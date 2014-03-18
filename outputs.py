@@ -26,13 +26,25 @@ def plots(experiment, folderName, silent, saveFig, ivText, **models):
 
     figureSets = experiment.plots( ivText, **models)
     for (handle,figure) in figureSets:
-        fileName = folderName + "/" + handle
+        fileName = folderName + "\\" + handle
         outputFig(figure,fileName, silent, saveFig)
 
 ### Pickled outputs
-def pickleLog(results,folderName):
+def pickleLog(results,folderName, label=""):
 
-    outputFile = folderName + 'Pickle\\' + results["Name"] + '.pkl'
+    if label:
+        outputFile = folderName + 'Pickle\\' + results["Name"] + "-" + label
+    else:
+        outputFile = folderName + 'Pickle\\' + results["Name"]
+
+    if exists(outputFile):
+        i = 1
+        while exists(outputFile + "_" + str(i)):
+            i += 1
+        outputFile + "_" + str(i)
+
+    outputFile += '.pkl'
+
     with open(outputFile,'w') as w :
         dump(results, w)
 
