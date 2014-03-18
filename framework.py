@@ -23,8 +23,8 @@ def sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName):
 
     logger1 = logging.getLogger('Overview')
 
-    message = "Begninning the core simulation "
-    logger1.info(message)
+    message = "Beginning the core simulation "
+    logger1.debug(message)
 
     # Simulation
 
@@ -151,7 +151,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
             logger2.info(message)
             paramText = l
 
-        message = "Begining experiment with" + paramText
+        message = "Begining experiment with " + paramText
         logger1.info(message)
 
         experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
@@ -191,39 +191,39 @@ def multiModelSim(expName, *args, **kwargs):
     fancyLogger(logLevel, fileName)
 
     logger1 = logging.getLogger('Framework')
-    logger2 = logging.getLogger('Outputs')
+
+    modelNames = []
 
     expDataSets = {}
     modelResults = {}
 
-    for p in paramCombs:
+    for m in args:
 
-        paramText = ""
-        for param, val in izip(params,p):
-            modelArgs[param] = val
-            paramText += param + ' = ' + str(val) + ' '
+        modelName = m["Name"]
+        if modelName in modelNames:
+            i = 1
+            while modelName + "_"+ str(i) in modelName:
+                i +=1
+            modelName = modelName + "_"+ str(i)
+        modelNames.append(modelName)
 
-        if len(paramText)>18:
-            l = "Group " + str(labelCount)
-            labelCount += 1
-            message = "Outputting '" + paramText + "' with the label '" + l + "'"
-            logger2.info(message)
-            paramText = l
+        for k, v in m.iteritems():
+            modelArgs[k] = v
 
-        message = "Begining experiment with" + paramText
+        message = "Begining experiment with " + modelName
         logger1.info(message)
 
-        experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
+        experiment, model = sim(expName, m["Name"], modelArgs, expArgs, otherArgs, folderName)
         expData = experiment.outputEvolution()
         modelResult = model.outputEvolution()
-        modelResults[paramText] = modelResult
+        modelResults[modelName] = modelResult
 
         message = "Experiment ended. Recording data"
         logger1.debug(message)
 
         if folderName:
             pickleLog(expData,folderName)
-            pickleLog(modelResult,folderName,label= paramText)
+            pickleLog(modelResult,folderName,label= modelName)
 
     message = "Begining output processing"
     logger1.info(message)
@@ -240,4 +240,5 @@ if __name__ == '__main__':
 #    singleModel(sys.argv)
 
 #    simpleSim("Beads", "RPE")
-    paramModSim("Beads", "RPE", ('rateConst',[0.1,0.2,0.3,0.4,0.5]))
+#    paramModSim("Beads", "RPE", ('rateConst',[0.1,0.2,0.3,0.4,0.5]))
+    multiModelSim("Beads", {'Name':'RPE'},{'Name':'RPE'})
