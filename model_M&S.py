@@ -45,7 +45,7 @@ class model_MS(model):
     def feedback(self,response):
         """ Recieves the reaction to the action """
 
-    def outputEvolution(self,folderName):
+    def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
 
         results = {"Name": self.Name,

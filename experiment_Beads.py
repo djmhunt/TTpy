@@ -81,7 +81,7 @@ class experiment_Beads(experiment):
     def feedback(self):
         """ Responds to the action from the participant"""
 
-    def outputEvolution(self,folderName):
+    def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this
         experiment run """
 

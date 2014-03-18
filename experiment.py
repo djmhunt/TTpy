@@ -46,7 +46,7 @@ class experiment:
     def feedback(self):
         """ Responds to the action from the participant"""
 
-    def outputEvolution(folderName):
+    def outputEvolution():
         """ Plots and saves files containing all the relavent data for this
         experiment run """
 
