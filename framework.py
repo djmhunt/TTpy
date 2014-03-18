@@ -47,7 +47,7 @@ def sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName):
     logger1.info(message)
 
     message = "Begining experiment"
-    logger1.info(message)
+    logger1.debug(message)
 
     for event in exp:
         model.observe(event)
@@ -58,7 +58,7 @@ def sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName):
         exp.procede()
 
     message = "Experiment completed"
-    logger1.info(message)
+    logger1.debug(message)
 
     return exp, model
 
@@ -73,22 +73,25 @@ def simpleSim(expName, modelName, *args, **kwargs):
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
     label = otherArgs.pop("ivLabel","Single")
+    logLevel = otherArgs.pop("logLevel",logging.DEBUG)
 
     folderName, fileName = saving(save, label)
 
-    fancyLogger(logging.DEBUG, fileName)
+    fancyLogger(logLevel, fileName)
 
     logger1 = logging.getLogger('Framework')
+
+    message = "Begining simple experiment"
+    logger1.debug(message)
 
     experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
 
     message = "Begining output processing"
     logger1.info(message)
 
-    expData = experiment.outputEvolution(folderName)
-    modelResult = model.outputEvolution(folderName)
+    expData = experiment.outputEvolution()
+    modelResult = model.outputEvolution()
     modelResults = {model.Name: modelResult}
-#    modelResults = {model.Name: model.outputEvolution(folderName) for model in models}
 
     if folderName:
         pickleLog(expData,folderName)
@@ -109,10 +112,11 @@ def paramModSim(expName, modelName, *args, **kwargs):
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
     label = otherArgs.pop("ivLabel","Parameter")
+    logLevel = otherArgs.pop("logLevel",logging.DEBUG)
 
     folderName, fileName = saving(save, label)
 
-    fancyLogger(logging.DEBUG, fileName)
+    fancyLogger(logLevel, fileName)
 
     logger1 = logging.getLogger('Framework')
     logger2 = logging.getLogger('Outputs')
@@ -138,34 +142,94 @@ def paramModSim(expName, modelName, *args, **kwargs):
         paramText = ""
         for param, val in izip(params,p):
             modelArgs[param] = val
-            paramText += param + ': ' + str(val) + ' '
+            paramText += param + ' = ' + str(val) + ' '
 
-        if len(paramText)>15:
-
+        if len(paramText)>18:
             l = "Group " + str(labelCount)
             labelCount += 1
-
             message = "Outputting '" + paramText + "' with the label '" + l + "'"
             logger2.info(message)
-
             paramText = l
 
+        message = "Begining experiment with" + paramText
+        logger1.info(message)
+
         experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
-        expData = experiment.outputEvolution(folderName)
-        modelResult = model.outputEvolution(folderName)
+        expData = experiment.outputEvolution()
+        modelResult = model.outputEvolution()
         modelResults[paramText] = modelResult
+
+        message = "Experiment ended. Recording data"
+        logger1.debug(message)
 
         if folderName:
             pickleLog(expData,folderName)
-            pickleLog(modelResult,folderName)
-
-        if not silent or save:
-            plots(experiment, folderName, silent, save, label, **modelResults)
+            pickleLog(modelResult,folderName,label= paramText)
 
     message = "Begining output processing"
     logger1.info(message)
 
-    plots(experiment, folderName, silent, save, label, **modelResults)
+    if not silent or save:
+        plots(experiment, folderName, silent, save, label, **modelResults)
+
+    message = "### Simulation complete"
+    logger1.info(message)
+
+def multiModelSim(expName, *args, **kwargs):
+
+    # Sift through kwargs to find those related to the experiment and those related to
+    # the model
+    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+
+    silent = otherArgs.get('silent',False)
+    save = otherArgs.get('save', True)
+    label = otherArgs.pop("ivLabel","Parameter")
+    logLevel = otherArgs.pop("logLevel",logging.DEBUG)
+
+    folderName, fileName = saving(save, label)
+
+    fancyLogger(logLevel, fileName)
+
+    logger1 = logging.getLogger('Framework')
+    logger2 = logging.getLogger('Outputs')
+
+    expDataSets = {}
+    modelResults = {}
+
+    for p in paramCombs:
+
+        paramText = ""
+        for param, val in izip(params,p):
+            modelArgs[param] = val
+            paramText += param + ' = ' + str(val) + ' '
+
+        if len(paramText)>18:
+            l = "Group " + str(labelCount)
+            labelCount += 1
+            message = "Outputting '" + paramText + "' with the label '" + l + "'"
+            logger2.info(message)
+            paramText = l
+
+        message = "Begining experiment with" + paramText
+        logger1.info(message)
+
+        experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
+        expData = experiment.outputEvolution()
+        modelResult = model.outputEvolution()
+        modelResults[paramText] = modelResult
+
+        message = "Experiment ended. Recording data"
+        logger1.debug(message)
+
+        if folderName:
+            pickleLog(expData,folderName)
+            pickleLog(modelResult,folderName,label= paramText)
+
+    message = "Begining output processing"
+    logger1.info(message)
+
+    if not silent or save:
+        plots(experiment, folderName, silent, save, label, **modelResults)
 
     message = "### Simulation complete"
     logger1.info(message)
