@@ -115,6 +115,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
     fancyLogger(logging.DEBUG, fileName)
 
     logger1 = logging.getLogger('Framework')
+    logger2 = logging.getLogger('Outputs')
 
     expDataSets = {}
     modelResults = {}
@@ -129,14 +130,25 @@ def paramModSim(expName, modelName, *args, **kwargs):
         else:
             otherParams.append(a)
 
-    paramCombs = listMerge(paramVals)
+    paramCombs = listMerge(*paramVals)
 
+    labelCount = 1
     for p in paramCombs:
 
         paramText = ""
         for param, val in izip(params,p):
             modelArgs[param] = val
             paramText += param + ': ' + str(val) + ' '
+
+        if len(paramText)>15:
+
+            l = "Group " + str(labelCount)
+            labelCount += 1
+
+            message = "Outputting '" + paramText + "' with the label '" + l + "'"
+            logger2.info(message)
+
+            paramText = l
 
         experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
         expData = experiment.outputEvolution(folderName)
@@ -163,4 +175,5 @@ if __name__ == '__main__':
 
 #    singleModel(sys.argv)
 
-    simpleSim("Beads", "RPE")
+#    simpleSim("Beads", "RPE")
+    paramModSim("Beads", "RPE", ('rateConst',[0.1,0.2,0.3,0.4,0.5]))
