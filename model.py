@@ -13,11 +13,11 @@ class model:
         """The documentation for the class"""
 
     def __init__(self,**kwargs):
-        """The model class is a gneral template for a model"""
+        """The model class is a general template for a model"""
 
         self.Name = "model_Empty"
 
-        self.action = 1
+        self.currAction = 1
 
         # Recorded information
 
@@ -52,5 +52,5 @@ class model:
         """ Stores the state of all the important variables so that they can be
             output later """
 
-        self.recAction.append(self.action)
+        self.recAction.append(self.currAction)
 
