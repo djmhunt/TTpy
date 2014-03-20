@@ -16,10 +16,9 @@ class model_RPE(model):
         """The model class is a general template for a model"""
 
         self.Name = "model_RPE"
-
         self.rateConst = kwargs.pop('rateConst',0.2)
-
         self.activity = zeros(2) + 0.05
+        self.decision = 0.5
 
         # Recorded information
 
@@ -27,6 +26,7 @@ class model_RPE(model):
         self.recAction = []
         self.recEvents = []
         self.recActivity = []
+        self.recDecision = []
 
     def action(self):
         """ Returns the action of the model"""
@@ -34,6 +34,8 @@ class model_RPE(model):
         self._newAct()
 
         self.currAction = self.activity[0]
+
+        self._decision()
 
         self._storeState()
 
@@ -58,6 +60,7 @@ class model_RPE(model):
                     "Events":array(self.recEvents),
                     "Information": array(self.recInformation),
                     "Activity": array(self.recActivity),
+                    "Decsions": array(self.recDecision),
                     "rateConst": self.rateConst}
 
         return results
@@ -67,14 +70,25 @@ class model_RPE(model):
             output later """
 
         self.recInformation.append(self.information)
-
         self.recAction.append(self.currAction)
-
         self.recActivity.append(self.activity)
+        self.recDecision.append(self.decision)
 
     def _newAct(self):
         """ Calculate the new probabilities of different actions """
 
         self.activity = self.activity + (self.information-self.activity)* self.rateConst
+
+    def _decision(self):
+
+        prob = self.activity[0]
+
+        if abs(prob-0.5)>self.beta:
+            if prob>0.5:
+                self.decision = "Choice 1"
+            else:
+                self.decision = "Choice 2"
+        else:
+            self.decision = "None"
 
 
