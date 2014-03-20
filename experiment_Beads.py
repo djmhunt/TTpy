@@ -102,18 +102,27 @@ class experiment_Beads(experiment):
 
     def plotActions(self, ivText, **models):
 
-        fig = plt.figure(1)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
-        plt.plot(self.recBeads, 'o', label = "Beads drawn", color = 'k', linewidth=2,markersize = 3)
 
         for i, (label,v) in enumerate(models.iteritems()):
 
-            plt.plot(v["Actions"], lpl[i], label = ivText + ": " + label, color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)#, axes=axs[0])
+            pltLine = ax.plot(v["Actions"], lpl[i], label = ivText + ": " + label, color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)#, axes=axs[0])
 
-        plt.xlabel("Bead")
-        plt.ylabel("Action")
-        plt.title("Opinion of next bead being white")
-        leg = plt.legend(loc = 'best', fancybox=True)
+        axb = ax.twinx()
+        pltLine = axb.plot(self.recBeads, 'o', label = "Beads drawn", color = 'k', linewidth=2,markersize = 5)
+
+        ax.set_xlabel("Time")
+        ax.set_ylabel("Action")
+        axb.set_ylabel("Bead presented")
+        ax.set_title("Opinion of next bead being white")
+
+        lines1, pltLables1 = ax.get_legend_handles_labels()
+        lines2, pltLables2 = axb.get_legend_handles_labels()
+        pltLables = pltLables1 + pltLables2
+        lines = lines1 + lines2
+        leg = ax.legend(lines, pltLables,loc = 'best', fancybox=True)
 
         return fig
 
