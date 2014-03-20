@@ -43,6 +43,14 @@ def fancyLogger(logLevel, fileName="", silent = False):
           for line in buf.rstrip().splitlines():
              self.logger.log(self.log_level, line.rstrip())
 
+       # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
+       def flush(self):
+          try:
+             self.logger.flush()
+          except AttributeError:
+              pass
+
+
     if fileName:
         logging.basicConfig(filename = fileName,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
