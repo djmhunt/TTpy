@@ -17,6 +17,7 @@ class model_RPE(model):
 
         self.Name = "model_RPE"
         self.rateConst = kwargs.pop('rateConst',0.2)
+        self.beta = kwargs.pop('beta',0.3)
         self.activity = zeros(2) + 0.05
         self.decision = 0.5
 

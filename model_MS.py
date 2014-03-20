@@ -29,6 +29,7 @@ class model_MS(model):
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',1)
         self.actParam = kwargs.pop('actParam',0.2)
+        self.beta = kwargs.pop('beta',0.5)
         # The actParam is an activation rate paramenter. The paper uses a value of 1.
 
         # Recorded information
