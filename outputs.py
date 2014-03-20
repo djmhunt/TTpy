@@ -9,9 +9,9 @@ import matplotlib
 import logging
 
 import matplotlib.pyplot as plt
+import cPickle as pickle
 
 from os.path import isfile, exists
-from cPickle import dump
 
 
 def plots(experiment, folderName, silent, saveFig, ivText, **models):
@@ -46,7 +46,7 @@ def pickleLog(results,folderName, label=""):
     outputFile += '.pkl'
 
     with open(outputFile,'w') as w :
-        dump(results, w)
+        pickle.dump(results, w)
 
 ### Graphical outputs
 def outputFig(fig,fileName,silent,saveFig):
