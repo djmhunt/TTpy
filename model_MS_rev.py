@@ -45,7 +45,7 @@ class model_MS_rev(model):
     def action(self):
         """ Returns the action of the model"""
 
-        self.currAction = self.probDifference
+        self.currAction = self.probabilities[0]
 
         self._decision()
 
@@ -104,7 +104,7 @@ class model_MS_rev(model):
 
         li = self.activity ** self.theta
         p = li/sum(li)
-        p = 1.0 / (1.0 + exp(-self.theta*self.activity))
+#        p = 1.0 / (1.0 + exp(-self.theta*self.activity))
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
@@ -114,10 +114,10 @@ class model_MS_rev(model):
 
     def _decision(self):
 
-        pd = self.probDifference
+        prob = self.probabilities
 
-        if abs(pd)>self.beta:
-            if pd>0:
+        if abs(prob-0.5)>self.beta:
+            if prob>0.5:
                 self.decision = "Choice 1"
             else:
                 self.decision = "Choice 2"

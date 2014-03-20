@@ -110,10 +110,10 @@ class model_MS(model):
 
     def _decision(self):
 
-        pd = self.probDifference
+        prob = self.probDifference
 
-        if abs(pd)>self.beta:
-            if pd>0:
+        if abs(prob)>self.beta:
+            if prob>0:
                 self.decision = "Choice 1"
             else:
                 self.decision = "Choice 2"

@@ -94,13 +94,13 @@ class experiment_Beads(experiment):
 
         figSets = []
 
-        fig = self.plotActions(ivText, **models)
+        fig = self.plotProbJar1(ivText, **models)
 
         figSets.append(('Actions',fig))
 
         return figSets
 
-    def plotActions(self, ivText, **models):
+    def plotProbJar1(self, ivText, **models):
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
@@ -112,9 +112,11 @@ class experiment_Beads(experiment):
 
         axb = ax.twinx()
         pltLine = axb.plot(self.recBeads, 'o', label = "Beads drawn", color = 'k', linewidth=2,markersize = 5)
+        bottom,top = axb.get_ylim()
+        axb.set_ylim((bottom - 0.01,top + 0.01))
 
         ax.set_xlabel("Time")
-        ax.set_ylabel("Action")
+        ax.set_ylabel("Probability of Jar 1")
         axb.set_ylabel("Bead presented")
         ax.set_title("Opinion of next bead being white")
 
