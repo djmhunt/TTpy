@@ -29,7 +29,7 @@ class model:
 
         self._storeState()
 
-        return self.action
+        return self.currAction
 
     def observe(self,event):
         """ Recieves the latest observation"""
