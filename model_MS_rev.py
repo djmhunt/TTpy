@@ -114,7 +114,7 @@ class model_MS_rev(model):
 
     def _decision(self):
 
-        prob = self.probabilities
+        prob = self.probabilities[0]
 
         if abs(prob-0.5)>self.beta:
             if prob>0.5:
