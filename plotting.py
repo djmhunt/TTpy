@@ -77,8 +77,11 @@ def dim1VarDim(X,Y, varXLabel):
 
     plt.plot(X,Y)
 
-
-    ax.set_ylim((minVal,maxVal))
+    if minVal != maxVal:
+        ax.set_ylim((minVal,maxVal))
+    else:
+        logger1 = logging.getLogger('Plots')
+        logger1.warning("There is no variation in the parameter reaction times")
 
     plt.xlabel(varXLabel)
     plt.ylabel("Reaction")
