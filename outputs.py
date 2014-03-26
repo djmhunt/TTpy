@@ -14,7 +14,7 @@ import cPickle as pickle
 from os.path import isfile, exists
 
 
-def plots(experiment, folderName, silent, saveFig, ivText, **models):
+def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSets):
     """ Plots the results for each of the models
 
     """
@@ -24,10 +24,20 @@ def plots(experiment, folderName, silent, saveFig, ivText, **models):
     message = "Produce plots"
     logger1.info(message)
 
-    figureSets = experiment.plots( ivText, **models)
+    expFigureSets = experiment.plots( ivText, **models)
+    figureSets = list(majFigureSets) + expFigureSets
     for (handle,figure) in figureSets:
         fileName = folderName + "\\" + handle
         outputFig(figure,fileName, silent, saveFig)
+
+    if not silent:
+        if matplotlib.is_interactive():
+            plt.draw()
+        else:
+            plt.show()
+    else:
+        plt.close()
+
 
 ### Pickled outputs
 def pickleLog(results,folderName, label=""):
@@ -53,14 +63,18 @@ def outputFig(fig,fileName,silent,saveFig):
     """Saves the figure to a .png file and/or displays it on the screen.
 
     fig:        MatPlotLib figure object
-    fileName:    The name and path of the file the figure should be saved to. If ommited
-            the file will not be saved.
-    silent:    If false the figure will be plotted to the screen. If true the figure
-            will be closed
+    fileName:   The name and path of the file the figure should be saved to. If ommited
+                the file will be saved to a default name.
+    saveFig:    If true the figure will be saved.
+    silent:     If false the figure will be plotted to the screen. If true the figure
+                will be closed
 
 
-    outputFig(fig,fileName,silent)
+    outputFig(fig,fileName,silent,saveFig)
     """
+
+    plt.figure(fig.number)
+
     if saveFig:
         if exists(fileName):
             i = 1
@@ -72,12 +86,9 @@ def outputFig(fig,fileName,silent,saveFig):
 
         plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
-        plt.savefig(fileName,dpi=3*ndpi)
+        plt.savefig(fileName,dpi=ndpi)
 
-    if not silent:
-        if matplotlib.is_interactive():
-            plt.draw()
-        else:
-            plt.show()
-    else:
-        plt.close()
+    if not silent and matplotlib.is_interactive():
+        plt.draw()
+
+
