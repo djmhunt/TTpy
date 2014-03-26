@@ -3,28 +3,14 @@
 @author: Dominic
 """
 
-import matplotlib
 #matplotlib.interactive(True)
 import logging
 
-import matplotlib.pyplot as plt
-
 from numpy import array
 from experiment import experiment
+from plotting import dataVsEvents
 
 defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
-
-#Define the different types of lines that will be plotted and their properties.
-dots = ['.', 'o', '^', 'x', 'd', '2', 'H', ',', 'v', '+', 'D', 'p', '<', 's', '1', 'h', '4', '>', '3']
-scatterdots = ['o', '^', 'x', 'd', 'v', '+', 'p', '<', 's', 'h', '>', '8']
-lines = ['-', '--', ':', '-.','-']
-lines_width = [1,1,2,2,2]
-large = ['^', 'x', 'D', '4', 'd', 'p', '>', '2', ',', '3', 'H']
-large_line_width = [2]*len(large)
-
-lpl = lines + large
-lpl_linewidth = large_line_width + lines_width
-colours = ['g','r','b','m','0.85'] + ['k']*len(large)
 
 class experiment_Beads(experiment):
 
@@ -101,30 +87,28 @@ class experiment_Beads(experiment):
         return figSets
 
     def plotProbJar1(self, ivText, **models):
+        """
+        Plots a set of lines for the probability of jar 1.
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
+        plotProbJar1(self, ivText, **models)
+        """
 
+        data = []
+        labels = []
 
-        for i, (label,v) in enumerate(models.iteritems()):
+        for label,v in models.iteritems():
+            data.append(v["Actions"])
+            labels.append(ivText + ": " + label)
 
-            pltLine = ax.plot(v["Actions"], lpl[i], label = ivText + ": " + label, color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)#, axes=axs[0])
+        events = self.recBeads
 
-        axb = ax.twinx()
-        pltLine = axb.plot(self.recBeads, 'o', label = "Beads drawn", color = 'k', linewidth=2,markersize = 5)
-        bottom,top = axb.get_ylim()
-        axb.set_ylim((bottom - 0.01,top + 0.01))
+        axisLabels = {"title":"Opinion of next bead being white"}
+        axisLabels["xLabel"] = "Time"
+        axisLabels["yLabel"] = "Probability of Jar 1"
+        axisLabels["y2Label"] = "Bead presented"
+        eventLabel = "Beads drawn"
 
-        ax.set_xlabel("Time")
-        ax.set_ylabel("Probability of Jar 1")
-        axb.set_ylabel("Bead presented")
-        ax.set_title("Opinion of next bead being white")
-
-        lines1, pltLables1 = ax.get_legend_handles_labels()
-        lines2, pltLables2 = axb.get_legend_handles_labels()
-        pltLables = pltLables1 + pltLables2
-        lines = lines1 + lines2
-        leg = ax.legend(lines, pltLables,loc = 'best', fancybox=True)
+        fig = dataVsEvents(data,events,labels,eventLabel,axisLabels)
 
         return fig
 
