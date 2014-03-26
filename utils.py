@@ -8,7 +8,8 @@ import datetime as dt
 import logging
 import sys
 
-from numpy import seterr, seterrcall
+from numpy import seterr, seterrcall, meshgrid
+from itertools import izip
 from os import getcwd, makedirs
 from os.path import exists
 
@@ -125,6 +126,8 @@ def argProcess(**kwargs):
 
 def listMerge(*args):
 
+    """Obselite? Should be replaced by listMergeNP?"""
+
     r=[[]]
     for x in args:
         r = [i+[y] for y in x for i in r]
@@ -136,3 +139,20 @@ def listMerge(*args):
 #        r = t
 
     return r
+
+def listMergeNP(*args):
+
+    A = meshgrid(*args)
+
+    r = [b for a in izip(*A) for b in izip(*a)]
+
+    return r, A
+
+if __name__ == '__main__':
+    from timeit import timeit
+
+    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
+    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
+
+    print timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000)
+    print timeit('listMerge2([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge2",number=500000)
