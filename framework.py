@@ -8,7 +8,8 @@ from itertools import izip
 from importlib import import_module
 
 from outputs import plots, pickleLog
-from utils import fancyLogger, argProcess, saving, listMerge, folderSetup
+from utils import fancyLogger, argProcess, saving, listMerge
+from plotting import varDynamics
 
 # For analysing the state of the computer
 # import psutil
@@ -98,7 +99,7 @@ def simpleSim(expName, modelName, *args, **kwargs):
         pickleLog(modelResult,folderName)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, **modelResults)
+        plots(experiment, folderName, silent, save, label, modelResults)
 
     message = "### Simulation complete"
     logger1.info(message)
@@ -123,6 +124,8 @@ def paramModSim(expName, modelName, *args, **kwargs):
 
     expDataSets = {}
     modelResults = {}
+
+    decisionTimes = []
 
     params = []
     paramVals = []
@@ -157,6 +160,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
         experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
         expData = experiment.outputEvolution()
         modelResult = model.outputEvolution()
+        decisionTimes.append(modelResult["firstDecision"])
         modelResults[paramText] = modelResult
 
         message = "Experiment ended. Recording data"
@@ -170,7 +174,11 @@ def paramModSim(expName, modelName, *args, **kwargs):
     logger1.info(message)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, **modelResults)
+        pl = varDynamics(params, paramVals, decisionTimes)
+        majFigureSets = (("firstDecision",pl),)
+        plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets)
+        varDynamics(params, paramVals, decisionTimes)
+
 
     message = "### Simulation complete"
     logger1.info(message)
@@ -229,16 +237,18 @@ def multiModelSim(expName, *args, **kwargs):
     logger1.info(message)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, **modelResults)
+        plots(experiment, folderName, silent, save, label, modelResults)
 
     message = "### Simulation complete"
     logger1.info(message)
 
 if __name__ == '__main__':
-#    sim(sys.argv)
 
-#    singleModel(sys.argv)
+    from numpy import fromfunction
 
 #    simpleSim("Beads", "RPE")
-#    paramModSim("Beads", "RPE", ('rateConst',[0.1,0.2,0.3,0.4,0.5]))
-    multiModelSim("Beads", {'Name':'RPE'},{'Name':'RPE'})
+#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))))
+#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/1000, (4000, 1))))
+#    paramModSim("Beads", "MS", ('theta',[1,2,3]))
+#    multiModelSim("Beads", {'Name':'RPE'},{'Name':'MS'},{'Name':'MS_rev'})
+    simpleSim("Beads", "BP")
