@@ -26,7 +26,8 @@ class model_BP:
         self.information = zeros(2)
         self.posteriorProb = zeros(2) + self.prior
         self.probabilities = zeros(2) + self.prior
-        self.decision = 0.5
+        self.decision = None
+        self.firstDecision = 0
 
         # Recorded information
 
@@ -73,6 +74,7 @@ class model_BP:
                    "PosteriorProb": array(self.recPosteriorProb),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
+                   "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
         return results
@@ -101,8 +103,10 @@ class model_BP:
 
         if abs(prob-0.5)>self.beta:
             if prob>0.5:
-                self.decision = "Choice 1"
+                self.decision = 1
             else:
-                self.decision = "Choice 2"
+                self.decision = 2
+            if not self.firstDecision:
+                self.firstDecision = len(self.recDecision) + 1
         else:
-            self.decision = "None"
+            self.decision = None

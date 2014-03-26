@@ -19,7 +19,8 @@ class model_RPE(model):
         self.rateConst = kwargs.pop('rateConst',0.2)
         self.beta = kwargs.pop('beta',0.3)
         self.activity = zeros(2) + 0.05
-        self.decision = 0.5
+        self.decision = None
+        self.firstDecision = 0
 
         # Recorded information
 
@@ -62,6 +63,7 @@ class model_RPE(model):
                     "Information": array(self.recInformation),
                     "Activity": array(self.recActivity),
                     "Decsions": array(self.recDecision),
+                    "firstDecision": self.firstDecision,
                     "rateConst": self.rateConst}
 
         return results
@@ -86,10 +88,12 @@ class model_RPE(model):
 
         if abs(prob-0.5)>self.beta:
             if prob>0.5:
-                self.decision = "Choice 1"
+                self.decision = 1
             else:
-                self.decision = "Choice 2"
+                self.decision = 2
+            if not self.firstDecision:
+                self.firstDecision = len(self.recDecision) + 1
         else:
-            self.decision = "None"
+            self.decision = None
 
 

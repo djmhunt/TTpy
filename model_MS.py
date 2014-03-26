@@ -24,7 +24,8 @@ class model_MS(model):
         self.probabilities = zeros(2)
         self.probDifference = 0
         self.activity = zeros(2)
-        self.decision = 0.5
+        self.decision = None
+        self.firstDecision = 0
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',1)
@@ -84,6 +85,7 @@ class model_MS(model):
                    "Activity": array(self.recActivity),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
+                   "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
         return results
@@ -114,9 +116,11 @@ class model_MS(model):
 
         if abs(prob)>self.beta:
             if prob>0:
-                self.decision = "Choice 1"
+                self.decision = 1
             else:
-                self.decision = "Choice 2"
+                self.decision = 2
+            if not self.firstDecision:
+                self.firstDecision = len(self.recDecision) + 1
         else:
-            self.decision = "None"
+            self.decision = None
 
