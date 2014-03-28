@@ -145,7 +145,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
         paramText = ""
         for param, val in izip(params,p):
             modelArgs[param] = val
-            paramText += param + ' = ' + str(val) + ' '
+            paramText += param + ' = ' + str(val).strip('[]()') + ', '
 
         if len(paramText)>18:
             l = "Group " + str(labelCount)
@@ -246,9 +246,11 @@ if __name__ == '__main__':
 
     from numpy import fromfunction
 
-#    simpleSim("Beads", "RPE")
 #    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))))
-#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/1000, (4000, 1))))
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/10, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (4, 1))))
+#    paramModSim("Beads", "MS_rev", ('theta',fromfunction(lambda i, j: i/10+0.1, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10+0.1, (4, 1))))
+    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
+
 #    paramModSim("Beads", "MS", ('theta',[1,2,3]))
 #    multiModelSim("Beads", {'Name':'RPE'},{'Name':'MS'},{'Name':'MS_rev'})
-    simpleSim("Beads", "BP")
+#    simpleSim("Beads", "BP")
