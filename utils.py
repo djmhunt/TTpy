@@ -116,11 +116,11 @@ def argProcess(**kwargs):
     otherArgs = dict()
     for k in kwargs.iterkeys():
         if "m_" in k:
-            modelArgs[k.strip("m_")] = kwargs.pop(k)
+            modelArgs[k.strip("m_")] = kwargs.get(k)
         elif "e_" in k:
-            expArgs[k.strip("e_")] = kwargs.pop(k)
+            expArgs[k.strip("e_")] = kwargs.get(k)
         else:
-            otherArgs[k] = kwargs.pop(k)
+            otherArgs[k] = kwargs.get(k)
 
     return expArgs, modelArgs, otherArgs
 
