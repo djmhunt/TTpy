@@ -31,10 +31,10 @@ def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSet
         outputFig(figure,fileName, silent, saveFig)
 
     if not silent:
-        if matplotlib.is_interactive():
-            plt.draw()
-        else:
+        if not matplotlib.is_interactive():
             plt.show()
+#        else:
+#            plt.draw()
     else:
         plt.close()
 
@@ -88,7 +88,7 @@ def outputFig(fig,fileName,silent,saveFig):
 
         plt.savefig(fileName,dpi=ndpi)
 
-    if not silent and matplotlib.is_interactive():
-        plt.draw()
+#    if not silent and matplotlib.is_interactive():
+#        plt.draw()
 
 
