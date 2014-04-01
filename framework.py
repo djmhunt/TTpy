@@ -246,11 +246,25 @@ if __name__ == '__main__':
 
     from numpy import fromfunction
 
-#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))))
-#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/10, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (4, 1))))
-#    paramModSim("Beads", "MS_rev", ('theta',fromfunction(lambda i, j: i/10+0.1, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10+0.1, (4, 1))))
-    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
+    # For RPE:
+#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
+#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))), m_beta = 0.3)
+#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/10+0.1, (7, 1))), m_beta = 0.3)
 
-#    paramModSim("Beads", "MS", ('theta',[1,2,3]))
-#    multiModelSim("Beads", {'Name':'RPE'},{'Name':'MS'},{'Name':'MS_rev'})
+    # For MS:
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))))
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))), beta= 0.5)
+#    paramModSim("Beads", "MS", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]))
+
+    # For MS_rev:
+#    paramModSim("Beads", "MS_rev", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))))
+#    paramModSim("Beads", "MS_rev", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]))
+#    simpleSim("Beads", "MS_rev")
+
+    # For BP
+#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/5, (80, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
+#    paramModSim("Beads", "BP", ('theta',[]), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
 #    simpleSim("Beads", "BP")
+
+
+    multiModelSim("Beads", {'Name':'RPE'},{'Name':'MS'},{'Name':'MS_rev'},{'Name':'BP'})
