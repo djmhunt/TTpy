@@ -10,6 +10,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import cPickle as pickle
+import pandas as pd
 
 from os.path import isfile, exists
 
@@ -40,12 +41,7 @@ def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSet
 
 
 ### Pickled outputs
-def pickleLog(results,folderName, label=""):
-
-    if label:
-        outputFile = folderName + 'Pickle\\' + results["Name"] + "-" + label
-    else:
-        outputFile = folderName + 'Pickle\\' + results["Name"]
+def pickleRec(data,outputFile):
 
     if exists(outputFile):
         i = 1
@@ -56,7 +52,37 @@ def pickleLog(results,folderName, label=""):
     outputFile += '.pkl'
 
     with open(outputFile,'w') as w :
-        pickle.dump(results, w)
+        pickle.dump(data, w)
+
+def pickleLog(results,folderName, label=""):
+
+    if label:
+        outputFile = folderName + 'Pickle\\' + results["Name"] + "-" + label
+    else:
+        outputFile = folderName + 'Pickle\\' + results["Name"]
+
+    pickleRec(results,outputFile)
+
+def simSetLog(readableLog,params,expName,modelName,kwargs,ivlabel,folderName):
+
+    data = {'sim': [i[0] for i in readableLog],
+            'experiment': expName,
+            'model': modelName,
+            'ivlabel': ivlabel,
+            'folder': folderName}
+
+    data['beadTotal'] = [v[2] for v in readableLog]
+
+    for i,n in enumerate(params):
+        data[n] = [v[1][i][:] for v in readableLog]
+
+    record = pd.DataFrame(data)
+
+    outputFile = folderName + 'Pickle\\' + 'simStore'
+
+    pickleRec(record,outputFile)
+
+#readableLog.append((paramText, p, modelResult["firstDecision"]))
 
 ### Graphical outputs
 def outputFig(fig,fileName,silent,saveFig):
