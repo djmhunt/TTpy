@@ -97,7 +97,7 @@ class experiment_Beads(experiment):
         labels = []
 
         for label,v in models.iteritems():
-            data.append(v["Actions"])
+            data.append(v["DecOneProb"])
             labels.append(ivText + ": " + label)
 
         events = self.recBeads
@@ -106,6 +106,8 @@ class experiment_Beads(experiment):
         axisLabels["xLabel"] = "Time"
         axisLabels["yLabel"] = "Probability of Jar 1"
         axisLabels["y2Label"] = "Bead presented"
+        axisLabels["yMax"] = 1
+        axisLabels["yMin"] = 0
         eventLabel = "Beads drawn"
 
         fig = dataVsEvents(data,events,labels,eventLabel,axisLabels)
