@@ -15,7 +15,7 @@ class model_BP:
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_Empty"
+        self.Name = "model_BP"
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
@@ -36,12 +36,17 @@ class model_BP:
         self.recInformation = []
         self.recProbabilities = []
         self.recPosteriorProb = []
+        self.recDecOneProb = []
         self.recDecision = []
 
     def action(self):
         """ Returns the action of the model"""
 
+        self.currAction = self.decision
+
         self._decision()
+
+        self.recDecOneProb.append(self.probabilities[0])
 
         self._storeState()
 
@@ -74,6 +79,7 @@ class model_BP:
                    "PosteriorProb": array(self.recPosteriorProb),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
+                   "DecOneProb": array(self.recDecOneProb),
                    "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 

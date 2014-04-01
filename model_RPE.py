@@ -16,7 +16,7 @@ class model_RPE(model):
         """The model class is a general template for a model"""
 
         self.Name = "model_RPE"
-        self.rateConst = kwargs.pop('rateConst',0.2)
+        self.rateConst = kwargs.pop('rateConst',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.activity = zeros(2) + 0.05
         self.decision = None
@@ -28,6 +28,7 @@ class model_RPE(model):
         self.recAction = []
         self.recEvents = []
         self.recActivity = []
+        self.recDecOneProb = []
         self.recDecision = []
 
     def action(self):
@@ -35,9 +36,11 @@ class model_RPE(model):
 
         self._newAct()
 
-        self.currAction = self.activity[0]
+        self.currAction = self.decision
 
         self._decision()
+
+        self.recDecOneProb.append(self.activity[0])
 
         self._storeState()
 
@@ -63,6 +66,7 @@ class model_RPE(model):
                     "Information": array(self.recInformation),
                     "Activity": array(self.recActivity),
                     "Decsions": array(self.recDecision),
+                    "DecOneProb": array(self.recDecOneProb),
                     "firstDecision": self.firstDecision,
                     "rateConst": self.rateConst}
 

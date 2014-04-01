@@ -40,15 +40,18 @@ class model_MS(model):
         self.recInformation = []
         self.recProbabilities = []
         self.recProbDifference = []
+        self.recDecOneProb = []
         self.recActivity = []
         self.recDecision = []
 
     def action(self):
         """ Returns the action of the model"""
 
-        self.currAction = self.probDifference
+        self.currAction = self.decision
 
         self._decision()
+
+        self.recDecOneProb.append(self.probabilities[0])
 
         self._storeState()
 
@@ -85,6 +88,7 @@ class model_MS(model):
                    "Activity": array(self.recActivity),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
+                   "DecOneProb": array(self.recDecOneProb),
                    "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
