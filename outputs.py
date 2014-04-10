@@ -13,6 +13,7 @@ import cPickle as pickle
 import pandas as pd
 
 from os.path import isfile, exists
+from numpy import array
 
 
 def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSets):
@@ -34,8 +35,8 @@ def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSet
     if not silent:
         if not matplotlib.is_interactive():
             plt.show()
-#        else:
-#            plt.draw()
+        else:
+            plt.draw()
     else:
         plt.close()
 
@@ -63,20 +64,25 @@ def pickleLog(results,folderName, label=""):
 
     pickleRec(results,outputFile)
 
-def simSetLog(readableLog,params,expName,modelName,kwargs,ivlabel,folderName):
+def simSetLog(paramText,params,paramVals,firstDecision,expName,modelName,kwargs,ivLabel,folderName):
 
-    data = {'sim': [i[0] for i in readableLog],
+    data = {'sim': paramText,
             'experiment': expName,
             'model': modelName,
-            'ivlabel': ivlabel,
+            'ivLabel': ivLabel,
             'folder': folderName}
 
-    data['beadTotal'] = [v[2] for v in readableLog]
+    data['beadTotal'] = firstDecision
 
     for i,n in enumerate(params):
-        data[n] = [v[1][i][:] for v in readableLog]
+        data[n] = paramVals[:,i]
+
+    for k,v in kwargs.iteritems():
+        data[k] = v
 
     record = pd.DataFrame(data)
+
+    record = record.set_index('sim')
 
     outputFile = folderName + 'Pickle\\' + 'simStore'
 
@@ -109,8 +115,6 @@ def outputFig(fig,fileName,silent,saveFig):
             fileName + "_" + str(i)
 
         ndpi = fig.get_dpi()
-
-        plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
         plt.savefig(fileName,dpi=ndpi)
 
