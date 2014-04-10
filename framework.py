@@ -6,20 +6,22 @@ import logging
 
 from itertools import izip
 from importlib import import_module
+from numpy import array
 
-from outputs import plots, pickleLog
-from utils import fancyLogger, argProcess, saving, listMerge
+from outputs import plots, pickleLog, simSetLog
+from utils import fancyLogger, argProcess, saving, listMergeNP
 from plotting import varDynamics
+from inputs import unpickleModels, unpickleSimDescription
 
 # For analysing the state of the computer
 # import psutil
 
 ### +++++ Basic simulation
 
-def sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName):
+def sim(expName, modelName, modelArgs, expArgs, otherArgs):
     """This is the main run of the simulation
 
-    sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)"""
+    experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs)"""
 
 
     logger1 = logging.getLogger('Overview')
@@ -78,14 +80,14 @@ def simpleSim(expName, modelName, *args, **kwargs):
 
     folderName, fileName = saving(save, label)
 
-    fancyLogger(logLevel, fileName)
+    fancyLogger(logLevel, fileName, silent)
 
     logger1 = logging.getLogger('Framework')
 
     message = "Begining simple experiment"
     logger1.debug(message)
 
-    experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
+    experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs)
 
     message = "Begining output processing"
     logger1.info(message)
@@ -117,7 +119,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
 
     folderName, fileName = saving(save, label)
 
-    fancyLogger(logLevel, fileName)
+    fancyLogger(logLevel, fileName, silent)
 
     logger1 = logging.getLogger('Framework')
     logger2 = logging.getLogger('Outputs')
@@ -126,6 +128,10 @@ def paramModSim(expName, modelName, *args, **kwargs):
     modelResults = {}
 
     decisionTimes = []
+
+    readableLog_paramText = []
+    readableLog_paramVals = []
+    readableLog_firstDecision = []
 
     params = []
     paramVals = []
@@ -137,15 +143,16 @@ def paramModSim(expName, modelName, *args, **kwargs):
         else:
             otherParams.append(a)
 
-    paramCombs = listMerge(*paramVals)
+    paramCombs = listMergeNP(*paramVals)
 
     labelCount = 1
     for p in paramCombs:
 
-        paramText = ""
+        paramTexts = []
         for param, val in izip(params,p):
             modelArgs[param] = val
-            paramText += param + ' = ' + str(val).strip('[]()') + ', '
+            paramTexts.append(param + ' = ' + str(val).strip('[]()'))
+        paramText = ", ".join(paramTexts)
 
         if len(paramText)>18:
             l = "Group " + str(labelCount)
@@ -157,7 +164,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
         message = "Begining experiment with " + paramText
         logger1.info(message)
 
-        experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs, folderName)
+        experiment, model = sim(expName, modelName, modelArgs, expArgs, otherArgs)
         expData = experiment.outputEvolution()
         modelResult = model.outputEvolution()
         decisionTimes.append(modelResult["firstDecision"])
@@ -170,6 +177,12 @@ def paramModSim(expName, modelName, *args, **kwargs):
             pickleLog(expData,folderName)
             pickleLog(modelResult,folderName,label= paramText)
 
+            # Store the added data for the record set
+            readableLog_paramText.append(paramText)
+            readableLog_paramVals.append(p)
+            readableLog_firstDecision.append(modelResult["firstDecision"])
+
+
     message = "Begining output processing"
     logger1.info(message)
 
@@ -177,7 +190,18 @@ def paramModSim(expName, modelName, *args, **kwargs):
         pl = varDynamics(params, paramVals, decisionTimes)
         majFigureSets = (("firstDecision",pl),)
         plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets)
-        varDynamics(params, paramVals, decisionTimes)
+#        varDynamics(params, paramVals, decisionTimes)
+
+    if save:
+        simSetLog(readableLog_paramText,
+                  params,
+                  array(readableLog_paramVals),
+                  array(readableLog_firstDecision),
+                  expName,
+                  modelName,
+                  kwargs,
+                  label,
+                  folderName)
 
 
     message = "### Simulation complete"
@@ -191,12 +215,12 @@ def multiModelSim(expName, *args, **kwargs):
 
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
-    label = otherArgs.pop("ivLabel","Parameter")
+    label = otherArgs.pop("ivLabel","Models")
     logLevel = otherArgs.pop("logLevel",logging.DEBUG)
 
     folderName, fileName = saving(save, label)
 
-    fancyLogger(logLevel, fileName)
+    fancyLogger(logLevel, fileName, silent)
 
     logger1 = logging.getLogger('Framework')
 
@@ -221,7 +245,7 @@ def multiModelSim(expName, *args, **kwargs):
         message = "Begining experiment with " + modelName
         logger1.info(message)
 
-        experiment, model = sim(expName, m["Name"], modelArgs, expArgs, otherArgs, folderName)
+        experiment, model = sim(expName, m["Name"], modelArgs, expArgs, otherArgs)
         expData = experiment.outputEvolution()
         modelResult = model.outputEvolution()
         modelResults[modelName] = modelResult
@@ -242,29 +266,79 @@ def multiModelSim(expName, *args, **kwargs):
     message = "### Simulation complete"
     logger1.info(message)
 
+def plotLoadSim(folderName, *args, **kwargs):
+
+    # Sift through kwargs to find those related to the experiment and those related to
+    # the model
+    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+
+    silent = otherArgs.get('silent',False)
+    save = otherArgs.get('save', False)
+    label = otherArgs.pop("ivLabel","Reprocess")
+    logLevel = otherArgs.pop("logLevel",logging.DEBUG)
+
+    if save:
+        fileName = folderName + "reloadLog.txt"
+    else:
+        fileName = ''
+
+    fancyLogger(logLevel, fileName, silent)
+
+    logger1 = logging.getLogger('Framework')
+
+    modelResults = {}
+
+    for simLabel, model in unpickleModels(folderName):
+
+        modelResults[simLabel] = model
+
+    simDetails = unpickleSimDescription(folderName)
+
+    message = "Begining output processing"
+    logger1.info(message)
+
+    if not silent or save:
+        plots(experiment, folderName, silent, save, label, modelResults)
+
+    message = "### Simulation complete"
+    logger1.info(message)
+
 if __name__ == '__main__':
 
     from numpy import fromfunction
 
-    # For RPE:
-#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
-#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))), m_beta = 0.3)
-#    paramModSim("Beads", "RPE", ('rateConst',fromfunction(lambda i, j: i/10+0.1, (7, 1))), m_beta = 0.3)
+    saveSims = False
+
+    # For EP:
+#    paramModSim("Beads", "EP", ('rateConst',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))),ivLabel = 'EP_broad', save = saveSims)
+#    paramModSim("Beads", "EP", ('rateConst',fromfunction(lambda i, j: i/5000+0.1, (4000, 1))), m_beta = 0.3, ivLabel = "EP_beta-0'3", save = saveSims)
+#    paramModSim("Beads", "EP", ('rateConst',fromfunction(lambda i, j: i/10+0.1, (7, 1))), m_beta = 0.3, ivLabel = 'EP_narrow', save = saveSims)
+#    paramModSim("Beads", "EP", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))),ivLabel = 'MS_broad_theta', save = saveSims)
+
 
     # For MS:
-#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))))
-#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))), beta= 0.5)
-#    paramModSim("Beads", "MS", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]))
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))),ivLabel = 'MS_broad', save = saveSims)
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))), m_beta= 0.5,ivLabel = "MS_beta-0'5", save = saveSims)
+#    paramModSim("Beads", "MS", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]), ivLabel = 'MS_narrow', save = saveSims)
 
-    # For MS_rev:
-#    paramModSim("Beads", "MS_rev", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))))
-#    paramModSim("Beads", "MS_rev", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]))
-#    simpleSim("Beads", "MS_rev")
+#    # For MS_rev:
+#    paramModSim("Beads", "MS_rev", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))),ivLabel = 'MS_rev_broad', save = saveSims)
+#    paramModSim("Beads", "MS_rev", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]), ivLabel = 'MS_rev_narrow', save = saveSims)
+#    paramModSim("Beads", "MS_rev", ('theta',[4,5,6,7]), ('actParam',[0.1]), ivLabel = 'MS_rev_narrow', save = saveSims)
+#    simpleSim("Beads", "MS_rev", ivLabel = 'MS_rev_single')
 
     # For BP
-#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/5, (80, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
-#    paramModSim("Beads", "BP", ('theta',[]), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))))
-#    simpleSim("Beads", "BP")
+#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('beta',fromfunction(lambda i, j: i/10+0.3, (4, 1))),ivLabel = 'BP_broad', save = saveSims)
+#    paramModSim("Beads", "BP", ('theta',fromfunction(lambda i, j: i/5+2.4, (18, 1))), ('beta',fromfunction(lambda i, j: i/10+0.2, (4, 1))), ivLabel = 'BP_narrow', save = saveSims)
+#    paramModSim("Beads", "BP", ('theta',array([2.8,3.8,4.8])), m_beta = 0.4, ivLabel = 'BP_narrow', save = saveSims)
+#    simpleSim("Beads", "BP", ivLabel = 'BP_single', save = saveSims)
 
 
-    multiModelSim("Beads", {'Name':'RPE'},{'Name':'MS'},{'Name':'MS_rev'},{'Name':'BP'})
+#    multiModelSim("Beads", {'Name':'EP'},{'Name':'MS'},{'Name':'MS_rev'},{'Name':'BP'}, ivLabel = 'most_models', save = saveSims)
+
+#    plotLoadSim(".\\Outputs\\2014-4-3_BP_broad\\")
+
+#theta = fromfunction(lambda i, j: i/40+2.6, (20, 1))
+#
+#
+#paramModSim("Beads", "BP", ('theta',theta), ivLabel = 'BP_narrow', save = False)
