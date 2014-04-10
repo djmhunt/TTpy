@@ -17,7 +17,7 @@ class model_MS_rev(model):
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_M&S"
+        self.Name = "model_MS_rev"
 
         self.currAction = 1
         self.information = zeros(2)
@@ -28,8 +28,8 @@ class model_MS_rev(model):
         self.firstDecision = 0
 
         self.oneProb = kwargs.pop('oneProb',0.85)
-        self.theta = kwargs.pop('theta',1)
-        self.actParam = kwargs.pop('actParam',0.2)
+        self.theta = kwargs.pop('theta',4)
+        self.actParam = kwargs.pop('actParam',0.3)
         self.beta = kwargs.pop('beta',0.3)
         # The actParam is an activation rate paramenter. The paper uses a value of 1.
 
@@ -40,15 +40,18 @@ class model_MS_rev(model):
         self.recInformation = []
         self.recProbabilities = []
         self.recProbDifference = []
+        self.recDecOneProb = []
         self.recActivity = []
         self.recDecision = []
 
     def action(self):
         """ Returns the action of the model"""
 
-        self.currAction = self.probabilities[0]
-
         self._decision()
+
+        self.recDecOneProb.append(self.probabilities[0])
+
+        self.currAction = self.decision
 
         self._storeState()
 
@@ -85,6 +88,7 @@ class model_MS_rev(model):
                    "Activity": array(self.recActivity),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
+                   "DecOneProb": array(self.recDecOneProb),
                    "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
@@ -104,9 +108,11 @@ class model_MS_rev(model):
     def _prob(self):
         # The probability of a given jar, using the Luce choice model
 
-        li = self.activity ** self.theta
-        p = li/sum(li)
-#        p = 1.0 / (1.0 + exp(-self.theta*self.activity))
+#        li = self.activity ** self.theta
+#        p = li/sum(li)
+
+        diff = 2*self.activity - sum(self.activity)
+        p = 1.0 / (1.0 + exp(-self.theta*diff))
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]

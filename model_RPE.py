@@ -34,13 +34,11 @@ class model_RPE(model):
     def action(self):
         """ Returns the action of the model"""
 
-        self._newAct()
-
-        self.currAction = self.decision
-
         self._decision()
 
         self.recDecOneProb.append(self.activity[0])
+
+        self.currAction = self.decision
 
         self._storeState()
 
@@ -53,6 +51,9 @@ class model_RPE(model):
 
         #Calculate jar information
         self.information = array([event,1-event])
+
+        #Find the new activites
+        self._newAct()
 
     def feedback(self,response):
         """ Recieves the reaction to the action """

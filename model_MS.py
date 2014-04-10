@@ -28,8 +28,8 @@ class model_MS(model):
         self.firstDecision = 0
 
         self.oneProb = kwargs.pop('oneProb',0.85)
-        self.theta = kwargs.pop('theta',1)
-        self.actParam = kwargs.pop('actParam',0.2)
+        self.theta = kwargs.pop('theta',4)
+        self.actParam = kwargs.pop('actParam',1)
         self.beta = kwargs.pop('beta',0.5)
         # The actParam is an activation rate paramenter. The paper uses a value of 1.
 
@@ -47,11 +47,11 @@ class model_MS(model):
     def action(self):
         """ Returns the action of the model"""
 
-        self.currAction = self.decision
-
         self._decision()
 
         self.recDecOneProb.append(self.probabilities[0])
+
+        self.currAction = self.decision
 
         self._storeState()
 
