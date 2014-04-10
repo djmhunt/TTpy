@@ -8,7 +8,7 @@ import datetime as dt
 import logging
 import sys
 
-from numpy import seterr, seterrcall, meshgrid
+from numpy import seterr, seterrcall, meshgrid, array, amax
 from itertools import izip
 from os import getcwd, makedirs
 from os.path import exists
@@ -59,6 +59,9 @@ def fancyLogger(logLevel, fileName="", silent = False):
                             level = logLevel,
                             filemode= 'w')
     if not silent:
+        if not fileName:
+            logging.basicConfig(datefmt='%m-%d %H:%M',
+                                level = logLevel,)
         consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
         console = logging.StreamHandler()
         console.setLevel(logLevel)
@@ -115,10 +118,10 @@ def argProcess(**kwargs):
     expArgs = dict()
     otherArgs = dict()
     for k in kwargs.iterkeys():
-        if "m_" in k:
-            modelArgs[k.strip("m_")] = kwargs.get(k)
-        elif "e_" in k:
-            expArgs[k.strip("e_")] = kwargs.get(k)
+        if k.startswith("m_"):
+            modelArgs[k[2:]] = kwargs.get(k)
+        elif k.startswith("e_"):
+            expArgs[k[2:]] = kwargs.get(k)
         else:
             otherArgs[k] = kwargs.get(k)
 
@@ -138,21 +141,33 @@ def listMerge(*args):
 #                t.append(i+[y])
 #        r = t
 
-    return r
+    return array(r)
 
 def listMergeNP(*args):
 
-    A = meshgrid(*args)
+    if len(args) == 1:
+        a = array(args[0])
+        r = a.reshape((amax(a.shape),1))
 
-    r = [b for a in izip(*A) for b in izip(*a)]
+        return r
 
-    return r, A
+    else:
+        A = meshgrid(*args)
+
+        r = array([i.flatten()for i in A])
+
+        return r.T
 
 if __name__ == '__main__':
     from timeit import timeit
+    from numpy import fromfunction
 
-    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
-    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
+#    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
+#    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
 
-    print timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000)
-    print timeit('listMerge2([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge2",number=500000)
+#    print timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000)
+#    print timeit('listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMergeNP",number=500000)
+
+#    for p in listMergeNP(array([1,2,3,4,5,6,7,8,9]).T): print p
+#
+#    for p in listMergeNP(fromfunction(lambda i, j: i/40+2.6, (20, 1))): print p
