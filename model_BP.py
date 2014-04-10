@@ -42,11 +42,11 @@ class model_BP:
     def action(self):
         """ Returns the action of the model"""
 
-        self.currAction = self.decision
-
         self._decision()
 
         self.recDecOneProb.append(self.probabilities[0])
+
+        self.currAction = self.decision
 
         self._storeState()
 
@@ -73,6 +73,7 @@ class model_BP:
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
                    "theta": self.theta,
+                   "beta": self.beta,
                    "prior": self.prior,
                    "Information": array(self.recInformation),
                    "Probabilities": array(self.recProbabilities),
