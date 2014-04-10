@@ -29,9 +29,9 @@ class model_MS(model):
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
-        self.actParam = kwargs.pop('actParam',1)
+        self.alpha = kwargs.pop('alpha',1)
         self.beta = kwargs.pop('beta',0.5)
-        # The actParam is an activation rate paramenter. The paper uses a value of 1.
+        # The alpha is an activation rate paramenter. The paper uses a value of 1.
 
         # Recorded information
 
@@ -81,7 +81,7 @@ class model_MS(model):
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
                    "theta": self.theta,
-                   "actParam": self.actParam,
+                   "alpha": self.alpha,
                    "Information": array(self.recInformation),
                    "Probabilities": array(self.recProbabilities),
                    "ProbDifference": array(self.recProbDifference),
@@ -112,7 +112,7 @@ class model_MS(model):
         self.probDifference = p[0] - p[1]
 
     def _newActivity(self):
-        self.activity = self.activity + (1-self.activity) * self.information * self.actParam
+        self.activity = self.activity + (1-self.activity) * self.information * self.alpha
 
     def _decision(self):
 

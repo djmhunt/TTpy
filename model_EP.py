@@ -16,7 +16,7 @@ class model_EP(model):
         """The model class is a general template for a model"""
 
         self.Name = "model_EP"
-        self.rateConst = kwargs.pop('rateConst',0.3)
+        self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.theta = kwargs.pop('theta',4)
         self.activity = zeros(2) + 0.5
@@ -76,7 +76,7 @@ class model_EP(model):
                     "Probabilities": array(self.recProbabilities),
                     "DecOneProb": array(self.recDecOneProb),
                     "firstDecision": self.firstDecision,
-                    "rateConst": self.rateConst}
+                    "alpha": self.alpha}
 
         return results
 
@@ -100,7 +100,7 @@ class model_EP(model):
     def _newAct(self):
         """ Calculate the new probabilities of different actions """
 
-        self.activity = self.activity + (self.information-self.activity)* self.rateConst
+        self.activity = self.activity + (self.information-self.activity)* self.alpha
 
     def _decision(self):
 

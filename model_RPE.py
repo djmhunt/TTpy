@@ -16,7 +16,7 @@ class model_RPE(model):
         """The model class is a general template for a model"""
 
         self.Name = "model_RPE"
-        self.rateConst = kwargs.pop('rateConst',0.3)
+        self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.activity = zeros(2) + 0.05
         self.decision = None
@@ -69,7 +69,7 @@ class model_RPE(model):
                     "Decsions": array(self.recDecision),
                     "DecOneProb": array(self.recDecOneProb),
                     "firstDecision": self.firstDecision,
-                    "rateConst": self.rateConst}
+                    "alpha": self.alpha}
 
         return results
 
@@ -85,7 +85,7 @@ class model_RPE(model):
     def _newAct(self):
         """ Calculate the new probabilities of different actions """
 
-        self.activity = self.activity + (self.information-self.activity)* self.rateConst
+        self.activity = self.activity + (self.information-self.activity)* self.alpha
 
     def _decision(self):
 
