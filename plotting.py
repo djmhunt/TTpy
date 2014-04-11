@@ -77,7 +77,7 @@ def dim1VarDim(X,Y, varXLabel):
         minVal = 0
     maxVal += (maxVal-minVal)/100.0
 
-    plt.plot(X,Y)
+    ax.plot(X,Y)
 
     if minVal != maxVal:
         ax.set_ylim((minVal,maxVal))
@@ -85,11 +85,11 @@ def dim1VarDim(X,Y, varXLabel):
         logger1 = logging.getLogger('Plots')
         logger1.warning("There is no variation in the time to decision across parameters")
 
-    plt.xlabel(varXLabel)
-    plt.ylabel("Time to decision")
+    ax.set_xlabel(varXLabel)
+    ax.set_ylabel("Time to decision")
     plt.title("Time to decision across parameters")
 
-    plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
@@ -114,6 +114,7 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel):
     if yMin == yMax:
         logger1 = logging.getLogger('Plots')
         logger1.warning("There is no variation in the time to decision across parameters")
+        return plt.figure()
 
     minZ = 0
     maxZ = amax(z)
@@ -131,7 +132,7 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    CS = plt.contour(X,Y, Z, levels,
+    CS = ax.contour(X,Y, Z, levels,
                      origin='lower',
                      colors = 'k',
                      linewidths=2,
@@ -166,7 +167,7 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel):
     gridZ = griddata(zPoints, z, (Xfleshed, Yfleshed), method='nearest')
 
 #    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
-    im = plt.imshow(gridZ, interpolation='nearest',
+    im = ax.imshow(gridZ, interpolation='nearest',
                     origin='lower',
                     cmap=local_cmap,
                     extent=[xMinIm,xMaxIm,yMinIm,yMaxIm],
@@ -175,16 +176,16 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel):
     CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
     CBI.set_label("Time to decision")
 
-    plt.xlabel(varXLabel)
-    plt.ylabel(varYLabel)
+    ax.set_xlabel(varXLabel)
+    ax.set_ylabel(varYLabel)
     plt.title('Time to decision across parameters')
 
     # Improving the position of the contour bar legend
-    l,b,w,h = plt.gca().get_position().bounds
+    l,b,w,h = ax.get_position().bounds
     ll,bb,ww,hh = CB.ax.get_position().bounds
     CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
-    plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
@@ -243,7 +244,7 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     lines = lines1 + lines2
     leg = ax.legend(lines, pltLables,loc = 'best', fancybox=True)
 
-    plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
@@ -278,13 +279,13 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    plt.imshow(plotData.T,
+    im = ax.imshow(plotData.T,
                interpolation='nearest',
                cmap=wintermod_cmap,
                origin='lower',
                extent=[xMin,xMax,minVal,maxVal],
                aspect='auto' )
-    col = plt.colorbar(orientation='horizontal')
+    col = plt.colorbar(im,orientation='horizontal')
     col.set_label("Probability density")
 
     axb = ax.twinx()
@@ -297,9 +298,31 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
     axb.set_ylabel(y2Label)
     ax.set_title(title)
 
-    plt.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
+
+### Background to plotting functions
+# Taking the final stages of plotting and providing a nice interface to do it all in one call
+# rather than a few dozen
+
+def axScatterSize(ax,x,y,z):
+    """
+    """
+
+    ax.scatter(x,y,s=z)
+
+    return ax
+
+def axImage(ax,x,y,z,lables):
+    """
+    """
+
+    ax.scatter(x,y,s=z)
+
+    return ax
+
+
 
 if __name__ == '__main__':
 
