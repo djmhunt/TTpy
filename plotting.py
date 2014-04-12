@@ -50,22 +50,22 @@ origin = 'lower'
 #origin = 'upper'
 
 ### Plots
-def varDynamics(params, paramVals, decisionTimes):
+def varDynamics(params, paramVals, decisionTimes, **kwargs):
 
     lparams = len(params)
 
     if lparams == 1:
-        fig = dim1VarDim(paramVals[0],decisionTimes, params[0])
+        fig = dim1VarDim(paramVals[0],decisionTimes, params[0], **kwargs)
 
     elif lparams == 2:
-        fig = dim2VarDim(paramVals[0],paramVals[1],decisionTimes, params[0], params[1])
+        fig = dim2VarDim(paramVals[0],paramVals[1],decisionTimes, params[0], params[1], **kwargs)
 
     elif lparams == 3:
         fig = None
 
     return fig
 
-def dim1VarDim(X,Y, varXLabel):
+def dim1VarDim(X,Y, varXLabel, **kwargs):
     """
     """
     fig = plt.figure()
@@ -93,97 +93,39 @@ def dim1VarDim(X,Y, varXLabel):
 
     return fig
 
-def dim2VarDim(x,y,z, varXLabel, varYLabel):
+def dim2VarDim(x,y,z, varXLabel, varYLabel, **kwargs):
     """
-
-    Todo: Split out the actual plotting so contour plots do not interfere with heatmaps.
-
-    Put in a scatter plot: plt.scatter(theta,beta,s=beadTotal)
 
     Look in to fatfonts
     """
 
-    X,Y = meshgrid(x,y)
-    z = array(z)
-    Z = z.reshape(X.shape)
+    contour= kwargs.get("contour",True)
+    heatmap = kwargs.get("heatmap",True)
+    scatter = kwargs.get("scatter",False)
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
+
+    yMin = amin(y)
+    yMax = amax(y)
     if yMin == yMax:
         logger1 = logging.getLogger('Plots')
         logger1.warning("There is no variation in the time to decision across parameters")
         return plt.figure()
 
-    minZ = 0
-    maxZ = amax(z)
-    if maxZ == minZ:
-        maxZ += 1
-    zSorted = sort(z)
-    i = bisect_right(zSorted, 0)
-    if i != len(zSorted):
-        dz = zSorted[i]
-        zJumps = (maxZ - minZ)/dz + 2
-        levels = linspace(minZ,maxZ+dz,zJumps)
-    else:
-        levels = arange(maxZ+1)
-
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    CS = ax.contour(X,Y, Z, levels,
-                     origin='lower',
-                     colors = 'k',
-                     linewidths=2,
-                     extent=[xMin,xMax,yMin, yMax],
-                     extend = 'both')
-    plt.clabel(CS, levels,#[1::2],  # label every second level
-               inline=1,
-               fmt='%2.1f',
-               fontsize=14,
-               colors = 'k')
+    if contour == True:
+        CS = axContour(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
-#    CS.cmap.set_under('yellow')
-#    CS.cmap.set_over('cyan')
-    CS.cmap.set_bad("red")
+    if scatter == True:
+        SC = axScatter(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
-    CB = plt.colorbar(CS, shrink=0.8, extend='both')
-    CB.set_label("Time to decision")
-
-    dx = amin(x[1:]-x[:-1])/2.0
-    dy = amin(y[1:]-y[:-1])/2.0
-    xJumps = (xMax - xMin)/dx + 2
-    yJumps = (yMax - yMin)/dy + 2
-
-    xMinIm = xMin - dx
-    xMaxIm = xMax + dx
-    yMinIm = yMin - dy
-    yMaxIm = yMax + dy
-
-    Xfleshed,Yfleshed = meshgrid(linspace(xMinIm,xMaxIm,xJumps),linspace(yMinIm,yMaxIm,yJumps))
-
-    zPoints = [(a,b) for a,b in izip(X.flatten(),Y.flatten())]
-    gridZ = griddata(zPoints, z, (Xfleshed, Yfleshed), method='nearest')
-
-#    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
-    im = ax.imshow(gridZ, interpolation='nearest',
-                    origin='lower',
-                    cmap=local_cmap,
-                    extent=[xMinIm,xMaxIm,yMinIm,yMaxIm],
-                    vmin = minZ,
-                    aspect='auto')
-    CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
-    CBI.set_label("Time to decision")
+    if heatmap == True:
+        IM = axImage(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
     ax.set_xlabel(varXLabel)
     ax.set_ylabel(varYLabel)
     plt.title('Time to decision across parameters')
-
-    # Improving the position of the contour bar legend
-    l,b,w,h = ax.get_position().bounds
-    ll,bb,ww,hh = CB.ax.get_position().bounds
-    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
@@ -306,21 +248,107 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 # Taking the final stages of plotting and providing a nice interface to do it all in one call
 # rather than a few dozen
 
-def axScatterSize(ax,x,y,z):
+def axScatter(ax,x,y,z, minZ = 0, CB_label = ""):
     """
     """
 
-    ax.scatter(x,y,s=z)
+    maxZ = amax(z)
 
-    return ax
+    minC = 1
+    maxC = 301
+    zScale = (maxC - minC) / float(maxZ - minZ)
+    C = minC + (z-amin(z))*zScale
 
-def axImage(ax,x,y,z,lables):
+    X,Y = meshgrid(x,y)
+    sc= ax.scatter(X.flatten(),Y.flatten(),s=C)
+
+    return sc
+
+def axImage(ax,x,y,z,minZ = 0,CB_label = ""):
     """
     """
 
-    ax.scatter(x,y,s=z)
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
 
-    return ax
+    dx = amin(x[1:]-x[:-1])/2.0
+    dy = amin(y[1:]-y[:-1])/2.0
+    xJumps = (xMax - xMin)/dx + 2
+    yJumps = (yMax - yMin)/dy + 2
+
+    xMinIm = xMin - dx
+    xMaxIm = xMax + dx
+    yMinIm = yMin - dy
+    yMaxIm = yMax + dy
+
+    X,Y = meshgrid(x,y)
+    Xfleshed,Yfleshed = meshgrid(linspace(xMinIm,xMaxIm,xJumps),linspace(yMinIm,yMaxIm,yJumps))
+
+    zPoints = [(a,b) for a,b in izip(X.flatten(),Y.flatten())]
+    gridZ = griddata(zPoints, z, (Xfleshed, Yfleshed), method='nearest')
+
+#    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
+    im = ax.imshow(gridZ, interpolation='nearest',
+                    origin='lower',
+                    cmap=local_cmap,
+                    extent=[xMinIm,xMaxIm,yMinIm,yMaxIm],
+                    vmin = minZ,
+                    aspect='auto')
+    CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
+    CBI.set_label(CB_label)
+
+    return im
+
+def axContour(ax,x,y,z,minZ = 0,CB_label = ""):
+
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
+
+    maxZ = amax(z)
+    if maxZ == minZ:
+        maxZ += 1
+    zSorted = sort(z)
+    i = bisect_right(zSorted, 0)
+    if i != len(zSorted):
+        dz = zSorted[i]
+        zJumps = (maxZ - minZ)/dz + 2
+        levels = linspace(minZ,maxZ+dz,zJumps)
+    else:
+        levels = arange(maxZ+1)
+
+    X,Y = meshgrid(x,y)
+    z = array(z)
+    Z = z.reshape(X.shape)
+
+    CS = ax.contour(X,Y, Z, levels,
+                     origin='lower',
+                     colors = 'k',
+                     linewidths=2,
+                     extent=[xMin,xMax,yMin,yMax],
+                     extend = 'both')
+    plt.clabel(CS, levels,#[1::2],  # label every second level
+               inline=1,
+               fmt='%2.1f',
+               fontsize=14,
+               colors = 'k')
+
+#    CS.cmap.set_under('yellow')
+#    CS.cmap.set_over('cyan')
+    CS.cmap.set_bad("red")
+
+    CB = plt.colorbar(CS, shrink=0.8, extend='both')
+    CB.set_label(CB_label)
+
+#    # Improving the position of the contour bar legend
+#    l,b,w,h = ax.get_position().bounds
+#    ll,bb,ww,hh = CB.ax.get_position().bounds
+#    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
+
+    return CS
 
 
 
@@ -335,7 +363,7 @@ if __name__ == '__main__':
 #    Z = array([[2, 1, 1], [0, 2, 1], [0, 0, 1]])
     z = array([1,2,3,2,3,4,3,4,5])
 
-    fig = dim2VarDim(x,y,z, 'TestX', 'TestY')
+    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
 
 #    fig = plt.figure()
 #    ax = fig.add_subplot(111)
