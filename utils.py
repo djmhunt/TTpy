@@ -116,16 +116,19 @@ def argProcess(**kwargs):
 
     modelArgs = dict()
     expArgs = dict()
+    plotArgs = dict()
     otherArgs = dict()
     for k in kwargs.iterkeys():
         if k.startswith("m_"):
             modelArgs[k[2:]] = kwargs.get(k)
         elif k.startswith("e_"):
             expArgs[k[2:]] = kwargs.get(k)
+        elif k.startswith("p_"):
+            plotArgs[k[2:]] = kwargs.get(k)
         else:
             otherArgs[k] = kwargs.get(k)
 
-    return expArgs, modelArgs, otherArgs
+    return expArgs, modelArgs, plotArgs, otherArgs
 
 def listMerge(*args):
 

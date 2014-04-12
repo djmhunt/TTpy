@@ -16,7 +16,7 @@ from os.path import isfile, exists
 from numpy import array
 
 
-def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSets):
+def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSets, **kwargs):
     """ Plots the results for each of the models
 
     """

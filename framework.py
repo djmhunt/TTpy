@@ -71,7 +71,7 @@ def simpleSim(expName, modelName, *args, **kwargs):
 
     # Sift through kwargs to find those related to the experiment and those related to
     # the model
-    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+    expArgs, modelArgs, plotArgs, otherArgs = argProcess(**kwargs)
 
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
@@ -101,7 +101,7 @@ def simpleSim(expName, modelName, *args, **kwargs):
         pickleLog(modelResult,folderName)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, modelResults)
+        plots(experiment, folderName, silent, save, label, modelResults, **plotArgs)
 
     message = "### Simulation complete"
     logger1.info(message)
@@ -110,7 +110,7 @@ def paramModSim(expName, modelName, *args, **kwargs):
 
     # Sift through kwargs to find those related to the experiment and those related to
     # the model
-    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+    expArgs, modelArgs, plotArgs, otherArgs = argProcess(**kwargs)
 
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
@@ -187,9 +187,9 @@ def paramModSim(expName, modelName, *args, **kwargs):
     logger1.info(message)
 
     if not silent or save:
-        pl = varDynamics(params, paramVals, decisionTimes)
+        pl = varDynamics(params, paramVals, array(decisionTimes), **plotArgs)
         majFigureSets = (("firstDecision",pl),)
-        plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets)
+        plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets, **plotArgs)
 #        varDynamics(params, paramVals, decisionTimes)
 
     if save:
@@ -211,7 +211,7 @@ def multiModelSim(expName, *args, **kwargs):
 
     # Sift through kwargs to find those related to the experiment and those related to
     # the model
-    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+    expArgs, modelArgs, plotArgs, otherArgs = argProcess(**kwargs)
 
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', True)
@@ -261,7 +261,7 @@ def multiModelSim(expName, *args, **kwargs):
     logger1.info(message)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, modelResults)
+        plots(experiment, folderName, silent, save, label, modelResults , **plotArgs)
 
     message = "### Simulation complete"
     logger1.info(message)
@@ -270,7 +270,7 @@ def plotLoadSim(folderName, *args, **kwargs):
 
     # Sift through kwargs to find those related to the experiment and those related to
     # the model
-    expArgs, modelArgs, otherArgs = argProcess(**kwargs)
+    expArgs, modelArgs, plotArgs, otherArgs = argProcess(**kwargs)
 
     silent = otherArgs.get('silent',False)
     save = otherArgs.get('save', False)
@@ -298,7 +298,7 @@ def plotLoadSim(folderName, *args, **kwargs):
     logger1.info(message)
 
     if not silent or save:
-        plots(experiment, folderName, silent, save, label, modelResults)
+        plots(experiment, folderName, silent, save, label, modelResults , **plotArgs)
 
     message = "### Simulation complete"
     logger1.info(message)
@@ -317,8 +317,9 @@ if __name__ == '__main__':
 
 
     # For MS:
-#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))),ivLabel = 'MS_broad', save = saveSims)
-#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('actParam',fromfunction(lambda i, j: i/10, (9, 1))), m_beta= 0.5,ivLabel = "MS_beta-0'5", save = saveSims)
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (100, 1))), ('beta',fromfunction(lambda i, j: i/10, (5, 1))),ivLabel = 'MS_theta_beta', save = saveSims)
+    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/20, (100, 1))), ('alpha',fromfunction(lambda i, j: i/30, (31, 1))), m_beta=0.1, ivLabel = 'MS_theta_beta', save = saveSims, p_contour = False)
+#    paramModSim("Beads", "MS", ('theta',fromfunction(lambda i, j: i/5, (40, 1))), ('alpha',fromfunction(lambda i, j: i/10, (9, 1))), m_beta= 0.5,ivLabel = "MS_beta-0'5", save = saveSims)
 #    paramModSim("Beads", "MS", ('theta',[1,2,4]), ('actParam',[0.3, 0.6]), ivLabel = 'MS_narrow', save = saveSims)
 
 #    # For MS_rev:
