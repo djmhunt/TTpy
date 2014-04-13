@@ -102,7 +102,12 @@ class model_BP:
         li = self.posteriorProb * self.information
         self.posteriorProb = li/sum(li)
 
-        self.probabilities = 1.0/(1.0 +exp(-self.theta*(self.posteriorProb-0.5)))
+#        self.probabilities = 1.0/(1.0 +exp(-self.theta*(self.posteriorProb-0.5)))
+
+        diff = 2*self.posteriorProb - sum(self.posteriorProb)
+        p = 1.0 / (1.0 + exp(-self.theta*diff))
+
+        self.probabilities = p
 
     def _decision(self):
 
