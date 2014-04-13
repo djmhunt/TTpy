@@ -39,7 +39,7 @@ class model_EP(model):
 
         self._decision()
 
-        self.recDecOneProb.append(self.activity[0])
+        self.recDecOneProb.append(self.probabilities[0])
 
         self.currAction = self.decision
 
