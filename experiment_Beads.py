@@ -6,7 +6,8 @@
 #matplotlib.interactive(True)
 import logging
 
-from numpy import array
+from numpy import array, zeros
+from numpy.random import rand
 from experiment import experiment
 from plotting import dataVsEvents
 
@@ -119,3 +120,22 @@ class experiment_Beads(experiment):
         output later """
 
         self.recBeads[self.t] = self.beads[self.t]
+
+def generateSequence(numBeads, oneProb, switchProb):
+
+    sequence = zeros(numBeads)
+
+    probs = rand(numBeads,2)
+    bead = 1
+
+    for i in range(numBeads):
+        if probs[i,1]< switchProb:
+            bead = 1-bead
+
+        if probs[i,0]< oneProb:
+            sequence[i] = bead
+        else:
+            sequence[i] = 1-bead
+
+    return sequence
+
