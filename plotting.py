@@ -14,8 +14,12 @@ from numpy import array, meshgrid, fromfunction, arange,linspace, sort
 from scipy import histogram, amin, amax
 from scipy.interpolate import griddata
 from matplotlib.cm import get_cmap
+#from mayavi import mlab #import quiver3d, flow
 from itertools import izip
 from bisect import bisect_right
+from vtkStructured import VTK_XML_Serial_Structured
+from vtkUnstructured import VTK_XML_Serial_Unstructured
+from vtkCSV import VTK_CSV
 
 
 ### Define the different types of lines that will be plotted and their properties.
@@ -61,6 +65,10 @@ def varDynamics(params, paramVals, decisionTimes, **kwargs):
         fig = dim2VarDim(paramVals[0],paramVals[1],decisionTimes, params[0], params[1], **kwargs)
 
     elif lparams == 3:
+        fig = dim3VarDim(paramVals[0],paramVals[1],paramVals[2],decisionTimes, params[0], params[1], params[2], **kwargs)
+
+    else:
+
         fig = None
 
     return fig
@@ -68,7 +76,7 @@ def varDynamics(params, paramVals, decisionTimes, **kwargs):
 def dim1VarDim(X,Y, varXLabel, **kwargs):
     """
     """
-    fig = plt.figure()
+    fig = plt.figure() # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     maxVal = amax(Y)
@@ -99,7 +107,7 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel, **kwargs):
     Look in to fatfonts
     """
 
-    contour= kwargs.get("contour",True)
+    contour= kwargs.get("contour",False)
     heatmap = kwargs.get("heatmap",True)
     scatter = kwargs.get("scatter",False)
 
@@ -111,7 +119,7 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel, **kwargs):
         logger1.warning("There is no variation in the time to decision across parameters")
         return plt.figure()
 
-    fig = plt.figure()
+    fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     if contour == True:
@@ -131,13 +139,68 @@ def dim2VarDim(x,y,z, varXLabel, varYLabel, **kwargs):
 
     return fig
 
+def dim3VarDim(x,y,z,f, varXLabel, varYLabel, varZLabel, **kwargs):
+
+    paraOut = kwargs.get("paraOut", "CSV")
+
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
+    zMin = amin(z)
+    zMax = amax(z)
+
+    xS = sort(x)
+    yS = sort(y)
+    zS = sort(z)
+
+    dx = amin(xS[1:]-xS[:-1])
+    dy = amin(yS[1:]-yS[:-1])
+    dz = amin(zS[1:]-zS[:-1])
+    xJumps = (xMax - xMin)/dx + 1
+    yJumps = (yMax - yMin)/dy + 1
+    zJumps = (zMax - zMin)/dz + 1
+
+    X,Y,Z = meshgrid(x,y,z)
+#    Xfleshed, Yfleshed, Zfleshed = meshgrid(linspace(xMin - dx, xMax + dx, xJumps),
+#                                            linspace(yMin - dy, yMax + dy, yJumps),
+#                                            linspace(zMin - dz, zMax + dz, zJumps))
+    Xfleshed, Yfleshed, Zfleshed = meshgrid(linspace(xMin, xMax, xJumps),
+                                            linspace(yMin, yMax, yJumps),
+                                            linspace(zMin, zMax, zJumps))
+
+    coPoints = [(a,b,c) for a,b,c in izip(X.flatten(),Y.flatten(),Z.flatten())]
+    coGrid = griddata(coPoints, f, (Xfleshed, Yfleshed,Zfleshed), method='nearest')
+
+#    coGridX = coGrid[1:,:,:] - coGrid[:-1,:,:]
+#    coGridY = coGrid[:,1:,:] - coGrid[:,:-1,:]
+#    coGridZ = coGrid[:,:,1:] - coGrid[:,:,:-1]
+
+    if paraOut == "structured":
+        vtk_writer = VTK_XML_Serial_Structured()
+    else:
+        vtk_writer = VTK_CSV()
+    vtk_writer.snapshot(Xfleshed,
+                        Yfleshed,
+                        Zfleshed,
+                        xLabel = varXLabel,
+                        yLabel = varYLabel,
+                        zLabel = varZLabel,
+#                        x_force = coGridX.flatten(),
+#                        y_force = coGridY.flatten(),
+#                        z_force = coGridZ.flatten(),
+                        radii = coGrid.flatten())
+
+    return vtk_writer
+
+
 def dataVsEvents(data,events,labels,eventLabel,axisLabels):
 
     if len(data) > 8:
         fig = dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels)
         return fig
 
-    fig = plt.figure()
+    fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     xLabel = axisLabels.pop("xLabel","Event")
@@ -167,19 +230,6 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     axb.set_ylabel(y2Label)
     ax.set_title(title)
 
-#    yLim = list(ax.get_ylim())
-#    if yMin != None:
-#        yLim[0] = yMin
-#    if yMax != None:
-#        yLim[1] = yMax
-#    ax.set_ylim(yLim)
-#    xLim = list(ax.get_xlim())
-#    if xMin != None:
-#        xLim[0] = xMin
-#    if xMax != None:
-#        xLim[1] = xMax
-#    ax.set_xlim(xLim)
-
     lines1, pltLables1 = ax.get_legend_handles_labels()
     lines2, pltLables2 = axb.get_legend_handles_labels()
     pltLables = pltLables1 + pltLables2
@@ -207,18 +257,25 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
     xMin = axisLabels.pop("xMin",0)
     xMax = axisLabels.pop("xMax",len(data[0]))
 
-    bins = 25
+    bins = axisLabels.pop("bins",25)
+    probDensity = axisLabels.pop("probDensity",False)
 
     eventX = fromfunction(lambda i: i+0.5, (len(events),))
 
     data = array(data)
 
     # Create this histogram-like data
-    histData = [histogram(d, bins, range=(minVal,maxVal), normed=True) for d in data.T]#if normed unknown try density
+    histData = [histogram(d, bins, range=(minVal,maxVal), density=True) for d in data.T]
 
-    plotData = array([d[0] for d in histData])
+    if probDensity:
+        plotData = array([d[0] for d in histData])
+    else:
+        plotData = array([d[0]*(d[1][1:]-d[1][:-1]) for d in histData])
 
-    fig = plt.figure()
+    # Since we are calculating a probability density and the bins are less than 1 in size we needed
+    # To multiply by the bin size to get the actual probability of each bin
+
+    fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     im = ax.imshow(plotData.T,
@@ -228,7 +285,10 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
                extent=[xMin,xMax,minVal,maxVal],
                aspect='auto' )
     col = plt.colorbar(im,orientation='horizontal')
-    col.set_label("Probability density")
+    if probDensity:
+        col.set_label("Probability density")
+    else:
+        col.set_label("Bin probability")
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
@@ -273,8 +333,11 @@ def axImage(ax,x,y,z,minZ = 0,CB_label = ""):
     yMin = amin(y)
     yMax = amax(y)
 
-    dx = amin(x[1:]-x[:-1])/2.0
-    dy = amin(y[1:]-y[:-1])/2.0
+    xS = sort(x)
+    yS = sort(y)
+
+    dx = amin(xS[1:]-xS[:-1])
+    dy = amin(yS[1:]-yS[:-1])
     xJumps = (xMax - xMin)/dx + 2
     yJumps = (yMax - yMin)/dy + 2
 
@@ -314,7 +377,8 @@ def axContour(ax,x,y,z,minZ = 0,CB_label = ""):
     zSorted = sort(z)
     i = bisect_right(zSorted, 0)
     if i != len(zSorted):
-        dz = zSorted[i]
+        diffSort = sort(zSorted[1:]-zSorted[:-1])
+        dz = diffSort[bisect_right(diffSort, 0)]
         zJumps = (maxZ - minZ)/dz + 2
         levels = linspace(minZ,maxZ+dz,zJumps)
     else:
@@ -354,18 +418,25 @@ def axContour(ax,x,y,z,minZ = 0,CB_label = ""):
 
 if __name__ == '__main__':
 
+
+#    x = array([1, 2, 4])
+#    y = array([0.1, 0.2, 0.3])
+#    z = array([0.3, 0.4, 0.5])
+    x = array([1, 2, 3])
+    y = array([4, 5, 6])
+    z = array([7, 8, 9])
+    f = array([1,2,3,2,3,4,3,4,5,2,3,4,3,4,5,4,5,6,3,4,5,4,5,6,5,6,7])
+
+    fig = dim3VarDim(x,y,z,f, 'TestX', 'TestY','TestZ')
+    fig.outputTrees("outputs/testDataStruc")
+
+#    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
+
 #    X = array([[1, 2, 4], [1, 2, 4], [1, 2, 4]])
-    x = array([1,2,4])
-
 #    Y = array([[ 0.1,  0.1,  0.1], [ 0.2,  0.2,  0.2], [ 0.3,  0.3,  0.3]])
-    y = array([0.1, 0.2, 0.3])
-
 #    Z = array([[2, 1, 1], [0, 2, 1], [0, 0, 1]])
-    z = array([1,2,3,2,3,4,3,4,5])
 
-    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
-
-#    fig = plt.figure()
+#    fig = plt.figure()  # figsize=(8, 6), dpi=80)
 #    ax = fig.add_subplot(111)
 #
 #    minZ = amin(Z)-1
@@ -377,7 +448,7 @@ if __name__ == '__main__':
 #                   cmap = local_cmap)
 #    CBI = plt.colorbar(qm, orientation='horizontal', shrink=0.8)
 #    CBI.set_label("Time to decision")
-
+#
 #    plt.gcf().set_size_inches(6, 6)
-
-    plt.show()
+#
+#    plt.show()
