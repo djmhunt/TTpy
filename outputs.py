@@ -28,9 +28,14 @@ def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSet
 
     expFigureSets = experiment.plots( ivText, **models)
     figureSets = list(majFigureSets) + expFigureSets
+
     for (handle,figure) in figureSets:
         fileName = folderName + "\\" + handle
-        outputFig(figure,fileName, silent, saveFig)
+
+        if hasattr(figure,"outputTrees") and callable(getattr(figure,"outputTrees")):
+            figure.outputTrees(fileName)
+        else:
+            outputFig(figure,fileName, silent, saveFig)
 
     if not silent:
         if not matplotlib.is_interactive():
