@@ -7,7 +7,7 @@ import logging
 
 from numpy import array
 
-class model:
+class model(object):
 
     def __doc__(self):
         """The documentation for the class"""

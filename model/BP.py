@@ -2,12 +2,14 @@
 """
 @author: Dominic
 """
+
 import logging
 
 from numpy import exp, zeros, array
+
 from model import model
 
-class model_EP(model):
+class BP(model):
 
     def __doc__(self):
         """The documentation for the class"""
@@ -15,24 +17,29 @@ class model_EP(model):
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_EP"
-        self.alpha = kwargs.pop('alpha',0.3)
-        self.beta = kwargs.pop('beta',0.3)
+        self.Name = "model_BP"
+
+        self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
-        self.activity = zeros(2) + 0.5
+        self.prior = kwargs.pop('prior',0.5)
+        self.beta = kwargs.pop('beta',0.3)
+
+        self.currAction = 1
+        self.information = zeros(2)
+        self.posteriorProb = zeros(2) + self.prior
+        self.probabilities = zeros(2) + self.prior
         self.decision = None
         self.firstDecision = 0
-        self.probabilities = zeros(2)
 
         # Recorded information
 
-        self.recInformation = []
         self.recAction = []
         self.recEvents = []
-        self.recActivity = []
+        self.recInformation = []
+        self.recProbabilities = []
+        self.recPosteriorProb = []
         self.recDecOneProb = []
         self.recDecision = []
-        self.recProbabilities = []
 
     def action(self):
         """ Returns the action of the model"""
@@ -47,16 +54,14 @@ class model_EP(model):
 
         return self.currAction
 
-    def observe(self, event):
+    def observe(self,event):
         """ Recieves the latest observation"""
 
         self.recEvents.append(event)
 
         #Calculate jar information
-        self.information = array([event,1-event])
-
-        #Find the new activites
-        self._newAct()
+        info = self.oneProb*event + (1-self.oneProb)*(1-event)
+        self.information = array([info,1-info])
 
         #Calculate the new probabilities
         self._prob()
@@ -67,16 +72,19 @@ class model_EP(model):
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
 
-        results = { "Name": self.Name,
-                    "Actions":array(self.recAction),
-                    "Events":array(self.recEvents),
-                    "Information": array(self.recInformation),
-                    "Activity": array(self.recActivity),
-                    "Decsions": array(self.recDecision),
-                    "Probabilities": array(self.recProbabilities),
-                    "DecOneProb": array(self.recDecOneProb),
-                    "firstDecision": self.firstDecision,
-                    "alpha": self.alpha}
+        results = {"Name": self.Name,
+                   "oneProb": self.oneProb,
+                   "theta": self.theta,
+                   "beta": self.beta,
+                   "prior": self.prior,
+                   "Information": array(self.recInformation),
+                   "Probabilities": array(self.recProbabilities),
+                   "PosteriorProb": array(self.recPosteriorProb),
+                   "Actions":array(self.recAction),
+                   "Decsions": array(self.recDecision),
+                   "DecOneProb": array(self.recDecOneProb),
+                   "firstDecision": self.firstDecision,
+                   "Events":array(self.recEvents)}
 
         return results
 
@@ -84,23 +92,24 @@ class model_EP(model):
         """ Stores the state of all the important variables so that they can be
             output later """
 
-        self.recInformation.append(self.information)
         self.recAction.append(self.currAction)
-        self.recActivity.append(self.activity)
-        self.recDecision.append(self.decision)
+        self.recInformation.append(self.information)
         self.recProbabilities.append(self.probabilities)
+        self.recPosteriorProb.append(self.posteriorProb)
+        self.recDecision.append(self.decision)
 
     def _prob(self):
 
-        diff = 2*self.activity - sum(self.activity)
+
+        li = self.posteriorProb * self.information
+        self.posteriorProb = li/sum(li)
+
+#        self.probabilities = 1.0/(1.0 +exp(-self.theta*(self.posteriorProb-0.5)))
+
+        diff = 2*self.posteriorProb - sum(self.posteriorProb)
         p = 1.0 / (1.0 + exp(-self.theta*diff))
 
         self.probabilities = p
-
-    def _newAct(self):
-        """ Calculate the new probabilities of different actions """
-
-        self.activity = self.activity + (self.information-self.activity)* self.alpha
 
     def _decision(self):
 
@@ -115,5 +124,3 @@ class model_EP(model):
                 self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
-
-

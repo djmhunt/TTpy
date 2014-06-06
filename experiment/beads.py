@@ -13,7 +13,7 @@ from plotting import dataVsEvents
 
 defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
 
-class experiment_Beads(experiment):
+class beads(experiment):
 
     def __doc__(self):
         """The documentation for the class"""

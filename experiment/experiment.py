@@ -10,7 +10,7 @@ import logging
 import matplotlib.pyplot as plt
 
 
-class experiment:
+class experiment(object):
 
     def __doc__(self):
         """The documentation for the class"""

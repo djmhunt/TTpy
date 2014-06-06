@@ -7,7 +7,9 @@ import logging
 
 from numpy import exp, zeros, array
 
-class model_BP:
+from model import model
+
+class MS(model):
 
     def __doc__(self):
         """The documentation for the class"""
@@ -15,19 +17,21 @@ class model_BP:
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_BP"
-
-        self.oneProb = kwargs.pop('oneProb',0.85)
-        self.theta = kwargs.pop('theta',4)
-        self.prior = kwargs.pop('prior',0.5)
-        self.beta = kwargs.pop('beta',0.3)
+        self.Name = "model_M&S"
 
         self.currAction = 1
         self.information = zeros(2)
-        self.posteriorProb = zeros(2) + self.prior
-        self.probabilities = zeros(2) + self.prior
+        self.probabilities = zeros(2)
+        self.probDifference = 0
+        self.activity = zeros(2)
         self.decision = None
         self.firstDecision = 0
+
+        self.oneProb = kwargs.pop('oneProb',0.85)
+        self.theta = kwargs.pop('theta',4)
+        self.alpha = kwargs.pop('alpha',1)
+        self.beta = kwargs.pop('beta',0.5)
+        # The alpha is an activation rate paramenter. The paper uses a value of 1.
 
         # Recorded information
 
@@ -35,8 +39,9 @@ class model_BP:
         self.recEvents = []
         self.recInformation = []
         self.recProbabilities = []
-        self.recPosteriorProb = []
+        self.recProbDifference = []
         self.recDecOneProb = []
+        self.recActivity = []
         self.recDecision = []
 
     def action(self):
@@ -61,6 +66,9 @@ class model_BP:
         info = self.oneProb*event + (1-self.oneProb)*(1-event)
         self.information = array([info,1-info])
 
+        #Find the new activites
+        self._newActivity()
+
         #Calculate the new probabilities
         self._prob()
 
@@ -73,11 +81,11 @@ class model_BP:
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
                    "theta": self.theta,
-                   "beta": self.beta,
-                   "prior": self.prior,
+                   "alpha": self.alpha,
                    "Information": array(self.recInformation),
                    "Probabilities": array(self.recProbabilities),
-                   "PosteriorProb": array(self.recPosteriorProb),
+                   "ProbDifference": array(self.recProbDifference),
+                   "Activity": array(self.recActivity),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
                    "DecOneProb": array(self.recDecOneProb),
@@ -93,28 +101,25 @@ class model_BP:
         self.recAction.append(self.currAction)
         self.recInformation.append(self.information)
         self.recProbabilities.append(self.probabilities)
-        self.recPosteriorProb.append(self.posteriorProb)
+        self.recProbDifference.append(self.probDifference)
+        self.recActivity.append(self.activity)
         self.recDecision.append(self.decision)
 
     def _prob(self):
-
-
-        li = self.posteriorProb * self.information
-        self.posteriorProb = li/sum(li)
-
-#        self.probabilities = 1.0/(1.0 +exp(-self.theta*(self.posteriorProb-0.5)))
-
-        diff = 2*self.posteriorProb - sum(self.posteriorProb)
-        p = 1.0 / (1.0 + exp(-self.theta*diff))
+        p = 1.0 / (1.0 + exp(-self.theta*self.activity))
 
         self.probabilities = p
+        self.probDifference = p[0] - p[1]
+
+    def _newActivity(self):
+        self.activity = self.activity + (1-self.activity) * self.information * self.alpha
 
     def _decision(self):
 
-        prob = self.probabilities[0]
+        prob = self.probDifference
 
-        if abs(prob-0.5)>self.beta:
-            if prob>0.5:
+        if abs(prob)>self.beta:
+            if prob>0:
                 self.decision = 1
             else:
                 self.decision = 2
@@ -122,3 +127,4 @@ class model_BP:
                 self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
+

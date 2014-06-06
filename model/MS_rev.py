@@ -9,7 +9,7 @@ from numpy import exp, zeros, array
 
 from model import model
 
-class model_MS_rev(model):
+class MS_rev(model):
 
     def __doc__(self):
         """The documentation for the class"""
