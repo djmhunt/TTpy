@@ -32,6 +32,12 @@ class MS(model):
         self.beta = kwargs.pop('beta',0.5)
         # The alpha is an activation rate paramenter. The paper uses a value of 1.
 
+        self.parameters = {"Name": self.Name,
+                           "oneProb": self.oneProb,
+                           "theta": self.theta,
+                           "beta": self.beta,
+                           "alpha": self.alpha}
+
         # Recorded information
 
         self.recAction = []
@@ -126,4 +132,7 @@ class MS(model):
                 self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
+
+    def plot(self):
+        """Returns a plotting class relavent for this model"""
 

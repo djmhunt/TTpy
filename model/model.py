@@ -17,6 +17,8 @@ class model(object):
 
         self.currAction = 1
 
+        self.parameters = {"Name" : self.Name}
+
         # Recorded information
 
         self.recAction = []
@@ -73,6 +75,8 @@ class model(object):
 
     def params(self):
         """ Returns the parameters of the model as a dictionary"""
+
+        return self.parameters
 
     def plot(self):
         """Returns a plotting class relavent for this model"""

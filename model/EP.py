@@ -24,6 +24,11 @@ class EP(model):
         self.firstDecision = 0
         self.probabilities = zeros(2)
 
+        self.parameters = {"Name": self.Name,
+                           "alpha": self.alpha,
+                           "theta": self.theta,
+                           "beta": self.beta}
+
         # Recorded information
 
         self.recInformation = []
@@ -76,7 +81,9 @@ class EP(model):
                     "Probabilities": array(self.recProbabilities),
                     "DecOneProb": array(self.recDecOneProb),
                     "firstDecision": self.firstDecision,
-                    "alpha": self.alpha}
+                    "alpha": self.alpha,
+                    "theta": self.theta,
+                    "beta": self.beta}
 
         return results
 
@@ -115,5 +122,8 @@ class EP(model):
                 self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
+
+    def plot(self):
+        """Returns a plotting class relavent for this model"""
 
 

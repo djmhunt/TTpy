@@ -23,6 +23,12 @@ class BP(model):
         self.prior = kwargs.pop('prior',0.5)
         self.beta = kwargs.pop('beta',0.3)
 
+        self.parameters = {"Name": self.Name,
+                           "oneProb": self.oneProb,
+                           "theta": self.theta,
+                           "beta": self.beta,
+                           "prior": self.prior}
+
         self.currAction = 1
         self.information = zeros(2)
         self.posteriorProb = zeros(2) + self.prior
@@ -123,3 +129,6 @@ class BP(model):
                 self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
+
+    def plot(self):
+        """Returns a plotting class relavent for this model"""

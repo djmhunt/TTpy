@@ -22,6 +22,10 @@ class RPE(model):
         self.decision = None
         self.firstDecision = 0
 
+        self.parameters = {"Name": self.Name,
+                           "beta": self.beta,
+                           "alpha": self.alpha}
+
         # Recorded information
 
         self.recInformation = []
@@ -101,4 +105,6 @@ class RPE(model):
         else:
             self.decision = None
 
+    def plot(self):
+        """Returns a plotting class relavent for this model"""
 

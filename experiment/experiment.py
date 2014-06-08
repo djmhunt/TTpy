@@ -19,6 +19,8 @@ class experiment(object):
     def __init__(self,**kwargs):
         """ Creates a new experiment instance"""
 
+        self.parameters = {"Name": self.Name}
+
     def __iter__(self):
         """ Returns the iterator for the experiment"""
 
@@ -81,6 +83,8 @@ class experiment(object):
 
     def params(self):
         """ Returns the parameters of the experiment as a dictionary"""
+
+        return self.parameters
 
     def plot(self):
         """ Returns a plotting class relavent for this experiment"""

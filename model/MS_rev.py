@@ -32,6 +32,12 @@ class MS_rev(model):
         self.beta = kwargs.pop('beta',0.3)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
 
+        self.parameters = {"Name": self.Name,
+                           "oneProb": self.oneProb,
+                           "theta": self.theta,
+                           "beta": self.beta,
+                           "alpha": self.alpha}
+
         # Recorded information
 
         self.recAction = []
@@ -133,3 +139,5 @@ class MS_rev(model):
         else:
             self.decision = None
 
+    def plot(self):
+        """Returns a plotting class relavent for this model"""

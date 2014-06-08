@@ -28,11 +28,15 @@ class beads(experiment):
         N = kwargs.pop('N',None)
         beadSequence = kwargs.pop("beadSequence",defaultBeads)
 
+
         self.beads = beadSequence
         if N:
             self.T = N
         else:
             self.T = len(beadSequence)
+
+        self.parameters = {"Name": self.Name,
+                           "beadSequence": self.beads}
 
         # Set timestep count
         self.t = -1
@@ -119,6 +123,9 @@ class beads(experiment):
         output later """
 
         self.recBeads[self.t] = self.beads[self.t]
+
+    def plot(self):
+        """Returns a plotting class relavent for this experiment"""
 
 def generateSequence(numBeads, oneProb, switchProb):
 
