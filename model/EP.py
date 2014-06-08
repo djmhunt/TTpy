@@ -9,13 +9,12 @@ from model import model
 
 class EP(model):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_EP"
+        self.Name = "EP"
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.theta = kwargs.pop('theta',4)

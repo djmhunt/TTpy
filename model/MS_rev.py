@@ -11,13 +11,12 @@ from model import model
 
 class MS_rev(model):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_MS_rev"
+        self.Name = "MS_rev"
 
         self.currAction = 1
         self.information = zeros(2)

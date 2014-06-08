@@ -11,13 +11,12 @@ from model import model
 
 class BP(model):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "model_BP"
+        self.Name = "BP"
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)

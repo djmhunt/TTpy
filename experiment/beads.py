@@ -15,8 +15,7 @@ defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
 
 class beads(experiment):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,**kwargs):
         """ Creates a new experiment instance
@@ -24,7 +23,7 @@ class beads(experiment):
         N: Number of beads that could potentially be shown
         beadSequence: The sequence of beads"""
 
-        self.Name = "experiment_Beads"
+        self.Name = "beads"
 
         N = kwargs.pop('N',None)
         beadSequence = kwargs.pop("beadSequence",defaultBeads)
