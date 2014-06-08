@@ -12,13 +12,12 @@ import matplotlib.pyplot as plt
 
 class experiment(object):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,**kwargs):
         """ Creates a new experiment instance"""
 
-        self.Name = "experiment_Empty"
+        self.Name = "Empty"
 
     def __iter__(self):
         """ Returns the iterator for the experiment"""
@@ -36,6 +35,24 @@ class experiment(object):
 #        self._storeState()
 #
 #        return self.data[self.index]
+
+    def __eq__(self, other):
+
+        if self.Name == other.Name:
+            return True
+        else:
+            return False
+
+    def __ne__(self, other):
+
+        if self.Name != other.Name:
+            return True
+        else:
+            return False
+
+    def __hash__(self):
+
+        return hash(self.Name)
 
     def receiveAction(self,action):
         """ Receives the next action from the participant"""
@@ -61,3 +78,9 @@ class experiment(object):
     def _storeState():
         """ Stores the state of all the important variables so that they can be
         output later """
+
+    def params(self):
+        """ Returns the parameters of the experiment as a dictionary"""
+
+    def plot(self):
+        """ Returns a plotting class relavent for this experiment"""
