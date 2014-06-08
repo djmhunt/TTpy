@@ -13,10 +13,10 @@ class BP(model):
 
     """The documentation for the class"""
 
+    Name = "BP"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
-
-        self.Name = "BP"
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)

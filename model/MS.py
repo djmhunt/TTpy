@@ -13,10 +13,10 @@ class MS(model):
 
     """The documentation for the class"""
 
+    Name = "M&S"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
-
-        self.Name = "M&S"
 
         self.currAction = 1
         self.information = zeros(2)

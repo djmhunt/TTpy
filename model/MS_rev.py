@@ -13,10 +13,10 @@ class MS_rev(model):
 
     """The documentation for the class"""
 
+    Name = "MS_rev"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
-
-        self.Name = "MS_rev"
 
         self.currAction = 1
         self.information = zeros(2)

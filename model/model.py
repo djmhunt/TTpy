@@ -10,10 +10,10 @@ class model(object):
 
     """The documentation for the class"""
 
+    Name = "model"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
-
-        self.Name = "Empty"
 
         self.currAction = 1
 

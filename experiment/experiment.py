@@ -14,10 +14,10 @@ class experiment(object):
 
     """The documentation for the class"""
 
+    Name = "Empty"
+
     def __init__(self,**kwargs):
         """ Creates a new experiment instance"""
-
-        self.Name = "Empty"
 
     def __iter__(self):
         """ Returns the iterator for the experiment"""

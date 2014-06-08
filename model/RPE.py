@@ -11,10 +11,11 @@ class RPE(model):
 
     """The documentation for the class"""
 
+    Name = "RPE"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "RPE"
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.activity = zeros(2) + 0.05

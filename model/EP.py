@@ -11,10 +11,11 @@ class EP(model):
 
     """The documentation for the class"""
 
+    Name = "EP"
+
     def __init__(self,**kwargs):
         """The model class is a general template for a model"""
 
-        self.Name = "EP"
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.theta = kwargs.pop('theta',4)

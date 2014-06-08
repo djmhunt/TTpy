@@ -17,13 +17,13 @@ class beads(experiment):
 
     """The documentation for the class"""
 
+    Name = "beads"
+
     def __init__(self,**kwargs):
         """ Creates a new experiment instance
 
         N: Number of beads that could potentially be shown
         beadSequence: The sequence of beads"""
-
-        self.Name = "beads"
 
         N = kwargs.pop('N',None)
         beadSequence = kwargs.pop("beadSequence",defaultBeads)
