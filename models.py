@@ -28,20 +28,25 @@ class models(object):
     def __iter__(self):
         """ Returns the iterator for the creation of models"""
 
-        self.count = 0
+        self.count = -1
 
         return self
 
     def next(self):
         """ Produces the next item for the iterator"""
 
+        self.count += 1
+
         record = self.models[self.count]
 
         model = record[0]
 
-        self.count += 1
+        yield model(**record[1])
 
-        return model(**record[1]), record[2], record[3]
+    def params(self):
+        """Returns the relavent dictionary of parameters for the current model"""
+
+        return self.models[self.count][1]
 
     def _params(self,model, parameters, otherArgs):
 
@@ -53,11 +58,8 @@ class models(object):
 
         params = parameters.keys()
         paramVals = parameters.values()
-        name = model.Name
 
         paramCombs = listMerGen(*paramVals)
-
-        labelCount = self.lastLabelID
 
         models = []
         for p in paramCombs:
@@ -66,15 +68,6 @@ class models(object):
             for k,v in otherArgs:
                 args[k] = v
 
-            descriptors = [k + ' = ' + str(v).strip('[]()') for k,v in izip(params,p)]
-            descriptor = name + ": " + ", ".join(descriptors)
-
-            if len(descriptor)>18:
-                plotLabel = name + ": " + "Group " + str(labelCount)
-                labelCount += 1
-            else:
-                plotLabel = descriptor
-
-            models.append([model, args, descriptor, plotLabel])
+            models.append([model, args])
 
         self.models.extend(models)
