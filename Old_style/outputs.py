@@ -155,6 +155,6 @@ def varCategoryDynamics(params, paramVals, decisionTimes,folderName):
 
     CoM = CoM.set_index('decisionTimes')
 
-    outputFile = folderName + 'Pickle\\' + 'decisionCoM'
+    outputFile = folderName + 'decisionCoM.xlsx'
 
-    pickleRec(CoM,outputFile)
+    CoM.to_excel(outputFile, sheet_name='CoM')
