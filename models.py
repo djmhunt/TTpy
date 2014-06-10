@@ -44,7 +44,7 @@ class models(object):
         yield model(**record[1])
 
     def params(self):
-        """Returns the relavent dictionary of parameters for the current model"""
+        """Returns the relevent dictionary of parameters for the current model"""
 
         return self.models[self.count][1]
 
@@ -53,7 +53,7 @@ class models(object):
         """ For the given model returns the appropreate list for constructing the model instances
 
         Each line has:
-        (model, {dict of model arguments},descriptor,plotLabel)
+        (model, {dict of model arguments})
         """
 
         params = parameters.keys()
