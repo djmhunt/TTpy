@@ -140,8 +140,6 @@ def varCategoryDynamics(params, paramVals, decisionTimes,folderName):
     initData = pd.DataFrame({p:v for p,v in izip(params,paramcombs)})
     initData["decisionTimes"] = decisionTimes
 
-#    initData = pd.DataFrame(initData)
-
     maxDecTime = max(decisionTimes)
     if maxDecTime == 0:
         logger1 = logging.getLogger('categoryDynamics')
