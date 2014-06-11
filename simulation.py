@@ -22,29 +22,33 @@ def  simulation(experiments, models, outputting):
 
     for exp in experiments:
 
-        for model in models:
+        for modelSet in models:
 
-            exp.reset()
+            for model in modelSet:
 
-            outputting.recordSimParams(exp.params(),model.params())
+                exp.reset()
 
-            message = "Begining experiment"
-            logger.debug(message)
+                outputting.recordSimParams(exp.params(),model.params())
 
-            for event in exp:
-                model.observe(event)
-                act = model.action()
-                exp.receiveAction(act)
-                response = exp.feedback()
-                model.feedback(response)
-                exp.procede()
+                message = "Begining experiment"
+                logger.debug(message)
 
-            message = "Experiment completed"
-            logger.debug(message)
+                for event in exp:
+                    model.observe(event)
+                    act = model.action()
+                    exp.receiveAction(act)
+                    response = exp.feedback()
+                    model.feedback(response)
+                    exp.procede()
+
+                message = "Experiment completed"
+                logger.debug(message)
 
 
-            outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
+                outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
 
-            outputting.plotModel(model.plot())
+                outputting.plotModel(model.plot())
+
+            outputting.plotModelSet(model.plotSet())
 
         outputting.plotExperiment(exp.plot())
