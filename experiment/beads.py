@@ -124,8 +124,22 @@ class beads(experiment):
 
         self.recBeads[self.t] = self.beads[self.t]
 
-    def plot(self):
-        """Returns a plotting class relavent for this experiment"""
+class experimentPlot(object):
+
+    """Abstract class for the creation of plots relevant to a experiment"""
+
+    def __init__(self, *args, **kwargs):
+
+        # Create all the plots and place them in in a list to be iterated
+
+
+    def __iter__(self):
+        """ Returns the iterator for the release of plots"""
+
+        return self
+
+    def next(self):
+        """ Produces the next item for the iterator"""
 
 def generateSequence(numBeads, oneProb, switchProb):
 
