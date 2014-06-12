@@ -28,25 +28,13 @@ class models(object):
     def __iter__(self):
         """ Returns the iterator for the creation of models"""
 
-        self.count = -1
-
         return self
 
     def next(self):
         """ Produces the next item for the iterator"""
 
-        self.count += 1
-
-        record = self.models[self.count]
-
-        model = record[0]
-
-        yield model(**record[1])
-
-    def params(self):
-        """Returns the relevent dictionary of parameters for the current model"""
-
-        return self.models[self.count][1]
+        for modelSet in self.models:
+            yield (model(**record) for model,record in modelSet)
 
     def _params(self,model, parameters, otherArgs):
 
@@ -61,13 +49,13 @@ class models(object):
 
         paramCombs = listMerGen(*paramVals)
 
-        models = []
+        modelSet = []
         for p in paramCombs:
 
             args = {k:v for k,v in izip(params,p)}
             for k,v in otherArgs:
                 args[k] = v
 
-            models.append([model, args])
+            modelSet.append([model, args])
 
-        self.models.extend(models)
+        self.models.append(modelSet)
