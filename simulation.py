@@ -52,3 +52,7 @@ def  simulation(experiments, models, outputting):
             outputting.plotModelSet(model.plotSet())
 
         outputting.plotExperiment(exp.plot())
+
+    outputting.simLog()
+
+    outputting.end()
