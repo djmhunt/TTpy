@@ -38,6 +38,8 @@ class outputting(object):
         self.modelParamStore = []
         self.modelLabelStore = []
 
+        self.modelSetSize = 0
+
 
     def _saving(self):
 
@@ -197,8 +199,6 @@ class outputting(object):
         self.expStore.append(expData)
         self.modelStore.append(modelData)
 
-        # Store in memory a copy of data
-
     def getLogger(self, name):
 
         logger = logging.getLogger(name)
@@ -208,18 +208,33 @@ class outputting(object):
     def plotModel(self,modelPlot):
         """ Feeds the model data into the relevant plotting functions for the class """
 
-        mp = modelPlot(self.modelDataSet[])
+        mp = modelPlot(self.modelStore[-1:])
 
-        for p in mp:
-            # save or display the figures
+        savePlots(mp)
+
+    def plotModelSet(self,modelSetPlot):
+
+        modelSet = self.modelStore[-self.modelSetSize:]
+        modelParam = self.modelParamStore[-self.modelSetSize:]
+        modelLabel = self.modelLabelStore[-self.modelSetSize:]
+
+        mp = modelSetPlot(modelSet)
+
+        savePlots(mp)
+
+        self.modelSetSize = 0
 
     def plotExperiment(self, expPlot):
-        """ Feeds the model data into the relevant plotting functions for the experiment class """
+        """ Feeds the experiment data into the relevant plotting functions for the experiment class """
 
         # Initialise the class
-        mp = expPlot(self.modelDataSet[])
+        ep = expPlot(self.expStore[-1:])
 
-        for p in mp:
+        savePlots(ep)
+
+    def savePlots(plots):
+
+        for p in plots:
             # save or display the figures
 
 
