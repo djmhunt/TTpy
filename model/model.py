@@ -81,24 +81,46 @@ class model(object):
     def plot(self):
         """Returns a plotting class relavent for this model"""
 
-        return modelPlot
+        return self.modelPlot
 
-class modelPlot(object):
+    def plotSet(self):
+        """Returns a plotting class relavent for a parameter analysis for this model"""
 
-    """Abstract class for the creation of plots relevant to a model"""
+        return self.modelSetPlot
 
-    def __init__(self, *args, **kwargs):
+    class modelPlot(object):
 
-        # Create all the plots and place them in in a list to be iterated
+        """Abstract class for the creation of plots relevant to a model"""
+
+        def __init__(self, *args, **kwargs):
+
+            # Create all the plots and place them in in a list to be iterated
 
 
-    def __iter__(self):
-        """ Returns the iterator for the release of plots"""
+        def __iter__(self):
+            """ Returns the iterator for the release of plots"""
 
-        return self
+            return self
 
-    def next(self):
-        """ Produces the next item for the iterator"""
+        def next(self):
+            """ Produces the next item for the iterator"""
+
+    class modelSetPlot(object):
+
+        """Abstract class for the creation of plots relevant to a model"""
+
+        def __init__(self, *args, **kwargs):
+
+            # Create all the plots and place them in in a list to be iterated
+
+
+        def __iter__(self):
+            """ Returns the iterator for the release of plots"""
+
+            return self
+
+        def next(self):
+            """ Produces the next item for the iterator"""
 
 
 
