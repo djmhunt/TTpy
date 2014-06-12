@@ -141,7 +141,7 @@ class outputting(object):
         self.outputFolder = folderName
 
 
-    def __del__(self):
+    def end(self):
         """ """
         message = "Experiment completed. Shutting down"
         self.logger.info(message)
@@ -237,9 +237,43 @@ class outputting(object):
         for p in plots:
             # save or display the figures
 
+    def simLog(self):
 
+        data = {'exp_Label': self.expLabelStore,
+                'model_Label': self.modelLabelStore,
+                'folder': self.outputFolder}
 
+        expData = self._reframeStore(expStore, 'exp_')
+        modelData = self._reframeStore(modelStore, 'model_')
 
+        data.update(expData,modelData)
+
+        record = pd.DataFrame(data)
+
+#        record = record.set_index('sim')
+
+        outputFile = self.outputFolder + 'simRecord'
+
+        record.to_excel(outputFile, sheet_name='simRecord')
+
+    def _reframeStore(self, store, storeType):
+        """Take a list of dictionaries and turn it into a dictionary of lists"""
+
+        # Find all the keys
+        keySet = set()
+        for s in store:
+            keySet = keySet.union(s.keys())
+
+        # For every key
+        partStore = {k:[] for k in keySet}
+        for key in keySet:
+            for s in store:
+                v = repr(s.get(key,None))
+                partStore[key].append(v)
+
+        newStore = [storeType + k:v for k,v in partStore]
+
+        return newStore
 
 
     decisionTimes = []
@@ -276,15 +310,6 @@ class outputting(object):
 
         varCategoryDynamics(params, paramVals, array(decisionTimes), folderName)
 
-        simSetLog(readableLog_paramText,
-                  params,
-                  array(readableLog_paramVals),
-                  array(readableLog_firstDecision),
-                  expName,
-                  modelName,
-                  kwargs,
-                  label,
-                  folderName)
 
 
 
