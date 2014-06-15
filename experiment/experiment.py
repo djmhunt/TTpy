@@ -19,6 +19,8 @@ class experiment(object):
     def __init__(self,**kwargs):
         """ Creates a new experiment instance"""
 
+        self.recAction = []
+
         self.parameters = {"Name": self.Name}
 
     def __iter__(self):
@@ -59,6 +61,8 @@ class experiment(object):
     def receiveAction(self,action):
         """ Receives the next action from the participant"""
 
+        self.recAction.append(action)
+
     def procede(self):
         """Updates the experiment"""
 
@@ -69,13 +73,10 @@ class experiment(object):
         """ Plots and saves files containing all the relavent data for this
         experiment run """
 
-        results = {"Name": self.Name}
+        results = {"Name": self.Name,
+                   "Actions": self.recAction}
 
         return results
-
-    def plots(self, ivText, **models):
-
-        return
 
     def _storeState():
         """ Stores the state of all the important variables so that they can be
