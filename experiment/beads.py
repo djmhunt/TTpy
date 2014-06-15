@@ -36,6 +36,7 @@ class beads(experiment):
             self.T = len(beadSequence)
 
         self.parameters = {"Name": self.Name,
+                           "N": self.T,
                            "beadSequence": self.beads}
 
         # Set timestep count
@@ -44,6 +45,8 @@ class beads(experiment):
         # Recording variables
 
         self.recBeads = [-1]*self.T
+        self.recAction = [-1][-1]*self.T
+        self.firstDecision = None
 
     def __iter__(self):
         """ Returns the iterator for the experiment"""
@@ -65,6 +68,11 @@ class beads(experiment):
     def receiveAction(self,action):
         """ Receives the next action from the participant"""
 
+        self.recAction[self.t] = action
+
+        if not self.firstDecision:
+            self.firstDecision = self.t + 1
+
     def procede(self):
         """Updates the experiment"""
 
@@ -76,11 +84,29 @@ class beads(experiment):
         experiment run """
 
         results = { "Name": self.Name,
-                    "Observables":array(self.recBeads)}
+                    "Observables":array(self.recBeads),
+                    "Actions": self.recAction,
+                    "FirstDecision" : self.firstDecision}
 
         return results
 
-    def plots(self, ivText, **models):
+    def _storeState(self):
+        """ Stores the state of all the important variables so that they can be
+        output later """
+
+        self.recBeads[self.t] = self.beads[self.t]
+
+class experimentPlot(object):
+
+    """Abstract class for the creation of plots relevant to a experiment"""
+
+    def __init__(self, expSet, expParams, expLabels):
+
+        self.expStore = expSet
+        self.expParams = expParams
+        self.expLabels = expLabels
+
+        # Create all the plots and place them in in a list to be iterated
 
         figSets = []
 
@@ -88,7 +114,46 @@ class beads(experiment):
 
         figSets.append(('Actions',fig))
 
-        return figSets
+        fig = self.varCategoryDynamics()
+
+
+    def __iter__(self):
+        """ Returns the iterator for the release of plots"""
+
+        return self
+
+    def next(self):
+        """ Produces the next item for the iterator"""
+
+    def varCategoryDynamics(self):
+
+        params = self.expParams
+
+        for exp in self.expStore:
+
+
+
+        paramcombs = listMergeNP(*paramVals).T
+
+        initData = pd.DataFrame({p:v for p,v in izip(params,paramcombs)})
+        initData["decisionTimes"] = decisionTimes
+
+        maxDecTime = max(decisionTimes)
+        if maxDecTime == 0:
+            logger1 = logging.getLogger('categoryDynamics')
+            message = "No decisions taken, so no useful data"
+            logger1.info(message)
+            return
+
+        dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
+
+        CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
+
+        CoM = CoM.set_index('decisionTimes')
+
+        outputFile = folderName + 'decisionCoM.xlsx'
+
+        CoM.to_excel(outputFile, sheet_name='CoM')
 
     def plotProbJar1(self, ivText, **models):
         """
@@ -117,29 +182,6 @@ class beads(experiment):
         fig = dataVsEvents(data,events,labels,eventLabel,axisLabels)
 
         return fig
-
-    def _storeState(self):
-        """ Stores the state of all the important variables so that they can be
-        output later """
-
-        self.recBeads[self.t] = self.beads[self.t]
-
-class experimentPlot(object):
-
-    """Abstract class for the creation of plots relevant to a experiment"""
-
-    def __init__(self, *args, **kwargs):
-
-        # Create all the plots and place them in in a list to be iterated
-
-
-    def __iter__(self):
-        """ Returns the iterator for the release of plots"""
-
-        return self
-
-    def next(self):
-        """ Produces the next item for the iterator"""
 
 def generateSequence(numBeads, oneProb, switchProb):
 
