@@ -45,7 +45,6 @@ class MS(model):
         self.recInformation = []
         self.recProbabilities = []
         self.recProbDifference = []
-        self.recDecOneProb = []
         self.recActivity = []
         self.recDecision = []
 
@@ -53,8 +52,6 @@ class MS(model):
         """ Returns the action of the model"""
 
         self._decision()
-
-        self.recDecOneProb.append(self.probabilities[0])
 
         self.currAction = self.decision
 
@@ -93,8 +90,6 @@ class MS(model):
                    "Activity": array(self.recActivity),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
-                   "DecOneProb": array(self.recDecOneProb),
-                   "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
         return results
@@ -128,8 +123,6 @@ class MS(model):
                 self.decision = 1
             else:
                 self.decision = 2
-            if not self.firstDecision:
-                self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
 

@@ -43,15 +43,12 @@ class BP(model):
         self.recInformation = []
         self.recProbabilities = []
         self.recPosteriorProb = []
-        self.recDecOneProb = []
         self.recDecision = []
 
     def action(self):
         """ Returns the action of the model"""
 
         self._decision()
-
-        self.recDecOneProb.append(self.probabilities[0])
 
         self.currAction = self.decision
 
@@ -87,8 +84,6 @@ class BP(model):
                    "PosteriorProb": array(self.recPosteriorProb),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
-                   "DecOneProb": array(self.recDecOneProb),
-                   "firstDecision": self.firstDecision,
                    "Events":array(self.recEvents)}
 
         return results
@@ -125,8 +120,6 @@ class BP(model):
                 self.decision = 1
             else:
                 self.decision = 2
-            if not self.firstDecision:
-                self.firstDecision = len(self.recDecision) + 1
         else:
             self.decision = None
 
