@@ -4,15 +4,33 @@
 @author: Dominic
 """
 
+import matplotlib
+#matplotlib.interactive(True)
+import logging
+import sys
 
+import matplotlib.pyplot as plt
+import cPickle as pickle
+import pandas as pd
+import datetime as dt
+
+from os import getcwd, makedirs
+from os.path import isfile, exists
+from numpy import seterr, seterrcall, array
+from itertools import izip
 
 class outputting(object):
 
-    def __doc__(self):
-        """The documentation for the class"""
+    """The documentation for the class"""
 
     def __init__(self,*args,**kwargs):
-        """ """
+        """
+
+        fileName:   The name and path of the file the figure should be saved to. If ommited
+                    the file will be saved to a default name.
+        saveFig:    If true the figure will be saved.
+        silent:     If false the figure will be plotted to the screen. If true the figure
+                    will be closed"""
 
         self.silent = kwargs.get('silent',False)
         self.save = kwargs.get('save', True)
@@ -20,9 +38,11 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel",logging.DEBUG)
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
 
-        self.saving()
+        self._date()
 
-        self.fancyLogger()
+        self._saving()
+
+        self._fancyLogger()
 
         self.logger = logging.getLogger('Framework')
 
@@ -39,13 +59,14 @@ class outputting(object):
         self.modelLabelStore = []
 
         self.modelSetSize = 0
+        self.expSetSize = 0
 
 
     def _saving(self):
 
         if self.save:
             self.folderSetup()
-            self.logFile = self.outputFolder + "log.txt"
+            self.logFile = self._newFile(self, 'log', '.txt')
         else:
             self.outputFolder = ''
             self.logFile =  ''
@@ -84,15 +105,15 @@ class outputting(object):
             logging.basicConfig(filename = self.logFile,
                                 format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                                 datefmt='%m-%d %H:%M',
-                                level = logLevel,
+                                level = self.logLevel,
                                 filemode= 'w')
         else:
             logging.basicConfig(datefmt='%m-%d %H:%M',
-                                    level = logLevel,)
+                                    level = self.logLevel)
 
         consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
         console = logging.StreamHandler()
-        console.setLevel(logLevel)
+        console.setLevel(self.logLevel)
         console.setFormatter(consoleFormat)
         # add the handler to the root logger
         logging.getLogger('').addHandler(console)
@@ -107,15 +128,13 @@ class outputting(object):
     #        # add the handler to the root logger
     #        logging.getLogger('').addHandler(console)
 
-
-
         # Set the standard error output
         sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
         # Set the numpy error output
         seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
         seterr(all='log')
 
-        logging.info(date)
+        logging.info(self.date)
         logging.info("Log initialised")
         if self.logFile:
             logging.info("The log you are reading was written to " + str(self.logFile))
@@ -127,7 +146,7 @@ class outputting(object):
         folderSetup()"""
 
         # While the folders have already been created, check for the next one
-        folderName = './Outputs/' + date + "_" + self.label
+        folderName = './Outputs/' + self.date + "_" + self.label
         if exists(folderName):
             i = 1
             folderName += '_no_'
@@ -193,11 +212,37 @@ class outputting(object):
         self.logger.info(message)
 
         if self.outputFolder:
-            pickleLog(expData,self.outputFolder)
-            pickleLog(modelData,self.outputFolder)
+            self.pickleLog(expData,self.outputFolder)
+            self.pickleLog(modelData,self.outputFolder)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
+
+        self.expSetSize += 1
+        self.modelSetSize += 1
+
+    ### Pickled outputs
+    def pickleRec(self,data,outputFile):
+
+        if exists(outputFile):
+            i = 1
+            while exists(outputFile + "_" + str(i)):
+                i += 1
+            outputFile + "_" + str(i)
+
+        outputFile += '.pkl'
+
+        with open(outputFile,'w') as w :
+            pickle.dump(data, w)
+
+    def pickleLog(self, results,folderName, label=""):
+
+        if label:
+            outputFile = folderName + 'Pickle\\' + results["Name"] + "-" + label
+        else:
+            outputFile = folderName + 'Pickle\\' + results["Name"]
+
+        self.pickleRec(results,outputFile)
 
     def getLogger(self, name):
 
@@ -210,32 +255,79 @@ class outputting(object):
 
         mp = modelPlot(self.modelStore[-1:])
 
-        savePlots(mp)
+        self.savePlots(mp)
 
     def plotModelSet(self,modelSetPlot):
 
         modelSet = self.modelStore[-self.modelSetSize:]
         modelParam = self.modelParamStore[-self.modelSetSize:]
-        modelLabel = self.modelLabelStore[-self.modelSetSize:]
+        modelLabels = self.modelLabelStore[-self.modelSetSize:]
 
-        mp = modelSetPlot(modelSet)
+        mp = modelSetPlot(modelSet, modelLabels)
 
-        savePlots(mp)
+        self.savePlots(mp)
 
         self.modelSetSize = 0
 
     def plotExperiment(self, expPlot):
         """ Feeds the experiment data into the relevant plotting functions for the experiment class """
 
+        expSet = self.expStore[-self.expSetSize:]
+        expParams = self.expParamStore[-self.expSetSize:]
+        expLabels = self.expLabelStore[-self.expSetSize:]
+
         # Initialise the class
-        ep = expPlot(self.expStore[-1:])
+        ep = expPlot(expSet, expParams, expLabels)
 
-        savePlots(ep)
+        self.savePlots(ep)
 
-    def savePlots(plots):
+        self.expSetSize = 0
 
-        for p in plots:
-            # save or display the figures
+    def savePlots(self, plots):
+
+        message = "Produce plots"
+        self.logger.info(message)
+
+        for handle, plot in plots:
+            if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
+
+                fileName = self._newFile(self, handle, '')
+
+                self._outputFig(plot,fileName)
+
+            elif hasattr(plot,"outputTrees") and callable(getattr(plot,"outputTrees")):
+
+                if self.save:
+                    fileName = self._newFile(handle, '')
+
+                    plot.outputTrees(fileName)
+
+            elif hasattr(plot,"to_excel") and callable(getattr(plot,"to_excel")):
+                outputFile = self._newFile(handle, '.xlsx')
+
+                if self.save:
+                    plot.to_excel(outputFile, sheet_name=handle)
+
+    def _outputFig(self, fig, fileName):
+        """Saves the figure to a .png file and/or displays it on the screen.
+        fig:        MatPlotLib figure object
+
+        self._outputFig(fig)
+        """
+
+#        plt.figure(fig.number)
+
+        if self.save:
+            ndpi = fig.get_dpi()
+            fig.savefig(fileName,dpi=ndpi)
+
+        if not self.silent:
+            if not matplotlib.is_interactive():
+                fig.show()
+            else:
+                fig.draw()
+        else:
+            plt.close(fig)
 
     def simLog(self):
 
@@ -252,7 +344,7 @@ class outputting(object):
 
 #        record = record.set_index('sim')
 
-        outputFile = self.outputFolder + 'simRecord'
+        outputFile = self._newFile(self, 'simRecord', '.xlsx')
 
         record.to_excel(outputFile, sheet_name='simRecord')
 
@@ -271,44 +363,31 @@ class outputting(object):
                 v = repr(s.get(key,None))
                 partStore[key].append(v)
 
-        newStore = [storeType + k:v for k,v in partStore]
+        newStore = {storeType + k : v for k,v in partStore}
 
         return newStore
 
+    def _newFile(self, handle, extension):
 
-    decisionTimes = []
+        fileName = self.outputFolder + handle
+        if exists(fileName + extension):
+            i = 1
+            while exists(fileName + "_" + str(i) + extension):
+                i += 1
+            fileName += "_" + str(i) + extension
 
-    readableLog_paramText = []
-    readableLog_paramVals = []
-    readableLog_firstDecision = []
+        return fileName
 
-
-        decisionTimes.append(modelResult["firstDecision"])
-
-
-
-        if folderName:
-            pickleLog(expData,folderName)
-            pickleLog(modelResult,folderName,label= paramText)
-
-            # Store the added data for the record set
-            readableLog_paramText.append(paramText)
-            readableLog_paramVals.append(p)
-            readableLog_firstDecision.append(modelResult["firstDecision"])
-
-
-    message = "Begining output processing"
-    logger1.info(message)
+    def _date(self):
+        d = dt.datetime(1987, 1, 14)
+        d = d.today()
+        self.date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
     if not silent or save:
         pl = varDynamics(params, paramVals, array(decisionTimes), **plotArgs)
         majFigureSets = (("firstDecision",pl),)
         plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets, **plotArgs)
-#        varDynamics(params, paramVals, decisionTimes)
 
-    if save:
-
-        varCategoryDynamics(params, paramVals, array(decisionTimes), folderName)
 
 
 

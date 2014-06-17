@@ -111,10 +111,10 @@ class experimentPlot(object):
         figSets = []
 
         fig = self.plotProbJar1(ivText, **models)
-
         figSets.append(('Actions',fig))
 
         fig = self.varCategoryDynamics()
+        figSets.append(('decisionCoM',fig))
 
 
     def __iter__(self):
@@ -150,10 +150,6 @@ class experimentPlot(object):
         CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
 
         CoM = CoM.set_index('decisionTimes')
-
-        outputFile = folderName + 'decisionCoM.xlsx'
-
-        CoM.to_excel(outputFile, sheet_name='CoM')
 
     def plotProbJar1(self, ivText, **models):
         """
