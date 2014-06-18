@@ -100,37 +100,34 @@ class experimentPlot(object):
 
     """Abstract class for the creation of plots relevant to a experiment"""
 
-    def __init__(self, expSet, expParams, expLabels):
+#    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLables):
+#
+#        self.expStore = expSet
+#        self.expParams = expParams
+#        self.expLabel = expLabel
+#        self.modelStore = modelSet
+#        self.modelParams = modelParams
+#        self.modelLabels = modelLabels
+#
+#        self._figSets()
 
-        self.expStore = expSet
-        self.expParams = expParams
-        self.expLabels = expLabels
+    def _figSets(self):
 
         # Create all the plots and place them in in a list to be iterated
 
-        figSets = []
+        self.figSets = []
 
-        fig = self.plotProbJar1(ivText, **models)
-        figSets.append(('Actions',fig))
+        fig = self.plotProbJar1()
+        self.figSets.append(('Actions',fig))
 
         fig = self.varCategoryDynamics()
-        figSets.append(('decisionCoM',fig))
-
-
-    def __iter__(self):
-        """ Returns the iterator for the release of plots"""
-
-        return self
-
-    def next(self):
-        """ Produces the next item for the iterator"""
+        self.figSets.append(('decisionCoM',fig))
 
     def varCategoryDynamics(self):
 
         params = self.expParams
 
         for exp in self.expStore:
-
 
 
         paramcombs = listMergeNP(*paramVals).T
@@ -151,21 +148,16 @@ class experimentPlot(object):
 
         CoM = CoM.set_index('decisionTimes')
 
-    def plotProbJar1(self, ivText, **models):
+    def plotProbJar1(self):
         """
         Plots a set of lines for the probability of jar 1.
 
-        plotProbJar1(self, ivText, **models)
+        self.plotProbJar1(modelLables, modelSet)
         """
 
-        data = []
-        labels = []
+        data = [model["Probabilities"][0] for model in self.modelStore]
 
-        for label,v in models.iteritems():
-            data.append(v["DecOneProb"])
-            labels.append(ivText + ": " + label)
-
-        events = self.recBeads
+        events = self.expStore[0]["Observables"]
 
         axisLabels = {"title":"Opinion of next bead being white"}
         axisLabels["xLabel"] = "Time"
@@ -175,7 +167,7 @@ class experimentPlot(object):
         axisLabels["yMin"] = 0
         eventLabel = "Beads drawn"
 
-        fig = dataVsEvents(data,events,labels,eventLabel,axisLabels)
+        fig = dataVsEvents(data,events,self.modelLabels,eventLabel,axisLabels)
 
         return fig
 
