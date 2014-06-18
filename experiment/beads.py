@@ -6,6 +6,8 @@
 #matplotlib.interactive(True)
 import logging
 
+import pandas as pd
+
 from numpy import array, zeros
 from numpy.random import rand
 from experiment import experiment
@@ -125,21 +127,19 @@ class experimentPlot(object):
 
     def varCategoryDynamics(self):
 
-        params = self.expParams
+        params = self.self.modelParams
 
-        for exp in self.expStore:
+        initDataSet = {param:[m[param] for m in self.modelStore] for param in params}
+        initDataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
+
+        initData = pd.DataFrame(initDataSet)
 
 
-        paramcombs = listMergeNP(*paramVals).T
-
-        initData = pd.DataFrame({p:v for p,v in izip(params,paramcombs)})
-        initData["decisionTimes"] = decisionTimes
-
-        maxDecTime = max(decisionTimes)
+        maxDecTime = max(initDataSet["decisionTimes"])
         if maxDecTime == 0:
-            logger1 = logging.getLogger('categoryDynamics')
+            logger = logging.getLogger('categoryDynamics')
             message = "No decisions taken, so no useful data"
-            logger1.info(message)
+            logger.info(message)
             return
 
         dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
@@ -147,6 +147,8 @@ class experimentPlot(object):
         CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
 
         CoM = CoM.set_index('decisionTimes')
+
+        return CoM
 
     def plotProbJar1(self):
         """
