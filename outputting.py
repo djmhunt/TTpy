@@ -222,27 +222,21 @@ class outputting(object):
         self.modelSetSize += 1
 
     ### Pickled outputs
-    def pickleRec(self,data,outputFile):
+    def pickleRec(self,data, handle):
 
-        if exists(outputFile):
-            i = 1
-            while exists(outputFile + "_" + str(i)):
-                i += 1
-            outputFile + "_" + str(i)
-
-        outputFile += '.pkl'
+        outputFile = _newFile(self, handle, '.pkl')
 
         with open(outputFile,'w') as w :
             pickle.dump(data, w)
 
     def pickleLog(self, results,folderName, label=""):
 
-        if label:
-            outputFile = folderName + 'Pickle\\' + results["Name"] + "-" + label
-        else:
-            outputFile = folderName + 'Pickle\\' + results["Name"]
+        handle = 'Pickle\\' + results["Name"]
 
-        self.pickleRec(results,outputFile)
+        if label:
+            handle += label
+
+        self.pickleRec(results,handle)
 
     def getLogger(self, name):
 
@@ -260,10 +254,10 @@ class outputting(object):
     def plotModelSet(self,modelSetPlot):
 
         modelSet = self.modelStore[-self.modelSetSize:]
-        modelParam = self.modelParamStore[-self.modelSetSize:]
+        modelParams = self.modelParamStore[-self.modelSetSize:]
         modelLabels = self.modelLabelStore[-self.modelSetSize:]
 
-        mp = modelSetPlot(modelSet, modelLabels)
+        mp = modelSetPlot(modelSet, modelParams, modelLabels)
 
         self.savePlots(mp)
 
@@ -275,9 +269,12 @@ class outputting(object):
         expSet = self.expStore[-self.expSetSize:]
         expParams = self.expParamStore[-self.expSetSize:]
         expLabels = self.expLabelStore[-self.expSetSize:]
+        modelSet = self.modelStore[-self.expSetSize:]
+        modelParams = self.modelParamStore[-self.expSetSize:]
+        modelLabels = self.modelLabelStore[-self.expSetSize:]
 
         # Initialise the class
-        ep = expPlot(expSet, expParams, expLabels)
+        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels)
 
         self.savePlots(ep)
 
@@ -335,8 +332,8 @@ class outputting(object):
                 'model_Label': self.modelLabelStore,
                 'folder': self.outputFolder}
 
-        expData = self._reframeStore(expStore, 'exp_')
-        modelData = self._reframeStore(modelStore, 'model_')
+        expData = self._reframeStore(self.expStore, 'exp_')
+        modelData = self._reframeStore(self.modelStore, 'model_')
 
         data.update(expData,modelData)
 
