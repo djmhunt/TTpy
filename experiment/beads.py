@@ -12,6 +12,7 @@ from numpy import array, zeros
 from numpy.random import rand
 from experiment import experiment
 from plotting import dataVsEvents
+from experimentPlot import experimentPlot
 
 defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
 
@@ -98,80 +99,80 @@ class beads(experiment):
 
         self.recBeads[self.t] = self.beads[self.t]
 
-class experimentPlot(object):
+    class experimentPlot(experimentPlot):
 
-    """Abstract class for the creation of plots relevant to a experiment"""
+        """Abstract class for the creation of plots relevant to a experiment"""
 
-#    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLables):
-#
-#        self.expStore = expSet
-#        self.expParams = expParams
-#        self.expLabel = expLabel
-#        self.modelStore = modelSet
-#        self.modelParams = modelParams
-#        self.modelLabels = modelLabels
-#
-#        self._figSets()
+    #    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLables):
+    #
+    #        self.expStore = expSet
+    #        self.expParams = expParams
+    #        self.expLabel = expLabel
+    #        self.modelStore = modelSet
+    #        self.modelParams = modelParams
+    #        self.modelLabels = modelLabels
+    #
+    #        self._figSets()
 
-    def _figSets(self):
+        def _figSets(self):
 
-        # Create all the plots and place them in in a list to be iterated
+            # Create all the plots and place them in in a list to be iterated
 
-        self.figSets = []
+            self.figSets = []
 
-        fig = self.plotProbJar1()
-        self.figSets.append(('Actions',fig))
+            fig = self.plotProbJar1()
+            self.figSets.append(('Actions',fig))
 
-        fig = self.varCategoryDynamics()
-        self.figSets.append(('decisionCoM',fig))
+            fig = self.varCategoryDynamics()
+            self.figSets.append(('decisionCoM',fig))
 
-    def varCategoryDynamics(self):
+        def varCategoryDynamics(self):
 
-        params = self.self.modelParams
+            params = self.self.modelParams
 
-        initDataSet = {param:[m[param] for m in self.modelStore] for param in params}
-        initDataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
+            initDataSet = {param:[m[param] for m in self.modelStore] for param in params}
+            initDataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
 
-        initData = pd.DataFrame(initDataSet)
+            initData = pd.DataFrame(initDataSet)
 
 
-        maxDecTime = max(initDataSet["decisionTimes"])
-        if maxDecTime == 0:
-            logger = logging.getLogger('categoryDynamics')
-            message = "No decisions taken, so no useful data"
-            logger.info(message)
-            return
+            maxDecTime = max(initDataSet["decisionTimes"])
+            if maxDecTime == 0:
+                logger = logging.getLogger('categoryDynamics')
+                message = "No decisions taken, so no useful data"
+                logger.info(message)
+                return
 
-        dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
+            dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
 
-        CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
+            CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
 
-        CoM = CoM.set_index('decisionTimes')
+            CoM = CoM.set_index('decisionTimes')
 
-        return CoM
+            return CoM
 
-    def plotProbJar1(self):
-        """
-        Plots a set of lines for the probability of jar 1.
+        def plotProbJar1(self):
+            """
+            Plots a set of lines for the probability of jar 1.
 
-        self.plotProbJar1(modelLables, modelSet)
-        """
+            self.plotProbJar1(modelLables, modelSet)
+            """
 
-        data = [model["Probabilities"][0] for model in self.modelStore]
+            data = [model["Probabilities"][0] for model in self.modelStore]
 
-        events = self.expStore[0]["Observables"]
+            events = self.expStore[0]["Observables"]
 
-        axisLabels = {"title":"Opinion of next bead being white"}
-        axisLabels["xLabel"] = "Time"
-        axisLabels["yLabel"] = "Probability of Jar 1"
-        axisLabels["y2Label"] = "Bead presented"
-        axisLabels["yMax"] = 1
-        axisLabels["yMin"] = 0
-        eventLabel = "Beads drawn"
+            axisLabels = {"title":"Opinion of next bead being white"}
+            axisLabels["xLabel"] = "Time"
+            axisLabels["yLabel"] = "Probability of Jar 1"
+            axisLabels["y2Label"] = "Bead presented"
+            axisLabels["yMax"] = 1
+            axisLabels["yMin"] = 0
+            eventLabel = "Beads drawn"
 
-        fig = dataVsEvents(data,events,self.modelLabels,eventLabel,axisLabels)
+            fig = dataVsEvents(data,events,self.modelLabels,eventLabel,axisLabels)
 
-        return fig
+            return fig
 
 def generateSequence(numBeads, oneProb, switchProb):
 
