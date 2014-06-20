@@ -9,6 +9,7 @@ import logging
 
 import matplotlib.pyplot as plt
 
+from experimentPlot import experimentPlot
 
 class experiment(object):
 
@@ -69,7 +70,7 @@ class experiment(object):
     def feedback(self):
         """ Responds to the action from the participant"""
 
-    def outputEvolution():
+    def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this
         experiment run """
 
@@ -78,7 +79,7 @@ class experiment(object):
 
         return results
 
-    def _storeState():
+    def _storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later """
 
@@ -90,39 +91,8 @@ class experiment(object):
     def plot(self):
         """ Returns a plotting class relavent for this experiment"""
 
-        return experimentPlot
+        return self.experimentPlot
 
-class experimentPlot(object):
+    class experimentPlot(experimentPlot):
 
-    """Abstract class for the creation of plots relevant to a experiment"""
-
-    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLables):
-
-        self.expStore = expSet
-        self.expParams = expParams
-        self.expLabel = expLabel
-        self.modelStore = modelSet
-        self.modelParams = modelParams
-        self.modelLabels = modelLabels
-
-        self._figSets()
-
-    def _figSets(self):
-
-        # Create all the plots and place them in in a list to be iterated
-
-    def __iter__(self):
-        """ Returns the iterator for the release of plots"""
-
-        self.counter = 0
-
-        return self
-
-    def next(self):
-        """ Produces the next item for the iterator"""
-
-        figure = self.figSets[self.counter]
-
-        self.counter += 1
-
-        return figure
+        """Abstract class for the creation of plots relevant to a experiment"""
