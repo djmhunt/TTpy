@@ -5,6 +5,8 @@
 
 
 from numpy import array
+from modelSetPlot import modelSetPlot
+from modelPlot import modelPlot
 
 class model(object):
 
@@ -88,39 +90,14 @@ class model(object):
 
         return self.modelSetPlot
 
-    class modelPlot(object):
+    class modelPlot(modelPlot):
 
         """Abstract class for the creation of plots relevant to a model"""
 
-        def __init__(self, *args, **kwargs):
+    class modelSetPlot(modelSetPlot):
 
-            # Create all the plots and place them in in a list to be iterated
+        """Abstract class for the creation of plots relevant to a set of models"""
 
-
-        def __iter__(self):
-            """ Returns the iterator for the release of plots"""
-
-            return self
-
-        def next(self):
-            """ Produces the next item for the iterator"""
-
-    class modelSetPlot(object):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
-        def __init__(self, *args, **kwargs):
-
-            # Create all the plots and place them in in a list to be iterated
-
-
-        def __iter__(self):
-            """ Returns the iterator for the release of plots"""
-
-            return self
-
-        def next(self):
-            """ Produces the next item for the iterator"""
 
 
 
