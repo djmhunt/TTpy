@@ -17,9 +17,9 @@ from matplotlib.cm import get_cmap
 #from mayavi import mlab #import quiver3d, flow
 from itertools import izip
 from bisect import bisect_right
-from vtk.vtkStructured import VTK_XML_Serial_Structured
-from vtk.vtkUnstructured import VTK_XML_Serial_Unstructured
-from vtk.vtkCSV import VTK_CSV
+from vtkWriter.vtkStructured import VTK_XML_Serial_Structured
+from vtkWriter.vtkUnstructured import VTK_XML_Serial_Unstructured
+from vtkWriter.vtkCSV import VTK_CSV
 
 
 ### Define the different types of lines that will be plotted and their properties.
