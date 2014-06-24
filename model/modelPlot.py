@@ -9,13 +9,34 @@ class modelPlot(object):
 
     def __init__(self, model, modelParams, modelLabel):
 
-        # Create all the plots and place them in in a list to be iterated
+        self.model = model
+        self.modelParams = modelParams
+        self.modelLabel = modelLabel
 
+        self._figSets()
+
+    def _figSets(self):
+        """ Contains all the figures """
+
+        self.figSets = []
+
+        # Create all the plots and place them in in a list to be iterated
 
     def __iter__(self):
         """ Returns the iterator for the release of plots"""
+
+        self.counter = 0
 
         return self
 
     def next(self):
         """ Produces the next item for the iterator"""
+
+        if self.counter < len(self.figSets):
+            figure = self.figSets[self.counter]
+
+            self.counter += 1
+
+            return figure
+        else:
+            return None
