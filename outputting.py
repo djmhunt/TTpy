@@ -23,7 +23,7 @@ class outputting(object):
 
     """The documentation for the class"""
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self,**kwargs):
         """
 
         fileName:   The name and path of the file the figure should be saved to. If ommited
@@ -54,12 +54,18 @@ class outputting(object):
         self.expStore = []
         self.expParamStore = []
         self.expLabelStore = []
+        self.expGroupNum = []
         self.modelStore = []
         self.modelParamStore = []
         self.modelLabelStore = []
+        self.modelGroupNum = []
 
         self.modelSetSize = 0
         self.expSetSize = 0
+        self.modelSetNum = 0
+        self.expSetNum = 0
+
+        self.lastLabelID = 1
 
 
     def _saving(self):
@@ -194,11 +200,11 @@ class outputting(object):
 
         name = params['Name'] + ": "
 
-        descriptors = [k + ' = ' + str(v).strip('[]()') for k,v in params.iterItems() if k != 'Name']
+        descriptors = [k + ' = ' + str(v).strip('[]()') for k,v in params.iteritems() if k != 'Name']
         descriptor = name + ", ".join(descriptors)
 
         if len(descriptor)>self.maxLabelLength:
-            plotLabel = name + "Group " + str(self.lastLabelID)
+            plotLabel = name + "Run " + str(self.lastLabelID)
             self.lastLabelID += 1
         else:
             plotLabel = descriptor
@@ -218,10 +224,13 @@ class outputting(object):
         self.expStore.append(expData)
         self.modelStore.append(modelData)
 
+        self.expGroupNum.append(self.expSetNum)
+        self.modelGroupNum.append(self.modelSetNum)
+
         self.expSetSize += 1
         self.modelSetSize += 1
 
-    ### Pickled outputs
+    ### Outputs
     def pickleRec(self,data, handle):
 
         outputFile = _newFile(self, handle, '.pkl')
@@ -262,6 +271,7 @@ class outputting(object):
         self.savePlots(mp)
 
         self.modelSetSize = 0
+        self.modelSetNum += 1
 
     def plotExperiment(self, expPlot):
         """ Feeds the experiment data into the relevant plotting functions for the experiment class """
@@ -279,6 +289,7 @@ class outputting(object):
         self.savePlots(ep)
 
         self.expSetSize = 0
+        self.expSetNum += 1
 
     def savePlots(self, plots):
 
@@ -330,6 +341,8 @@ class outputting(object):
 
         data = {'exp_Label': self.expLabelStore,
                 'model_Label': self.modelLabelStore,
+                'exp_Group_Num': self.expGroupNum,
+                'model_Group_Num': self.modelGroupNum,
                 'folder': self.outputFolder}
 
         expData = self._reframeStore(self.expStore, 'exp_')
@@ -379,11 +392,6 @@ class outputting(object):
         d = dt.datetime(1987, 1, 14)
         d = d.today()
         self.date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
-
-    if not silent or save:
-        pl = varDynamics(params, paramVals, array(decisionTimes), **plotArgs)
-        majFigureSets = (("firstDecision",pl),)
-        plots(experiment, folderName, silent, save, label, modelResults, *majFigureSets, **plotArgs)
 
 
 
