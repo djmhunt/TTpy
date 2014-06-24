@@ -256,7 +256,7 @@ class outputting(object):
     def plotModel(self,modelPlot):
         """ Feeds the model data into the relevant plotting functions for the class """
 
-        mp = modelPlot(self.modelStore[-1:])
+        mp = modelPlot(self.modelStore[-1:], self.modelParamStore[-1:], self.modelLabelStore[-1:])
 
         self.savePlots(mp)
 
