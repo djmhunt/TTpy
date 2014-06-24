@@ -3,15 +3,22 @@
 @author: Dominic
 """
 
-from ittertools import izip
+from itertools import izip
 
 from utils import listMerGen
 
 class experiments(object):
 
-    """The documentation for the class"""
+    """A factory that generates lists of experiment classes
 
-    def __init__(self,*args,**kwargs):
+    experiments(*experimentSets)
+    Recieves a series of experiment packages. the packages are in the form of:
+    (experiments,variables, parameters)
+    experiments:  An experiments class object
+    variables: A dictionary of varibles with a list for their values
+    parameters: A dictionary of other, probably text or binary parameters"""
+
+    def __init__(self,*args):
         """ """
 
         self.experiments = []
@@ -22,13 +29,11 @@ class experiments(object):
             other = a[2]
             self._params(exp,variables,other)
 
-    def reset(self):
-        """Resets the generator of experiments """
-
     def __iter__(self):
         """ Returns the iterator for the creation of experiments"""
 
         self.count = -1
+        self.countLen = len(self.experiments)
 
         return self
 
@@ -36,17 +41,27 @@ class experiments(object):
         """ Produces the next item for the iterator"""
 
         self.count += 1
+        if self.count >= self.countLen:
+            return None
 
-        record = self.experiments[self.count]
+        return self.count
+
+    def create(self,expNum):
+
+        return self._instance(expNum)
+
+    def _instance(self, expNum):
+
+        record = self.experiments[expNum]
 
         exp = record[0]
 
-        yield exp(**record[1])
-
-    def params(self):
-        """Returns the relevent dictionary of parameters for the current experiment"""
-
-        return self.experiments[self.count][1]
+        return exp(**record[1])
+#
+#    def params(self):
+#        """Returns the relevent dictionary of parameters for the current experiment"""
+#
+#        return self.experiments[self.count][1]
 
     def _params(self,exp, parameters, otherArgs):
 
@@ -55,6 +70,10 @@ class experiments(object):
         Each line has:
         (exp, {dict of exp arguments})
         """
+
+        if not parameters:
+            self.experiments.append([exp,otherArgs])
+            return
 
         params = parameters.keys()
         paramVals = parameters.values()
