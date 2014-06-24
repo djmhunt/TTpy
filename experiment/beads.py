@@ -48,7 +48,7 @@ class beads(experiment):
         # Recording variables
 
         self.recBeads = [-1]*self.T
-        self.recAction = [-1][-1]*self.T
+        self.recAction = [-1]*self.T
         self.firstDecision = None
 
     def __iter__(self):
