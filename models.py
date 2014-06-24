@@ -3,15 +3,22 @@
 @author: Dominic
 """
 
-from ittertools import izip
+from itertools import izip
 
 from utils import listMerGen
 
 class models(object):
 
-    """The documentation for the class"""
+    """A factory that generates lists of model classes
 
-    def __init__(self,*args,**kwargs):
+    models(*modelSets)
+    Recieves a series of model packages. the packages are in the form of:
+    (model,variables, parameters)
+    model:  A model class object
+    variables: A dictionary of varibles with a list for their values
+    parameters: A dictionary of other, probably text or binary parameters"""
+
+    def __init__(self,*args):
         """ """
 
         self.models = []
@@ -28,13 +35,19 @@ class models(object):
     def __iter__(self):
         """ Returns the iterator for the creation of models"""
 
+        self.count = -1
+        self.countLen = len(self.models)
+
         return self
 
     def next(self):
         """ Produces the next item for the iterator"""
 
-        for modelSet in self.models:
-            yield (model(**record) for model,record in modelSet)
+        self.count += 1
+        if self.count >= self.countLen:
+            return None
+
+        return (model(**record) for model,record in self.models[self.count])
 
     def _params(self,model, parameters, otherArgs):
 
