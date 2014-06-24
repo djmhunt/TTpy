@@ -21,6 +21,8 @@ class experimentPlot(object):
     def _figSets(self):
         """ Contains all the figures """
 
+        self.figSets = []
+
         # Create all the plots and place them in in a list to be iterated
 
     def __iter__(self):
@@ -33,8 +35,11 @@ class experimentPlot(object):
     def next(self):
         """ Produces the next item for the iterator"""
 
-        figure = self.figSets[self.counter]
+        if self.counter < len(self.figSets):
+            figure = self.figSets[self.counter]
 
-        self.counter += 1
+            self.counter += 1
 
-        return figure
+            return figure
+        else:
+            return None
