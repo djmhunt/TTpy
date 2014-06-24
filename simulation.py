@@ -20,13 +20,13 @@ def  simulation(experiments, models, outputting):
     message = "Beginning the simulation set"
     logger.debug(message)
 
-    for exp in experiments:
+    for expNum in experiments:
 
         for modelSet in models:
 
             for model in modelSet:
 
-                exp.reset()
+                exp = experiments.create(expNum)
 
                 outputting.recordSimParams(exp.params(),model.params())
 
