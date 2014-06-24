@@ -8,6 +8,8 @@ import logging
 from numpy import exp, zeros, array
 
 from model import model
+from modelPlot import modelPlot
+from modelSetPlot import modelSetPlot
 
 class BP(model):
 
