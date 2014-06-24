@@ -32,6 +32,9 @@ class experiment(object):
     def next(self):
         """ Produces the next item for the iterator"""
 
+        # Since there is nothing to iterate over, just return the final state
+
+        raise StopIteration
 #        if self.index == self.maxIndex:
 #            raise StopIteration
 #

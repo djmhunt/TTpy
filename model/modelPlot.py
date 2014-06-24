@@ -39,4 +39,4 @@ class modelPlot(object):
 
             return figure
         else:
-            return None
+            raise StopIteration

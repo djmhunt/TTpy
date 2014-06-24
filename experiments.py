@@ -42,7 +42,7 @@ class experiments(object):
 
         self.count += 1
         if self.count >= self.countLen:
-            return None
+            raise StopIteration
 
         return self.count
 

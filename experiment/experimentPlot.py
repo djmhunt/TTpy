@@ -42,4 +42,4 @@ class experimentPlot(object):
 
             return figure
         else:
-            return None
+            raise StopIteration

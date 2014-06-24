@@ -45,7 +45,7 @@ class models(object):
 
         self.count += 1
         if self.count >= self.countLen:
-            return None
+            raise StopIteration
 
         return (model(**record) for model,record in self.models[self.count])
 
