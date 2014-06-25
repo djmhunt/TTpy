@@ -71,7 +71,7 @@ class outputting(object):
     def _saving(self):
 
         if self.save:
-            self.folderSetup()
+            self._folderSetup()
             self.logFile = self._newFile('log', '.txt')
         else:
             self.outputFolder = ''
@@ -240,7 +240,10 @@ class outputting(object):
 
     def pickleLog(self, results,folderName, label=""):
 
-        handle = 'Pickle\\' + results["Name"]
+        if not self.save:
+            return
+
+        handle = 'Pickle/' + results["Name"]
 
         if label:
             handle += label
@@ -339,18 +342,22 @@ class outputting(object):
 
     def simLog(self):
 
+        if not self.save:
+            return
+
         data = {'exp_Label': self.expLabelStore,
                 'model_Label': self.modelLabelStore,
                 'exp_Group_Num': self.expGroupNum,
                 'model_Group_Num': self.modelGroupNum,
                 'folder': self.outputFolder}
 
+        record = pd.DataFrame(data)
+
         expData = self._reframeStore(self.expStore, 'exp_')
         modelData = self._reframeStore(self.modelStore, 'model_')
 
-        data.update(expData,modelData)
-
-        record = pd.DataFrame(data)
+        record.update(expData)
+        record.update(modelData)
 
 #        record = record.set_index('sim')
 
@@ -373,11 +380,14 @@ class outputting(object):
                 v = repr(s.get(key,None))
                 partStore[key].append(v)
 
-        newStore = {storeType + k : v for k,v in partStore}
+        newStore = {storeType + k : v for k,v in partStore.iteritems()}
 
         return newStore
 
     def _newFile(self, handle, extension):
+
+        if not self.save:
+            return ''
 
         fileName = self.outputFolder + handle
         if exists(fileName + extension):
