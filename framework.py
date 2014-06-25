@@ -49,7 +49,7 @@ def sim(expName, modelName, modelArgs, expArgs, otherArgs):
     message = modelFullName + " loaded"
     logger1.info(message)
 
-    message = "Begining experiment"
+    message = "Beginning experiment"
     logger1.debug(message)
 
     for event in exp:
