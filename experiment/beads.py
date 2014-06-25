@@ -128,7 +128,9 @@ class beads(experiment):
 
         def varCategoryDynamics(self):
 
-            params = self.self.modelParams
+            params = self.modelParams[0].keys()
+            #We assume that the parameters are the same for all the data to be analised,
+            # otherwise this data is meaningless
 
             initDataSet = {param:[m[param] for m in self.modelStore] for param in params}
             initDataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
