@@ -72,7 +72,7 @@ class outputting(object):
 
         if self.save:
             self.folderSetup()
-            self.logFile = self._newFile(self, 'log', '.txt')
+            self.logFile = self._newFile('log', '.txt')
         else:
             self.outputFolder = ''
             self.logFile =  ''
@@ -233,7 +233,7 @@ class outputting(object):
     ### Outputs
     def pickleRec(self,data, handle):
 
-        outputFile = _newFile(self, handle, '.pkl')
+        outputFile = self._newFile(handle, '.pkl')
 
         with open(outputFile,'w') as w :
             pickle.dump(data, w)
@@ -299,7 +299,7 @@ class outputting(object):
         for handle, plot in plots:
             if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
 
-                fileName = self._newFile(self, handle, '')
+                fileName = self._newFile(handle, '')
 
                 self._outputFig(plot,fileName)
 
@@ -354,7 +354,7 @@ class outputting(object):
 
 #        record = record.set_index('sim')
 
-        outputFile = self._newFile(self, 'simRecord', '.xlsx')
+        outputFile = self._newFile('simRecord', '.xlsx')
 
         record.to_excel(outputFile, sheet_name='simRecord')
 
