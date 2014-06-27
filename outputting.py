@@ -35,7 +35,7 @@ class outputting(object):
         self.silent = kwargs.get('silent',False)
         self.save = kwargs.get('save', True)
         self.label = kwargs.pop("simLabel","Untitled")
-        self.logLevel = kwargs.pop("logLevel",logging.DEBUG)
+        self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
 
         self._date()
@@ -46,7 +46,7 @@ class outputting(object):
 
         self.logger = logging.getLogger('Framework')
 
-        message = "Begining experiment labeled: " + self.label
+        message = "Beginning experiment labelled: " + self.label
         self.logger.info(message)
 
         # Initialise the stores of information
@@ -115,7 +115,8 @@ class outputting(object):
                                 filemode= 'w')
         else:
             logging.basicConfig(datefmt='%m-%d %H:%M',
-                                    level = self.logLevel)
+                                format='%(name)-12s %(levelname)-8s %(message)s',
+                                level = self.logLevel)
 
         consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
         console = logging.StreamHandler()
@@ -214,7 +215,7 @@ class outputting(object):
 
     def recordSim(self,expData,modelData):
 
-        message = "Begining output processing"
+        message = "Beginning output processing"
         self.logger.info(message)
 
         if self.outputFolder:
@@ -351,13 +352,13 @@ class outputting(object):
                 'model_Group_Num': self.modelGroupNum,
                 'folder': self.outputFolder}
 
-        record = pd.DataFrame(data)
-
         expData = self._reframeStore(self.expStore, 'exp_')
         modelData = self._reframeStore(self.modelStore, 'model_')
 
-        record.update(expData)
-        record.update(modelData)
+        data.update(expData)
+        data.update(modelData)
+
+        record = pd.DataFrame(data)
 
 #        record = record.set_index('sim')
 
@@ -394,7 +395,9 @@ class outputting(object):
             i = 1
             while exists(fileName + "_" + str(i) + extension):
                 i += 1
-            fileName += "_" + str(i) + extension
+            fileName += "_" + str(i)
+
+        fileName += extension
 
         return fileName
 
