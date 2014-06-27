@@ -30,7 +30,7 @@ def  simulation(experiments, models, outputting):
 
                 outputting.recordSimParams(exp.params(),model.params())
 
-                message = "Begining experiment"
+                message = "Beginning experiment"
                 logger.debug(message)
 
                 for event in exp:
