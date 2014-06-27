@@ -160,7 +160,7 @@ class beads(experiment):
             self.plotProbJar1(modelLables, modelSet)
             """
 
-            data = [model["Probabilities"][0] for model in self.modelStore]
+            data = [model["Probabilities"][:,0] for model in self.modelStore]
 
             events = self.expStore[0]["Observables"]
 

@@ -245,8 +245,6 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 
     printResourcesSpectrum(data,bins)"""
 
-
-
     xLabel = axisLabels.pop("xLabel","Events")
     yLabel = axisLabels.pop("yLabel","Density across parameter range")
     y2Label = axisLabels.pop("y2Label","Event value")
