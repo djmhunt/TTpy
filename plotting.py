@@ -178,8 +178,10 @@ def dim3VarDim(x,y,z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 
     if paraOut == "structured":
         vtk_writer = VTK_XML_Serial_Structured()
-    else:
+    elif paraOut == "CSV":
         vtk_writer = VTK_CSV()
+    else:
+        return None
     vtk_writer.snapshot(Xfleshed,
                         Yfleshed,
                         Zfleshed,
