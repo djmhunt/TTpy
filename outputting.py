@@ -65,7 +65,8 @@ class outputting(object):
         self.modelSetNum = 0
         self.expSetNum = 0
 
-        self.lastLabelID = 1
+        self.lastExpLabelID = 1
+        self.lastModelLabelID = 1
 
 
     def _saving(self):
@@ -113,27 +114,17 @@ class outputting(object):
                                 datefmt='%m-%d %H:%M',
                                 level = self.logLevel,
                                 filemode= 'w')
+
+            consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
+            console = logging.StreamHandler()
+            console.setLevel(self.logLevel)
+            console.setFormatter(consoleFormat)
+            # add the handler to the root logger
+            logging.getLogger('').addHandler(console)
         else:
             logging.basicConfig(datefmt='%m-%d %H:%M',
                                 format='%(name)-12s %(levelname)-8s %(message)s',
                                 level = self.logLevel)
-
-        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-        console = logging.StreamHandler()
-        console.setLevel(self.logLevel)
-        console.setFormatter(consoleFormat)
-        # add the handler to the root logger
-        logging.getLogger('').addHandler(console)
-    #    if not silent:
-    #        if not self.logFile:
-    #            logging.basicConfig(datefmt='%m-%d %H:%M',
-    #                                level = logLevel,)
-    #        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-    #        console = logging.StreamHandler()
-    #        console.setLevel(logLevel)
-    #        console.setFormatter(consoleFormat)
-    #        # add the handler to the root logger
-    #        logging.getLogger('').addHandler(console)
 
         # Set the standard error output
         sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
@@ -169,14 +160,21 @@ class outputting(object):
 
     def end(self):
         """ """
+
+        if not self.silent:
+            plt.show()
+
         message = "Experiment completed. Shutting down"
         self.logger.info(message)
 
     def recordSimParams(self,expParams,modelParams):
         """Record any parameters that are user specified"""
 
-        expDesc, expPltLabel =  self._params(expParams)
-        modelDesc, modelPltLabel =  self._params(modelParams)
+        expDesc, expPltLabel, lastExpLabelID =  self._params(expParams, self.lastExpLabelID)
+        modelDesc, modelPltLabel, lastModelLabelID =  self._params(modelParams, self.lastModelLabelID)
+
+        self.lastExpLabelID = lastExpLabelID
+        self.lastModelLabelID = lastModelLabelID
 
         self.expLabelStore.append(expPltLabel)
         self.expParamStore.append(expParams)
@@ -196,7 +194,7 @@ class outputting(object):
             message += " output with the label '" + modelPltLabel + "'."
         self.logger.info(message)
 
-    def _params(self, params):
+    def _params(self, params, lastLabelID):
         """ Processes the parameters of an experiment or model"""
 
         name = params['Name'] + ": "
@@ -205,12 +203,12 @@ class outputting(object):
         descriptor = name + ", ".join(descriptors)
 
         if len(descriptor)>self.maxLabelLength:
-            plotLabel = name + "Run " + str(self.lastLabelID)
-            self.lastLabelID += 1
+            plotLabel = name + "Run " + str(lastLabelID)
+            lastLabelID += 1
         else:
             plotLabel = descriptor
 
-        return descriptor, plotLabel
+        return descriptor, plotLabel, lastLabelID
 
 
     def recordSim(self,expData,modelData):
@@ -218,9 +216,11 @@ class outputting(object):
         message = "Beginning output processing"
         self.logger.info(message)
 
+        label = "_Exp-" + str(self.expSetNum) + "_Model-" + str(self.modelSetNum) + "'" + str(self.modelSetSize)
+
         if self.outputFolder:
-            self.pickleLog(expData,self.outputFolder)
-            self.pickleLog(modelData,self.outputFolder)
+            self.pickleLog(expData,self.outputFolder,label)
+            self.pickleLog(modelData,self.outputFolder,label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -260,7 +260,10 @@ class outputting(object):
     def plotModel(self,modelPlot):
         """ Feeds the model data into the relevant plotting functions for the class """
 
-        mp = modelPlot(self.modelStore[-1:], self.modelParamStore[-1:], self.modelLabelStore[-1:])
+        mp = modelPlot(self.modelStore[-1], self.modelParamStore[-1], self.modelLabelStore[-1])
+
+        message = "Produce plots for the model " + self.modelLabelStore[-1]
+        self.logger.info(message)
 
         self.savePlots(mp)
 
@@ -272,13 +275,18 @@ class outputting(object):
 
         mp = modelSetPlot(modelSet, modelParams, modelLabels)
 
+        message = "Produce plots for model set " + str(self.modelSetNum)
+        self.logger.info(message)
+
         self.savePlots(mp)
 
         self.modelSetSize = 0
         self.modelSetNum += 1
 
-    def plotExperiment(self, expPlot):
+    def plotExperiment(self, expInput):
         """ Feeds the experiment data into the relevant plotting functions for the experiment class """
+
+        expPlot, plotArgs = expInput
 
         expSet = self.expStore[-self.expSetSize:]
         expParams = self.expParamStore[-self.expSetSize:]
@@ -288,7 +296,10 @@ class outputting(object):
         modelLabels = self.modelLabelStore[-self.expSetSize:]
 
         # Initialise the class
-        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels)
+        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
+
+        message = "Produce plots for experiment set " + str(self.expSetNum)
+        self.logger.info(message)
 
         self.savePlots(ep)
 
@@ -296,9 +307,6 @@ class outputting(object):
         self.expSetNum += 1
 
     def savePlots(self, plots):
-
-        message = "Produce plots"
-        self.logger.info(message)
 
         for handle, plot in plots:
             if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
@@ -334,10 +342,8 @@ class outputting(object):
             fig.savefig(fileName,dpi=ndpi)
 
         if not self.silent:
-            if not matplotlib.is_interactive():
-                fig.show()
-            else:
-                fig.draw()
+            plt.figure(fig.number)
+            plt.draw()
         else:
             plt.close(fig)
 
@@ -345,6 +351,9 @@ class outputting(object):
 
         if not self.save:
             return
+
+        message = "Produce log of all experiments"
+        self.logger.info(message)
 
         data = {'exp_Label': self.expLabelStore,
                 'model_Label': self.modelLabelStore,
