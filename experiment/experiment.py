@@ -20,9 +20,12 @@ class experiment(object):
     def __init__(self,**kwargs):
         """ Creates a new experiment instance"""
 
+        self.plotArgs = kwargs.pop('plotArgs',{})
+
         self.recAction = []
 
         self.parameters = {"Name": self.Name}
+
 
     def __iter__(self):
         """ Returns the iterator for the experiment"""
@@ -94,7 +97,7 @@ class experiment(object):
     def plot(self):
         """ Returns a plotting class relavent for this experiment"""
 
-        return self.experimentPlot
+        return self.experimentPlot, self.plotArgs
 
     class experimentPlot(experimentPlot):
 
