@@ -8,6 +8,8 @@ import logging
 from numpy import exp, zeros, array
 
 from model import model
+from modelPlot import modelPlot
+from modelSetPlot import modelSetPlot
 
 class MS(model):
 
@@ -126,6 +128,11 @@ class MS(model):
         else:
             self.decision = None
 
-    def plot(self):
-        """Returns a plotting class relavent for this model"""
+    class modelPlot(modelPlot):
+
+        """Abstract class for the creation of plots relevant to a model"""
+
+    class modelSetPlot(modelSetPlot):
+
+        """Abstract class for the creation of plots relevant to a set of models"""
 
