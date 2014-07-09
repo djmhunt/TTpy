@@ -7,7 +7,7 @@ class experimentPlot(object):
 
     """Abstract class for the creation of plots relevant to a experiment"""
 
-    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLabels):
+    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLabels, plotArgs):
 
         self.expStore = expSet
         self.expParams = expParams
@@ -15,6 +15,7 @@ class experimentPlot(object):
         self.modelStore = modelSet
         self.modelParams = modelParams
         self.modelLabels = modelLabels
+        self.plotArgs = plotArgs
 
         self._figSets()
 
