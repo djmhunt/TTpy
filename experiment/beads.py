@@ -11,8 +11,9 @@ import pandas as pd
 from numpy import array, zeros
 from numpy.random import rand
 from experiment import experiment
-from plotting import dataVsEvents
+from plotting import dataVsEvents, varDynamics
 from experimentPlot import experimentPlot
+from utils import varyingParams
 
 defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
 
@@ -31,6 +32,7 @@ class beads(experiment):
         N = kwargs.pop('N',None)
         beadSequence = kwargs.pop("beadSequence",defaultBeads)
 
+        self.plotArgs = kwargs.pop('plotArgs',{})
 
         self.beads = beadSequence
         if N:
@@ -49,7 +51,7 @@ class beads(experiment):
 
         self.recBeads = [-1]*self.T
         self.recAction = [-1]*self.T
-        self.firstDecision = None
+        self.firstDecision = 0
 
     def __iter__(self):
         """ Returns the iterator for the experiment"""
@@ -73,7 +75,7 @@ class beads(experiment):
 
         self.recAction[self.t] = action
 
-        if not self.firstDecision:
+        if action and not self.firstDecision:
             self.firstDecision = self.t + 1
 
     def procede(self):
@@ -126,19 +128,33 @@ class beads(experiment):
             fig = self.varCategoryDynamics()
             self.figSets.append(('decisionCoM',fig))
 
+            fig = self.varDynamicPlot()
+            self.figSets.append(("firstDecision",fig))
+
+        def varDynamicPlot(self):
+
+            params = self.modelParams[0].keys()
+
+            paramSet = varyingParams(self.modelStore,params)
+            decisionTimes = array([exp["FirstDecision"] for exp in self.expStore])
+
+            fig = varDynamics(paramSet, decisionTimes, **self.plotArgs)
+
+            return fig
+
         def varCategoryDynamics(self):
 
             params = self.modelParams[0].keys()
             #We assume that the parameters are the same for all the data to be analised,
             # otherwise this data is meaningless
 
-            initDataSet = {param:[m[param] for m in self.modelStore] for param in params}
-            initDataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
+            dataSet = varyingParams(self.modelStore,params)
+            dataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
 
-            initData = pd.DataFrame(initDataSet)
+            initData = pd.DataFrame(dataSet)
 
 
-            maxDecTime = max(initDataSet["decisionTimes"])
+            maxDecTime = max(dataSet["decisionTimes"])
             if maxDecTime == 0:
                 logger = logging.getLogger('categoryDynamics')
                 message = "No decisions taken, so no useful data"
@@ -175,6 +191,8 @@ class beads(experiment):
             fig = dataVsEvents(data,events,self.modelLabels,eventLabel,axisLabels)
 
             return fig
+
+
 
 def generateSequence(numBeads, oneProb, switchProb):
 
