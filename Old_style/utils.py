@@ -132,7 +132,7 @@ def argProcess(**kwargs):
 
 def listMerge(*args):
 
-    """Obselite? Should be replaced by listMergeNP"""
+    """Obselite? Should be replaced by listMergeNP?"""
 
     r=[[]]
     for x in args:
@@ -160,29 +160,6 @@ def listMergeNP(*args):
         r = array([i.flatten()for i in A])
 
         return r.T
-
-def listMerGen(*args):
-
-    if len(args) == 1:
-        a = array(args[0])
-        r = a.reshape((amax(a.shape),1))
-
-    else:
-        A = meshgrid(*args)
-
-        r = array([i.flatten()for i in A]).T
-
-    for i in r:
-        yield i
-
-def varyingParams(intObjects,params):
-    """Takes a list of models or experiments and returns a dictionary with only the parameters
-    which vary and their values"""
-
-    initDataSet = {param:[i[param] for i in intObjects] for param in params}
-    dataSet = {param:val for param,val in initDataSet.iteritems() if val.count(val[0])!=len(val)}
-
-    return dataSet
 
 if __name__ == '__main__':
     from timeit import timeit

@@ -14,6 +14,9 @@ import pandas as pd
 
 from os.path import isfile, exists
 from numpy import array
+from itertools import izip
+
+from utils import listMergeNP
 
 
 def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSets, **kwargs):
@@ -33,7 +36,8 @@ def plots(experiment, folderName, silent, saveFig, ivText, models, *majFigureSet
         fileName = folderName + "\\" + handle
 
         if hasattr(figure,"outputTrees") and callable(getattr(figure,"outputTrees")):
-            figure.outputTrees(fileName)
+            if folderName:
+                figure.outputTrees(fileName)
         else:
             outputFig(figure,fileName, silent, saveFig)
 
@@ -83,7 +87,7 @@ def simSetLog(paramText,params,paramVals,firstDecision,expName,modelName,kwargs,
         data[n] = paramVals[:,i]
 
     for k,v in kwargs.iteritems():
-        data[k] = v
+        data[k] = repr(v)
 
     record = pd.DataFrame(data)
 
@@ -127,3 +131,28 @@ def outputFig(fig,fileName,silent,saveFig):
 #        plt.draw()
 
 
+### Categorical outputs
+
+def varCategoryDynamics(params, paramVals, decisionTimes,folderName):
+
+    paramcombs = listMergeNP(*paramVals).T
+
+    initData = pd.DataFrame({p:v for p,v in izip(params,paramcombs)})
+    initData["decisionTimes"] = decisionTimes
+
+    maxDecTime = max(decisionTimes)
+    if maxDecTime == 0:
+        logger1 = logging.getLogger('categoryDynamics')
+        message = "No decisions taken, so no useful data"
+        logger1.info(message)
+        return
+
+    dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
+
+    CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
+
+    CoM = CoM.set_index('decisionTimes')
+
+    outputFile = folderName + 'decisionCoM.xlsx'
+
+    CoM.to_excel(outputFile, sheet_name='CoM')

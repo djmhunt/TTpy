@@ -7,7 +7,9 @@ import logging
 
 from numpy import exp, zeros, array
 
-class model_BP:
+from model import model
+
+class model_BP(model):
 
     def __doc__(self):
         """The documentation for the class"""

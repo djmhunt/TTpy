@@ -8,7 +8,7 @@ from itertools import izip
 from importlib import import_module
 from numpy import array, sort
 
-from outputs import plots, pickleLog, simSetLog
+from outputs import plots, pickleLog, simSetLog, varCategoryDynamics
 from utils import fancyLogger, argProcess, saving, listMergeNP
 from plotting import varDynamics
 from inputs import unpickleModels, unpickleSimDescription
@@ -193,6 +193,9 @@ def paramModSim(expName, modelName, *args, **kwargs):
 #        varDynamics(params, paramVals, decisionTimes)
 
     if save:
+
+        varCategoryDynamics(params, paramVals, array(decisionTimes), folderName)
+
         simSetLog(readableLog_paramText,
                   params,
                   array(readableLog_paramVals),
@@ -435,13 +438,16 @@ if __name__ == '__main__':
 
     from numpy import fromfunction
 
-    saveSims = False
+    saveSims = True
+    silence = True
     alpha_central = 0.2
     beta_central = 0.15
     theta_central = 1.5
     alpha = fromfunction(lambda i, j: i/60.0 + alpha_central - 10/60.0 , (20, 1))
     beta = fromfunction(lambda i, j: i/400.0 + beta_central - 27.5/400.0, (55, 1))
     theta = fromfunction(lambda i, j: i/30.0 + theta_central - 0.5, (30, 1))
+
+    altBeads = [1,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1]
 
     # For EP:
 #    paramModSim("Beads", "EP", ('alpha',fromfunction(lambda i, j: i/500+0.1, (400, 1))), ('beta',fromfunction(lambda i, j: i/10+0.1, (9, 1))),ivLabel = 'EP_broad', save = saveSims)
@@ -469,10 +475,10 @@ if __name__ == '__main__':
 #    paramModSim("Beads", "BP", ('theta',array([2.8,3.8,4.8])), m_beta = 0.4, ivLabel = 'BP_narrow', save = saveSims)
 #    simpleSim("Beads", "BP", ivLabel = 'BP_single', save = saveSims)
 
-#    paramModSim("Beads", "MS", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'MS_all', save = saveSims)
-#    paramModSim("Beads", "MS_rev", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'MS_rev_all', save = saveSims)
-#    paramModSim("Beads", "EP", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'EP_all', save = saveSims)
-    paramModSim("Beads", "BP", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'BP_all', save = saveSims)
+#    paramModSim("Beads", "MS", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'MS_all', save = saveSims, silent = silence, exp_beadSequence = altBeads)
+#    paramModSim("Beads", "MS_rev", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'MS_rev_all', save = saveSims, silent = silence, exp_beadSequence = altBeads)
+#    paramModSim("Beads", "EP", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'EP_all', save = saveSims, silent = silence, exp_beadSequence = altBeads)
+    paramModSim("Beads", "BP", ('theta',theta), ('alpha',alpha), ('beta',beta),ivLabel = 'BP_all', save = saveSims, silent = silence, exp_beadSequence = altBeads)
 
 
 

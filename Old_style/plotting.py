@@ -17,9 +17,9 @@ from matplotlib.cm import get_cmap
 #from mayavi import mlab #import quiver3d, flow
 from itertools import izip
 from bisect import bisect_right
-from vtkWriter.vtkStructured import VTK_XML_Serial_Structured
-from vtkWriter.vtkUnstructured import VTK_XML_Serial_Unstructured
-from vtkWriter.vtkCSV import VTK_CSV
+from vtkStructured import VTK_XML_Serial_Structured
+from vtkUnstructured import VTK_XML_Serial_Unstructured
+from vtkCSV import VTK_CSV
 
 
 ### Define the different types of lines that will be plotted and their properties.
@@ -54,21 +54,18 @@ origin = 'lower'
 #origin = 'upper'
 
 ### Plots
-def varDynamics(paramSet, decisionTimes, **kwargs):
+def varDynamics(params, paramVals, decisionTimes, **kwargs):
 
-    lparams = len(paramSet)
-
-    params = paramSet.keys()
+    lparams = len(params)
 
     if lparams == 1:
-        param = params[0]
-        fig = dim1VarDim(paramSet[param],decisionTimes, param, **kwargs)
+        fig = dim1VarDim(paramVals[0],decisionTimes, params[0], **kwargs)
 
     elif lparams == 2:
-        fig = dim2VarDim(paramSet[params[0]],paramSet[params[1]],decisionTimes, params[0], params[1], **kwargs)
+        fig = dim2VarDim(paramVals[0],paramVals[1],decisionTimes, params[0], params[1], **kwargs)
 
     elif lparams == 3:
-        fig = dim3VarDim(paramSet[params[0]],paramSet[params[1]],paramSet[params[2]],decisionTimes, params[0], params[1], params[2], **kwargs)
+        fig = dim3VarDim(paramVals[0],paramVals[1],paramVals[2],decisionTimes, params[0], params[1], params[2], **kwargs)
 
     else:
 
@@ -104,7 +101,7 @@ def dim1VarDim(X,Y, varXLabel, **kwargs):
 
     return fig
 
-def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
+def dim2VarDim(x,y,z, varXLabel, varYLabel, **kwargs):
     """
 
     Look in to fatfonts
@@ -115,24 +112,24 @@ def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
     scatter = kwargs.get("scatter",False)
 
 
-    zMin = amin(z)
-    zMax = amax(z)
-    if zMin == zMax:
-        logger = logging.getLogger('Plots')
-        logger.warning("There is no variation in the time to decision across parameters")
-        return None
+    yMin = amin(y)
+    yMax = amax(y)
+    if yMin == yMax:
+        logger1 = logging.getLogger('Plots')
+        logger1.warning("There is no variation in the time to decision across parameters")
+        return plt.figure()
 
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     if contour == True:
-        CS = axContour(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        CS = axContour(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
     if scatter == True:
-        SC = axScatter(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        SC = axScatter(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
     if heatmap == True:
-        IM = axImage(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        IM = axImage(ax,x,y,z, minZ = 0, CB_label = "Time to decision")
 
     ax.set_xlabel(varXLabel)
     ax.set_ylabel(varYLabel)
@@ -142,20 +139,20 @@ def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
 
     return fig
 
-def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
+def dim3VarDim(x,y,z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 
     paraOut = kwargs.get("paraOut", "CSV")
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
-    zMin = amin(Y)
-    zMax = amax(Y)
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
+    zMin = amin(z)
+    zMax = amax(z)
 
-    xS = sort(list(set(X)))
-    yS = sort(list(set(Y)))
-    zS = sort(list(set(Z)))
+    xS = sort(x)
+    yS = sort(y)
+    zS = sort(z)
 
     dx = amin(xS[1:]-xS[:-1])
     dy = amin(yS[1:]-yS[:-1])
@@ -164,7 +161,7 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
     yJumps = (yMax - yMin)/dy + 1
     zJumps = (zMax - zMin)/dz + 1
 
-#    X,Y,Z = meshgrid(x,y,z)
+    X,Y,Z = meshgrid(x,y,z)
 #    Xfleshed, Yfleshed, Zfleshed = meshgrid(linspace(xMin - dx, xMax + dx, xJumps),
 #                                            linspace(yMin - dy, yMax + dy, yJumps),
 #                                            linspace(zMin - dz, zMax + dz, zJumps))
@@ -172,8 +169,7 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
                                             linspace(yMin, yMax, yJumps),
                                             linspace(zMin, zMax, zJumps))
 
-#    coPoints = [(a,b,c) for a,b,c in izip(X.flatten(),Y.flatten(),Z.flatten())]
-    coPoints = [(a,b,c) for a,b,c in izip(X,Y,Z)]
+    coPoints = [(a,b,c) for a,b,c in izip(X.flatten(),Y.flatten(),Z.flatten())]
     coGrid = griddata(coPoints, f, (Xfleshed, Yfleshed,Zfleshed), method='nearest')
 
 #    coGridX = coGrid[1:,:,:] - coGrid[:-1,:,:]
@@ -182,12 +178,8 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 
     if paraOut == "structured":
         vtk_writer = VTK_XML_Serial_Structured()
-    elif paraOut == "CSV":
-        vtk_writer = VTK_CSV()
-    elif paraOut == "unstructured":
-        vtk_writer = VTK_XML_Serial_Unstructured()
     else:
-        return None
+        vtk_writer = VTK_CSV()
     vtk_writer.snapshot(Xfleshed,
                         Yfleshed,
                         Zfleshed,
@@ -253,6 +245,8 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 
     printResourcesSpectrum(data,bins)"""
 
+
+
     xLabel = axisLabels.pop("xLabel","Events")
     yLabel = axisLabels.pop("yLabel","Density across parameter range")
     y2Label = axisLabels.pop("y2Label","Event value")
@@ -314,7 +308,7 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 # Taking the final stages of plotting and providing a nice interface to do it all in one call
 # rather than a few dozen
 
-def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
+def axScatter(ax,x,y,z, minZ = 0, CB_label = ""):
     """
     """
 
@@ -325,27 +319,25 @@ def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
     zScale = (maxC - minC) / float(maxZ - minZ)
     C = minC + (z-amin(z))*zScale
 
-#    X,Y = meshgrid(x,y)
-#    sc= ax.scatter(X.flatten(),Y.flatten(),s=C)
-    sc= ax.scatter(X,Y,s=C)
+    X,Y = meshgrid(x,y)
+    sc= ax.scatter(X.flatten(),Y.flatten(),s=C)
 
     return sc
 
-def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
+def axImage(ax,x,y,z,minZ = 0,CB_label = ""):
     """
     """
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
 
-    xS = sort(list(set(X)))
-    yS = sort(list(set(Y)))
+    xS = sort(x)
+    yS = sort(y)
 
     dx = amin(xS[1:]-xS[:-1])
     dy = amin(yS[1:]-yS[:-1])
-
     xJumps = (xMax - xMin)/dx + 2
     yJumps = (yMax - yMin)/dy + 2
 
@@ -354,11 +346,10 @@ def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
     yMinIm = yMin - dy
     yMaxIm = yMax + dy
 
-#    X,Y = meshgrid(x,y)
+    X,Y = meshgrid(x,y)
     Xfleshed,Yfleshed = meshgrid(linspace(xMinIm,xMaxIm,xJumps),linspace(yMinIm,yMaxIm,yJumps))
 
-#    zPoints = [(a,b) for a,b in izip(X.flatten(),Y.flatten())]
-    zPoints = [(a,b) for a,b in izip(X,Y)]
+    zPoints = [(a,b) for a,b in izip(X.flatten(),Y.flatten())]
     gridZ = griddata(zPoints, z, (Xfleshed, Yfleshed), method='nearest')
 
 #    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
@@ -373,12 +364,12 @@ def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
 
     return im
 
-def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
+def axContour(ax,x,y,z,minZ = 0,CB_label = ""):
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
+    xMin = amin(x)
+    xMax = amax(x)
+    yMin = amin(y)
+    yMax = amax(y)
 
     maxZ = amax(z)
     if maxZ == minZ:
@@ -393,13 +384,9 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
     else:
         levels = arange(maxZ+1)
 
-#    X,Y = meshgrid(x,y)
-
-    Xlen = len(set(X))
-    Ylen = len(set(Y))
-
+    X,Y = meshgrid(x,y)
     z = array(z)
-    Z = z.reshape((Ylen,Xlen))
+    Z = z.reshape(X.shape)
 
     CS = ax.contour(X,Y, Z, levels,
                      origin='lower',
