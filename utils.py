@@ -25,7 +25,7 @@ date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 def fancyLogger(logLevel, fileName="", silent = False):
     """
     Sets up the style of logging for all the simulations
-    loggingSetup(logLevel, fileName="", silent = False)
+    fancyLogger(logLevel, logFile="", silent = False)
 
     logLevel = [logging.DEBUG|logging.INFO|logging.WARNING|logging.ERROR|logging.CRITICAL]"""
 
@@ -58,28 +58,17 @@ def fancyLogger(logLevel, fileName="", silent = False):
                             datefmt='%m-%d %H:%M',
                             level = logLevel,
                             filemode= 'w')
+
+        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
+        console = logging.StreamHandler()
+        console.setLevel(logLevel)
+        console.setFormatter(consoleFormat)
+        # add the handler to the root logger
+        logging.getLogger('').addHandler(console)
     else:
         logging.basicConfig(datefmt='%m-%d %H:%M',
-                                level = logLevel,)
-
-    consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-    console = logging.StreamHandler()
-    console.setLevel(logLevel)
-    console.setFormatter(consoleFormat)
-    # add the handler to the root logger
-    logging.getLogger('').addHandler(console)
-#    if not silent:
-#        if not fileName:
-#            logging.basicConfig(datefmt='%m-%d %H:%M',
-#                                level = logLevel,)
-#        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-#        console = logging.StreamHandler()
-#        console.setLevel(logLevel)
-#        console.setFormatter(consoleFormat)
-#        # add the handler to the root logger
-#        logging.getLogger('').addHandler(console)
-
-
+                            format='%(name)-12s %(levelname)-8s %(message)s',
+                            level = logLevel)
 
     # Set the standard error output
     sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
@@ -185,6 +174,15 @@ def listMerGen(*args):
 
     for i in r:
         yield i
+
+def varyingParams(intObjects,params):
+    """Takes a list of models or experiments and returns a dictionary with only the parameters
+    which vary and their values"""
+
+    initDataSet = {param:[i[param] for i in intObjects] for param in params}
+    dataSet = {param:val for param,val in initDataSet.iteritems() if val.count(val[0])!=len(val)}
+
+    return dataSet
 
 if __name__ == '__main__':
     from timeit import timeit
