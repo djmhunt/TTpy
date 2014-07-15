@@ -15,7 +15,10 @@ from plotting import dataVsEvents, varDynamics
 from experimentPlot import experimentPlot
 from utils import varyingParams
 
-defaultBeads = [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]
+
+# Bead Sequences:
+beadSequences = {"MooreSellen": [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]}
+defaultBeads = beadSequences["MooreSellen"]
 
 class beads(experiment):
 
@@ -34,7 +37,11 @@ class beads(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
-        self.beads = beadSequence
+        if beadSequence in beadSequences:
+            self.beads = beadSequences[beadSequence]
+        else:
+            self.beads = beadSequence
+
         if N:
             self.T = N
         else:
