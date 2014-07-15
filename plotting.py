@@ -53,7 +53,7 @@ local_cmap = wintermod_cmap
 origin = 'lower'
 #origin = 'upper'
 
-### Plots
+### Response changes to different parameters
 def varDynamics(paramSet, decisionTimes, **kwargs):
 
     lparams = len(paramSet)
@@ -201,7 +201,7 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 
     return vtk_writer
 
-
+### Inputs compared to output probabilities
 def dataVsEvents(data,events,labels,eventLabel,axisLabels):
 
     if len(data) > 8:
@@ -247,6 +247,7 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
+
 
 def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
     """Normalised spectogram/histogram of values across events
