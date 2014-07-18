@@ -37,8 +37,11 @@ class beads(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
-        if beadSequence in beadSequences:
-            self.beads = beadSequences[beadSequence]
+        if isinstance(beadSequence, str):
+            if beadSequence in beadSequences:
+                self.beads = beadSequences[beadSequence]
+            else:
+                raise "Unknown bead sequence"
         else:
             self.beads = beadSequence
 
