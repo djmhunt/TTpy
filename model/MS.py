@@ -10,6 +10,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
+from plotting import dataVsEvents, lineplot
 
 class MS(model):
 
@@ -134,5 +135,51 @@ class MS(model):
 
     class modelSetPlot(modelSetPlot):
 
-        """Abstract class for the creation of plots relevant to a set of models"""
+        def _figSets(self):
+            """ Contains all the figures """
 
+            self.figSets = []
+
+            # Create all the plots and place them in in a list to be iterated
+
+            fig = self.dPChanges()
+            self.figSets.append(('dPChanges',fig))
+
+            fig = self.trial3_4Diff()
+            self.figSets.append(('trial3_4Diff',fig))
+
+        def dPChanges(self):
+
+            gainLables = array(["Gain " + str(m["theta"]) for m in self.modelStore])
+
+            dP = array([m["ProbDifference"] for m in self.modelStore])
+            events = array(self.modelStore[0]["Events"])
+
+            axisLabels = {"title":"Confidence by Learning Trial for Different Gain Parameters"}
+            axisLabels["xLabel"] = "Trial number"
+            axisLabels["yLabel"] = "\Delta P"
+            axisLabels["y2Label"] = "Bead presented"
+            axisLabels["yMax"] = 1
+            axisLabels["yMin"] = 0
+            eventLabel = "Beads drawn"
+
+            fig = dataVsEvents(dP,events,gainLables,eventLabel,axisLabels)
+
+            return fig
+
+
+        def trial3_4Diff(self):
+
+            dPDiff = array([m["ProbDifference"][3]-m["ProbDifference"][2] for m in self.modelStore])
+
+            gain = array([m["theta"] for m in self.modelStore])
+
+            axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
+            axisLabels["xLabel"] = "Trial number"
+            axisLabels["yLabel"] = "\Delta P\left(4\right) - \Delta P\left(3\right)"
+            axisLabels["yMax"] = 1
+            axisLabels["yMin"] = 0
+
+            fig = lineplot(gain,dPDiff,[],axisLabels)
+
+            return fig
