@@ -22,7 +22,7 @@ defaultBeads = beadSequences["MooreSellen"]
 
 class beads(experiment):
 
-    """The documentation for the class"""
+    """Based on the Moore&Sellen Beads task"""
 
     Name = "beads"
 
@@ -62,11 +62,6 @@ class beads(experiment):
         self.recBeads = [-1]*self.T
         self.recAction = [-1]*self.T
         self.firstDecision = 0
-
-    def __iter__(self):
-        """ Returns the iterator for the experiment"""
-
-        return self
 
     def next(self):
         """ Produces the next item for the iterator"""
