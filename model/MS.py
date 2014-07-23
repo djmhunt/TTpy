@@ -86,6 +86,7 @@ class MS(model):
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
                    "theta": self.theta,
+                   "beta": self.beta,
                    "alpha": self.alpha,
                    "Information": array(self.recInformation),
                    "Probabilities": array(self.recProbabilities),
@@ -157,7 +158,7 @@ class MS(model):
 
             axisLabels = {"title":"Confidence by Learning Trial for Different Gain Parameters"}
             axisLabels["xLabel"] = "Trial number"
-            axisLabels["yLabel"] = "\Delta P"
+            axisLabels["yLabel"] = r"$\Delta P$"
             axisLabels["y2Label"] = "Bead presented"
             axisLabels["yMax"] = 1
             axisLabels["yMin"] = 0
@@ -176,7 +177,7 @@ class MS(model):
 
             axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
             axisLabels["xLabel"] = "Trial number"
-            axisLabels["yLabel"] = "\Delta P\left(4\right) - \Delta P\left(3\right)"
+            axisLabels["yLabel"] = r"$\Delta P\left(4\right) - \Delta P\left(3\right)$"
             axisLabels["yMax"] = 1
             axisLabels["yMin"] = 0
 
