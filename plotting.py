@@ -53,6 +53,20 @@ local_cmap = wintermod_cmap
 origin = 'lower'
 #origin = 'upper'
 
+### Simple lineplot
+def lineplot(x,Y,labels,axisLabels):
+
+    fig = plt.figure()  # figsize=(8, 6), dpi=80)
+    ax = fig.add_subplot(111)
+
+    axPlotlines(ax,x,Y, labels, axisLabels)
+
+    legend(ax)
+
+    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+
+    return fig
+
 ### Response changes to different parameters
 def varDynamics(paramSet, decisionTimes, **kwargs):
 
@@ -204,6 +218,8 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 ### Inputs compared to output probabilities
 def dataVsEvents(data,events,labels,eventLabel,axisLabels):
 
+    data = array(data)
+
     if len(data) > 8:
         fig = dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels)
         return fig
@@ -211,38 +227,21 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    xLabel = axisLabels.pop("xLabel","Event")
-    yLabel = axisLabels.pop("yLabel","Value")
     y2Label = axisLabels.pop("y2Label","Event value")
-    title = axisLabels.pop("title","")
 
-    yMin = axisLabels.pop("yMin",0)
-    yMax = axisLabels.pop("yMax",amax(data))
-    xMin = axisLabels.pop("xMin",0)
-    xMax = axisLabels.pop("xMax",len(data[0]))
+    eventTimes = range(1, len(events)+1)
+    eventX = [i - 0.5 for i in eventTimes]
 
-    eventX = fromfunction(lambda i: i+0.5, (len(events),))
-
-
-    for i, d in enumerate(data):
-
-        pltLine = ax.plot(d, lpl[i], label = labels[i], color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)#, axes=axs[0])
+    axPlotlines(ax,eventTimes,data, labels, axisLabels)
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
     bottom,top = axb.get_ylim()
     axb.set_ylim((bottom - 0.01,top + 0.01))
 
-    ax.set_xlabel(xLabel)
-    ax.set_ylabel(yLabel)
     axb.set_ylabel(y2Label)
-    ax.set_title(title)
 
-    lines1, pltLables1 = ax.get_legend_handles_labels()
-    lines2, pltLables2 = axb.get_legend_handles_labels()
-    pltLables = pltLables1 + pltLables2
-    lines = lines1 + lines2
-    leg = ax.legend(lines, pltLables,loc = 'best', fancybox=True)
+    legend(ax,axb)
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
@@ -254,58 +253,21 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 
     printResourcesSpectrum(data,bins)"""
 
-    xLabel = axisLabels.pop("xLabel","Events")
-    yLabel = axisLabels.pop("yLabel","Density across parameter range")
     y2Label = axisLabels.pop("y2Label","Event value")
-    title = axisLabels.pop("title","")
-
-    minVal = axisLabels.pop("yMin",0)
-    maxVal = axisLabels.pop("yMax",amax(data))
-    xMin = axisLabels.pop("xMin",0)
-    xMax = axisLabels.pop("xMax",len(data[0]))
-
-    bins = axisLabels.pop("bins",25)
-    probDensity = axisLabels.pop("probDensity",False)
 
     eventX = fromfunction(lambda i: i+0.5, (len(events),))
-
-    data = array(data)
-
-    # Create this histogram-like data
-    histData = [histogram(d, bins, range=(minVal,maxVal), density=True) for d in data.T]
-
-    if probDensity:
-        plotData = array([d[0] for d in histData])
-    else:
-        plotData = array([d[0]*(d[1][1:]-d[1][:-1]) for d in histData])
-
-    # Since we are calculating a probability density and the bins are less than 1 in size we needed
-    # To multiply by the bin size to get the actual probability of each bin
 
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    im = ax.imshow(plotData.T,
-               interpolation='nearest',
-               cmap=wintermod_cmap,
-               origin='lower',
-               extent=[xMin,xMax,minVal,maxVal],
-               aspect='auto' )
-    col = plt.colorbar(im,orientation='horizontal')
-    if probDensity:
-        col.set_label("Probability density")
-    else:
-        col.set_label("Bin probability")
+    axSpectrum(ax,events,data, axisLabels)
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
     bottom,top = axb.get_ylim()
     axb.set_ylim((bottom - 0.01,top + 0.01))
 
-    ax.set_xlabel(xLabel)
-    ax.set_ylabel(yLabel)
     axb.set_ylabel(y2Label)
-    ax.set_title(title)
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
@@ -427,6 +389,89 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
 #    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
     return CS
+
+def axPlotlines(ax, x, Y, labels, axisLabels):
+
+    xLabel = axisLabels.pop("xLabel","Event")
+    yLabel = axisLabels.pop("yLabel","Value")
+    title = axisLabels.pop("title","")
+
+    yMin = axisLabels.pop("yMin",0)
+    yMax = axisLabels.pop("yMax",amax(Y))
+    xMin = axisLabels.pop("xMin",0)
+    Ys = Y.shape
+    if len(Ys)== 1:
+        xMax = axisLabels.pop("xMax",Ys[0])
+        pltLines = ax.plot(x,Y, lpl[0], color = colours[0], linewidth=lpl_linewidth[0], markersize = 3)
+    elif len(Ys) == 2:
+        xMax = axisLabels.pop("xMax",Ys[1])
+        for i, y in enumerate(Y):
+            pltLines = ax.plot(x,y, lpl[i], label = labels[i], color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)
+
+    ax.set_ylim([yMin,yMax])
+    ax.set_xlim([xMin,xMax])
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    ax.set_title(title)
+
+def axSpectrum(ax,x,Y, axisLabels):
+
+    xLabel = axisLabels.pop("xLabel","Events")
+    yLabel = axisLabels.pop("yLabel","Density across parameter range")
+    title = axisLabels.pop("title","")
+
+    minVal = axisLabels.pop("yMin",0)
+    maxVal = axisLabels.pop("yMax",amax(Y))
+    xMin = axisLabels.pop("xMin",0)
+    xMax = axisLabels.pop("xMax",len(Y[0]))
+
+    bins = axisLabels.pop("bins",25)
+    probDensity = axisLabels.pop("probDensity",False)
+
+    data = array(Y)
+
+    # Create this histogram-like data
+    histData = [histogram(d, bins, range=(minVal,maxVal), density=True) for d in data.T]
+
+    if probDensity:
+        plotData = array([d[0] for d in histData])
+    else:
+        plotData = array([d[0]*(d[1][1:]-d[1][:-1]) for d in histData])
+
+    # Since we are calculating a probability density and the bins are less than 1 in size we needed
+    # To multiply by the bin size to get the actual probability of each bin
+
+    im = ax.imshow(plotData.T,
+               interpolation='nearest',
+               cmap=wintermod_cmap,
+               origin='lower',
+               extent=[xMin,xMax,minVal,maxVal],
+               aspect='auto' )
+    col = plt.colorbar(im,orientation='horizontal')
+    if probDensity:
+        col.set_label("Probability density")
+    else:
+        col.set_label("Bin probability")
+
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    ax.set_title(title)
+
+def legend(*axis):
+
+    lines = []
+    pltLabels = []
+    for ax in axis:
+
+        line, pltLabel = ax.get_legend_handles_labels()
+        lines.extend(line)
+        pltLabels.extend(pltLabel)
+
+    if not lines:
+        return
+
+    leg = ax.legend(lines, pltLabels,loc = 'best', fancybox=True)
+
 
 
 
