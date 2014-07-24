@@ -396,9 +396,9 @@ def axPlotlines(ax, x, Y, labels, axisLabels):
     yLabel = axisLabels.pop("yLabel","Value")
     title = axisLabels.pop("title","")
 
-    yMin = axisLabels.pop("yMin",0)
+    yMin = axisLabels.pop("yMin",amin(Y))
     yMax = axisLabels.pop("yMax",amax(Y))
-    xMin = axisLabels.pop("xMin",0)
+    xMin = axisLabels.pop("xMin",min(x))
     Ys = Y.shape
     if len(Ys)== 1:
         xMax = axisLabels.pop("xMax",Ys[0])
