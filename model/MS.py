@@ -28,6 +28,7 @@ class MS(model):
         self.activity = zeros(2)
         self.decision = None
         self.firstDecision = 0
+        self.lastObs = False
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
@@ -65,20 +66,14 @@ class MS(model):
     def observe(self,event):
         """ Recieves the latest observation"""
 
-        self.recEvents.append(event)
-
-        #Calculate jar information
-        info = self.oneProb*event + (1-self.oneProb)*(1-event)
-        self.information = array([info,1-info])
-
-        #Find the new activites
-        self._newActivity()
-
-        #Calculate the new probabilities
-        self._prob()
+        if event != None:
+            self._update(event,'obs')
 
     def feedback(self,response):
         """ Recieves the reaction to the action """
+
+        if response != None:
+            self._update(response,'reac')
 
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
@@ -98,6 +93,46 @@ class MS(model):
 
         return results
 
+    def _update(self,event,instance):
+        """Processes updates to new actions"""
+
+        if instance == 'obs':
+
+            self.recEvents.append(event)
+
+            #Calculate jar information
+            info = self.oneProb*event + (1-self.oneProb)*(1-event)
+            self.information = array([info,1-info])
+
+            #Find the new activites
+            self._newActivity()
+
+            #Calculate the new probabilities
+            self._prob()
+
+            self.lastObs = True
+
+        elif instance == 'reac':
+
+            if self.lastObs:
+
+                self.lastObs = False
+
+            else:
+
+                self.recEvents.append(event)
+
+                #Calculate jar information
+                info = self.oneProb*event + (1-self.oneProb)*(1-event)
+                self.information = array([info,1-info])
+
+                #Find the new activites
+                self._newActivity()
+
+                #Calculate the new probabilities
+                self._prob()
+
+
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be
             output later """
@@ -116,6 +151,7 @@ class MS(model):
         self.probDifference = p[0] - p[1]
 
     def _newActivity(self):
+
         self.activity = self.activity + (1-self.activity) * self.information * self.alpha
 
     def _decision(self):
@@ -178,8 +214,8 @@ class MS(model):
             axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
             axisLabels["xLabel"] = "Trial number"
             axisLabels["yLabel"] = r"$\Delta P\left(4\right) - \Delta P\left(3\right)$"
-            axisLabels["yMax"] = 1
-            axisLabels["yMin"] = 0
+#            axisLabels["yMax"] = 0
+#            axisLabels["yMin"] = -0.5
 
             fig = lineplot(gain,dPDiff,[],axisLabels)
 
