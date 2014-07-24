@@ -48,7 +48,7 @@ class beads(experiment):
         if N:
             self.T = N
         else:
-            self.T = len(beadSequence)
+            self.T = len(self.beads)
 
         self.parameters = {"Name": self.Name,
                            "N": self.T,
