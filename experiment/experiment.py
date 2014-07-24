@@ -71,7 +71,7 @@ class experiment(object):
         self.recAction.append(action)
 
     def procede(self):
-        """Updates the experiment"""
+        """Updates the experiment after feedback"""
 
     def feedback(self):
         """ Responds to the action from the participant"""
