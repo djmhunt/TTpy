@@ -26,6 +26,7 @@ class EP(model):
         self.decision = None
         self.firstDecision = 0
         self.probabilities = zeros(2)
+        self.lastObs = False
 
         self.parameters = {"Name": self.Name,
                            "alpha": self.alpha,
@@ -52,23 +53,6 @@ class EP(model):
 
         return self.currAction
 
-    def observe(self, event):
-        """ Recieves the latest observation"""
-
-        self.recEvents.append(event)
-
-        #Calculate jar information
-        self.information = array([event,1-event])
-
-        #Find the new activites
-        self._newAct()
-
-        #Calculate the new probabilities
-        self._prob()
-
-    def feedback(self,response):
-        """ Recieves the reaction to the action """
-
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
 
@@ -84,6 +68,43 @@ class EP(model):
                     "beta": self.beta}
 
         return results
+
+    def _update(self,event,instance):
+        """Processes updates to new actions"""
+
+        if instance == 'obs':
+
+            self.recEvents.append(event)
+
+            #Calculate jar information
+            self.information = array([event,1-event])
+
+            #Find the new activites
+            self._newAct()
+
+            #Calculate the new probabilities
+            self._prob()
+
+            self.lastObs = True
+
+        elif instance == 'reac':
+
+            if self.lastObs:
+
+                self.lastObs = False
+
+            else:
+
+                self.recEvents.append(event)
+
+                #Calculate jar information
+                self.information = array([event,1-event])
+
+                #Find the new activites
+                self._newAct()
+
+                #Calculate the new probabilities
+                self._prob()
 
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be

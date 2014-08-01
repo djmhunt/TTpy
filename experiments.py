@@ -57,11 +57,6 @@ class experiments(object):
         exp = record[0]
 
         return exp(**record[1])
-#
-#    def params(self):
-#        """Returns the relevent dictionary of parameters for the current experiment"""
-#
-#        return self.experiments[self.count][1]
 
     def _params(self,exp, parameters, otherArgs):
 

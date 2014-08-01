@@ -37,6 +37,7 @@ class BP(model):
         self.probabilities = zeros(2) + self.prior
         self.decision = None
         self.firstDecision = 0
+        self.lastObs = False
 
         # Recorded information
 
@@ -58,21 +59,6 @@ class BP(model):
 
         return self.currAction
 
-    def observe(self,event):
-        """ Recieves the latest observation"""
-
-        self.recEvents.append(event)
-
-        #Calculate jar information
-        info = self.oneProb*event + (1-self.oneProb)*(1-event)
-        self.information = array([info,1-info])
-
-        #Calculate the new probabilities
-        self._prob()
-
-    def feedback(self,response):
-        """ Recieves the reaction to the action """
-
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
 
@@ -89,6 +75,39 @@ class BP(model):
                    "Events":array(self.recEvents)}
 
         return results
+
+    def _update(self,event,instance):
+        """Processes updates to new actions"""
+
+        if instance == 'obs':
+
+            self.recEvents.append(event)
+
+            #Calculate jar information
+            info = self.oneProb*event + (1-self.oneProb)*(1-event)
+            self.information = array([info,1-info])
+
+            #Calculate the new probabilities
+            self._prob()
+
+            self.lastObs = True
+
+        elif instance == 'reac':
+
+            if self.lastObs:
+
+                self.lastObs = False
+
+            else:
+
+                self.recEvents.append(event)
+
+                #Calculate jar information
+                info = self.oneProb*event + (1-self.oneProb)*(1-event)
+                self.information = array([info,1-info])
+
+                #Calculate the new probabilities
+                self._prob()
 
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be

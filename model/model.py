@@ -18,6 +18,7 @@ class model(object):
         """The model class is a general template for a model"""
 
         self.currAction = 1
+        self.lastObs = False
 
         self.parameters = {"Name" : self.Name}
 
@@ -55,10 +56,14 @@ class model(object):
     def observe(self,event):
         """ Recieves the latest observation"""
 
-        self.recEvents.append(event)
+        if event != None:
+            self._update(event,'obs')
 
     def feedback(self,response):
         """ Recieves the reaction to the action """
+
+        if response != None:
+            self._update(response,'reac')
 
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this model """
@@ -68,6 +73,25 @@ class model(object):
                    "Events":array(self.recEvents)}
 
         return results
+
+    def _update(self,event,instance):
+        """Processes updates to new actions"""
+
+        if instance == 'obs':
+
+            self.recEvents.append(event)
+
+            self.lastObs = True
+
+        elif instance == 'reac':
+
+            if self.lastObs:
+
+                self.lastObs = False
+
+            else:
+
+                self.recEvents.append(event)
 
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be
