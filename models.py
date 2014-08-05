@@ -14,9 +14,9 @@ class models(object):
     models(*modelSets)
     Recieves a series of model packages. the packages are in the form of:
     (model,variables, parameters)
-    model:  A model class object
-    variables: A dictionary of varibles with a list for their values
-    parameters: A dictionary of other, probably text or binary parameters"""
+        model:  A model class object
+        variables: A dictionary of varibles with a list for their values
+        parameters: A dictionary of other, probably text or binary parameters"""
 
     def __init__(self,*args):
         """ """
@@ -31,6 +31,8 @@ class models(object):
 
     def reset(self):
         """Resets the generator of models """
+
+        self.count = -1
 
     def __iter__(self):
         """ Returns the iterator for the creation of models"""
