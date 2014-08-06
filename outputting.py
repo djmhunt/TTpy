@@ -68,6 +68,59 @@ class outputting(object):
         self.lastExpLabelID = 1
         self.lastModelLabelID = 1
 
+    def end(self):
+        """ """
+
+        if not self.silent:
+            plt.show()
+
+        message = "Experiment completed. Shutting down"
+        self.logger.info(message)
+
+    ### Folder management
+
+    def _folderSetup(self):
+        """Identifies and creates the folder the data will be stored in
+
+        folderSetup()"""
+
+        # While the folders have already been created, check for the next one
+        folderName = './Outputs/' + self.date + "_" + self.label
+        if exists(folderName):
+            i = 1
+            folderName += '_no_'
+            while exists(folderName + str(i)):
+                i += 1
+            folderName += str(i)
+
+        folderName += "/"
+        makedirs(folderName  + 'Pickle/')
+
+        self.outputFolder = folderName
+
+    ### File management
+    def _newFile(self, handle, extension):
+
+        if not self.save:
+            return ''
+
+        fileName = self.outputFolder + handle
+        if exists(fileName + extension):
+            i = 1
+            while exists(fileName + "_" + str(i) + extension):
+                i += 1
+            fileName += "_" + str(i)
+
+        fileName += extension
+
+        return fileName
+
+    ### Logging
+    def getLogger(self, name):
+
+        logger = logging.getLogger(name)
+
+        return logger
 
     def _saving(self):
 
@@ -137,35 +190,7 @@ class outputting(object):
         if self.logFile:
             logging.info("The log you are reading was written to " + str(self.logFile))
 
-
-    def _folderSetup(self):
-        """Identifies and creates the folder the data will be stored in
-
-        folderSetup()"""
-
-        # While the folders have already been created, check for the next one
-        folderName = './Outputs/' + self.date + "_" + self.label
-        if exists(folderName):
-            i = 1
-            folderName += '_no_'
-            while exists(folderName + str(i)):
-                i += 1
-            folderName += str(i)
-
-        folderName += "/"
-        makedirs(folderName  + 'Pickle/')
-
-        self.outputFolder = folderName
-
-
-    def end(self):
-        """ """
-
-        if not self.silent:
-            plt.show()
-
-        message = "Experiment completed. Shutting down"
-        self.logger.info(message)
+    ### Data collection
 
     def recordSimParams(self,expParams,modelParams):
         """Record any parameters that are user specified"""
@@ -210,7 +235,6 @@ class outputting(object):
 
         return descriptor, plotLabel, lastLabelID
 
-
     def recordSim(self,expData,modelData):
 
         message = "Beginning output processing"
@@ -231,32 +255,7 @@ class outputting(object):
         self.expSetSize += 1
         self.modelSetSize += 1
 
-    ### Outputs
-    def pickleRec(self,data, handle):
-
-        outputFile = self._newFile(handle, '.pkl')
-
-        with open(outputFile,'w') as w :
-            pickle.dump(data, w)
-
-    def pickleLog(self, results,folderName, label=""):
-
-        if not self.save:
-            return
-
-        handle = 'Pickle/' + results["Name"]
-
-        if label:
-            handle += label
-
-        self.pickleRec(results,handle)
-
-    def getLogger(self, name):
-
-        logger = logging.getLogger(name)
-
-        return logger
-
+    ### Ploting
     def plotModel(self,modelPlot):
         """ Feeds the model data into the relevant plotting functions for the class """
 
@@ -347,6 +346,27 @@ class outputting(object):
         else:
             plt.close(fig)
 
+    ### Pickle
+    def pickleRec(self,data, handle):
+
+        outputFile = self._newFile(handle, '.pkl')
+
+        with open(outputFile,'w') as w :
+            pickle.dump(data, w)
+
+    def pickleLog(self, results,folderName, label=""):
+
+        if not self.save:
+            return
+
+        handle = 'Pickle/' + results["Name"]
+
+        if label:
+            handle += label
+
+        self.pickleRec(results,handle)
+
+    ### Excel
     def simLog(self):
 
         if not self.save:
@@ -375,6 +395,7 @@ class outputting(object):
 
         record.to_excel(outputFile, sheet_name='simRecord')
 
+    ### Utils
     def _reframeStore(self, store, storeLabel):
         """Take a list of dictionaries and turn it into a dictionary of lists"""
 
@@ -393,22 +414,6 @@ class outputting(object):
         newStore = {storeLabel + k : v for k,v in partStore.iteritems()}
 
         return newStore
-
-    def _newFile(self, handle, extension):
-
-        if not self.save:
-            return ''
-
-        fileName = self.outputFolder + handle
-        if exists(fileName + extension):
-            i = 1
-            while exists(fileName + "_" + str(i) + extension):
-                i += 1
-            fileName += "_" + str(i)
-
-        fileName += extension
-
-        return fileName
 
     def _date(self):
         d = dt.datetime(1987, 1, 14)
