@@ -16,10 +16,6 @@ from os.path import exists
 # For analysing the state of the computer
 # import psutil
 
-d = dt.datetime(1987, 1, 14)
-d = d.today()
-date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
-
 ### +++++ Internal utilities
 
 def fancyLogger(logLevel, fileName="", silent = False):
@@ -76,7 +72,7 @@ def fancyLogger(logLevel, fileName="", silent = False):
     seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
     seterr(all='log')
 
-    logging.info(date)
+    logging.info(date())
     logging.info("Log initialised")
     if fileName:
         logging.info("The log you are reading was written to " + str(fileName))
@@ -183,6 +179,32 @@ def varyingParams(intObjects,params):
     dataSet = {param:val for param,val in initDataSet.iteritems() if val.count(val[0])!=len(val)}
 
     return dataSet
+
+def mergeDatasets(data, dataLabel):
+    """Take a list of dictionaries and turn it into a dictionary of lists
+
+    """
+
+    # Find all the keys
+    keySet = set()
+    for s in data:
+        keySet = keySet.union(s.keys())
+
+    # For every key
+    partStore = {k:[] for k in keySet}
+    for key in keySet:
+        for s in data:
+            v = repr(s.get(key,None))
+            partStore[key].append(v)
+
+    newStore = {dataLabel + k : v for k,v in partStore.iteritems()}
+
+    return newStore
+
+def date():
+    d = dt.datetime(1987, 1, 14)
+    d = d.today()
+    return str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
 if __name__ == '__main__':
     from timeit import timeit
