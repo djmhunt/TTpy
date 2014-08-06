@@ -375,7 +375,7 @@ class outputting(object):
 
         record.to_excel(outputFile, sheet_name='simRecord')
 
-    def _reframeStore(self, store, storeType):
+    def _reframeStore(self, store, storeLabel):
         """Take a list of dictionaries and turn it into a dictionary of lists"""
 
         # Find all the keys
@@ -390,7 +390,7 @@ class outputting(object):
                 v = repr(s.get(key,None))
                 partStore[key].append(v)
 
-        newStore = {storeType + k : v for k,v in partStore.iteritems()}
+        newStore = {storeLabel + k : v for k,v in partStore.iteritems()}
 
         return newStore
 
