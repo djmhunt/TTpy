@@ -25,7 +25,7 @@ defaultDecks = deckSets["WorthyMaddox"]
 
 class decks(experiment):
 
-    """Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.""""
+    """Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task."""
 
     Name = "decks"
 
@@ -100,6 +100,7 @@ class decks(experiment):
     def procede(self):
         """Updates the experiment after feedback"""
 
+        pass
 
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this

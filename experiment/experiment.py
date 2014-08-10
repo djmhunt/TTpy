@@ -73,8 +73,12 @@ class experiment(object):
     def procede(self):
         """Updates the experiment after feedback"""
 
+        pass
+
     def feedback(self):
         """ Responds to the action from the participant"""
+
+        pass
 
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this
@@ -88,6 +92,8 @@ class experiment(object):
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later """
+
+        pass
 
     def params(self):
         """ Returns the parameters of the experiment as a dictionary"""
