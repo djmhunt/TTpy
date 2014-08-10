@@ -180,7 +180,7 @@ def varyingParams(intObjects,params):
 
     return dataSet
 
-def mergeDatasets(data, dataLabel):
+def mergeDatasets(data, dataLabel=''):
     """Take a list of dictionaries and turn it into a dictionary of lists
 
     """
