@@ -4,6 +4,7 @@
 """
 
 from itertools import izip
+from numpy import amax, amin
 
 from utils import listMerGen
 
@@ -27,7 +28,7 @@ class models(object):
             model = a[0]
             variables = a[1]
             other = a[2]
-            self._params(model,variables,other)
+            self.models.append((model,variables,other))
 
     def reset(self):
         """Resets the generator of models """
@@ -49,7 +50,30 @@ class models(object):
         if self.count >= self.countLen:
             raise StopIteration
 
-        return (model(**record) for model,record in self.models[self.count])
+        model,variables,other = self.models[self.count]
+
+        modelSet = self._params(model,variables,other)
+
+        return (model(**record) for model,record in modelSet)
+
+    def iterFitting(self):
+        """ Yields a list containing model object and parameters to initialise them
+        """
+
+        for m in self.models:
+
+            model = m[0]
+            otherArgs = m[2]
+            initialVars = {}
+            for k,v in m[1].iteritems():
+                if amax(v) == amin(v):
+                    initialVars[k] = amax(v)
+                else:
+                    initialVars[k] = (amax(v)-amin(v))/2.0
+#            initialVars = {k:(amax(v)-amin(v))/2.0 for k,v in m[1].iteritems()}
+
+            yield (model,initialVars, otherArgs)
+
 
     def _params(self,model, parameters, otherArgs):
 
@@ -73,4 +97,4 @@ class models(object):
 
             modelSet.append([model, args])
 
-        self.models.append(modelSet)
+        return modelSet
