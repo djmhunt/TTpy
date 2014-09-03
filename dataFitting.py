@@ -6,21 +6,28 @@
 
 from simulation import simulation
 
-def dataFitting(experiments, models, outputting, data = None, fitter = None, fittingParams = (None,None)):
+import pandas
+import fitters
+
+def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """ A framework for fitting models to data for experiments, along with recording the data
 
         Variables:
         experiments: An instance of the experiments factory
         models: An instance of the models factory
         outputing: An instance of the outputting class
-        data: a Pandas dataframe
+        data: A list of dictionaries not a Pandas dataframe
         fitter: An instance of the fitter class
-        fittingParams : Tuple of strings of form (dataParam,modelParam)
 
         dataFitting(experiments, models, outputting, data = None, fitter = None)
     """
 
-    if not data or not fitter:
+#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):
+    if not (isinstance(data, list) and isinstance(fitter,fitters.fitter)):
+
+#        continue
+#
+#    else:
 
         logger = outputting.getLogger('dataFitting')
 
@@ -37,44 +44,36 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None, fit
     message = "Beginning the data fitting"
     logger.debug(message)
 
-    for expNum in experiments:
+    for modelInfo in models.iterFitting():
 
-        for model in models.iterFitting():
+        model = modelInfo[0]
+        modelSetup = modelInfo[1:]
 
-            for participant in data.iterrows():
+        exp = experiments.create(0)
 
-                # Find the best model values from those proposed
+        for participant in data:
 
-                exp = experiments.create(expNum)
+            # Find the best model values from those proposed
 
-                message = "Beginning run"
-                logger.debug(message)
+            message = "Beginning participant fit"
+            logger.debug(message)
 
-                model = fitter(exp, model, simRun, fittingParams)
+            model = fitter.participant(exp, model, modelSetup, participant)
 
-                message = "Experiment run"
-                logger.debug(message)
+            message = "Participant fitted"
+            logger.debug(message)
 
-                outputting.recordSimParams(exp.params(),model.params())
+            outputting.recordSimParams(exp.params(),model.params())
 
-                outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
+            outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
 
-                outputting.plotModel(model.plot())
+            outputting.plotModel(model.plot())
 
-            outputting.plotModelSet(model.plotSet())
+        outputting.plotModelSet(model.plotSet())
 
-        outputting.plotExperiment(exp.plot())
+    outputting.plotExperiment(exp.plot())
 
     outputting.simLog()
 
     outputting.end()
 
-def simRun(exp, model):
-
-    for event in exp:
-        model.observe(event)
-        act = model.action()
-        exp.receiveAction(act)
-        response = exp.feedback()
-        model.feedback(response)
-        exp.procede()
