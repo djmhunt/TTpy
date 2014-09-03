@@ -30,10 +30,18 @@ class decks(experiment):
     Name = "decks"
 
     def __init__(self,**kwargs):
+
+        self.kwargs = kwargs
+
+        self.reset()
+
+    def reset(self):
         """ Creates a new experiment instance
 
         T: Number of cards drawn by the participant
         decks: Array containing the decks of cards"""
+
+        kwargs = self.kwargs.copy()
 
         T = kwargs.pop('Draws',None)
         decks = kwargs.pop("decks",defaultDecks)
@@ -67,6 +75,8 @@ class decks(experiment):
 
         self.recCardVal = [-1]*self.T
         self.recAction = [-1]*self.T
+
+        return self
 
     def next(self):
         """ Produces the next item for the iterator"""

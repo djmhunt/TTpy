@@ -27,10 +27,18 @@ class beads(experiment):
     Name = "beads"
 
     def __init__(self,**kwargs):
+
+        self.kwargs = kwargs
+
+        self.reset()
+
+    def reset(self):
         """ Creates a new experiment instance
 
         N: Number of beads that could potentially be shown
         beadSequence: The sequence of beads"""
+
+        kwargs = self.kwargs.copy()
 
         N = kwargs.pop('N',None)
         beadSequence = kwargs.pop("beadSequence",defaultBeads)
@@ -62,6 +70,8 @@ class beads(experiment):
         self.recBeads = [-1]*self.T
         self.recAction = [-1]*self.T
         self.firstDecision = 0
+
+        return self
 
     def next(self):
         """ Produces the next item for the iterator"""

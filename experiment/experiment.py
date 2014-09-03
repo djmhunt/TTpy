@@ -18,7 +18,15 @@ class experiment(object):
     Name = "Empty"
 
     def __init__(self,**kwargs):
+
+        self.kwargs = kwargs
+
+        self.reset()
+
+    def reset(self):
         """ Creates a new experiment instance"""
+
+        kwargs = self.kwargs.copy()
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
