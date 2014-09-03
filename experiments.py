@@ -29,11 +29,12 @@ class experiments(object):
             other = a[2]
             self._params(exp,variables,other)
 
+        self.countLen = len(self.experiments)
+
     def __iter__(self):
         """ Returns the iterator for the creation of experiments"""
 
         self.count = -1
-        self.countLen = len(self.experiments)
 
         return self
 
@@ -47,6 +48,9 @@ class experiments(object):
         return self.count
 
     def create(self,expNum):
+
+        if expNum >= self.countLen:
+            return None
 
         return self._instance(expNum)
 
