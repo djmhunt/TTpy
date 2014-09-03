@@ -65,13 +65,16 @@ def _getmatData(folder, files):
 
         dataSets.append(data)
 
-    dataSet = mergeDatasets(dataSets)
+#    dataSet = mergeDatasets(dataSets)
 
-    record = pd.DataFrame(dataSet)
+    # Create one DataFrame for the timeseries data
+
+#    record = pd.DataFrame(dataSet)
 
 #        record = record.set_index('dfile')
 
-    return record
+#    return record
+    return dataSets
 
 #
 #    def _params(self,model, parameters, otherArgs):
