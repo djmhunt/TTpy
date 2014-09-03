@@ -22,7 +22,7 @@ class BP(model):
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
-        self.prior = kwargs.pop('prior',0.5)
+        self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.beta = kwargs.pop('beta',0.3)
 
         self.parameters = {"Name": self.Name,
@@ -60,7 +60,7 @@ class BP(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this model """
+        """ Returns all the relavent data for this model """
 
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,

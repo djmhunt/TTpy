@@ -76,7 +76,7 @@ class MS(model):
             self._update(response,'reac')
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this model """
+        """ Returns all the relavent data for this model """
 
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,

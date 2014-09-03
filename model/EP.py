@@ -54,7 +54,7 @@ class EP(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this model """
+        """ Returns all the relavent data for this model """
 
         results = { "Name": self.Name,
                     "Actions":array(self.recAction),
