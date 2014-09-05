@@ -92,7 +92,7 @@ class models(object):
         for p in paramCombs:
 
             args = {k:v for k,v in izip(params,p)}
-            for k,v in otherArgs:
+            for k,v in otherArgs.iteritems():
                 args[k] = v
 
             modelSet.append([model, args])
