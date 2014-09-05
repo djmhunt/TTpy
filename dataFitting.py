@@ -8,6 +8,7 @@ from simulation import simulation
 
 import pandas
 import fitters
+import fitness
 
 def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """ A framework for fitting models to data for experiments, along with recording the data
@@ -23,7 +24,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """
 
 #    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):
-    if not (isinstance(data, list) and isinstance(fitter,fitters.fitter)):
+    if not (isinstance(data, list) and (isinstance(fitter,fitters.fitter) or isinstance(fitter,fitness.fitter))):
 
 #        continue
 #
@@ -58,18 +59,18 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             message = "Beginning participant fit"
             logger.debug(message)
 
-            model = fitter.participant(exp, model, modelSetup, participant)
+            modelFitted = fitter.participant(exp, model, modelSetup, participant)
 
             message = "Participant fitted"
             logger.debug(message)
 
-            outputting.recordSimParams(exp.params(),model.params())
+            outputting.recordSimParams(exp.params(),modelFitted.params())
 
-            outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
+            outputting.recordSim(exp.outputEvolution(),modelFitted.outputEvolution())
 
-            outputting.plotModel(model.plot())
+            outputting.plotModel(modelFitted.plot())
 
-        outputting.plotModelSet(model.plotSet())
+        outputting.plotModelSet(modelFitted.plotSet())
 
     outputting.plotExperiment(exp.plot())
 
