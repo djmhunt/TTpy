@@ -23,12 +23,12 @@ class qLearn(model):
         self.theta = kwargs.pop('theta',4)
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.alpha = kwargs.pop('alpha',0.3)
-#        self.beta = kwargs.pop('beta',0.3)
+        self.beta = kwargs.pop('beta',0.3)
         self.expect = kwargs.pop('expect',2)
 
         self.parameters = {"Name": self.Name,
                            "theta": self.theta,
-#                           "beta": self.beta,
+                           "beta": self.beta,
                            "alpha": self.alpha}#,
 #                           "expectation": self.expect}
 
@@ -43,6 +43,7 @@ class qLearn(model):
         self.recAction = []
         self.recEvents = []
         self.recProbabilities = []
+        self.recActionProb = []
         self.recExpectation = []
         self.recDecision = []
 
@@ -62,10 +63,11 @@ class qLearn(model):
 
         results = {"Name": self.Name,
                    "theta": self.theta,
-#                   "beta": self.beta,
+                   "beta": self.beta,
                    "alpha": self.alpha,
                    "prior": self.prior,
                    "Probabilities": array(self.recProbabilities),
+                   "ActionProb": array(self.recActionProb),
                    "Expectation": array(self.recExpectation),
                    "Actions":array(self.recAction),
                    "Decsions": array(self.recDecision),
@@ -113,6 +115,7 @@ class qLearn(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities)
+        self.recActionProb.append(self.probabilities[self.currAction])
         self.recExpectation.append(self.expectation)
         self.recDecision.append(self.decision)
 
