@@ -3,6 +3,8 @@
 @author: Dominic
 """
 
+from fit import fit
+
 from itertools import izip
 from numpy import log, concatenate, array
 from numpy import sum as asum
@@ -11,7 +13,7 @@ from numpy import sum as asum
 
 from scipy import optimize
 
-class fitter(object):
+class fitter(fit):
 
     """A class for fitting data
 

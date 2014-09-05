@@ -3,6 +3,8 @@
 @author: Dominic
 """
 
+from fit import fit
+
 from itertools import izip
 #from numpy import amax, amin
 #
@@ -10,7 +12,7 @@ from itertools import izip
 
 from scipy import optimize
 
-class fitter(object):
+class fitter(fit):
 
     """A class for fitting data
 

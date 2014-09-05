@@ -7,8 +7,8 @@
 from simulation import simulation
 
 import pandas
-import fitters
-import fitness
+
+from fit import fit
 
 def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """ A framework for fitting models to data for experiments, along with recording the data
@@ -24,7 +24,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """
 
 #    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):
-    if not (isinstance(data, list) and (isinstance(fitter,fitters.fitter) or isinstance(fitter,fitness.fitter))):
+    if not (isinstance(data, list) and isinstance(fitter,fit)):
 
 #        continue
 #
