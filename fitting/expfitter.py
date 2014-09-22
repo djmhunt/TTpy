@@ -14,7 +14,7 @@ from scipy import optimize
 
 class fitter(fit):
 
-    """A class for fitting data
+    """A class for fitting data by running through an experiment
 
     fitters(partParam, modelParam, scaler)
 
@@ -28,6 +28,8 @@ class fitter(fit):
         self.scaler = scaler
 
     def fitness(self, *modelParameters):
+        """ Returns the value necessary for the fitting
+        """
 
         #Run model with given parameters
         exp, model = self._simSetup(modelParameters)
