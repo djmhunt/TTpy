@@ -14,17 +14,18 @@ class fit(object):
     """
 
 
-    def __init__(self,partParam, modelParam, scaler):
+    def __init__(self,partParam, modelParam, fitAlg, scaler):
 
         self.partParam = partParam
         self.modelparam = modelParam
+        self.fitAlg = fitAlg
         self.scaler = scaler
 
     def fitness(self, *modelParameters):
 
         return 0
 
-    def participant(self, model, modelSetup, partData):
+    def participant(self, exp, model, modelSetup, partData):
 
         self.model = model
         self.mInitialParams = modelSetup[0].values()
