@@ -50,8 +50,7 @@ class fitter(fit):
         self.mOtherParams = modelSetup[1]
 
         self.partChoices = self.scaler(partData[self.partChoiceParam])
-#        partCumRewards = partData["cumpts"]
-#        self.partRewards = concatenate((partCumRewards[0:1],partCumRewards[1:]-partCumRewards[:-1]))
+
         self.partRewards = partData[self.partRewardParam]
 
         fitVals = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
