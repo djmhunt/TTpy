@@ -3,11 +3,11 @@
 @author: Dominic
 """
 
-from scipy import optimize
+from itertools import izip
 
 class fit(object):
 
-    """A class for fitting data
+    """The abstact class for fitting data
 
     fitters(partParam, modelParam, scaler)
 
@@ -22,11 +22,16 @@ class fit(object):
 
     def fitness(self, *modelParameters):
 
-        return None
+        return 0
 
-    def participant(self, exp, model, modelSetup, partData):
+    def participant(self, model, modelSetup, partData):
 
-        return None
+        self.model = model
+        self.mInitialParams = modelSetup[0].values()
+        self.mParamNames = modelSetup[0].keys()
+        self.mOtherParams = modelSetup[1]
+
+        return self._fittedModel(self.mInitialParams)
 
     def _fittedModel(self,*fitVals):
 
@@ -57,7 +62,5 @@ class fit(object):
 
     def _simRun(self, model):
 
-
-
-
+        pass
 

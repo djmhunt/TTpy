@@ -6,11 +6,6 @@
 from fit import fit
 
 from itertools import izip
-#from numpy import amax, amin
-#
-#from utils import listMerGen
-
-from scipy import optimize
 
 class fitter(fit):
 
@@ -60,7 +55,7 @@ class fitter(fit):
 
         self.partChoices = self.scaler(partData[self.partParam])
 
-        fitVals, success = optimize.leastsq(self.fitness, self.mInitialParams[:])
+        fitVals = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
 
         return self._fittedModel(fitVals)
 

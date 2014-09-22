@@ -11,24 +11,26 @@ from numpy import sum as asum
 #
 #from utils import listMerGen
 
-from scipy import optimize
-
 class fitter(fit):
 
-    """A class for fitting data
+    """A class for fitting data by passing the participant data through the model
 
     fitters(partParam, modelParam, scaler)
 
     """
 
 
-    def __init__(self,partParam, modelParam, scaler):
+    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
 
-        self.partParam = partParam
+        self.partChoiceParam = partChoiceParam
+        self.partRewardParam = partRewardParam
         self.modelparam = modelParam
+        self.fitAlg = fitAlg
         self.scaler = scaler
 
     def fitness(self, *modelParameters):
+        """ Returns the value necessary for the fitting
+        """
 
         #Run model with given parameters
         model = self._simSetup(*modelParameters[0])
@@ -36,13 +38,9 @@ class fitter(fit):
         # Pull out the values to be compared
 
         modelData = model.outputEvolution()
-        modelChoiceProbs = modelData["ActionProb"]
+        modelChoiceProbs = modelData[self.modelparam]#"ActionProb"
 
-        logModCoiceprob = log(modelChoiceProbs)
-
-        fit = -2*logModCoiceprob
-
-        return fit
+        return modelChoiceProbs
 
     def participant(self, exp, model, modelSetup, partData):
 
@@ -51,11 +49,12 @@ class fitter(fit):
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
-        self.partChoices = self.scaler(partData[self.partParam])
-        partCumRewards = partData["cumpts"]
-        self.partRewards = concatenate((partCumRewards[0:1],partCumRewards[1:]-partCumRewards[:-1]))
+        self.partChoices = self.scaler(partData[self.partChoiceParam])
+#        partCumRewards = partData["cumpts"]
+#        self.partRewards = concatenate((partCumRewards[0:1],partCumRewards[1:]-partCumRewards[:-1]))
+        self.partRewards = partData[self.partRewardParam]
 
-        fitVals, success = optimize.leastsq(self.fitness, self.mInitialParams[:])
+        fitVals = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
 
         return self._fittedModel(*fitVals)
 
@@ -67,6 +66,7 @@ class fitter(fit):
 
     def _getModInput(self, *modelParameters):
 
+
         optional = self.mOtherParams
 
         inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
@@ -77,6 +77,8 @@ class fitter(fit):
         return inputs
 
     def _simSetup(self, *modelParameters):
+        """ Initialises the model for the running of the 'simulation'
+        """
 
         args = self._getModInput(*modelParameters)
 
@@ -87,6 +89,8 @@ class fitter(fit):
         return model
 
     def _simRun(self, model):
+        """ Simulates the events of a simulation from the perspective of a model
+        """
 
         parAct = self.partChoices
         parReward = self.partRewards
