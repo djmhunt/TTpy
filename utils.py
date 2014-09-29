@@ -7,6 +7,7 @@ import datetime as dt
 
 import logging
 import sys
+import collections
 
 from numpy import seterr, seterrcall, meshgrid, array, amax
 from itertools import izip
@@ -206,9 +207,26 @@ def date():
     d = d.today()
     return str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
+def flatten(l):
+
+    """
+    Flattens any itterable
+    """
+    for i, v in enumerate(l):
+        if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
+            for sub, loc in flatten(v):
+                yield sub,[i] + loc
+        else:
+            yield repr(v),[i]
+
 if __name__ == '__main__':
     from timeit import timeit
     from numpy import fromfunction
+
+    a = array([[1,2,3],[4,5,6]])
+
+    for i, loc in flatten(a):
+        print i, loc
 
 #    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
 #    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
