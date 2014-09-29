@@ -62,7 +62,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
 
             outputting.recordSimParams(exp.params(),modelFitted.params())
 
-            outputting.recordSim(exp.outputEvolution(),modelFitted.outputEvolution())
+            outputting.recordParticipantFit(participant, exp.outputEvolution(),modelFitted.outputEvolution())
 
             outputting.plotModel(modelFitted.plot())
 

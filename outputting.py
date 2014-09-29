@@ -16,8 +16,10 @@ import datetime as dt
 
 from os import getcwd, makedirs
 from os.path import isfile, exists
-from numpy import seterr, seterrcall, array
+from numpy import seterr, seterrcall, array, ndarray, shape
 from itertools import izip
+
+from utils import flatten, listMerGen
 
 class outputting(object):
 
@@ -59,6 +61,7 @@ class outputting(object):
         self.modelParamStore = []
         self.modelLabelStore = []
         self.modelGroupNum = []
+        self.partStore = []
 
         self.modelSetSize = 0
         self.expSetSize = 0
@@ -255,6 +258,32 @@ class outputting(object):
         self.expSetSize += 1
         self.modelSetSize += 1
 
+    def recordParticipantFit(self, participant, expData, modelData):
+        """Record the data relevant to the participant"""
+
+        message = "Recording participant model fit"
+        self.logger.info(message)
+
+        label = "_Model-" + str(self.modelSetNum) + "_Part-" + str(self.modelSetSize)
+
+        participant.setdefault("Name","Participant" + str(self.modelSetSize))
+
+        if self.outputFolder:
+            self.pickleLog(expData,self.outputFolder,label)
+            self.pickleLog(modelData,self.outputFolder,label)
+            self.pickleLog(participant,self.outputFolder,label)
+
+        self.expStore.append(expData)
+        self.modelStore.append(modelData)
+        self.partStore.append(participant)
+
+        self.expGroupNum.append(self.expSetNum)
+        self.modelGroupNum.append(self.modelSetNum)
+
+        self.expSetSize += 1
+        self.modelSetSize += 1
+
+
     ### Ploting
     def plotModel(self,modelPlot):
         """ Feeds the model data into the relevant plotting functions for the class """
@@ -383,33 +412,58 @@ class outputting(object):
 
         expData = self._reframeStore(self.expStore, 'exp_')
         modelData = self._reframeStore(self.modelStore, 'model_')
+        partData = self._reframeStore(self.partStore, 'part_')
 
         data.update(expData)
         data.update(modelData)
+        data.update(partData)
 
         record = pd.DataFrame(data)
 
 #        record = record.set_index('sim')
 
         outputFile = self._newFile('simRecord', '.xlsx')
-
         record.to_excel(outputFile, sheet_name='simRecord')
+
+        outputFile = self._newFile('simRecord', '.csv')
+        record.to_csv(outputFile)
 
     ### Utils
     def _reframeStore(self, store, storeLabel):
         """Take a list of dictionaries and turn it into a dictionary of lists"""
 
-        # Find all the keys
-        keySet = set()
-        for s in store:
-            keySet = keySet.union(s.keys())
+        partStore = {}
 
-        # For every key
-        partStore = {k:[] for k in keySet}
-        for key in keySet:
+        # Find all the keys
+        keySet = {}
+        for s in store:
+            for k in s.keys():
+                v = s[k]
+                if isinstance(v, (list,ndarray)):
+                    arrSets = [range(0,i) for i in shape(v)]
+                    for loc in listMerGen(*arrSets):
+                        if len(loc) > 1:
+                            loc = tuple(loc)
+                        keySet.setdefault(k+str(loc), (k, loc))
+                        partStore.setdefault(k+str(loc),[])
+                else:
+                    keySet.setdefault(k, (None, None))
+                    partStore.setdefault(k,[])
+
+        # For every key now found
+        for key, (initKey, loc) in keySet.iteritems():
             for s in store:
-                v = repr(s.get(key,None))
-                partStore[key].append(v)
+                if initKey == None:
+                    rawVal = s.get(key,None)
+                    v = repr(rawVal)
+                    partStore[key].append(v)
+                else:
+                    rawVal = s.get(initKey,None)
+                    if rawVal == None:
+                        v = None
+                    else:
+                        v = rawVal[loc]
+                    partStore[key].append(v)
 
         newStore = {storeLabel + k : v for k,v in partStore.iteritems()}
 
