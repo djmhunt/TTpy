@@ -44,7 +44,7 @@ class leastsq(fitAlg):
 
         self.sim = sim
 
-        fitVals, success = optimize.leastsq(self.fitness, mInitialParams[:])
+        fitParams, success = optimize.leastsq(self.fitness, mInitialParams[:])
 
-        return fitVals
+        return fitParams
 
