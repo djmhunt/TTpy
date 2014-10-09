@@ -11,10 +11,14 @@ class fitAlg(object):
 
     """
 
+    name = 'none'
+
 
     def __init__(self,dataShaper = None):
 
         self.fitness = self.null
+
+        self.fitInfo = {'name':self.name}
 
     def null(self,*params):
 
@@ -27,4 +31,8 @@ class fitAlg(object):
         self.sim = sim
 
         return 0
+
+    def info(self):
+
+        return self.fitInfo
 

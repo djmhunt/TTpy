@@ -30,38 +30,30 @@ class minimize(fitAlg):
 
     """
 
+    name = 'minimise'
+
+    unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
+    constrained = ['L-BFGS-B','TNC','COBYLA','SLSQP']
+
 
     def __init__(self,dataShaper = None, method = None, bounds = None):
-
-        unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
-        constrained = ['L-BFGS-B','TNC','COBYLA','SLSQP']
 
         if dataShaper == "-2log":
             self.fitness = self.logprob
         else:
             self.fitness = self.null
 
-        self.method = None
-        self.methodSet = None
-        self.bounds = None
-        if isinstance(method,list):
-            self.methodSet = method
-            self.bounds = bounds
-        elif method in unconstrained:
-            self.method = method
-        elif method in constrained:
-            self.method = method
-            self.bounds = bounds
-        elif isinstance(method,('function','instancemethod')):
-            self.method = method
-            self.bounds = bounds
-        elif method == 'constrained':
-            self.methodSet = constrained
-            self.bounds = bounds
-        elif method == 'unconstrained':
-            self.methodSet = unconstrained
+        self._setType(method,bounds)
+
+        self.fitInfo = {'name':self.name,
+                        'shaper': dataShaper,
+                        'bounds':self.bounds
+                        }
+
+        if self.methodSet == None:
+            self.fitInfo['method'] = self.method
         else:
-            self.methodSet = unconstrained
+            self.fitInfo['method'] = self.methodSet
 
     def null(self,*params):
 
@@ -112,3 +104,27 @@ class minimize(fitAlg):
             fitParams = optimizeResult.x
 
             return fitParams
+
+    def _setType(self,method,bounds):
+
+        self.method = None
+        self.methodSet = None
+        self.bounds = None
+        if isinstance(method,list):
+            self.methodSet = method
+            self.bounds = bounds
+        elif method in self.unconstrained:
+            self.method = method
+        elif method in self.constrained:
+            self.method = method
+            self.bounds = bounds
+        elif isinstance(method,('function','instancemethod')):
+            self.method = method
+            self.bounds = bounds
+        elif method == 'constrained':
+            self.methodSet = self.constrained
+            self.bounds = bounds
+        elif method == 'unconstrained':
+            self.methodSet = self.unconstrained
+        else:
+            self.methodSet = self.unconstrained

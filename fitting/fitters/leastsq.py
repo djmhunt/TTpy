@@ -16,6 +16,7 @@ class leastsq(fitAlg):
 
     """
 
+    name = 'leastsq'
 
     def __init__(self,dataShaper = None):
 
@@ -23,6 +24,9 @@ class leastsq(fitAlg):
             self.fitness = self.logprob
         else:
             self.fitness = self.null
+
+        self.fitInfo = {'name':self.name,
+                        'shaper': dataShaper}
 
     def null(self,*params):
 
