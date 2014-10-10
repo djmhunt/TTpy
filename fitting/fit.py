@@ -4,6 +4,7 @@
 """
 
 from itertools import izip
+from utlis import mergeDicts
 
 class fit(object):
 
@@ -13,6 +14,8 @@ class fit(object):
 
     """
 
+    name = 'none'
+
 
     def __init__(self,partParam, modelParam, fitAlg, scaler):
 
@@ -20,6 +23,11 @@ class fit(object):
         self.modelparam = modelParam
         self.fitAlg = fitAlg
         self.scaler = scaler
+
+        self.fitInfo = {'name':self.name,
+                        'participantChoiceParam':partParam,
+                        'modelParam':modelParam,
+                        'scalerEffect': self._scalerEffect()}
 
     def fitness(self, *modelParameters):
 
@@ -33,6 +41,18 @@ class fit(object):
         self.mOtherParams = modelSetup[1]
 
         return self._fittedModel(self.mInitialParams)
+
+    def info(self):
+
+        fitAlgInfo = self.fitAlg.info()
+
+        labeledFitAlgInfo = {"fitAlg_"+k:v for k,v in fitAlgInfo}
+
+        labeledFitInfo = {"fit_" + k : v for k,v in self.fitInfo}
+
+        fitInfo = mergeDicts(labeledFitAlgInfo, labeledFitInfo)
+
+        return fitInfo
 
     def _fittedModel(self,*fitVals):
 
@@ -64,4 +84,14 @@ class fit(object):
     def _simRun(self, model):
 
         pass
+
+    def _scalerEffect(self):
+
+        testBed = [0,1,2,3,10]
+
+        response = self.scaler(testBed)
+
+        return repr(testBed) + " --> " + repr(response)
+
+
 
