@@ -3,6 +3,8 @@
 @author: Dominic
 """
 
+import logging
+
 from fit import fit
 
 from itertools import izip
@@ -27,6 +29,12 @@ class fitter(fit):
         self.modelparam = modelParam
         self.fitAlg = fitAlg
         self.scaler = scaler
+
+        self.fitInfo = {'name':self.name,
+                        'participantChoiceParam':partChoiceParam,
+                        'participantRewardParam':partRewardParam,
+                        'modelParam':modelParam,
+                        'scalerEffect': self._scalerEffect()}
 
     def fitness(self, *modelParameters):
         """ Returns the value necessary for the fitting

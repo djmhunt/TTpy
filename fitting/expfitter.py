@@ -23,6 +23,11 @@ class fitter(fit):
         self.fitAlg = fitAlg
         self.scaler = scaler
 
+        self.fitInfo = {'name':self.name,
+                        'participantChoiceParam':partParam,
+                        'modelParam':modelParam,
+                        'scalerEffect': self._scalerEffect()}
+
     def fitness(self, *modelParameters):
         """ Returns the value necessary for the fitting
         """
