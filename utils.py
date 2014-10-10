@@ -10,9 +10,10 @@ import sys
 import collections
 
 from numpy import seterr, seterrcall, meshgrid, array, amax
-from itertools import izip
+from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
+
 
 # For analysing the state of the computer
 # import psutil
@@ -210,7 +211,7 @@ def date():
 def flatten(l):
 
     """
-    Flattens any itterable
+    Yields the elements in order from any N demtional itterable
     """
     for i, v in enumerate(l):
         if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
@@ -218,6 +219,15 @@ def flatten(l):
                 yield sub,[i] + loc
         else:
             yield repr(v),[i]
+
+def mergeDicts(*args):
+    """Merges dictionaries with different keys"""
+
+    dicItemGen = (x.iteritems() for x in args)
+
+    mergedDict = dict(chain(dicItemGen))
+
+    return mergedDict
 
 if __name__ == '__main__':
     from timeit import timeit
