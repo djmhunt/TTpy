@@ -15,17 +15,8 @@ class minimize(fitAlg):
     fitAlg()
 
 
-    method:
-
-    ‘Nelder-Mead’
-    ‘Powell’
-    ‘CG’
-    ‘BFGS’
-    Constrained methods:
-    ‘L-BFGS-B’
-    ‘TNC’
-    ‘COBYLA’
-    ‘SLSQP’
+    Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,
+    Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’
     custom
 
     """
@@ -33,7 +24,7 @@ class minimize(fitAlg):
     name = 'minimise'
 
     unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
-    constrained = ['L-BFGS-B','TNC','COBYLA','SLSQP']
+    constrained = ['L-BFGS-B','TNC','SLSQP']
 
 
     def __init__(self,dataShaper = None, method = None, bounds = None):
@@ -118,7 +109,7 @@ class minimize(fitAlg):
         elif method in self.constrained:
             self.method = method
             self.bounds = bounds
-        elif isinstance(method,('function','instancemethod')):
+        elif callable(method):
             self.method = method
             self.bounds = bounds
         elif method == 'constrained':
