@@ -38,6 +38,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
 
     logger = outputting.getLogger('Overview')
 
+    outputting.recordFittingParams(fitter.info())
+
     message = "Beginning the data fitting"
     logger.debug(message)
 
