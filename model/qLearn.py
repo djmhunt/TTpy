@@ -114,9 +114,9 @@ class qLearn(model):
             output later """
 
         self.recAction.append(self.currAction)
-        self.recProbabilities.append(self.probabilities)
+        self.recProbabilities.append(self.probabilities.copy())
         self.recActionProb.append(self.probabilities[self.currAction])
-        self.recExpectation.append(self.expectation)
+        self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
 
     def _prob(self):

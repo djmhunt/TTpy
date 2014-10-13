@@ -110,11 +110,11 @@ class EP(model):
         """ Stores the state of all the important variables so that they can be
             output later """
 
-        self.recInformation.append(self.information)
+        self.recInformation.append(self.information.copy())
         self.recAction.append(self.currAction)
-        self.recActivity.append(self.activity)
+        self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
-        self.recProbabilities.append(self.probabilities)
+        self.recProbabilities.append(self.probabilities.copy())
 
     def _prob(self):
 

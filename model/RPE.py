@@ -97,9 +97,9 @@ class RPE(model):
         """ Stores the state of all the important variables so that they can be
             output later """
 
-        self.recInformation.append(self.information)
+        self.recInformation.append(self.information.copy())
         self.recAction.append(self.currAction)
-        self.recActivity.append(self.activity)
+        self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
     def _newAct(self):

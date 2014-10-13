@@ -114,9 +114,9 @@ class BP(model):
             output later """
 
         self.recAction.append(self.currAction)
-        self.recInformation.append(self.information)
-        self.recProbabilities.append(self.probabilities)
-        self.recPosteriorProb.append(self.posteriorProb)
+        self.recInformation.append(self.information.copy())
+        self.recProbabilities.append(self.probabilities.copy())
+        self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
 
     def _prob(self):
