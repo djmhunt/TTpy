@@ -61,9 +61,11 @@ class fitter(fit):
 
         self.partRewards = partData[self.partRewardParam]
 
-        fitVals = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
+        fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
 
-        return self._fittedModel(*fitVals)
+        model = self._fittedModel(*fitVals)
+
+        return model, fitQuality
 
     def _fittedModel(self,*fitVals):
 

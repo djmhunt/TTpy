@@ -87,14 +87,15 @@ class minimize(fitAlg):
 
             fitVal, fitid = min((v, idx) for (idx, v) in enumerate(fitValSet))
 
-            return fitParamSet[fitid]
+            return fitParamSet[fitid], fitVal
 
         else:
             optimizeResult = optimize.minimize(self.fitness, mInitialParams[:], method=method, bounds=bounds)
 
             fitParams = optimizeResult.x
+            fitVal = optimizeResult.fun
 
-            return fitParams
+            return fitParams, fitVal
 
     def _setType(self,method,bounds):
 

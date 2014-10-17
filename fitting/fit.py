@@ -4,7 +4,8 @@
 """
 
 from itertools import izip
-from utlis import mergeDicts
+from utils import mergeDicts
+from numpy import array
 
 class fit(object):
 
@@ -46,13 +47,13 @@ class fit(object):
 
         fitAlgInfo = self.fitAlg.info()
 
-        labeledFitAlgInfo = {"fitAlg_"+k:v for k,v in fitAlgInfo}
+#        labeledFitAlgInfo = {"fitAlg_"+k:v for k,v in fitAlgInfo.iteritems()}
 
-        labeledFitInfo = {"fit_" + k : v for k,v in self.fitInfo}
+#        labeledFitInfo = {"fit_" + k : v for k,v in self.fitInfo.iteritems()}
 
-        fitInfo = mergeDicts(labeledFitAlgInfo, labeledFitInfo)
+#        fitInfo = mergeDicts(labeledFitAlgInfo, labeledFitInfo)
 
-        return fitInfo
+        return (self.fitInfo,fitAlgInfo)
 
     def _fittedModel(self,*fitVals):
 
@@ -89,9 +90,9 @@ class fit(object):
 
         testBed = [0,1,2,3,10]
 
-        response = self.scaler(testBed)
+        response = self.scaler(array(testBed))
 
-        return repr(testBed) + " --> " + repr(response)
+        return repr(testBed) + " --> " + repr(list(response))
 
 
 
