@@ -16,8 +16,9 @@ import datetime as dt
 
 from os import getcwd, makedirs
 from os.path import isfile, exists
-from numpy import seterr, seterrcall, array, ndarray, shape
+from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
+from collections import OrderedDict
 
 from utils import flatten, listMerGen
 
@@ -62,6 +63,8 @@ class outputting(object):
         self.modelLabelStore = []
         self.modelGroupNum = []
         self.partStore = []
+        self.fitInfo = None
+        self.fitQualStore = []
 
         self.modelSetSize = 0
         self.expSetSize = 0
@@ -186,7 +189,7 @@ class outputting(object):
         sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
         # Set the numpy error output
         seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
-        seterr(all='log')
+        seterr(all='log')#'raise')#'log')
 
         logging.info(self.date)
         logging.info("Log initialised")
@@ -258,7 +261,7 @@ class outputting(object):
         self.expSetSize += 1
         self.modelSetSize += 1
 
-    def recordParticipantFit(self, participant, expData, modelData):
+    def recordParticipantFit(self, participant, expData, modelData, fitQuality = None):
         """Record the data relevant to the participant"""
 
         message = "Recording participant model fit"
@@ -276,12 +279,34 @@ class outputting(object):
         self.expStore.append(expData)
         self.modelStore.append(modelData)
         self.partStore.append(participant)
+        self.fitQualStore.append(fitQuality)
 
         self.expGroupNum.append(self.expSetNum)
         self.modelGroupNum.append(self.modelSetNum)
 
         self.expSetSize += 1
         self.modelSetSize += 1
+
+    def recordFittingParams(self,fitInfo):
+        """Records and outputs to the log the parameters associated with the fitting algorithms """
+
+        self.fitInfo = fitInfo
+
+        log = logging.getLogger('Framework')
+
+        message = "Fitting information:"
+        log.info(message)
+
+        for f in fitInfo:
+            message = "For " + f['name'] + ":"
+            log.info(message)
+
+            for k,v in f.iteritems():
+                if k == "name":
+                    continue
+
+                message = k + ": " + repr(v)
+                log.info(message)
 
 
     ### Ploting
@@ -404,60 +429,167 @@ class outputting(object):
         message = "Produce log of all experiments"
         self.logger.info(message)
 
-        data = {'exp_Label': self.expLabelStore,
-                'model_Label': self.modelLabelStore,
-                'exp_Group_Num': self.expGroupNum,
-                'model_Group_Num': self.modelGroupNum,
-                'folder': self.outputFolder}
-
-        expData = self._reframeStore(self.expStore, 'exp_')
-        modelData = self._reframeStore(self.modelStore, 'model_')
-        partData = self._reframeStore(self.partStore, 'part_')
-
-        data.update(expData)
-        data.update(modelData)
-        data.update(partData)
+        data = self._makeDataSet()
+        pertinantData = self._makePertinantDataSet()
 
         record = pd.DataFrame(data)
+        pertRecord = pd.DataFrame(pertinantData)
 
 #        record = record.set_index('sim')
-
-        outputFile = self._newFile('simRecord', '.xlsx')
-        record.to_excel(outputFile, sheet_name='simRecord')
 
         outputFile = self._newFile('simRecord', '.csv')
         record.to_csv(outputFile)
 
+        outputFile = self._newFile('abridgedRecord', '.csv')
+        pertRecord.to_csv(outputFile)
+
+        outputFile = self._newFile('simRecord', '.xlsx')
+        xlsx = pd.ExcelWriter(outputFile)
+        record.to_excel(xlsx, sheet_name='simRecord')
+        pertRecord.to_excel(xlsx,sheet_name = 'abridgedRecord')
+        xlsx.save()
+
+    def _makeDataSet(self):
+
+        data = OrderedDict()
+        data['exp_Label'] = self.expLabelStore
+        data['model_Label'] = self.modelLabelStore
+        data['exp_Group_Num'] = self.expGroupNum
+        data['model_Group_Num'] = self.modelGroupNum
+        data['folder'] = self.outputFolder
+
+        expData = self._reframeStore(self.expStore, 'exp_')
+        modelData = self._reframeStore(self.modelStore, 'model_')
+        if self.fitInfo != None:
+            partData = self._reframeStore(self.partStore, 'part_')
+            partData['fit_quality'] = self.fitQualStore
+            data.update(partData)
+
+        data.update(modelData)
+        data.update(expData)
+
+        return data
+
+    def _makePertinantDataSet(self):
+
+        data = OrderedDict()
+        data['exp_Label'] = self.expLabelStore
+        data['model_Label'] = self.modelLabelStore
+        data['exp_Group_Num'] = self.expGroupNum
+        data['model_Group_Num'] = self.modelGroupNum
+
+        # Get parameters and fitting data
+        modelParams = self._reframeStore(self.modelParamStore)
+        modelUsefulParams = OrderedDict((('model_' + k,v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
+        data.update(modelUsefulParams)
+
+        ### Must do this for experiment parameters as well
+#        data.update(expData)
+        fitInfo = self.fitInfo
+        if fitInfo != None:
+
+            usefulKeys = []
+            for fitSet in fitInfo:
+                for k,v in fitSet.iteritems():
+                    if "Param" in k and "model" or "participant" in k:
+                        usefulKeys.append(v)
+
+            modelData = self._reframeSelectStore(self.modelStore, usefulKeys, 'model_')
+            partData = self._reframeSelectStore(self.partStore, usefulKeys, 'part_')
+            partData['fit_quality'] = self.fitQualStore
+            data.update(modelData)
+            data.update(partData)
+
+
+        return data
+
+
     ### Utils
-    def _reframeStore(self, store, storeLabel):
+    def _reframeStore(self, store, storeLabel = ''):
         """Take a list of dictionaries and turn it into a dictionary of lists"""
 
-        partStore = {}
+        keySet = self._dictKeySet(store)
+
+        # For every key now found
+        newStore = self._newDict(keySet,store,storeLabel)
+
+        return newStore
+
+    def _reframeSelectStore(self, store, keySet, storeLabel = ''):
+        """Take a list of dictionaries and turn it into a dictionary of lists"""
+
+        keySet = self._dictSelectKeySet(store,keySet)
+
+        # For every key now found
+        newStore = self._newDict(keySet,store,storeLabel)
+
+        return newStore
+
+    def _dictKeySet(self,store):
 
         # Find all the keys
-        keySet = {}
+        keySet = OrderedDict()
+
         for s in store:
             for k in s.keys():
                 v = s[k]
                 if isinstance(v, (list,ndarray)):
+                    #We need to calculate every combination of co-ordinates in the array
                     arrSets = [range(0,i) for i in shape(v)]
-                    for loc in listMerGen(*arrSets):
-                        if len(loc) > 1:
-                            loc = tuple(loc)
+                    # Now record each one
+                    for genLoc in listMerGen(*arrSets):
+                        if len(genLoc) == 1:
+                            loc = genLoc[0]
+                        else:
+                            loc = tuple(genLoc)
                         keySet.setdefault(k+str(loc), (k, loc))
-                        partStore.setdefault(k+str(loc),[])
                 else:
                     keySet.setdefault(k, (None, None))
-                    partStore.setdefault(k,[])
 
-        # For every key now found
-        for key, (initKey, loc) in keySet.iteritems():
-            for s in store:
-                if initKey == None:
-                    rawVal = s.get(key,None)
-                    v = repr(rawVal)
-                    partStore[key].append(v)
+        return keySet
+
+    def _dictSelectKeySet(self,store, keys):
+
+        # Find all the keys
+        keySet = OrderedDict()
+
+        for s in store:
+            sKeys = (k for k in s.iterkeys() if k in keys)
+            for k in sKeys:
+                v = s[k]
+                if isinstance(v, (list,ndarray)):
+                    vShape = shape(v)
+                    # If the length is too long, skip it. It will just clutter up the document
+                    if prod(vShape) > 10:
+                        continue
+                    #We need to calculate every combination of co-ordinates in the array
+                    arrSets = [range(0,i) for i in vShape]
+                    # Now record each one
+                    for genLoc in listMerGen(*arrSets):
+                        if len(genLoc) == 1:
+                            loc = genLoc[0]
+                        else:
+                            loc = tuple(genLoc)
+                        keySet.setdefault(k+str(loc), (k, loc))
                 else:
+                    keySet.setdefault(k, (None, None))
+
+        return keySet
+
+    def _newDict(self,keySet,store,storeLabel):
+
+        partStore = OrderedDict()
+
+        for key, (initKey, loc) in keySet.iteritems():
+
+            partStore.setdefault(key,[])
+
+            if initKey == None:
+                vals = [repr(s.get(key,None)) for s in store]
+                partStore[key].extend(vals)
+
+            else:
+                for s in store:
                     rawVal = s.get(initKey,None)
                     if rawVal == None:
                         v = None
@@ -465,7 +597,7 @@ class outputting(object):
                         v = rawVal[loc]
                     partStore[key].append(v)
 
-        newStore = {storeLabel + k : v for k,v in partStore.iteritems()}
+        newStore = OrderedDict(((storeLabel + k, v) for k,v in partStore.iteritems()))
 
         return newStore
 
