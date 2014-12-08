@@ -2,6 +2,7 @@
 """
 @author: Dominic
 """
+from __future__ import division
 
 from fitAlg import fitAlg
 

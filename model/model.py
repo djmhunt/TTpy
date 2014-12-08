@@ -2,7 +2,7 @@
 """
 @author: Dominic
 """
-
+from __future__ import division
 
 from numpy import array
 from modelSetPlot import modelSetPlot

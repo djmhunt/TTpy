@@ -3,6 +3,7 @@
 
 @author: Dominic
 """
+from __future__ import division
 
 def  simulation(experiments, models, outputting):
     """ A framework for letting models interact with experiments and record the data

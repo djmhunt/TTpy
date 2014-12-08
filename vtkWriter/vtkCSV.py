@@ -5,7 +5,7 @@
 
 Based on vtktools.py
 """
-
+from __future__ import division
 
 from numpy import ones
 

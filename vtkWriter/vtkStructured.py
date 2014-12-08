@@ -5,6 +5,7 @@
 
 Based on vtktools.py
 """
+from __future__ import division
 
 import xml.etree.ElementTree as ET
 

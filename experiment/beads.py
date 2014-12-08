@@ -2,6 +2,7 @@
 """
 @author: Dominic
 """
+from __future__ import division
 
 #matplotlib.interactive(True)
 import logging

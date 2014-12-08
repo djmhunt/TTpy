@@ -2,6 +2,7 @@
 """
 @author: Dominic
 """
+from __future__ import division
 
 import sys
 sys.path.append("../../")
@@ -137,10 +138,6 @@ class TestClass:
                       [ 0.6,  1.8]])
         
         assert (abs(starts2 - ans2) < 0.01).all()
-            
-#    def test_setType(self):
-#        
-#        print 2
         
     def test_logprob(self):
         
@@ -177,15 +174,8 @@ class TestClass:
         
         result = fitAlg._methodFit(fitAlg.methodSet[0], initParamSets, fitAlg.bounds)
         
-        pytest.set_trace()
-        
         assert (abs(result.x - array([0.2,0.7])) < 0.1).all()
-        
-        
-        
-    def test_fit(self):
-        
-        print 5
+
         
 
 if __name__ == '__main__':
