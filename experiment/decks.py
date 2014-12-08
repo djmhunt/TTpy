@@ -67,7 +67,7 @@ class decks(experiment):
 
         # Set draw count
         self.t = -1
-        self.drawn = [0,0]
+        self.drawn = -1#[-1,-1]
         self.cardValue = None
         self.action = None
 
@@ -97,11 +97,12 @@ class decks(experiment):
         """ Responds to the action from the participant"""
 
         deckDrawn = self.action
-        cardDrawn = self.drawn[deckDrawn] + 1
+        cardDrawn = self.drawn + 1 #[deckDrawn] + 1
 
         self.cardValue = self.decks[deckDrawn,cardDrawn]
 
-        self.drawn[deckDrawn] = cardDrawn
+#        self.drawn[deckDrawn] = cardDrawn
+        self.drawn = cardDrawn
 
         self._storeState()
 
