@@ -11,20 +11,21 @@ class fitter(fit):
 
     """A class for fitting data by running through an experiment
 
-    fitters(partParam, modelParam, scaler)
+    fitters(partChoiceParam, partRewardParam, modelParam, scaler)
 
     """
 
 
-    def __init__(self,partParam, modelParam, fitAlg, scaler):
+    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
 
-        self.partParam = partParam
+        self.partChoiceParam = partChoiceParam
+        self.partRewardParam = partRewardParam
         self.modelparam = modelParam
         self.fitAlg = fitAlg
         self.scaler = scaler
 
         self.fitInfo = {'name':self.name,
-                        'participantChoiceParam':partParam,
+                        'participantChoiceParam':partChoiceParam,
                         'modelParam':modelParam,
                         'scalerEffect': self._scalerEffect()}
 
@@ -43,7 +44,7 @@ class fitter(fit):
 
         #Check lengths
         if len(partChoices) != len(modelChoices):
-            raise ValueError("The length of the model and participatiant data are different. %s:%s to %s:%s " % (self.partParam,len(partChoices),self.modelparam,len(modelChoices)))
+            raise ValueError("The length of the model and participatiant data are different. %s:%s to %s:%s " % (self.partChoiceParam,len(partChoices),self.modelparam,len(modelChoices)))
 
         # Find the difference
 
@@ -59,7 +60,7 @@ class fitter(fit):
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
-        self.partChoices = self.scaler(partData[self.partParam])
+        self.partChoices = self.scaler(partData[self.partChoiceParam])
 
         fitVals = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
 
