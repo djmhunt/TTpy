@@ -5,6 +5,7 @@
 import logging
 
 from numpy import exp, zeros, array
+from random import choice
 
 from model import model
 from modelPlot import modelPlot
@@ -22,10 +23,10 @@ class EP(model):
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.theta = kwargs.pop('theta',4)
-        self.activity = zeros(2) + 0.5
+        self.activity = kwargs.pop('activity',array([0.5,0.5]))
         self.decision = None
         self.firstDecision = 0
-        self.probabilities = zeros(2)
+        self.probabilities = zeros(2) + 0.5
         self.lastObs = False
 
         self.parameters = {"Name": self.Name,
@@ -134,9 +135,11 @@ class EP(model):
 
         if abs(prob-0.5)>self.beta:
             if prob>0.5:
-                self.decision = 1
+                self.decision = 0
+            elif prob == 0.5:
+                self.decision = choice([0,1])
             else:
-                self.decision = 2
+                self.decision = 1
         else:
             self.decision = None
 

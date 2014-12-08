@@ -3,9 +3,12 @@
 @author: Dominic
 """
 
+from __future__ import division
+
 import logging
 
 from numpy import exp, zeros, array
+from random import choice
 
 from model import model
 from modelPlot import modelPlot
@@ -24,7 +27,7 @@ class qLearn(model):
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
-        self.expect = kwargs.pop('expect',2)
+        self.expect = kwargs.pop('expect',5)
 
         self.parameters = {"Name": self.Name,
                            "theta": self.theta,
@@ -57,6 +60,8 @@ class qLearn(model):
         self._storeState()
 
         return self.currAction
+        
+    
 
     def outputEvolution(self):
         """ Returns all the relavent data for this model """
@@ -130,11 +135,13 @@ class qLearn(model):
 
         prob = self.probabilities[0]
 
-        if abs(prob-0.5)>self.beta:
+        if abs(prob-0.5) >= self.beta:
             if prob>0.5:
-                self.decision = 1
+                self.decision = 0
+            elif prob == 0.5:
+                self.decision = choice([0,1])
             else:
-                self.decision = 2
+                self.decision = 1
         else:
             self.decision = None
 
