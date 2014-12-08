@@ -38,9 +38,47 @@ def _getFiles(folder, fileType):
 
     files = listdir(folder)
 
-    dataFiles = [f for f in files if f.endswith(fileType) ]
+    dataFiles = _sortFiles(files, fileType)
 
     return dataFiles
+    
+def _sortFiles(files, fileType):
+    
+    dataFiles = [f for f in files if f.endswith(fileType) ]
+    
+    suffixLen = len(fileType)
+    
+    prefix = _getFilePrefix(dataFiles, suffixLen)
+    
+    sortedFiles = _floatCore(dataFiles,prefix,fileType)
+    if sortedFiles:
+        return sortedFiles
+    else:
+        return dataFiles   
+    
+def _getFilePrefix(dataFiles, suffixLen):
+    
+    for i in xrange(1,len(dataFiles[0])-suffixLen):
+        sec = dataFiles[0][:i]
+        if all((sec == d[:i] for d in dataFiles)):
+            continue
+        else:
+            break
+    return dataFiles[0][:i-1]
+    
+def _floatCore(dataFiles,prefix,suffix):
+    
+    try:
+        core = [int(d[len(prefix):-(len(suffix)+1)]) for d in dataFiles]
+    except:
+        return []
+        
+    core.sort()
+    
+    sortedFiles = [''.join([prefix,str(c),'.',suffix]) for c in core]
+    
+    return sortedFiles
+    
 
 def _getmatData(folder, files):
 
