@@ -2,6 +2,7 @@
 """
 @author: Dominic
 """
+from __future__ import division
 
 import logging
 
@@ -20,6 +21,8 @@ class fitter(fit):
     fitters(partParam, modelParam, scaler)
 
     """
+    
+    name = "fitness"
 
 
     def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
@@ -46,7 +49,7 @@ class fitter(fit):
         # Pull out the values to be compared
 
         modelData = model.outputEvolution()
-        modelChoiceProbs = modelData[self.modelparam]#"ActionProb"
+        modelChoiceProbs = modelData[self.modelparam]
 
         return modelChoiceProbs
 
@@ -107,8 +110,9 @@ class fitter(fit):
         for action, reward in izip(parAct, parReward):
 
             model.currAction = action
-            model._update(reward,'reac')
             model._storeState()
+            model._update(reward,'reac')
+            
 
 
 
