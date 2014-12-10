@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 @author: Dominic
+
+Based on the paper Regulatory fit effects in a choice task
+                Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007).
+                Psychonomic Bulletin & Review, 14(6), 1125–32. 
+                Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
 
 from __future__ import division

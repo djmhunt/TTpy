@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 @author: Dominic
+
+Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+                    Moore, S. C., & Sellen, J. L. (2006). 
+                    Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9. 
+                    Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
 from __future__ import division
 
