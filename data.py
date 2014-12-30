@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+This module allows for the importing of participant data for use in fitting
+
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -14,14 +16,16 @@ from numpy import array, shape
 from utils import listMerGen, mergeDatasets
 
 def data(folder,fileType):
-
     """A function for reading in and returning a dataset
 
-    dataSet = data(folder,fileType)
-
+    Parameters
+    ----------
     folder : string
-    fileType: string
-    dataSet : pandas dataframe
+    fileType : string
+    
+    Returns
+    -------
+    dataSet : dictionary
     """
 
     fileType = fileType
@@ -36,6 +40,7 @@ def data(folder,fileType):
     return dataSet
 
 def _getFiles(folder, fileType):
+    """Produces the list of valid input files"""
 
     files = listdir(folder)
 
@@ -44,6 +49,7 @@ def _getFiles(folder, fileType):
     return dataFiles
     
 def _sortFiles(files, fileType):
+    """Identifies valid files and sorts them if possible"""
     
     dataFiles = [f for f in files if f.endswith(fileType) ]
     
@@ -58,6 +64,8 @@ def _sortFiles(files, fileType):
         return dataFiles   
     
 def _getFilePrefix(dataFiles, suffixLen):
+    """Identifies any initial part of the filenames which is identical 
+    for all files"""
     
     for i in xrange(1,len(dataFiles[0])-suffixLen):
         sec = dataFiles[0][:i]
@@ -68,6 +76,8 @@ def _getFilePrefix(dataFiles, suffixLen):
     return dataFiles[0][:i-1]
     
 def _floatCore(dataFiles,prefix,suffix):
+    """Takes the *core* part of a filename and, assuming it is a number, 
+    sorts them. Returns the filelist sorted"""
     
     try:
         core = [int(d[len(prefix):-(len(suffix)+1)]) for d in dataFiles]
@@ -82,6 +92,7 @@ def _floatCore(dataFiles,prefix,suffix):
     
 
 def _getmatData(folder, files):
+    """Loads the data from MATLAB files"""
 
     dataSets = []
     folder = folder
@@ -104,38 +115,4 @@ def _getmatData(folder, files):
 
         dataSets.append(data)
 
-#    dataSet = mergeDatasets(dataSets)
-
-    # Create one DataFrame for the timeseries data
-
-#    record = pd.DataFrame(dataSet)
-
-#        record = record.set_index('dfile')
-
-#    return record
     return dataSets
-
-#
-#    def _params(self,model, parameters, otherArgs):
-#
-#        """ For the given model returns the appropreate list for constructing the model instances
-#
-#        Each line has:
-#        (model, {dict of model arguments})
-#        """
-#
-#        params = parameters.keys()
-#        paramVals = parameters.values()
-#
-#        paramCombs = listMerGen(*paramVals)
-#
-#        modelSet = []
-#        for p in paramCombs:
-#
-#            args = {k:v for k,v in izip(params,p)}
-#            for k,v in otherArgs:
-#                args[k] = v
-#
-#            modelSet.append([model, args])
-#
-#        self.models.append(modelSet)

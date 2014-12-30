@@ -106,7 +106,7 @@ class beads(experiment):
         """ Responds to the action from the participant"""
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this
+        """ Plots and saves files containing all the relevent data for this
         experiment run """
 
         results = { "Name": self.Name,
@@ -125,17 +125,6 @@ class beads(experiment):
     class experimentPlot(experimentPlot):
 
         """Abstract class for the creation of plots relevant to a experiment"""
-
-    #    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLables):
-    #
-    #        self.expStore = expSet
-    #        self.expParams = expParams
-    #        self.expLabel = expLabel
-    #        self.modelStore = modelSet
-    #        self.modelParams = modelParams
-    #        self.modelLabels = modelLabels
-    #
-    #        self._figSets()
 
         def _figSets(self):
 

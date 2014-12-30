@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
 class modelPlot(object):
 
-    """Abstract class for the creation of plots relevant to a model"""
+    """Abstract class for the creation of plots relevant to a model
+    
+    Parameters
+    ----------
+    model : dict
+        The data produced by the model
+    modelParams : dict
+        The parameters associated with the model
+    modelLabel : string
+        A unique identifier for the model
+    """
 
     def __init__(self, model, modelParams, modelLabel):
 
@@ -31,7 +41,17 @@ class modelPlot(object):
         return self
 
     def next(self):
-        """ Produces the next item for the iterator"""
+        """ 
+        Returns the plots
+        
+        Returns
+        -------
+        figure : matplotlib.pyplot.figure
+        
+        Raises
+        ------
+        StopIteration
+            When there are no more figures to return"""
 
         if self.counter < len(self.figSets):
             figure = self.figSets[self.counter]

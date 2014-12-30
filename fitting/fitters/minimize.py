@@ -12,6 +12,8 @@ from math import isinf
 from itertools import izip
 from utils import listMergeNP
 
+import pytest
+
 class minimize(fitAlg):
 
     """The class for fitting data using scipy.optimise.minimize
@@ -112,7 +114,7 @@ class minimize(fitAlg):
                     fitParamSet.append(optimizeResult.x)
                     fitValSet.append(optimizeResult.fun)
                     methodSuccessSet.append(method)
-            
+
             if len(fitValSet) == 0:
                 return mInitialParams, float("inf")
 
@@ -147,8 +149,7 @@ class minimize(fitAlg):
         
             optimizeResult = optimize.minimize(self.fitness, i[:], 
                                                method=method, 
-                                               bounds=bounds)#, 
-#                                               tol = 0.00000000000000001)#, 
+                                               bounds=bounds)#,  
 #                                               callback= self.callback )
             self.count = 1
             
@@ -167,6 +168,7 @@ class minimize(fitAlg):
 #            data['message'].append(o.message) 
 #            data['jacAlpha'].append(o.jac[0])
 #            data['jacTheta'].append(o.jac[1])
+#        pytest.set_trace()
                 
         if len(resultSet) == 0:
             return None

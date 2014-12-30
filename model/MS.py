@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 
-Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+:Reference: Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
                     Moore, S. C., & Sellen, J. L. (2006). 
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9. 
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
@@ -20,12 +20,28 @@ from plotting import dataVsEvents, lineplot
 
 class MS(model):
 
-    """The documentation for the class"""
+    """The Moore & Sellen model
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+        
+    Parameters
+    ----------
+    alpha : float, optional
+        Learning rate parameter
+    theta : float, optional
+        Sensitivity parameter for probabilities
+    beta : float, optional
+        Decision threshold parameter
+    oneProb : array, optional
+        The prior probability
+    """
 
     Name = "M&S"
 
     def __init__(self,**kwargs):
-        """The model class is a general template for a model"""
 
         self.currAction = 1
         self.information = zeros(2)
@@ -59,7 +75,11 @@ class MS(model):
         self.recDecision = []
 
     def action(self):
-        """ Returns the action of the model"""
+        """
+        Returns
+        -------
+        action : integer or None
+        """
 
         self._decision()
 
@@ -82,7 +102,14 @@ class MS(model):
             self._update(response,'reac')
 
     def outputEvolution(self):
-        """ Returns all the relavent data for this model """
+        """ Returns all the relevent data for this model 
+        
+        Returns
+        -------
+        results : dict
+            The dictionary contains a series of keys including Name, 
+            Probabilities, Actions and Events.
+        """
 
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
@@ -172,11 +199,9 @@ class MS(model):
         else:
             self.decision = None
 
-    class modelPlot(modelPlot):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
     class modelSetPlot(modelSetPlot):
+        
+        """Class for the creation of plots relevant to the model set"""
 
         def _figSets(self):
             """ Contains all the figures """

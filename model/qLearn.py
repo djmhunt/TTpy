@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 
-Based on the paper Regulatory fit effects in a choice task
+:Reference: Based on the paper Regulatory fit effects in a choice task
                 Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007).
                 Psychonomic Bulletin & Review, 14(6), 1125–32. 
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
@@ -21,12 +21,30 @@ from modelSetPlot import modelSetPlot
 
 class qLearn(model):
 
-    """The documentation for the class"""
+    """The q-Learning algorithm
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+        
+    Parameters
+    ----------
+    alpha : float, optional
+        Learning rate parameter
+    theta : float, optional
+        Sensitivity parameter for probabilities
+    beta : float, optional
+        Decision threshold parameter
+    prior : array, optional
+        The prior probability 
+    expect: float, optional
+        The initialisation of the the expected reward
+    """
 
     Name = "qLearn"
 
     def __init__(self,**kwargs):
-        """The model class is a general template for a model"""
 
         self.theta = kwargs.pop('theta',4)
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
@@ -56,7 +74,11 @@ class qLearn(model):
         self.recDecision = []
 
     def action(self):
-        """ Returns the action of the model"""
+        """
+        Returns
+        -------
+        action : integer or None
+        """
 
         self._decision()
 
@@ -69,7 +91,14 @@ class qLearn(model):
     
 
     def outputEvolution(self):
-        """ Returns all the relavent data for this model """
+        """ Returns all the relevent data for this model 
+        
+        Returns
+        -------
+        results : dict
+            The dictionary contains a series of keys including Name, 
+            Probabilities, Actions and Events.
+        """
 
         results = {"Name": self.Name,
                    "theta": self.theta,
@@ -90,14 +119,15 @@ class qLearn(model):
 
         if instance == 'obs':
 
-#            self.recEvents.append(event)
-#
-#            #Calculate jar information
-#            info = self.oneProb*event + (1-self.oneProb)*(1-event)
-#            self.information = array([info,1-info])
-#
-#            #Calculate the new probabilities
-#            self._prob()
+            self.recEvents.append(event)
+
+            chosen = self.currAction
+
+            #Calculate jar information
+            self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
+
+            #Calculate the new probabilities
+            self._prob()
 
             self.lastObs = True
 
@@ -149,11 +179,3 @@ class qLearn(model):
                 self.decision = 1
         else:
             self.decision = None
-
-    class modelPlot(modelPlot):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
-    class modelSetPlot(modelSetPlot):
-
-        """Abstract class for the creation of plots relevant to a set of models"""

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -10,12 +10,20 @@ from modelPlot import modelPlot
 
 class model(object):
 
-    """The documentation for the class"""
+    """
+    The model class is a general template for a model. It also contains 
+    universal methods used by all models.
+        
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    """
 
     Name = "model"
 
     def __init__(self,**kwargs):
-        """The model class is a general template for a model"""
+        """"""
 
         self.currAction = 1
         self.lastObs = False
@@ -47,26 +55,55 @@ class model(object):
 
 
     def action(self):
-        """ Returns the action of the model"""
+        """
+        Returns the action of the model
+        
+        Returns
+        -------
+        action : integer or None
+        """
 
         self._storeState()
 
         return self.currAction
 
     def observe(self,event):
-        """ Recieves the latest observation"""
+        """
+        Receives the latest observation
+        
+        Parameters
+        ----------
+        event : float or None
+            The stimulus from the experiment. Returns without doing anything if
+            the value of event is `None`.
+        
+        """
 
         if event != None:
             self._update(event,'obs')
 
     def feedback(self,response):
-        """ Recieves the reaction to the action """
+        """
+        Receives the reaction to the action
+        
+        Parameters
+        ----------
+        response : float
+            The stimulus from the experiment. Returns without doing anything if
+            the value of response is `None`.
+        """
 
         if response != None:
             self._update(response,'reac')
 
     def outputEvolution(self):
-        """ Returns all the relavent data for this model """
+        """
+        Returns all the relevent data for this model
+
+        Returns
+        -------
+        results : dictionary
+        """
 
         results = {"Name": self.Name,
                    "Actions":array(self.recAction),
@@ -100,17 +137,36 @@ class model(object):
         self.recAction.append(self.currAction)
 
     def params(self):
-        """ Returns the parameters of the model as a dictionary"""
+        """
+        Returns the parameters of the model
+        
+        Returns
+        -------
+        parameters : dictionary
+        """
 
         return self.parameters
 
     def plot(self):
-        """Returns a plotting class relavent for this model"""
+        """
+        Returns a plotting class relavent for this model
+        
+        Returns
+        -------
+        modelPlot : model.modelPlot
+        """
 
         return self.modelPlot
 
     def plotSet(self):
-        """Returns a plotting class relavent for a parameter analysis for this model"""
+        """
+        Returns a plotting class relavent analysis of sets of results from this 
+        model
+        
+        Returns
+        -------
+        modelSetPlot : model.modelSetPlot
+        """
 
         return self.modelSetPlot
 

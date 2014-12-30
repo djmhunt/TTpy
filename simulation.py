@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
 def  simulation(experiments, models, outputting):
-    """ A framework for letting models interact with experiments and record the data
+    """ 
+    A framework for letting models interact with experiments and record the data
 
-        Variables:
-        experiments: An instance of the experiments factory
-        models: An instance of the models factory
-        outputing: An instance of the outputting class
-
-        simulation(experiments, models, outputting)
+        Parameters
+        ----------
+        experiments : experiments.experiments
+            An experiment factory generating each of the different experiments being considered
+        models : models.models
+            A model factory generating each of the different models being considered
+        outputing : outputting.outputting
     """
 
     logger = outputting.getLogger('Overview')

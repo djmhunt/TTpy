@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -14,12 +14,28 @@ from modelSetPlot import modelSetPlot
 
 class BP(model):
 
-    """The documentation for the class"""
+    """The Beysian predictor model
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+        
+    Parameters
+    ----------
+    theta : float, optional
+        Sensitivity parameter for probabilities
+    beta : float, optional
+        Decision threshold parameter
+    oneProb : array, optional
+        The prior probability
+    prior : array, optional
+        The prior probability 
+    """
 
     Name = "BP"
 
     def __init__(self,**kwargs):
-        """The model class is a general template for a model"""
 
         self.oneProb = kwargs.pop('oneProb',0.85)
         self.theta = kwargs.pop('theta',4)
@@ -50,7 +66,11 @@ class BP(model):
         self.recDecision = []
 
     def action(self):
-        """ Returns the action of the model"""
+        """
+        Returns
+        -------
+        action : integer or None
+        """
 
         self._decision()
 
@@ -61,7 +81,14 @@ class BP(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Returns all the relavent data for this model """
+        """ Returns all the relevent data for this model 
+        
+        Returns
+        -------
+        results : dict
+            The dictionary contains a series of keys including Name, 
+            Probabilities, Actions and Events.
+        """
 
         results = {"Name": self.Name,
                    "oneProb": self.oneProb,
@@ -144,11 +171,3 @@ class BP(model):
                 self.decision = 2
         else:
             self.decision = None
-
-    class modelPlot(modelPlot):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
-    class modelSetPlot(modelSetPlot):
-
-        """Abstract class for the creation of plots relevant to a set of models"""

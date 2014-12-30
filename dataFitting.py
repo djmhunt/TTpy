@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-
-@author: Dominic
+:Author: Dominic Hunt
 """
 
 from simulation import simulation
 
-import pandas
-
 from fitting.fit import fit
 
 def dataFitting(experiments, models, outputting, data = None, fitter = None):
-    """ A framework for fitting models to data for experiments, along with recording the data
+    """ 
+    A framework for fitting models to data for experiments, along with 
+    recording the plots and data associated with the best fits.
 
-        Variables:
-        experiments: An instance of the experiments factory
-        models: An instance of the models factory
-        outputing: An instance of the outputting class
-        data: A list of dictionaries not a Pandas dataframe
-        fitter: An instance of the fitter class
-
-        dataFitting(experiments, models, outputting, data = None, fitter = None)
+    Parameters
+    ----------
+    experiments : experiments.experiments
+        An experiment factory generating each of the different experiments being considered
+    models : models.models
+        A model factory generating each of the different models being considered
+    outputing : outputting.outputting
+    data : list of dictionaries
+    fitter : fitting.fit.fit
     """
 
 #    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):

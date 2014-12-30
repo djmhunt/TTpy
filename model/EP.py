@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -15,12 +15,29 @@ from modelSetPlot import modelSetPlot
 
 class EP(model):
 
-    """The documentation for the class"""
+    """
+    The expectation prediction model
+
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    
+    Parameters
+    ----------
+    alpha : float, optional
+        Learning rate parameter
+    theta : float, optional
+        Sensitivity parameter for probabilities
+    beta : float, optional
+        Decision threshold parameter
+    activity : array, optional
+        The `activity` of the neurons. The values are between [0,1]
+    """
 
     Name = "EP"
 
     def __init__(self,**kwargs):
-        """The model class is a general template for a model"""
 
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
@@ -46,7 +63,11 @@ class EP(model):
         self.recProbabilities = []
 
     def action(self):
-        """ Returns the action of the model"""
+        """
+        Returns
+        -------
+        action : integer or None
+        """
 
         self._decision()
 
@@ -57,7 +78,14 @@ class EP(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Returns all the relavent data for this model """
+        """ Returns all the relevent data for this model 
+        
+        Returns
+        -------
+        results : dict
+            The dictionary contains a series of keys including Name, 
+            Probabilities, Actions and Events.
+        """
 
         results = { "Name": self.Name,
                     "Actions":array(self.recAction),
@@ -120,6 +148,7 @@ class EP(model):
         self.recProbabilities.append(self.probabilities.copy())
 
     def _prob(self):
+        """ Calculate the new probabilities of different actions """
 
         diff = 2*self.activity - sum(self.activity)
         p = 1.0 / (1.0 + exp(-self.theta*diff))
@@ -127,7 +156,6 @@ class EP(model):
         self.probabilities = p
 
     def _newAct(self):
-        """ Calculate the new probabilities of different actions """
 
         self.activity = self.activity + (self.information-self.activity)* self.alpha
 
@@ -137,20 +165,12 @@ class EP(model):
 
         if abs(prob-0.5)>self.beta:
             if prob>0.5:
-                self.decision = 0
-            elif prob == 0.5:
-                self.decision = choice([0,1])
-            else:
                 self.decision = 1
+            elif prob == 0.5:
+                self.decision = choice([1,2])
+            else:
+                self.decision = 2
         else:
             self.decision = None
-
-    class modelPlot(modelPlot):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
-    class modelSetPlot(modelSetPlot):
-
-        """Abstract class for the creation of plots relevant to a set of models"""
 
 
