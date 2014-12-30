@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>models module &mdash; PyDM 0.8 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.8 documentation" href="index.html" />
+    <link rel="next" title="model package" href="model.html" />
+    <link rel="prev" title="experiment package" href="experiment.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="model package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="experiment.html" title="experiment package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyDM 0.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-models">
+<span id="models-module"></span><h1>models module<a class="headerlink" href="#module-models" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="models.models">
+<em class="property">class </em><tt class="descclassname">models.</tt><tt class="descname">models</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/models.html#models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A factory that generates lists of model classes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : a list of tuples of the form (model,variables, parameters)</p>
+<blockquote>
+<div><p>Each tuple is an an model package, describing an model and 
+the different parameter combinations that will be tried.</p>
+</div></blockquote>
+<p><strong>args tuples components</strong></p>
+<p><strong>model</strong> :  model.model.model</p>
+<p><strong>variables</strong> : dictonary of floats or lists of floats</p>
+<blockquote>
+<div><p>Variables are the parameters that you are or are likely to change across 
+model instances. When a variable contains a list, an instance of the 
+model will be created for every combination of this variable with 
+all the others.</p>
+</div></blockquote>
+<p><strong>parameters</strong> : dictionary of float, string or binary valued elements</p>
+<blockquote class="last">
+<div><p>These contain all the the model parameters that define the version 
+of the model being studied.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="models.models.iterFitting">
+<tt class="descname">iterFitting</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/models.html#models.iterFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models.iterFitting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields a list containing model object and parameters to initialise them
+If a model variable was introduced with multiple values a value will 
+be taken half way between the max and min.</p>
+<p>This is expected to be used only for introducing models to the fitting
+functions in dataFitting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> : model.model.model</p>
+<p><strong>initialVars</strong> : dictionary of floats</p>
+<p class="last"><strong>otherArgs</strong> : dictonary of floats, strings and binary values</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.models.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/models.html#models.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next item for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>models</strong> : list of model.model.model instances</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="models.models.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/models.html#models.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the generator of models</p>
+<p>Once this is reset the iterator will produce model instances from the 
+beginning again</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="experiment.html"
+                        title="previous chapter">experiment package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="model.html"
+                        title="next chapter">model package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/models.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.html" title="model package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="experiment.html" title="experiment package"
+             >previous</a> |</li>
+        <li><a href="index.html">PyDM 0.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

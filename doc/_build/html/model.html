@@ -1,0 +1,919 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>model package &mdash; PyDM 0.8 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.8 documentation" href="index.html" />
+    <link rel="next" title="model.decision package" href="model.decision.html" />
+    <link rel="prev" title="models module" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.decision.html" title="model.decision package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="models module"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">PyDM 0.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="model-package">
+<h1>model package<a class="headerlink" href="#model-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="model.decision.html">model.decision package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model.decision.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.decision.html#module-model.decision.binary">model.decision.binary module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.decision.html#module-model.decision">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-model.BP">
+<span id="model-bp-module"></span><h2>model.BP module<a class="headerlink" href="#module-model.BP" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.BP.BP">
+<em class="property">class </em><tt class="descclassname">model.BP.</tt><tt class="descname">BP</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/BP.html#BP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The Beysian predictor model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>oneProb</strong> : array, optional</p>
+<blockquote>
+<div><p>The prior probability</p>
+</div></blockquote>
+<p><strong>prior</strong> : array, optional</p>
+<blockquote class="last">
+<div><p>The prior probability</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.BP.BP.Name">
+<tt class="descname">Name</tt><em class="property"> = 'BP'</em><a class="headerlink" href="#model.BP.BP.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.BP.BP.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BP.html#BP.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.BP.BP.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BP.html#BP.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.EP">
+<span id="model-ep-module"></span><h2>model.EP module<a class="headerlink" href="#module-model.EP" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.EP.EP">
+<em class="property">class </em><tt class="descclassname">model.EP.</tt><tt class="descname">EP</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/EP.html#EP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The expectation prediction model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+<p><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>activity</strong> : array, optional</p>
+<blockquote class="last">
+<div><p>The <cite>activity</cite> of the neurons. The values are between [0,1]</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.EP.EP.Name">
+<tt class="descname">Name</tt><em class="property"> = 'EP'</em><a class="headerlink" href="#model.EP.EP.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.EP.EP.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/EP.html#EP.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.EP.EP.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/EP.html#EP.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="model-ms-module">
+<h2>model.MS module<a class="headerlink" href="#model-ms-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-model.MS_rev">
+<span id="model-ms-rev-module"></span><h2>model.MS_rev module<a class="headerlink" href="#module-model.MS_rev" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+Moore, S. C., &amp; Sellen, J. L. (2006). 
+Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9. 
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/17458441">http://www.ncbi.nlm.nih.gov/pubmed/17458441</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.MS_rev.MS_rev">
+<em class="property">class </em><tt class="descclassname">model.MS_rev.</tt><tt class="descname">MS_rev</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>An adapted version of the Morre &amp; Sellen model
+Attributes
+&#8212;&#8212;&#8212;-
+Name : string</p>
+<blockquote>
+<div>The name of the class used when recording what has been used.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+<p><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>oneProb</strong> : array, optional</p>
+<blockquote class="last">
+<div><p>The prior probability</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.MS_rev.MS_rev.Name">
+<tt class="descname">Name</tt><em class="property"> = 'MS_rev'</em><a class="headerlink" href="#model.MS_rev.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.RVPM">
+<span id="model-rvpm-module"></span><h2>model.RVPM module<a class="headerlink" href="#module-model.RVPM" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Value and prediction error in medial frontal cortex: integrating the single-unit and systems levels of analysis.
+Silvetti, M., Seurinck, R., &amp; Verguts, T. (2011). 
+Frontiers in Human Neuroscience, 5(August), 75. 
+doi:10.3389/fnhum.2011.00075</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.RVPM.RVPM">
+<em class="property">class </em><tt class="descclassname">model.RVPM.</tt><tt class="descname">RVPM</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The reward value and prediction model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter for updating the cue-value weights</p>
+</div></blockquote>
+<p><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Used for gamma from the paper. It is a time constant that controls 
+how quickly the neural units (modeled as dynamical systems) respond 
+to external inputs</p>
+</div></blockquote>
+<p><strong>zeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Regulates the ratio between the power (amplitude) of expectation 
+relative to delta units.</p>
+</div></blockquote>
+<p><strong>prior</strong> : array, optional</p>
+<blockquote>
+<div><p>The prior probability</p>
+</div></blockquote>
+<p><strong>expect: float, optional</strong></p>
+<blockquote class="last">
+<div><p>The initialisation of the the expected reward</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.RVPM.RVPM.Name">
+<tt class="descname">Name</tt><em class="property"> = 'RVPM'</em><a class="headerlink" href="#model.RVPM.RVPM.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.RVPM.RVPM.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.RVPM.RVPM.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.model">
+<span id="model-model-module"></span><h2>model.model module<a class="headerlink" href="#module-model.model" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.model.model">
+<em class="property">class </em><tt class="descclassname">model.model.</tt><tt class="descname">model</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>The model class is a general template for a model. It also contains 
+universal methods used by all models.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.model.model.Name">
+<tt class="descname">Name</tt><em class="property"> = 'model'</em><a class="headerlink" href="#model.model.model.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/model.html#model.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the action of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.feedback">
+<tt class="descname">feedback</tt><big>(</big><em>response</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the reaction to the action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>response</strong> : float</p>
+<blockquote class="last">
+<div><p>The stimulus from the experiment. Returns without doing anything if
+the value of response is <cite>None</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.model.model.modelPlot">
+<em class="property">class </em><tt class="descname">modelPlot</tt><big>(</big><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.modelPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelPlot.modelPlot" title="model.modelPlot.modelPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelPlot.modelPlot</span></tt></a></p>
+<p>Abstract class for the creation of plots relevant to a model</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.model.model.modelSetPlot">
+<em class="property">class </em><tt class="descclassname">model.</tt><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.modelSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></tt></a></p>
+<p>Abstract class for the creation of plots relevant to a set of models</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.observe">
+<tt class="descclassname">model.</tt><tt class="descname">observe</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the latest observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>event</strong> : float or None</p>
+<blockquote class="last">
+<div><p>The stimulus from the experiment. Returns without doing anything if
+the value of event is <cite>None</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.outputEvolution">
+<tt class="descclassname">model.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/model.html#model.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> : dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.params">
+<tt class="descclassname">model.</tt><tt class="descname">params</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/model.html#model.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameters of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>parameters</strong> : dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.plot">
+<tt class="descclassname">model.</tt><tt class="descname">plot</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/model.html#model.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelPlot</strong> : model.modelPlot</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.model.model.plotSet">
+<tt class="descclassname">model.</tt><tt class="descname">plotSet</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/model.html#model.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.plotSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent analysis of sets of results from this 
+model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelSetPlot</strong> : model.modelSetPlot</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.modelPlot">
+<span id="model-modelplot-module"></span><h2>model.modelPlot module<a class="headerlink" href="#module-model.modelPlot" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.modelPlot.modelPlot">
+<em class="property">class </em><tt class="descclassname">model.modelPlot.</tt><tt class="descname">modelPlot</tt><big>(</big><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><big>)</big><a class="reference internal" href="_modules/model/modelPlot.html#modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelPlot.modelPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Abstract class for the creation of plots relevant to a model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>model</strong> : dict</p>
+<blockquote>
+<div><p>The data produced by the model</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : dict</p>
+<blockquote>
+<div><p>The parameters associated with the model</p>
+</div></blockquote>
+<p><strong>modelLabel</strong> : string</p>
+<blockquote class="last">
+<div><p>A unique identifier for the model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="model.modelPlot.modelPlot.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/modelPlot.html#modelPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelPlot.modelPlot.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
+<blockquote class="last">
+<div><p>When there are no more figures to return</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.modelSetPlot">
+<span id="model-modelsetplot-module"></span><h2>model.modelSetPlot module<a class="headerlink" href="#module-model.modelSetPlot" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.modelSetPlot.modelSetPlot">
+<em class="property">class </em><tt class="descclassname">model.modelSetPlot.</tt><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/modelSetPlot.html#modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelSetPlot.modelSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Abstract class for the creation of plots for sets of results from a model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelSet</strong> : list of dictionaries</p>
+<blockquote>
+<div><p>A list of sets of data produced by each model</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : list with dictionaries</p>
+<blockquote>
+<div><p>List of parameters associated with each model</p>
+</div></blockquote>
+<p><strong>modelLabels</strong> : list with strings</p>
+<blockquote class="last">
+<div><p>A list of unique identifiers for each model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="model.modelSetPlot.modelSetPlot.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/modelSetPlot.html#modelSetPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelSetPlot.modelSetPlot.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
+<blockquote class="last">
+<div><p>When there are no more figures to return</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.qLearn">
+<span id="model-qlearn-module"></span><h2>model.qLearn module<a class="headerlink" href="#module-model.qLearn" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Regulatory fit effects in a choice task
+Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007).
+Psychonomic Bulletin &amp; Review, 14(6), 1125–32. 
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/18229485">http://www.ncbi.nlm.nih.gov/pubmed/18229485</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.qLearn.qLearn">
+<em class="property">class </em><tt class="descclassname">model.qLearn.</tt><tt class="descname">qLearn</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The q-Learning algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+<p><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>prior</strong> : array, optional</p>
+<blockquote>
+<div><p>The prior probability</p>
+</div></blockquote>
+<p><strong>expect: float, optional</strong></p>
+<blockquote class="last">
+<div><p>The initialisation of the the expected reward</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="attribute">
+<dt id="model.qLearn.qLearn.Name">
+<tt class="descname">Name</tt><em class="property"> = 'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.qLearn.qLearn.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.qLearn.qLearn.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">model package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-model.BP">model.BP module</a></li>
+<li><a class="reference internal" href="#module-model.EP">model.EP module</a></li>
+<li><a class="reference internal" href="#model-ms-module">model.MS module</a></li>
+<li><a class="reference internal" href="#module-model.MS_rev">model.MS_rev module</a></li>
+<li><a class="reference internal" href="#module-model.RVPM">model.RVPM module</a></li>
+<li><a class="reference internal" href="#module-model.model">model.model module</a></li>
+<li><a class="reference internal" href="#module-model.modelPlot">model.modelPlot module</a></li>
+<li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
+<li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
+<li><a class="reference internal" href="#module-model">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">models module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="model.decision.html"
+                        title="next chapter">model.decision package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/model.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.decision.html" title="model.decision package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="models module"
+             >previous</a> |</li>
+        <li><a href="index.html">PyDM 0.8 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
