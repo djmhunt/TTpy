@@ -50,10 +50,10 @@
   <h1>Source code for experiment.decks</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">@author: Dominic</span>
+<span class="sd">:Author: Dominic Hunt</span>
 
-<span class="sd">Based on the paper Regulatory fit effects in a choice task</span>
-<span class="sd">                Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007).</span>
+<span class="sd">:Reference: Regulatory fit effects in a choice task</span>
+<span class="sd">                `Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007)`.</span>
 <span class="sd">                Psychonomic Bulletin &amp; Review, 14(6), 1125–32. </span>
 <span class="sd">                Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -84,12 +84,6 @@
     <span class="sd">&quot;&quot;&quot;Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.&quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;decks&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="decks.reset"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a new experiment instance</span>
@@ -191,7 +185,22 @@
 
 <div class="viewcode-block" id="decks.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a experiment&quot;&quot;&quot;</span></div></div>
+        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a experiment&quot;&quot;&quot;</span>
+</div></div>
+<div class="viewcode-block" id="deckStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDirect">[docs]</a><span class="k">def</span> <span class="nf">deckStimDirect</span><span class="p">():</span>
+    
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">event</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)</span> <span class="o">+</span> <span class="n">event</span><span class="o">*</span><span class="n">decision</span><span class="p">,</span> <span class="n">event</span><span class="o">*</span><span class="n">decision</span> <span class="o">+</span> <span class="n">event</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">stimulus</span>
+    <span class="k">return</span> <span class="n">deckStim</span>
+</div>
+<div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
+        <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">))</span><span class="o">*</span><span class="n">decision</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">stimulus</span>
+    <span class="k">return</span> <span class="n">deckStim</span></div>
 </pre></div>
 
           </div>
