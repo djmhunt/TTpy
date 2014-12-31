@@ -66,10 +66,9 @@
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
 <em class="property">class </em><tt class="descclassname">fitting.fitters.fitAlg.</tt><tt class="descname">fitAlg</tt><big>(</big><em>dataShaper=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>The abstact class for fitting data</p>
 <p>fitAlg()</p>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="fitting.fitters.fitAlg.fitAlg.fit">
 <tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.fit" title="Permalink to this definition">¶</a></dt>
@@ -93,14 +92,138 @@
 </dd></dl>
 
 </div>
-<div class="section" id="fitting-fitters-leastsq-module">
-<h2>fitting.fitters.leastsq module<a class="headerlink" href="#fitting-fitters-leastsq-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.leastsq">
+<span id="fitting-fitters-leastsq-module"></span><h2>fitting.fitters.leastsq module<a class="headerlink" href="#module-fitting.fitters.leastsq" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: Dominic</p>
+<dl class="class">
+<dt id="fitting.fitters.leastsq.leastsq">
+<em class="property">class </em><tt class="descclassname">fitting.fitters.leastsq.</tt><tt class="descname">leastsq</tt><big>(</big><em>dataShaper=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></p>
+<p>Fits data based on the least squared</p>
+<p>fitters(partParam, modelParam, scaler)</p>
+<dl class="method">
+<dt id="fitting.fitters.leastsq.leastsq.fit">
+<tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.leastsq.leastsq.logprob">
+<tt class="descname">logprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.logprob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.leastsq.leastsq.name">
+<tt class="descname">name</tt><em class="property"> = 'leastsq'</em><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.leastsq.leastsq.null">
+<tt class="descname">null</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.null"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.null" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="fitting-fitters-minimize-module">
-<h2>fitting.fitters.minimize module<a class="headerlink" href="#fitting-fitters-minimize-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.minimize">
+<span id="fitting-fitters-minimize-module"></span><h2>fitting.fitters.minimize module<a class="headerlink" href="#module-fitting.fitters.minimize" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: Dominic</p>
+<dl class="class">
+<dt id="fitting.fitters.minimize.minimize">
+<em class="property">class </em><tt class="descclassname">fitting.fitters.minimize.</tt><tt class="descname">minimize</tt><big>(</big><em>dataShaper=None</em>, <em>method=None</em>, <em>bounds=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></p>
+<p>The class for fitting data using scipy.optimise.minimize</p>
+<p>minimize(dataShaper = None, method = None, bounds = None)</p>
+<p>Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,
+Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’
+custom</p>
+<dl class="method">
+<dt id="fitting.fitters.minimize.minimize.callback">
+<tt class="descname">callback</tt><big>(</big><em>Xi</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.minimize.minimize.constrained">
+<tt class="descname">constrained</tt><em class="property"> = ['L-BFGS-B', 'TNC', 'SLSQP']</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.constrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.minimize.minimize.fit">
+<tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.minimize.minimize.logprob">
+<tt class="descname">logprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.logprob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.minimize.minimize.maxprob">
+<tt class="descname">maxprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.maxprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to maximise the probability, so in this case minimise the 
+difference between 1 and the probability</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.minimize.minimize.name">
+<tt class="descname">name</tt><em class="property"> = 'minimise'</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.minimize.minimize.null">
+<tt class="descname">null</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.null"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.null" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.minimize.minimize.unconstrained">
+<tt class="descname">unconstrained</tt><em class="property"> = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.unconstrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="fitting-fitters-test-minimize-module">
-<h2>fitting.fitters.test_minimize module<a class="headerlink" href="#fitting-fitters-test-minimize-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.test_minimize">
+<span id="fitting-fitters-test-minimize-module"></span><h2>fitting.fitters.test_minimize module<a class="headerlink" href="#module-fitting.fitters.test_minimize" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: Dominic</p>
+<dl class="class">
+<dt id="fitting.fitters.test_minimize.TestClass">
+<em class="property">class </em><tt class="descclassname">fitting.fitters.test_minimize.</tt><tt class="descname">TestClass</tt><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_logprob">
+<tt class="descname">test_logprob</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_logprob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_methodFit">
+<tt class="descname">test_methodFit</tt><big>(</big><em>fitting</em>, <em>participant</em>, <em>modelSets</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_methodFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_methodFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_setStartParams">
+<tt class="descname">test_setStartParams</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_setStartParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_setStartParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_startParamList">
+<tt class="descname">test_startParamList</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParamList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParamList" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.fitting">
+<tt class="descclassname">fitting.fitters.test_minimize.</tt><tt class="descname">fitting</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#fitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.fitting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.modelSets">
+<tt class="descclassname">fitting.fitters.test_minimize.</tt><tt class="descname">modelSets</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#modelSets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.modelSets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.participant">
+<tt class="descclassname">fitting.fitters.test_minimize.</tt><tt class="descname">participant</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.participant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-fitting.fitters">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fitting.fitters" title="Permalink to this headline">¶</a></h2>
@@ -118,9 +241,9 @@
 <li><a class="reference internal" href="#">fitting.fitters package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.fitAlg">fitting.fitters.fitAlg module</a></li>
-<li><a class="reference internal" href="#fitting-fitters-leastsq-module">fitting.fitters.leastsq module</a></li>
-<li><a class="reference internal" href="#fitting-fitters-minimize-module">fitting.fitters.minimize module</a></li>
-<li><a class="reference internal" href="#fitting-fitters-test-minimize-module">fitting.fitters.test_minimize module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.leastsq">fitting.fitters.leastsq module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.minimize">fitting.fitters.minimize module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.test_minimize">fitting.fitters.test_minimize module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters">Module contents</a></li>
 </ul>
 </li>

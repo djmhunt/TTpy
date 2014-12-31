@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fitting.fitters.minimize &mdash; PyDM 0.8 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.8',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.8 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyDM 0.8 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fitting.fitters.minimize</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author: Dominic</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span> <span class="nn">fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log2</span><span class="p">,</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isinf</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMergeNP</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<div class="viewcode-block" id="minimize"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize">[docs]</a><span class="k">class</span> <span class="nc">minimize</span><span class="p">(</span><span class="n">fitAlg</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;The class for fitting data using scipy.optimise.minimize</span>
+
+<span class="sd">    minimize(dataShaper = None, method = None, bounds = None)</span>
+
+
+<span class="sd">    Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,</span>
+<span class="sd">    Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’</span>
+<span class="sd">    custom</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;minimise&#39;</span>
+
+    <span class="n">unconstrained</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Nelder-Mead&#39;</span><span class="p">,</span><span class="s">&#39;Powell&#39;</span><span class="p">,</span><span class="s">&#39;CG&#39;</span><span class="p">,</span><span class="s">&#39;BFGS&#39;</span><span class="p">]</span>
+    <span class="n">constrained</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;L-BFGS-B&#39;</span><span class="p">,</span><span class="s">&#39;TNC&#39;</span><span class="p">,</span><span class="s">&#39;SLSQP&#39;</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dataShaper</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">dataShaper</span> <span class="o">==</span> <span class="s">&quot;-2log&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logprob</span>
+        <span class="k">elif</span> <span class="n">dataShaper</span> <span class="o">==</span> <span class="s">&quot;1-prob&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxprob</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">null</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setType</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="n">bounds</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s">&#39;shaper&#39;</span><span class="p">:</span> <span class="n">dataShaper</span><span class="p">,</span>
+                        <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+                        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;method&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="minimize.null"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.null">[docs]</a>    <span class="k">def</span> <span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
+
+        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="minimize.logprob"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.logprob">[docs]</a>    <span class="k">def</span> <span class="nf">logprob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
+
+        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">logModCoiceprob</span> <span class="o">=</span> <span class="n">log2</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
+
+        <span class="n">probs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">logModCoiceprob</span>
+        
+        <span class="n">fit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fit</span>
+        </div>
+<div class="viewcode-block" id="minimize.maxprob"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.maxprob">[docs]</a>    <span class="k">def</span> <span class="nf">maxprob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used to maximise the probability, so in this case minimise the </span>
+<span class="sd">        difference between 1 and the probability&quot;&quot;&quot;</span>
+        
+        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
+        
+        <span class="n">fit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">modVals</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">fit</span>
+        </div>
+<div class="viewcode-block" id="minimize.callback"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.callback">[docs]</a>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">Xi</span><span class="p">):</span>
+        
+        <span class="k">print</span> <span class="s">&#39;{0:4d}: {1:s}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">Xi</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="minimize.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
+
+        <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span>
+        <span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+        
+        <span class="n">initParamSets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setStartParams</span><span class="p">(</span><span class="n">mInitialParams</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+
+            <span class="n">fitParamSet</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">fitValSet</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">methodSuccessSet</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methodSet</span><span class="p">:</span>
+                
+                <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_methodFit</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">initParamSets</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">optimizeResult</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">fitParamSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+                    <span class="n">fitValSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span>
+                    <span class="n">methodSuccessSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fitValSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">mInitialParams</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">&quot;inf&quot;</span><span class="p">)</span>
+
+            <span class="n">fitVal</span><span class="p">,</span> <span class="n">fitid</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fitValSet</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">fitParamSet</span><span class="p">[</span><span class="n">fitid</span><span class="p">],</span> <span class="n">fitVal</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_methodFit</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">initParamSets</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+
+            <span class="n">fitParams</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">fitVal</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span>
+
+            <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span>
+            </div>
+    <span class="k">def</span> <span class="nf">_methodFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="p">,</span> <span class="n">initParamSets</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+        
+        <span class="n">fitValSet</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">resultSet</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c">#        data = {&quot;initAlpha&quot;:[],</span>
+<span class="c">#                &quot;initTheta&quot;:[],</span>
+<span class="c">#                &quot;fitVal&quot;:[],</span>
+<span class="c">#                &quot;nIter&quot;:[],</span>
+<span class="c">#                &quot;alpha&quot;:[],</span>
+<span class="c">#                &quot;theta&quot;:[],</span>
+<span class="c">#                &quot;success&quot;:[], </span>
+<span class="c">#                &quot;nfev&quot;:[], </span>
+<span class="c">#                &quot;message&quot;:[],</span>
+<span class="c">#                &quot;jacAlpha&quot;:[], </span>
+<span class="c">#                &quot;jacTheta&quot;:[]}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initParamSets</span><span class="p">:</span>
+        
+            <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span> <span class="n">i</span><span class="p">[:],</span> 
+                                               <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> 
+                                               <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span><span class="c">#,  </span>
+<span class="c">#                                               callback= self.callback )</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+            
+            <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">fitValSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span>
+                <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
+<span class="c">#            o = optimizeResult</span>
+<span class="c">#            data[&quot;initAlpha&quot;].append(i[0])</span>
+<span class="c">#            data[&quot;initTheta&quot;].append(i[1])</span>
+<span class="c">#            data[&quot;fitVal&quot;].append(o.fun)</span>
+<span class="c">#            data[&#39;nIter&#39;].append(o.nit)</span>
+<span class="c">#            data[&#39;alpha&#39;].append(o.x[0]) </span>
+<span class="c">#            data[&#39;theta&#39;].append(o.x[1])</span>
+<span class="c">#            data[&#39;success&#39;].append(o.success) </span>
+<span class="c">#            data[&#39;nfev&#39;].append(o.nfev)</span>
+<span class="c">#            data[&#39;message&#39;].append(o.message) </span>
+<span class="c">#            data[&#39;jacAlpha&#39;].append(o.jac[0])</span>
+<span class="c">#            data[&#39;jacTheta&#39;].append(o.jac[1])</span>
+<span class="c">#        pytest.set_trace()</span>
+                
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resultSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+        <span class="n">fitVal</span><span class="p">,</span> <span class="n">fitid</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">v</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fitValSet</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">resultSet</span><span class="p">[</span><span class="n">fitid</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">_setType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="p">,</span><span class="n">bounds</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="n">method</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrained</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s">&#39;constrained&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrained</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s">&#39;unconstrained&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span>
+            
+    <span class="k">def</span> <span class="nf">_setStartParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initialParams</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Defines a list of different starting parameters to run the minimization over&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># We only have the values passed in as the starting parameters</span>
+            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_startParamList</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initialParams</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_startParamList</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">))</span>
+            
+        <span class="n">startSets</span> <span class="o">=</span> <span class="n">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">startLists</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">startSets</span>
+            
+            
+    <span class="k">def</span> <span class="nf">_startParamList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Assumes that intial parameters are positive and all values will </span>
+<span class="sd">        be above zero&quot;&quot;&quot;</span>
+    
+         <span class="c">#The number of initial points per parameter</span>
+        <span class="n">divVal</span> <span class="o">=</span> <span class="p">(</span><span class="n">numPoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        
+        <span class="c"># We can assume that any initial parameter proposed has the </span>
+        <span class="c">#correct order of magnitude. </span>
+        <span class="n">vMin</span> <span class="o">=</span> <span class="n">initial</span> <span class="o">/</span> <span class="n">divVal</span>
+        
+        
+        <span class="k">if</span> <span class="n">bMax</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">isinf</span><span class="p">(</span><span class="n">bMax</span><span class="p">):</span>
+            <span class="c"># We can also assume any number smaller than one should stay </span>
+            <span class="c">#smaller than one.</span>
+            <span class="k">if</span> <span class="n">initial</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">bMax</span>
+            
+        <span class="k">if</span> <span class="n">numPoints</span><span class="o">*</span><span class="n">vMin</span> <span class="o">&gt;</span> <span class="n">valAbsMax</span><span class="p">:</span>
+            <span class="n">inc</span> <span class="o">=</span> <span class="p">(</span><span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">initial</span><span class="p">)</span> <span class="o">/</span> <span class="n">divVal</span>
+            <span class="n">vMin</span> <span class="o">=</span> <span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">numPoints</span> <span class="o">*</span> <span class="n">inc</span> 
+            <span class="n">vMax</span> <span class="o">=</span> <span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">inc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vMax</span> <span class="o">=</span> <span class="n">vMin</span> <span class="o">*</span> <span class="n">numPoints</span>
+            
+           
+        <span class="n">points</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">vMin</span><span class="p">,</span> <span class="n">vMax</span><span class="p">,</span> <span class="n">numPoints</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">points</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyDM 0.8 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -36,6 +36,14 @@ experiment.experimentPlot module
     :undoc-members:
     :show-inheritance:
 
+experiment.pavlov module
+------------------------
+
+.. automodule:: experiment.pavlov
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

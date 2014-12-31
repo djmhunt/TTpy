@@ -122,7 +122,6 @@
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.BP.BP.Name">
 <tt class="descname">Name</tt><em class="property"> = 'BP'</em><a class="headerlink" href="#model.BP.BP.Name" title="Permalink to this definition">¶</a></dt>
@@ -214,7 +213,6 @@ Probabilities, Actions and Events.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.EP.EP.Name">
 <tt class="descname">Name</tt><em class="property"> = 'EP'</em><a class="headerlink" href="#model.EP.EP.Name" title="Permalink to this definition">¶</a></dt>
@@ -255,8 +253,130 @@ Probabilities, Actions and Events.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="model-ms-module">
-<h2>model.MS module<a class="headerlink" href="#model-ms-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-model.MS">
+<span id="model-ms-module"></span><h2>model.MS module<a class="headerlink" href="#module-model.MS" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+<cite>Moore, S. C., &amp; Sellen, J. L. (2006)</cite>. 
+Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9. 
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/17458441">http://www.ncbi.nlm.nih.gov/pubmed/17458441</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.MS.MS">
+<em class="property">class </em><tt class="descclassname">model.MS.</tt><tt class="descname">MS</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The Moore &amp; Sellen model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+<p><strong>theta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>oneProb</strong> : array, optional</p>
+<blockquote class="last">
+<div><p>The prior probability</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.MS.MS.Name">
+<tt class="descname">Name</tt><em class="property"> = 'M&amp;S'</em><a class="headerlink" href="#model.MS.MS.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.MS.MS.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS.MS.feedback">
+<tt class="descname">feedback</tt><big>(</big><em>response</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recieves the reaction to the action</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.MS.MS.modelSetPlot">
+<em class="property">class </em><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></tt></a></p>
+<p>Class for the creation of plots relevant to the model set</p>
+<dl class="method">
+<dt id="model.MS.MS.modelSetPlot.dPChanges">
+<tt class="descname">dPChanges</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot.dPChanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot.dPChanges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.MS.MS.modelSetPlot.trial3_4Diff">
+<tt class="descname">trial3_4Diff</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot.trial3_4Diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot.trial3_4Diff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS.MS.observe">
+<tt class="descclassname">MS.</tt><tt class="descname">observe</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recieves the latest observation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS.MS.outputEvolution">
+<tt class="descclassname">MS.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-model.MS_rev">
 <span id="model-ms-rev-module"></span><h2>model.MS_rev module<a class="headerlink" href="#module-model.MS_rev" title="Permalink to this headline">¶</a></h2>
@@ -307,7 +427,6 @@ Name : string</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.MS_rev.MS_rev.Name">
 <tt class="descname">Name</tt><em class="property"> = 'MS_rev'</em><a class="headerlink" href="#model.MS_rev.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
@@ -411,7 +530,6 @@ relative to delta units.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.RVPM.RVPM.Name">
 <tt class="descname">Name</tt><em class="property"> = 'RVPM'</em><a class="headerlink" href="#model.RVPM.RVPM.Name" title="Permalink to this definition">¶</a></dt>
@@ -465,7 +583,7 @@ Probabilities, Actions and Events.</p>
 <dl class="class">
 <dt id="model.model.model">
 <em class="property">class </em><tt class="descclassname">model.model.</tt><tt class="descname">model</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>The model class is a general template for a model. It also contains 
 universal methods used by all models.</p>
 <p class="rubric">Attributes</p>
@@ -480,7 +598,6 @@ universal methods used by all models.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.model.model.Name">
 <tt class="descname">Name</tt><em class="property"> = 'model'</em><a class="headerlink" href="#model.model.model.Name" title="Permalink to this definition">¶</a></dt>
@@ -524,7 +641,6 @@ the value of response is <cite>None</cite>.</p>
 <em class="property">class </em><tt class="descname">modelPlot</tt><big>(</big><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.modelPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#model.modelPlot.modelPlot" title="model.modelPlot.modelPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelPlot.modelPlot</span></tt></a></p>
 <p>Abstract class for the creation of plots relevant to a model</p>
-<p class="rubric">Methods</p>
 </dd></dl>
 
 <dl class="class">
@@ -532,7 +648,6 @@ the value of response is <cite>None</cite>.</p>
 <em class="property">class </em><tt class="descclassname">model.</tt><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/model.html#model.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.model.model.modelSetPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></tt></a></p>
 <p>Abstract class for the creation of plots relevant to a set of models</p>
-<p class="rubric">Methods</p>
 </dd></dl>
 
 <dl class="method">
@@ -627,7 +742,7 @@ model</p>
 <dl class="class">
 <dt id="model.modelPlot.modelPlot">
 <em class="property">class </em><tt class="descclassname">model.modelPlot.</tt><tt class="descname">modelPlot</tt><big>(</big><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><big>)</big><a class="reference internal" href="_modules/model/modelPlot.html#modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelPlot.modelPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Abstract class for the creation of plots relevant to a model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -649,7 +764,6 @@ model</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="model.modelPlot.modelPlot.next">
 <tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/modelPlot.html#modelPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelPlot.modelPlot.next" title="Permalink to this definition">¶</a></dt>
@@ -687,7 +801,7 @@ model</p>
 <dl class="class">
 <dt id="model.modelSetPlot.modelSetPlot">
 <em class="property">class </em><tt class="descclassname">model.modelSetPlot.</tt><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/modelSetPlot.html#modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelSetPlot.modelSetPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Abstract class for the creation of plots for sets of results from a model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -709,7 +823,6 @@ model</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="model.modelSetPlot.modelSetPlot.next">
 <tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/modelSetPlot.html#modelSetPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelSetPlot.modelSetPlot.next" title="Permalink to this definition">¶</a></dt>
@@ -794,7 +907,6 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods</p>
 <dl class="attribute">
 <dt id="model.qLearn.qLearn.Name">
 <tt class="descname">Name</tt><em class="property"> = 'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
@@ -853,7 +965,7 @@ Probabilities, Actions and Events.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-model.BP">model.BP module</a></li>
 <li><a class="reference internal" href="#module-model.EP">model.EP module</a></li>
-<li><a class="reference internal" href="#model-ms-module">model.MS module</a></li>
+<li><a class="reference internal" href="#module-model.MS">model.MS module</a></li>
 <li><a class="reference internal" href="#module-model.MS_rev">model.MS_rev module</a></li>
 <li><a class="reference internal" href="#module-model.RVPM">model.RVPM module</a></li>
 <li><a class="reference internal" href="#module-model.model">model.model module</a></li>
