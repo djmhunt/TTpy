@@ -2,8 +2,8 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
-                    Moore, S. C., & Sellen, J. L. (2006). 
+:Reference: Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+                    `Moore, S. C., & Sellen, J. L. (2006)`. 
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9. 
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
@@ -126,8 +126,10 @@ class MS(model):
 
         return results
 
-    def _update(self,event,instance):
+    def _update(self,events,instance):
         """Processes updates to new actions"""
+        
+        event = events
 
         if instance == 'obs':
 

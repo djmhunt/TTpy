@@ -111,12 +111,12 @@ class model(object):
 
         return results
 
-    def _update(self,event,instance):
+    def _update(self,events,instance):
         """Processes updates to new actions"""
 
         if instance == 'obs':
 
-            self.recEvents.append(event)
+            self.recEvents.append(events)
 
             self.lastObs = True
 
@@ -128,7 +128,7 @@ class model(object):
 
             else:
 
-                self.recEvents.append(event)
+                self.recEvents.append(events)
 
     def _storeState(self):
         """ Stores the state of all the important variables so that they can be

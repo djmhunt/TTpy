@@ -114,8 +114,10 @@ class qLearn(model):
 
         return results
 
-    def _update(self,event,instance):
+    def _update(self,events,instance):
         """Processes updates to new actions"""
+        
+        event = events
 
         if instance == 'obs':
 
