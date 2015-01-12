@@ -139,9 +139,11 @@ class EP(model):
                 #Calculate the new probabilities
                 self._prob()
 
-    def _storeState(self):
-        """ Stores the state of all the important variables so that they can be
-            output later """
+    def storeState(self):
+        """" 
+        Stores the state of all the important variables so that they can be
+        accessed later 
+        """
 
         self.recInformation.append(self.information.copy())
         self.recAction.append(self.currAction)

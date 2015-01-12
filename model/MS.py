@@ -168,9 +168,11 @@ class MS(model):
                 self._prob()
 
 
-    def _storeState(self):
-        """ Stores the state of all the important variables so that they can be
-            output later """
+    def storeState(self):
+        """ 
+        Stores the state of all the important variables so that they can be
+        accessed later 
+        """
 
         self.recAction.append(self.currAction)
         self.recInformation.append(self.information.copy())
