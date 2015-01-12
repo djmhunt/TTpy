@@ -50,7 +50,7 @@
   <h1>Source code for plotting</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">@author: Dominic</span>
+<span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
@@ -106,6 +106,24 @@
 
 <span class="c">### Simple lineplot</span>
 <div class="viewcode-block" id="lineplot"><a class="viewcode-back" href="../plotting.html#plotting.lineplot">[docs]</a><span class="k">def</span> <span class="nf">lineplot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Produces a lineplot for multiple datasets witht he same x and y axis</span>
+<span class="sd">    </span>
+<span class="sd">    Uses ``axPlotlines`` for plotting</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array of length n of floats</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    labels : list of strings</span>
+<span class="sd">        Description of each of the m datasets in ``Y``</span>
+<span class="sd">    axisLabels : dictionary</span>
+<span class="sd">        A dictionary of axis properties, all optional, used in ``axPlotlines``. See</span>
+<span class="sd">        ``axPlotlines`` for more details.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>  <span class="c"># figsize=(8, 6), dpi=80)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
@@ -119,7 +137,28 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 <span class="c">### Response changes to different parameters</span></div>
-<div class="viewcode-block" id="varDynamics"><a class="viewcode-back" href="../plotting.html#plotting.varDynamics">[docs]</a><span class="k">def</span> <span class="nf">varDynamics</span><span class="p">(</span><span class="n">paramSet</span><span class="p">,</span> <span class="n">decisionTimes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="varDynamics"><a class="viewcode-back" href="../plotting.html#plotting.varDynamics">[docs]</a><span class="k">def</span> <span class="nf">varDynamics</span><span class="p">(</span><span class="n">paramSet</span><span class="p">,</span> <span class="n">responses</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots response changes to different parameters</span>
+<span class="sd">    </span>
+<span class="sd">    Uses ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for plotting </span>
+<span class="sd">    depending on number of parameters chosen. See their documentation for more </span>
+<span class="sd">    detail.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    paramSet : dictionary</span>
+<span class="sd">        The keys are the parameter names. The values are a list or array of </span>
+<span class="sd">        floats, showing the different values of the parameter looked at.</span>
+<span class="sd">    responses : array of floats</span>
+<span class="sd">    kwargs : dictionary</span>
+<span class="sd">        kwargs depend on number of parameters chosen. See documentation for </span>
+<span class="sd">        ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for kwarg lists</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object or, if ``dim3VarDim`` has been used, a ``vtkWriter`` object</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">lparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paramSet</span><span class="p">)</span>
 
@@ -127,13 +166,13 @@
 
     <span class="k">if</span> <span class="n">lparams</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim1VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">param</span><span class="p">],</span><span class="n">decisionTimes</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim1VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">param</span><span class="p">],</span><span class="n">responses</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">lparams</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim2VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">decisionTimes</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim2VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">responses</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">lparams</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim3VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">decisionTimes</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">dim3VarDim</span><span class="p">(</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">paramSet</span><span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">responses</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
 
@@ -268,11 +307,38 @@
 
 <span class="c">### Inputs compared to output probabilities</span></div>
 <div class="viewcode-block" id="dataVsEvents"><a class="viewcode-back" href="../plotting.html#plotting.dataVsEvents">[docs]</a><span class="k">def</span> <span class="nf">dataVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">eventLabel</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Line plots of data with a line plot over the top</span>
+<span class="sd">    </span>
+<span class="sd">    Uses axPlotlines unless there are more than eight datasets in ``data``, </span>
+<span class="sd">    at which point ``dataSpectrumVsEvents`` is called.</span>
+<span class="sd">     </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array of size m*n of floats</span>
+<span class="sd">        The main datasets to be plotted</span>
+<span class="sd">    events : array of size n of floats</span>
+<span class="sd">        An variable that changes alongside ``data``, but whose values are </span>
+<span class="sd">        meaningful for all sets in data</span>
+<span class="sd">    labels : list of strings</span>
+<span class="sd">        Description of each of the m datasets in data</span>
+<span class="sd">    eventLabel : string</span>
+<span class="sd">        A description of the meaning of events</span>
+<span class="sd">    axisLabels : dictionary</span>
+<span class="sd">        A dictionary of axis properties, all optional, containing those in </span>
+<span class="sd">        ``axPlotlines`` as well as:</span>
+<span class="sd">        ``y2label`` : `string` The label of the scale of events</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">:</span>
-        <span class="n">fig</span> <span class="o">=</span> <span class="n">dataSpectrumVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">eventLabel</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">)</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">dataSpectrumVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">eventLabel</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>  <span class="c"># figsize=(8, 6), dpi=80)</span>
@@ -299,10 +365,31 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 </div>
-<div class="viewcode-block" id="dataSpectrumVsEvents"><a class="viewcode-back" href="../plotting.html#plotting.dataSpectrumVsEvents">[docs]</a><span class="k">def</span> <span class="nf">dataSpectrumVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">eventLabel</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Normalised spectogram/histogram of values across events</span>
+<div class="viewcode-block" id="dataSpectrumVsEvents"><a class="viewcode-back" href="../plotting.html#plotting.dataSpectrumVsEvents">[docs]</a><span class="k">def</span> <span class="nf">dataSpectrumVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">eventLabel</span><span class="p">,</span><span class="n">axisLabels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Spectogram of data with a line plot over the top</span>
+<span class="sd">    </span>
+<span class="sd">    Uses axSpectrum for the spectogram</span>
+<span class="sd">     </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array of size m*n of floats</span>
+<span class="sd">        The main datasets to be plotted</span>
+<span class="sd">    events : array of size n of floats</span>
+<span class="sd">        An variable that changes alongside ``data``, but whose values are </span>
+<span class="sd">        meaningful for all sets in data</span>
+<span class="sd">    eventLabel : string</span>
+<span class="sd">        A description of the meaning of events</span>
+<span class="sd">    axisLabels : dictionary</span>
+<span class="sd">        A dictionary of axis properties, all optional, containing those in </span>
+<span class="sd">        ``axSpectrum`` as well as:</span>
+<span class="sd">        ``y2label`` : `string` The label of the scale of events</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object</span>
 
-<span class="sd">    printResourcesSpectrum(data,bins)&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">y2Label</span> <span class="o">=</span> <span class="n">axisLabels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;y2Label&quot;</span><span class="p">,</span><span class="s">&quot;Event value&quot;</span><span class="p">)</span>
 
@@ -311,7 +398,7 @@
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>  <span class="c"># figsize=(8, 6), dpi=80)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
-    <span class="n">axSpectrum</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">)</span>
+    <span class="n">axSpectrum</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">)</span>
 
     <span class="n">axb</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
     <span class="n">pltLine</span> <span class="o">=</span> <span class="n">axb</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eventX</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">eventLabel</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">markersize</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
@@ -330,6 +417,24 @@
 </div>
 <div class="viewcode-block" id="axScatter"><a class="viewcode-back" href="../plotting.html#plotting.axScatter">[docs]</a><span class="k">def</span> <span class="nf">axScatter</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span> <span class="n">minZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">CB_label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produces a scatter plot on the axis with the colour of the dots being a </span>
+<span class="sd">    third axis</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib axis object</span>
+<span class="sd">    X : array of size m*n of floats</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    z : list or array of floats</span>
+<span class="sd">        The magnitude values for the X,Y locations</span>
+<span class="sd">    minZ : float, optional</span>
+<span class="sd">        The lowest valid value of the colour map</span>
+<span class="sd">    CB_label : string, optional</span>
+<span class="sd">        The colour bar label</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sc : matplotlib scatter object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">maxZ</span> <span class="o">=</span> <span class="n">amax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
@@ -347,6 +452,23 @@
 </div>
 <div class="viewcode-block" id="axImage"><a class="viewcode-back" href="../plotting.html#plotting.axImage">[docs]</a><span class="k">def</span> <span class="nf">axImage</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">minZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">CB_label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produces an image on the axis</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib axis object</span>
+<span class="sd">    X : array of size m*n of floats</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    z : list or array of floats</span>
+<span class="sd">        The magnitude values for the X,Y locations</span>
+<span class="sd">    minZ : float, optional</span>
+<span class="sd">        The lowest valid value of the colour map</span>
+<span class="sd">    CB_label : string, optional</span>
+<span class="sd">        The colour bar label</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IM : matplotlib image object</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xMin</span> <span class="o">=</span> <span class="n">amin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -388,6 +510,25 @@
     <span class="k">return</span> <span class="n">im</span>
 </div>
 <div class="viewcode-block" id="axContour"><a class="viewcode-back" href="../plotting.html#plotting.axContour">[docs]</a><span class="k">def</span> <span class="nf">axContour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">minZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">CB_label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produces a contour plot on the axis</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib axis object</span>
+<span class="sd">    X : array of size m*n of floats</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    z : list or array of floats</span>
+<span class="sd">        The magnitude values for the X,Y locations</span>
+<span class="sd">    minZ : float, optional</span>
+<span class="sd">        The value of the lowest contour</span>
+<span class="sd">    CB_label : string, optional</span>
+<span class="sd">        The colour bar label</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    CS : matplotlib contour object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xMin</span> <span class="o">=</span> <span class="n">amin</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
     <span class="n">xMax</span> <span class="o">=</span> <span class="n">amax</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -442,6 +583,27 @@
     <span class="k">return</span> <span class="n">CS</span>
 </div>
 <div class="viewcode-block" id="axPlotlines"><a class="viewcode-back" href="../plotting.html#plotting.axPlotlines">[docs]</a><span class="k">def</span> <span class="nf">axPlotlines</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produces a set of lineplots on the axis</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib axis object</span>
+<span class="sd">    x : array of length n of floats</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    labels : list of strings</span>
+<span class="sd">        Description of each of the m datasets in ``Y``</span>
+<span class="sd">    axisLabels : dictionary</span>
+<span class="sd">        A dictionary of axis properties, all optional, containing:</span>
+<span class="sd">        </span>
+<span class="sd">        ``xlabel`` : `string`,</span>
+<span class="sd">        ``ylabel`` : `string`,</span>
+<span class="sd">        ``title`` : `string`,</span>
+<span class="sd">        ``yMin`` : `float`,</span>
+<span class="sd">        ``yMax`` : `float`,</span>
+<span class="sd">        ``xMin`` : `float`,</span>
+<span class="sd">        ``xMax`` : `float`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xLabel</span> <span class="o">=</span> <span class="n">axisLabels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;xLabel&quot;</span><span class="p">,</span><span class="s">&quot;Event&quot;</span><span class="p">)</span>
     <span class="n">yLabel</span> <span class="o">=</span> <span class="n">axisLabels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;yLabel&quot;</span><span class="p">,</span><span class="s">&quot;Value&quot;</span><span class="p">)</span>
@@ -465,7 +627,31 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">yLabel</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="axSpectrum"><a class="viewcode-back" href="../plotting.html#plotting.axSpectrum">[docs]</a><span class="k">def</span> <span class="nf">axSpectrum</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">):</span>
+<div class="viewcode-block" id="axSpectrum"><a class="viewcode-back" href="../plotting.html#plotting.axSpectrum">[docs]</a><span class="k">def</span> <span class="nf">axSpectrum</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Produces a spectogram-like plot on the axis</span>
+<span class="sd">    </span>
+<span class="sd">    This is made by creating a histogram for each x-axis element.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ax : matplotlib axis object</span>
+<span class="sd">    Y : array of size m*n of floats</span>
+<span class="sd">    axisLabels : dictionary</span>
+<span class="sd">        A dictionary of axis properties, all optional, containing:</span>
+<span class="sd">        </span>
+<span class="sd">        ``xlabel`` : `string`,</span>
+<span class="sd">        ``ylabel`` : `string`,</span>
+<span class="sd">        ``title`` : `string`,</span>
+<span class="sd">        ``yMin`` : `float`,</span>
+<span class="sd">        ``yMax`` : `float`,</span>
+<span class="sd">        ``xMin`` : `float`,</span>
+<span class="sd">        ``xMax`` : `float`,</span>
+<span class="sd">        ``bins`` : `int`,</span>
+<span class="sd">        ``probDensity`` : `binary`</span>
+<span class="sd">        Sets if the histogram type is showing frequency or probability </span>
+<span class="sd">        density.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xLabel</span> <span class="o">=</span> <span class="n">axisLabels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;xLabel&quot;</span><span class="p">,</span><span class="s">&quot;Events&quot;</span><span class="p">)</span>
     <span class="n">yLabel</span> <span class="o">=</span> <span class="n">axisLabels</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;yLabel&quot;</span><span class="p">,</span><span class="s">&quot;Density across parameter range&quot;</span><span class="p">)</span>
@@ -509,6 +695,13 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="legend"><a class="viewcode-back" href="../plotting.html#plotting.legend">[docs]</a><span class="k">def</span> <span class="nf">legend</span><span class="p">(</span><span class="o">*</span><span class="n">axis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a legend to each axis</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    axis : a list of matplotlib axis objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">pltLabels</span> <span class="o">=</span> <span class="p">[]</span>

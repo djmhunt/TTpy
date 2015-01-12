@@ -77,16 +77,38 @@
 <span class="n">defaultBeads</span> <span class="o">=</span> <span class="n">beadSequences</span><span class="p">[</span><span class="s">&quot;MooreSellen&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="beads"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads">[docs]</a><span class="k">class</span> <span class="nc">beads</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Based on the Moore&amp;Sellen Beads task&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Based on the Moore&amp;Sellen Beads task</span>
+<span class="sd">    </span>
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
+<span class="sd">    Refer to its documentation for missing methods.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N : int, optional</span>
+<span class="sd">        Number of beads that could potentially be shown</span>
+<span class="sd">    beadSequence : list or array of {0,1}, optional</span>
+<span class="sd">        The sequence of beads to be shown. Bead sequences can also be embedded </span>
+<span class="sd">        in the code and then referred to by name. The only current one is</span>
+<span class="sd">        `MooreSellen`, the default sequence.</span>
+<span class="sd">    plotArgs : dictionary, optional</span>
+<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to </span>
+<span class="sd">        its documentation for more details.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beads&quot;</span>
 
 <div class="viewcode-block" id="beads.reset"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a new experiment instance</span>
 
-<span class="sd">        N: Number of beads that could potentially be shown</span>
-<span class="sd">        beadSequence: The sequence of beads&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : The cleaned up object instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -124,7 +146,16 @@
         <span class="k">return</span> <span class="bp">self</span>
 </div>
 <div class="viewcode-block" id="beads.next"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Produces the next item for the iterator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Produces the next bead for the iterator</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bead : {0,1}</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -136,22 +167,29 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="beads.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Receives the next action from the participant&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Receives the next action from the participant</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : {1,2}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
 
         <span class="k">if</span> <span class="n">action</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span>
 </div>
-<div class="viewcode-block" id="beads.procede"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Updates the experiment&quot;&quot;&quot;</span>
-</div>
-<div class="viewcode-block" id="beads.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Responds to the action from the participant&quot;&quot;&quot;</span>
-</div>
 <div class="viewcode-block" id="beads.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Plots and saves files containing all the relevent data for this</span>
-<span class="sd">        experiment run &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the relevent data for this experiment run</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            The dictionary contains a series of keys including Name, </span>
+<span class="sd">            Observables and Actions.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                     <span class="s">&quot;Observables&quot;</span><span class="p">:</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">),</span>

@@ -50,40 +50,69 @@
   <h1>Source code for model.decision.binary</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">@author: Dominic</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">A collection of decision making functions where there are only two possible actions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 
-<div class="viewcode-block" id="binary"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.binary">[docs]</a><span class="k">class</span> <span class="nc">binary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="beta"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.beta">[docs]</a><span class="k">def</span> <span class="nf">beta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decisions using a probability difference threshold</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    responses : tuple of length two, optional</span>
+<span class="sd">        Provides the two action responses expected by the experiment</span>
+<span class="sd">    beta : float, optional</span>
+<span class="sd">        The threshold for decisions. :math:`\left\Vert p_0-0.5\right\Vert&gt;\Beta`</span>
+<span class="sd">        If true a decision is taken. If false the function responds ``None``</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    decisionFunc : function</span>
+<span class="sd">        Calculates the decisions</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary&quot;</span>
-    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">responses</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
+    <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binaryBeta&quot;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">responses</span> <span class="o">=</span> <span class="n">responses</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
-        
-<div class="viewcode-block" id="binary.decisionFunc"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.binary.decisionFunc">[docs]</a>    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-        
-        <span class="k">if</span> <span class="n">beta</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decisions using a probability difference threshold</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        probabilities : tuple of length two</span>
+<span class="sd">            The probabilities of the two decisions. They are compared by:</span>
+<span class="sd">            </span>
+<span class="sd">            .. math::\left\Vert p_0-0.5\right\Vert&gt;\Beta</span>
+<span class="sd">            </span>
+<span class="sd">            If true a decision is taken. If false the function responds ``None``</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        decision : int or None</span>
+<span class="sd">            The vlaue of the decision</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">prob</span> <span class="o">=</span> <span class="n">probabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">&gt;</span><span class="n">beta</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">prob</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">:</span>
-                <span class="n">decision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">responses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
-                <span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">)</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">responses</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">decision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">responses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">responses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
             
-        <span class="k">return</span> <span class="n">decision</span></div></div>
+        <span class="k">return</span> <span class="n">decision</span>
+        
+    <span class="k">return</span> <span class="n">decisionFunc</span></div>
 </pre></div>
 
           </div>

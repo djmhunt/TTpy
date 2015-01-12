@@ -55,43 +55,253 @@
             
   <div class="section" id="module-plotting">
 <span id="plotting-module"></span><h1>plotting module<a class="headerlink" href="#module-plotting" title="Permalink to this headline">¶</a></h1>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="plotting.axContour">
 <tt class="descclassname">plotting.</tt><tt class="descname">axContour</tt><big>(</big><em>ax</em>, <em>X</em>, <em>Y</em>, <em>z</em>, <em>minZ=0</em>, <em>CB_label=''</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axContour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axContour" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Produces a contour plot on the axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : matplotlib axis object</p>
+<p><strong>X</strong> : array of size m*n of floats</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>z</strong> : list or array of floats</p>
+<blockquote>
+<div><p>The magnitude values for the X,Y locations</p>
+</div></blockquote>
+<p><strong>minZ</strong> : float, optional</p>
+<blockquote>
+<div><p>The value of the lowest contour</p>
+</div></blockquote>
+<p><strong>CB_label</strong> : string, optional</p>
+<blockquote>
+<div><p>The colour bar label</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>CS</strong> : matplotlib contour object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.axImage">
 <tt class="descclassname">plotting.</tt><tt class="descname">axImage</tt><big>(</big><em>ax</em>, <em>X</em>, <em>Y</em>, <em>z</em>, <em>minZ=0</em>, <em>CB_label=''</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axImage" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Produces an image on the axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : matplotlib axis object</p>
+<p><strong>X</strong> : array of size m*n of floats</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>z</strong> : list or array of floats</p>
+<blockquote>
+<div><p>The magnitude values for the X,Y locations</p>
+</div></blockquote>
+<p><strong>minZ</strong> : float, optional</p>
+<blockquote>
+<div><p>The lowest valid value of the colour map</p>
+</div></blockquote>
+<p><strong>CB_label</strong> : string, optional</p>
+<blockquote>
+<div><p>The colour bar label</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>IM</strong> : matplotlib image object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.axPlotlines">
 <tt class="descclassname">plotting.</tt><tt class="descname">axPlotlines</tt><big>(</big><em>ax</em>, <em>x</em>, <em>Y</em>, <em>labels</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axPlotlines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axPlotlines" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Produces a set of lineplots on the axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : matplotlib axis object</p>
+<p><strong>x</strong> : array of length n of floats</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>labels</strong> : list of strings</p>
+<blockquote>
+<div><p>Description of each of the m datasets in <tt class="docutils literal"><span class="pre">Y</span></tt></p>
+</div></blockquote>
+<p><strong>axisLabels</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>A dictionary of axis properties, all optional, containing:</p>
+<p><tt class="docutils literal"><span class="pre">xlabel</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">ylabel</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">title</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">yMin</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">yMax</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">xMin</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">xMax</span></tt> : <cite>float</cite></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.axScatter">
 <tt class="descclassname">plotting.</tt><tt class="descname">axScatter</tt><big>(</big><em>ax</em>, <em>X</em>, <em>Y</em>, <em>z</em>, <em>minZ=0</em>, <em>CB_label=''</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axScatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axScatter" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Produces a scatter plot on the axis with the colour of the dots being a 
+third axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : matplotlib axis object</p>
+<p><strong>X</strong> : array of size m*n of floats</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>z</strong> : list or array of floats</p>
+<blockquote>
+<div><p>The magnitude values for the X,Y locations</p>
+</div></blockquote>
+<p><strong>minZ</strong> : float, optional</p>
+<blockquote>
+<div><p>The lowest valid value of the colour map</p>
+</div></blockquote>
+<p><strong>CB_label</strong> : string, optional</p>
+<blockquote>
+<div><p>The colour bar label</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>sc</strong> : matplotlib scatter object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.axSpectrum">
-<tt class="descclassname">plotting.</tt><tt class="descname">axSpectrum</tt><big>(</big><em>ax</em>, <em>x</em>, <em>Y</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descclassname">plotting.</tt><tt class="descname">axSpectrum</tt><big>(</big><em>ax</em>, <em>Y</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#axSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.axSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a spectogram-like plot on the axis</p>
+<p>This is made by creating a histogram for each x-axis element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : matplotlib axis object</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>axisLabels</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>A dictionary of axis properties, all optional, containing:</p>
+<p><tt class="docutils literal"><span class="pre">xlabel</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">ylabel</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">title</span></tt> : <cite>string</cite>,
+<tt class="docutils literal"><span class="pre">yMin</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">yMax</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">xMin</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">xMax</span></tt> : <cite>float</cite>,
+<tt class="docutils literal"><span class="pre">bins</span></tt> : <cite>int</cite>,
+<tt class="docutils literal"><span class="pre">probDensity</span></tt> : <cite>binary</cite>
+Sets if the histogram type is showing frequency or probability 
+density.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.dataSpectrumVsEvents">
-<tt class="descclassname">plotting.</tt><tt class="descname">dataSpectrumVsEvents</tt><big>(</big><em>data</em>, <em>events</em>, <em>labels</em>, <em>eventLabel</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#dataSpectrumVsEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.dataSpectrumVsEvents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Normalised spectogram/histogram of values across events</p>
-<p>printResourcesSpectrum(data,bins)</p>
+<tt class="descclassname">plotting.</tt><tt class="descname">dataSpectrumVsEvents</tt><big>(</big><em>data</em>, <em>events</em>, <em>eventLabel</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#dataSpectrumVsEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.dataSpectrumVsEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spectogram of data with a line plot over the top</p>
+<p>Uses axSpectrum for the spectogram</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : array of size m*n of floats</p>
+<blockquote>
+<div><p>The main datasets to be plotted</p>
+</div></blockquote>
+<p><strong>events</strong> : array of size n of floats</p>
+<blockquote>
+<div><p>An variable that changes alongside <tt class="docutils literal"><span class="pre">data</span></tt>, but whose values are 
+meaningful for all sets in data</p>
+</div></blockquote>
+<p><strong>eventLabel</strong> : string</p>
+<blockquote>
+<div><p>A description of the meaning of events</p>
+</div></blockquote>
+<p><strong>axisLabels</strong> : dictionary</p>
+<blockquote>
+<div><p>A dictionary of axis properties, all optional, containing those in 
+<tt class="docutils literal"><span class="pre">axSpectrum</span></tt> as well as:
+<tt class="docutils literal"><span class="pre">y2label</span></tt> : <cite>string</cite> The label of the scale of events</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : matplotlib figure object</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="plotting.dataVsEvents">
 <tt class="descclassname">plotting.</tt><tt class="descname">dataVsEvents</tt><big>(</big><em>data</em>, <em>events</em>, <em>labels</em>, <em>eventLabel</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#dataVsEvents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.dataVsEvents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Line plots of data with a line plot over the top</p>
+<p>Uses axPlotlines unless there are more than eight datasets in <tt class="docutils literal"><span class="pre">data</span></tt>, 
+at which point <tt class="docutils literal"><span class="pre">dataSpectrumVsEvents</span></tt> is called.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : array of size m*n of floats</p>
+<blockquote>
+<div><p>The main datasets to be plotted</p>
+</div></blockquote>
+<p><strong>events</strong> : array of size n of floats</p>
+<blockquote>
+<div><p>An variable that changes alongside <tt class="docutils literal"><span class="pre">data</span></tt>, but whose values are 
+meaningful for all sets in data</p>
+</div></blockquote>
+<p><strong>labels</strong> : list of strings</p>
+<blockquote>
+<div><p>Description of each of the m datasets in data</p>
+</div></blockquote>
+<p><strong>eventLabel</strong> : string</p>
+<blockquote>
+<div><p>A description of the meaning of events</p>
+</div></blockquote>
+<p><strong>axisLabels</strong> : dictionary</p>
+<blockquote>
+<div><p>A dictionary of axis properties, all optional, containing those in 
+<tt class="docutils literal"><span class="pre">axPlotlines</span></tt> as well as:
+<tt class="docutils literal"><span class="pre">y2label</span></tt> : <cite>string</cite> The label of the scale of events</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : matplotlib figure object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.dim1VarDim">
@@ -112,17 +322,76 @@
 <dl class="function">
 <dt id="plotting.legend">
 <tt class="descclassname">plotting.</tt><tt class="descname">legend</tt><big>(</big><em>*axis</em><big>)</big><a class="reference internal" href="_modules/plotting.html#legend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.legend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds a legend to each axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>axis</strong> : a list of matplotlib axis objects</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.lineplot">
 <tt class="descclassname">plotting.</tt><tt class="descname">lineplot</tt><big>(</big><em>x</em>, <em>Y</em>, <em>labels</em>, <em>axisLabels</em><big>)</big><a class="reference internal" href="_modules/plotting.html#lineplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.lineplot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Produces a lineplot for multiple datasets witht he same x and y axis</p>
+<p>Uses <tt class="docutils literal"><span class="pre">axPlotlines</span></tt> for plotting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array of length n of floats</p>
+<p><strong>Y</strong> : array of size m*n of floats</p>
+<p><strong>labels</strong> : list of strings</p>
+<blockquote>
+<div><p>Description of each of the m datasets in <tt class="docutils literal"><span class="pre">Y</span></tt></p>
+</div></blockquote>
+<p><strong>axisLabels</strong> : dictionary</p>
+<blockquote>
+<div><p>A dictionary of axis properties, all optional, used in <tt class="docutils literal"><span class="pre">axPlotlines</span></tt>. See
+<tt class="docutils literal"><span class="pre">axPlotlines</span></tt> for more details.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : matplotlib figure object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="plotting.varDynamics">
-<tt class="descclassname">plotting.</tt><tt class="descname">varDynamics</tt><big>(</big><em>paramSet</em>, <em>decisionTimes</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/plotting.html#varDynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.varDynamics" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<tt class="descclassname">plotting.</tt><tt class="descname">varDynamics</tt><big>(</big><em>paramSet</em>, <em>responses</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/plotting.html#varDynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plotting.varDynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots response changes to different parameters</p>
+<p>Uses <tt class="docutils literal"><span class="pre">dim1VarDim</span></tt>, <tt class="docutils literal"><span class="pre">dim2VarDim</span></tt> and <tt class="docutils literal"><span class="pre">dim3VarDim</span></tt> for plotting 
+depending on number of parameters chosen. See their documentation for more 
+detail.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>paramSet</strong> : dictionary</p>
+<blockquote>
+<div><p>The keys are the parameter names. The values are a list or array of 
+floats, showing the different values of the parameter looked at.</p>
+</div></blockquote>
+<p><strong>responses</strong> : array of floats</p>
+<p><strong>kwargs</strong> : dictionary</p>
+<blockquote>
+<div><p>kwargs depend on number of parameters chosen. See documentation for 
+<tt class="docutils literal"><span class="pre">dim1VarDim</span></tt>, <tt class="docutils literal"><span class="pre">dim2VarDim</span></tt> and <tt class="docutils literal"><span class="pre">dim3VarDim</span></tt> for kwarg lists</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : matplotlib figure object or, if <tt class="docutils literal"><span class="pre">dim3VarDim</span></tt> has been used, a <tt class="docutils literal"><span class="pre">vtkWriter</span></tt> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

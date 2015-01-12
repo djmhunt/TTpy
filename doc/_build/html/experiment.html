@@ -88,6 +88,43 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <em class="property">class </em><tt class="descclassname">experiment.beads.</tt><tt class="descname">beads</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experiment.experiment" title="experiment.experiment.experiment"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experiment.experiment</span></tt></a></p>
 <p>Based on the Moore&amp;Sellen Beads task</p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>N</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of beads that could potentially be shown</p>
+</div></blockquote>
+<p><strong>beadSequence</strong> : list or array of {0,1}, optional</p>
+<blockquote>
+<div><p>The sequence of beads to be shown. Bead sequences can also be embedded 
+in the code and then referred to by name. The only current one is
+<cite>MooreSellen</cite>, the default sequence.</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dictionary, optional</p>
+<blockquote class="last">
+<div><p>Any arguments that will be later used by <tt class="docutils literal"><span class="pre">experimentPlot</span></tt>. Refer to 
+its documentation for more details.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="experiment.beads.beads.Name">
 <tt class="descname">Name</tt><em class="property"> = 'beads'</em><a class="headerlink" href="#experiment.beads.beads.Name" title="Permalink to this definition">¶</a></dt>
@@ -118,42 +155,66 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.beads.beads.feedback">
-<tt class="descclassname">beads.</tt><tt class="descname">feedback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.feedback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Responds to the action from the participant</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="experiment.beads.beads.next">
 <tt class="descclassname">beads.</tt><tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
+<dd><p>Produces the next bead for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>bead</strong> : {0,1}</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>StopIteration</strong></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.beads.beads.outputEvolution">
 <tt class="descclassname">beads.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots and saves files containing all the relevent data for this
-experiment run</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.beads.beads.procede">
-<tt class="descclassname">beads.</tt><tt class="descname">procede</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.procede" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the experiment</p>
+<dd><p>Returns all the relevent data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Observables and Actions.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.beads.beads.receiveAction">
 <tt class="descclassname">beads.</tt><tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> : {1,2}</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.beads.beads.reset">
 <tt class="descclassname">beads.</tt><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
-<p>N: Number of beads that could potentially be shown
-beadSequence: The sequence of beads</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -358,6 +419,15 @@ np.random.random_sample .</p>
 <dt id="experiment.experiment.experiment.feedback">
 <tt class="descclassname">experiment.</tt><tt class="descname">feedback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Responds to the action from the participant</p>
+<p>For this experiment there is no possible response</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>feedback</strong> : None</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -388,7 +458,7 @@ experiment run</p>
 <dl class="method">
 <dt id="experiment.experiment.experiment.procede">
 <tt class="descclassname">experiment.</tt><tt class="descname">procede</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.procede" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the experiment after feedback</p>
+<dd><p>Updates the experiment before the next timestep</p>
 </dd></dl>
 
 <dl class="method">
@@ -438,6 +508,98 @@ doi:10.3389/fnhum.2011.00075</td>
 </tr>
 </tbody>
 </table>
+<dl class="function">
+<dt id="experiment.pavlov.choice">
+<tt class="descclassname">experiment.pavlov.</tt><tt class="descname">choice</tt><big>(</big><em>a</em>, <em>size=None</em>, <em>replace=True</em>, <em>p=None</em><big>)</big><a class="headerlink" href="#experiment.pavlov.choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a random sample from a given 1-D array</p>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a</strong> : 1-D array-like or int</p>
+<blockquote>
+<div><p>If an ndarray, a random sample is generated from its elements.
+If an int, the random sample is generated as if a was np.arange(n)</p>
+</div></blockquote>
+<p><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Output shape. Default is None, in which case a single value is
+returned.</p>
+</div></blockquote>
+<p><strong>replace</strong> : boolean, optional</p>
+<blockquote>
+<div><p>Whether the sample is with or without replacement</p>
+</div></blockquote>
+<p><strong>p</strong> : 1-D array-like, optional</p>
+<blockquote>
+<div><p>The probabilities associated with each entry in a.
+If not given the sample assumes a uniform distribtion over all
+entries in a.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>samples</strong> : 1-D ndarray, shape (size,)</p>
+<blockquote>
+<div><p>The generated random samples</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If a is an int and less than zero, if a or p are not 1-dimensional,
+if a is an array-like of size 0, if p is not a vector of
+probabilities, if a and p have different lengths, or if
+replace=False and the sample size is greater than the population
+size</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">randint</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">shuffle</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">permutation</span></tt></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Generate a uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">#This is equivalent to np.random.randint(0,5,3)</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([3, 3, 0])</span>
+</pre></div>
+</div>
+<p>Generate a uniform random sample from np.arange(5) of size 3 without
+replacement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">array([3,1,0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">#This is equivalent to np.random.shuffle(np.arange(5))[:3]</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size
+3 without replacement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([2, 3, 0])</span>
+</pre></div>
+</div>
+<p>Any of the above can be repeated with an arbitrary array-like
+instead of just integers. For instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;pooh&#39;</span><span class="p">,</span> <span class="s">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s">&#39;piglet&#39;</span><span class="p">,</span> <span class="s">&#39;Christopher&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;],</span>
+<span class="go">      dtype=&#39;|S11&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="class">
 <dt id="experiment.pavlov.pavlov">
 <em class="property">class </em><tt class="descclassname">experiment.pavlov.</tt><tt class="descname">pavlov</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov" title="Permalink to this definition">¶</a></dt>
@@ -458,12 +620,6 @@ analysis.&#8221;</cite></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.pavlov.pavlov.feedback">
-<tt class="descclassname">pavlov.</tt><tt class="descname">feedback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.feedback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Responds to the action from the participant</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="experiment.pavlov.pavlov.next">
 <tt class="descclassname">pavlov.</tt><tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the next item for the iterator</p>
@@ -477,15 +633,21 @@ experiment run</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.pavlov.pavlov.procede">
-<tt class="descclassname">pavlov.</tt><tt class="descname">procede</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.procede" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the experiment after feedback</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="experiment.pavlov.pavlov.receiveAction">
 <tt class="descclassname">pavlov.</tt><tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>action</strong> : ignored</p>
+<blockquote class="last">
+<div><p>The action is only stored, not used.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -496,6 +658,54 @@ experiment run</p>
 decks: Array containing the decks of cards</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.pavlov.random">
+<tt class="descclassname">experiment.pavlov.</tt><tt class="descname">random</tt><big>(</big><em>size=None</em><big>)</big><a class="headerlink" href="#experiment.pavlov.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return random floats in the half-open interval [0.0, 1.0).</p>
+<p>Results are from the &#8220;continuous uniform&#8221; distribution over the
+stated interval.  To sample <span class="math">\(Unif[a, b), b &gt; a\)</span> multiply
+the output of <cite>random_sample</cite> by <cite>(b-a)</cite> and add <cite>a</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">random_sample</span><span class="p">()</span> <span class="o">+</span> <span class="n">a</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Defines the shape of the returned array of random floats. If None
+(the default), returns a single float.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : float or ndarray of floats</p>
+<blockquote class="last">
+<div><p>Array of random floats of shape <cite>size</cite> (unless <tt class="docutils literal"><span class="pre">size=None</span></tt>, in which
+case a single float is returned).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
+<span class="go">0.47108547995356098</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">())</span>
+<span class="go">&lt;type &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">((</span><span class="mi">5</span><span class="p">,))</span>
+<span class="go">array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428])</span>
+</pre></div>
+</div>
+<p>Three-by-two array of random numbers from [-5, 0):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">5</span>
+<span class="go">array([[-3.99149989, -0.52338984],</span>
+<span class="go">       [-2.99091858, -0.79479508],</span>
+<span class="go">       [-1.23204345, -1.75224494]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
