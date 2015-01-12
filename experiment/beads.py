@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 
-Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
-                    Moore, S. C., & Sellen, J. L. (2006). 
+:Reference: Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+                    `Moore, S. C., & Sellen, J. L. (2006)`. 
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9. 
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
@@ -27,22 +27,39 @@ beadSequences = {"MooreSellen": [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]}
 defaultBeads = beadSequences["MooreSellen"]
 
 class beads(experiment):
-
-    """Based on the Moore&Sellen Beads task"""
+    """Based on the Moore&Sellen Beads task
+    
+    Many methods are inherited from the experiment.experiment.experiment class.
+    Refer to its documentation for missing methods.
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    
+    Parameters
+    ----------
+    N : int, optional
+        Number of beads that could potentially be shown
+    beadSequence : list or array of {0,1}, optional
+        The sequence of beads to be shown. Bead sequences can also be embedded 
+        in the code and then referred to by name. The only current one is
+        `MooreSellen`, the default sequence.
+    plotArgs : dictionary, optional
+        Any arguments that will be later used by ``experimentPlot``. Refer to 
+        its documentation for more details.    
+    """
 
     Name = "beads"
 
-    def __init__(self,**kwargs):
-
-        self.kwargs = kwargs
-
-        self.reset()
-
     def reset(self):
-        """ Creates a new experiment instance
+        """ 
+        Creates a new experiment instance
 
-        N: Number of beads that could potentially be shown
-        beadSequence: The sequence of beads"""
+        Returns
+        -------
+        self : The cleaned up object instance
+        """
 
         kwargs = self.kwargs.copy()
 
@@ -80,7 +97,16 @@ class beads(experiment):
         return self
 
     def next(self):
-        """ Produces the next item for the iterator"""
+        """ Produces the next bead for the iterator
+        
+        Returns
+        -------
+        bead : {0,1}
+        
+        Raises
+        ------
+        StopIteration
+        """
 
         self.t += 1
 
@@ -92,22 +118,29 @@ class beads(experiment):
         return self.beads[self.t]
 
     def receiveAction(self,action):
-        """ Receives the next action from the participant"""
+        """ 
+        Receives the next action from the participant
+        
+        Parameters
+        ----------
+        action : {1,2}
+        """
 
         self.recAction[self.t] = action
 
         if action and not self.firstDecision:
             self.firstDecision = self.t + 1
 
-    def procede(self):
-        """Updates the experiment"""
-
-    def feedback(self):
-        """ Responds to the action from the participant"""
-
     def outputEvolution(self):
-        """ Plots and saves files containing all the relevent data for this
-        experiment run """
+        """
+        Returns all the relevent data for this experiment run
+        
+        Returns
+        -------
+        results : dictionary
+            The dictionary contains a series of keys including Name, 
+            Observables and Actions.        
+        """
 
         results = { "Name": self.Name,
                     "Observables":array(self.recBeads),
@@ -221,4 +254,20 @@ def generateSequence(numBeads, oneProb, switchProb):
             sequence[i] = 1-bead
 
     return sequence
+    
+def beadStimDirect():
+    
+    def beadStim(event):
+        stimulus = array([event,1-event])
+        return stimulus
+    return beadStim
+
+def beadStimInfo(oneProb):
+    
+    def beadStim(event):
+        stim = oneProb*event + (1-oneProb)*(1-event)
+        stimulus = array([stim,1-stim])
+        return stimulus
+        
+    return beadStim
 

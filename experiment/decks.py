@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 
-Based on the paper Regulatory fit effects in a choice task
-                Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007).
+:Reference: Regulatory fit effects in a choice task
+                `Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007)`.
                 Psychonomic Bulletin & Review, 14(6), 1125–32. 
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
@@ -30,26 +30,42 @@ deckSets = {"WorthyMaddox": array([[ 2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2, 
 defaultDecks = deckSets["WorthyMaddox"]
 
 class decks(experiment):
-
-    """Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task."""
+    """
+    Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.
+    
+    Many methods are inherited from the experiment.experiment.experiment class.
+    Refer to its documentation for missing methods.
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    
+    Parameters
+    ----------
+    draws: int, optional
+        Number of cards drawn by the participant
+    decks: array of floats, optional
+        The decks of cards
+    plotArgs : dictionary, optional
+        Any arguments that will be later used by ``experimentPlot``. Refer to 
+        its documentation for more details.        
+    """
 
     Name = "decks"
 
-    def __init__(self,**kwargs):
-
-        self.kwargs = kwargs
-
-        self.reset()
-
     def reset(self):
-        """ Creates a new experiment instance
+        """ 
+        Creates a new experiment instance
 
-        T: Number of cards drawn by the participant
-        decks: Array containing the decks of cards"""
+        Returns
+        -------
+        self : The cleaned up object instance
+        """
 
         kwargs = self.kwargs.copy()
 
-        T = kwargs.pop('Draws',None)
+        T = kwargs.pop('draws',None)
         decks = kwargs.pop("decks",defaultDecks)
 
         self.plotArgs = kwargs.pop('plotArgs',{})
@@ -85,14 +101,24 @@ class decks(experiment):
         return self
 
     def next(self):
-        """ Produces the next item for the iterator"""
+        """
+        Produces the next bead for the iterator
+        
+        Returns
+        -------
+        stimulus : None
+        
+        Raises
+        ------
+        StopIteration
+        """
 
         self.t += 1
 
         if self.t == self.T:
             raise StopIteration
 
-        return
+        return None
 
     def receiveAction(self,action):
         """ Receives the next action from the participant"""
@@ -142,3 +168,18 @@ class decks(experiment):
     class experimentPlot(experimentPlot):
 
         """Abstract class for the creation of plots relevant to a experiment"""
+
+def deckStimDirect():
+    
+    def deckStim(event, decision):
+        stimulus = [event*(1-decision) + event*decision, event*decision + event*(1-decision)]
+        return stimulus
+    return deckStim
+
+def deckStimDualInfo(maxEventVal):
+    
+    def deckStim(event, decision):
+        stim = (event/maxEventVal)*(1-decision) + (1-(event/maxEventVal))*decision
+        stimulus = [stim,1-stim]
+        return stimulus
+    return deckStim

@@ -13,8 +13,16 @@ import matplotlib.pyplot as plt
 from experimentPlot import experimentPlot
 
 class experiment(object):
-
-    """The documentation for the class"""
+    """The abstract experiment class from which all others inherit
+    
+    Many general methods for experiments are found only here
+    
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    
+    """
 
     Name = "Empty"
 
@@ -25,7 +33,13 @@ class experiment(object):
         self.reset()
 
     def reset(self):
-        """ Creates a new experiment instance"""
+        """ 
+        Creates a new experiment instance
+
+        Returns
+        -------
+        self : The cleaned up object instance
+        """
 
         kwargs = self.kwargs.copy()
 
@@ -42,7 +56,17 @@ class experiment(object):
         return self
 
     def next(self):
-        """ Produces the next item for the iterator"""
+        """
+        Produces the next bead for the iterator
+        
+        Returns
+        -------
+        stimulus : None
+        
+        Raises
+        ------
+        StopIteration
+        """
 
         # Since there is nothing to iterate over, just return the final state
 
@@ -80,14 +104,23 @@ class experiment(object):
         self.recAction.append(action)
 
     def procede(self):
-        """Updates the experiment after feedback"""
+        """
+        Updates the experiment before the next timestep
+        """
 
         pass
 
     def feedback(self):
-        """ Responds to the action from the participant"""
-
-        pass
+        """ 
+        Responds to the action from the participant
+        
+        For this experiment there is no possible response
+        
+        Returns
+        -------
+        feedback : None
+        """
+        return None
 
     def outputEvolution(self):
         """ Plots and saves files containing all the relavent data for this
