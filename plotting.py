@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -56,6 +56,24 @@ origin = 'lower'
 
 ### Simple lineplot
 def lineplot(x,Y,labels,axisLabels):
+    """Produces a lineplot for multiple datasets witht he same x and y axis
+    
+    Uses ``axPlotlines`` for plotting
+    
+    Parameters
+    ----------
+    x : array of length n of floats
+    Y : array of size m*n of floats
+    labels : list of strings
+        Description of each of the m datasets in ``Y``
+    axisLabels : dictionary
+        A dictionary of axis properties, all optional, used in ``axPlotlines``. See
+        ``axPlotlines`` for more details.
+
+    Returns
+    -------
+    fig : matplotlib figure object    
+    """
 
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
@@ -69,7 +87,28 @@ def lineplot(x,Y,labels,axisLabels):
     return fig
 
 ### Response changes to different parameters
-def varDynamics(paramSet, decisionTimes, **kwargs):
+def varDynamics(paramSet, responses, **kwargs):
+    """Plots response changes to different parameters
+    
+    Uses ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for plotting 
+    depending on number of parameters chosen. See their documentation for more 
+    detail.
+    
+    Parameters
+    ----------
+    paramSet : dictionary
+        The keys are the parameter names. The values are a list or array of 
+        floats, showing the different values of the parameter looked at.
+    responses : array of floats
+    kwargs : dictionary
+        kwargs depend on number of parameters chosen. See documentation for 
+        ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for kwarg lists
+        
+    Returns
+    -------
+    fig : matplotlib figure object or, if ``dim3VarDim`` has been used, a ``vtkWriter`` object
+    
+    """
 
     lparams = len(paramSet)
 
@@ -77,13 +116,13 @@ def varDynamics(paramSet, decisionTimes, **kwargs):
 
     if lparams == 1:
         param = params[0]
-        fig = dim1VarDim(paramSet[param],decisionTimes, param, **kwargs)
+        fig = dim1VarDim(paramSet[param],responses, param, **kwargs)
 
     elif lparams == 2:
-        fig = dim2VarDim(paramSet[params[0]],paramSet[params[1]],decisionTimes, params[0], params[1], **kwargs)
+        fig = dim2VarDim(paramSet[params[0]],paramSet[params[1]],responses, params[0], params[1], **kwargs)
 
     elif lparams == 3:
-        fig = dim3VarDim(paramSet[params[0]],paramSet[params[1]],paramSet[params[2]],decisionTimes, params[0], params[1], params[2], **kwargs)
+        fig = dim3VarDim(paramSet[params[0]],paramSet[params[1]],paramSet[params[2]],responses, params[0], params[1], params[2], **kwargs)
 
     else:
 
@@ -218,11 +257,38 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
 
 ### Inputs compared to output probabilities
 def dataVsEvents(data,events,labels,eventLabel,axisLabels):
+    """
+    Line plots of data with a line plot over the top
+    
+    Uses axPlotlines unless there are more than eight datasets in ``data``, 
+    at which point ``dataSpectrumVsEvents`` is called.
+     
+    Parameters
+    ----------
+    data : array of size m*n of floats
+        The main datasets to be plotted
+    events : array of size n of floats
+        An variable that changes alongside ``data``, but whose values are 
+        meaningful for all sets in data
+    labels : list of strings
+        Description of each of the m datasets in data
+    eventLabel : string
+        A description of the meaning of events
+    axisLabels : dictionary
+        A dictionary of axis properties, all optional, containing those in 
+        ``axPlotlines`` as well as:
+        ``y2label`` : `string` The label of the scale of events
+    
+    Returns
+    -------
+    fig : matplotlib figure object
+
+    """
 
     data = array(data)
 
     if len(data) > 8:
-        fig = dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels)
+        fig = dataSpectrumVsEvents(data,events,eventLabel,axisLabels)
         return fig
 
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
@@ -249,10 +315,31 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     return fig
 
 
-def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
-    """Normalised spectogram/histogram of values across events
+def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
+    """
+    Spectogram of data with a line plot over the top
+    
+    Uses axSpectrum for the spectogram
+     
+    Parameters
+    ----------
+    data : array of size m*n of floats
+        The main datasets to be plotted
+    events : array of size n of floats
+        An variable that changes alongside ``data``, but whose values are 
+        meaningful for all sets in data
+    eventLabel : string
+        A description of the meaning of events
+    axisLabels : dictionary
+        A dictionary of axis properties, all optional, containing those in 
+        ``axSpectrum`` as well as:
+        ``y2label`` : `string` The label of the scale of events
+    
+    Returns
+    -------
+    fig : matplotlib figure object
 
-    printResourcesSpectrum(data,bins)"""
+    """
 
     y2Label = axisLabels.pop("y2Label","Event value")
 
@@ -261,7 +348,7 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    axSpectrum(ax,events,data, axisLabels)
+    axSpectrum(ax,data, axisLabels)
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
@@ -280,6 +367,24 @@ def dataSpectrumVsEvents(data,events,labels,eventLabel,axisLabels):
 
 def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
     """
+    Produces a scatter plot on the axis with the colour of the dots being a 
+    third axis
+    
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    X : array of size m*n of floats
+    Y : array of size m*n of floats
+    z : list or array of floats
+        The magnitude values for the X,Y locations
+    minZ : float, optional
+        The lowest valid value of the colour map
+    CB_label : string, optional
+        The colour bar label
+    
+    Returns
+    -------
+    sc : matplotlib scatter object
     """
 
     maxZ = amax(z)
@@ -297,6 +402,23 @@ def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
 
 def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
     """
+    Produces an image on the axis
+    
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    X : array of size m*n of floats
+    Y : array of size m*n of floats
+    z : list or array of floats
+        The magnitude values for the X,Y locations
+    minZ : float, optional
+        The lowest valid value of the colour map
+    CB_label : string, optional
+        The colour bar label
+    
+    Returns
+    -------
+    IM : matplotlib image object
     """
 
     xMin = amin(X)
@@ -338,6 +460,25 @@ def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
     return im
 
 def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
+    """
+    Produces a contour plot on the axis
+    
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    X : array of size m*n of floats
+    Y : array of size m*n of floats
+    z : list or array of floats
+        The magnitude values for the X,Y locations
+    minZ : float, optional
+        The value of the lowest contour
+    CB_label : string, optional
+        The colour bar label
+    
+    Returns
+    -------
+    CS : matplotlib contour object
+    """
 
     xMin = amin(X)
     xMax = amax(X)
@@ -392,6 +533,27 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
     return CS
 
 def axPlotlines(ax, x, Y, labels, axisLabels):
+    """
+    Produces a set of lineplots on the axis
+    
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    x : array of length n of floats
+    Y : array of size m*n of floats
+    labels : list of strings
+        Description of each of the m datasets in ``Y``
+    axisLabels : dictionary
+        A dictionary of axis properties, all optional, containing:
+        
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+        ``yMin`` : `float`,
+        ``yMax`` : `float`,
+        ``xMin`` : `float`,
+        ``xMax`` : `float`
+    """
 
     xLabel = axisLabels.pop("xLabel","Event")
     yLabel = axisLabels.pop("yLabel","Value")
@@ -415,7 +577,31 @@ def axPlotlines(ax, x, Y, labels, axisLabels):
     ax.set_ylabel(yLabel)
     ax.set_title(title)
 
-def axSpectrum(ax,x,Y, axisLabels):
+def axSpectrum(ax,Y, axisLabels):
+    """
+    Produces a spectogram-like plot on the axis
+    
+    This is made by creating a histogram for each x-axis element.
+    
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    Y : array of size m*n of floats
+    axisLabels : dictionary
+        A dictionary of axis properties, all optional, containing:
+        
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+        ``yMin`` : `float`,
+        ``yMax`` : `float`,
+        ``xMin`` : `float`,
+        ``xMax`` : `float`,
+        ``bins`` : `int`,
+        ``probDensity`` : `binary`
+        Sets if the histogram type is showing frequency or probability 
+        density.
+    """
 
     xLabel = axisLabels.pop("xLabel","Events")
     yLabel = axisLabels.pop("yLabel","Density across parameter range")
@@ -459,6 +645,13 @@ def axSpectrum(ax,x,Y, axisLabels):
     ax.set_title(title)
 
 def legend(*axis):
+    """
+    Adds a legend to each axis
+    
+    Parameters
+    ----------
+    axis : a list of matplotlib axis objects
+    """
 
     lines = []
     pltLabels = []
