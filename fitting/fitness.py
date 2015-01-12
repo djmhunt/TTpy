@@ -16,9 +16,11 @@ from numpy import sum as asum
 
 class fitter(fit):
 
-    """A class for fitting data by passing the participant data through the model
+    """
+    A class for fitting data by passing the participant data through the model.
+    
+    Used only for fitting action-response models
 
-    fitters(partParam, modelParam, scaler)
 
     """
     
@@ -110,8 +112,8 @@ class fitter(fit):
         for action, reward in izip(parAct, parReward):
 
             model.currAction = action
-            model._storeState()
-            model._update(reward,'reac')
+            model.storeState()
+            model.feedback(reward)
             
 
 
