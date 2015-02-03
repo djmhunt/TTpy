@@ -61,7 +61,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">amax</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">argmax</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 
 <span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="n">model</span>
@@ -80,50 +80,68 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    alpha : float, optional</span>
-<span class="sd">        Learning rate parameter for updating the cue-value weights</span>
+<span class="sd">        Learning rate parameter for updating the cue-value weights. Default 0.3</span>
+<span class="sd">    gamma : float, optional</span>
+<span class="sd">        It is a time constant that controls how quickly the neural units </span>
+<span class="sd">        (modeled as dynamical systems) respond to external inputs. Default 0.1</span>
 <span class="sd">    theta : float, optional</span>
-<span class="sd">        Used for gamma from the paper. It is a time constant that controls </span>
-<span class="sd">        how quickly the neural units (modeled as dynamical systems) respond </span>
-<span class="sd">        to external inputs</span>
+<span class="sd">        Used for gamma from the paper. Theta is used in other models for the </span>
+<span class="sd">        same purpose, so is added here as another option. Gamma will override</span>
+<span class="sd">        theta.</span>
 <span class="sd">    zeta : float, optional</span>
 <span class="sd">        Regulates the ratio between the power (amplitude) of expectation </span>
-<span class="sd">        relative to delta units.</span>
-<span class="sd">    prior : array, optional</span>
-<span class="sd">        The prior probability </span>
-<span class="sd">    expect: float, optional</span>
-<span class="sd">        The initialisation of the the expected reward    </span>
+<span class="sd">        relative to delta units. Default 2</span>
+<span class="sd">    w : array, optional</span>
+<span class="sd">        The stimulus weights. Default [0.01,0.01]</span>
+<span class="sd">    tau : float, optional</span>
+<span class="sd">        The timing signal mean. Default 160</span>
+<span class="sd">    z: float, optional</span>
+<span class="sd">        The timing signal spread. Default 20   </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;RVPM&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;zeta&#39;</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;expect&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">defaultGamma</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="n">defaultGamma</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">==</span> <span class="n">defaultGamma</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span><span class="n">defaultGamma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;zeta&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;tau&#39;</span><span class="p">,</span><span class="mi">160</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averaging</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;averaging&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFuncName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,[</span><span class="n">blankStim</span><span class="p">,</span><span class="s">&#39;blank&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFuncName</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,[</span><span class="n">basicDecision</span><span class="p">,</span><span class="s">&#39;basic&#39;</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># Timing sgnal value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># The stimuli</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># Reward value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="mi">0</span> <span class="c">#Reward prediction unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># positivie prediction error unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># negative prediction error unit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TSN</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># Temporaly shifted neuron</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s">&quot;theta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+                           <span class="s">&quot;theta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
                            <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
-                           <span class="s">&quot;alpha&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">}</span><span class="c">#,</span>
-<span class="c">#                           &quot;expectation&quot;: self.expect}</span>
+                           <span class="s">&quot;alpha&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+                           <span class="s">&quot;zeta&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="p">,</span>
+                           <span class="s">&quot;tau&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span>
+                           <span class="s">&quot;z&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+                           <span class="s">&quot;averaging&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">averaging</span><span class="p">,</span>
+                           <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFuncName</span><span class="p">,</span>
+                           <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFuncName</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastObs</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="c"># Recorded information</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storeSetup</span><span class="p">()</span>
 
 <div class="viewcode-block" id="RVPM.action"><a class="viewcode-back" href="../../model.html#model.RVPM.RVPM.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -131,17 +149,12 @@
 <span class="sd">        -------</span>
 <span class="sd">        action : integer or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_decision</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_storeState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
-        
-    
-</div>
+        </div>
 <div class="viewcode-block" id="RVPM.outputEvolution"><a class="viewcode-back" href="../../model.html#model.RVPM.RVPM.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevent data for this model </span>
 <span class="sd">        </span>
@@ -152,17 +165,14 @@
 <span class="sd">            Probabilities, Actions and Events.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                   <span class="s">&quot;theta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-                   <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
-                   <span class="s">&quot;alpha&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
-                   <span class="s">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">,</span>
-                   <span class="s">&quot;Probabilities&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">),</span>
-                   <span class="s">&quot;ActionProb&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="p">),</span>
-                   <span class="s">&quot;Expectation&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="p">),</span>
-                   <span class="s">&quot;Actions&quot;</span><span class="p">:</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">),</span>
-                   <span class="s">&quot;Decsions&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">),</span>
-                   <span class="s">&quot;Events&quot;</span><span class="p">:</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="p">)}</span>
+        <span class="n">av</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">averaging</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            
+            <span class="n">results</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39;_early&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:</span><span class="n">av</span><span class="p">]</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39;_late&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="n">av</span><span class="p">:]</span>
 
         <span class="k">return</span> <span class="n">results</span>
 </div>
@@ -171,17 +181,8 @@
 
         <span class="k">if</span> <span class="n">instance</span> <span class="o">==</span> <span class="s">&#39;obs&#39;</span><span class="p">:</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-            <span class="n">chosen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
-            
-            <span class="n">delta</span> <span class="o">=</span> <span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
-
-            <span class="c">#Calculate jar information</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="p">()</span>
-
-            <span class="c">#Calculate the new probabilities</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">()</span>
+            <span class="c">#Calculate the new information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">lastObs</span> <span class="o">=</span> <span class="bp">True</span>
 
@@ -192,47 +193,125 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">lastObs</span> <span class="o">=</span> <span class="bp">False</span>
 
             <span class="k">else</span><span class="p">:</span>
+                
+                <span class="c">#Calculate the new information</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
-                <span class="n">chosen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
-
-                <span class="c">#Calculate jar information</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">])</span>
-
-                <span class="c">#Calculate the new probabilities</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
-<span class="sd">            output later &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RVPM.storeState"><a class="viewcode-back" href="../../model.html#model.RVPM.RVPM.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Stores the state of all the important variables so that they can be</span>
+<span class="sd">        accessed later </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_updateGeneralStore</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">_processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
+        
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_processStim</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_updateEventStore</span><span class="p">()</span>
+            
+    <span class="k">def</span> <span class="nf">_processStim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+        
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeSigMag</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">+</span> <span class="n">dV</span>
+        <span class="n">ddeltaP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deltaPUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span> <span class="o">+</span> <span class="n">ddeltaP</span>
 
-        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">)</span>
-        <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
+        <span class="n">ddeltaM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deltaMUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span><span class="p">,</span><span class="n">T</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span> <span class="o">+</span> <span class="n">ddeltaM</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TSN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tsnUpdate</span><span class="p">(</span><span class="n">dV</span><span class="p">,</span><span class="n">ddeltaP</span><span class="p">,</span><span class="n">ddeltaM</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wNew</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">_wNew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">deltaP</span><span class="p">,</span><span class="n">deltaM</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">w</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">c</span><span class="o">*</span><span class="n">V</span><span class="o">*</span><span class="p">(</span><span class="n">deltaP</span> <span class="o">-</span> <span class="n">deltaM</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span>
+    
+    <span class="k">def</span> <span class="nf">_vUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">V</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">new</span>
+        
+    <span class="k">def</span> <span class="nf">_deltaPUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">deltaP</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">deltaP</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">r</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">new</span>
+        
+    <span class="k">def</span> <span class="nf">_timeSigMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">t</span><span class="p">):</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">signal</span>
+        
+    <span class="k">def</span> <span class="nf">_deltaMUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">deltaM</span><span class="p">,</span><span class="n">T</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">deltaM</span> <span class="o">+</span> <span class="n">gamma</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="o">-</span><span class="n">r</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">new</span>
+        
+    <span class="k">def</span> <span class="nf">_tsnUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dV</span><span class="p">,</span><span class="n">ddeltaP</span><span class="p">,</span><span class="n">ddeltaM</span><span class="p">):</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">dV</span><span class="p">])</span> <span class="o">+</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ddeltaP</span><span class="p">])</span> <span class="o">-</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ddeltaM</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">signal</span>
+        
+    <span class="k">def</span> <span class="nf">_storeSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;T&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;V&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;DP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;DM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;TSN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;stim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;rew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;w&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generalStoreSetup</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_generalStoreSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        
+    <span class="k">def</span> <span class="nf">_updateEventStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;T&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;V&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;DP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deltaP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;DM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;TSN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TSN</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;stim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;rew&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="s">&quot;w&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span>
+        
+        
+    <span class="k">def</span> <span class="nf">_updateGeneralStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        
 
-    <span class="k">def</span> <span class="nf">_decision</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    </div>
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.RVPM.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
 
-        <span class="n">prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">prob</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">eventIter</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">event</span><span class="p">))</span>
+        
+    
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">eventIter</span><span class="p">]):</span>
+            
+        <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span>
+        </div>
+<div class="viewcode-block" id="basicDecision"><a class="viewcode-back" href="../../model.html#model.RVPM.basicDecision">[docs]</a><span class="k">def</span> <span class="nf">basicDecision</span><span class="p">(</span><span class="n">prob</span><span class="p">):</span>
+            
+    <span class="k">return</span> <span class="bp">None</span>
+            
 </pre></div></div>
 
           </div>

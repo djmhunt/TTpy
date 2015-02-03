@@ -134,12 +134,10 @@ its documentation for more details.</p>
 <dt id="experiment.beads.beads.experimentPlot">
 <em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.experimentPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></tt></a></p>
-<p>Abstract class for the creation of plots relevant to a experiment</p>
 <dl class="method">
 <dt id="experiment.beads.beads.experimentPlot.plotProbJar1">
 <tt class="descname">plotProbJar1</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.experimentPlot.plotProbJar1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.experimentPlot.plotProbJar1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a set of lines for the probability of jar 1.</p>
-<p>self.plotProbJar1(modelLables, modelSet)</p>
 </dd></dl>
 
 <dl class="method">
@@ -215,6 +213,13 @@ Observables and Actions.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.beads.storeState">
+<tt class="descclassname">beads.</tt><tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
 </dd></dl>
 
 </dd></dl>
@@ -298,55 +303,106 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <em class="property">class </em><tt class="descclassname">experiment.decks.</tt><tt class="descname">decks</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experiment.experiment" title="experiment.experiment.experiment"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experiment.experiment</span></tt></a></p>
 <p>Based on the Worthy&amp;Maddox 2007 paper &#8220;Regulatory fit effects in a choice task.</p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>draws: int, optional</strong></p>
+<blockquote>
+<div><p>Number of cards drawn by the participant</p>
+</div></blockquote>
+<p><strong>decks: array of floats, optional</strong></p>
+<blockquote>
+<div><p>The decks of cards</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dictionary, optional</p>
+<blockquote class="last">
+<div><p>Any arguments that will be later used by <tt class="docutils literal"><span class="pre">experimentPlot</span></tt>. Refer to 
+its documentation for more details.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="experiment.decks.decks.Name">
 <tt class="descname">Name</tt><em class="property"> = 'decks'</em><a class="headerlink" href="#experiment.decks.decks.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="class">
-<dt id="experiment.decks.decks.experimentPlot">
-<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.experimentPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></tt></a></p>
-<p>Abstract class for the creation of plots relevant to a experiment</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="experiment.decks.decks.feedback">
-<tt class="descclassname">decks.</tt><tt class="descname">feedback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.feedback" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">feedback</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Responds to the action from the participant</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.decks.decks.next">
-<tt class="descclassname">decks.</tt><tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next bead for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>stimulus</strong> : None</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>StopIteration</strong></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.decks.decks.outputEvolution">
-<tt class="descclassname">decks.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots and saves files containing all the relavent data for this
 experiment run</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.decks.decks.procede">
-<tt class="descclassname">decks.</tt><tt class="descname">procede</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.procede" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">procede</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.procede" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the experiment after feedback</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.decks.decks.receiveAction">
-<tt class="descclassname">decks.</tt><tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.receiveAction" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.decks.decks.reset">
-<tt class="descclassname">decks.</tt><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.reset" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
-<p>T: Number of cards drawn by the participant
-decks: Array containing the decks of cards</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.decks.decks.storeState">
+<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#decks.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.decks.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
 </dd></dl>
 
 </dd></dl>
@@ -402,7 +458,20 @@ np.random.random_sample .</p>
 <dt id="experiment.experiment.experiment">
 <em class="property">class </em><tt class="descclassname">experiment.experiment.</tt><tt class="descname">experiment</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
-<p>The documentation for the class</p>
+<p>The abstract experiment class from which all others inherit</p>
+<p>Many general methods for experiments are found only here</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="experiment.experiment.experiment.Name">
 <tt class="descname">Name</tt><em class="property"> = 'Empty'</em><a class="headerlink" href="#experiment.experiment.experiment.Name" title="Permalink to this definition">¶</a></dt>
@@ -433,7 +502,17 @@ np.random.random_sample .</p>
 <dl class="method">
 <dt id="experiment.experiment.experiment.next">
 <tt class="descclassname">experiment.</tt><tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
+<dd><p>Produces the next bead for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>stimulus</strong> : None</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><strong>StopIteration</strong></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -471,6 +550,21 @@ experiment run</p>
 <dt id="experiment.experiment.experiment.reset">
 <tt class="descclassname">experiment.</tt><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experiment.experiment.storeState">
+<tt class="descclassname">experiment.</tt><tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
 </dd></dl>
 
 </dd></dl>
@@ -607,34 +701,107 @@ instead of just integers. For instance:</p>
 <p>Based on the Silvetti et al 2011 paper <cite>&#8220;Value and prediction error in 
 medial frontal cortex: integrating the single-unit and systems levels of 
 analysis.&#8221;</cite></p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>rewMag</strong> : float, optional</p>
+<blockquote>
+<div><p>The size of the stimulus. Default 4</p>
+</div></blockquote>
+<p><strong>rewProb</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The probabilities of each stimulus producing a reward. 
+Default [0.85,0.33]</p>
+</div></blockquote>
+<p><strong>stimMag</strong> : float, optional</p>
+<blockquote>
+<div><p>The size of the stimulus. Default 1</p>
+</div></blockquote>
+<p><strong>stimDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that the stimulus is produced for. This
+should be longer than rewDur since rewDur is set to end when stimDur
+ends. Default 200</p>
+</div></blockquote>
+<p><strong>rewDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that the reward is produced for.
+Default 40</p>
+</div></blockquote>
+<p><strong>simDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that each stimulus event is run for.
+Default 300</p>
+</div></blockquote>
+<p><strong>stimRepeats</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of times a stimulus is introduced. Default 72</p>
+</div></blockquote>
+<p><strong>simLoopLen</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of times the learning process is undertaken to produce the 
+averages. Default 100</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="experiment.pavlov.pavlov.Name">
 <tt class="descname">Name</tt><em class="property"> = 'pavlov'</em><a class="headerlink" href="#experiment.pavlov.pavlov.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="class">
-<dt id="experiment.pavlov.pavlov.experimentPlot">
-<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.experimentPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></tt></a></p>
-<p>Abstract class for the creation of plots relevant to a experiment</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="experiment.pavlov.pavlov.next">
-<tt class="descclassname">pavlov.</tt><tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next bead for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>c</strong> : list of floats</p>
+<blockquote>
+<div><p>Contains the inputs for each of the stimuli</p>
+</div></blockquote>
+<p><strong>rewSig</strong> : list of lists of floats</p>
+<blockquote>
+<div><p>Each list contains the rewards at each time</p>
+</div></blockquote>
+<p><strong>stimDur</strong> : int</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.pavlov.pavlov.outputEvolution">
-<tt class="descclassname">pavlov.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots and saves files containing all the relavent data for this
 experiment run</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.pavlov.pavlov.receiveAction">
-<tt class="descclassname">pavlov.</tt><tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.receiveAction" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">receiveAction</tt><big>(</big><em>action</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -652,13 +819,31 @@ experiment run</p>
 
 <dl class="method">
 <dt id="experiment.pavlov.pavlov.reset">
-<tt class="descclassname">pavlov.</tt><tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.reset" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
-<p>T: Number of cards drawn by the participant
-decks: Array containing the decks of cards</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.pavlov.storeState">
+<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlov.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlov.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
 </dd></dl>
 
 </dd></dl>
+
+<dl class="function">
+<dt id="experiment.pavlov.pavlovStimTemporal">
+<tt class="descclassname">experiment.pavlov.</tt><tt class="descname">pavlovStimTemporal</tt><big>(</big><em>stimDur</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlovStimTemporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlovStimTemporal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="experiment.pavlov.random">

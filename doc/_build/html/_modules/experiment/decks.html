@@ -80,20 +80,42 @@
 <span class="n">defaultDecks</span> <span class="o">=</span> <span class="n">deckSets</span><span class="p">[</span><span class="s">&quot;WorthyMaddox&quot;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="decks"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks">[docs]</a><span class="k">class</span> <span class="nc">decks</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.</span>
+<span class="sd">    </span>
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
+<span class="sd">    Refer to its documentation for missing methods.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    draws: int, optional</span>
+<span class="sd">        Number of cards drawn by the participant</span>
+<span class="sd">    decks: array of floats, optional</span>
+<span class="sd">        The decks of cards</span>
+<span class="sd">    plotArgs : dictionary, optional</span>
+<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to </span>
+<span class="sd">        its documentation for more details.        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;decks&quot;</span>
 
 <div class="viewcode-block" id="decks.reset"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates a new experiment instance</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Creates a new experiment instance</span>
 
-<span class="sd">        T: Number of cards drawn by the participant</span>
-<span class="sd">        decks: Array containing the decks of cards&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : The cleaned up object instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;Draws&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;draws&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="n">decks</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;decks&quot;</span><span class="p">,</span><span class="n">defaultDecks</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;plotArgs&#39;</span><span class="p">,{})</span>
@@ -129,14 +151,24 @@
         <span class="k">return</span> <span class="bp">self</span>
 </div>
 <div class="viewcode-block" id="decks.next"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Produces the next item for the iterator&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produces the next bead for the iterator</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimulus : None</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="decks.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Receives the next action from the participant&quot;&quot;&quot;</span>
@@ -154,7 +186,7 @@
 <span class="c">#        self.drawn[deckDrawn] = cardDrawn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drawn</span> <span class="o">=</span> <span class="n">cardDrawn</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_storeState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span>
 </div>
@@ -176,16 +208,12 @@
 
         <span class="k">return</span> <span class="n">results</span>
 </div>
-    <span class="k">def</span> <span class="nf">_storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="decks.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span>
-
-<div class="viewcode-block" id="decks.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.decks.decks.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a experiment&quot;&quot;&quot;</span>
 </div></div>
 <div class="viewcode-block" id="deckStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDirect">[docs]</a><span class="k">def</span> <span class="nf">deckStimDirect</span><span class="p">():</span>
     

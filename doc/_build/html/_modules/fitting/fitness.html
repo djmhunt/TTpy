@@ -66,9 +66,11 @@
 
 <div class="viewcode-block" id="fitter"><a class="viewcode-back" href="../../fitting.html#fitting.fitness.fitter">[docs]</a><span class="k">class</span> <span class="nc">fitter</span><span class="p">(</span><span class="n">fit</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;A class for fitting data by passing the participant data through the model</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for fitting data by passing the participant data through the model.</span>
+<span class="sd">    </span>
+<span class="sd">    Used only for fitting action-response models</span>
 
-<span class="sd">    fitters(partParam, modelParam, scaler)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -160,8 +162,8 @@
         <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">parAct</span><span class="p">,</span> <span class="n">parReward</span><span class="p">):</span>
 
             <span class="n">model</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="n">action</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">_storeState</span><span class="p">()</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span><span class="s">&#39;reac&#39;</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
             
 </pre></div></div>
 

@@ -103,7 +103,8 @@
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beads&quot;</span>
 
 <div class="viewcode-block" id="beads.reset"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates a new experiment instance</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Creates a new experiment instance</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -162,7 +163,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_storeState</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
 </div>
@@ -198,15 +199,13 @@
 
         <span class="k">return</span> <span class="n">results</span>
 </div>
-    <span class="k">def</span> <span class="nf">_storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="beads.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
-
+</div>
 <div class="viewcode-block" id="beads.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a experiment&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_figSets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -264,8 +263,6 @@
 <div class="viewcode-block" id="beads.experimentPlot.plotProbJar1"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot.plotProbJar1">[docs]</a>        <span class="k">def</span> <span class="nf">plotProbJar1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Plots a set of lines for the probability of jar 1.</span>
-
-<span class="sd">            self.plotProbJar1(modelLables, modelSet)</span>
 <span class="sd">            &quot;&quot;&quot;</span>
 
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">]</span>
