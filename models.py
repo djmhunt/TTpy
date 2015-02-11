@@ -15,20 +15,20 @@ class models(object):
 
     Parameters
     ----------
-    args : a list of tuples of the form (model,variables, parameters)
+    args : a list of tuples of the form (model, parameters, modifiers)
         Each tuple is an an model package, describing an model and 
         the different parameter combinations that will be tried.
         
     args tuples components
 
     model :  model.model.model
-    variables : dictonary of floats or lists of floats
-        Variables are the parameters that you are or are likely to change across 
-        model instances. When a variable contains a list, an instance of the 
-        model will be created for every combination of this variable with 
+    parameters : dictonary containing floats or lists of floats
+        Parameters are the variables that you are or are likely to change across 
+        model instances. When a parameter contains a list, an instance of the 
+        model will be created for every combination of this parameter with 
         all the others.
-    parameters : dictionary of float, string or binary valued elements
-        These contain all the the model parameters that define the version 
+    modifiers : dictionary of float, string or binary valued elements
+        These contain all the the model modifiers that define the version 
         of the model being studied.
     """
 
@@ -92,7 +92,9 @@ class models(object):
         Returns
         -------
         model : model.model.model
+            The model to be initialised
         initialVars : dictionary of floats
+            The model instance paramters
         otherArgs : dictonary of floats, strings and binary values
         """
 
@@ -114,10 +116,27 @@ class models(object):
     def _params(self,model, parameters, otherArgs):
 
         """ 
-        For the given model returns the appropreate list for constructing the model instances
+        For the given model returns a list of all that goes in to the model.
 
-        Each line has:
-        (model, {dict of model arguments})
+        Each line has:         (model, {dict of model arguments})
+        
+        Parameters
+        ----------
+        model : model.model.model
+            The model to be initialised
+        parameters : dictonary containing floats or lists of floats
+            Frequently changing values of the model. When a parameter contains 
+            a list, an version of the model will be set-up for every combination 
+            of this parameter with all the others.
+        otherArgs : dictionary of float, string or binary valued elements
+            These contain all the the model modifiers that define the version 
+            of the model being studied.
+            
+        Returns
+        -------
+        modelSet : list of tuples with two elements
+            Each tuple contains a (model,args) pair, where args is a unique 
+            combination of the parameters and otherArgs in the form of a dict.
         """
 
         params = parameters.keys()

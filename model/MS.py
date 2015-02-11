@@ -221,6 +221,9 @@ class MS(model):
             self.figSets.append(('trial3_4Diff',fig))
 
         def dPChanges(self):
+            """
+            A graph reproducing figures 3 & 4 from the paper
+            """
 
             gainLables = array(["Gain " + str(m["theta"]) for m in self.modelStore])
 
@@ -241,6 +244,9 @@ class MS(model):
 
 
         def trial3_4Diff(self):
+            """
+            A graph reproducing figures 5 from the paper
+            """
 
             dPDiff = array([m["ProbDifference"][3]-m["ProbDifference"][2] for m in self.modelStore])
 
