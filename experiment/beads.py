@@ -113,7 +113,7 @@ class beads(experiment):
         if self.t == self.T:
             raise StopIteration
 
-        self._storeState()
+        self.storeState()
 
         return self.beads[self.t]
 
@@ -149,15 +149,13 @@ class beads(experiment):
 
         return results
 
-    def _storeState(self):
+    def storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later """
 
         self.recBeads[self.t] = self.beads[self.t]
 
     class experimentPlot(experimentPlot):
-
-        """Abstract class for the creation of plots relevant to a experiment"""
 
         def _figSets(self):
 
@@ -215,8 +213,6 @@ class beads(experiment):
         def plotProbJar1(self):
             """
             Plots a set of lines for the probability of jar 1.
-
-            self.plotProbJar1(modelLables, modelSet)
             """
 
             data = [model["Probabilities"][:,0] for model in self.modelStore]
@@ -260,6 +256,9 @@ def beadStimDirect():
     def beadStim(event):
         stimulus = array([event,1-event])
         return stimulus
+        
+    beadStim.Name = "beadStimDirect"
+    
     return beadStim
 
 def beadStimInfo(oneProb):
@@ -268,6 +267,8 @@ def beadStimInfo(oneProb):
         stim = oneProb*event + (1-oneProb)*(1-event)
         stimulus = array([stim,1-stim])
         return stimulus
+        
+    beadStim.Name = "beadStimInfo"
         
     return beadStim
 
