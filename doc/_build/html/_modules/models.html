@@ -65,20 +65,20 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    args : a list of tuples of the form (model,variables, parameters)</span>
+<span class="sd">    args : a list of tuples of the form (model, parameters, modifiers)</span>
 <span class="sd">        Each tuple is an an model package, describing an model and </span>
 <span class="sd">        the different parameter combinations that will be tried.</span>
 <span class="sd">        </span>
 <span class="sd">    args tuples components</span>
 
 <span class="sd">    model :  model.model.model</span>
-<span class="sd">    variables : dictonary of floats or lists of floats</span>
-<span class="sd">        Variables are the parameters that you are or are likely to change across </span>
-<span class="sd">        model instances. When a variable contains a list, an instance of the </span>
-<span class="sd">        model will be created for every combination of this variable with </span>
+<span class="sd">    parameters : dictonary containing floats or lists of floats</span>
+<span class="sd">        Parameters are the variables that you are or are likely to change across </span>
+<span class="sd">        model instances. When a parameter contains a list, an instance of the </span>
+<span class="sd">        model will be created for every combination of this parameter with </span>
 <span class="sd">        all the others.</span>
-<span class="sd">    parameters : dictionary of float, string or binary valued elements</span>
-<span class="sd">        These contain all the the model parameters that define the version </span>
+<span class="sd">    modifiers : dictionary of float, string or binary valued elements</span>
+<span class="sd">        These contain all the the model modifiers that define the version </span>
 <span class="sd">        of the model being studied.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -142,7 +142,9 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        model : model.model.model</span>
+<span class="sd">            The model to be initialised</span>
 <span class="sd">        initialVars : dictionary of floats</span>
+<span class="sd">            The model instance paramters</span>
 <span class="sd">        otherArgs : dictonary of floats, strings and binary values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -164,10 +166,27 @@
     <span class="k">def</span> <span class="nf">_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">otherArgs</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">        For the given model returns the appropreate list for constructing the model instances</span>
+<span class="sd">        For the given model returns a list of all that goes in to the model.</span>
 
-<span class="sd">        Each line has:</span>
-<span class="sd">        (model, {dict of model arguments})</span>
+<span class="sd">        Each line has:         (model, {dict of model arguments})</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model : model.model.model</span>
+<span class="sd">            The model to be initialised</span>
+<span class="sd">        parameters : dictonary containing floats or lists of floats</span>
+<span class="sd">            Frequently changing values of the model. When a parameter contains </span>
+<span class="sd">            a list, an version of the model will be set-up for every combination </span>
+<span class="sd">            of this parameter with all the others.</span>
+<span class="sd">        otherArgs : dictionary of float, string or binary valued elements</span>
+<span class="sd">            These contain all the the model modifiers that define the version </span>
+<span class="sd">            of the model being studied.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelSet : list of tuples with two elements</span>
+<span class="sd">            Each tuple contains a (model,args) pair, where args is a unique </span>
+<span class="sd">            combination of the parameters and otherArgs in the form of a dict.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>

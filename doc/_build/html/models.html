@@ -72,23 +72,23 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : a list of tuples of the form (model,variables, parameters)</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : a list of tuples of the form (model, parameters, modifiers)</p>
 <blockquote>
 <div><p>Each tuple is an an model package, describing an model and 
 the different parameter combinations that will be tried.</p>
 </div></blockquote>
 <p><strong>args tuples components</strong></p>
 <p><strong>model</strong> :  model.model.model</p>
-<p><strong>variables</strong> : dictonary of floats or lists of floats</p>
+<p><strong>parameters</strong> : dictonary containing floats or lists of floats</p>
 <blockquote>
-<div><p>Variables are the parameters that you are or are likely to change across 
-model instances. When a variable contains a list, an instance of the 
-model will be created for every combination of this variable with 
+<div><p>Parameters are the variables that you are or are likely to change across 
+model instances. When a parameter contains a list, an instance of the 
+model will be created for every combination of this parameter with 
 all the others.</p>
 </div></blockquote>
-<p><strong>parameters</strong> : dictionary of float, string or binary valued elements</p>
+<p><strong>modifiers</strong> : dictionary of float, string or binary valued elements</p>
 <blockquote class="last">
-<div><p>These contain all the the model parameters that define the version 
+<div><p>These contain all the the model modifiers that define the version 
 of the model being studied.</p>
 </div></blockquote>
 </td>
@@ -108,7 +108,13 @@ functions in dataFitting.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> : model.model.model</p>
+<blockquote>
+<div><p>The model to be initialised</p>
+</div></blockquote>
 <p><strong>initialVars</strong> : dictionary of floats</p>
+<blockquote>
+<div><p>The model instance paramters</p>
+</div></blockquote>
 <p class="last"><strong>otherArgs</strong> : dictonary of floats, strings and binary values</p>
 </td>
 </tr>

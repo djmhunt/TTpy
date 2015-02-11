@@ -55,7 +55,14 @@
             
   <div class="section" id="module-utils">
 <span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="function">
 <dt id="utils.argProcess">
 <tt class="descclassname">utils.</tt><tt class="descname">argProcess</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/utils.html#argProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.argProcess" title="Permalink to this definition">¶</a></dt>
@@ -64,61 +71,300 @@
 <dl class="function">
 <dt id="utils.date">
 <tt class="descclassname">utils.</tt><tt class="descname">date</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/utils.html#date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.date" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Provides a string of todays date</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>date</strong> : string</p>
+<blockquote class="last">
+<div><p>The string is of the form [year]-[month]-[day]</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.fancyLogger">
 <tt class="descclassname">utils.</tt><tt class="descname">fancyLogger</tt><big>(</big><em>logLevel</em>, <em>fileName=''</em>, <em>silent=False</em><big>)</big><a class="reference internal" href="_modules/utils.html#fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.fancyLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets up the style of logging for all the simulations
-fancyLogger(logLevel, logFile=&#8221;&#8221;, silent = False)</p>
-<p>logLevel = [logging.DEBUG|logging.INFO|logging.WARNING|logging.ERROR|logging.CRITICAL]</p>
+<dd><p>Sets up the style of logging for all the simulations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>logLevel</strong> : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</p>
+<blockquote>
+<div><p>The lowest level to which logging is recorded</p>
+</div></blockquote>
+<p><strong>fileName</strong> : string, optional</p>
+<blockquote>
+<div><p>The filename that the log will be written to. If empty no log will be 
+written to a file. Default is empty</p>
+</div></blockquote>
+<p><strong>silent</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>States if a log is not written to stdout. Defaults to False</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.flatten">
 <tt class="descclassname">utils.</tt><tt class="descname">flatten</tt><big>(</big><em>l</em><big>)</big><a class="reference internal" href="_modules/utils.html#flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.flatten" title="Permalink to this definition">¶</a></dt>
-<dd><p>Yields the elements in order from any N demtional itterable</p>
+<dd><p>Yields the elements in order from any N dimentional itterable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>l</strong> : iterable</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">flatten</span><span class="p">(</span><span class="n">a</span><span class="p">):</span> <span class="k">print</span> <span class="n">i</span><span class="p">,</span><span class="n">loc</span>
+<span class="go">1 [0, 0]</span>
+<span class="go">2 [0, 1]</span>
+<span class="go">3 [0, 2]</span>
+<span class="go">4 [1, 0]</span>
+<span class="go">5 [1, 1]</span>
+<span class="go">6 [1, 2]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.folderSetup">
 <tt class="descclassname">utils.</tt><tt class="descname">folderSetup</tt><big>(</big><em>simType</em><big>)</big><a class="reference internal" href="_modules/utils.html#folderSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.folderSetup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies and creates the folder the data will be stored in</p>
-<p>folderSetup(simType)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>simType</strong> : string</p>
+<blockquote>
+<div><p>A description of the experiment</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>folderName</strong> : string</p>
+<blockquote class="last">
+<div><p>The path to the folder</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.listMerGen">
 <tt class="descclassname">utils.</tt><tt class="descname">listMerGen</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/utils.html#listMerGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMerGen" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fast merging of lists of numbers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : list of lists of numbers</p>
+<blockquote class="last">
+<div><p>A list of 1D lists of numbers</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.listMerge">
 <tt class="descclassname">utils.</tt><tt class="descname">listMerge</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/utils.html#listMerge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMerge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obselite? Should be replaced by listMergeNP</p>
+<dd><p>For merging lists with objects that are not solely numbers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : list of lists</p>
+<blockquote>
+<div><p>A list of 1D lists of objects</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>combinations</strong> : array</p>
+<blockquote class="last">
+<div><p>An array with len(args) columns and a row for each combination</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">utils</span><span class="o">.</span><span class="n">listMerge</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="go">array([[1, 2, 3, 1, 2, 3, 1, 2, 3],</span>
+<span class="go">       [5, 5, 5, 6, 6, 6, 7, 7, 7]])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.listMergeNP">
 <tt class="descclassname">utils.</tt><tt class="descname">listMergeNP</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/utils.html#listMergeNP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMergeNP" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fast merging of lists of numbers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : list of lists of numbers</p>
+<blockquote>
+<div><p>A list of 1D lists of numbers</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>combinations</strong> : array</p>
+<blockquote class="last">
+<div><p>An array with len(args) columns and a row for each combination</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">utils</span><span class="o">.</span><span class="n">listMergeNP</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="go">array([[1, 2, 3, 1, 2, 3, 1, 2, 3],</span>
+<span class="go">       [5, 5, 5, 6, 6, 6, 7, 7, 7]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.mergeDatasetRepr">
+<tt class="descclassname">utils.</tt><tt class="descname">mergeDatasetRepr</tt><big>(</big><em>data</em>, <em>dataLabel=''</em><big>)</big><a class="reference internal" href="_modules/utils.html#mergeDatasetRepr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.mergeDatasetRepr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists of strings</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list of dicts containing strings, lists or numbers</p>
+<p><strong>dataLabel</strong> : string, optional</p>
+<blockquote>
+<div><p>This string will be appended to the front of each key in the new dataset
+Default blank</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dictionary of lists of strings</p>
+<blockquote class="last">
+<div><p>For each key a list will be formed of the string representations of 
+each of the former key values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.mergeDatasets">
-<tt class="descclassname">utils.</tt><tt class="descname">mergeDatasets</tt><big>(</big><em>data</em>, <em>dataLabel=''</em><big>)</big><a class="reference internal" href="_modules/utils.html#mergeDatasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.mergeDatasets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
+<tt class="descclassname">utils.</tt><tt class="descname">mergeDatasets</tt><big>(</big><em>data</em>, <em>extend=False</em><big>)</big><a class="reference internal" href="_modules/utils.html#mergeDatasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.mergeDatasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists of objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list of dicts containing strings, lists or numbers</p>
+<p><strong>extend</strong> : bool, optional</p>
+<blockquote>
+<div><p>If lists should be extended rather than appended. Default False</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dictionary of lists of objects</p>
+<blockquote class="last">
+<div><p>For each key a list will be formed of the former key values. If a 
+data set did not contain a key a value of None will be entered for it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;a&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="s">&#39;b&#39;</span><span class="p">:[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]},</span>
+<span class="go">            {&#39;b&#39;:[4,5,6],&#39;c&#39;:&#39;string&#39;,&#39;d&#39;:5}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: [[1, 2, 3], None],</span>
+<span class="go"> &#39;b&#39;: [[7, 8, 9], [4, 5, 6]],</span>
+<span class="go"> &#39;c&#39;: [None, &#39;string&#39;],</span>
+<span class="go"> &#39;d&#39;: [None, 5]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extend</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="go">{&#39;a&#39;: [1, 2, 3, None],</span>
+<span class="go"> &#39;b&#39;: [7, 8, 9, 4, 5, 6],</span>
+<span class="go"> &#39;c&#39;: [None, &#39;string&#39;],</span>
+<span class="go"> &#39;d&#39;: [None, 5]}</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;b&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]])},</span> <span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extend</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="go">{&#39;b&#39;: [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">{&#39;b&#39;: [array([[7, 8, 9],</span>
+<span class="go">        [1, 2, 3]]), array([[4, 5, 6],</span>
+<span class="go">        [2, 3, 4]])]}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.mergeDicts">
 <tt class="descclassname">utils.</tt><tt class="descname">mergeDicts</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/utils.html#mergeDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.mergeDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merges dictionaries with different keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> : list of dictionaries</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>mergedDict</strong> : dictionary</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="utils.saving">
 <tt class="descclassname">utils.</tt><tt class="descname">saving</tt><big>(</big><em>save</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/utils.html#saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.saving" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates a folder and produces a log filename</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save</strong> : bool</p>
+<blockquote>
+<div><p>If a file is to be saved</p>
+</div></blockquote>
+<p><strong>label</strong> : string</p>
+<blockquote>
+<div><p>A special label to add to the folder name</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>folderName</strong> : string</p>
+<blockquote>
+<div><p>Path for the folder. If save is False, &#8220;&#8221;</p>
+</div></blockquote>
+<p><strong>fileName</strong> : string</p>
+<blockquote class="last">
+<div><p>Full file name of log.txt with path. If save is False, &#8220;&#8221;</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="utils.varyingParams">

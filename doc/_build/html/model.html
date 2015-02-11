@@ -356,12 +356,14 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <dl class="method">
 <dt id="model.MS.MS.modelSetPlot.dPChanges">
 <tt class="descname">dPChanges</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot.dPChanges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot.dPChanges" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A graph reproducing figures 3 &amp; 4 from the paper</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="model.MS.MS.modelSetPlot.trial3_4Diff">
 <tt class="descname">trial3_4Diff</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot.trial3_4Diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot.trial3_4Diff" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>A graph reproducing figures 5 from the paper</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -489,8 +491,7 @@ Probabilities, Actions and Events.</p>
 <dl class="method">
 <dt id="model.MS_rev.MS_rev.storeState">
 <tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
+<dd><p>Stores the state of all the important variables so that they can be accessed later</p>
 </dd></dl>
 
 </dd></dl>
@@ -548,9 +549,24 @@ relative to delta units. Default 2</p>
 <blockquote>
 <div><p>The timing signal mean. Default 160</p>
 </div></blockquote>
-<p><strong>z: float, optional</strong></p>
-<blockquote class="last">
+<p><strong>z</strong> : float, optional</p>
+<blockquote>
 <div><p>The timing signal spread. Default 20</p>
+</div></blockquote>
+<p><strong>averaging</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of stimuli recorded from the beginning and end of each 
+training set. Default is 3</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is basicDecision</p>
 </div></blockquote>
 </td>
 </tr>
@@ -586,9 +602,23 @@ relative to delta units. Default 2</p>
 </table>
 </dd></dl>
 
+<dl class="class">
+<dt id="model.RVPM.RVPM.modelSetPlot">
+<em class="property">class </em><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.modelSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><tt class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></tt></a></p>
+<p>Class for the creation of plots relevant to the model set</p>
+<dl class="method">
+<dt id="model.RVPM.RVPM.modelSetPlot.avResponse">
+<tt class="descname">avResponse</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.modelSetPlot.avResponse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.modelSetPlot.avResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>The averaged response from different parts of the model in the form
+of figure 1 from the paper</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="method">
 <dt id="model.RVPM.RVPM.outputEvolution">
-<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">RVPM.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevent data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -607,7 +637,7 @@ Probabilities, Actions and Events.</p>
 
 <dl class="method">
 <dt id="model.RVPM.RVPM.storeState">
-<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.storeState" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">RVPM.</tt><tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#RVPM.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
@@ -616,12 +646,12 @@ accessed later</p>
 
 <dl class="function">
 <dt id="model.RVPM.basicDecision">
-<tt class="descclassname">model.RVPM.</tt><tt class="descname">basicDecision</tt><big>(</big><em>prob</em><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#basicDecision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.basicDecision" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">model.RVPM.</tt><tt class="descname">basicDecision</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#basicDecision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.basicDecision" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="model.RVPM.blankStim">
-<tt class="descclassname">model.RVPM.</tt><tt class="descname">blankStim</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.blankStim" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">model.RVPM.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.blankStim" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
