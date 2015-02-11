@@ -136,7 +136,7 @@ class decks(experiment):
 #        self.drawn[deckDrawn] = cardDrawn
         self.drawn = cardDrawn
 
-        self._storeState()
+        self.storeState()
 
         return self.cardValue
 
@@ -158,16 +158,12 @@ class decks(experiment):
 
         return results
 
-    def _storeState(self):
+    def storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later """
 
         self.recAction[self.t] = self.action
         self.recCardVal[self.t] = self.cardValue
-
-    class experimentPlot(experimentPlot):
-
-        """Abstract class for the creation of plots relevant to a experiment"""
 
 def deckStimDirect():
     

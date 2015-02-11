@@ -131,7 +131,7 @@ class experiment(object):
 
         return results
 
-    def _storeState(self):
+    def storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later """
 
