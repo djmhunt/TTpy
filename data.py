@@ -8,12 +8,9 @@ from __future__ import division
 
 import pandas as pd
 
-from itertools import izip
 from os import listdir
 from scipy.io import loadmat
 from numpy import array, shape
-
-from utils import listMerGen, mergeDatasets
 
 def data(folder,fileType):
     """A function for reading in and returning a dataset
