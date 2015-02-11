@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -14,19 +14,26 @@ from numpy import seterr, seterrcall, meshgrid, array, amax
 from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
+from collections import defaultdict
 
 
 # For analysing the state of the computer
 # import psutil
 
-### +++++ Internal utilities
-
 def fancyLogger(logLevel, fileName="", silent = False):
     """
     Sets up the style of logging for all the simulations
-    fancyLogger(logLevel, logFile="", silent = False)
-
-    logLevel = [logging.DEBUG|logging.INFO|logging.WARNING|logging.ERROR|logging.CRITICAL]"""
+    
+    Parameters
+    ----------
+    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+        The lowest level to which logging is recorded
+    fileName : string, optional
+        The filename that the log will be written to. If empty no log will be 
+        written to a file. Default is empty
+    silent : bool, optional
+        States if a log is not written to stdout. Defaults to False
+    """
 
     class streamLoggerSim(object):
        """
@@ -84,7 +91,16 @@ def fancyLogger(logLevel, fileName="", silent = False):
 def folderSetup(simType):
     """Identifies and creates the folder the data will be stored in
 
-    folderSetup(simType)"""
+    Parameters
+    ----------
+    simType : string
+        A description of the experiment
+        
+    Returns
+    -------
+    folderName : string
+        The path to the folder 
+    """
 
     # While the folders have already been created, check for the next one
     folderName = './Outputs/' + date + "_" + simType
@@ -101,6 +117,23 @@ def folderSetup(simType):
     return folderName
 
 def saving(save, label):
+    """
+    Creates a folder and produces a log filename
+    
+    Parameters
+    ----------
+    save : bool
+        If a file is to be saved
+    label : string
+        A special label to add to the folder name
+        
+    Returns
+    -------
+    folderName : string
+        Path for the folder. If save is False, ""
+    fileName : string
+        Full file name of log.txt with path. If save is False, ""
+    """
 
     if save:
         folderName = folderSetup(label)
@@ -130,8 +163,26 @@ def argProcess(**kwargs):
     return expArgs, modelArgs, plotArgs, otherArgs
 
 def listMerge(*args):
+    """For merging lists with objects that are not solely numbers
+    
+    Parameters
+    ----------
+    args : list of lists
+        A list of 1D lists of objects
+        
+    Returns
+    -------
+    combinations : array
+        An array with len(args) columns and a row for each combination
+    
+    Examples
+    --------    
+    >>> utils.listMerge([1,2,3],[5,6,7]).T
+    array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
+           [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
-    """Obselite? Should be replaced by listMergeNP"""
+    
+    """
 
     r=[[]]
     for x in args:
@@ -146,8 +197,30 @@ def listMerge(*args):
     return array(r)
 
 def listMergeNP(*args):
+    """Fast merging of lists of numbers
+    
+    Parameters
+    ----------
+    args : list of lists of numbers
+        A list of 1D lists of numbers
+        
+    Returns
+    -------
+    combinations : array
+        An array with len(args) columns and a row for each combination
+    
+    Examples
+    --------    
+    >>> utils.listMergeNP([1,2,3],[5,6,7]).T
+    array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
+           [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
-    if len(args) == 1:
+    """
+
+    if len(args) == 0:
+        return array([[]])
+        
+    elif len(args) == 1:
         a = array(args[0])
         r = a.reshape((amax(a.shape),1))
 
@@ -161,8 +234,21 @@ def listMergeNP(*args):
         return r.T
 
 def listMerGen(*args):
-
-    if len(args) == 1:
+    """Fast merging of lists of numbers
+    
+    Parameters
+    ----------
+    args : list of lists of numbers
+        A list of 1D lists of numbers
+        
+    Yields
+    ------
+    combination : numpy.array of 1 x len(args)
+        Array of all combinations
+    """
+    if len(args) == 0:
+        r = array([[]])
+    elif len(args) == 1:
         a = array(args[0])
         r = a.reshape((amax(a.shape),1))
 
@@ -175,16 +261,32 @@ def listMerGen(*args):
         yield i
 
 def varyingParams(intObjects,params):
-    """Takes a list of models or experiments and returns a dictionary with only the parameters
-    which vary and their values"""
+    """
+    Takes a list of models or experiments and returns a dictionary with only the parameters
+    which vary and their values
+    """
 
     initDataSet = {param:[i[param] for i in intObjects] for param in params}
     dataSet = {param:val for param,val in initDataSet.iteritems() if val.count(val[0])!=len(val)}
 
     return dataSet
 
-def mergeDatasets(data, dataLabel=''):
-    """Take a list of dictionaries and turn it into a dictionary of lists
+def mergeDatasetRepr(data, dataLabel=''):
+    """
+    Take a list of dictionaries and turn it into a dictionary of lists of strings
+    
+    Parameters
+    ----------
+    data : list of dicts containing strings, lists or numbers
+    dataLabel : string, optional
+        This string will be appended to the front of each key in the new dataset
+        Default blank
+        
+    Returns
+    -------
+    newStore : dictionary of lists of strings
+        For each key a list will be formed of the string representations of 
+        each of the former key values.
 
     """
 
@@ -194,7 +296,7 @@ def mergeDatasets(data, dataLabel=''):
         keySet = keySet.union(s.keys())
 
     # For every key
-    partStore = {k:[] for k in keySet}
+    partStore = defaultdict(list)
     for key in keySet:
         for s in data:
             v = repr(s.get(key,None))
@@ -203,16 +305,103 @@ def mergeDatasets(data, dataLabel=''):
     newStore = {dataLabel + k : v for k,v in partStore.iteritems()}
 
     return newStore
+    
+def mergeDatasets(data, extend = False):
+    """
+    Take a list of dictionaries and turn it into a dictionary of lists of objects
+    
+    Parameters
+    ----------
+    data : list of dicts containing strings, lists or numbers
+    extend : bool, optional
+        If lists should be extended rather than appended. Default False
+        
+    Returns
+    -------
+    newStore : dictionary of lists of objects
+        For each key a list will be formed of the former key values. If a 
+        data set did not contain a key a value of None will be entered for it.
+    
+    Examples
+    --------    
+    >>> data = [{'a':[1,2,3],'b':[7,8,9]},
+                {'b':[4,5,6],'c':'string','d':5}]
+    >>> mergeDatasets(data)
+    {'a': [[1, 2, 3], None],
+     'b': [[7, 8, 9], [4, 5, 6]],
+     'c': [None, 'string'],
+     'd': [None, 5]}
+    >>> mergeDatasets(data, extend = True)
+    {'a': [1, 2, 3, None],
+     'b': [7, 8, 9, 4, 5, 6],
+     'c': [None, 'string'],
+     'd': [None, 5]}
+     
+     >>> from numpy import array
+     >>> data = [{'b':array([[7,8,9],[1,2,3]])}, {'b':array([[4,5,6],[2,3,4]])}]
+     >>> mergeDatasets(data, extend = True)
+     {'b': [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}
+     >>> mergeDatasets(data)
+     {'b': [array([[7, 8, 9],
+             [1, 2, 3]]), array([[4, 5, 6],
+             [2, 3, 4]])]}
+
+
+    """
+
+    # Find all the keys
+    keySet = set(k for d in data for k in d.keys() )
+
+    # For every key
+    newStore = defaultdict(list)
+    for key in keySet:          
+        for d in data:
+            dv = d.get(key,None)
+            if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, basestring):
+                newStore[key].extend(dv)
+            else:
+                newStore[key].append(dv)
+
+    return dict(newStore)
 
 def date():
+    """
+    Provides a string of todays date
+        
+    Returns
+    -------
+    date : string
+        The string is of the form [year]-[month]-[day]
+    """
     d = dt.datetime(1987, 1, 14)
     d = d.today()
     return str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
 def flatten(l):
-
     """
-    Yields the elements in order from any N demtional itterable
+    Yields the elements in order from any N dimentional itterable
+    
+    Parameters
+    ----------
+    l : iterable
+    
+    Yields
+    ------
+    ID : (string,list)
+        A pair containing the value at each location and the co-ordinates used 
+        to access them.
+    
+    Examples
+    --------    
+    >>> a = [[1,2,3],[4,5,6]]
+    >>> for i, loc in flatten(a): print i,loc
+    1 [0, 0]
+    2 [0, 1]
+    3 [0, 2]
+    4 [1, 0]
+    5 [1, 1]
+    6 [1, 2]
+
     """
     for i, v in enumerate(l):
         if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
@@ -222,7 +411,17 @@ def flatten(l):
             yield repr(v),[i]
 
 def mergeDicts(*args):
-    """Merges dictionaries with different keys"""
+    """Merges dictionaries with different keys
+    
+    Parameters
+    ----------
+    args : list of dictionaries
+        
+    Returns
+    -------
+    mergedDict : dictionary
+    
+    """
 
     dicItemGen = (x.iteritems() for x in args)
 
@@ -230,14 +429,9 @@ def mergeDicts(*args):
 
     return mergedDict
 
-if __name__ == '__main__':
-    from timeit import timeit
-    from numpy import fromfunction
-
-    a = array([[1,2,3],[4,5,6]])
-
-    for i, loc in flatten(a):
-        print i, loc
+#if __name__ == '__main__':
+#    from timeit import timeit
+#    from numpy import fromfunction
 
 #    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
 #    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
