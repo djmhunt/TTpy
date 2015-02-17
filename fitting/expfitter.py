@@ -27,8 +27,12 @@ class fitter(fit):
 
         self.fitInfo = {'name':self.name,
                         'participantChoiceParam':partChoiceParam,
-                        'modelParam':modelParam,
-                        'scalerEffect': self._scalerEffect()}
+                        'modelParam':modelParam}
+        try: 
+            self.fitInfo['scalerName'] = self.scaler.Name
+            self.fitInfo['scalerEffect'] = self._scalerEffect()
+        except AttributeError:
+            self.fitInfo['scalerEffect'] = self._scalerEffect()
 
     def fitness(self, *modelParameters):
         """ Returns the value necessary for the fitting
