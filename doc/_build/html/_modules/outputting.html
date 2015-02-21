@@ -50,8 +50,7 @@
   <h1>Source code for outputting</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">@author: Dominic</span>
+<span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
@@ -75,16 +74,26 @@
 
 <div class="viewcode-block" id="outputting"><a class="viewcode-back" href="../outputting.html#outputting.outputting">[docs]</a><span class="k">class</span> <span class="nc">outputting</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;The documentation for the class&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;An class which manages the outputting to the screen and to files of all </span>
+<span class="sd">    data in any form for the simulation</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fileName : string</span>
+<span class="sd">        The name and path of the file the figure should be saved to. If ommited</span>
+<span class="sd">        the file will be saved to a default name.</span>
+<span class="sd">    saveFig : bool</span>
+<span class="sd">        If true the figure will be saved.</span>
+<span class="sd">    silent : bool</span>
+<span class="sd">        If false the figure will be plotted to the screen. If true the figure</span>
+<span class="sd">        will be closed</span>
+<span class="sd">    label : string</span>
+<span class="sd">        The label for the simulation</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd">        fileName:   The name and path of the file the figure should be saved to. If ommited</span>
-<span class="sd">                    the file will be saved to a default name.</span>
-<span class="sd">        saveFig:    If true the figure will be saved.</span>
-<span class="sd">        silent:     If false the figure will be plotted to the screen. If true the figure</span>
-<span class="sd">                    will be closed&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;silent&#39;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;save&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
@@ -99,6 +108,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fancyLogger</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Framework&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Simulation&#39;</span><span class="p">)</span>
 
         <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Beginning experiment labelled: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
@@ -274,7 +284,7 @@
             <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;.&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;.&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lastLabelID</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Processes the parameters of an experiment or model&quot;&quot;&quot;</span>

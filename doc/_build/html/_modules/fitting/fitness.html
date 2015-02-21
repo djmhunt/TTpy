@@ -88,8 +88,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                         <span class="s">&#39;participantChoiceParam&#39;</span><span class="p">:</span><span class="n">partChoiceParam</span><span class="p">,</span>
                         <span class="s">&#39;participantRewardParam&#39;</span><span class="p">:</span><span class="n">partRewardParam</span><span class="p">,</span>
-                        <span class="s">&#39;modelParam&#39;</span><span class="p">:</span><span class="n">modelParam</span><span class="p">,</span>
-                        <span class="s">&#39;scalerEffect&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scalerEffect</span><span class="p">()}</span>
+                        <span class="s">&#39;modelParam&#39;</span><span class="p">:</span><span class="n">modelParam</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;scalerName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">Name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;scalerEffect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scalerEffect</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;scalerEffect&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scalerEffect</span><span class="p">()</span>
 
 <div class="viewcode-block" id="fitter.fitness"><a class="viewcode-back" href="../../fitting.html#fitting.fitness.fitter.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the value necessary for the fitting</span>

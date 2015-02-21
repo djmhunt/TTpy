@@ -19,8 +19,19 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
     models : models.models
         A model factory generating each of the different models being considered
     outputing : outputting.outputting
+        An outputting class instance
     data : list of dictionaries
+        Each dictionary should all contain the keys associated with the fitting
     fitter : fitting.fit.fit
+        A fitting class instance
+    
+    See Also
+    --------
+    experiments.experiments : The experiments factory
+    models.models : The model factory
+    outputting.outputting : The outputting class
+    fitting.fit.fit : Abstract class for fitting data
+    data.data : Data import function
     """
 
 #    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):

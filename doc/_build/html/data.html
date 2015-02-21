@@ -73,14 +73,243 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
 <p><strong>fileType</strong> : string</p>
+<blockquote>
+<div><p>The file extension found after the &#8221;.&#8221;. Currently only mat files are 
+supported.</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataSet</strong> : dictionary</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataSet</strong> : list of dictionaries</p>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#data.getFiles" title="data.getFiles"><tt class="xref py py-obj docutils literal"><span class="pre">getFiles</span></tt></a></dt>
+<dd>finds the files</dd>
+<dt><a class="reference internal" href="#data.getmatData" title="data.getmatData"><tt class="xref py py-obj docutils literal"><span class="pre">getmatData</span></tt></a></dt>
+<dd>imports and formats the mat data</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s">&quot;./Data/&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">fileType</span><span class="p">)</span>
+<span class="go">[{&#39;cumpts&#39;: array([ 7, 17, 19, 21], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([12, 22, 24, 26], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([ 5, 15, 17, 19], dtype=uint8)}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getFilePrefix">
+<tt class="descclassname">data.</tt><tt class="descname">getFilePrefix</tt><big>(</big><em>dataFiles</em>, <em>suffixLen</em><big>)</big><a class="reference internal" href="_modules/data.html#getFilePrefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getFilePrefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies any initial part of the filenames that is identical 
+for all files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dataFiles</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+<p><strong>suffixLen</strong> : int</p>
+<blockquote>
+<div><p>The length of the file extension found after the &#8221;.&#8221;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>prefix</strong> : string</p>
+<blockquote class="last">
+<div><p>The initial part of the filenames that is identical for all files</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffixLen</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getFilePrefix</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">)</span>
+<span class="go">&#39;subj&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getFiles">
+<tt class="descclassname">data.</tt><tt class="descname">getFiles</tt><big>(</big><em>folder</em>, <em>fileType</em><big>)</big><a class="reference internal" href="_modules/data.html#getFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the list of valid input files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>fileType</strong> : string</p>
+<blockquote>
+<div><p>The file extension found after the &#8221;.&#8221;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataFiles</strong> : list</p>
+<blockquote class="last">
+<div><p>A sorted list of the the files</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#data.sortFiles" title="data.sortFiles"><tt class="xref py py-obj docutils literal"><span class="pre">sortFiles</span></tt></a></dt>
+<dd>sorts the files found</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s">&quot;./Data/&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getmatData">
+<tt class="descclassname">data.</tt><tt class="descname">getmatData</tt><big>(</big><em>folder</em>, <em>files</em><big>)</big><a class="reference internal" href="_modules/data.html#getmatData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getmatData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from MATLAB files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>files</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataSet</strong> : list of dictionaries</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s">&#39;./Data/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj2.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj11.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getmatData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+<span class="go">[{&#39;cumpts&#39;: array([ 7, 17, 19, 21], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([12, 22, 24, 26], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([ 5, 15, 17, 19], dtype=uint8)}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.intCore">
+<tt class="descclassname">data.</tt><tt class="descname">intCore</tt><big>(</big><em>dataFiles</em>, <em>prefix</em>, <em>suffix</em><big>)</big><a class="reference internal" href="_modules/data.html#intCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.intCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the <em>core</em> part of a filename and, assuming it is an integer, 
+sorts them. Returns the file list sorted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dataFiles</strong> : list of strings</p>
+<blockquote>
+<div><p>The complete filenames (without path)</p>
+</div></blockquote>
+<p><strong>prefix</strong> : string</p>
+<blockquote>
+<div><p>The unchanging part of the start each file name</p>
+</div></blockquote>
+<p><strong>suffix</strong> : string</p>
+<blockquote>
+<div><p>The file type</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sortedFiles</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>The filenames now sorted</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;me001.mat&#39;</span><span class="p">,</span> <span class="s">&#39;me051.mat&#39;</span><span class="p">,</span> <span class="s">&#39;me002.mat&#39;</span><span class="p">,</span> <span class="s">&#39;me052.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;me0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffix</span> <span class="o">=</span> <span class="s">&#39;mat&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">suffix</span><span class="p">)</span>
+<span class="go">[&#39;me001.mat&#39;, &#39;me002.mat&#39;, &#39;me051.mat&#39;, &#39;me052.mat&#39;]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj12.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;subj&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffix</span> <span class="o">=</span> <span class="s">&#39;mat&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">suffix</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;, &#39;subj12.mat&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.sortFiles">
+<tt class="descclassname">data.</tt><tt class="descname">sortFiles</tt><big>(</big><em>files</em>, <em>fileType</em><big>)</big><a class="reference internal" href="_modules/data.html#sortFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.sortFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies valid files and sorts them if possible</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>files</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+<p><strong>fileType</strong> : string</p>
+<blockquote>
+<div><p>The file extension found after the &#8221;.&#8221;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataFiles</strong> : list</p>
+<blockquote class="last">
+<div><p>A sorted list of the the files</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#data.intCore" title="data.intCore"><tt class="xref py py-obj docutils literal"><span class="pre">intCore</span></tt></a></dt>
+<dd>sorts the files found if they are a number</dd>
+<dt><a class="reference internal" href="#data.getFilePrefix" title="data.getFilePrefix"><tt class="xref py py-obj docutils literal"><span class="pre">getFilePrefix</span></tt></a></dt>
+<dd>identifies file name prefixes</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Experiment.pptx&#39;</span><span class="p">,</span> <span class="s">&#39;info.txt&#39;</span><span class="p">,</span> <span class="s">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s">&quot;mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sortFiles</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
