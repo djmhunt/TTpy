@@ -1,18 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
 class experimentPlot(object):
+    """
+    Abstract class for the creation of plots relevant to a experiment
+    
+    Parameters
+    ----------
+    expSet : list of dicts
+        The data from each experiment run
+    expParams : list of dicts
+        The input parameters of each experiment run
+    expLabels : list of strings
+        The labels for each experiment run
+    modelSet : list dicts
+        The data from each model run
+    modelParams : list of dicts
+        The input parameters of each model run
+    modelLabels : list of strings
+        The labels for each model run
+    plotArgs : dict
+        The arguments for the plotting functions
+    """
 
-    """Abstract class for the creation of plots relevant to a experiment"""
-
-    def __init__(self, expSet, expParams, expLabel, modelSet, modelParams, modelLabels, plotArgs):
+    def __init__(self, expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs):
 
         self.expStore = expSet
         self.expParams = expParams
-        self.expLabel = expLabel
+        self.expLabels = expLabels
         self.modelStore = modelSet
         self.modelParams = modelParams
         self.modelLabels = modelLabels
@@ -35,7 +53,18 @@ class experimentPlot(object):
         return self
 
     def next(self):
-        """ Produces the next item for the iterator"""
+        """
+        Returns the plots
+        
+        Returns
+        -------
+        figure : matplotlib.pyplot.figure
+        
+        Raises
+        ------
+        StopIteration
+            When there are no more figures to return
+        """
 
         if self.counter < len(self.figSets):
             figure = self.figSets[self.counter]
