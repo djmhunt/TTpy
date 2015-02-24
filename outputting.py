@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -21,20 +20,36 @@ from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
 from collections import OrderedDict
 
-from utils import flatten, listMerGen
+from utils import listMerGen
 
 class outputting(object):
 
-    """The documentation for the class"""
+    """An class which manages the outputting to the screen and to files of all 
+    data in any form for the simulation
+    
+    Parameters
+    ----------
+    save : bool, optional
+        If true the data will be saved to files. Default True
+    silent : bool, optional
+        States if a log is not written to stdout. Defaults to False
+    simLabel : string, optional
+        The label for the simulation
+    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+        Defines the level of the log. Default logging.INFO
+    maxLabelLength : int, optional
+        The maximum length of a label to be used as a reference for an 
+        individual model-experiment combination. Default 18
+        
+    See Also
+    --------
+    date : Identifies todays date
+    saving : Sets up the log file and folder to save results
+    fancyLogger : Log creator    
+    """
 
     def __init__(self,**kwargs):
-        """
 
-        fileName:   The name and path of the file the figure should be saved to. If ommited
-                    the file will be saved to a default name.
-        saveFig:    If true the figure will be saved.
-        silent:     If false the figure will be plotted to the screen. If true the figure
-                    will be closed"""
 
         self.silent = kwargs.get('silent',False)
         self.save = kwargs.get('save', True)
@@ -42,13 +57,14 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
 
-        self._date()
+        self.date()
 
-        self._saving()
+        self.saving()
 
-        self._fancyLogger()
+        self.fancyLogger()
 
         self.logger = logging.getLogger('Framework')
+        self.loggerSim = logging.getLogger('Simulation')
 
         message = "Beginning experiment labelled: " + self.label
         self.logger.info(message)
@@ -76,7 +92,11 @@ class outputting(object):
         self.lastModelLabelID = 1
 
     def end(self):
-        """ """
+        """ 
+        To run once everything has been completed. Displays the figures if not
+        silent.
+        
+        """
 
         if not self.silent:
             plt.show()
@@ -86,10 +106,23 @@ class outputting(object):
 
     ### Folder management
 
-    def _folderSetup(self):
-        """Identifies and creates the folder the data will be stored in
+    def folderSetup(self):
+        """
+        Identifies and creates the folder the data will be stored in
+        
+        Folder will be created as "./Outputs/<date>_<simLabel>/". If that had 
+        previously been created then it is created as
+        "./Outputs/<date>_<simLabel>_no_<#>/", where "<#>" is the first
+        avalable integer.
+        
+        A subfolder is also created with the name "Pickle"
+        
+        See Also
+        --------
+        newFile : Creates a new file
+        saving : Ceates the log system
 
-        folderSetup()"""
+        """
 
         # While the folders have already been created, check for the next one
         folderName = './Outputs/' + self.date + "_" + self.label
@@ -106,44 +139,83 @@ class outputting(object):
         self.outputFolder = folderName
 
     ### File management
-    def _newFile(self, handle, extension):
+    def newFile(self, handle, extension):
+        """
+        Creates a new file withe the name <handle> and the extension <extension>
+        
+        Parameters
+        ----------
+        handle : string
+            The file name
+        extension : string
+            The extension of the file
+            
+        Returns
+        -------
+        fileName : string
+            The filename allowed for the file
+        """
 
         if not self.save:
             return ''
+            
+        if extension == '':
+            end = ''
+        else: 
+            end = "." + extension
 
         fileName = self.outputFolder + handle
-        if exists(fileName + extension):
+        if exists(fileName + end):
             i = 1
-            while exists(fileName + "_" + str(i) + extension):
+            while exists(fileName + "_" + str(i) + end):
                 i += 1
             fileName += "_" + str(i)
 
-        fileName += extension
+        fileName += end
 
         return fileName
 
     ### Logging
     def getLogger(self, name):
+        """
+        Returns a named logger stream
+        
+        Parameters
+        ----------
+        name : string
+            Name of the logger
+            
+        Returns
+        -------
+        logger : logging.logger instance
+            The named logger
+        """
 
         logger = logging.getLogger(name)
 
         return logger
 
-    def _saving(self):
+    def saving(self):
+        """
+        Creates the folder structure for the saved data and created the log file
+        as log.txt
+        
+        See Also
+        --------
+        folderSetup : creates the folders
+        """
 
         if self.save:
-            self._folderSetup()
-            self.logFile = self._newFile('log', '.txt')
+            self.folderSetup()
+            self.logFile = self.newFile('log', 'txt')
         else:
             self.outputFolder = ''
             self.logFile =  ''
 
-    def _fancyLogger(self):
+    def fancyLogger(self):
         """
-        Sets up the style of logging for all the simulations
-        fancyLogger(logLevel, logFile="", silent = False)
-
-        logLevel = [logging.DEBUG|logging.INFO|logging.WARNING|logging.ERROR|logging.CRITICAL]"""
+        Sets up the style of logging for all the simulations        
+        """
 
         class streamLoggerSim(object):
            """
@@ -200,7 +272,16 @@ class outputting(object):
     ### Data collection
 
     def recordSimParams(self,expParams,modelParams):
-        """Record any parameters that are user specified"""
+        """
+        Record any parameters that are user specified
+        
+        Parameters
+        ----------
+        expParams : dict
+            The experiment parameters
+        modelParams : dict
+            The model parameters
+        """
 
         expDesc, expPltLabel, lastExpLabelID =  self._params(expParams, self.lastExpLabelID)
         modelDesc, modelPltLabel, lastModelLabelID =  self._params(modelParams, self.lastModelLabelID)
@@ -224,7 +305,7 @@ class outputting(object):
             message += "."
         else:
             message += " output with the label '" + modelPltLabel + "'."
-        self.logger.info(message)
+        self.loggerSim.info(message)
 
     def _params(self, params, lastLabelID):
         """ Processes the parameters of an experiment or model"""
@@ -243,6 +324,20 @@ class outputting(object):
         return descriptor, plotLabel, lastLabelID
 
     def recordSim(self,expData,modelData):
+        """
+        Records the data from an experiment-model run. Creates a pickled version
+        
+        Parameters
+        ----------
+        expData : dict
+            The data from the experiment
+        modelData : dict
+            The data from the model
+        
+        See Also
+        --------
+        pickleLog : records the picked data
+        """
 
         message = "Beginning output processing"
         self.logger.info(message)
@@ -263,7 +358,21 @@ class outputting(object):
         self.modelSetSize += 1
 
     def recordParticipantFit(self, participant, expData, modelData, fitQuality = None):
-        """Record the data relevant to the participant"""
+        """
+        Record the data relevant to the participant fitting
+        
+        Parameters
+        ----------
+        participant : dict
+            The participant data
+        expData : dict
+            The data from the experiment
+        modelData : dict
+            The data from the model
+        fitQuality : float, optional
+            The quality of the fit as provided by the fitting function
+            Default is None
+        """
 
         message = "Recording participant model fit"
         self.logger.info(message)
@@ -289,7 +398,14 @@ class outputting(object):
         self.modelSetSize += 1
 
     def recordFittingParams(self,fitInfo):
-        """Records and outputs to the log the parameters associated with the fitting algorithms """
+        """
+        Records and outputs to the log the parameters associated with the fitting algorithms 
+        
+        Parameters
+        ----------
+        fitInfo : dict
+            The details of the fitting
+        """
 
         self.fitInfo = fitInfo
 
@@ -312,7 +428,19 @@ class outputting(object):
 
     ### Ploting
     def plotModel(self,modelPlot):
-        """ Feeds the model data into the relevant plotting functions for the class """
+        """ 
+        Feeds the model data into the relevant plotting functions for the class
+        
+        Parameters
+        ----------
+        modelPlot : model.modelPlot
+            The model's modelPlot class
+            
+        See Also
+        --------
+        model.modelPlot : The template for modelPlot class for each model
+        savePlots : Saves the plots created by modelPlot
+        """
 
         mp = modelPlot(self.modelStore[-1], self.modelParamStore[-1], self.modelLabelStore[-1])
 
@@ -322,6 +450,19 @@ class outputting(object):
         self.savePlots(mp)
 
     def plotModelSet(self,modelSetPlot):
+        """ 
+        Feeds the model set data into the relevant plotting functions for the class
+        
+        Parameters
+        ----------
+        modelSetPlot : model.modelSetPlot
+            The model's modelSetPlot class
+            
+        See Also
+        --------
+        model.modelSetPlot : The template for modelSetPlot class for each model
+        savePlots : Saves the plots created by modelSetPlot
+        """
 
         modelSet = self.modelStore[-self.modelSetSize:]
         modelParams = self.modelParamStore[-self.modelSetSize:]
@@ -338,7 +479,20 @@ class outputting(object):
         self.modelSetNum += 1
 
     def plotExperiment(self, expInput):
-        """ Feeds the experiment data into the relevant plotting functions for the experiment class """
+        """
+        Feeds the experiment data into the relevant plotting functions for the class
+        
+        Parameters
+        ----------
+        expInput : (experiment.experimentPlot, dict)
+            The experiment's experimentPlot class and a dictionary of plot 
+            attributes
+            
+        See Also
+        --------
+        experiment.experimentPlot : The template for experimentPlot class for each experiment
+        savePlots : Saves the plots created by experimentPlot
+        """
 
         expPlot, plotArgs = expInput
 
@@ -361,32 +515,53 @@ class outputting(object):
         self.expSetNum += 1
 
     def savePlots(self, plots):
+        """
+        Saves a list of plots in the appropriate way
+        
+        Parameters
+        ----------
+        plots : list of savable objects
+            The currently accepted objects are matplotlib.pyplot.figure, 
+            pandas.DataFrame and xml.etree.ElementTree.ElementTree
+            
+        See Also
+        --------
+        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame, 
+        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree, 
+        xml.etree.ElementTree.ElementTree.outputTrees
+        
+        """
 
         for handle, plot in plots:
             if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
 
-                fileName = self._newFile(handle, '')
+                fileName = self.newFile(handle, '')
 
-                self._outputFig(plot,fileName)
+                self.outputFig(plot,fileName)
 
             elif hasattr(plot,"outputTrees") and callable(getattr(plot,"outputTrees")):
 
                 if self.save:
-                    fileName = self._newFile(handle, '')
+                    fileName = self.newFile(handle, '')
 
                     plot.outputTrees(fileName)
 
             elif hasattr(plot,"to_excel") and callable(getattr(plot,"to_excel")):
-                outputFile = self._newFile(handle, '.xlsx')
+                outputFile = self.newFile(handle, 'xlsx')
 
                 if self.save:
                     plot.to_excel(outputFile, sheet_name=handle)
 
-    def _outputFig(self, fig, fileName):
+    def outputFig(self, fig, fileName):
         """Saves the figure to a .png file and/or displays it on the screen.
-        fig:        MatPlotLib figure object
+        
+        Parameters
+        ----------
+        fig : MatPlotLib figure object
+            The figure to be output
+        fileName : string
+            The file to be saved to
 
-        self._outputFig(fig)
         """
 
 #        plt.figure(fig.number)
@@ -403,13 +578,36 @@ class outputting(object):
 
     ### Pickle
     def pickleRec(self,data, handle):
+        """
+        Writes the data to a picke file 
+        
+        Parameters
+        ----------
+        data : object
+            Data to be written to the file
+        handle : string
+            The name of the file
+        """
 
-        outputFile = self._newFile(handle, '.pkl')
+        outputFile = self.newFile(handle, 'pkl')
 
         with open(outputFile,'w') as w :
             pickle.dump(data, w)
 
     def pickleLog(self, results,folderName, label=""):
+        """
+        Stores the data in the appropriate pickle file in a Pickle subfolder 
+        of the outputting folder
+        
+        Parameters
+        ----------
+        results : dict
+            The data to be stored
+        folderName : string
+            The path to the outputting folder
+        label : string, optional
+            A label for the results file
+        """
 
         if not self.save:
             return
@@ -423,6 +621,10 @@ class outputting(object):
 
     ### Excel
     def simLog(self):
+        """
+        Outputs relavent data to an excel file with all the data and a csv file
+        with the estimated pertinant data
+        """
 
         if not self.save:
             return
@@ -438,13 +640,13 @@ class outputting(object):
 
 #        record = record.set_index('sim')
 
-        outputFile = self._newFile('simRecord', '.csv')
+        outputFile = self.newFile('simRecord', 'csv')
         record.to_csv(outputFile)
 
-        outputFile = self._newFile('abridgedRecord', '.csv')
+        outputFile = self.newFile('abridgedRecord', 'csv')
         pertRecord.to_csv(outputFile)
 
-        outputFile = self._newFile('simRecord', '.xlsx')
+        outputFile = self.newFile('simRecord', 'xlsx')
         xlsx = pd.ExcelWriter(outputFile)
         record.to_excel(xlsx, sheet_name='simRecord')
         pertRecord.to_excel(xlsx,sheet_name = 'abridgedRecord')
@@ -459,10 +661,10 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
         data['folder'] = self.outputFolder
 
-        expData = self._reframeStore(self.expStore, 'exp_')
-        modelData = self._reframeStore(self.modelStore, 'model_')
+        expData = self.reframeStore(self.expStore, 'exp_')
+        modelData = self.reframeStore(self.modelStore, 'model_')
         if self.fitInfo != None:
-            partData = self._reframeStore(self.partStore, 'part_')
+            partData = self.reframeStore(self.partStore, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(partData)
 
@@ -480,7 +682,7 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
 
         # Get parameters and fitting data
-        modelParams = self._reframeStore(self.modelParamStore)
+        modelParams = self.reframeStore(self.modelParamStore)
         modelUsefulParams = OrderedDict((('model_' + k,v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
         data.update(modelUsefulParams)
 
@@ -495,8 +697,8 @@ class outputting(object):
                     if "Param" in k and "model" or "participant" in k:
                         usefulKeys.append(v)
 
-            modelData = self._reframeSelectStore(self.modelStore, usefulKeys, 'model_')
-            partData = self._reframeSelectStore(self.partStore, usefulKeys, 'part_')
+            modelData = self.reframeSelectStore(self.modelStore, usefulKeys, 'model_')
+            partData = self.reframeSelectStore(self.partStore, usefulKeys, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
@@ -506,27 +708,96 @@ class outputting(object):
 
 
     ### Utils
-    def _reframeStore(self, store, storeLabel = ''):
-        """Take a list of dictionaries and turn it into a dictionary of lists"""
+    def reframeStore(self, store, storeLabel = ''):
+        """
+        Take a list of dictionaries and turn it into a dictionary of lists
+        
+        Parameters
+        ----------
+        store : list of dicts
+            The dictionaries would be expected to have many of the same keys
+        storeLabel : string, optional
+            An identifier to be added to the beginning of each key string.
+            Default is ''.
+            
+        Returns
+        -------
+        newStore : dict of 1D lists
+            Any dictionary keys containing lists in the input have been split 
+            into multiple numbered keys
+            
+        See Also
+        --------
+        dictKeySet, newDict
+        """
 
-        keySet = self._dictKeySet(store)
+        keySet = self.dictKeySet(store)
 
         # For every key now found
-        newStore = self._newDict(keySet,store,storeLabel)
+        newStore = self.newDict(keySet,store,storeLabel)
 
         return newStore
 
-    def _reframeSelectStore(self, store, keySet, storeLabel = ''):
-        """Take a list of dictionaries and turn it into a dictionary of lists"""
+    def reframeSelectStore(self, store, keySet, storeLabel = ''):
+        """Take a list of dictionaries and turn it into a dictionary of lists 
+        containing only the useful keys
+        
+        Parameters
+        ----------
+        store : list of dicts
+            The dictionaries would be expected to have many of the same keys
+        keySet : list of strings
+            The keys whose data will be included in the return dictionary
+        storeLabel : string, optional
+            An identifier to be added to the beginning of each key string.
+            Default is ''.
+            
+        Returns
+        -------
+        newStore : dict of 1D lists
+            Any dictionary keys containing lists in the input have been split 
+            into multiple numbered keys
+            
+        See Also
+        --------
+        dictSelectKeySet, newDict
+        
+        """
 
-        keySet = self._dictSelectKeySet(store,keySet)
+        keySet = self.dictSelectKeySet(store,keySet)
 
         # For every key now found
-        newStore = self._newDict(keySet,store,storeLabel)
+        newStore = self.newDict(keySet,store,storeLabel)
 
         return newStore
 
-    def _dictKeySet(self,store):
+    def dictKeySet(self,store):
+        """
+        Generates a dictionary of keys and identifiers for the new dictionary,
+        splitting any keys with lists into a set of keys, one for each element
+        in the original key.
+        
+        These are named <key><location>
+        
+        Parameters
+        ----------
+        store : list of dicts
+            The dictionaries would be expected to have many of the same keys. 
+            Any dictionary keys containing lists in the input have been split 
+            into multiple numbered keys
+            
+        Returns
+        -------
+        keySet : dict
+            The keys are the keys for the new dictionary. The values contain a 
+            two element tuple. The first element is the original name of the 
+            key and the second is the location of the value to be stored in the 
+            original dictionary value array.
+            
+        See Also
+        --------
+        reframeStore, newDict
+        """
 
         # Find all the keys
         keySet = OrderedDict()
@@ -549,7 +820,35 @@ class outputting(object):
 
         return keySet
 
-    def _dictSelectKeySet(self,store, keys):
+    def dictSelectKeySet(self,store, keys):
+        """
+        Generates a dictionary of keys and identifiers for the new dictionary,
+        including only the keys in the keys list. Any keys with lists  will
+        be split into a set of keys, one for each element in the original key.
+        
+        These are named <key><location>
+        
+        Parameters
+        ----------
+        store : list of dicts
+            The dictionaries would be expected to have many of the same keys. 
+            Any dictionary keys containing lists in the input have been split 
+            into multiple numbered keys
+        keys : list of strings
+            The keys whose data will be included in the return dictionary
+            
+        Returns
+        -------
+        keySet : dict
+            The keys are the keys for the new dictionary. The values contain a 
+            two element tuple. The first element is the original name of the 
+            key and the second is the location of the value to be stored in the 
+            original dictionary value array.
+            
+        See Also
+        --------
+        reframeSelectStore, newDict
+        """
 
         # Find all the keys
         keySet = OrderedDict()
@@ -577,7 +876,36 @@ class outputting(object):
 
         return keySet
 
-    def _newDict(self,keySet,store,storeLabel):
+    def newDict(self,keySet,store,storeLabel):
+        """
+        Takes a list of dictionaries and returns a dictionary of 1D lists. 
+        
+        If a dictionary did not have that key or list element, then 'None' is 
+        put in its place
+        
+        Parameters
+        ----------
+        keySet : dict
+            The keys are the keys for the new dictionary. The values contain a 
+            two element tuple. The first element is the original name of the 
+            key and the second is the location of the value to be stored in the 
+            original dictionary value array.
+        store : list of dicts
+            The dictionaries would be expected to have many of the same keys. 
+            Any dictionary keys containing lists in the input have been split 
+            into multiple numbered keys
+        storeLabel : string
+            An identifier to be added to the beginning of each key string.
+            
+        
+        Returns
+        -------
+        newStore : dict
+            The new dictionary with the keys from the keySet and the values as 
+            1D lists with 'None' if the keys, value pair was not found in the 
+            store.
+        
+        """
 
         partStore = OrderedDict()
 
@@ -602,7 +930,12 @@ class outputting(object):
 
         return newStore
 
-    def _date(self):
+    def date(self):
+        """
+        Calculate todays date as a string in the form <year>-<month>-<day>
+        and stores it in self.date
+        
+        """
         d = dt.datetime(1987, 1, 14)
         d = d.today()
         self.date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)

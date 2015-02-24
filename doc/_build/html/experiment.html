@@ -132,7 +132,7 @@ its documentation for more details.</p>
 
 <dl class="class">
 <dt id="experiment.beads.beads.experimentPlot">
-<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beads.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beads.experimentPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></tt></a></p>
 <dl class="method">
 <dt id="experiment.beads.beads.experimentPlot.plotProbJar1">
@@ -460,6 +460,18 @@ np.random.random_sample .</p>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>The abstract experiment class from which all others inherit</p>
 <p>Many general methods for experiments are found only here</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The arguments for plotting functions</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -479,7 +491,7 @@ np.random.random_sample .</p>
 
 <dl class="class">
 <dt id="experiment.experiment.experiment.experimentPlot">
-<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.experimentPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><tt class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></tt></a></p>
 <p>Abstract class for the creation of plots relevant to a experiment</p>
 </dd></dl>
@@ -518,20 +530,60 @@ np.random.random_sample .</p>
 <dl class="method">
 <dt id="experiment.experiment.experiment.outputEvolution">
 <tt class="descclassname">experiment.</tt><tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots and saves files containing all the relavent data for this
-experiment run</p>
+<dd><p>Returns all the relevent data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Observables and Actions.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.experiment.experiment.params">
 <tt class="descclassname">experiment.</tt><tt class="descname">params</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the parameters of the experiment as a dictionary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>parameters</strong> : dict</p>
+<blockquote class="last">
+<div><p>The parameters of the experiment</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.experiment.experiment.plot">
 <tt class="descclassname">experiment.</tt><tt class="descname">plot</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experiment.html#experiment.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experiment.experiment.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a plotting class relavent for this experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>experimentPlot</strong> : experiment.experimentPlot.experimentPlot</p>
+<blockquote>
+<div><p>The plots created for the experiment</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>Plot arguments that may be used within the experimentPlot instance</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -572,16 +624,74 @@ output later</p>
 </div>
 <div class="section" id="module-experiment.experimentPlot">
 <span id="experiment-experimentplot-module"></span><h2>experiment.experimentPlot module<a class="headerlink" href="#module-experiment.experimentPlot" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="class">
 <dt id="experiment.experimentPlot.experimentPlot">
-<em class="property">class </em><tt class="descclassname">experiment.experimentPlot.</tt><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabel</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">experiment.experimentPlot.</tt><tt class="descname">experimentPlot</tt><big>(</big><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><big>)</big><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>Abstract class for the creation of plots relevant to a experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expSet</strong> : list of dicts</p>
+<blockquote>
+<div><p>The data from each experiment run</p>
+</div></blockquote>
+<p><strong>expParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each experiment run</p>
+</div></blockquote>
+<p><strong>expLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each experiment run</p>
+</div></blockquote>
+<p><strong>modelSet</strong> : list dicts</p>
+<blockquote>
+<div><p>The data from each model run</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each model run</p>
+</div></blockquote>
+<p><strong>modelLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each model run</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The arguments for the plotting functions</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="experiment.experimentPlot.experimentPlot.next">
 <tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
+<dd><p>Returns the plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
+<blockquote class="last">
+<div><p>When there are no more figures to return</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

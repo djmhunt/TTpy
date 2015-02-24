@@ -17,6 +17,11 @@ class experiment(object):
     
     Many general methods for experiments are found only here
     
+    Parameters
+    ----------
+    plotArgs : dict
+        The arguments for plotting functions
+    
     Attributes
     ----------
     Name : string
@@ -123,8 +128,15 @@ class experiment(object):
         return None
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this
-        experiment run """
+        """
+        Returns all the relevent data for this experiment run
+        
+        Returns
+        -------
+        results : dictionary
+            The dictionary contains a series of keys including Name, 
+            Observables and Actions.        
+        """
 
         results = {"Name": self.Name,
                    "Actions": self.recAction}
@@ -138,12 +150,28 @@ class experiment(object):
         pass
 
     def params(self):
-        """ Returns the parameters of the experiment as a dictionary"""
+        """
+        Returns the parameters of the experiment as a dictionary
+
+        Returns
+        -------
+        parameters : dict
+            The parameters of the experiment
+        """
 
         return self.parameters
 
     def plot(self):
-        """ Returns a plotting class relavent for this experiment"""
+        """ 
+        Returns a plotting class relavent for this experiment
+        
+        Returns
+        -------
+        experimentPlot : experiment.experimentPlot.experimentPlot
+            The plots created for the experiment
+        plotArgs : dict
+            Plot arguments that may be used within the experimentPlot instance
+        """
 
         return self.experimentPlot, self.plotArgs
 

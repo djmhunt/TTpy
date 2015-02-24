@@ -73,97 +73,620 @@ data in any form for the simulation</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save</strong> : bool, optional</p>
 <blockquote>
-<div><p>The name and path of the file the figure should be saved to. If ommited
-the file will be saved to a default name.</p>
+<div><p>If true the data will be saved to files. Default True</p>
 </div></blockquote>
-<p><strong>saveFig</strong> : bool</p>
+<p><strong>silent</strong> : bool, optional</p>
 <blockquote>
-<div><p>If true the figure will be saved.</p>
+<div><p>States if a log is not written to stdout. Defaults to False</p>
 </div></blockquote>
-<p><strong>silent</strong> : bool</p>
+<p><strong>simLabel</strong> : string, optional</p>
 <blockquote>
-<div><p>If false the figure will be plotted to the screen. If true the figure
-will be closed</p>
-</div></blockquote>
-<p><strong>label</strong> : string</p>
-<blockquote class="last">
 <div><p>The label for the simulation</p>
+</div></blockquote>
+<p><strong>logLevel</strong> : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</p>
+<blockquote>
+<div><p>Defines the level of the log. Default logging.INFO</p>
+</div></blockquote>
+<p><strong>maxLabelLength</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The maximum length of a label to be used as a reference for an 
+individual model-experiment combination. Default 18</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.date" title="outputting.outputting.date"><tt class="xref py py-obj docutils literal"><span class="pre">date</span></tt></a></dt>
+<dd>Identifies todays date</dd>
+<dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><tt class="xref py py-obj docutils literal"><span class="pre">saving</span></tt></a></dt>
+<dd>Sets up the log file and folder to save results</dd>
+<dt><a class="reference internal" href="#outputting.outputting.fancyLogger" title="outputting.outputting.fancyLogger"><tt class="xref py py-obj docutils literal"><span class="pre">fancyLogger</span></tt></a></dt>
+<dd>Log creator</dd>
+</dl>
+</div>
+<dl class="method">
+<dt id="outputting.outputting.date">
+<tt class="descname">date</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate todays date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
+and stores it in self.date</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.dictKeySet">
+<tt class="descname">dictKeySet</tt><big>(</big><em>store</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.dictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.dictKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+splitting any keys with lists into a set of keys, one for each element
+in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys. 
+Any dictionary keys containing lists in the input have been split 
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
+<blockquote class="last">
+<div><p>The keys are the keys for the new dictionary. The values contain a 
+two element tuple. The first element is the original name of the 
+key and the second is the location of the value to be stored in the 
+original dictionary value array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.reframeStore" title="outputting.outputting.reframeStore"><tt class="xref py py-obj docutils literal"><span class="pre">reframeStore</span></tt></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><tt class="xref py py-obj docutils literal"><span class="pre">newDict</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.dictSelectKeySet">
+<tt class="descname">dictSelectKeySet</tt><big>(</big><em>store</em>, <em>keys</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.dictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.dictSelectKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+including only the keys in the keys list. Any keys with lists  will
+be split into a set of keys, one for each element in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys. 
+Any dictionary keys containing lists in the input have been split 
+into multiple numbered keys</p>
+</div></blockquote>
+<p><strong>keys</strong> : list of strings</p>
+<blockquote>
+<div><p>The keys whose data will be included in the return dictionary</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
+<blockquote class="last">
+<div><p>The keys are the keys for the new dictionary. The values contain a 
+two element tuple. The first element is the original name of the 
+key and the second is the location of the value to be stored in the 
+original dictionary value array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.reframeSelectStore" title="outputting.outputting.reframeSelectStore"><tt class="xref py py-obj docutils literal"><span class="pre">reframeSelectStore</span></tt></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><tt class="xref py py-obj docutils literal"><span class="pre">newDict</span></tt></a></p>
+</div>
+</dd></dl>
+
 <dl class="method">
 <dt id="outputting.outputting.end">
 <tt class="descname">end</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>To run once everything has been completed. Displays the figures if not
+silent.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.fancyLogger">
+<tt class="descname">fancyLogger</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the style of logging for all the simulations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.folderSetup">
+<tt class="descname">folderSetup</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.folderSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.folderSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies and creates the folder the data will be stored in</p>
+<p>Folder will be created as &#8221;./Outputs/&lt;date&gt;_&lt;simLabel&gt;/&#8221;. If that had 
+previously been created then it is created as
+&#8221;./Outputs/&lt;date&gt;_&lt;simLabel&gt;_no_&lt;#&gt;/&#8221;, where &#8220;&lt;#&gt;&#8221; is the first
+avalable integer.</p>
+<p>A subfolder is also created with the name &#8220;Pickle&#8221;</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.newFile" title="outputting.outputting.newFile"><tt class="xref py py-obj docutils literal"><span class="pre">newFile</span></tt></a></dt>
+<dd>Creates a new file</dd>
+<dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><tt class="xref py py-obj docutils literal"><span class="pre">saving</span></tt></a></dt>
+<dd>Ceates the log system</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.getLogger">
 <tt class="descname">getLogger</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.getLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.getLogger" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns a named logger stream</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : string</p>
+<blockquote>
+<div><p>Name of the logger</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>logger</strong> : logging.logger instance</p>
+<blockquote class="last">
+<div><p>The named logger</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.newDict">
+<tt class="descname">newDict</tt><big>(</big><em>keySet</em>, <em>store</em>, <em>storeLabel</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.newDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
+<p>If a dictionary did not have that key or list element, then &#8216;None&#8217; is 
+put in its place</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
+<blockquote>
+<div><p>The keys are the keys for the new dictionary. The values contain a 
+two element tuple. The first element is the original name of the 
+key and the second is the location of the value to be stored in the 
+original dictionary value array.</p>
+</div></blockquote>
+<p><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys. 
+Any dictionary keys containing lists in the input have been split 
+into multiple numbered keys</p>
+</div></blockquote>
+<p><strong>storeLabel</strong> : string</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict</p>
+<blockquote class="last">
+<div><p>The new dictionary with the keys from the keySet and the values as 
+1D lists with &#8216;None&#8217; if the keys, value pair was not found in the 
+store.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.newFile">
+<tt class="descname">newFile</tt><big>(</big><em>handle</em>, <em>extension</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.newFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>handle</strong> : string</p>
+<blockquote>
+<div><p>The file name</p>
+</div></blockquote>
+<p><strong>extension</strong> : string</p>
+<blockquote>
+<div><p>The extension of the file</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
+<blockquote class="last">
+<div><p>The filename allowed for the file</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.outputFig">
+<tt class="descname">outputFig</tt><big>(</big><em>fig</em>, <em>fileName</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.outputFig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.outputFig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the figure to a .png file and/or displays it on the screen.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fig</strong> : MatPlotLib figure object</p>
+<blockquote>
+<div><p>The figure to be output</p>
+</div></blockquote>
+<p><strong>fileName</strong> : string</p>
+<blockquote class="last">
+<div><p>The file to be saved to</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.pickleLog">
 <tt class="descname">pickleLog</tt><big>(</big><em>results</em>, <em>folderName</em>, <em>label=''</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Stores the data in the appropriate pickle file in a Pickle subfolder 
+of the outputting folder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote>
+<div><p>The data to be stored</p>
+</div></blockquote>
+<p><strong>folderName</strong> : string</p>
+<blockquote>
+<div><p>The path to the outputting folder</p>
+</div></blockquote>
+<p><strong>label</strong> : string, optional</p>
+<blockquote class="last">
+<div><p>A label for the results file</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.pickleRec">
 <tt class="descname">pickleRec</tt><big>(</big><em>data</em>, <em>handle</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.pickleRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleRec" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Writes the data to a picke file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : object</p>
+<blockquote>
+<div><p>Data to be written to the file</p>
+</div></blockquote>
+<p><strong>handle</strong> : string</p>
+<blockquote class="last">
+<div><p>The name of the file</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.plotExperiment">
 <tt class="descname">plotExperiment</tt><big>(</big><em>expInput</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.plotExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.plotExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the experiment data into the relevant plotting functions for the experiment class</p>
+<dd><p>Feeds the experiment data into the relevant plotting functions for the class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expInput</strong> : (experiment.experimentPlot, dict)</p>
+<blockquote class="last">
+<div><p>The experiment&#8217;s experimentPlot class and a dictionary of plot 
+attributes</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="experiment.html#module-experiment.experimentPlot" title="experiment.experimentPlot"><tt class="xref py py-obj docutils literal"><span class="pre">experiment.experimentPlot</span></tt></a></dt>
+<dd>The template for experimentPlot class for each experiment</dd>
+<dt><a class="reference internal" href="#outputting.outputting.savePlots" title="outputting.outputting.savePlots"><tt class="xref py py-obj docutils literal"><span class="pre">savePlots</span></tt></a></dt>
+<dd>Saves the plots created by experimentPlot</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.plotModel">
 <tt class="descname">plotModel</tt><big>(</big><em>modelPlot</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.plotModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.plotModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Feeds the model data into the relevant plotting functions for the class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelPlot</strong> : model.modelPlot</p>
+<blockquote class="last">
+<div><p>The model&#8217;s modelPlot class</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="model.html#module-model.modelPlot" title="model.modelPlot"><tt class="xref py py-obj docutils literal"><span class="pre">model.modelPlot</span></tt></a></dt>
+<dd>The template for modelPlot class for each model</dd>
+<dt><a class="reference internal" href="#outputting.outputting.savePlots" title="outputting.outputting.savePlots"><tt class="xref py py-obj docutils literal"><span class="pre">savePlots</span></tt></a></dt>
+<dd>Saves the plots created by modelPlot</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.plotModelSet">
 <tt class="descname">plotModelSet</tt><big>(</big><em>modelSetPlot</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.plotModelSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.plotModelSet" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Feeds the model set data into the relevant plotting functions for the class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelSetPlot</strong> : model.modelSetPlot</p>
+<blockquote class="last">
+<div><p>The model&#8217;s modelSetPlot class</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="model.html#module-model.modelSetPlot" title="model.modelSetPlot"><tt class="xref py py-obj docutils literal"><span class="pre">model.modelSetPlot</span></tt></a></dt>
+<dd>The template for modelSetPlot class for each model</dd>
+<dt><a class="reference internal" href="#outputting.outputting.savePlots" title="outputting.outputting.savePlots"><tt class="xref py py-obj docutils literal"><span class="pre">savePlots</span></tt></a></dt>
+<dd>Saves the plots created by modelSetPlot</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.recordFittingParams">
 <tt class="descname">recordFittingParams</tt><big>(</big><em>fitInfo</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordFittingParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Records and outputs to the log the parameters associated with the fitting algorithms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitInfo</strong> : dict</p>
+<blockquote class="last">
+<div><p>The details of the fitting</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.recordParticipantFit">
 <tt class="descname">recordParticipantFit</tt><big>(</big><em>participant</em>, <em>expData</em>, <em>modelData</em>, <em>fitQuality=None</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the data relevant to the participant</p>
+<dd><p>Record the data relevant to the participant fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>participant</strong> : dict</p>
+<blockquote>
+<div><p>The participant data</p>
+</div></blockquote>
+<p><strong>expData</strong> : dict</p>
+<blockquote>
+<div><p>The data from the experiment</p>
+</div></blockquote>
+<p><strong>modelData</strong> : dict</p>
+<blockquote>
+<div><p>The data from the model</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float, optional</p>
+<blockquote class="last">
+<div><p>The quality of the fit as provided by the fitting function
+Default is None</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.recordSim">
 <tt class="descname">recordSim</tt><big>(</big><em>expData</em>, <em>modelData</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSim" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Records the data from an experiment-model run. Creates a pickled version</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expData</strong> : dict</p>
+<blockquote>
+<div><p>The data from the experiment</p>
+</div></blockquote>
+<p><strong>modelData</strong> : dict</p>
+<blockquote class="last">
+<div><p>The data from the model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.pickleLog" title="outputting.outputting.pickleLog"><tt class="xref py py-obj docutils literal"><span class="pre">pickleLog</span></tt></a></dt>
+<dd>records the picked data</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.recordSimParams">
 <tt class="descname">recordSimParams</tt><big>(</big><em>expParams</em>, <em>modelParams</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSimParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record any parameters that are user specified</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
+<blockquote>
+<div><p>The experiment parameters</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : dict</p>
+<blockquote class="last">
+<div><p>The model parameters</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.reframeSelectStore">
+<tt class="descname">reframeSelectStore</tt><big>(</big><em>store</em>, <em>keySet</em>, <em>storeLabel=''</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.reframeSelectStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeSelectStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists 
+containing only the useful keys</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys</p>
+</div></blockquote>
+<p><strong>keySet</strong> : list of strings</p>
+<blockquote>
+<div><p>The keys whose data will be included in the return dictionary</p>
+</div></blockquote>
+<p><strong>storeLabel</strong> : string, optional</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.
+Default is &#8216;&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict of 1D lists</p>
+<blockquote class="last">
+<div><p>Any dictionary keys containing lists in the input have been split 
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.dictSelectKeySet" title="outputting.outputting.dictSelectKeySet"><tt class="xref py py-obj docutils literal"><span class="pre">dictSelectKeySet</span></tt></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><tt class="xref py py-obj docutils literal"><span class="pre">newDict</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.reframeStore">
+<tt class="descname">reframeStore</tt><big>(</big><em>store</em>, <em>storeLabel=''</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.reframeStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys</p>
+</div></blockquote>
+<p><strong>storeLabel</strong> : string, optional</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.
+Default is &#8216;&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict of 1D lists</p>
+<blockquote class="last">
+<div><p>Any dictionary keys containing lists in the input have been split 
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.dictKeySet" title="outputting.outputting.dictKeySet"><tt class="xref py py-obj docutils literal"><span class="pre">dictKeySet</span></tt></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><tt class="xref py py-obj docutils literal"><span class="pre">newDict</span></tt></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.savePlots">
 <tt class="descname">savePlots</tt><big>(</big><em>plots</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.savePlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.savePlots" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Saves a list of plots in the appropriate way</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plots</strong> : list of savable objects</p>
+<blockquote class="last">
+<div><p>The currently accepted objects are matplotlib.pyplot.figure, 
+pandas.DataFrame and xml.etree.ElementTree.ElementTree</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="vtkWriter.html#module-vtkWriter" title="vtkWriter"><tt class="xref py py-obj docutils literal"><span class="pre">vtkWriter</span></tt></a>, <a class="reference internal" href="plotting.html#module-plotting" title="plotting"><tt class="xref py py-obj docutils literal"><span class="pre">plotting</span></tt></a>, <tt class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.figure</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame.to_excel</span></tt>, <a class="reference external" href="http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree</span></tt></a>, <tt class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree.outputTrees</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.saving">
+<tt class="descname">saving</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.saving" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the folder structure for the saved data and created the log file
+as log.txt</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.folderSetup" title="outputting.outputting.folderSetup"><tt class="xref py py-obj docutils literal"><span class="pre">folderSetup</span></tt></a></dt>
+<dd>creates the folders</dd>
+</dl>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="outputting.outputting.simLog">
 <tt class="descname">simLog</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.simLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.simLog" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Outputs relavent data to an excel file with all the data and a csv file
+with the estimated pertinant data</p>
+</dd></dl>
 
 </dd></dl>
 

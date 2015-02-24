@@ -67,6 +67,11 @@
 <span class="sd">    </span>
 <span class="sd">    Many general methods for experiments are found only here</span>
 <span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    plotArgs : dict</span>
+<span class="sd">        The arguments for plotting functions</span>
+<span class="sd">    </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
@@ -173,8 +178,15 @@
         <span class="k">return</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="experiment.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.experiment.experiment.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Plots and saves files containing all the relavent data for this</span>
-<span class="sd">        experiment run &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the relevent data for this experiment run</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            The dictionary contains a series of keys including Name, </span>
+<span class="sd">            Observables and Actions.        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                    <span class="s">&quot;Actions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">}</span>
@@ -188,12 +200,28 @@
         <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="experiment.params"><a class="viewcode-back" href="../../experiment.html#experiment.experiment.experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the parameters of the experiment as a dictionary&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the parameters of the experiment as a dictionary</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            The parameters of the experiment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
 </div>
 <div class="viewcode-block" id="experiment.plot"><a class="viewcode-back" href="../../experiment.html#experiment.experiment.experiment.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns a plotting class relavent for this experiment&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Returns a plotting class relavent for this experiment</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        experimentPlot : experiment.experimentPlot.experimentPlot</span>
+<span class="sd">            The plots created for the experiment</span>
+<span class="sd">        plotArgs : dict</span>
+<span class="sd">            Plot arguments that may be used within the experimentPlot instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">experimentPlot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span>
 </div>
