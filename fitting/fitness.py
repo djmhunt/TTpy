@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -21,32 +21,53 @@ class fitter(fit):
     
     Used only for fitting action-response models
 
-
+    Parameters
+    ----------
+    partChoiceParam : string
+        The key to be compared in the participant data
+    partRewardParam : string
+        The key containing the participant reward data
+    modelParam : string
+        The key to be compared in the model data
+    fitAlg : fitting.fitters.fitAlg instance
+        An instance of one of the fitting algorithms
+    scaler : function
+        Transforms the participant action form to match that of the model
+        
+    Attributes
+    ----------
+    name : string
+        The name of the fitting type
+        
+    See Also
+    --------
+    fitting.fit.fit : The class this inherits many functions from
+    fitting.fitters.fitAlg.fitAlg : The general fitting class
     """
     
     name = "fitness"
 
-
-    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
-
-        self.partChoiceParam = partChoiceParam
-        self.partRewardParam = partRewardParam
-        self.modelparam = modelParam
-        self.fitAlg = fitAlg
-        self.scaler = scaler
-
-        self.fitInfo = {'name':self.name,
-                        'participantChoiceParam':partChoiceParam,
-                        'participantRewardParam':partRewardParam,
-                        'modelParam':modelParam}
-        try: 
-            self.fitInfo['scalerName'] = self.scaler.Name
-            self.fitInfo['scalerEffect'] = self._scalerEffect()
-        except AttributeError:
-            self.fitInfo['scalerEffect'] = self._scalerEffect()
-
     def fitness(self, *modelParameters):
-        """ Returns the value necessary for the fitting
+        """
+        Used by a fitter to calculate the quality of a fit for given model 
+        parameters
+        
+        Parameters
+        ----------
+        modelParameters : list of floats
+            A list of the parameters used by the model in the order previously
+            defined
+            
+        Returns
+        -------
+        fitQuality : list of floats
+            The quality of the fit. In this case defined as the choices
+            made by the model
+            
+        See Also
+        --------
+        fitting.fit.fit.participant : Fits participant data
+        fitting.fitters.fitAlg.fitAlg : The general fitting class
         """
 
         #Run model with given parameters
@@ -55,50 +76,25 @@ class fitter(fit):
         # Pull out the values to be compared
 
         modelData = model.outputEvolution()
-        modelChoiceProbs = modelData[self.modelparam]
+        modelChoices = modelData[self.modelparam]
 
-        return modelChoiceProbs
-
-    def participant(self, exp, model, modelSetup, partData):
-
-        self.model = model
-        self.mInitialParams = modelSetup[0].values()
-        self.mParamNames = modelSetup[0].keys()
-        self.mOtherParams = modelSetup[1]
-
-        self.partChoices = self.scaler(partData[self.partChoiceParam])
-
-        self.partRewards = partData[self.partRewardParam]
-
-        fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
-
-        model = self._fittedModel(*fitVals)
-
-        return model, fitQuality
+        return modelChoices
 
     def _fittedModel(self,*fitVals):
+        """
+        Return the best fit model
+        """
 
         model = self._simSetup(*fitVals)
 
         return model
 
-    def _getModInput(self, *modelParameters):
-
-
-        optional = self.mOtherParams
-
-        inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
-
-        for k, v in optional.iteritems():
-            inputs[k] = v
-
-        return inputs
-
     def _simSetup(self, *modelParameters):
-        """ Initialises the model for the running of the 'simulation'
+        """ 
+        Initialises the model for the running of the 'simulation'
         """
 
-        args = self._getModInput(*modelParameters)
+        args = self.getModInput(*modelParameters)
 
         model = self.model(**args)
 
@@ -107,7 +103,8 @@ class fitter(fit):
         return model
 
     def _simRun(self, model):
-        """ Simulates the events of a simulation from the perspective of a model
+        """
+        Simulates the events of a simulation from the perspective of a model
         """
 
         parAct = self.partChoices
