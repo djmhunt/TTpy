@@ -150,8 +150,10 @@ class beads(experiment):
         return results
 
     def storeState(self):
-        """ Stores the state of all the important variables so that they can be
-        output later """
+        """
+        Stores the state of all the important variables so that they can be
+        output later 
+        """
 
         self.recBeads[self.t] = self.beads[self.t]
 

@@ -56,7 +56,9 @@ class experiment(object):
 
 
     def __iter__(self):
-        """ Returns the iterator for the experiment"""
+        """
+        Returns the iterator for the experiment
+        """
 
         return self
 
@@ -104,7 +106,9 @@ class experiment(object):
         return hash(self.Name)
 
     def receiveAction(self,action):
-        """ Receives the next action from the participant"""
+        """
+        Receives the next action from the participant
+        """
 
         self.recAction.append(action)
 
@@ -144,8 +148,10 @@ class experiment(object):
         return results
 
     def storeState(self):
-        """ Stores the state of all the important variables so that they can be
-        output later """
+        """
+        Stores the state of all the important variables so that they can be
+        output later
+        """
 
         pass
 

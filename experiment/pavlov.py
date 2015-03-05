@@ -194,6 +194,11 @@ def pavlovStimTemporal(eventDur):
     eventDur : int
         The length of each event. Must be longer than stimDur and be 
         absolutely the same length as simDur.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
     
     """
     

@@ -39,14 +39,18 @@ class experimentPlot(object):
         self._figSets()
 
     def _figSets(self):
-        """ Contains all the figures """
+        """
+        Sets up a container for all the figures
+        """
 
         self.figSets = []
 
         # Create all the plots and place them in in a list to be iterated
 
     def __iter__(self):
-        """ Returns the iterator for the release of plots"""
+        """
+        Returns the iterator for the release of plots
+        """
 
         self.counter = 0
 

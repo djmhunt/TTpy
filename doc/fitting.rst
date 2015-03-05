@@ -35,14 +35,6 @@ fitting.fitness module
     :undoc-members:
     :show-inheritance:
 
-fitting.test_fitness module
----------------------------
-
-.. automodule:: fitting.test_fitness
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

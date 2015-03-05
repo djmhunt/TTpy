@@ -38,7 +38,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'numpydoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'matplotlib.sphinxext.mathmpl'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

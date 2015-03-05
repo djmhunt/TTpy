@@ -121,12 +121,16 @@ class decks(experiment):
         return None
 
     def receiveAction(self,action):
-        """ Receives the next action from the participant"""
+        """
+        Receives the next action from the participant
+        """
 
         self.action = action
 
     def feedback(self):
-        """ Responds to the action from the participant"""
+        """
+        Responds to the action from the participant
+        """
 
         deckDrawn = self.action
         cardDrawn = self.drawn + 1 #[deckDrawn] + 1
@@ -141,13 +145,17 @@ class decks(experiment):
         return self.cardValue
 
     def procede(self):
-        """Updates the experiment after feedback"""
+        """
+        Updates the experiment after feedback
+        """
 
         pass
 
     def outputEvolution(self):
-        """ Plots and saves files containing all the relavent data for this
-        experiment run """
+        """
+        Plots and saves files containing all the relavent data for this
+        experiment run
+        """
 
         results = {"Name": self.Name,
                    "Actions": self.recAction,
