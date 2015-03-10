@@ -97,7 +97,7 @@ class qLearn(model):
 
         self.currAction = self.decision
 
-        self._storeState()
+        self.storeState()
 
         return self.currAction
         
