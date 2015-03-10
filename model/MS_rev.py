@@ -30,7 +30,7 @@ class MS_rev(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    theta : float, optional
+    gamma : float, optional
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
@@ -57,7 +57,7 @@ class MS_rev(model):
         self.lastObs = False
 
         self.oneProb = kwargs.pop('oneProb',0.85)
-        self.theta = kwargs.pop('theta',4)
+        self.gamma = kwargs.pop('gamma',4)
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
@@ -67,7 +67,7 @@ class MS_rev(model):
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
-                           "theta": self.theta,
+                           "gamma": self.gamma,
                            "beta": self.beta,
                            "alpha": self.alpha,
                            "stimFunc" : self.stimFunc.Name,
@@ -167,11 +167,11 @@ class MS_rev(model):
     def _prob(self):
         # The probability of a given jar, using the Luce choice model
 
-#        li = self.activity ** self.theta
+#        li = self.activity ** self.gamma
 #        p = li/sum(li)
 
         diff = 2*self.activity - sum(self.activity)
-        p = 1.0 / (1.0 + exp(-self.theta*diff))
+        p = 1.0 / (1.0 + exp(-self.gamma*diff))
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
