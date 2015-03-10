@@ -16,6 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
+from model.decision.binary import  beta
 
 class MS_rev(model):
 
@@ -33,8 +34,15 @@ class MS_rev(model):
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
-    oneProb : array, optional
-        The prior probability 
+    oneProb : float in [0,1], optional
+        The probability of a 1 from the first jar. This is also the probability
+        of a 0 from the second jar.
+    stimFunc : function, optional
+        The function that transforms the stimulus into a form the model can 
+        understand and a string to identify it later. Default is blankStim
+    decFunc : function, optional
+        The function that takes the internal values of the model and turns them
+        in to a decision. Default is model.decision.binary.beta
     """
 
     Name = "MS_rev"
@@ -42,12 +50,10 @@ class MS_rev(model):
     def __init__(self,**kwargs):
 
         self.currAction = 1
-        self.information = zeros(2)
         self.probabilities = zeros(2)
         self.probDifference = 0
         self.activity = zeros(2)
         self.decision = None
-        self.firstDecision = 0
         self.lastObs = False
 
         self.oneProb = kwargs.pop('oneProb',0.85)
@@ -55,18 +61,22 @@ class MS_rev(model):
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
+        
+        self.stimFunc = kwargs.pop('stimFunc',blankStim())
+        self.decisionFunc = kwargs.pop('decFunc',beta(responses = (1,2), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
                            "theta": self.theta,
                            "beta": self.beta,
-                           "alpha": self.alpha}
+                           "alpha": self.alpha,
+                           "stimFunc" : self.stimFunc.Name,
+                           "decFunc" : self.decisionFunc.Name}
 
         # Recorded information
 
         self.recAction = []
         self.recEvents = []
-        self.recInformation = []
         self.recProbabilities = []
         self.recProbDifference = []
         self.recActivity = []
@@ -79,11 +89,11 @@ class MS_rev(model):
         action : integer or None
         """
 
-        self._decision()
+        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
-        self._storeState()
+        self.storeState()
 
         return self.currAction
 
@@ -97,38 +107,23 @@ class MS_rev(model):
             Probabilities, Actions and Events.
         """
 
-        results = {"Name": self.Name,
-                   "oneProb": self.oneProb,
-                   "theta": self.theta,
-                   "alpha": self.alpha,
-                   "Information": array(self.recInformation),
-                   "Probabilities": array(self.recProbabilities),
-                   "ProbDifference": array(self.recProbDifference),
-                   "Activity": array(self.recActivity),
-                   "Actions":array(self.recAction),
-                   "Decsions": array(self.recDecision),
-                   "Events":array(self.recEvents)}
+        results = self.parameters
+
+        results["Probabilities"] = array(self.recProbabilities)
+        results["ProbDifference"] = array(self.recProbDifference)
+        results["Activity"] = array(self.recActivity)
+        results["Actions"] = array(self.recAction)
+        results["Decsions"] = array(self.recDecision)
+        results["Events"] = array(self.recEvents)
 
         return results
 
     def _update(self,events,instance):
         """Processes updates to new actions"""
-        
-        event = events
 
         if instance == 'obs':
-
-            self.recEvents.append(event)
-
-            #Calculate jar information
-            info = self.oneProb*event + (1-self.oneProb)*(1-event)
-            self.information = array([info,1-info])
-
-            #Find the new activites
-            self._newActivity()
-
-            #Calculate the new probabilities
-            self._prob()
+            
+            self._processEvent(events)
 
             self.lastObs = True
 
@@ -139,18 +134,23 @@ class MS_rev(model):
                 self.lastObs = False
 
             else:
+                self._processEvent(events)
+                
+    def _processEvent(self,events):
+        
+        event = self.stimFunc(events)
+        
+        self.recEvents.append(event)
 
-                self.recEvents.append(event)
+        #Calculate jar information
+        info = self.oneProb*event + (1-self.oneProb)*(1-event)
+        self.information = array([info,1-info])
 
-                #Calculate jar information
-                info = self.oneProb*event + (1-self.oneProb)*(1-event)
-                self.information = array([info,1-info])
+        #Find the new activites
+        self._newActivity()
 
-                #Find the new activites
-                self._newActivity()
-
-                #Calculate the new probabilities
-                self._prob()
+        #Calculate the new probabilities
+        self._prob()
 
     def storeState(self):
         """ 
@@ -178,15 +178,25 @@ class MS_rev(model):
 
     def _newActivity(self):
         self.activity = self.activity + (self.information - self.activity)  * self.alpha
-
-    def _decision(self):
-
-        prob = self.probabilities[0]
-
-        if abs(prob-0.5)>self.beta:
-            if prob>0.5:
-                self.decision = 1
-            else:
-                self.decision = 2
-        else:
-            self.decision = None
+        
+def blankStim():
+    """
+    Default stimulus processor. Does nothing.Returns [1,0]
+        
+    Returns
+    -------
+    blankStimFunc : function
+        The function expects to be passed the event and then return [1,0].
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    """
+    
+    def blankStimFunc(event):
+        return [1,0]
+        
+    blankStimFunc.Name = "blankStim"
+    return blankStimFunc
