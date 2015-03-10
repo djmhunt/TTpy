@@ -16,8 +16,8 @@ def beta(responses = (0,1),beta = 0):
     ----------
     responses : tuple of length two, optional
         Provides the two action responses expected by the experiment
-    beta : float, optional :math:`beta`
-        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \beta`
+    beta : float, optional :math:`\\beta`
+        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\beta`
         If true a decision is taken. If false the function responds ``None``
     
     Returns
@@ -26,8 +26,6 @@ def beta(responses = (0,1),beta = 0):
         Calculates the decisions 
     
     """
-    
-    Name = "binaryBeta"
         
     def decisionFunc(probabilities):
         """
@@ -36,9 +34,9 @@ def beta(responses = (0,1),beta = 0):
         Parameters
         ----------
         probabilities : tuple of length two
-            The probabilities of the two decisions. They are compared by: :math:`\left\Vert p_0-0.5\right\Vert>\Beta`
+            The probabilities of the two decisions. They are compared by: :math:`\left\Vert p_0-0.5\right\Vert>\\beta`
             .. math:: X(e^{j\omega } ) = x(n)e^{ - j\omega n}
-            .. math:: \left\Vert p_0-0.5\right\Vert>\Beta
+            .. math:: \left\Vert p_0-0.5\right\Vert>\beta
             If true a decision is taken. If false the function responds ``None``
         
         Returns
@@ -60,5 +58,7 @@ def beta(responses = (0,1),beta = 0):
             decision = None
             
         return decision
+        
+    decisionFunc.Name = "binaryBeta"
         
     return decisionFunc
