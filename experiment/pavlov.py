@@ -184,16 +184,21 @@ class pavlov(experiment):
         
         return rewSigSet, rewVals
         
-def pavlovStimTemporal(eventDur):
+def pavlovStimTemporal():
     """
     Passes the pavlov stimuli to models that cope with stimuli and rewards 
     that have a duration.
-    
-    Parameters
-    ----------
-    eventDur : int
-        The length of each event. Must be longer than stimDur and be 
-        absolutely the same length as simDur.
+        
+    Returns
+    -------
+    pavlovStim : function
+        The function expects to be passed an event with three components: 
+        ``(stim,rew,stimDur)`` and yield a series of events ``t,c,r```. 
+        ``stim`` is the value of the stimulus. It is expected to be a list-like
+        object. ``rew`` is a list containing the reward for each timestep. 
+        The reward is expected to be a float. ``stimDur`` is the duration of 
+        the stimulus, an ``int``. This should be less than the length of ``rew``.
+        ``c`` the stimulus. ``r`` the reward. ``t`` is the time
         
     Attributes
     ----------
@@ -220,7 +225,6 @@ def pavlovStimTemporal(eventDur):
             yield t, c, r
             
     pavlovStim.Name = "pavlovStimTemporal"
-    pavlovStim.simDur = eventDur
             
     return pavlovStim
         
