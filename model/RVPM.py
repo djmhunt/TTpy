@@ -336,22 +336,45 @@ class RVPM(model):
 
             return fig
 
-def blankStim(): 
+def blankStim():
+    """ The default stimulus processor generator for RVPM
+    
+    Passes the pavlov stimuli to models that cope with stimuli and rewards 
+    that have a duration.
+        
+    Returns
+    -------
+    blankStimFunc : function
+        The function yields a series of ten events ``t,0,0```, where ``t`` is 
+        the time. The stimulus and reward are set to 0.
+        
+    """
     
     def blankStimFunc(event):
-    
-        eventIter = argmax((len(e) for e in event))
-            
         
-        for t, c in enumerate(event[eventIter]):
+        for t in xrange(10):
                 
-            yield t, c, 0
+            yield t, 1, 0
             
     blankStimFunc.Name = "blankStim"
     
     return blankStimFunc
         
 def basicDecision():
+    """The default decision function for RVPM
+        
+    Returns
+    -------
+    beadStim : function
+        The function expects to be passed the probabilities and then return 
+        `None`.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+    
+    """
     
     def basicDecisionFunc(prob):
                 
