@@ -174,16 +174,57 @@ class decks(experiment):
         self.recCardVal[self.t] = self.cardValue
 
 def deckStimDirect():
+    """
+    Processes the decks stimuli for models expecting just the event
+        
+    Returns
+    -------
+    deckStim : function
+        The function expects to be passed a tuple containing the event and the
+        last decision. The function returns the event.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.qLearn
+    """
     
     def deckStim(event, decision):
-        stimulus = [event*(1-decision) + event*decision, event*decision + event*(1-decision)]
-        return stimulus
+        return event
+        
+    deckStim.Name = "deckStimDirect"
     return deckStim
 
 def deckStimDualInfo(maxEventVal):
+    """
+    Processes the decks stimuli for models expecting the reward information 
+    from two possible actions 
+        
+    Returns
+    -------
+    deckStim : function
+        The function expects to be passed a tuple containing the event and the
+        last decision. The event that is a float and decision is {0,1}. The 
+        function returns a list of length 2.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.BP, model.EP, model.MS, model.MS_rev
+    """
     
     def deckStim(event, decision):
         stim = (event/maxEventVal)*(1-decision) + (1-(event/maxEventVal))*decision
         stimulus = [stim,1-stim]
         return stimulus
+        
+    deckStim.Name = "deckStimDualInfo"
     return deckStim

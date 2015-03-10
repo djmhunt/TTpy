@@ -254,23 +254,91 @@ def generateSequence(numBeads, oneProb, switchProb):
     return sequence
     
 def beadStimDirect():
+    """
+    Processes the beads stimuli for models expecting just the event
+        
+    Returns
+    -------
+    beadStim : function
+        The function expects to be passed the event and then return it.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.qLearn
+    """
+    
+    def beadStim(event):
+        return event
+        
+    beadStim.Name = "beadStimDirect"
+    return beadStim
+    
+def beadStimDualDirect():
+    """
+    Processes the beads stimuli for models expecting a tuple of [event,1-event] 
+        
+    Returns
+    -------
+    beadStim : function
+        The function expects to be passed the event and then return 
+        [event,1-event].
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.EP
+    """
     
     def beadStim(event):
         stimulus = array([event,1-event])
         return stimulus
         
-    beadStim.Name = "beadStimDirect"
+    beadStim.Name = "beadStimDualDirect"
     
     return beadStim
 
-def beadStimInfo(oneProb):
+def beadStimDualInfo(oneProb):
+    """
+    Processes the beads stimuli for models expecting the reward information 
+    from two possible actions 
+    
+    Parameters
+    ----------
+    oneProb : float in [0,1]
+        The probability of a 1 from the first jar. This is also the probability
+        of a 0 from the second jar.
+        
+    Returns
+    -------
+    beadStim : function
+        The function expects to be passed the event and then return 
+        [event_info,1-event_info].
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.MS, model.MS_rev, model.BP
+    """
     
     def beadStim(event):
         stim = oneProb*event + (1-oneProb)*(1-event)
         stimulus = array([stim,1-stim])
         return stimulus
         
-    beadStim.Name = "beadStimInfo"
+    beadStim.Name = "beadStimDualInfo"
         
     return beadStim
 
