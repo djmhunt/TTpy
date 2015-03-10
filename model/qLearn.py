@@ -18,6 +18,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
+from model.decision.binary import  beta
 
 class qLearn(model):
 
@@ -32,7 +33,7 @@ class qLearn(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    theta : float, optional
+    gamma : float, optional
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
@@ -40,23 +41,35 @@ class qLearn(model):
         The prior probability 
     expect: float, optional
         The initialisation of the the expected reward
+    stimFunc : function, optional
+        The function that transforms the stimulus into a form the model can 
+        understand and a string to identify it later. Default is blankStim
+    decFunc : function, optional
+        The function that takes the internal values of the model and turns them
+        in to a decision. Default is model.decision.binary.beta
     """
 
     Name = "qLearn"
 
     def __init__(self,**kwargs):
 
-        self.theta = kwargs.pop('theta',4)
+        self.gamma = kwargs.pop('gamma',4)
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.expect = kwargs.pop('expect',5)
+        
+        self.stimFunc = kwargs.pop('stimFunc',blankStim())
+        self.decisionFunc = kwargs.pop('decFunc',beta(beta = self.beta))
 
         self.parameters = {"Name": self.Name,
-                           "theta": self.theta,
+                           "gamma": self.gamma,
                            "beta": self.beta,
-                           "alpha": self.alpha}#,
-#                           "expectation": self.expect}
+                           "alpha": self.alpha,
+                           "expectation": self.expect,
+                           "prior": self.prior,
+                           "stimFunc" : self.stimFunc.Name,
+                           "decFunc" : self.decisionFunc.Name}
 
         self.currAction = None
         self.expectation = zeros(2) + self.expect
@@ -80,7 +93,7 @@ class qLearn(model):
         action : integer or None
         """
 
-        self._decision()
+        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
@@ -99,25 +112,22 @@ class qLearn(model):
             The dictionary contains a series of keys including Name, 
             Probabilities, Actions and Events.
         """
+        
+        results = self.parameters
 
-        results = {"Name": self.Name,
-                   "theta": self.theta,
-                   "beta": self.beta,
-                   "alpha": self.alpha,
-                   "prior": self.prior,
-                   "Probabilities": array(self.recProbabilities),
-                   "ActionProb": array(self.recActionProb),
-                   "Expectation": array(self.recExpectation),
-                   "Actions":array(self.recAction),
-                   "Decsions": array(self.recDecision),
-                   "Events":array(self.recEvents)}
+        results["Probabilities"] = array(self.recProbabilities)
+        results["ActionProb"] = array(self.recActionProb)
+        results["Expectation"] = array(self.recExpectation)
+        results["Actions"] = array(self.recAction)
+        results["Decsions"] = array(self.recDecision)
+        results["Events"] = array(self.recEvents)
 
         return results
 
     def _update(self,events,instance):
         """Processes updates to new actions"""
         
-        event = events
+        event = self.stimFunc(events)
 
         if instance == 'obs':
 
@@ -165,21 +175,29 @@ class qLearn(model):
 
     def _prob(self):
 
-        numerat = exp(self.theta*self.expectation)
+        numerat = exp(self.gamma*self.expectation)
         denom = sum(numerat)
 
         self.probabilities= numerat / denom
-
-    def _decision(self):
-
-        prob = self.probabilities[0]
-
-        if abs(prob-0.5) >= self.beta:
-            if prob>0.5:
-                self.decision = 0
-            elif prob == 0.5:
-                self.decision = choice([0,1])
-            else:
-                self.decision = 1
-        else:
-            self.decision = None
+        
+def blankStim():
+    """
+    Default stimulus processor. Does nothing.
+        
+    Returns
+    -------
+    blankStimFunc : function
+        The function expects to be passed the event and then return it.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    """
+    
+    def blankStimFunc(event):
+        return event
+        
+    blankStimFunc.Name = "blankStim"
+    return blankStimFunc
