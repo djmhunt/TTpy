@@ -126,20 +126,10 @@ class qLearn(model):
 
     def _update(self,events,instance):
         """Processes updates to new actions"""
-        
-        event = self.stimFunc(events)
 
         if instance == 'obs':
 
-            self.recEvents.append(event)
-
-            chosen = self.currAction
-
-            #Calculate jar information
-            self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
-
-            #Calculate the new probabilities
-            self._prob()
+            self._processEvent(events)
 
             self.lastObs = True
 
@@ -150,16 +140,21 @@ class qLearn(model):
                 self.lastObs = False
 
             else:
+                self._processEvent(events)
+                
+    def _processEvent(self,events):
+        
+        event = self.stimFunc(events)
+        
+        self.recEvents.append(event)
 
-                self.recEvents.append(event)
+        chosen = self.currAction
 
-                chosen = self.currAction
+        #Calculate jar information
+        self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
 
-                #Calculate jar information
-                self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
-
-                #Calculate the new probabilities
-                self._prob()
+        #Calculate the new probabilities
+        self._prob()
 
     def storeState(self):
         """ 
