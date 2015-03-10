@@ -224,18 +224,59 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span>
 </div></div>
 <div class="viewcode-block" id="deckStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDirect">[docs]</a><span class="k">def</span> <span class="nf">deckStimDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the decks stimuli for models expecting just the event</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deckStim : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
+<span class="sd">        last decision. The function returns the event.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.qLearn</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
-        <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">event</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)</span> <span class="o">+</span> <span class="n">event</span><span class="o">*</span><span class="n">decision</span><span class="p">,</span> <span class="n">event</span><span class="o">*</span><span class="n">decision</span> <span class="o">+</span> <span class="n">event</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">stimulus</span>
+        <span class="k">return</span> <span class="n">event</span>
+        
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDirect&quot;</span>
     <span class="k">return</span> <span class="n">deckStim</span>
 </div>
 <div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
+<span class="sd">    from two possible actions </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deckStim : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
+<span class="sd">        last decision. The event that is a float and decision is {0,1}. The </span>
+<span class="sd">        function returns a list of length 2.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">))</span><span class="o">*</span><span class="n">decision</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">stimulus</span>
+        
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfo&quot;</span>
     <span class="k">return</span> <span class="n">deckStim</span></div>
 </pre></div>
 

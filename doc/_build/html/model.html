@@ -647,12 +647,54 @@ accessed later</p>
 <dl class="function">
 <dt id="model.RVPM.basicDecision">
 <tt class="descclassname">model.RVPM.</tt><tt class="descname">basicDecision</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#basicDecision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.basicDecision" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The default decision function for RVPM</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the probabilities and then return 
+<cite>None</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="model.RVPM.blankStim">
 <tt class="descclassname">model.RVPM.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/RVPM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The default stimulus processor generator for RVPM</p>
+<p>Passes the pavlov stimuli to models that cope with stimuli and rewards 
+that have a duration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function yields a series of ten events <tt class="docutils literal"><span class="pre">t,0,0`</span></tt>, where <tt class="docutils literal"><span class="pre">t</span></tt> is 
+the time. The stimulus and reward are set to 0.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 <div class="section" id="module-model.model">
@@ -939,112 +981,8 @@ accessed later</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-model.qLearn">
-<span id="model-qlearn-module"></span><h2>model.qLearn module<a class="headerlink" href="#module-model.qLearn" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Regulatory fit effects in a choice task
-Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007).
-Psychonomic Bulletin &amp; Review, 14(6), 1125–32. 
-Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/18229485">http://www.ncbi.nlm.nih.gov/pubmed/18229485</a></td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="model.qLearn.qLearn">
-<em class="property">class </em><tt class="descclassname">model.qLearn.</tt><tt class="descname">qLearn</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
-<p>The q-Learning algorithm</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
-<blockquote>
-<div><p>Learning rate parameter</p>
-</div></blockquote>
-<p><strong>theta</strong> : float, optional</p>
-<blockquote>
-<div><p>Sensitivity parameter for probabilities</p>
-</div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
-<blockquote>
-<div><p>Decision threshold parameter</p>
-</div></blockquote>
-<p><strong>prior</strong> : array, optional</p>
-<blockquote>
-<div><p>The prior probability</p>
-</div></blockquote>
-<p><strong>expect: float, optional</strong></p>
-<blockquote class="last">
-<div><p>The initialisation of the the expected reward</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="5%" />
-<col width="95%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.qLearn.qLearn.Name">
-<tt class="descname">Name</tt><em class="property"> = 'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn.qLearn.action">
-<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.action" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn.qLearn.outputEvolution">
-<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name, 
-Probabilities, Actions and Events.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn.qLearn.storeState">
-<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="model-qlearn-module">
+<h2>model.qLearn module<a class="headerlink" href="#model-qlearn-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-model">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
@@ -1070,7 +1008,7 @@ accessed later</p>
 <li><a class="reference internal" href="#module-model.model">model.model module</a></li>
 <li><a class="reference internal" href="#module-model.modelPlot">model.modelPlot module</a></li>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
-<li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
+<li><a class="reference internal" href="#model-qlearn-module">model.qLearn module</a></li>
 <li><a class="reference internal" href="#module-model">Module contents</a></li>
 </ul>
 </li>

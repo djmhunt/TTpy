@@ -234,16 +234,21 @@
         
         <span class="k">return</span> <span class="n">rewSigSet</span><span class="p">,</span> <span class="n">rewVals</span>
         </div>
-<div class="viewcode-block" id="pavlovStimTemporal"><a class="viewcode-back" href="../../experiment.html#experiment.pavlov.pavlovStimTemporal">[docs]</a><span class="k">def</span> <span class="nf">pavlovStimTemporal</span><span class="p">(</span><span class="n">eventDur</span><span class="p">):</span>
+<div class="viewcode-block" id="pavlovStimTemporal"><a class="viewcode-back" href="../../experiment.html#experiment.pavlov.pavlovStimTemporal">[docs]</a><span class="k">def</span> <span class="nf">pavlovStimTemporal</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Passes the pavlov stimuli to models that cope with stimuli and rewards </span>
 <span class="sd">    that have a duration.</span>
-<span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    eventDur : int</span>
-<span class="sd">        The length of each event. Must be longer than stimDur and be </span>
-<span class="sd">        absolutely the same length as simDur.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pavlovStim : function</span>
+<span class="sd">        The function expects to be passed an event with three components: </span>
+<span class="sd">        ``(stim,rew,stimDur)`` and yield a series of events ``t,c,r```. </span>
+<span class="sd">        ``stim`` is the value of the stimulus. It is expected to be a list-like</span>
+<span class="sd">        object. ``rew`` is a list containing the reward for each timestep. </span>
+<span class="sd">        The reward is expected to be a float. ``stimDur`` is the duration of </span>
+<span class="sd">        the stimulus, an ``int``. This should be less than the length of ``rew``.</span>
+<span class="sd">        ``c`` the stimulus. ``r`` the reward. ``t`` is the time</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -270,7 +275,6 @@
             <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span>
             
     <span class="n">pavlovStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;pavlovStimTemporal&quot;</span>
-    <span class="n">pavlovStim</span><span class="o">.</span><span class="n">simDur</span> <span class="o">=</span> <span class="n">eventDur</span>
             
     <span class="k">return</span> <span class="n">pavlovStim</span>
         

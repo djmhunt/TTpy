@@ -386,22 +386,45 @@
 
             <span class="k">return</span> <span class="n">fig</span>
 </div></div></div>
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.RVPM.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span> 
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.RVPM.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; The default stimulus processor generator for RVPM</span>
+<span class="sd">    </span>
+<span class="sd">    Passes the pavlov stimuli to models that cope with stimuli and rewards </span>
+<span class="sd">    that have a duration.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blankStimFunc : function</span>
+<span class="sd">        The function yields a series of ten events ``t,0,0```, where ``t`` is </span>
+<span class="sd">        the time. The stimulus and reward are set to 0.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-    
-        <span class="n">eventIter</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">event</span><span class="p">))</span>
-            
         
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="n">eventIter</span><span class="p">]):</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
                 
-            <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
             
     <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;blankStim&quot;</span>
     
     <span class="k">return</span> <span class="n">blankStimFunc</span>
         </div>
 <div class="viewcode-block" id="basicDecision"><a class="viewcode-back" href="../../model.html#model.RVPM.basicDecision">[docs]</a><span class="k">def</span> <span class="nf">basicDecision</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The default decision function for RVPM</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    beadStim : function</span>
+<span class="sd">        The function expects to be passed the probabilities and then return </span>
+<span class="sd">        `None`.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">basicDecisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">):</span>
                 

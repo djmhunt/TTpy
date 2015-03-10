@@ -76,12 +76,114 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <dl class="function">
 <dt id="experiment.beads.beadStimDirect">
 <tt class="descclassname">experiment.beads.</tt><tt class="descname">beadStimDirect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beadStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDirect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Processes the beads stimuli for models expecting just the event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
-<dt id="experiment.beads.beadStimInfo">
-<tt class="descclassname">experiment.beads.</tt><tt class="descname">beadStimInfo</tt><big>(</big><em>oneProb</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beadStimInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimInfo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="experiment.beads.beadStimDualDirect">
+<tt class="descclassname">experiment.beads.</tt><tt class="descname">beadStimDualDirect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beadStimDualDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDualDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads stimuli for models expecting a tuple of [event,1-event]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return 
+[event,1-event].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.EP" title="model.EP"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.beadStimDualInfo">
+<tt class="descclassname">experiment.beads.</tt><tt class="descname">beadStimDualInfo</tt><big>(</big><em>oneProb</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beadStimDualInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDualInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads stimuli for models expecting the reward information 
+from two possible actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>oneProb</strong> : float in [0,1]</p>
+<blockquote>
+<div><p>The probability of a 1 from the first jar. This is also the probability
+of a 0 from the second jar.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return 
+[event_info,1-event_info].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.MS" title="model.MS"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></a>, <a class="reference internal" href="model.html#module-model.BP" title="model.BP"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="class">
 <dt id="experiment.beads.beads">
@@ -291,12 +393,74 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <dl class="function">
 <dt id="experiment.decks.deckStimDirect">
 <tt class="descclassname">experiment.decks.</tt><tt class="descname">deckStimDirect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#deckStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDirect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Processes the decks stimuli for models expecting just the event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deckStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last decision. The function returns the event.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="experiment.decks.deckStimDualInfo">
 <tt class="descclassname">experiment.decks.</tt><tt class="descname">deckStimDualInfo</tt><big>(</big><em>maxEventVal</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#deckStimDualInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDualInfo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Processes the decks stimuli for models expecting the reward information 
+from two possible actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deckStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last decision. The event that is a float and decision is {0,1}. The 
+function returns a list of length 2.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="class">
 <dt id="experiment.decks.decks">
@@ -959,17 +1123,22 @@ output later</p>
 
 <dl class="function">
 <dt id="experiment.pavlov.pavlovStimTemporal">
-<tt class="descclassname">experiment.pavlov.</tt><tt class="descname">pavlovStimTemporal</tt><big>(</big><em>eventDur</em><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlovStimTemporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlovStimTemporal" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">experiment.pavlov.</tt><tt class="descname">pavlovStimTemporal</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/pavlov.html#pavlovStimTemporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlovStimTemporal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Passes the pavlov stimuli to models that cope with stimuli and rewards 
 that have a duration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>eventDur</strong> : int</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pavlovStim</strong> : function</p>
 <blockquote class="last">
-<div><p>The length of each event. Must be longer than stimDur and be 
-absolutely the same length as simDur.</p>
+<div><p>The function expects to be passed an event with three components: 
+<tt class="docutils literal"><span class="pre">(stim,rew,stimDur)</span></tt> and yield a series of events <tt class="docutils literal"><span class="pre">t,c,r`</span></tt>. 
+<tt class="docutils literal"><span class="pre">stim</span></tt> is the value of the stimulus. It is expected to be a list-like
+object. <tt class="docutils literal"><span class="pre">rew</span></tt> is a list containing the reward for each timestep. 
+The reward is expected to be a float. <tt class="docutils literal"><span class="pre">stimDur</span></tt> is the duration of 
+the stimulus, an <tt class="docutils literal"><span class="pre">int</span></tt>. This should be less than the length of <tt class="docutils literal"><span class="pre">rew</span></tt>.
+<tt class="docutils literal"><span class="pre">c</span></tt> the stimulus. <tt class="docutils literal"><span class="pre">r</span></tt> the reward. <tt class="docutils literal"><span class="pre">t</span></tt> is the time</p>
 </div></blockquote>
 </td>
 </tr>

@@ -304,23 +304,91 @@
     <span class="k">return</span> <span class="n">sequence</span>
     </div>
 <div class="viewcode-block" id="beadStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the beads stimuli for models expecting just the event</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    beadStim : function</span>
+<span class="sd">        The function expects to be passed the event and then return it.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.qLearn</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">event</span>
+        
+    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDirect&quot;</span>
+    <span class="k">return</span> <span class="n">beadStim</span>
+    </div>
+<div class="viewcode-block" id="beadStimDualDirect"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDualDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the beads stimuli for models expecting a tuple of [event,1-event] </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    beadStim : function</span>
+<span class="sd">        The function expects to be passed the event and then return </span>
+<span class="sd">        [event,1-event].</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.EP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">event</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
         
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDirect&quot;</span>
+    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDualDirect&quot;</span>
     
     <span class="k">return</span> <span class="n">beadStim</span>
 </div>
-<div class="viewcode-block" id="beadStimInfo"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimInfo">[docs]</a><span class="k">def</span> <span class="nf">beadStimInfo</span><span class="p">(</span><span class="n">oneProb</span><span class="p">):</span>
+<div class="viewcode-block" id="beadStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualInfo</span><span class="p">(</span><span class="n">oneProb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the beads stimuli for models expecting the reward information </span>
+<span class="sd">    from two possible actions </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    oneProb : float in [0,1]</span>
+<span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
+<span class="sd">        of a 0 from the second jar.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    beadStim : function</span>
+<span class="sd">        The function expects to be passed the event and then return </span>
+<span class="sd">        [event_info,1-event_info].</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.MS, model.MS_rev, model.BP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="n">oneProb</span><span class="o">*</span><span class="n">event</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">)</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
         
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimInfo&quot;</span>
+    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDualInfo&quot;</span>
         
     <span class="k">return</span> <span class="n">beadStim</span>
 </pre></div></div>
