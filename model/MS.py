@@ -16,7 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from model.decision.binary import  beta
+from decision.binary import  beta
 from plotting import dataVsEvents, lineplot
 
 class MS(model):

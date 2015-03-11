@@ -16,7 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from model.decision.binary import  beta
+from decision.binary import  beta
 
 class MS_rev(model):
 

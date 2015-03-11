@@ -18,7 +18,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from model.decision.binary import  beta
+from decision.binary import  beta
 
 class qLearn(model):
 
