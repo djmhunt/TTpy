@@ -16,7 +16,7 @@ from numpy.random import choice, random
 from experiment import experiment
 from experimentPlot import experimentPlot
 
-class pavlov(experiment):
+class Pavlov(experiment):
 
     """
     Based on the Silvetti et al 2011 paper `"Value and prediction error in 

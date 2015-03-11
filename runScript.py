@@ -15,9 +15,9 @@ from numpy import array, concatenate
 
 ### Import all experiments, models, outputting and interface functions
 from experiments import experiments
-from experiment.decks import decks
-from experiment.beads import beads
-from experiment.pavlov import pavlov, pavlovStimTemporal
+from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
+from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
+from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 from models import models
 from model.BP import BP

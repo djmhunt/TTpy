@@ -26,7 +26,7 @@ from utils import varyingParams
 beadSequences = {"MooreSellen": [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]}
 defaultBeads = beadSequences["MooreSellen"]
 
-class beads(experiment):
+class Beads(experiment):
     """Based on the Moore&Sellen Beads task
     
     Many methods are inherited from the experiment.experiment.experiment class.

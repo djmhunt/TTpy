@@ -29,7 +29,7 @@ deckSets = {"WorthyMaddox": array([[ 2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2, 
                                      1,  1,  1,  7,  2,  1,  2,  1,  4,  1,  4,  1]])}
 defaultDecks = deckSets["WorthyMaddox"]
 
-class decks(experiment):
+class Decks(experiment):
     """
     Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.
     
