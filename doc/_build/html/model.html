@@ -90,7 +90,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>theta</strong> : float, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>gamma</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
@@ -103,8 +103,18 @@
 <div><p>The prior probability</p>
 </div></blockquote>
 <p><strong>prior</strong> : array, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The prior probability</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.beta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -168,6 +178,36 @@ accessed later</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="model.BP.blankStim">
+<tt class="descclassname">model.BP.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BP.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-model.EP">
 <span id="model-ep-module"></span><h2>model.EP module<a class="headerlink" href="#module-model.EP" title="Permalink to this headline">¶</a></h2>
@@ -192,7 +232,7 @@ accessed later</p>
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>theta</strong> : float, optional</p>
+<p><strong>gamma</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
@@ -201,8 +241,18 @@ accessed later</p>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
 <p><strong>activity</strong> : array, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The <cite>activity</cite> of the neurons. The values are between [0,1]</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.beta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -267,6 +317,36 @@ accessed later</p>
 
 </dd></dl>
 
+<dl class="function">
+<dt id="model.EP.blankStim">
+<tt class="descclassname">model.EP.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/EP.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-model.MS">
 <span id="model-ms-module"></span><h2>model.MS module<a class="headerlink" href="#module-model.MS" title="Permalink to this headline">¶</a></h2>
@@ -296,7 +376,7 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>theta</strong> : float, optional</p>
+<p><strong>gamma</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
@@ -304,9 +384,20 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
-<p><strong>oneProb</strong> : array, optional</p>
+<p><strong>oneProb</strong> : float in [0,1], optional</p>
+<blockquote>
+<div><p>The probability of a 1 from the first jar. This is also the probability
+of a 0 from the second jar.</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
-<div><p>The prior probability</p>
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.beta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -342,12 +433,6 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="model.MS.MS.feedback">
-<tt class="descname">feedback</tt><big>(</big><em>response</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.feedback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recieves the reaction to the action</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="model.MS.MS.modelSetPlot">
 <em class="property">class </em><tt class="descname">modelSetPlot</tt><big>(</big><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.modelSetPlot" title="Permalink to this definition">¶</a></dt>
@@ -365,12 +450,6 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <dd><p>A graph reproducing figures 5 from the paper</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="method">
-<dt id="model.MS.MS.observe">
-<tt class="descclassname">MS.</tt><tt class="descname">observe</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="_modules/model/MS.html#MS.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.observe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recieves the latest observation</p>
 </dd></dl>
 
 <dl class="method">
@@ -399,6 +478,36 @@ Probabilities, Actions and Events.</p>
 accessed later</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="model.MS.blankStim">
+<tt class="descclassname">model.MS.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -435,7 +544,7 @@ Name : string</p>
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>theta</strong> : float, optional</p>
+<p><strong>gamma</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
@@ -443,9 +552,20 @@ Name : string</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
-<p><strong>oneProb</strong> : array, optional</p>
+<p><strong>oneProb</strong> : float in [0,1], optional</p>
+<blockquote>
+<div><p>The probability of a 1 from the first jar. This is also the probability
+of a 0 from the second jar.</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
-<div><p>The prior probability</p>
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.beta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -494,6 +614,36 @@ Probabilities, Actions and Events.</p>
 <dd><p>Stores the state of all the important variables so that they can be accessed later</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="model.MS_rev.blankStim">
+<tt class="descclassname">model.MS_rev.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -981,8 +1131,152 @@ accessed later</p>
 </dd></dl>
 
 </div>
-<div class="section" id="model-qlearn-module">
-<h2>model.qLearn module<a class="headerlink" href="#model-qlearn-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-model.qLearn">
+<span id="model-qlearn-module"></span><h2>model.qLearn module<a class="headerlink" href="#module-model.qLearn" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Regulatory fit effects in a choice task
+Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007).
+Psychonomic Bulletin &amp; Review, 14(6), 1125–32. 
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/18229485">http://www.ncbi.nlm.nih.gov/pubmed/18229485</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="model.qLearn.blankStim">
+<tt class="descclassname">model.qLearn.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.qLearn.qLearn">
+<em class="property">class </em><tt class="descclassname">model.qLearn.</tt><tt class="descname">qLearn</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The q-Learning algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter</p>
+</div></blockquote>
+<p><strong>prior</strong> : array, optional</p>
+<blockquote>
+<div><p>The prior probability</p>
+</div></blockquote>
+<p><strong>expect: float, optional</strong></p>
+<blockquote>
+<div><p>The initialisation of the the expected reward</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.beta</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.qLearn.qLearn.Name">
+<tt class="descname">Name</tt><em class="property"> = 'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.qLearn.qLearn.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.qLearn.qLearn.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.qLearn.qLearn.storeState">
+<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn.html#qLearn.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-model">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
@@ -1008,7 +1302,7 @@ accessed later</p>
 <li><a class="reference internal" href="#module-model.model">model.model module</a></li>
 <li><a class="reference internal" href="#module-model.modelPlot">model.modelPlot module</a></li>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
-<li><a class="reference internal" href="#model-qlearn-module">model.qLearn module</a></li>
+<li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
 <li><a class="reference internal" href="#module-model">Module contents</a></li>
 </ul>
 </li>

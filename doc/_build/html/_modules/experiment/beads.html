@@ -76,7 +76,7 @@
 <span class="n">beadSequences</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;MooreSellen&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]}</span>
 <span class="n">defaultBeads</span> <span class="o">=</span> <span class="n">beadSequences</span><span class="p">[</span><span class="s">&quot;MooreSellen&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="beads"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads">[docs]</a><span class="k">class</span> <span class="nc">beads</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads">[docs]</a><span class="k">class</span> <span class="nc">Beads</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Based on the Moore&amp;Sellen Beads task</span>
 <span class="sd">    </span>
 <span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
@@ -102,7 +102,7 @@
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beads&quot;</span>
 
-<div class="viewcode-block" id="beads.reset"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.reset"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Creates a new experiment instance</span>
 
@@ -146,7 +146,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-<div class="viewcode-block" id="beads.next"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.next"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Produces the next bead for the iterator</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -167,7 +167,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="beads.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Receives the next action from the participant</span>
 <span class="sd">        </span>
@@ -181,7 +181,7 @@
         <span class="k">if</span> <span class="n">action</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span>
 </div>
-<div class="viewcode-block" id="beads.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all the relevent data for this experiment run</span>
 <span class="sd">        </span>
@@ -199,7 +199,7 @@
 
         <span class="k">return</span> <span class="n">results</span>
 </div>
-<div class="viewcode-block" id="beads.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later </span>
@@ -207,7 +207,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="beads.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
 
         <span class="k">def</span> <span class="nf">_figSets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -224,7 +224,7 @@
             <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">varDynamicPlot</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;firstDecision&quot;</span><span class="p">,</span><span class="n">fig</span><span class="p">))</span>
 
-<div class="viewcode-block" id="beads.experimentPlot.varDynamicPlot"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot.varDynamicPlot">[docs]</a>        <span class="k">def</span> <span class="nf">varDynamicPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.experimentPlot.varDynamicPlot"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.experimentPlot.varDynamicPlot">[docs]</a>        <span class="k">def</span> <span class="nf">varDynamicPlot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
             <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
@@ -235,7 +235,7 @@
 
             <span class="k">return</span> <span class="n">fig</span>
 </div>
-<div class="viewcode-block" id="beads.experimentPlot.varCategoryDynamics"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot.varCategoryDynamics">[docs]</a>        <span class="k">def</span> <span class="nf">varCategoryDynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.experimentPlot.varCategoryDynamics"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.experimentPlot.varCategoryDynamics">[docs]</a>        <span class="k">def</span> <span class="nf">varCategoryDynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
             <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="c">#We assume that the parameters are the same for all the data to be analised,</span>
@@ -262,7 +262,7 @@
 
             <span class="k">return</span> <span class="n">CoM</span>
 </div>
-<div class="viewcode-block" id="beads.experimentPlot.plotProbJar1"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beads.experimentPlot.plotProbJar1">[docs]</a>        <span class="k">def</span> <span class="nf">plotProbJar1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.experimentPlot.plotProbJar1"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.experimentPlot.plotProbJar1">[docs]</a>        <span class="k">def</span> <span class="nf">plotProbJar1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Plots a set of lines for the probability of jar 1.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
