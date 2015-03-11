@@ -16,6 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
+from model.decision.binary import  beta
 from plotting import dataVsEvents, lineplot
 
 class MS(model):
@@ -31,12 +32,19 @@ class MS(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    theta : float, optional
+    gamma : float, optional
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
-    oneProb : array, optional
-        The prior probability
+    oneProb : float in [0,1], optional
+        The probability of a 1 from the first jar. This is also the probability
+        of a 0 from the second jar.
+    stimFunc : function, optional
+        The function that transforms the stimulus into a form the model can 
+        understand and a string to identify it later. Default is blankStim
+    decFunc : function, optional
+        The function that takes the internal values of the model and turns them
+        in to a decision. Default is model.decision.binary.beta
     """
 
     Name = "M&S"
@@ -44,7 +52,6 @@ class MS(model):
     def __init__(self,**kwargs):
 
         self.currAction = 1
-        self.information = zeros(2)
         self.probabilities = zeros(2)
         self.probDifference = 0
         self.activity = zeros(2)
@@ -53,22 +60,26 @@ class MS(model):
         self.lastObs = False
 
         self.oneProb = kwargs.pop('oneProb',0.85)
-        self.theta = kwargs.pop('theta',4)
+        self.gamma = kwargs.pop('gamma',4)
         self.alpha = kwargs.pop('alpha',1)
         self.beta = kwargs.pop('beta',0.5)
         # The alpha is an activation rate paramenter. The paper uses a value of 1.
+        
+        self.stimFunc = kwargs.pop('stimFunc',blankStim())
+        self.decisionFunc = kwargs.pop('decFunc',beta(responses = (1,2), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
-                           "theta": self.theta,
+                           "gamma": self.gamma,
                            "beta": self.beta,
-                           "alpha": self.alpha}
+                           "alpha": self.alpha,
+                           "stimFunc" : self.stimFunc.Name,
+                           "decFunc" : self.decisionFunc.Name}
 
         # Recorded information
 
         self.recAction = []
         self.recEvents = []
-        self.recInformation = []
         self.recProbabilities = []
         self.recProbDifference = []
         self.recActivity = []
@@ -81,25 +92,13 @@ class MS(model):
         action : integer or None
         """
 
-        self._decision()
+        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
-        self._storeState()
+        self.storeState()
 
         return self.currAction
-
-    def observe(self,event):
-        """ Recieves the latest observation"""
-
-        if event != None:
-            self._update(event,'obs')
-
-    def feedback(self,response):
-        """ Recieves the reaction to the action """
-
-        if response != None:
-            self._update(response,'reac')
 
     def outputEvolution(self):
         """ Returns all the relevent data for this model 
@@ -110,40 +109,25 @@ class MS(model):
             The dictionary contains a series of keys including Name, 
             Probabilities, Actions and Events.
         """
+        
+        results = self.parameters
 
-        results = {"Name": self.Name,
-                   "oneProb": self.oneProb,
-                   "theta": self.theta,
-                   "beta": self.beta,
-                   "alpha": self.alpha,
-                   "Information": array(self.recInformation),
-                   "Probabilities": array(self.recProbabilities),
-                   "ProbDifference": array(self.recProbDifference),
-                   "Activity": array(self.recActivity),
-                   "Actions":array(self.recAction),
-                   "Decsions": array(self.recDecision),
-                   "Events":array(self.recEvents)}
+        results["Probabilities"] = array(self.recProbabilities)
+        results["ProbDifference"] = array(self.recProbDifference)
+        results["Activity"] = array(self.recActivity)
+        results["Actions"] = array(self.recAction)
+        results["Decsions"] = array(self.recDecision)
+        results["Events"] = array(self.recEvents)
 
         return results
 
     def _update(self,events,instance):
         """Processes updates to new actions"""
         
-        event = events
 
         if instance == 'obs':
-
-            self.recEvents.append(event)
-
-            #Calculate jar information
-            info = self.oneProb*event + (1-self.oneProb)*(1-event)
-            self.information = array([info,1-info])
-
-            #Find the new activites
-            self._newActivity()
-
-            #Calculate the new probabilities
-            self._prob()
+            
+            self._processEvent(events)
 
             self.lastObs = True
 
@@ -154,18 +138,19 @@ class MS(model):
                 self.lastObs = False
 
             else:
+                self._processEvent(events)
+                
+    def _processEvent(self,events):
+        
+        event = self.stimFunc(events)
+        
+        self.recEvents.append(event)
 
-                self.recEvents.append(event)
+        #Find the new activites
+        self._newActivity(event)
 
-                #Calculate jar information
-                info = self.oneProb*event + (1-self.oneProb)*(1-event)
-                self.information = array([info,1-info])
-
-                #Find the new activites
-                self._newActivity()
-
-                #Calculate the new probabilities
-                self._prob()
+        #Calculate the new probabilities
+        self._prob()
 
 
     def storeState(self):
@@ -175,33 +160,20 @@ class MS(model):
         """
 
         self.recAction.append(self.currAction)
-        self.recInformation.append(self.information.copy())
         self.recProbabilities.append(self.probabilities.copy())
         self.recProbDifference.append(self.probDifference)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
+    def _newActivity(self, event):
+
+        self.activity = self.activity + (1-self.activity) * event * self.alpha
+
     def _prob(self):
-        p = 1.0 / (1.0 + exp(-self.theta*self.activity))
+        p = 1.0 / (1.0 + exp(-self.gamma*self.activity))
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
-
-    def _newActivity(self):
-
-        self.activity = self.activity + (1-self.activity) * self.information * self.alpha
-
-    def _decision(self):
-
-        prob = self.probDifference
-
-        if abs(prob)>self.beta:
-            if prob>0:
-                self.decision = 1
-            else:
-                self.decision = 2
-        else:
-            self.decision = None
 
     class modelSetPlot(modelSetPlot):
         
@@ -225,7 +197,7 @@ class MS(model):
             A graph reproducing figures 3 & 4 from the paper
             """
 
-            gainLables = array(["Gain " + str(m["theta"]) for m in self.modelStore])
+            gainLables = array(["Gain " + str(m["gamma"]) for m in self.modelStore])
 
             dP = array([m["ProbDifference"] for m in self.modelStore])
             events = array(self.modelStore[0]["Events"])
@@ -250,7 +222,7 @@ class MS(model):
 
             dPDiff = array([m["ProbDifference"][3]-m["ProbDifference"][2] for m in self.modelStore])
 
-            gain = array([m["theta"] for m in self.modelStore])
+            gain = array([m["gamma"] for m in self.modelStore])
 
             axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
             axisLabels["xLabel"] = "Trial number"
@@ -261,3 +233,25 @@ class MS(model):
             fig = lineplot(gain,dPDiff,[],axisLabels)
 
             return fig
+            
+def blankStim():
+    """
+    Default stimulus processor. Does nothing.Returns [1,0]
+        
+    Returns
+    -------
+    blankStimFunc : function
+        The function expects to be passed the event and then return [1,0].
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    """
+    
+    def blankStimFunc(event):
+        return [1,0]
+        
+    blankStimFunc.Name = "blankStim"
+    return blankStimFunc

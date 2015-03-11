@@ -142,12 +142,8 @@ class MS_rev(model):
         
         self.recEvents.append(event)
 
-        #Calculate jar information
-        info = self.oneProb*event + (1-self.oneProb)*(1-event)
-        self.information = array([info,1-info])
-
         #Find the new activites
-        self._newActivity()
+        self._newActivity(event)
 
         #Calculate the new probabilities
         self._prob()
@@ -158,11 +154,13 @@ class MS_rev(model):
         """
 
         self.recAction.append(self.currAction)
-        self.recInformation.append(self.information.copy())
         self.recProbabilities.append(self.probabilities.copy())
         self.recProbDifference.append(self.probDifference)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
+
+    def _newActivity(self, event):
+        self.activity = self.activity + (event - self.activity)  * self.alpha
 
     def _prob(self):
         # The probability of a given jar, using the Luce choice model
@@ -175,9 +173,6 @@ class MS_rev(model):
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
-
-    def _newActivity(self):
-        self.activity = self.activity + (self.information - self.activity)  * self.alpha
         
 def blankStim():
     """

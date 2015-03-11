@@ -12,6 +12,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
+from model.decision.binary import  beta
 
 class EP(model):
 
@@ -27,12 +28,18 @@ class EP(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    theta : float, optional
+    gamma : float, optional
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
     activity : array, optional
         The `activity` of the neurons. The values are between [0,1]
+    stimFunc : function, optional
+        The function that transforms the stimulus into a form the model can 
+        understand and a string to identify it later. Default is blankStim
+    decFunc : function, optional
+        The function that takes the internal values of the model and turns them
+        in to a decision. Default is model.decision.binary.beta
     """
 
     Name = "EP"
@@ -41,21 +48,24 @@ class EP(model):
 
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
-        self.theta = kwargs.pop('theta',4)
+        self.gamma = kwargs.pop('gamma',4)
         self.activity = kwargs.pop('activity',array([0.5,0.5]))
         self.decision = None
-        self.firstDecision = 0
         self.probabilities = zeros(2) + 0.5
         self.lastObs = False
+        
+        self.stimFunc = kwargs.pop('stimFunc',blankStim())
+        self.decisionFunc = kwargs.pop('decFunc',beta(responses = (1,2), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "alpha": self.alpha,
-                           "theta": self.theta,
-                           "beta": self.beta}
+                           "gamma": self.gamma,
+                           "beta": self.beta,
+                           "stimFunc" : self.stimFunc.Name,
+                           "decFunc" : self.decisionFunc.Name}
 
         # Recorded information
 
-        self.recInformation = []
         self.recAction = []
         self.recEvents = []
         self.recActivity = []
@@ -69,11 +79,11 @@ class EP(model):
         action : integer or None
         """
 
-        self._decision()
+        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
-        self._storeState()
+        self.storeState()
 
         return self.currAction
 
@@ -86,37 +96,23 @@ class EP(model):
             The dictionary contains a series of keys including Name, 
             Probabilities, Actions and Events.
         """
+        
+        results = self.parameters
 
-        results = { "Name": self.Name,
-                    "Actions":array(self.recAction),
-                    "Events":array(self.recEvents),
-                    "Information": array(self.recInformation),
-                    "Activity": array(self.recActivity),
-                    "Decsions": array(self.recDecision),
-                    "Probabilities": array(self.recProbabilities),
-                    "alpha": self.alpha,
-                    "theta": self.theta,
-                    "beta": self.beta}
+        results["Probabilities"] = array(self.recProbabilities)
+        results["Activity"] = array(self.recActivity)
+        results["Actions"] = array(self.recAction)
+        results["Decsions"] = array(self.recDecision)
+        results["Events"] = array(self.recEvents)
 
         return results
 
     def _update(self,events,instance):
         """Processes updates to new actions"""
-        
-        event = events
 
         if instance == 'obs':
-
-            self.recEvents.append(event)
-
-            #Calculate jar information
-            self.information = array([event,1-event])
-
-            #Find the new activites
-            self._newAct()
-
-            #Calculate the new probabilities
-            self._prob()
+            
+            self._processEvent(events)
 
             self.lastObs = True
 
@@ -127,17 +123,19 @@ class EP(model):
                 self.lastObs = False
 
             else:
+                self._processEvent(events)
+                
+    def _processEvent(self,events):
+        
+        event = self.stimFunc(events)
+        
+        self.recEvents.append(event)
 
-                self.recEvents.append(event)
+        #Find the new activites
+        self._newAct(event)
 
-                #Calculate jar information
-                self.information = array([event,1-event])
-
-                #Find the new activites
-                self._newAct()
-
-                #Calculate the new probabilities
-                self._prob()
+        #Calculate the new probabilities
+        self._prob()
 
     def storeState(self):
         """" 
@@ -145,7 +143,6 @@ class EP(model):
         accessed later 
         """
 
-        self.recInformation.append(self.information.copy())
         self.recAction.append(self.currAction)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
@@ -155,26 +152,34 @@ class EP(model):
         """ Calculate the new probabilities of different actions """
 
         diff = 2*self.activity - sum(self.activity)
-        p = 1.0 / (1.0 + exp(-self.theta*diff))
+        p = 1.0 / (1.0 + exp(-self.gamma*diff))
 
         self.probabilities = p
 
-    def _newAct(self):
+    def _newAct(self,event):
 
-        self.activity = self.activity + (self.information-self.activity)* self.alpha
-
-    def _decision(self):
-
-        prob = self.probabilities[0]
-
-        if abs(prob-0.5)>self.beta:
-            if prob>0.5:
-                self.decision = 1
-            elif prob == 0.5:
-                self.decision = choice([1,2])
-            else:
-                self.decision = 2
-        else:
-            self.decision = None
+        self.activity = self.activity + (event-self.activity)* self.alpha
+        
+def blankStim():
+    """
+    Default stimulus processor. Does nothing.Returns [1,0]
+        
+    Returns
+    -------
+    blankStimFunc : function
+        The function expects to be passed the event and then return [1,0].
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    """
+    
+    def blankStimFunc(event):
+        return [1,0]
+        
+    blankStimFunc.Name = "blankStim"
+    return blankStimFunc
 
 
