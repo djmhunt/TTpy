@@ -71,6 +71,7 @@ class BP(model):
         self.recAction = []
         self.recEvents = []
         self.recProbabilities = []
+        self.recActionProb = []
         self.recPosteriorProb = []
         self.recDecision = []
 
@@ -102,8 +103,8 @@ class BP(model):
         results = self.parameters
 
         results["Probabilities"] = array(self.recProbabilities)
+        results["ActionProb"] = array(self.recActionProb)
         results["PosteriorProb"] = array(self.recPosteriorProb)
-        results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
@@ -144,6 +145,7 @@ class BP(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
+        self.recActionProb.append(self.probabilities[self.currAction])
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
 

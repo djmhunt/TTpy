@@ -71,6 +71,7 @@ class EP(model):
         self.recActivity = []
         self.recDecision = []
         self.recProbabilities = []
+        self.recActionProb = []
 
     def action(self):
         """
@@ -100,6 +101,7 @@ class EP(model):
         results = self.parameters
 
         results["Probabilities"] = array(self.recProbabilities)
+        results["ActionProb"] = array(self.recActionProb)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
@@ -147,6 +149,7 @@ class EP(model):
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
         self.recProbabilities.append(self.probabilities.copy())
+        self.recActionProb.append(self.probabilities[self.currAction])
 
     def _prob(self):
         """ Calculate the new probabilities of different actions """

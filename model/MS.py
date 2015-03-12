@@ -81,6 +81,7 @@ class MS(model):
         self.recAction = []
         self.recEvents = []
         self.recProbabilities = []
+        self.recActionProb = []
         self.recProbDifference = []
         self.recActivity = []
         self.recDecision = []
@@ -113,6 +114,7 @@ class MS(model):
         results = self.parameters
 
         results["Probabilities"] = array(self.recProbabilities)
+        results["ActionProb"] = array(self.recActionProb)
         results["ProbDifference"] = array(self.recProbDifference)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
@@ -161,6 +163,7 @@ class MS(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
+        self.recActionProb.append(self.probabilities[self.currAction])
         self.recProbDifference.append(self.probDifference)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
