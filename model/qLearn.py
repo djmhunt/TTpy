@@ -18,7 +18,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import  beta
+from decision.binary import decBeta
 
 class qLearn(model):
 
@@ -46,7 +46,7 @@ class qLearn(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.beta
+        in to a decision. Default is model.decision.binary.decBeta
     """
 
     Name = "qLearn"
@@ -60,7 +60,7 @@ class qLearn(model):
         self.expect = kwargs.pop('expect',5)
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',beta(beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decBeta(beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "gamma": self.gamma,
@@ -144,11 +144,11 @@ class qLearn(model):
                 
     def _processEvent(self,events):
         
-        event = self.stimFunc(events)
+        chosen = self.currAction
+        
+        event = self.stimFunc(events, chosen)
         
         self.recEvents.append(event)
-
-        chosen = self.currAction
 
         #Calculate jar information
         self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])

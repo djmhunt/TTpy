@@ -16,7 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import  beta
+from decision.binary import decBeta
 
 class MS_rev(model):
 
@@ -42,7 +42,7 @@ class MS_rev(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.beta
+        in to a decision. Default is model.decision.binary.decBeta
     """
 
     Name = "MS_rev"
@@ -63,7 +63,7 @@ class MS_rev(model):
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',beta(responses = (1,2), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = (1,2), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
@@ -138,7 +138,7 @@ class MS_rev(model):
                 
     def _processEvent(self,events):
         
-        event = self.stimFunc(events)
+        event = self.stimFunc(events, self.currAction)
         
         self.recEvents.append(event)
 

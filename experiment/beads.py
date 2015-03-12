@@ -123,7 +123,7 @@ class Beads(experiment):
         
         Parameters
         ----------
-        action : {1,2}
+        action : {1,2, None}
         """
 
         self.recAction[self.t] = action
@@ -260,7 +260,8 @@ def beadStimDirect():
     Returns
     -------
     beadStim : function
-        The function expects to be passed the event and then return it.
+        The function expects to be passed the event and a decision of {1,2, None} 
+        and then return it.
         
     Attributes
     ----------
@@ -272,7 +273,7 @@ def beadStimDirect():
     model.qLearn
     """
     
-    def beadStim(event):
+    def beadStim(event, decision):
         return event
         
     beadStim.Name = "beadStimDirect"
@@ -285,8 +286,8 @@ def beadStimDualDirect():
     Returns
     -------
     beadStim : function
-        The function expects to be passed the event and then return 
-        [event,1-event].
+        The function expects to be passed the event and a decision of {1,2, None} 
+        and then return [event_info,1-event_info].
         
     Attributes
     ----------
@@ -298,7 +299,7 @@ def beadStimDualDirect():
     model.EP
     """
     
-    def beadStim(event):
+    def beadStim(event, decision):
         stimulus = array([event,1-event])
         return stimulus
         
@@ -320,8 +321,8 @@ def beadStimDualInfo(oneProb):
     Returns
     -------
     beadStim : function
-        The function expects to be passed the event and then return 
-        [event_info,1-event_info].
+        The function expects to be passed the event and a decision of {1,2, None} 
+        and then return [event_info,1-event_info].
         
     Attributes
     ----------
@@ -333,7 +334,7 @@ def beadStimDualInfo(oneProb):
     model.MS, model.MS_rev, model.BP
     """
     
-    def beadStim(event):
+    def beadStim(event, decision):
         stim = oneProb*event + (1-oneProb)*(1-event)
         stimulus = array([stim,1-stim])
         return stimulus

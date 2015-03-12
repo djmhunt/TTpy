@@ -9,7 +9,7 @@ from __future__ import division
 
 from random import choice
 
-def beta(responses = (0,1),beta = 0):
+def decBeta(responses = (0,1),beta = 0):
     """Decisions using a probability difference threshold
     
     Parameters
@@ -59,6 +59,6 @@ def beta(responses = (0,1),beta = 0):
             
         return decision
         
-    decisionFunc.Name = "binaryBeta"
+    decisionFunc.Name = "binary.decBeta"
         
     return decisionFunc

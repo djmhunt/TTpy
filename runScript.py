@@ -14,12 +14,18 @@ from __future__ import division
 from numpy import array, concatenate
 
 ### Import all experiments, models, outputting and interface functions
+#The experiment factory
 from experiments import experiments
+#The experiments and stimulus processors
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
-from models import models
+# The model factory
+from models import models 
+# The decision methods
+from model.decision.binary import decBeta
+#The models
 from model.BP import BP
 from model.EP import EP
 from model.MS import MS
@@ -30,20 +36,22 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0.3
+beta = 0.0
 alpha = 0.5
-theta = 0.5
+gamma = 0.5
 simDur = 30
 outputOptions = {'simLabel': 'qLearn_jessData',
                  'save': True,
                  'silent': False}
 parameters = {  'alpha':alpha,
 #                'beta':beta,
-                'theta':theta}
-paramExtras = {'prior':array([0.5,0.5])} #For qLearn
+                'gamma':gamma}
+paramExtras = {'beta':beta,
+               'stimFunc':deckStimDirect(),
+               'decFunc':decBeta(beta = beta)} #For qLearn decks
 #paramExtras = {'activity':array([5,5])} # For EP
 
-expSets = experiments((decks,{},{}))
+expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
 

@@ -87,10 +87,6 @@
 <span class="sd">    gamma : float, optional</span>
 <span class="sd">        It is a time constant that controls how quickly the neural units </span>
 <span class="sd">        (modeled as dynamical systems) respond to external inputs. Default 0.1</span>
-<span class="sd">    theta : float, optional</span>
-<span class="sd">        Used for gamma from the paper. Theta is used in other models for the </span>
-<span class="sd">        same purpose, so is added here as another option. Gamma will override</span>
-<span class="sd">        theta.</span>
 <span class="sd">    zeta : float, optional</span>
 <span class="sd">        Regulates the ratio between the power (amplitude) of expectation </span>
 <span class="sd">        relative to delta units. Default 2</span>
@@ -116,10 +112,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="mf">0.005</span><span class="p">)</span>
-        <span class="n">defaultGamma</span> <span class="o">=</span> <span class="mf">0.1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="n">defaultGamma</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">==</span> <span class="n">defaultGamma</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span><span class="n">defaultGamma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;w&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;zeta&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;tau&#39;</span><span class="p">,</span><span class="mi">160</span><span class="p">)</span>
@@ -220,7 +213,7 @@
 </div>
     <span class="k">def</span> <span class="nf">_processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">):</span>
         
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">):</span>
             
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">c</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
@@ -400,7 +393,7 @@
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
                 

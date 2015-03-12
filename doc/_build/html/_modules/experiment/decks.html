@@ -231,7 +231,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last decision. The function returns the event.</span>
+<span class="sd">        last action. The function returns the event.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -243,7 +243,7 @@
 <span class="sd">    model.qLearn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">event</span>
         
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDirect&quot;</span>
@@ -258,7 +258,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last decision. The event that is a float and decision is {0,1}. The </span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
 <span class="sd">        function returns a list of length 2.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
@@ -271,8 +271,8 @@
 <span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
-        <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">decision</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">))</span><span class="o">*</span><span class="n">decision</span>
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">maxEventVal</span><span class="p">))</span><span class="o">*</span><span class="n">action</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">stimulus</span>
         

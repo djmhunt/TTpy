@@ -181,7 +181,7 @@ def deckStimDirect():
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
-        last decision. The function returns the event.
+        last action. The function returns the event.
         
     Attributes
     ----------
@@ -193,7 +193,7 @@ def deckStimDirect():
     model.qLearn
     """
     
-    def deckStim(event, decision):
+    def deckStim(event, action):
         return event
         
     deckStim.Name = "deckStimDirect"
@@ -208,7 +208,7 @@ def deckStimDualInfo(maxEventVal):
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
-        last decision. The event that is a float and decision is {0,1}. The 
+        last action. The event that is a float and action is {0,1}. The 
         function returns a list of length 2.
         
     Attributes
@@ -221,8 +221,8 @@ def deckStimDualInfo(maxEventVal):
     model.BP, model.EP, model.MS, model.MS_rev
     """
     
-    def deckStim(event, decision):
-        stim = (event/maxEventVal)*(1-decision) + (1-(event/maxEventVal))*decision
+    def deckStim(event, action):
+        stim = (event/maxEventVal)*(1-action) + (1-(event/maxEventVal))*action
         stimulus = [stim,1-stim]
         return stimulus
         

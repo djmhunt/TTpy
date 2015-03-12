@@ -12,7 +12,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import  beta
+from decision.binary import decBeta
 
 class EP(model):
 
@@ -39,7 +39,7 @@ class EP(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.beta
+        in to a decision. Default is model.decision.binary.decBeta
     """
 
     Name = "EP"
@@ -55,7 +55,7 @@ class EP(model):
         self.lastObs = False
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',beta(responses = (1,2), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = (1,2), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "alpha": self.alpha,
@@ -127,7 +127,7 @@ class EP(model):
                 
     def _processEvent(self,events):
         
-        event = self.stimFunc(events)
+        event = self.stimFunc(events, self.currAction)
         
         self.recEvents.append(event)
 

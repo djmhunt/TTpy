@@ -37,10 +37,6 @@ class RVPM(model):
     gamma : float, optional
         It is a time constant that controls how quickly the neural units 
         (modeled as dynamical systems) respond to external inputs. Default 0.1
-    theta : float, optional
-        Used for gamma from the paper. Theta is used in other models for the 
-        same purpose, so is added here as another option. Gamma will override
-        theta.
     zeta : float, optional
         Regulates the ratio between the power (amplitude) of expectation 
         relative to delta units. Default 2
@@ -66,10 +62,7 @@ class RVPM(model):
     def __init__(self,**kwargs):
 
         self.alpha = kwargs.pop('alpha',0.005)
-        defaultGamma = 0.1
-        self.gamma = kwargs.pop('gamma',defaultGamma)
-        if self.gamma == defaultGamma:
-            self.gamma = kwargs.pop('theta',defaultGamma)
+        self.gamma = kwargs.pop('gamma',0.1)
         self.w = kwargs.pop('w',array([0.01,0.01]))
         self.zeta = kwargs.pop('zeta',2)
         self.tau = kwargs.pop('tau',160)
@@ -170,7 +163,7 @@ class RVPM(model):
 
     def _processEvent(self,event):
         
-        for t,c,r in self.stimFunc(event):
+        for t,c,r in self.stimFunc(event, self.currAction):
             
             self.c = c
             self.r = r
@@ -350,7 +343,7 @@ def blankStim():
         
     """
     
-    def blankStimFunc(event):
+    def blankStimFunc(event, action):
         
         for t in xrange(10):
                 

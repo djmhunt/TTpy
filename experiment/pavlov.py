@@ -193,7 +193,8 @@ def pavlovStimTemporal():
     -------
     pavlovStim : function
         The function expects to be passed an event with three components: 
-        ``(stim,rew,stimDur)`` and yield a series of events ``t,c,r```. 
+        ``(stim,rew,stimDur)``and an action (unused) and yield a series of 
+        events ``t,c,r```. 
         ``stim`` is the value of the stimulus. It is expected to be a list-like
         object. ``rew`` is a list containing the reward for each timestep. 
         The reward is expected to be a float. ``stimDur`` is the duration of 
@@ -207,7 +208,7 @@ def pavlovStimTemporal():
     
     """
     
-    def pavlovStim(event):
+    def pavlovStim(event, action):
         
         cStim = event[0]
         rewSig = event[1]

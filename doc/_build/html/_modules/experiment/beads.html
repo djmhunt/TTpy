@@ -173,7 +173,7 @@
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : {1,2}</span>
+<span class="sd">        action : {1,2, None}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
@@ -310,7 +310,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and then return it.</span>
+<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        and then return it.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -322,7 +323,7 @@
 <span class="sd">    model.qLearn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">event</span>
         
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDirect&quot;</span>
@@ -335,8 +336,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and then return </span>
-<span class="sd">        [event,1-event].</span>
+<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        and then return [event_info,1-event_info].</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -348,7 +349,7 @@
 <span class="sd">    model.EP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">event</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
         
@@ -370,8 +371,8 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and then return </span>
-<span class="sd">        [event_info,1-event_info].</span>
+<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        and then return [event_info,1-event_info].</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -383,7 +384,7 @@
 <span class="sd">    model.MS, model.MS_rev, model.BP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="n">oneProb</span><span class="o">*</span><span class="n">event</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">)</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
