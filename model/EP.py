@@ -151,6 +151,10 @@ class EP(model):
         self.recProbabilities.append(self.probabilities.copy())
         self.recActionProb.append(self.probabilities[self.currAction])
 
+    def _newAct(self,event):
+
+        self.activity = self.activity + (event-self.activity)* self.alpha
+
     def _prob(self):
         """ Calculate the new probabilities of different actions """
 
@@ -158,10 +162,6 @@ class EP(model):
         p = 1.0 / (1.0 + exp(-self.gamma*diff))
 
         self.probabilities = p
-
-    def _newAct(self,event):
-
-        self.activity = self.activity + (event-self.activity)* self.alpha
         
 def blankStim():
     """
