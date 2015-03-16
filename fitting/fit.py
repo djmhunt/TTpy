@@ -11,11 +11,6 @@ from numpy import array
 class fit(object):
 
     """The abstact class for fitting data
-
-    Attributes
-    ----------
-    Name : string
-        The name of the class used when recording what has been used.
         
     Parameters
     ----------
@@ -32,7 +27,7 @@ class fit(object):
         
     Attributes
     ----------
-    name : string
+    Name : string
         The name of the fitting type
         
     See Also
@@ -40,7 +35,7 @@ class fit(object):
     fitting.fitters.fitAlg.fitAlg : The general fitting class
     """
 
-    name = 'none'
+    Name = 'none'
 
 
     def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
@@ -51,7 +46,7 @@ class fit(object):
         self.fitAlg = fitAlg
         self.scaler = scaler
 
-        self.fitInfo = {'name':self.name,
+        self.fitInfo = {'Name':self.Name,
                         'participantChoiceParam':partChoiceParam,
                         'participantRewardParam':partRewardParam,
                         'modelParam':modelParam}

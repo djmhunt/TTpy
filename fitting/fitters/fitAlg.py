@@ -12,14 +12,14 @@ class fitAlg(object):
 
     """
 
-    name = 'none'
+    Name = 'none'
 
 
     def __init__(self,dataShaper = None):
 
         self.fitness = self.null
 
-        self.fitInfo = {'name':self.name}
+        self.fitInfo = {'Name':self.Name}
 
     def null(self,*params):
 

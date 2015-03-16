@@ -415,11 +415,11 @@ class outputting(object):
         log.info(message)
 
         for f in fitInfo:
-            message = "For " + f['name'] + ":"
+            message = "For " + f['Name'] + ":"
             log.info(message)
 
             for k,v in f.iteritems():
-                if k == "name":
+                if k == "Name":
                     continue
 
                 message = k + ": " + repr(v)

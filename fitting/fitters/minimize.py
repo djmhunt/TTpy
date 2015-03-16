@@ -18,16 +18,23 @@ class minimize(fitAlg):
 
     """The class for fitting data using scipy.optimise.minimize
 
-    minimize(dataShaper = None, method = None, bounds = None)
+    Parameters
+    ----------
+    
+    Attributes
+    ----------
+    
 
 
+    Notes
+    -----
     Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,
     Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’
-    custom
+    Custom fitting algorithms are also allowed
 
     """
 
-    name = 'minimise'
+    Name = 'minimise'
 
     unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
     constrained = ['L-BFGS-B','TNC','SLSQP']
@@ -44,7 +51,7 @@ class minimize(fitAlg):
 
         self._setType(method,bounds)
 
-        self.fitInfo = {'name':self.name,
+        self.fitInfo = {'Name':self.Name,
                         'shaper': dataShaper,
                         'bounds':self.bounds
                         }
@@ -75,8 +82,10 @@ class minimize(fitAlg):
         return fit
         
     def maxprob(self,*params):
-        """Used to maximise the probability, so in this case minimise the 
-        difference between 1 and the probability"""
+        """
+        Used to maximise the probability, so in this case minimise the 
+        difference between 1 and the probability
+        """
         
         modVals = self.sim(*params)
         
