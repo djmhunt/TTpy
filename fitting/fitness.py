@@ -49,8 +49,7 @@ class fitter(fit):
 
     def fitness(self, *modelParameters):
         """
-        Used by a fitter to calculate the quality of a fit for given model 
-        parameters
+        Used by a fitter to generate a fit for given model parameters
         
         Parameters
         ----------

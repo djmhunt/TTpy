@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
@@ -10,24 +10,26 @@ from scipy import optimize
 from numpy import log
 
 class leastsq(fitAlg):
+    """
+    Fits data based on the least squared optimizer
+    
+    Not properly developed and will not be documented until upgrade
 
-    """Fits data based on the least squared
 
-    fitters(partParam, modelParam, scaler)
 
     """
 
     Name = 'leastsq'
 
-    def __init__(self,dataShaper = None):
+    def __init__(self,fitQualFunc = None):
 
-        if dataShaper == "-2log":
+        if fitQualFunc == "-2log":
             self.fitness = self.logprob
         else:
             self.fitness = self.null
 
         self.fitInfo = {'Name':self.Name,
-                        'shaper': dataShaper}
+                        'shaper': fitQualFunc}
 
     def null(self,*params):
 

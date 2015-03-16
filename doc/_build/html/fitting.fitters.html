@@ -62,45 +62,248 @@
 </div>
 <div class="section" id="module-fitting.fitters.fitAlg">
 <span id="fitting-fitters-fitalg-module"></span><h2>fitting.fitters.fitAlg module<a class="headerlink" href="#module-fitting.fitters.fitAlg" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
-<em class="property">class </em><tt class="descclassname">fitting.fitters.fitAlg.</tt><tt class="descname">fitAlg</tt><big>(</big><em>dataShaper=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fitting.fitters.fitAlg.</tt><tt class="descname">fitAlg</tt><big>(</big><em>fitQualFunc=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>The abstact class for fitting data</p>
-<p>fitAlg()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function used to calculate the quality of the fit. The value it 
+returns proivides the fitter with its fitting guide. Default <tt class="docutils literal"><span class="pre">fitAlg.null</span></tt></p>
+</div></blockquote>
+<p><strong>method</strong> : string or list of strings, optional</p>
+<blockquote>
+<div><p>The name of the fitting method or list of names of fitting method or
+name of list of fitting methods. Valid names found in the notes.
+Default <tt class="docutils literal"><span class="pre">unconstrained</span></tt></p>
+</div></blockquote>
+<p><strong>bounds</strong> : tuple of length two, optional</p>
+<blockquote>
+<div><p>The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <tt class="docutils literal"><span class="pre">(0,float('Inf'))</span></tt></p>
+</div></blockquote>
+<p><strong>numStartPoints</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of starting points generated for each parameter.
+Default 4</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></tt></a></dt>
+<dd>The general fitting framework class</dd>
+</dl>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name: string</td>
+<td>The name of the fitting method</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.fitAlg.fitAlg.Name">
+<tt class="descname">Name</tt><em class="property"> = 'none'</em><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="fitting.fitters.fitAlg.fitAlg.fit">
 <tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Runs the model through the fitting algorithms and starting parameters 
+and returns the best one. This is the abstract version that always 
+returns <tt class="docutils literal"><span class="pre">(0,0)</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for 
+given model parameters. One example is <tt class="docutils literal"><span class="pre">fit.fitness</span></tt></p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the intial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote class="last">
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></tt></p>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="fitting.fitters.fitAlg.fitAlg.info">
 <tt class="descname">info</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.info" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The dictionary describing the fitting algorithm chosen</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitInfo</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary of fitting class information</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="fitting.fitters.fitAlg.fitAlg.name">
-<tt class="descname">name</tt><em class="property"> = 'none'</em><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="fitting.fitters.fitAlg.fitAlg.logprob">
+<tt class="descname">logprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.logprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <img src="_images/mathmpl/math-33bd321e62.png" style="position: relative; bottom: -10px"/></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fit</strong> : float</p>
+<blockquote class="last">
+<div><p>The sum of the model valaues returned</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.fitAlg.fitAlg.maxprob">
+<tt class="descname">maxprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.maxprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <img src="_images/mathmpl/math-e6a5547dcb.png" style="position: relative; bottom: -10px"/></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fit</strong> : float</p>
+<blockquote class="last">
+<div><p>The sum of the model valaues returned</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="fitting.fitters.fitAlg.fitAlg.null">
 <tt class="descname">null</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.null"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.null" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generates a fit quality value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fit</strong> : float</p>
+<blockquote class="last">
+<div><p>The sum of the model valaues returned</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.fitAlg.fitAlg.startParamList">
+<tt class="descname">startParamList</tt><big>(</big><em>initial</em>, <em>bMax=inf</em>, <em>numPoints=3</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.startParamList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.startParamList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assumes that intial parameters are positive and provides all starting 
+values above zero</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>initial</strong> : float</p>
+<blockquote>
+<div><p>The inital starting value proposed</p>
+</div></blockquote>
+<p><strong>bMax</strong> : float, optional</p>
+<blockquote>
+<div><p>The maximum value of the parameter. Default is <tt class="docutils literal"><span class="pre">float('Inf')</span></tt></p>
+</div></blockquote>
+<p><strong>numPoints</strong> : int</p>
+<blockquote>
+<div><p>The number of startin parameters to be calculated around the inital
+point</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>startParams</strong> : list of floats</p>
+<blockquote class="last">
+<div><p>The generated starting parameters</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>For each starting parameter provided a set of numStartPoints 
+starting points will be chosen, surrounding the starting point provided. If
+the starting point provided is less than one it will be assumed that the 
+values cannot exceed 1, otherwise, unless otherwise told, it will be 
+assumed that they can take any value and will be chosen to be eavenly 
+spaced around the provided value.</p>
+</dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-fitting.fitters.leastsq">
 <span id="fitting-fitters-leastsq-module"></span><h2>fitting.fitters.leastsq module<a class="headerlink" href="#module-fitting.fitters.leastsq" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="class">
 <dt id="fitting.fitters.leastsq.leastsq">
-<em class="property">class </em><tt class="descclassname">fitting.fitters.leastsq.</tt><tt class="descname">leastsq</tt><big>(</big><em>dataShaper=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fitting.fitters.leastsq.</tt><tt class="descname">leastsq</tt><big>(</big><em>fitQualFunc=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></p>
-<p>Fits data based on the least squared</p>
-<p>fitters(partParam, modelParam, scaler)</p>
+<p>Fits data based on the least squared optimizer</p>
+<p>Not properly developed and will not be documented until upgrade</p>
+<dl class="attribute">
+<dt id="fitting.fitters.leastsq.leastsq.Name">
+<tt class="descname">Name</tt><em class="property"> = 'leastsq'</em><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="fitting.fitters.leastsq.leastsq.fit">
 <tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.fit" title="Permalink to this definition">¶</a></dt>
@@ -109,11 +312,6 @@
 <dl class="method">
 <dt id="fitting.fitters.leastsq.leastsq.logprob">
 <tt class="descname">logprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.logprob" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fitting.fitters.leastsq.leastsq.name">
-<tt class="descname">name</tt><em class="property"> = 'leastsq'</em><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -126,19 +324,93 @@
 </div>
 <div class="section" id="module-fitting.fitters.minimize">
 <span id="fitting-fitters-minimize-module"></span><h2>fitting.fitters.minimize module<a class="headerlink" href="#module-fitting.fitters.minimize" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
 <dl class="class">
 <dt id="fitting.fitters.minimize.minimize">
-<em class="property">class </em><tt class="descclassname">fitting.fitters.minimize.</tt><tt class="descname">minimize</tt><big>(</big><em>dataShaper=None</em>, <em>method=None</em>, <em>bounds=None</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fitting.fitters.minimize.</tt><tt class="descname">minimize</tt><big>(</big><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=(0</em>, <em>inf)</em>, <em>numStartPoints=4</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
-<p>minimize(dataShaper = None, method = None, bounds = None)</p>
-<p>Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,
-Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’
-custom</p>
-<dl class="method">
-<dt id="fitting.fitters.minimize.minimize.callback">
-<tt class="descname">callback</tt><big>(</big><em>Xi</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.callback" title="Permalink to this definition">¶</a></dt>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function used to calculate the quality of the fit. The value it 
+returns proivides the fitter with its fitting guide. Default <tt class="docutils literal"><span class="pre">fitAlg.null</span></tt></p>
+</div></blockquote>
+<p><strong>method</strong> : string or list of strings, optional</p>
+<blockquote>
+<div><p>The name of the fitting method or list of names of fitting method or
+name of list of fitting methods. Valid names found in the notes.
+Default <tt class="docutils literal"><span class="pre">unconstrained</span></tt></p>
+</div></blockquote>
+<p><strong>bounds</strong> : tuple of length two, optional</p>
+<blockquote>
+<div><p>The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <tt class="docutils literal"><span class="pre">(0,float('Inf'))</span></tt></p>
+</div></blockquote>
+<p><strong>numStartPoints</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of starting points generated for each parameter.
+Default 4</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></dt>
+<dd>The general fitting method class, from which this one inherits</dd>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></tt></a></dt>
+<dd>The general fitting framework class</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.minimize</span></tt></dt>
+<dd>The fitting class this wraps around</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>unconstrained = [&#8216;Nelder-Mead&#8217;,&#8217;Powell&#8217;,&#8217;CG&#8217;,&#8217;BFGS&#8217;]
+constrained = [&#8216;L-BFGS-B&#8217;,&#8217;TNC&#8217;,&#8217;SLSQP&#8217;]
+Custom fitting algorithms are also allowed in theory, but it has yet to be 
+implemented.</p>
+<p>For each fitting function a set of different starting parameters will be 
+tried. These are the combinations of all the values of the different 
+parameters. For each starting parameter provided a set of numStartPoints 
+starting points will be chosen, surrounding the starting point provided. If
+the starting point provided is less than one it will be assumed that the 
+values cannot exceed 1, otherwise, unless otherwise told, it will be 
+assumed that they can take any value and will be chosen to be eavenly 
+spaced around the provided value.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name: string</td>
+<td>The name of the fitting method</td>
+</tr>
+<tr class="row-even"><td>unconstrained</td>
+<td>(list) The list of valid unconstrained fitting methods</td>
+</tr>
+<tr class="row-odd"><td>constrained</td>
+<td>(list) The list of valid constrained fitting methods</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.minimize.minimize.Name">
+<tt class="descname">Name</tt><em class="property"> = 'minimise'</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -149,29 +421,40 @@ custom</p>
 <dl class="method">
 <dt id="fitting.fitters.minimize.minimize.fit">
 <tt class="descname">fit</tt><big>(</big><em>sim</em>, <em>mInitialParams</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fitting.fitters.minimize.minimize.logprob">
-<tt class="descname">logprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.logprob" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fitting.fitters.minimize.minimize.maxprob">
-<tt class="descname">maxprob</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.maxprob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to maximise the probability, so in this case minimise the 
-difference between 1 and the probability</p>
+<dd><p>Runs the model through the fitting algorithms and starting parameters 
+and returns the best one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for 
+given model parameters. One example is fit.fitness</p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the intial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote class="last">
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></tt></p>
+</div>
 </dd></dl>
-
-<dl class="attribute">
-<dt id="fitting.fitters.minimize.minimize.name">
-<tt class="descname">name</tt><em class="property"> = 'minimise'</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fitting.fitters.minimize.minimize.null">
-<tt class="descname">null</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize.null"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize.null" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fitting.fitters.minimize.minimize.unconstrained">

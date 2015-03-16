@@ -34,7 +34,7 @@ class fitter(fit):
         
     Attributes
     ----------
-    name : string
+    Name : string
         The name of the fitting type
         
     See Also
@@ -43,12 +43,11 @@ class fitter(fit):
     fitting.fitters.fitAlg.fitAlg : The general fitting class
     """
     
-    name = "experimentFitter"
+    Name = "experimentFitter"
 
     def fitness(self, *modelParameters):
         """
-        Used by a fitter to calculate the quality of a fit for given model 
-        parameters
+        Used by a fitter to generate a fit for given model parameters
         
         Parameters
         ----------

@@ -249,6 +249,8 @@ def getmatData(folder, files):
         mat = loadmat(folder + f)
 
         data = {}
+        
+        data["fileName"] = f
 
         for m, v in mat.iteritems():
             if m[0:2] != "__":

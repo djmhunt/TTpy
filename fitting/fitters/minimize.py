@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-@author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division
 
 from fitAlg import fitAlg
 
 from scipy import optimize
-from numpy import log2, linspace
-from math import isinf
+
 from itertools import izip
 from utils import listMergeNP
 
@@ -20,17 +19,52 @@ class minimize(fitAlg):
 
     Parameters
     ----------
-    
+    fitQualFunc : function, optional
+        The function used to calculate the quality of the fit. The value it 
+        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``
+    method : string or list of strings, optional
+        The name of the fitting method or list of names of fitting method or
+        name of list of fitting methods. Valid names found in the notes.
+        Default ``unconstrained``
+    bounds : tuple of length two, optional
+        The boundaries for methods that use bounds. If unbounded methods are
+        specified then the bounds will be ignored. Default is ``(0,float('Inf'))``
+    numStartPoints : int, optional
+        The number of starting points generated for each parameter.
+        Default 4
+        
     Attributes
     ----------
-    
+    Name: string
+        The name of the fitting method    
+    unconstrained : list
+        The list of valid unconstrained fitting methods
+    constrained : list
+        The list of valid constrained fitting methods
 
 
     Notes
     -----
-    Unconstrained method: ‘Nelder-Mead’, ‘Powell’, ‘CG’, ‘BFGS’,
-    Constrained methods: ‘L-BFGS-B’, ‘TNC’, ‘SLSQP’
-    Custom fitting algorithms are also allowed
+    unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
+    constrained = ['L-BFGS-B','TNC','SLSQP']
+    Custom fitting algorithms are also allowed in theory, but it has yet to be 
+    implemented.
+    
+    For each fitting function a set of different starting parameters will be 
+    tried. These are the combinations of all the values of the different 
+    parameters. For each starting parameter provided a set of numStartPoints 
+    starting points will be chosen, surrounding the starting point provided. If
+    the starting point provided is less than one it will be assumed that the 
+    values cannot exceed 1, otherwise, unless otherwise told, it will be 
+    assumed that they can take any value and will be chosen to be eavenly 
+    spaced around the provided value.
+    
+    See Also
+    --------
+    fitting.fitters.fitAlg.fitAlg : The general fitting method class, from 
+                                    which this one inherits
+    fitting.fit.fit : The general fitting framework class
+    scipy.optimise.minimize : The fitting class this wraps around
 
     """
 
@@ -40,11 +74,13 @@ class minimize(fitAlg):
     constrained = ['L-BFGS-B','TNC','SLSQP']
 
 
-    def __init__(self,dataShaper = None, method = None, bounds = None):
+    def __init__(self,fitQualFunc = None, method = None, bounds = (0,float('Inf')), numStartPoints = 4):
+        
+        self.numStartPoints = numStartPoints
 
-        if dataShaper == "-2log":
+        if fitQualFunc == "-2log":
             self.fitness = self.logprob
-        elif dataShaper == "1-prob":
+        elif fitQualFunc == "1-prob":
             self.fitness = self.maxprob
         else:
             self.fitness = self.null
@@ -52,8 +88,9 @@ class minimize(fitAlg):
         self._setType(method,bounds)
 
         self.fitInfo = {'Name':self.Name,
-                        'shaper': dataShaper,
-                        'bounds':self.bounds
+                        'fitQualityFunction': fitQualFunc,
+                        'bounds':self.bounds,
+                        'numStartPoints' : self.numStartPoints
                         }
 
         if self.methodSet == None:
@@ -62,52 +99,50 @@ class minimize(fitAlg):
             self.fitInfo['method'] = self.methodSet
             
         self.count = 1
-
-    def null(self,*params):
-
-        modVals = self.sim(*params)
-
-        return sum(modVals)
-
-    def logprob(self,*params):
-
-        modVals = self.sim(*params)
-
-        logModCoiceprob = log2(modVals)
-
-        probs = -2*logModCoiceprob
         
-        fit = sum(probs)
-
-        return fit
-        
-    def maxprob(self,*params):
-        """
-        Used to maximise the probability, so in this case minimise the 
-        difference between 1 and the probability
-        """
-        
-        modVals = self.sim(*params)
-        
-        fit = sum(1-modVals)
-        
-        return fit
-        
-    def callback(self,Xi):
-        
-        print '{0:4d}: {1:s}'.format(self.count, Xi)
-        
-        self.count += 1
+#    def callback(self,Xi):
+#        """
+#        Used for printing state after each stage of fitting
+#        """
+#        
+#        print '{0:4d}: {1:s}'.format(self.count, Xi)
+#        
+#        self.count += 1
 
     def fit(self, sim, mInitialParams):
+        """
+        Runs the model through the fitting algorithms and starting parameters 
+        and returns the best one.
+        
+        Parameters
+        ----------
+        sim : function
+            The function used by a fitting algorithm to generate a fit for 
+            given model parameters. One example is fit.fitness
+        mInitialParams : list of floats
+            The list of the intial parameters
+            
+        Returns
+        -------
+        fitParams : list of floats
+            The best fitting parameters
+        fitQuality : float
+            The quality of the fit as defined by the quality function chosen.
+            
+        See Also
+        --------
+        fit.fitness
+        
+        """
 
         self.sim = sim
 
         method=self.method
         methodSet = self.methodSet
         bounds = self.bounds
+        numStartPoints = self.numStartPoints
         
-        initParamSets = self._setStartParams(mInitialParams, numPoints = 4)
+        initParamSets = self._setStartParams(mInitialParams, numPoints = numStartPoints)
 
         if method == None:
 
@@ -216,46 +251,14 @@ class minimize(fitAlg):
 
         if self.bounds == None:
             # We only have the values passed in as the starting parameters
-            startLists = (self._startParamList(i, numPoints = numPoints) for i in initialParams)
+            startLists = (self.startParamList(i, numPoints = numPoints) for i in initialParams)
 
         else: 
-            startLists = (self._startParamList(i, bMax, numPoints) for i, (bMin, bMax) in izip(initialParams,self.bounds))
+            startLists = (self.startParamList(i, bMax, numPoints) for i, (bMin, bMax) in izip(initialParams,self.bounds))
             
         startSets = listMergeNP(*startLists)
             
         return startSets
             
             
-    def _startParamList(self,initial, bMax = float('Inf'), numPoints = 3):
-        """Assumes that intial parameters are positive and all values will 
-        be above zero"""
     
-         #The number of initial points per parameter
-        divVal = (numPoints+1)/2
-        
-        # We can assume that any initial parameter proposed has the 
-        #correct order of magnitude. 
-        vMin = initial / divVal
-        
-        
-        if bMax == None or isinf(bMax):
-            # We can also assume any number smaller than one should stay 
-            #smaller than one.
-            if initial < 1:
-                valAbsMax = 1
-            else:
-                valAbsMax = float('inf')
-        else:
-            valAbsMax = bMax
-            
-        if numPoints*vMin > valAbsMax:
-            inc = (valAbsMax - initial) / divVal
-            vMin = valAbsMax - numPoints * inc 
-            vMax = valAbsMax - inc
-        else:
-            vMax = vMin * numPoints
-            
-           
-        points = linspace(vMin, vMax, numPoints)
-        
-        return points
