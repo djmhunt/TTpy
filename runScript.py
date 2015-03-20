@@ -93,7 +93,7 @@ scaler = lambda x : x - 1
 
 # Define the fitting algorithm
 #fitAlg = minimize(dataShaper = "-2log", method = 'unconstrained')
-fitAlg = minimize(dataShaper = "-2log", method = 'constrained', bounds= [(0,1),(0,5)])
+fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds= [(0,1),(0,5)])
 #fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
