@@ -6,6 +6,8 @@ from __future__ import division
 
 from math import isinf
 from numpy import log2, linspace
+from itertools import izip
+from utils import listMergeNP
 
 class fitAlg(object):
     """
@@ -16,13 +18,6 @@ class fitAlg(object):
     fitQualFunc : function, optional
         The function used to calculate the quality of the fit. The value it 
         returns proivides the fitter with its fitting guide. Default ``fitAlg.null``
-    method : string or list of strings, optional
-        The name of the fitting method or list of names of fitting method or
-        name of list of fitting methods. Valid names found in the notes.
-        Default ``unconstrained``
-    bounds : tuple of length two, optional
-        The boundaries for methods that use bounds. If unbounded methods are
-        specified then the bounds will be ignored. Default is ``(0,float('Inf'))``
     numStartPoints : int, optional
         The number of starting points generated for each parameter.
         Default 4
@@ -41,7 +36,9 @@ class fitAlg(object):
     Name = 'none'
 
 
-    def __init__(self,fitQualFunc = None):
+    def __init__(self,fitQualFunc = None, numStartPoints = 4):
+        
+        self.numStartPoints = numStartPoints
 
         self.fitness = self.null
 
@@ -140,7 +137,45 @@ class fitAlg(object):
 
         return self.fitInfo
         
-    def startParamList(self,initial, bMax = float('Inf'), numPoints = 3):
+    def startParams(self,initialParams, bounds = None, numPoints = 3):
+        """
+        Defines a list of different starting parameters to run the minimization 
+        over
+        
+        Parameters
+        ----------
+        initialParams : list of floats
+            The inital starting values proposed
+        bounds : list of tuples of length two with floats, optional
+            The boundaries for methods that use bounds. If unbounded methods are
+            specified then the bounds will be ignored. Default is ``None``, which 
+            translates to boundaries of (0,float('Inf')) for each parameter.
+        numPoints : int
+            The number of starting parameter values to be calculated around 
+            each inital point
+            
+        Returns
+        -------
+        startParamSet : list of list of floats
+            The generated starting parameter combinations
+            
+        See Also
+        --------
+        fitAlg.startParamVals : Used in this function
+        """
+
+        if bounds == None:
+            # We only have the values passed in as the starting parameters
+            startLists = (self.startParamVals(i, numPoints = numPoints) for i in initialParams)
+
+        else: 
+            startLists = (self.startParamVals(i, bMax = bMax, numPoints = numPoints) for i, (bMin, bMax) in izip(initialParams,bounds))
+            
+        startSets = listMergeNP(*startLists)
+            
+        return startSets
+        
+    def startParamVals(self,initial, bMax = float('Inf'), numPoints = 3):
         """
         Assumes that intial parameters are positive and provides all starting 
         values above zero
@@ -152,7 +187,7 @@ class fitAlg(object):
         bMax : float, optional
             The maximum value of the parameter. Default is ``float('Inf')``
         numPoints : int
-            The number of startin parameters to be calculated around the inital
+            The number of starting parameter values to be calculated around the inital
             point
             
         Returns
