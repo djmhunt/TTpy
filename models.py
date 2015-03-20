@@ -6,6 +6,7 @@ from __future__ import division
 
 from itertools import izip
 from numpy import amax, amin
+from collections import OrderedDict
 
 from utils import listMerGen
 
@@ -39,7 +40,7 @@ class models(object):
 
         for a in args:
             model = a[0]
-            variables = a[1]
+            variables = OrderedDict(a[1])
             other = a[2]
             self.models.append((model,variables,other))
 
@@ -82,7 +83,7 @@ class models(object):
 
     def iterFitting(self):
         """ 
-        Yields a list containing model object and parameters to initialise them
+        Yields a list containing a model object and parameters to initialise them
         If a model variable was introduced with multiple values a value will 
         be taken half way between the max and min.
         
@@ -93,7 +94,7 @@ class models(object):
         -------
         model : model.model.model
             The model to be initialised
-        initialVars : dictionary of floats
+        initialVars : ordered dictionary of floats
             The model instance paramters
         otherArgs : dictonary of floats, strings and binary values
         """
@@ -102,7 +103,7 @@ class models(object):
 
             model = m[0]
             otherArgs = m[2]
-            initialVars = {}
+            initialVars = OrderedDict()
             for k,v in m[1].iteritems():
                 if amax(v) == amin(v):
                     initialVars[k] = amax(v)
@@ -124,7 +125,7 @@ class models(object):
         ----------
         model : model.model.model
             The model to be initialised
-        parameters : dictonary containing floats or lists of floats
+        parameters : dictonary (preferably ordered) containing floats or lists of floats
             Frequently changing values of the model. When a parameter contains 
             a list, an version of the model will be set-up for every combination 
             of this parameter with all the others.
