@@ -92,8 +92,11 @@ def scaleFuncSingle():
 scaler = lambda x : x - 1
 
 # Define the fitting algorithm
-#fitAlg = minimize(dataShaper = "-2log", method = 'unconstrained')
-fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds= [(0,1),(0,5)])
+fitAlg = minimize(fitQualFunc = "-2log", 
+                  method = 'constrained', #'unconstrained',
+                  bounds = [(0,1),(0,5)], 
+                  numStartPoints = 5,
+                  boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
