@@ -37,7 +37,7 @@ class minimize(fitAlg):
         
     Attributes
     ----------
-    Name: string
+    Name : string
         The name of the fitting method    
     unconstrained : list
         The list of valid unconstrained fitting methods
@@ -165,7 +165,7 @@ class minimize(fitAlg):
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
                     
-            bestResult = self._bestfit(self, resultSet, bounds)
+            bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit)
 
             if bestResult == None:
                 return mInitialParams, float("inf")
@@ -198,7 +198,7 @@ class minimize(fitAlg):
             if optimizeResult.success == True:
                 resultSet.append(optimizeResult)
                 
-        bestResult = self._bestfit(self, resultSet, bounds)
+        bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit)
         
         return bestResult
         

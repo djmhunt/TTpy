@@ -26,7 +26,7 @@ class leastsq(fitAlg):
         
     Attributes
     ----------
-    Name: string
+    Name : string
         The name of the fitting method    
     
     See Also
