@@ -56,6 +56,8 @@
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isinf</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log2</span><span class="p">,</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMergeNP</span>
 
 <div class="viewcode-block" id="fitAlg"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg">[docs]</a><span class="k">class</span> <span class="nc">fitAlg</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -66,13 +68,6 @@
 <span class="sd">    fitQualFunc : function, optional</span>
 <span class="sd">        The function used to calculate the quality of the fit. The value it </span>
 <span class="sd">        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``</span>
-<span class="sd">    method : string or list of strings, optional</span>
-<span class="sd">        The name of the fitting method or list of names of fitting method or</span>
-<span class="sd">        name of list of fitting methods. Valid names found in the notes.</span>
-<span class="sd">        Default ``unconstrained``</span>
-<span class="sd">    bounds : tuple of length two, optional</span>
-<span class="sd">        The boundaries for methods that use bounds. If unbounded methods are</span>
-<span class="sd">        specified then the bounds will be ignored. Default is ``(0,float(&#39;Inf&#39;))``</span>
 <span class="sd">    numStartPoints : int, optional</span>
 <span class="sd">        The number of starting points generated for each parameter.</span>
 <span class="sd">        Default 4</span>
@@ -91,7 +86,9 @@
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">numStartPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">null</span>
 
@@ -190,7 +187,45 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span>
         </div>
-<div class="viewcode-block" id="fitAlg.startParamList"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParamList">[docs]</a>    <span class="k">def</span> <span class="nf">startParamList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="fitAlg.startParams"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParams">[docs]</a>    <span class="k">def</span> <span class="nf">startParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initialParams</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines a list of different starting parameters to run the minimization </span>
+<span class="sd">        over</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        initialParams : list of floats</span>
+<span class="sd">            The inital starting values proposed</span>
+<span class="sd">        bounds : list of tuples of length two with floats, optional</span>
+<span class="sd">            The boundaries for methods that use bounds. If unbounded methods are</span>
+<span class="sd">            specified then the bounds will be ignored. Default is ``None``, which </span>
+<span class="sd">            translates to boundaries of (0,float(&#39;Inf&#39;)) for each parameter.</span>
+<span class="sd">        numPoints : int</span>
+<span class="sd">            The number of starting parameter values to be calculated around </span>
+<span class="sd">            each inital point</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        startParamSet : list of list of floats</span>
+<span class="sd">            The generated starting parameter combinations</span>
+<span class="sd">            </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        fitAlg.startParamVals : Used in this function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">bounds</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># We only have the values passed in as the starting parameters</span>
+            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initialParams</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="n">bounds</span><span class="p">))</span>
+            
+        <span class="n">startSets</span> <span class="o">=</span> <span class="n">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">startLists</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">startSets</span>
+        </div>
+<div class="viewcode-block" id="fitAlg.startParamVals"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParamVals">[docs]</a>    <span class="k">def</span> <span class="nf">startParamVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Assumes that intial parameters are positive and provides all starting </span>
 <span class="sd">        values above zero</span>
@@ -202,7 +237,7 @@
 <span class="sd">        bMax : float, optional</span>
 <span class="sd">            The maximum value of the parameter. Default is ``float(&#39;Inf&#39;)``</span>
 <span class="sd">        numPoints : int</span>
-<span class="sd">            The number of startin parameters to be calculated around the inital</span>
+<span class="sd">            The number of starting parameter values to be calculated around the inital</span>
 <span class="sd">            point</span>
 <span class="sd">            </span>
 <span class="sd">        Returns</span>

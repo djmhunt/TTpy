@@ -323,7 +323,45 @@
 </div>
 <div class="viewcode-block" id="outputting.recordSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expParams</span><span class="p">,</span><span class="n">modelParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Record any parameters that are user specified</span>
+<span class="sd">        Record any parameters that are potentially user specified for the model</span>
+<span class="sd">        and experiment</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expParams : dict</span>
+<span class="sd">            The experiment parameters</span>
+<span class="sd">        modelParams : dict</span>
+<span class="sd">            The model parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">lastExpLabelID</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">(</span><span class="n">expParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span><span class="p">)</span>
+        <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">,</span> <span class="n">lastModelLabelID</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">(</span><span class="n">modelParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="n">lastExpLabelID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span> <span class="o">=</span> <span class="n">lastModelLabelID</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expPltLabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelPltLabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Simulation contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expDesc</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="k">if</span> <span class="n">expDesc</span> <span class="o">==</span> <span class="n">expPltLabel</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;. &quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">expPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;. &quot;</span>
+
+        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">modelDesc</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="k">if</span> <span class="n">modelDesc</span> <span class="o">==</span> <span class="n">modelPltLabel</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="outputting.recordSimFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSimFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordSimFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expParams</span><span class="p">,</span><span class="n">modelParams</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record any parameters that are potentially user specified for the model</span>
+<span class="sd">        and experiment</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

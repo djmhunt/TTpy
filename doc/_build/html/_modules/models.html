@@ -56,6 +56,7 @@
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">amax</span><span class="p">,</span> <span class="n">amin</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMerGen</span>
 
@@ -89,7 +90,7 @@
 
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">variables</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">model</span><span class="p">,</span><span class="n">variables</span><span class="p">,</span><span class="n">other</span><span class="p">))</span>
 
@@ -132,7 +133,7 @@
 </div>
 <div class="viewcode-block" id="models.iterFitting"><a class="viewcode-back" href="../models.html#models.models.iterFitting">[docs]</a>    <span class="k">def</span> <span class="nf">iterFitting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">        Yields a list containing model object and parameters to initialise them</span>
+<span class="sd">        Yields a list containing a model object and parameters to initialise them</span>
 <span class="sd">        If a model variable was introduced with multiple values a value will </span>
 <span class="sd">        be taken half way between the max and min.</span>
 <span class="sd">        </span>
@@ -143,7 +144,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        model : model.model.model</span>
 <span class="sd">            The model to be initialised</span>
-<span class="sd">        initialVars : dictionary of floats</span>
+<span class="sd">        initialVars : ordered dictionary of floats</span>
 <span class="sd">            The model instance paramters</span>
 <span class="sd">        otherArgs : dictonary of floats, strings and binary values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -152,7 +153,7 @@
 
             <span class="n">model</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">otherArgs</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">initialVars</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">initialVars</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">amax</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">amin</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                     <span class="n">initialVars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">amax</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
@@ -174,7 +175,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model : model.model.model</span>
 <span class="sd">            The model to be initialised</span>
-<span class="sd">        parameters : dictonary containing floats or lists of floats</span>
+<span class="sd">        parameters : dictonary (preferably ordered) containing floats or lists of floats</span>
 <span class="sd">            Frequently changing values of the model. When a parameter contains </span>
 <span class="sd">            a list, an version of the model will be set-up for every combination </span>
 <span class="sd">            of this parameter with all the others.</span>

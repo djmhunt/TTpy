@@ -65,13 +65,34 @@
 <span class="sd">    </span>
 <span class="sd">    Not properly developed and will not be documented until upgrade</span>
 
-
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fitQualFunc : function, optional</span>
+<span class="sd">        The function used to calculate the quality of the fit. The value it </span>
+<span class="sd">        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``</span>
+<span class="sd">    numStartPoints : int, optional</span>
+<span class="sd">        The number of starting points generated for each parameter.</span>
+<span class="sd">        Default 4</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name: string</span>
+<span class="sd">        The name of the fitting method    </span>
+<span class="sd">    </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    fitting.fitters.fitAlg.fitAlg : The general fitting method class, from </span>
+<span class="sd">                                    which this one inherits</span>
+<span class="sd">    fitting.fit.fit : The general fitting framework class</span>
+<span class="sd">    scipy.optimise.leastsq : The fitting class this wraps around</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;leastsq&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">numStartPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span>
 
         <span class="k">if</span> <span class="n">fitQualFunc</span> <span class="o">==</span> <span class="s">&quot;-2log&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logprob</span>
@@ -81,22 +102,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s">&#39;shaper&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">}</span>
 
-<div class="viewcode-block" id="leastsq.null"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.leastsq.leastsq.null">[docs]</a>    <span class="k">def</span> <span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
 
-        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">modVals</span>
-</div>
-<div class="viewcode-block" id="leastsq.logprob"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.leastsq.leastsq.logprob">[docs]</a>    <span class="k">def</span> <span class="nf">logprob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
-
-        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
-
-        <span class="n">logModCoiceprob</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
-
-        <span class="n">fit</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">logModCoiceprob</span>
-
-        <span class="k">return</span> <span class="n">fit</span>
-</div>
 <div class="viewcode-block" id="leastsq.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.leastsq.leastsq.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
