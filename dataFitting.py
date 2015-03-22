@@ -60,6 +60,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
         modelSetup = modelInfo[1:]
 
         exp = experiments.create(0)
+        
+        outputting.logSimFittingParams(exp.params(), model.Name, modelSetup[0], modelSetup[1])
 
         for participant in data:
 
@@ -73,7 +75,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             message = "Participant fitted"
             logger.debug(message)
 
-            outputting.recordSimParams(exp.params(),modelFitted.params())
+            desc = outputting.recordSimParams(exp.params(),modelFitted.params())
+            outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality)
 
             outputting.recordParticipantFit(participant, exp.outputEvolution(),modelFitted.outputEvolution(), fitQuality)
 

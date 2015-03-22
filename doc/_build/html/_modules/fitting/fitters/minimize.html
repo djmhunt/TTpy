@@ -143,7 +143,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
                         <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
-                        <span class="s">&#39;numStartPoints&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span>
+                        <span class="s">&#39;numStartPoints&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span><span class="p">,</span>
+                        <span class="s">&#39;boundFit&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundFit</span>
                         <span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
@@ -215,13 +216,13 @@
                     <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
                     <span class="n">methodSuccessSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
                     
-            <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resultSet</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+            <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="n">resultSet</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">boundFit</span> <span class="o">=</span> <span class="n">boundFit</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">bestResult</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">mInitialParams</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">&quot;inf&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">fitParams</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">x</span>
-                <span class="n">fitVal</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span>
+                <span class="n">fitParams</span> <span class="o">=</span> <span class="n">bestResult</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">fitVal</span> <span class="o">=</span> <span class="n">bestResult</span><span class="o">.</span><span class="n">fun</span>
     
                 <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span>
 
@@ -248,7 +249,7 @@
             <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
                 <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
                 
-        <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resultSet</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)</span>
+        <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="n">resultSet</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">boundFit</span> <span class="o">=</span> <span class="n">boundFit</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">bestResult</span>
         
@@ -272,7 +273,7 @@
                 <span class="k">if</span> <span class="mi">1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid</span><span class="p">:</span>
                     <span class="n">reducedResults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                     
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resultSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">reducedResults</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">resultSet</span><span class="p">[</span><span class="n">genFitid</span><span class="p">]</span>
                 
             <span class="k">else</span><span class="p">:</span>

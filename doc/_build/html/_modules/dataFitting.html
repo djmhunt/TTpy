@@ -110,6 +110,8 @@
         <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">outputting</span><span class="o">.</span><span class="n">logSimFittingParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 
@@ -123,7 +125,8 @@
             <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Participant fitted&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">outputting</span><span class="o">.</span><span class="n">recordSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">recordSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
+            <span class="n">outputting</span><span class="o">.</span><span class="n">logModFittedParams</span><span class="p">(</span><span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">)</span>
 
             <span class="n">outputting</span><span class="o">.</span><span class="n">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">)</span>
 

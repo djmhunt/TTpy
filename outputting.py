@@ -18,7 +18,7 @@ from os import getcwd, makedirs
 from os.path import isfile, exists
 from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
-from collections import OrderedDict
+from collections import OrderedDict, Callable
 
 from utils import listMerGen
 
@@ -268,32 +268,27 @@ class outputting(object):
         logging.info("Log initialised")
         if self.logFile:
             logging.info("The log you are reading was written to " + str(self.logFile))
-
-    ### Data collection
-
-    def recordSimParams(self,expParams,modelParams):
+            
+    def logSimParams(self, expDesc, expPltLabel, modelDesc, modelPltLabel):
         """
-        Record any parameters that are user specified
+        Writes to the log the descrition and the label of the experiment and model
         
         Parameters
         ----------
-        expParams : dict
-            The experiment parameters
-        modelParams : dict
-            The model parameters
+        expDesc : string
+            The description to be logged of the experiment 
+        expPltLabel : string
+            The label used for this experiment
+        modelDesc : string
+            The description to be logged of the model 
+        modelPltLabel : string
+            The label used for this model
+
+        See Also
+        --------
+        recordSimParams : Records these parameters for later use
         """
-
-        expDesc, expPltLabel, lastExpLabelID =  self._params(expParams, self.lastExpLabelID)
-        modelDesc, modelPltLabel, lastModelLabelID =  self._params(modelParams, self.lastModelLabelID)
-
-        self.lastExpLabelID = lastExpLabelID
-        self.lastModelLabelID = lastModelLabelID
-
-        self.expLabelStore.append(expPltLabel)
-        self.expParamStore.append(expParams)
-        self.modelLabelStore.append(modelPltLabel)
-        self.modelParamStore.append(modelParams)
-
+        
         message = "Simulation contains the experiment '" + expDesc + "'"
         if expDesc == expPltLabel:
             message += ". "
@@ -306,9 +301,126 @@ class outputting(object):
         else:
             message += " output with the label '" + modelPltLabel + "'."
         self.loggerSim.info(message)
+        
+    def logSimFittingParams(self, expParams, modelName, modelFitVars, modelOtherArgs):
+        """
+        Logs the model and experiment parameters that used as initial fitting 
+        conditions
+        
+        Parameters
+        ----------
+        expParams : dict
+            The experiment parameters
+        modelName : string
+            The name of the model
+        modelFitVars : dict
+            The model parameters that will be fitted over and varied.
+        modelOtherArgs : dict
+            The other parameters used in the model whose attributes have been 
+            modifed by the user
+        """        
+        message = "The fit will use the model '" + modelName + "'"
+        
+        modelFitParams = [k + ' around ' + str(v).strip('[]()') for k,v in modelFitVars.iteritems()]
+        message += " fited with the parameters " + ", ".join(modelFitParams)
+        
+        modelParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
+        modelFuncs = [k + ' = ' + v.Name for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
+        message += " and using the other user specified parameters " + ", ".join(modelParams)
+        message += " and the functions " + ", ".join(modelFuncs)
+        
+        message += ". This is based on the experiment '" + expParams['Name'] + "' "
 
-    def _params(self, params, lastLabelID):
-        """ Processes the parameters of an experiment or model"""
+        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k,v in expParams.iteritems() if k != 'Name']
+        message += "with the parameters " + ", ".join(expDescriptors) + "."
+        
+        self.loggerSim.info(message)
+        
+    def logModFittedParams(self, modelFitVars, modelParams, fitQuality):
+        """
+        Logs the model and experiment parameters that used as initial fitting 
+        conditions
+        
+        Parameters
+        ----------
+        modelFitVars : dict
+            The model parameters that have been fitted over and varied.
+        modelParams : dict
+            The model parameters for the fitted model
+        """    
+        params = modelFitVars.keys()
+        
+        modelFitParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelParams.iteritems() if k in params]
+        message = "The fited values are " + ", ".join(modelFitParams)
+        
+        message += " with a fit quality of " + str(fitQuality) + "."
+        
+        self.loggerSim.info(message)
+
+    ### Data collection
+
+    def recordSimParams(self,expParams,modelParams):
+        """
+        Record the model and experiment parameters
+        
+        Parameters
+        ----------
+        expParams : dict
+            The experiment parameters
+        modelParams : dict
+            The model parameters
+            
+        Returns
+        -------
+        expDesc : string
+            The description to be logged of the experiment 
+        expPltLabel : string
+            The label used for this experiment
+        modelDesc : string
+            The description to be logged of the model 
+        modelPltLabel : string
+            The label used for this model
+            
+        See Also
+        --------
+        paramIdentifier, logSimParams
+        """
+
+        expDesc, expPltLabel, lastExpLabelID =  self.paramIdentifier(expParams, self.lastExpLabelID)
+        modelDesc, modelPltLabel, lastModelLabelID =  self.paramIdentifier(modelParams, self.lastModelLabelID)
+
+        self.lastExpLabelID = lastExpLabelID
+        self.lastModelLabelID = lastModelLabelID
+
+        self.expLabelStore.append(expPltLabel)
+        self.expParamStore.append(expParams)
+        self.modelLabelStore.append(modelPltLabel)
+        self.modelParamStore.append(modelParams)
+        
+        return expDesc, expPltLabel, modelDesc, modelPltLabel
+
+    def paramIdentifier(self, params, lastLabelID):
+        """ 
+        Processes the parameters of an experiment or model
+        
+        If the description is too long to make a plot label then an ID is generated
+        
+        Parameters
+        ----------
+        params : dict
+            The parameters of the experiment or model. One is expected to be ``Name``
+        lastLabelID: int
+            The last ID number used
+            
+        Returns
+        -------
+        descriptor : string
+            The generated description of the model or experiment
+        plotLabel : string
+            The label to be used for this in plots
+        lastLabelID : int
+            The last label ID used
+        """
 
         name = params['Name'] + ": "
 

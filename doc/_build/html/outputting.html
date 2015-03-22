@@ -250,6 +250,98 @@ avalable integer.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="outputting.outputting.logModFittedParams">
+<tt class="descname">logModFittedParams</tt><big>(</big><em>modelFitVars</em>, <em>modelParams</em>, <em>fitQuality</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.logModFittedParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logModFittedParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs the model and experiment parameters that used as initial fitting 
+conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelFitVars</strong> : dict</p>
+<blockquote>
+<div><p>The model parameters that have been fitted over and varied.</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : dict</p>
+<blockquote class="last">
+<div><p>The model parameters for the fitted model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.logSimFittingParams">
+<tt class="descname">logSimFittingParams</tt><big>(</big><em>expParams</em>, <em>modelName</em>, <em>modelFitVars</em>, <em>modelOtherArgs</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.logSimFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimFittingParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs the model and experiment parameters that used as initial fitting 
+conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
+<blockquote>
+<div><p>The experiment parameters</p>
+</div></blockquote>
+<p><strong>modelName</strong> : string</p>
+<blockquote>
+<div><p>The name of the model</p>
+</div></blockquote>
+<p><strong>modelFitVars</strong> : dict</p>
+<blockquote>
+<div><p>The model parameters that will be fitted over and varied.</p>
+</div></blockquote>
+<p><strong>modelOtherArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The other parameters used in the model whose attributes have been 
+modifed by the user</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.logSimParams">
+<tt class="descname">logSimParams</tt><big>(</big><em>expDesc</em>, <em>expPltLabel</em>, <em>modelDesc</em>, <em>modelPltLabel</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.logSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes to the log the descrition and the label of the experiment and model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the experiment</p>
+</div></blockquote>
+<p><strong>expPltLabel</strong> : string</p>
+<blockquote>
+<div><p>The label used for this experiment</p>
+</div></blockquote>
+<p><strong>modelDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the model</p>
+</div></blockquote>
+<p><strong>modelPltLabel</strong> : string</p>
+<blockquote class="last">
+<div><p>The label used for this model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.recordSimParams" title="outputting.outputting.recordSimParams"><tt class="xref py py-obj docutils literal"><span class="pre">recordSimParams</span></tt></a></dt>
+<dd>Records these parameters for later use</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="outputting.outputting.newDict">
 <tt class="descname">newDict</tt><big>(</big><em>keySet</em>, <em>store</em>, <em>storeLabel</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.newDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
@@ -333,6 +425,43 @@ store.</p>
 <p><strong>fileName</strong> : string</p>
 <blockquote class="last">
 <div><p>The file to be saved to</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.paramIdentifier">
+<tt class="descname">paramIdentifier</tt><big>(</big><em>params</em>, <em>lastLabelID</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.paramIdentifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.paramIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the parameters of an experiment or model</p>
+<p>If the description is too long to make a plot label then an ID is generated</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>params</strong> : dict</p>
+<blockquote>
+<div><p>The parameters of the experiment or model. One is expected to be <tt class="docutils literal"><span class="pre">Name</span></tt></p>
+</div></blockquote>
+<p><strong>lastLabelID: int</strong></p>
+<blockquote>
+<div><p>The last ID number used</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>descriptor</strong> : string</p>
+<blockquote>
+<div><p>The generated description of the model or experiment</p>
+</div></blockquote>
+<p><strong>plotLabel</strong> : string</p>
+<blockquote>
+<div><p>The label to be used for this in plots</p>
+</div></blockquote>
+<p><strong>lastLabelID</strong> : int</p>
+<blockquote class="last">
+<div><p>The last label ID used</p>
 </div></blockquote>
 </td>
 </tr>
@@ -550,33 +679,9 @@ Default is None</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="outputting.outputting.recordSimFittingParams">
-<tt class="descname">recordSimFittingParams</tt><big>(</big><em>expParams</em>, <em>modelParams</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordSimFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSimFittingParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record any parameters that are potentially user specified for the model
-and experiment</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
-<blockquote>
-<div><p>The experiment parameters</p>
-</div></blockquote>
-<p><strong>modelParams</strong> : dict</p>
-<blockquote class="last">
-<div><p>The model parameters</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="outputting.outputting.recordSimParams">
 <tt class="descname">recordSimParams</tt><big>(</big><em>expParams</em>, <em>modelParams</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.recordSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSimParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record any parameters that are potentially user specified for the model
-and experiment</p>
+<dd><p>Record the model and experiment parameters</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -586,13 +691,35 @@ and experiment</p>
 <div><p>The experiment parameters</p>
 </div></blockquote>
 <p><strong>modelParams</strong> : dict</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The model parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>expDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the experiment</p>
+</div></blockquote>
+<p><strong>expPltLabel</strong> : string</p>
+<blockquote>
+<div><p>The label used for this experiment</p>
+</div></blockquote>
+<p><strong>modelDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the model</p>
+</div></blockquote>
+<p><strong>modelPltLabel</strong> : string</p>
+<blockquote class="last">
+<div><p>The label used for this model</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.paramIdentifier" title="outputting.outputting.paramIdentifier"><tt class="xref py py-obj docutils literal"><span class="pre">paramIdentifier</span></tt></a>, <a class="reference internal" href="#outputting.outputting.logSimParams" title="outputting.outputting.logSimParams"><tt class="xref py py-obj docutils literal"><span class="pre">logSimParams</span></tt></a></p>
+</div>
 </dd></dl>
 
 <dl class="method">
