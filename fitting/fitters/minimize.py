@@ -93,7 +93,8 @@ class minimize(fitAlg):
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc,
                         'bounds':self.bounds,
-                        'numStartPoints' : self.numStartPoints
+                        'numStartPoints' : self.numStartPoints,
+                        'boundFit' : self.boundFit
                         }
 
         if self.methodSet == None:
@@ -170,8 +171,8 @@ class minimize(fitAlg):
             if bestResult == None:
                 return mInitialParams, float("inf")
             else:
-                fitParams = optimizeResult.x
-                fitVal = optimizeResult.fun
+                fitParams = bestResult.x
+                fitVal = bestResult.fun
     
                 return fitParams, fitVal
 
@@ -222,7 +223,7 @@ class minimize(fitAlg):
                 if 1 not in invalid:
                     reducedResults.append(r)
                     
-            if len(resultSet) == 0:
+            if len(reducedResults) == 0:
                 return resultSet[genFitid]
                 
             else:
