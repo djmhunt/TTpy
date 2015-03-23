@@ -90,9 +90,13 @@ data in any form for the simulation</p>
 <div><p>Defines the level of the log. Default logging.INFO</p>
 </div></blockquote>
 <p><strong>maxLabelLength</strong> : int, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The maximum length of a label to be used as a reference for an 
 individual model-experiment combination. Default 18</p>
+</div></blockquote>
+<p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
+<blockquote class="last">
+<div><p>Defines the response to numpy errors. Defailt <tt class="docutils literal"><span class="pre">log</span></tt>. See numpy.seterr</p>
 </div></blockquote>
 </td>
 </tr>
@@ -107,6 +111,8 @@ individual model-experiment combination. Default 18</p>
 <dd>Sets up the log file and folder to save results</dd>
 <dt><a class="reference internal" href="#outputting.outputting.fancyLogger" title="outputting.outputting.fancyLogger"><tt class="xref py py-obj docutils literal"><span class="pre">fancyLogger</span></tt></a></dt>
 <dd>Log creator</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">numpy.seterr</span></tt></dt>
+<dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
 </dl>
 </div>
 <dl class="method">
@@ -201,8 +207,37 @@ silent.</p>
 
 <dl class="method">
 <dt id="outputting.outputting.fancyLogger">
-<tt class="descname">fancyLogger</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fancyLogger</tt><big>(</big><em>logFile='./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp='log'</em><big>)</big><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the style of logging for all the simulations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>logFile = string, optional</strong></p>
+<blockquote>
+<div><p>Provides the path the log will be written to. Default &#8221;./log.txt&#8221;</p>
+</div></blockquote>
+<p><strong>logLevel</strong> : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</p>
+<blockquote>
+<div><p>Defines the level of the log. Default logging.INFO</p>
+</div></blockquote>
+<p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
+<blockquote class="last">
+<div><p>Defines the response to numpy errors. Defailt <tt class="docutils literal"><span class="pre">log</span></tt>. See numpy.seterr</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.python.org/library/logging.html#module-logging" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">logging</span></tt></a></dt>
+<dd>The Python standard logging library</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">numpy.seterr</span></tt></dt>
+<dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="method">

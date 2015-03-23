@@ -90,12 +90,15 @@
 <span class="sd">    maxLabelLength : int, optional</span>
 <span class="sd">        The maximum length of a label to be used as a reference for an </span>
 <span class="sd">        individual model-experiment combination. Default 18</span>
+<span class="sd">    npErrResp : {&#39;log&#39;, &#39;raise&#39;}</span>
+<span class="sd">        Defines the response to numpy errors. Defailt ``log``. See numpy.seterr</span>
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    date : Identifies todays date</span>
 <span class="sd">    saving : Sets up the log file and folder to save results</span>
-<span class="sd">    fancyLogger : Log creator    </span>
+<span class="sd">    fancyLogger : Log creator</span>
+<span class="sd">    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -106,12 +109,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;simLabel&quot;</span><span class="p">,</span><span class="s">&quot;Untitled&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;logLevel&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="c">#logging.DEBUG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;maxLabelLength&quot;</span><span class="p">,</span><span class="mi">18</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;npErrResp&quot;</span><span class="p">,</span> <span class="s">&#39;log&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">saving</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">fancyLogger</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fancyLogger</span><span class="p">(</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Framework&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Simulation&#39;</span><span class="p">)</span>
@@ -262,9 +266,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span>  <span class="s">&#39;&#39;</span>
 </div>
-<div class="viewcode-block" id="outputting.fancyLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.fancyLogger">[docs]</a>    <span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.fancyLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.fancyLogger">[docs]</a>    <span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logFile</span> <span class="o">=</span> <span class="s">&quot;./log.txt&quot;</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="s">&#39;log&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets up the style of logging for all the simulations        </span>
+<span class="sd">        Sets up the style of logging for all the simulations  </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        logFile = string, optional</span>
+<span class="sd">            Provides the path the log will be written to. Default &quot;./log.txt&quot;</span>
+<span class="sd">        logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
+<span class="sd">            Defines the level of the log. Default logging.INFO</span>
+<span class="sd">        npErrResp : {&#39;log&#39;, &#39;raise&#39;}</span>
+<span class="sd">            Defines the response to numpy errors. Defailt ``log``. See numpy.seterr</span>
+<span class="sd">            </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        logging : The Python standard logging library</span>
+<span class="sd">        numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">class</span> <span class="nc">streamLoggerSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -290,34 +308,34 @@
                   <span class="k">pass</span>
 
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">logFile</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">logFile</span><span class="p">,</span>
                                 <span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> </span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span>
                                 <span class="n">datefmt</span><span class="o">=</span><span class="s">&#39;%m-</span><span class="si">%d</span><span class="s"> %H:%M&#39;</span><span class="p">,</span>
-                                <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span><span class="p">,</span>
+                                <span class="n">level</span> <span class="o">=</span> <span class="n">logLevel</span><span class="p">,</span>
                                 <span class="n">filemode</span><span class="o">=</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
 
             <span class="n">consoleFormat</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
             <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span><span class="p">)</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logLevel</span><span class="p">)</span>
             <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">consoleFormat</span><span class="p">)</span>
             <span class="c"># add the handler to the root logger</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s">&#39;%m-</span><span class="si">%d</span><span class="s"> %H:%M&#39;</span><span class="p">,</span>
                                 <span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span>
-                                <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span><span class="p">)</span>
+                                <span class="n">level</span> <span class="o">=</span> <span class="n">logLevel</span><span class="p">)</span>
 
         <span class="c"># Set the standard error output</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;STDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
         <span class="c"># Set the numpy error output</span>
         <span class="n">seterrcall</span><span class="p">(</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span> <span class="p">)</span>
-        <span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s">&#39;log&#39;</span><span class="p">)</span><span class="c">#&#39;raise&#39;)#&#39;log&#39;)</span>
+        <span class="n">seterr</span><span class="p">(</span><span class="nb">all</span> <span class="o">=</span> <span class="n">npErrResp</span><span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Log initialised&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">logFile</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">logFile</span><span class="p">))</span>
             </div>
 <div class="viewcode-block" id="outputting.logSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

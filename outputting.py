@@ -40,12 +40,15 @@ class outputting(object):
     maxLabelLength : int, optional
         The maximum length of a label to be used as a reference for an 
         individual model-experiment combination. Default 18
+    npErrResp : {'log', 'raise'}
+        Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
         
     See Also
     --------
     date : Identifies todays date
     saving : Sets up the log file and folder to save results
-    fancyLogger : Log creator    
+    fancyLogger : Log creator
+    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors    
     """
 
     def __init__(self,**kwargs):
@@ -56,12 +59,13 @@ class outputting(object):
         self.label = kwargs.pop("simLabel","Untitled")
         self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
+        self.npErrResp = kwargs.pop("npErrResp", 'log')
 
         self.date()
 
         self.saving()
 
-        self.fancyLogger()
+        self.fancyLogger(logFile = self.logFile, logLevel = self.logLevel, npErrResp = self.npErrResp)
 
         self.logger = logging.getLogger('Framework')
         self.loggerSim = logging.getLogger('Simulation')
@@ -212,9 +216,23 @@ class outputting(object):
             self.outputFolder = ''
             self.logFile =  ''
 
-    def fancyLogger(self):
+    def fancyLogger(self, logFile = "./log.txt", logLevel = logging.INFO, npErrResp = 'log'):
         """
-        Sets up the style of logging for all the simulations        
+        Sets up the style of logging for all the simulations  
+        
+        Parameters
+        ----------
+        logFile = string, optional
+            Provides the path the log will be written to. Default "./log.txt"
+        logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+            Defines the level of the log. Default logging.INFO
+        npErrResp : {'log', 'raise'}
+            Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
+            
+        See Also
+        --------
+        logging : The Python standard logging library
+        numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
         """
 
         class streamLoggerSim(object):
@@ -240,34 +258,34 @@ class outputting(object):
                   pass
 
 
-        if self.logFile:
-            logging.basicConfig(filename = self.logFile,
+        if logFile:
+            logging.basicConfig(filename = logFile,
                                 format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                                 datefmt='%m-%d %H:%M',
-                                level = self.logLevel,
+                                level = logLevel,
                                 filemode= 'w')
 
             consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
             console = logging.StreamHandler()
-            console.setLevel(self.logLevel)
+            console.setLevel(logLevel)
             console.setFormatter(consoleFormat)
             # add the handler to the root logger
             logging.getLogger('').addHandler(console)
         else:
             logging.basicConfig(datefmt='%m-%d %H:%M',
                                 format='%(name)-12s %(levelname)-8s %(message)s',
-                                level = self.logLevel)
+                                level = logLevel)
 
         # Set the standard error output
         sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
         # Set the numpy error output
         seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
-        seterr(all='log')#'raise')#'log')
+        seterr(all = npErrResp)
 
         logging.info(self.date)
         logging.info("Log initialised")
-        if self.logFile:
-            logging.info("The log you are reading was written to " + str(self.logFile))
+        if logFile:
+            logging.info("The log you are reading was written to " + str(logFile))
             
     def logSimParams(self, expDesc, expPltLabel, modelDesc, modelPltLabel):
         """
