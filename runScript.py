@@ -42,7 +42,8 @@ gamma = 0.5
 simDur = 30
 outputOptions = {'simLabel': 'qLearn_jessData',
                  'save': True,
-                 'silent': False}
+                 'silent': False,
+                 'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
 #                'beta':beta,
                 'gamma':gamma}
