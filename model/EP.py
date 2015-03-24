@@ -33,7 +33,10 @@ class EP(model):
     beta : float, optional
         Decision threshold parameter
     activity : array, optional
-        The `activity` of the neurons. The values are between [0,1]
+        The `activity` of the neurons. The values are between ``[0,1]``
+    prior : array of two floats in ``[0,1]`` or just float in range, optional
+        The prior probability of of the two states being the correct one. 
+        Default ``array([0.5,0.5])``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can 
         understand and a string to identify it later. Default is blankStim
@@ -50,8 +53,10 @@ class EP(model):
         self.beta = kwargs.pop('beta',0.3)
         self.gamma = kwargs.pop('gamma',4)
         self.activity = kwargs.pop('activity',array([0.5,0.5]))
+        self.prior = kwargs.pop('prior',array([0.5,0.5]))
+        
         self.decision = None
-        self.probabilities = zeros(2) + 0.5
+        self.probabilities = zeros(2) + self.prior
         self.lastObs = False
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -61,6 +66,8 @@ class EP(model):
                            "alpha": self.alpha,
                            "gamma": self.gamma,
                            "beta": self.beta,
+                           "prior": self.prior,
+                           "activity" : self.activity,
                            "stimFunc" : self.stimFunc.Name,
                            "decFunc" : self.decisionFunc.Name}
 

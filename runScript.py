@@ -49,7 +49,6 @@ parameters = {  'alpha':alpha,
 paramExtras = {'beta':beta,
                'stimFunc':deckStimDirect(),
                'decFunc':decBeta(beta = beta)} #For qLearn decks
-#paramExtras = {'activity':array([5,5])} # For EP
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn,parameters,paramExtras))

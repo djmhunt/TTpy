@@ -30,8 +30,9 @@ class BP(model):
         Decision threshold parameter
     oneProb : array, optional
         The prior probability
-    prior : array, optional
-        The prior probability 
+    prior : array of two floats in ``[0,1]`` or just float in range, optional
+        The prior probability of of the two states being the correct one. 
+        Default ``array([0.5,0.5])``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can 
         understand and a string to identify it later. Default is blankStim

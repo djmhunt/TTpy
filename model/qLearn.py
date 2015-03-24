@@ -37,8 +37,9 @@ class qLearn(model):
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
-    prior : array, optional
-        The prior probability 
+    prior : array of two floats in ``[0,1]`` or just float in range, optional
+        The prior probability of of the two states being the correct one. 
+        Default ``array([0.5,0.5])`` 
     expect: float, optional
         The initialisation of the the expected reward
     stimFunc : function, optional
