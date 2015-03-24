@@ -114,9 +114,9 @@ class outputting(object):
         """
         Identifies and creates the folder the data will be stored in
         
-        Folder will be created as "./Outputs/<date>_<simLabel>/". If that had 
+        Folder will be created as "./Outputs/<simLabel>_<date>/". If that had 
         previously been created then it is created as
-        "./Outputs/<date>_<simLabel>_no_<#>/", where "<#>" is the first
+        "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
         avalable integer.
         
         A subfolder is also created with the name "Pickle"
@@ -129,7 +129,7 @@ class outputting(object):
         """
 
         # While the folders have already been created, check for the next one
-        folderName = './Outputs/' + self.date + "_" + self.label
+        folderName = './Outputs/' + self.label + "_" + self.date
         if exists(folderName):
             i = 1
             folderName += '_no_'
