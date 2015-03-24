@@ -220,9 +220,10 @@ def deckStimDualInfo(maxEventVal):
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
+    devisor = maxEventVal+1#sum(xrange(0,maxEventVal+1))
     
     def deckStim(event, action):
-        stim = (event/maxEventVal)*(1-action) + (1-(event/maxEventVal))*action
+        stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
         stimulus = [stim,1-stim]
         return stimulus
         
