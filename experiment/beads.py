@@ -236,6 +236,26 @@ class Beads(experiment):
 
 
 def generateSequence(numBeads, oneProb, switchProb):
+    """
+    Designed to generate a sequence of beads with a probability of switching 
+    jar at any time.
+    
+    Properties
+    ----------
+    numBeads : int
+        The number of beads in the sequence
+    oneProb : float in ``[0,1]``
+        The probability of a 1 from the first jar. This is also the probability
+        of a 0 from the second jar. 
+    switchProb : float in ``[0,1]``
+        The probability that the drawn beads change the jar they are bieing 
+        drawn from
+        
+    Returns
+    -------
+    sequence : list of ``{0,1}``
+        The generated sequnce of beads
+    """
 
     sequence = zeros(numBeads)
 
@@ -260,7 +280,7 @@ def beadStimDirect():
     Returns
     -------
     beadStim : function
-        The function expects to be passed the event and a decision of {1,2, None} 
+        The function expects to be passed the event and a decision of ``{1,2, None}`` 
         and then return it.
         
     Attributes
@@ -281,13 +301,14 @@ def beadStimDirect():
     
 def beadStimDualDirect():
     """
-    Processes the beads stimuli for models expecting a tuple of [event,1-event] 
+    Processes the beads stimuli for models expecting a tuple of ``[event,1-event]`` 
         
     Returns
     -------
     beadStim : function
         The function expects to be passed the event and a decision of {1,2, None} 
-        and then return [event_info,1-event_info].
+        and then return ``[event,1-event]``, where the event is expected to be
+        ``{1,0}``.
         
     Attributes
     ----------
@@ -314,15 +335,16 @@ def beadStimDualInfo(oneProb):
     
     Parameters
     ----------
-    oneProb : float in [0,1]
+    oneProb : float in ``[0,1]``
         The probability of a 1 from the first jar. This is also the probability
-        of a 0 from the second jar.
+        of a 0 from the second jar. ``event_info`` is calculated as 
+        ``oneProb*event + (1-oneProb)*(1-event)``
         
     Returns
     -------
     beadStim : function
         The function expects to be passed the event and a decision of {1,2, None} 
-        and then return [event_info,1-event_info].
+        and then return ``[event_info,1-event_info]``.
         
     Attributes
     ----------
