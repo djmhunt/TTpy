@@ -25,6 +25,9 @@ class MS_rev(model):
     ----------
     Name : string
         The name of the class used when recording what has been used.
+    currAction : int
+        The current action chosen by the model. Used to pass participant action
+        to model when fitting
     
     Parameters
     ----------

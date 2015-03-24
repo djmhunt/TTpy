@@ -171,6 +171,9 @@ def blankStim():
     -------
     blankStimFunc : function
         The function expects to be passed the event and then return [1,0].
+    currAction : int
+        The current action chosen by the model. Used to pass participant action
+        to model when fitting
         
     Attributes
     ----------
