@@ -190,7 +190,7 @@ def deckStimDirect():
         
     See Also
     --------
-    model.qLearn
+    model.qLearn, model.qLearn2, model.qLearn2a
     """
     
     def deckStim(event, action):

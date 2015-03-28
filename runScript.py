@@ -31,6 +31,8 @@ from model.EP import EP
 from model.MS import MS
 from model.MS_rev import MS_rev
 from model.qLearn import qLearn
+from model.qLearn2 import qLearn2
+from model.qLearn2a import qLearn2a
 from model.RVPM import RVPM
 
 from outputting import outputting
@@ -45,7 +47,6 @@ outputOptions = {'simLabel': 'qLearn_jessData',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
-#                'beta':beta,
                 'gamma':gamma}
 paramExtras = {'beta':beta,
                'stimFunc':deckStimDirect(),
