@@ -106,7 +106,7 @@ class fit(object):
 
         self.exp = exp
         self.model = model
-        self.mInitialParams = modelSetup[0].values()
+        self.mInitialParams = modelSetup[0].values() # These are passed seperately to defineat this point the order of the parameters
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
@@ -114,7 +114,7 @@ class fit(object):
         
         self.partRewards = partData[self.partRewardParam]
 
-        fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mInitialParams[:])
+        fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
         model = self._fittedModel(*fitVals)
 

@@ -53,7 +53,7 @@ class leastsq(fitAlg):
                         'shaper': fitQualFunc}
 
 
-    def fit(self, sim, mInitialParams):
+    def fit(self, sim, mParamNames, mInitialParams):
 
         self.sim = sim
 

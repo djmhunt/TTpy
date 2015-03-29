@@ -24,7 +24,7 @@ class minimize(fitAlg):
         The name of the fitting method or list of names of fitting method or
         name of list of fitting methods. Valid names found in the notes.
         Default ``unconstrained``
-    bounds : list of tuples of length two with floats, optional
+    bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which 
         translates to boundaries of (0,float('Inf')) for each parameter.
@@ -104,6 +104,8 @@ class minimize(fitAlg):
             
         self.count = 1
         
+        self.boundVals = None
+        
 #    def callback(self,Xi):
 #        """
 #        Used for printing state after each stage of fitting
@@ -113,7 +115,7 @@ class minimize(fitAlg):
 #        
 #        self.count += 1
 
-    def fit(self, sim, mInitialParams):
+    def fit(self, sim, mParamNames, mInitialParams):
         """
         Runs the model through the fitting algorithms and starting parameters 
         and returns the best one.
@@ -123,6 +125,8 @@ class minimize(fitAlg):
         sim : function
             The function used by a fitting algorithm to generate a fit for 
             given model parameters. One example is fit.fitness
+        mParamNames : list of strings
+            The list of initial parameter names
         mInitialParams : list of floats
             The list of the intial parameters
             
@@ -144,14 +148,21 @@ class minimize(fitAlg):
         method=self.method
         methodSet = self.methodSet
         bounds = self.bounds
+        boundVals = self.boundVals
         boundFit = self.boundFit
         numStartPoints = self.numStartPoints
         
         if bounds == None:
-            bounds = [(0,float('Inf')) for i in mInitialParams]
+            boundVals = [(0,float('Inf')) for i in mInitialParams]
+            bounds = {k : v for k, v in izip(mParamNames, boundVals)}
             self.bounds = bounds
+            self.boundVals = boundVals
+            
+        if boundVals == None:
+            boundVals = [ bounds[k] for k in mParamNames]
+            self.boundVals = boundVals
         
-        initParamSets = self.startParams(mInitialParams, bounds = bounds, numPoints = numStartPoints)
+        initParamSets = self.startParams(mInitialParams, bounds = boundVals, numPoints = numStartPoints)
 
         if method == None:
 
@@ -160,13 +171,13 @@ class minimize(fitAlg):
 
             for method in methodSet:
                 
-                optimizeResult = self._methodFit(method, initParamSets, bounds, boundFit = boundFit)
+                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
 
                 if optimizeResult != None:
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
                     
-            bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit)
+            bestResult = self._bestfit(resultSet, boundVals, boundFit = boundFit)
 
             if bestResult == None:
                 return mInitialParams, float("inf")
@@ -177,7 +188,7 @@ class minimize(fitAlg):
                 return fitParams, fitVal
 
         else:
-            optimizeResult = self._methodFit(method, initParamSets, bounds, boundFit = boundFit)
+            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
 
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
@@ -210,6 +221,17 @@ class minimize(fitAlg):
             return None
         
         genFitVal, genFitid = min((r.fun, idx) for (idx, r) in enumerate(resultSet))
+        
+#        # Debug code
+#        data = {}
+#        data["fitVal"] = [o.fun for o in resultSet]
+#        data['nIter'] = [o.nit for o in resultSet]
+#        data['parameters'] = [o.x for o in resultSet] 
+#        data['success'] = [o.success for o in resultSet] 
+#        data['nfev'] = [o.nfev for o in resultSet]
+#        data['message'] = [o.message for o in resultSet] 
+#        data['jac'] = [o.jac for o in resultSet]
+#        pytest.set_trace()
             
         # If boundary fits are acceptable 
         if boundFit:
@@ -230,34 +252,6 @@ class minimize(fitAlg):
                 fitVal, fitid = min((r.fun, idx) for (idx, r) in enumerate(reducedResults))
                         
                 return resultSet[fitid]
-        
-        #debug code
-#        data = {"initAlpha":[],
-#                "initTheta":[],
-#                "fitVal":[],
-#                "nIter":[],
-#                "alpha":[],
-#                "theta":[],
-#                "success":[], 
-#                "nfev":[], 
-#                "message":[],
-#                "jacAlpha":[], 
-#                "jacTheta":[]}
-        
-#            # Debug code
-#            o = optimizeResult
-#            data["initAlpha"].append(i[0])
-#            data["initTheta"].append(i[1])
-#            data["fitVal"].append(o.fun)
-#            data['nIter'].append(o.nit)
-#            data['alpha'].append(o.x[0]) 
-#            data['theta'].append(o.x[1])
-#            data['success'].append(o.success) 
-#            data['nfev'].append(o.nfev)
-#            data['message'].append(o.message) 
-#            data['jacAlpha'].append(o.jac[0])
-#            data['jacTheta'].append(o.jac[1])
-#        pytest.set_trace()
 
 
     def _setType(self,method,bounds):

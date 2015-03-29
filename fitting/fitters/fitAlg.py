@@ -94,7 +94,7 @@ class fitAlg(object):
         
         return fit
 
-    def fit(self, sim, mInitialParams):
+    def fit(self, sim, mParamNames, mInitialParams):
         """
         Runs the model through the fitting algorithms and starting parameters 
         and returns the best one. This is the abstract version that always 
@@ -105,6 +105,8 @@ class fitAlg(object):
         sim : function
             The function used by a fitting algorithm to generate a fit for 
             given model parameters. One example is ``fit.fitness``
+        mParamNames : list of strings
+            The list of initial parameter names
         mInitialParams : list of floats
             The list of the intial parameters
             
@@ -162,6 +164,14 @@ class fitAlg(object):
         See Also
         --------
         fitAlg.startParamVals : Used in this function
+        
+        Examples
+        --------
+        >>> self.startParams([0.5,0.5], numPoints=2)
+        array([[ 0.33333333,  0.33333333],
+               [ 0.66666667,  0.33333333],
+               [ 0.33333333,  0.66666667],
+               [ 0.66666667,  0.66666667]])
         """
 
         if bounds == None:
@@ -169,6 +179,9 @@ class fitAlg(object):
             startLists = (self.startParamVals(i, numPoints = numPoints) for i in initialParams)
 
         else: 
+            if len(bounds) != len(initialParams):
+                raise ValueError('Bounds do not fit number of intial parameters', str(len(bounds)), str(len(initialParams))) 
+            
             startLists = (self.startParamVals(i, bMax = bMax, numPoints = numPoints) for i, (bMin, bMax) in izip(initialParams,bounds))
             
         startSets = listMergeNP(*startLists)
