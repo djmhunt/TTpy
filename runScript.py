@@ -2,6 +2,8 @@
 """
 :Author: Dominic Hunt
 
+Notes
+-----
 This is a script with all the components for running an investigation. I would 
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.

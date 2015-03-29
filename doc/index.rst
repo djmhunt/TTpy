@@ -11,18 +11,19 @@ Contents:
 .. toctree::
    :maxdepth: 4
    
-   dataFitting   
+   runScript
+   simulation
+   dataFitting 
    data
    experiments
    experiment
    models
    model
    fitting
-   inputs
    outputting
-   plotting
-   simulation
    utils
+   plotting
+   inputs
    vtkWriter
 
 
