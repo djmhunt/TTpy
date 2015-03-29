@@ -80,8 +80,9 @@
 <span class="sd">        Decision threshold parameter</span>
 <span class="sd">    oneProb : array, optional</span>
 <span class="sd">        The prior probability</span>
-<span class="sd">    prior : array, optional</span>
-<span class="sd">        The prior probability </span>
+<span class="sd">    prior : array of two floats in ``[0,1]`` or just float in range, optional</span>
+<span class="sd">        The prior probability of of the two states being the correct one. </span>
+<span class="sd">        Default ``array([0.5,0.5])``</span>
 <span class="sd">    stimFunc : function, optional</span>
 <span class="sd">        The function that transforms the stimulus into a form the model can </span>
 <span class="sd">        understand and a string to identify it later. Default is blankStim</span>
@@ -220,6 +221,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    blankStimFunc : function</span>
 <span class="sd">        The function expects to be passed the event and then return [1,0].</span>
+<span class="sd">    currAction : int</span>
+<span class="sd">        The current action chosen by the model. Used to pass participant action</span>
+<span class="sd">        to model when fitting</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>

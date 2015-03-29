@@ -224,7 +224,7 @@ output later</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
 <blockquote class="last">
-<div><p>The function expects to be passed the event and a decision of {1,2, None} 
+<div><p>The function expects to be passed the event and a decision of <tt class="docutils literal"><span class="pre">{1,2,</span> <span class="pre">None}</span></tt> 
 and then return it.</p>
 </div></blockquote>
 </td>
@@ -252,7 +252,7 @@ and then return it.</p>
 <dl class="function">
 <dt id="experiment.beads.beadStimDualDirect">
 <tt class="descclassname">experiment.beads.</tt><tt class="descname">beadStimDualDirect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#beadStimDualDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDualDirect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the beads stimuli for models expecting a tuple of [event,1-event]</p>
+<dd><p>Processes the beads stimuli for models expecting a tuple of <tt class="docutils literal"><span class="pre">[event,1-event]</span></tt></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -260,7 +260,8 @@ and then return it.</p>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
 <blockquote class="last">
 <div><p>The function expects to be passed the event and a decision of {1,2, None} 
-and then return [event_info,1-event_info].</p>
+and then return <tt class="docutils literal"><span class="pre">[event,1-event]</span></tt>, where the event is expected to be
+<tt class="docutils literal"><span class="pre">{1,0}</span></tt>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -293,17 +294,18 @@ from two possible actions</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>oneProb</strong> : float in [0,1]</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>oneProb</strong> : float in <tt class="docutils literal"><span class="pre">[0,1]</span></tt></p>
 <blockquote>
 <div><p>The probability of a 1 from the first jar. This is also the probability
-of a 0 from the second jar.</p>
+of a 0 from the second jar. <tt class="docutils literal"><span class="pre">event_info</span></tt> is calculated as 
+<tt class="docutils literal"><span class="pre">oneProb*event</span> <span class="pre">+</span> <span class="pre">(1-oneProb)*(1-event)</span></tt></p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
 <blockquote class="last">
 <div><p>The function expects to be passed the event and a decision of {1,2, None} 
-and then return [event_info,1-event_info].</p>
+and then return <tt class="docutils literal"><span class="pre">[event_info,1-event_info]</span></tt>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -330,7 +332,21 @@ and then return [event_info,1-event_info].</p>
 <dl class="function">
 <dt id="experiment.beads.generateSequence">
 <tt class="descclassname">experiment.beads.</tt><tt class="descname">generateSequence</tt><big>(</big><em>numBeads</em>, <em>oneProb</em>, <em>switchProb</em><big>)</big><a class="reference internal" href="_modules/experiment/beads.html#generateSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.generateSequence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Designed to generate a sequence of beads with a probability of switching 
+jar at any time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sequence</strong> : list of <tt class="docutils literal"><span class="pre">{0,1}</span></tt></p>
+<blockquote class="last">
+<div><p>The generated sequnce of beads</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="experiment.beads.rand">
@@ -519,7 +535,7 @@ last action. The function returns the event.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></a></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></a>, <a class="reference internal" href="model.html#module-model.qLearn2" title="model.qLearn2"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></tt></a>, <a class="reference internal" href="model.html#module-model.qLearn2a" title="model.qLearn2a"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2a</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -1050,8 +1066,9 @@ If an int, the random sample is generated as if a was np.arange(n)</p>
 </div></blockquote>
 <p><strong>size</strong> : int or tuple of ints, optional</p>
 <blockquote>
-<div><p>Output shape. Default is None, in which case a single value is
-returned.</p>
+<div><p>Output shape.  If the given shape is, e.g., <tt class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></tt>, then
+<tt class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></tt> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
 </div></blockquote>
 <p><strong>replace</strong> : boolean, optional</p>
 <blockquote>
@@ -1060,7 +1077,7 @@ returned.</p>
 <p><strong>p</strong> : 1-D array-like, optional</p>
 <blockquote>
 <div><p>The probabilities associated with each entry in a.
-If not given the sample assumes a uniform distribtion over all
+If not given the sample assumes a uniform distribution over all
 entries in a.</p>
 </div></blockquote>
 </td>
@@ -1103,7 +1120,7 @@ size</p>
 replacement:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="go">array([3,1,0])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c">#This is equivalent to np.random.shuffle(np.arange(5))[:3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
 </pre></div>
 </div>
 <p>Generate a non-uniform random sample from np.arange(5) of size
@@ -1176,8 +1193,9 @@ the output of <cite>random_sample</cite> by <cite>(b-a)</cite> and add <cite>a</
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>size</strong> : int or tuple of ints, optional</p>
 <blockquote>
-<div><p>Defines the shape of the returned array of random floats. If None
-(the default), returns a single float.</p>
+<div><p>Output shape.  If the given shape is, e.g., <tt class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></tt>, then
+<tt class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></tt> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
 </div></blockquote>
 </td>
 </tr>

@@ -286,6 +286,26 @@
 
 </div></div></div>
 <div class="viewcode-block" id="generateSequence"><a class="viewcode-back" href="../../experiment.html#experiment.beads.generateSequence">[docs]</a><span class="k">def</span> <span class="nf">generateSequence</span><span class="p">(</span><span class="n">numBeads</span><span class="p">,</span> <span class="n">oneProb</span><span class="p">,</span> <span class="n">switchProb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Designed to generate a sequence of beads with a probability of switching </span>
+<span class="sd">    jar at any time.</span>
+<span class="sd">    </span>
+<span class="sd">    Properties</span>
+<span class="sd">    ----------</span>
+<span class="sd">    numBeads : int</span>
+<span class="sd">        The number of beads in the sequence</span>
+<span class="sd">    oneProb : float in ``[0,1]``</span>
+<span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
+<span class="sd">        of a 0 from the second jar. </span>
+<span class="sd">    switchProb : float in ``[0,1]``</span>
+<span class="sd">        The probability that the drawn beads change the jar they are bieing </span>
+<span class="sd">        drawn from</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sequence : list of ``{0,1}``</span>
+<span class="sd">        The generated sequnce of beads</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">sequence</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">numBeads</span><span class="p">)</span>
 
@@ -310,7 +330,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        The function expects to be passed the event and a decision of ``{1,2, None}`` </span>
 <span class="sd">        and then return it.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
@@ -331,13 +351,14 @@
     </div>
 <div class="viewcode-block" id="beadStimDualDirect"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDualDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the beads stimuli for models expecting a tuple of [event,1-event] </span>
+<span class="sd">    Processes the beads stimuli for models expecting a tuple of ``[event,1-event]`` </span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
 <span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
-<span class="sd">        and then return [event_info,1-event_info].</span>
+<span class="sd">        and then return ``[event,1-event]``, where the event is expected to be</span>
+<span class="sd">        ``{1,0}``.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -364,15 +385,16 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    oneProb : float in [0,1]</span>
+<span class="sd">    oneProb : float in ``[0,1]``</span>
 <span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
-<span class="sd">        of a 0 from the second jar.</span>
+<span class="sd">        of a 0 from the second jar. ``event_info`` is calculated as </span>
+<span class="sd">        ``oneProb*event + (1-oneProb)*(1-event)``</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
 <span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
-<span class="sd">        and then return [event_info,1-event_info].</span>
+<span class="sd">        and then return ``[event_info,1-event_info]``.</span>
 <span class="sd">        </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>

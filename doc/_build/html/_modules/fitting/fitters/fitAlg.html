@@ -144,7 +144,7 @@
         
         <span class="k">return</span> <span class="n">fit</span>
 </div>
-<div class="viewcode-block" id="fitAlg.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
+<div class="viewcode-block" id="fitAlg.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the model through the fitting algorithms and starting parameters </span>
 <span class="sd">        and returns the best one. This is the abstract version that always </span>
@@ -155,6 +155,8 @@
 <span class="sd">        sim : function</span>
 <span class="sd">            The function used by a fitting algorithm to generate a fit for </span>
 <span class="sd">            given model parameters. One example is ``fit.fitness``</span>
+<span class="sd">        mParamNames : list of strings</span>
+<span class="sd">            The list of initial parameter names</span>
 <span class="sd">        mInitialParams : list of floats</span>
 <span class="sd">            The list of the intial parameters</span>
 <span class="sd">            </span>
@@ -212,6 +214,14 @@
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        fitAlg.startParamVals : Used in this function</span>
+<span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; self.startParams([0.5,0.5], numPoints=2)</span>
+<span class="sd">        array([[ 0.33333333,  0.33333333],</span>
+<span class="sd">               [ 0.66666667,  0.33333333],</span>
+<span class="sd">               [ 0.33333333,  0.66666667],</span>
+<span class="sd">               [ 0.66666667,  0.66666667]])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">bounds</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
@@ -219,6 +229,9 @@
             <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initialParams</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Bounds do not fit number of intial parameters&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">)))</span> 
+            
             <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="n">bounds</span><span class="p">))</span>
             
         <span class="n">startSets</span> <span class="o">=</span> <span class="n">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">startLists</span><span class="p">)</span>
