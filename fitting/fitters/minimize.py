@@ -6,6 +6,7 @@ from __future__ import division
 
 from fitAlg import fitAlg
 
+from numpy import array, around
 from scipy import optimize
 from itertools import izip
 
@@ -34,6 +35,11 @@ class minimize(fitAlg):
     boundFit : bool, optional
         Defines if fits that reach a boundary should be considered the same way
         as those that do not. Default is True
+    boundSensitivity : int, optional
+        Defines the smallest number of decimal places difference (so the 
+        minimal difference) between a fit value and its related boundaries
+        before a fit value is considered different from a boundary. The default
+        is `5`. This is only valid if ``boundFit`` is ``False``
         
     Attributes
     ----------
@@ -76,10 +82,11 @@ class minimize(fitAlg):
     constrained = ['L-BFGS-B','TNC','SLSQP']
 
 
-    def __init__(self,fitQualFunc = None, method = None, bounds = None, numStartPoints = 4, boundFit = True):
+    def __init__(self,fitQualFunc = None, method = None, bounds = None, numStartPoints = 4, boundFit = True, boundSensitivity = 5):
         
         self.numStartPoints = numStartPoints
         self.boundFit = boundFit
+        self.boundSensitivity = boundSensitivity
 
         if fitQualFunc == "-2log":
             self.fitness = self.logprob
@@ -94,7 +101,8 @@ class minimize(fitAlg):
                         'fitQualityFunction': fitQualFunc,
                         'bounds':self.bounds,
                         'numStartPoints' : self.numStartPoints,
-                        'boundFit' : self.boundFit
+                        'boundFit' : self.boundFit,
+                        'boundSensitivity' : self.boundSensitivity
                         }
 
         if self.methodSet == None:
@@ -150,6 +158,7 @@ class minimize(fitAlg):
         bounds = self.bounds
         boundVals = self.boundVals
         boundFit = self.boundFit
+        boundSensitivity = self.boundSensitivity
         numStartPoints = self.numStartPoints
         
         if bounds == None:
@@ -177,7 +186,7 @@ class minimize(fitAlg):
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
                     
-            bestResult = self._bestfit(resultSet, boundVals, boundFit = boundFit)
+            bestResult = self._bestfit(resultSet, boundVals, boundFit = boundFit, boundSensitivity = boundSensitivity)
 
             if bestResult == None:
                 return mInitialParams, float("inf")
@@ -195,7 +204,7 @@ class minimize(fitAlg):
 
             return fitParams, fitVal
             
-    def _methodFit(self,method, initParamSets, bounds, boundFit = True):
+    def _methodFit(self,method, initParamSets, bounds, boundFit = True, boundSensitivity = 5):
         
         resultSet = []
         
@@ -210,11 +219,11 @@ class minimize(fitAlg):
             if optimizeResult.success == True:
                 resultSet.append(optimizeResult)
                 
-        bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit)
+        bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit, boundSensitivity = boundSensitivity)
         
         return bestResult
         
-    def _bestfit(self, resultSet, bounds, boundFit = True):
+    def _bestfit(self, resultSet, bounds, boundFit = True, boundSensitivity = 5):
     
         # Check that there are fits
         if len(resultSet) == 0:
@@ -222,15 +231,16 @@ class minimize(fitAlg):
         
         genFitVal, genFitid = min((r.fun, idx) for (idx, r) in enumerate(resultSet))
         
-#        # Debug code
+        # Debug code
 #        data = {}
-#        data["fitVal"] = [o.fun for o in resultSet]
-#        data['nIter'] = [o.nit for o in resultSet]
-#        data['parameters'] = [o.x for o in resultSet] 
-#        data['success'] = [o.success for o in resultSet] 
-#        data['nfev'] = [o.nfev for o in resultSet]
-#        data['message'] = [o.message for o in resultSet] 
-#        data['jac'] = [o.jac for o in resultSet]
+#        data["fitVal"] = array([o.fun for o in resultSet])
+#        data['nIter'] = array([o.nit for o in resultSet])
+#        data['parameters'] = array([o.x for o in resultSet]) 
+#        data['success'] = array([o.success for o in resultSet]) 
+#        data['nfev'] = array([o.nfev for o in resultSet])
+#        data['message'] = array([o.message for o in resultSet]) 
+#        data['jac'] = array([o.jac for o in resultSet])
+#        print array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T
 #        pytest.set_trace()
             
         # If boundary fits are acceptable 
@@ -240,7 +250,7 @@ class minimize(fitAlg):
         else: 
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in izip(r.x,bounds) if fitVal in boundVals]
+                invalid = [1 for fitVal, boundVals in izip(r.x,bounds) if any(around(fitVal-boundVals,boundSensitivity)==0)]
                 
                 if 1 not in invalid:
                     reducedResults.append(r)
@@ -251,7 +261,7 @@ class minimize(fitAlg):
             else:
                 fitVal, fitid = min((r.fun, idx) for (idx, r) in enumerate(reducedResults))
                         
-                return resultSet[fitid]
+                return reducedResults[fitid]
 
 
     def _setType(self,method,bounds):
