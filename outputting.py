@@ -340,7 +340,7 @@ class outputting(object):
         message = "The fit will use the model '" + modelName + "'"
         
         modelFitParams = [k + ' around ' + str(v).strip('[]()') for k,v in modelFitVars.iteritems()]
-        message += " fited with the parameters " + ", ".join(modelFitParams)
+        message += " fitted with the parameters " + ", ".join(modelFitParams)
         
         modelParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
         modelFuncs = [k + ' = ' + v.Name for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
@@ -369,7 +369,7 @@ class outputting(object):
         params = modelFitVars.keys()
         
         modelFitParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelParams.iteritems() if k in params]
-        message = "The fited values are " + ", ".join(modelFitParams)
+        message = "The fitted values are " + ", ".join(modelFitParams)
         
         message += " with a fit quality of " + str(fitQuality) + "."
         
