@@ -10,8 +10,39 @@ import pandas as pd
 
 from os import listdir
 from scipy.io import loadmat
-from numpy import array, shape
+from numpy import array, shape, concatenate
 from itertools import izip
+
+def datasets(folders, fileTypes):
+    """
+    A function for reading in multiple datasets in one go
+    
+    Parameters
+    ----------
+    folders : list of strings
+        The folder strings should end in a "/"
+    fileType : list of strings
+        The file extensions found after the ".". Currently only mat files are 
+        supported.
+    
+    Returns
+    -------
+    dataSet : list of dictionaries
+    
+    See Also
+    --------
+    data : The function called by this one
+    """
+    dataSetList = []
+    for folder, fileType in izip(folders,fileTypes):
+        
+        d = data(folder,fileType)
+        
+        dataSetList.append(d)
+        
+    dataSet = concatenate(dataSetList)
+        
+    return dataSet
 
 def data(folder,fileType):
     """A function for reading in and returning a dataset
@@ -30,8 +61,7 @@ def data(folder,fileType):
     
     See Also
     --------
-    getFiles : finds the files
-    getmatData : imports and formats the mat data
+    data: The
     
     Examples
     --------
@@ -248,9 +278,9 @@ def getmatData(folder, files):
 
         mat = loadmat(folder + f)
 
-        data = {}
+        dataD = {}
         
-        data["fileName"] = f
+        dataD["fileName"] = f
 
         for m, v in mat.iteritems():
             if m[0:2] != "__":
@@ -258,10 +288,10 @@ def getmatData(folder, files):
                 if len(shape(d)) != 1:
                     d = d.T[0]
                 if len(d) == 1:
-                    data[m] = d[0]
+                    dataD[m] = d[0]
                 else:
-                    data[m] = d
+                    dataD[m] = d
 
-        dataSets.append(data)
+        dataSets.append(dataD)
 
     return dataSets
