@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: Dominic
+:Author: Dominic Hunt
+
+The top level pytest running function
+
+See Also
+--------
+pytest
 """
 
 import pytest
