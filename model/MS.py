@@ -93,7 +93,6 @@ class MS(model):
         self.recEvents = []
         self.recProbabilities = []
         self.recActionProb = []
-        self.recProbDifference = []
         self.recActivity = []
         self.recDecision = []
 
@@ -126,7 +125,6 @@ class MS(model):
 
         results["Probabilities"] = array(self.recProbabilities)
         results["ActionProb"] = array(self.recActionProb)
-        results["ProbDifference"] = array(self.recProbDifference)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
@@ -175,7 +173,6 @@ class MS(model):
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
         self.recActionProb.append(self.probabilities[self.currAction])
-        self.recProbDifference.append(self.probDifference)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
@@ -213,7 +210,7 @@ class MS(model):
 
             gainLables = array(["Gain " + str(m["gamma"]) for m in self.modelStore])
 
-            dP = array([m["ProbDifference"] for m in self.modelStore])
+            dP = array([m["Probabilities"][:,0] - m["Probabilities"][:,1] for m in self.modelStore])
             events = array(self.modelStore[0]["Events"])
 
             axisLabels = {"title":"Confidence by Learning Trial for Different Gain Parameters"}

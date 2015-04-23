@@ -91,7 +91,6 @@ class MS_rev(model):
         self.recEvents = []
         self.recProbabilities = []
         self.recActionProb = []
-        self.recProbDifference = []
         self.recActivity = []
         self.recDecision = []
 
@@ -124,7 +123,6 @@ class MS_rev(model):
 
         results["Probabilities"] = array(self.recProbabilities)
         results["ActionProb"] = array(self.recActionProb)
-        results["ProbDifference"] = array(self.recProbDifference)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
@@ -160,7 +158,7 @@ class MS_rev(model):
         self._newActivity(event)
 
         #Calculate the new probabilities
-        self._prob()
+        self.probabilities = self._prob(self.activity)
 
     def storeState(self):
         """ 
@@ -170,26 +168,24 @@ class MS_rev(model):
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
         self.recActionProb.append(self.probabilities[self.currAction])
-        self.recProbDifference.append(self.probDifference)
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
     def _newActivity(self, event):
         self.activity = self.activity + (event - self.activity)  * self.alpha
 
-    def _prob(self):
+    def _prob(self, expectation):
         # The probability of a given jar, using the Luce choice model
 
 #        li = self.activity ** self.gamma
 #        p = li/sum(li)
 
-        numerat = exp(self.gamma*self.activity)
+        numerat = exp(self.gamma*expectation)
         denom = sum(numerat)
 
         p = numerat / denom
-
-        self.probabilities = p
-        self.probDifference = p[0] - p[1]
+        
+        return p
         
 def blankStim():
     """

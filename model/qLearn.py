@@ -158,7 +158,7 @@ class qLearn(model):
         self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
 
         #Calculate the new probabilities
-        self._prob()
+        self.probabilities = self._prob(self.expectation)
 
     def storeState(self):
         """ 
@@ -172,12 +172,14 @@ class qLearn(model):
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
 
-    def _prob(self):
+    def _prob(self, expectation):
 
-        numerat = exp(self.gamma*self.expectation)
+        numerat = exp(self.gamma*expectation)
         denom = sum(numerat)
 
-        self.probabilities= numerat / denom
+        p = numerat / denom
+        
+        return p
         
 def blankStim():
     """

@@ -147,7 +147,7 @@ class EP(model):
         self._newAct(event)
 
         #Calculate the new probabilities
-        self._prob()
+        self.probabilities = self._prob(self.activity)
 
     def storeState(self):
         """" 
@@ -165,13 +165,15 @@ class EP(model):
 
         self.activity = self.activity + (event-self.activity)* self.alpha
 
-    def _prob(self):
+    def _prob(self, expectation):
         """ Calculate the new probabilities of different actions """
         
-        numerat = exp(self.gamma*self.activity)
+        numerat = exp(self.gamma*expectation)
         denom = sum(numerat)
 
-        self.probabilities= numerat / denom
+        p = numerat / denom
+        
+        return p
 
 #        diff = 2*self.activity - sum(self.activity)
 #        p = 1.0 / (1.0 + exp(-self.gamma*diff))

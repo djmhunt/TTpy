@@ -180,7 +180,7 @@ class qLearn2a(model):
         self._expectUpdate(event, chosen)
 
         #Calculate the new probabilities
-        self._prob(chosen)
+        self.probabilities = self._prob(self.expectation)
     
     def _expectUpdate(self, event, chosen):
         
@@ -204,12 +204,14 @@ class qLearn2a(model):
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
 
-    def _prob(self, choice):
+    def _prob(self, expectation):
         
-        numerat = exp(self.gamma*self.expectation)
+        numerat = exp(self.gamma*expectation)
         denom = sum(numerat)
 
-        self.probabilities= numerat / denom
+        p = numerat / denom
+        
+        return p
         
 def blankStim():
     """

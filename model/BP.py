@@ -136,7 +136,7 @@ class BP(model):
         self.recEvents.append(event)
 
         #Calculate the new probabilities
-        self._prob(event)
+        self.probabilities = self._prob(self.posteriorProb)
 
     def storeState(self):
         """ 
@@ -150,12 +150,14 @@ class BP(model):
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
 
-    def _prob(self, event):
+    def _prob(self, expectation):
 
-        numerat = exp(self.gamma*self.posteriorProb)
+        numerat = exp(self.gamma*expectation)
         denom = sum(numerat)
 
-        self.probabilities= numerat / denom
+        p = numerat / denom
+        
+        return p
 
 #        li = self.posteriorProb * event
 #        self.posteriorProb = li/sum(li)
