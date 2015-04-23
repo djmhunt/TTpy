@@ -10,8 +10,8 @@ import pandas as pd
 
 from os import listdir
 from scipy.io import loadmat
-from numpy import array, shape, concatenate
-from itertools import izip
+from numpy import array, shape
+from itertools import izip, chain
 
 def datasets(folders, fileTypes):
     """
@@ -40,7 +40,7 @@ def datasets(folders, fileTypes):
         
         dataSetList.append(d)
         
-    dataSet = concatenate(dataSetList)
+    dataSet = list(chain(*dataSetList))
         
     return dataSet
 
