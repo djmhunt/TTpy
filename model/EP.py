@@ -167,11 +167,16 @@ class EP(model):
 
     def _prob(self):
         """ Calculate the new probabilities of different actions """
+        
+        numerat = exp(self.gamma*self.activity)
+        denom = sum(numerat)
 
-        diff = 2*self.activity - sum(self.activity)
-        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+        self.probabilities= numerat / denom
 
-        self.probabilities = p
+#        diff = 2*self.activity - sum(self.activity)
+#        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+#
+#        self.probabilities = p
         
 def blankStim():
     """

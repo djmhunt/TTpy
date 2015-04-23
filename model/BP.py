@@ -152,16 +152,18 @@ class BP(model):
 
     def _prob(self, event):
 
+        numerat = exp(self.gamma*self.posteriorProb)
+        denom = sum(numerat)
 
-        li = self.posteriorProb * event
-        self.posteriorProb = li/sum(li)
+        self.probabilities= numerat / denom
 
-#        self.probabilities = 1.0/(1.0 +exp(-self.gamma*(self.posteriorProb-0.5)))
-
-        diff = 2*self.posteriorProb - sum(self.posteriorProb)
-        p = 1.0 / (1.0 + exp(-self.gamma*diff))
-
-        self.probabilities = p
+#        li = self.posteriorProb * event
+#        self.posteriorProb = li/sum(li)
+#
+#        diff = 2*self.posteriorProb - sum(self.posteriorProb)
+#        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+#
+#        self.probabilities = p
         
 def blankStim():
     """

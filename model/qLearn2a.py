@@ -16,7 +16,6 @@ from __future__ import division
 import logging
 
 from numpy import exp, zeros, array
-from random import choice
 
 from model import model
 from modelPlot import modelPlot
@@ -207,12 +206,10 @@ class qLearn2a(model):
 
     def _prob(self, choice):
         
-        expec = self.expectation
-        
-        diff = expec[choice] - expec[1-choice] - self.nu
-        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+        numerat = exp(self.gamma*self.expectation)
+        denom = sum(numerat)
 
-        self.probabilities[choice] = p
+        self.probabilities= numerat / denom
         
 def blankStim():
     """

@@ -183,8 +183,10 @@ class MS_rev(model):
 #        li = self.activity ** self.gamma
 #        p = li/sum(li)
 
-        diff = 2*self.activity - sum(self.activity)
-        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+        numerat = exp(self.gamma*self.activity)
+        denom = sum(numerat)
+
+        p = numerat / denom
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
