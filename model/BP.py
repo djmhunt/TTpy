@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 :Author: Dominic Hunt
+
+:Notes: In the version this model used the Luce choice algorithm,
+        rather than the logistic algorithm used here.
 """
 from __future__ import division
 
@@ -134,9 +137,12 @@ class BP(model):
         event = self.stimFunc(events, self.currAction)
         
         self.recEvents.append(event)
+        
+        postProb = self._postProb(self, event, self.posteriorProb)
+        self.posteriorProb = postProb
 
         #Calculate the new probabilities
-        self.probabilities = self._prob(self.posteriorProb)
+        self.probabilities = self._prob(postProb)
 
     def storeState(self):
         """ 
@@ -149,6 +155,13 @@ class BP(model):
         self.recActionProb.append(self.probabilities[self.currAction])
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
+        
+    def _postProb(self, event, postProb):
+        
+        li = postProb * event
+        newProb = li/sum(li)
+        
+        return newProb
 
     def _prob(self, expectation):
 
@@ -158,9 +171,6 @@ class BP(model):
         p = numerat / denom
         
         return p
-
-#        li = self.posteriorProb * event
-#        self.posteriorProb = li/sum(li)
 #
 #        diff = 2*self.posteriorProb - sum(self.posteriorProb)
 #        p = 1.0 / (1.0 + exp(-self.gamma*diff))

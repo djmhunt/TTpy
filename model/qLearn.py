@@ -154,8 +154,8 @@ class qLearn(model):
         
         self.recEvents.append(event)
 
-        #Calculate jar information
-        self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
+        #Find the new activites
+        self._newAct(event, chosen)
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
@@ -171,6 +171,10 @@ class qLearn(model):
         self.recActionProb.append(self.probabilities[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
+        
+    def _newAct(self,event, chosen):
+        
+        self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
 
     def _prob(self, expectation):
 
