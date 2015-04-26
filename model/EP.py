@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 :Author: Dominic Hunt
+
+:Notes: In the version this model used the Luce choice algorithm,
+        rather than the logistic algorithm used here.
 """
 from __future__ import division
 
@@ -163,7 +166,7 @@ class EP(model):
 
     def _newAct(self,event):
 
-        self.activity = self.activity + (event-self.activity)* self.alpha
+        self.activity = self.activity + self.alpha * (event-self.activity)
 
     def _prob(self, expectation):
         """ Calculate the new probabilities of different actions """
