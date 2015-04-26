@@ -204,11 +204,11 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-        <span class="c">#Calculate jar information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">])</span>
+        <span class="c">#Find the new activites</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_newAct</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
 
         <span class="c">#Calculate the new probabilities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">)</span>
 
 <div class="viewcode-block" id="qLearn.storeState"><a class="viewcode-back" href="../../model.html#model.qLearn.qLearn.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
@@ -221,13 +221,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_newAct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">])</span>
 
-        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+
+        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">expectation</span><span class="p">)</span>
         <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        
+        <span class="k">return</span> <span class="n">p</span>
         </div>
 <div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.qLearn.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>

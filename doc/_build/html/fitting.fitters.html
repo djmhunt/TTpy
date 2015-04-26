@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="up" title="fitting package" href="fitting.html" />
-    <link rel="next" title="inputs module" href="inputs.html" />
+    <link rel="next" title="outputting module" href="outputting.html" />
     <link rel="prev" title="fitting package" href="fitting.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="inputs.html" title="inputs module"
+          <a href="outputting.html" title="outputting module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="fitting package"
@@ -409,7 +409,7 @@ Default 4</p>
 </table>
 <dl class="class">
 <dt id="fitting.fitters.minimize.minimize">
-<em class="property">class </em><tt class="descclassname">fitting.fitters.minimize.</tt><tt class="descname">minimize</tt><big>(</big><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fitting.fitters.minimize.</tt><tt class="descname">minimize</tt><big>(</big><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><tt class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></tt></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -439,9 +439,16 @@ translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
 Default 4</p>
 </div></blockquote>
 <p><strong>boundFit</strong> : bool, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Defines if fits that reach a boundary should be considered the same way
 as those that do not. Default is True</p>
+</div></blockquote>
+<p><strong>boundSensitivity</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>Defines the smallest number of decimal places difference (so the 
+minimal difference) between a fit value and its related boundaries
+before a fit value is considered different from a boundary. The default
+is <cite>5</cite>. This is only valid if <tt class="docutils literal"><span class="pre">boundFit</span></tt> is <tt class="docutils literal"><span class="pre">False</span></tt></p>
 </div></blockquote>
 </td>
 </tr>
@@ -621,8 +628,8 @@ given model parameters. One example is fit.fitness</p>
   <p class="topless"><a href="fitting.html"
                         title="previous chapter">fitting package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="inputs.html"
-                        title="next chapter">inputs module</a></p>
+  <p class="topless"><a href="outputting.html"
+                        title="next chapter">outputting module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/fitting.fitters.txt"
@@ -655,7 +662,7 @@ given model parameters. One example is fit.fitness</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="inputs.html" title="inputs module"
+          <a href="outputting.html" title="outputting module"
              >next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="fitting package"

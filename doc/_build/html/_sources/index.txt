@@ -3,15 +3,29 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyDM's documentation!
+PyDM!
 ================================
+
+.. inheritance-diagram:: dataFitting
+   data
+   dataFitting
+   experiment
+   experiments
+   fitting
+   inputs
+   model
+   models
+   outputting
+   plotting
+   simulation
+   utils
+   vtkWriter
 
 Contents:
 
 .. toctree::
    :maxdepth: 4
    
-   runScript
    simulation
    dataFitting 
    data

@@ -91,14 +91,6 @@ model.qLearn2 module
     :undoc-members:
     :show-inheritance:
 
-model.qLearn2a module
----------------------
-
-.. automodule:: model.qLearn2a
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

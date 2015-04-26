@@ -59,6 +59,10 @@
 <span class="sd">                The Journal of Neuroscience : The Official Journal of the </span>
 <span class="sd">                Society for Neuroscience, 26(32), 8360–7. </span>
 <span class="sd">                doi:10.1523/JNEUROSCI.1010-06.2006</span>
+<span class="sd">                </span>
+<span class="sd">:Notes: In the original paper this model used the Luce choice algorithm,</span>
+<span class="sd">        rather than the logistic algorithm used here. This generalisation has </span>
+<span class="sd">        meant that the variable nu is no longer possible to use.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
@@ -66,7 +70,6 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">array</span>
-<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 
 <span class="kn">from</span> <span class="nn">model</span> <span class="kn">import</span> <span class="n">model</span>
 <span class="kn">from</span> <span class="nn">modelPlot</span> <span class="kn">import</span> <span class="n">modelPlot</span>
@@ -75,7 +78,8 @@
 
 <div class="viewcode-block" id="qLearn2"><a class="viewcode-back" href="../../model.html#model.qLearn2.qLearn2">[docs]</a><span class="k">class</span> <span class="nc">qLearn2</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;The q-Learning algorithm</span>
+    <span class="sd">&quot;&quot;&quot;The q-Learning algorithm modified to have different positive and </span>
+<span class="sd">    negative reward prediction errors </span>
 <span class="sd">    </span>
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -88,13 +92,18 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    alpha : float, optional</span>
-<span class="sd">        Learning rate parameter</span>
+<span class="sd">        Learning rate parameter. For this model only used when setting alphaPos</span>
+<span class="sd">        and alphaNeg to the same value. Default 0.3</span>
+<span class="sd">    alphaPos : float, optional</span>
+<span class="sd">        The positive learning rate parameter. Used when RPE is positive. </span>
+<span class="sd">        Default is alpha</span>
+<span class="sd">    alphaNeg : float, optional</span>
+<span class="sd">        The negative learning rate parameter. Used when RPE is negative. </span>
+<span class="sd">        Default is alpha    </span>
 <span class="sd">    gamma : float, optional</span>
 <span class="sd">        Sensitivity parameter for probabilities</span>
 <span class="sd">    beta : float, optional</span>
 <span class="sd">        Decision threshold parameter</span>
-<span class="sd">    nu : float in range [0,0.5], optional</span>
-<span class="sd">        The idecision point between the two choices. Default is 0</span>
 <span class="sd">    prior : array of two floats in ``[0,1]`` or just float in range, optional</span>
 <span class="sd">        The prior probability of of the two states being the correct one. </span>
 <span class="sd">        Default ``array([0.5,0.5])`` </span>
@@ -119,8 +128,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaPos</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaPos&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaNeg</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaNeg&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;beta&#39;</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;nu&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;expect&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,</span><span class="n">blankStim</span><span class="p">())</span>
@@ -130,7 +140,8 @@
                            <span class="s">&quot;gamma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span>
                            <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
                            <span class="s">&quot;alpha&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
-                           <span class="s">&quot;nu&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">,</span>
+                           <span class="s">&quot;alphaPos&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaPos</span><span class="p">,</span>
+                           <span class="s">&quot;alphaNeg&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNeg</span><span class="p">,</span>
                            <span class="s">&quot;expectation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">,</span>
                            <span class="s">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">,</span>
                            <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
@@ -216,10 +227,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
         <span class="c">#Calculate jar information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expectUpdate</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
 
         <span class="c">#Calculate the new probabilities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">chosen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">)</span>     
 
 <div class="viewcode-block" id="qLearn2.storeState"><a class="viewcode-back" href="../../model.html#model.qLearn2.qLearn2.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
@@ -232,15 +243,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choice</span><span class="p">):</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_expectUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">):</span>
         
-        <span class="n">expec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
         
-        <span class="n">diff</span> <span class="o">=</span> <span class="n">expec</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span> <span class="o">-</span> <span class="n">expec</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">choice</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">diff</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaPos</span><span class="o">*</span><span class="n">diff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNeg</span><span class="o">*</span><span class="n">diff</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="n">choice</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+        
+        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">expectation</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        
+        <span class="k">return</span> <span class="n">p</span>
         </div>
 <div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.qLearn2.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>

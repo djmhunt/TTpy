@@ -56,6 +56,9 @@
 <span class="sd">                    Moore, S. C., &amp; Sellen, J. L. (2006). </span>
 <span class="sd">                    Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9. </span>
 <span class="sd">                    Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441</span>
+<span class="sd">                    </span>
+<span class="sd">:Notes: In the original paper this model used a modified Luce choice </span>
+<span class="sd">        algorithm, rather than the logistic algorithm used here.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
@@ -141,7 +144,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recProbDifference</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActivity</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -174,7 +176,6 @@
 
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="p">)</span>
-        <span class="n">results</span><span class="p">[</span><span class="s">&quot;ProbDifference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbDifference</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActivity</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Decsions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">)</span>
@@ -210,7 +211,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_newActivity</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
         <span class="c">#Calculate the new probabilities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activity</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MS_rev.storeState"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
@@ -220,24 +221,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recProbDifference</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probDifference</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActivity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activity</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_newActivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">activity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activity</span> <span class="o">+</span> <span class="p">(</span><span class="n">event</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">activity</span><span class="p">)</span>  <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
 
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
         <span class="c"># The probability of a given jar, using the Luce choice model</span>
 
 <span class="c">#        li = self.activity ** self.gamma</span>
 <span class="c">#        p = li/sum(li)</span>
 
-        <span class="n">diff</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">activity</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activity</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">diff</span><span class="p">))</span>
+        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">expectation</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">p</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probDifference</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        
+        <span class="k">return</span> <span class="n">p</span>
         </div>
 <div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.MS_rev.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>

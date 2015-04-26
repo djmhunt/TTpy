@@ -79,6 +79,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Notes:</th><td class="field-body">In the version this model used the Luce choice algorithm,
+rather than the logistic algorithm used here.</td>
+</tr>
 </tbody>
 </table>
 <dl class="class">
@@ -222,6 +225,9 @@ to model when fitting</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Notes:</th><td class="field-body">In the version this model used the Luce choice algorithm,
+rather than the logistic algorithm used here.</td>
 </tr>
 </tbody>
 </table>
@@ -549,6 +555,9 @@ accessed later</p>
 Moore, S. C., &amp; Sellen, J. L. (2006). 
 Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9. 
 Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/17458441">http://www.ncbi.nlm.nih.gov/pubmed/17458441</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">In the original paper this model used a modified Luce choice 
+algorithm, rather than the logistic algorithm used here.</td>
 </tr>
 </tbody>
 </table>
@@ -1338,6 +1347,10 @@ The Journal of Neuroscience : The Official Journal of the
 Society for Neuroscience, 26(32), 8360–7. 
 doi:10.1523/JNEUROSCI.1010-06.2006</td>
 </tr>
+<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">In the original paper this model used the Luce choice algorithm,
+rather than the logistic algorithm used here. This generalisation has 
+meant that the variable nu is no longer possible to use.</td>
+</tr>
 </tbody>
 </table>
 <dl class="function">
@@ -1374,14 +1387,26 @@ doi:10.1523/JNEUROSCI.1010-06.2006</td>
 <dt id="model.qLearn2.qLearn2">
 <em class="property">class </em><tt class="descclassname">model.qLearn2.</tt><tt class="descname">qLearn2</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/qLearn2.html#qLearn2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2.qLearn2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
-<p>The q-Learning algorithm</p>
+<p>The q-Learning algorithm modified to have different positive and 
+negative reward prediction errors</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
 <blockquote>
-<div><p>Learning rate parameter</p>
+<div><p>Learning rate parameter. For this model only used when setting alphaPos
+and alphaNeg to the same value. Default 0.3</p>
+</div></blockquote>
+<p><strong>alphaPos</strong> : float, optional</p>
+<blockquote>
+<div><p>The positive learning rate parameter. Used when RPE is positive. 
+Default is alpha</p>
+</div></blockquote>
+<p><strong>alphaNeg</strong> : float, optional</p>
+<blockquote>
+<div><p>The negative learning rate parameter. Used when RPE is negative. 
+Default is alpha</p>
 </div></blockquote>
 <p><strong>gamma</strong> : float, optional</p>
 <blockquote>
@@ -1390,10 +1415,6 @@ doi:10.1523/JNEUROSCI.1010-06.2006</td>
 <p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
-</div></blockquote>
-<p><strong>nu</strong> : float in range [0,0.5], optional</p>
-<blockquote>
-<div><p>The idecision point between the two choices. Default is 0</p>
 </div></blockquote>
 <p><strong>prior</strong> : array of two floats in <tt class="docutils literal"><span class="pre">[0,1]</span></tt> or just float in range, optional</p>
 <blockquote>
@@ -1487,183 +1508,6 @@ accessed later</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-model.qLearn2a">
-<span id="model-qlearn2a-module"></span><h2>model.qLearn2a module<a class="headerlink" href="#module-model.qLearn2a" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Modified version of that found in the paper The role of the 
-ventromedial prefrontal cortex in abstract state-based inference 
-during decision making in humans.
-Hampton, A. N., Bossaerts, P., &amp; O’Doherty, J. P. (2006).  
-The Journal of Neuroscience : The Official Journal of the 
-Society for Neuroscience, 26(32), 8360–7. 
-doi:10.1523/JNEUROSCI.1010-06.2006</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="model.qLearn2a.blankStim">
-<tt class="descclassname">model.qLearn2a.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn2a.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2a.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
-<blockquote class="last">
-<div><p>The function expects to be passed the event and then return it.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The identifier of the function</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
-<dt id="model.qLearn2a.qLearn2a">
-<em class="property">class </em><tt class="descclassname">model.qLearn2a.</tt><tt class="descname">qLearn2a</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/qLearn2a.html#qLearn2a"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2a.qLearn2a" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
-<p>The q-Learning algorithm modified to have different positive and 
-negative reward prediction errors</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
-<blockquote>
-<div><p>Learning rate parameter. For this model only used when setting alphaPos
-and alphaNeg to the same value. Default 0.3</p>
-</div></blockquote>
-<p><strong>alphaPos</strong> : float, optional</p>
-<blockquote>
-<div><p>The positive learning rate parameter. Used when RPE is positive. 
-Default is alpha</p>
-</div></blockquote>
-<p><strong>alphaNeg</strong> : float, optional</p>
-<blockquote>
-<div><p>The negative learning rate parameter. Used when RPE is negative. 
-Default is alpha</p>
-</div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
-<blockquote>
-<div><p>Sensitivity parameter for probabilities</p>
-</div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
-<blockquote>
-<div><p>Decision threshold parameter</p>
-</div></blockquote>
-<p><strong>nu</strong> : float in range [0,0.5], optional</p>
-<blockquote>
-<div><p>The idecision point between the two choices. Default is 0</p>
-</div></blockquote>
-<p><strong>prior</strong> : array of two floats in <tt class="docutils literal"><span class="pre">[0,1]</span></tt> or just float in range, optional</p>
-<blockquote>
-<div><p>The prior probability of of the two states being the correct one. 
-Default <tt class="docutils literal"><span class="pre">array([0.5,0.5])</span></tt></p>
-</div></blockquote>
-<p><strong>expect: float, optional</strong></p>
-<blockquote>
-<div><p>The initialisation of the the expected reward</p>
-</div></blockquote>
-<p><strong>stimFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>The function that transforms the stimulus into a form the model can 
-understand and a string to identify it later. Default is blankStim</p>
-</div></blockquote>
-<p><strong>decFunc</strong> : function, optional</p>
-<blockquote class="last">
-<div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#module-model.qLearn2" title="model.qLearn2"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></tt></a></dt>
-<dd>This model is heavily based on that one</dd>
-</dl>
-</div>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-<tr class="row-even"><td>currAction</td>
-<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.qLearn2a.qLearn2a.Name">
-<tt class="descname">Name</tt><em class="property"> = 'qLearn2a'</em><a class="headerlink" href="#model.qLearn2a.qLearn2a.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn2a.qLearn2a.action">
-<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn2a.html#qLearn2a.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2a.qLearn2a.action" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn2a.qLearn2a.outputEvolution">
-<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn2a.html#qLearn2a.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2a.qLearn2a.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name, 
-Probabilities, Actions and Events.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.qLearn2a.qLearn2a.storeState">
-<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/qLearn2a.html#qLearn2a.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2a.qLearn2a.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-model">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -1690,7 +1534,6 @@ accessed later</p>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn2">model.qLearn2 module</a></li>
-<li><a class="reference internal" href="#module-model.qLearn2a">model.qLearn2a module</a></li>
 <li><a class="reference internal" href="#module-model">Module contents</a></li>
 </ul>
 </li>

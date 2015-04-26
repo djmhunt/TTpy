@@ -51,6 +51,9 @@
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Notes: In the version this model used the Luce choice algorithm,</span>
+<span class="sd">        rather than the logistic algorithm used here.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
@@ -184,9 +187,12 @@
         <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        
+        <span class="n">postProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postProb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">postProb</span>
 
         <span class="c">#Calculate the new probabilities</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">postProb</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BP.storeState"><a class="viewcode-back" href="../../model.html#model.BP.BP.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
@@ -199,19 +205,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
-</div>
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        </div>
+    <span class="k">def</span> <span class="nf">_postProb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">postProb</span><span class="p">):</span>
+        
+        <span class="n">li</span> <span class="o">=</span> <span class="n">postProb</span> <span class="o">*</span> <span class="n">event</span>
+        <span class="n">newProb</span> <span class="o">=</span> <span class="n">li</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">newProb</span>
 
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
 
-        <span class="n">li</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">*</span> <span class="n">event</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">li</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">expectation</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
 
-<span class="c">#        self.probabilities = 1.0/(1.0 +exp(-self.gamma*(self.posteriorProb-0.5)))</span>
-
-        <span class="n">diff</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="o">*</span><span class="n">diff</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">p</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+        
+        <span class="k">return</span> <span class="n">p</span>
+<span class="c">#</span>
+<span class="c">#        diff = 2*self.posteriorProb - sum(self.posteriorProb)</span>
+<span class="c">#        p = 1.0 / (1.0 + exp(-self.gamma*diff))</span>
+<span class="c">#</span>
+<span class="c">#        self.probabilities = p</span>
         </div>
 <div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.BP.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
