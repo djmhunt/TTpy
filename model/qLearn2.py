@@ -9,6 +9,10 @@
                 The Journal of Neuroscience : The Official Journal of the 
                 Society for Neuroscience, 26(32), 8360–7. 
                 doi:10.1523/JNEUROSCI.1010-06.2006
+                
+:Notes: In the original paper this model used the Luce choice algorithm,
+        rather than the logistic algorithm used here. This generalisation has 
+        meant that the variable nu is no longer possible to use.
 """
 
 from __future__ import division
@@ -16,7 +20,6 @@ from __future__ import division
 import logging
 
 from numpy import exp, zeros, array
-from random import choice
 
 from model import model
 from modelPlot import modelPlot
@@ -25,7 +28,8 @@ from decision.binary import decBeta
 
 class qLearn2(model):
 
-    """The q-Learning algorithm
+    """The q-Learning algorithm modified to have different positive and 
+    negative reward prediction errors 
     
     Attributes
     ----------
@@ -38,13 +42,18 @@ class qLearn2(model):
     Parameters
     ----------
     alpha : float, optional
-        Learning rate parameter
+        Learning rate parameter. For this model only used when setting alphaPos
+        and alphaNeg to the same value. Default 0.3
+    alphaPos : float, optional
+        The positive learning rate parameter. Used when RPE is positive. 
+        Default is alpha
+    alphaNeg : float, optional
+        The negative learning rate parameter. Used when RPE is negative. 
+        Default is alpha    
     gamma : float, optional
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
-    nu : float in range [0,0.5], optional
-        The idecision point between the two choices. Default is 0
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])`` 
@@ -69,8 +78,9 @@ class qLearn2(model):
         self.gamma = kwargs.pop('gamma',4)
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.alpha = kwargs.pop('alpha',0.3)
+        self.alphaPos = kwargs.pop('alphaPos', self.alpha)
+        self.alphaNeg = kwargs.pop('alphaNeg', self.alpha)
         self.beta = kwargs.pop('beta',0.3)
-        self.nu = kwargs.pop('nu', 0)
         self.expect = kwargs.pop('expect',5)
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -80,7 +90,8 @@ class qLearn2(model):
                            "gamma": self.gamma,
                            "beta": self.beta,
                            "alpha": self.alpha,
-                           "nu" : self.nu,
+                           "alphaPos" : self.alphaPos,
+                           "alphaNeg" : self.alphaNeg,
                            "expectation": self.expect,
                            "prior": self.prior,
                            "stimFunc" : self.stimFunc.Name,
@@ -166,10 +177,10 @@ class qLearn2(model):
         self.recEvents.append(event)
 
         #Calculate jar information
-        self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
+        self._expectUpdate(event, chosen)
 
         #Calculate the new probabilities
-        self.probabilities = self._prob(self.expectation)
+        self.probabilities = self._prob(self.expectation)     
 
     def storeState(self):
         """ 
@@ -182,6 +193,15 @@ class qLearn2(model):
         self.recActionProb.append(self.probabilities[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
+        
+    def _expectUpdate(self, event, chosen):
+        
+        diff = event - self.expectation[chosen]
+        
+        if diff > 0:
+            self.expectation[chosen] += self.alphaPos*diff
+        else:
+            self.expectation[chosen] += self.alphaNeg*diff
 
     def _prob(self, expectation):
         
