@@ -6,6 +6,9 @@
                     Moore, S. C., & Sellen, J. L. (2006). 
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9. 
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
+                    
+:Notes: In the original paper this model used a modified Luce choice 
+        algorithm, rather than the logistic algorithm used here.
 """
 from __future__ import division
 
