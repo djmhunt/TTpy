@@ -409,9 +409,32 @@ def flatten(l):
                 yield sub,[i] + loc
         else:
             yield repr(v),[i]
+            
+def mergeTwoDicts(x, y):
+    """
+    Given two dicts, merge them into a new dict as a shallow copy
+    
+    Assumes different keys in both dictionaries
+    
+    Parameters
+    ----------
+    x : dictionary
+    y : dictionary
+    
+    Returns
+    -------
+    mergedDict : dictionary
+    
+    
+    """
+    mergedDict = x.copy()
+    mergedDict.update(y)
+    return mergedDict
 
 def mergeDicts(*args):
-    """Merges dictionaries with different keys
+    """Merges any number of dictionaries with different keys into a new dict
+    
+    Precedence goes to key value pairs in latter dicts
     
     Parameters
     ----------
@@ -422,11 +445,11 @@ def mergeDicts(*args):
     mergedDict : dictionary
     
     """
-
-    dicItemGen = (x.iteritems() for x in args)
-
-    mergedDict = dict(chain(dicItemGen))
-
+    mergedDict = {}
+    
+    for dictionary in args:
+        mergedDict.update(dictionary)
+        
     return mergedDict
 
 #if __name__ == '__main__':
