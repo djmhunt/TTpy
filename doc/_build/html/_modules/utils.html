@@ -459,9 +459,32 @@
                 <span class="k">yield</span> <span class="n">sub</span><span class="p">,[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">loc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">yield</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">),[</span><span class="n">i</span><span class="p">]</span>
+            </div>
+<div class="viewcode-block" id="mergeTwoDicts"><a class="viewcode-back" href="../utils.html#utils.mergeTwoDicts">[docs]</a><span class="k">def</span> <span class="nf">mergeTwoDicts</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given two dicts, merge them into a new dict as a shallow copy</span>
+<span class="sd">    </span>
+<span class="sd">    Assumes different keys in both dictionaries</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : dictionary</span>
+<span class="sd">    y : dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mergedDict : dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mergedDict</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">mergedDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mergedDict</span>
 </div>
 <div class="viewcode-block" id="mergeDicts"><a class="viewcode-back" href="../utils.html#utils.mergeDicts">[docs]</a><span class="k">def</span> <span class="nf">mergeDicts</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Merges dictionaries with different keys</span>
+    <span class="sd">&quot;&quot;&quot;Merges any number of dictionaries with different keys into a new dict</span>
+<span class="sd">    </span>
+<span class="sd">    Precedence goes to key value pairs in latter dicts</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -472,11 +495,11 @@
 <span class="sd">    mergedDict : dictionary</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">dicItemGen</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
-
-    <span class="n">mergedDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">dicItemGen</span><span class="p">))</span>
-
+    <span class="n">mergedDict</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">mergedDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+        
     <span class="k">return</span> <span class="n">mergedDict</span>
 
 <span class="c">#if __name__ == &#39;__main__&#39;:</span>
@@ -530,7 +553,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Dominic Hunt.
+        &copy; Copyright 2015, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

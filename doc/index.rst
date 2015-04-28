@@ -6,20 +6,15 @@
 PyDM!
 ================================
 
-.. inheritance-diagram:: dataFitting
-   data
-   dataFitting
+.. inheritance-diagram::
    experiment
    experiments
    fitting
-   inputs
    model
    models
    outputting
-   plotting
-   simulation
-   utils
    vtkWriter
+
 
 Contents:
 

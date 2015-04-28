@@ -99,12 +99,14 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">oneProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;oneProb&#39;</span><span class="p">,</span><span class="mf">0.85</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;numActions&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;beta&#39;</span><span class="p">,</span><span class="mf">0.3</span><span class="p">)</span>
         
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,</span><span class="n">blankStim</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,</span><span class="n">decBeta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,</span><span class="n">decBeta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span> <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s">&quot;oneProb&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oneProb</span><span class="p">,</span>
@@ -115,8 +117,8 @@
                            <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastObs</span> <span class="o">=</span> <span class="bp">False</span>
 
@@ -289,7 +291,7 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Dominic Hunt.
+        &copy; Copyright 2015, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyDM'
-copyright = u'2014, Dominic Hunt'
+copyright = u'2015, Dominic Hunt'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -111,6 +111,9 @@ pygments_style = 'sphinx'
 
 
 # -- Options for HTML output ----------------------------------------------
+
+# For graphviz diagrams
+graphviz_dot = r"C:\Program Files (x86)\Graphviz2.38\bin\dot.exe"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
