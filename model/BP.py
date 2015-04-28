@@ -28,11 +28,9 @@ class BP(model):
     Parameters
     ----------
     gamma : float, optional
-        Sensitivity parameter for probabilities
+        Sensitivity parameter for probabilities. Default ``4``
     beta : float, optional
-        Decision threshold parameter
-    oneProb : array, optional
-        The prior probability
+        Decision threshold parameter. Default ``0.3``
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])``
@@ -50,7 +48,6 @@ class BP(model):
 
     def __init__(self,**kwargs):
 
-        self.oneProb = kwargs.pop('oneProb',0.85)
         self.numActions = kwargs.pop('numActions',2)
         self.gamma = kwargs.pop('gamma',4)
         self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
@@ -61,7 +58,6 @@ class BP(model):
         self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = tuple(range(1,self.numActions+1)), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
-                           "oneProb": self.oneProb,
                            "gamma": self.gamma,
                            "beta": self.beta,
                            "prior": self.prior,
