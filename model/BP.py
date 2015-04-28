@@ -9,7 +9,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, zeros, array
+from numpy import exp, array
 
 from model import model
 from modelPlot import modelPlot
@@ -65,8 +65,10 @@ class BP(model):
                            "decFunc" : self.decisionFunc.Name}
 
         self.currAction = 1
-        self.posteriorProb = zeros(self.numActions) + self.prior
-        self.probabilities = zeros(self.numActions) + self.prior
+#        if len(prior) != self.numActions:
+#            raise warning.
+        self.posteriorProb = array(self.prior)
+        self.probabilities = array(self.prior)
         self.decision = None
         self.lastObs = False
 

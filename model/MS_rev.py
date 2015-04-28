@@ -14,7 +14,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, zeros, array
+from numpy import exp, array
 
 from model import model
 from modelPlot import modelPlot
@@ -40,12 +40,11 @@ class MS_rev(model):
         Sensitivity parameter for probabilities
     beta : float, optional
         Decision threshold parameter
-    oneProb : float in ``[0,1]``, optional
-        The probability of a 1 from the first jar. This is also the probability
-        of a 0 from the second jar.
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])``
+    numActions : integer, optional
+        The number of different reaction learning sets. Default ``2``
     activity : array, optional
         The `activity` of the neurons. The values are between ``[0,1]``
     stimFunc : function, optional
@@ -60,26 +59,25 @@ class MS_rev(model):
 
     def __init__(self,**kwargs):
 
-        self.oneProb = kwargs.pop('oneProb',0.85)
         self.gamma = kwargs.pop('gamma',4)
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
-        self.prior = kwargs.pop('prior',array([0.5,0.5]))
-        self.activity = kwargs.pop('activity',array([0.5,0.5]))
+        self.numActions = kwargs.pop('numActions',2)
+        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
+        self.activity = kwargs.pop('activity',array([0.5]*self.numActions))
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = (1,2), beta = self.beta))
         
         self.currAction = 1
-        self.probabilities = zeros(2) + self.prior
+        self.probabilities = array(self.prior)
         self.probDifference = 0
-        self.activity = zeros(2) + self.activity
+        self.activity = array(self.activity)
         self.decision = None
         self.lastObs = False
 
         self.parameters = {"Name": self.Name,
-                           "oneProb": self.oneProb,
                            "gamma": self.gamma,
                            "beta": self.beta,
                            "alpha": self.alpha,

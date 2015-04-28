@@ -9,7 +9,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, zeros, array
+from numpy import exp, array
 from random import choice
 
 from model import model
@@ -43,6 +43,8 @@ class EP(model):
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])``
+    numActions : integer, optional
+        The number of different reaction learning sets. Default ``2``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can 
         understand and a string to identify it later. Default is blankStim
@@ -58,11 +60,12 @@ class EP(model):
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.gamma = kwargs.pop('gamma',4)
-        self.activity = kwargs.pop('activity',array([0.5,0.5]))
-        self.prior = kwargs.pop('prior',array([0.5,0.5]))
+        self.numActions = kwargs.pop('numActions',2)
+        self.activity = kwargs.pop('activity',array([0.5]*self.numActions))
+        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
         
         self.decision = None
-        self.probabilities = zeros(2) + self.prior
+        self.probabilities = array(self.prior)
         self.lastObs = False
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
