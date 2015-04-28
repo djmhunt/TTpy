@@ -138,7 +138,7 @@ class BP(model):
         
         self.recEvents.append(event)
         
-        postProb = self._postProb(self, event, self.posteriorProb)
+        postProb = self._postProb(event, self.posteriorProb)
         self.posteriorProb = postProb
 
         #Calculate the new probabilities
