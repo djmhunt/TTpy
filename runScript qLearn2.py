@@ -45,8 +45,9 @@ outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'gamma':gamma}
+parameters = {'alphaPos':alpha,
+              'alphaNeg':alpha,
+              'gamma':gamma}
 paramExtras = {'beta':beta,
                'stimFunc':deckStimDirect(),
                'decFunc':decBeta(beta = beta)} #For decks
@@ -99,7 +100,8 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (0,1),
+                  bounds = {'alphaPos' : (0,1),
+                            'alphaNeg' : (0,1),
                             'gamma' : (0,5)}, 
                   numStartPoints = 5,
                   boundFit = True)
