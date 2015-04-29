@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 
-Notes
------
 This is a script with all the components for running an investigation. I would 
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
@@ -39,11 +37,11 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0.0
-alpha = 0.5
-gamma = 0.5
+beta = 0#0.3#0.15
+alpha = 0.5#0.2#0.5#0.2
+gamma = 0.5#0.7#0.5#0.7
 simDur = 30
-outputOptions = {'simLabel': 'qLearn_decksSet',
+outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
@@ -51,7 +49,7 @@ parameters = {  'alpha':alpha,
                 'gamma':gamma}
 paramExtras = {'beta':beta,
                'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For qLearn decks
+               'decFunc':decBeta(beta = beta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn,parameters,paramExtras))
@@ -65,9 +63,11 @@ output = outputting(**outputOptions)
 
 ### For data fitting
 
+from numpy import concatenate
+
 from dataFitting import dataFitting
 
-from data import data
+from data import data, datasets
 
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.fitness import fitter
