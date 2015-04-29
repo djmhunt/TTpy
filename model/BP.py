@@ -61,6 +61,7 @@ class BP(model):
                            "gamma": self.gamma,
                            "beta": self.beta,
                            "prior": self.prior,
+                           "numActions": self.numActions,
                            "stimFunc" : self.stimFunc.Name,
                            "decFunc" : self.decisionFunc.Name}
 

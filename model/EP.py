@@ -77,6 +77,7 @@ class EP(model):
                            "beta": self.beta,
                            "prior": self.prior,
                            "activity" : self.activity,
+                           "numActions": self.numActions,
                            "stimFunc" : self.stimFunc.Name,
                            "decFunc" : self.decisionFunc.Name}
 
