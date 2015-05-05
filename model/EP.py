@@ -9,7 +9,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, array
+from numpy import exp, array, ones
 from random import choice
 
 from model import model
@@ -61,8 +61,8 @@ class EP(model):
         self.beta = kwargs.pop('beta',0.3)
         self.gamma = kwargs.pop('gamma',4)
         self.numActions = kwargs.pop('numActions',2)
-        self.activity = kwargs.pop('activity',array([0.5]*self.numActions))
-        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
+        self.activity = kwargs.pop('activity',ones(self.numActions)*0.5)
+        self.prior = kwargs.pop('prior',ones(self.numActions)*0.5)
         
         self.decision = None
         self.probabilities = array(self.prior)
@@ -169,8 +169,10 @@ class EP(model):
         self.recActionProb.append(self.probabilities[self.currAction])
 
     def _newAct(self,event):
+        
+        oldAct = self.activity
 
-        self.activity = self.activity + self.alpha * (event-self.activity)
+        self.activity = oldAct + self.alpha * (event-oldAct)
 
     def _prob(self, expectation):
         """ Calculate the new probabilities of different actions """

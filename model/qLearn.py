@@ -12,7 +12,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, zeros, array
+from numpy import exp, ones, array
 from random import choice
 
 from model import model
@@ -59,12 +59,12 @@ class qLearn(model):
 
     def __init__(self,**kwargs):
 
-        self.numActions = kwargs.pop('numActions',2)
-        self.gamma = kwargs.pop('gamma',4)
-        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
-        self.alpha = kwargs.pop('alpha',0.3)
-        self.beta = kwargs.pop('beta',0.3)
-        self.expect = kwargs.pop('expect',array([5]*self.numActions))
+        self.numActions = kwargs.pop('numActions', 2)
+        self.gamma = kwargs.pop('gamma', 4)
+        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
+        self.alpha = kwargs.pop('alpha', 0.3)
+        self.beta = kwargs.pop('beta', 0.3)
+        self.expect = kwargs.pop('expect', ones(self.numActions)*5)
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decBeta(beta = self.beta))
@@ -178,7 +178,9 @@ class qLearn(model):
         
     def _newAct(self,event, chosen):
         
-        self.expectation[chosen] += self.alpha*(event - self.expectation[chosen])
+        chosenExp = self.expectation[chosen]
+        
+        self.expectation[chosen] = chosenExp + self.alpha*(event - chosenExp)
 
     def _prob(self, expectation):
 

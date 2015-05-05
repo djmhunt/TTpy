@@ -14,7 +14,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, array
+from numpy import exp, array, ones
 
 from model import model
 from modelPlot import modelPlot
@@ -63,8 +63,8 @@ class MS_rev(model):
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
         self.numActions = kwargs.pop('numActions',2)
-        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
-        self.activity = kwargs.pop('activity',array([0.5]*self.numActions))
+        self.prior = kwargs.pop('prior',ones(self.numActions)*0.5)
+        self.activity = kwargs.pop('activity',ones(self.numActions)*0.5)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())

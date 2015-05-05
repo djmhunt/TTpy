@@ -9,7 +9,7 @@ from __future__ import division
 
 import logging
 
-from numpy import exp, array
+from numpy import exp, array, ones
 
 from model import model
 from modelPlot import modelPlot
@@ -48,14 +48,14 @@ class BP(model):
 
     def __init__(self,**kwargs):
 
-        self.numActions = kwargs.pop('numActions',2)
-        self.gamma = kwargs.pop('gamma',4)
-        self.prior = kwargs.pop('prior',array([0.5]*self.numActions))
-        self.beta = kwargs.pop('beta',0.3)
+        self.numActions = kwargs.pop('numActions', 2)
+        self.gamma = kwargs.pop('gamma', 4)
+        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
+        self.beta = kwargs.pop('beta', 0.3)
         
         
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = tuple(range(1,self.numActions+1)), beta = self.beta))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decBeta(responses = tuple(range(1,self.numActions+1)), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "gamma": self.gamma,
