@@ -362,6 +362,7 @@ def beadStimDualInfo(oneProb):
         return stimulus
         
     beadStim.Name = "beadStimDualInfo"
+    beadStim.Params = {"oneProb":oneProb}
         
     return beadStim
 
