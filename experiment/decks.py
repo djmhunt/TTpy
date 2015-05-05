@@ -190,7 +190,7 @@ def deckStimDirect():
         
     See Also
     --------
-    model.qLearn, model.qLearn2, model.qLearn2a
+    model.qLearn, model.qLearn2, model.decision.binary.decBeta
     """
     
     def deckStim(event, action):
@@ -199,10 +199,20 @@ def deckStimDirect():
     deckStim.Name = "deckStimDirect"
     return deckStim
 
-def deckStimDualInfo(maxEventVal):
+def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     """
     Processes the decks stimuli for models expecting the reward information 
-    from two possible actions 
+    from all possible actions 
+    
+    Parameters
+    ----------
+    maxEventVal : int
+        The highest value a reward can have
+    minEventVal : int
+        The lowest value a reward can have
+    numActions : int
+        The number of actions the participant can perform. Assumes the lowest 
+        valued action is 0
         
     Returns
     -------
@@ -218,14 +228,28 @@ def deckStimDualInfo(maxEventVal):
         
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntBetaReac
+    
+    Examples
+    --------    
+    >>> from numpy import array
+    >>> from experiment.decks import deckStimAllInfo
+    >>> stim = deckStimAllInfo(10,1,2)
+    >>> stim(6,0)
+    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    >>> stim(6,1)
+    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
     """
-    devisor = maxEventVal+1#sum(xrange(0,maxEventVal+1))
+    numDiffEvents = maxEventVal-minEventVal+1
+    respZeros = zeros(numDiffEvents * numActions)
     
     def deckStim(event, action):
-        stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
-        stimulus = [stim,1-stim]
+        stimulus = respZeros.copy()
+        stimulus[numDiffEvents*action + event - 1] = 1
         return stimulus
         
-    deckStim.Name = "deckStimDualInfo"
+    deckStim.Name = "deckStimAllInfo"
+    deckStim.Params = {"maxEventVal":maxEventVal,
+                       "minEventVal":minEventVal, 
+                       "numActions":numActions}
     return deckStim
