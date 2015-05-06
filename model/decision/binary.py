@@ -24,7 +24,8 @@ def decBeta(responses = (0,1),beta = 0):
     Returns
     -------
     decisionFunc : function
-        Calculates the decisions 
+        Calculates the decisions based on the probabilities and returns the 
+        decision and the probability of that decision
         
     See Also
     --------
@@ -46,7 +47,7 @@ def decBeta(responses = (0,1),beta = 0):
         else:
             decision = None
             
-        return decision
+        return decision, probabilities
         
     decisionFunc.Name = "binary.decBeta"
     decisionFunc.Params = {"responses": responses,
@@ -75,7 +76,8 @@ def decIntBetaReac(responses = (0,1), beta = 0):
     Returns
     -------
     decisionFunc : function
-        Calculates the decisions 
+        Calculates the decisions based on the probabilities and returns the 
+        decision and the probability of that decision 
         
     See Also
     --------
@@ -113,7 +115,7 @@ def decIntBetaReac(responses = (0,1), beta = 0):
         else:
             decision = None
             
-        return decision
+        return decision, probPair
         
     decisionFunc.Name = "binary.decIntBetaReac"
     decisionFunc.Params = {"responses": responses,
