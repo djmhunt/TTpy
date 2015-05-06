@@ -17,14 +17,14 @@ from numpy import array, concatenate
 #The experiment factory
 from experiments import experiments
 #The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
+from experiment.decks import Decks, deckStimDirect, deckStimAllInfo
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
 from models import models 
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decBeta, decIntBetaReac
 #The models
 from model.BP import BP
 from model.EP import EP
@@ -41,18 +41,18 @@ beta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
 gamma = 0.5#0.7#0.5#0.7
 simDur = 30
-outputOptions = {'simLabel': 'qLearn_dataSet',
+outputOptions = {'simLabel': 'BP_decksSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
                 'gamma':gamma}
 paramExtras = {'beta':beta,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For decks
+               'stimFunc':deckStimAllInfo(10,1,2),
+               'decFunc':decIntBetaReac(beta = beta)} #For decks
 
 expSets = experiments((Decks,{},{}))
-modelSet = models((qLearn,parameters,paramExtras))
+modelSet = models((BP,parameters,paramExtras))
 output = outputting(**outputOptions)
 
 ### For simulating experiments

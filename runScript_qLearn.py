@@ -14,15 +14,15 @@ from __future__ import division
 from numpy import array, concatenate
 
 ### Import all experiments, models, outputting and interface functions
-#The experiment factory
+# The experiment factory
 from experiments import experiments
-#The experiments and stimulus processors
+# The experiments and stimulus processors
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
-from models import models 
+from models import models
 # The decision methods
 from model.decision.binary import decBeta
 #The models
@@ -41,18 +41,18 @@ beta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
 gamma = 0.5#0.7#0.5#0.7
 simDur = 30
-outputOptions = {'simLabel': 'BP_decksSet',
+outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
                 'gamma':gamma}
 paramExtras = {'beta':beta,
-               'stimFunc':deckStimDualInfo(10),
+               'stimFunc':deckStimDirect(),
                'decFunc':decBeta(beta = beta)} #For decks
 
 expSets = experiments((Decks,{},{}))
-modelSet = models((BP,parameters,paramExtras))
+modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
 
 ### For simulating experiments
@@ -109,4 +109,4 @@ fitAlg = minimize(fitQualFunc = "-2log",
 fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFuncSingle())
 
 # Run the data fitter
-dataFitting(expSets, modelSet, output, data = dataSet, fitter = fit)
+dataFitting(expSets, modelSet, output, data=dataSet, fitter=fit)
