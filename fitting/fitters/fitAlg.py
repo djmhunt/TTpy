@@ -5,9 +5,11 @@
 from __future__ import division
 
 from math import isinf
-from numpy import log2, linspace
+from numpy import linspace
 from itertools import izip
 from utils import listMergeNP
+
+from qualityFunc import qualFuncIdent
 
 class fitAlg(object):
     """
@@ -40,59 +42,9 @@ class fitAlg(object):
         
         self.numStartPoints = numStartPoints
 
-        self.fitness = self.null
+        self.fitQualFunc = qualFuncIdent(fitQualFunc)
 
         self.fitInfo = {'Name':self.Name}
-
-    def null(self,*params):
-        """
-        Generates a fit quality value
-        
-        Returns
-        -------
-        fit : float
-            The sum of the model valaues returned
-        """
-
-        modVals = self.sim(*params)
-
-        return sum(modVals)
-
-    def logprob(self,*params):
-        """
-        Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2({\\vec x}^2)`
-        
-        Returns
-        -------
-        fit : float
-            The sum of the model valaues returned
-        """
-
-        modVals = self.sim(*params)
-
-        logModCoiceprob = log2(modVals)
-
-        probs = -2*logModCoiceprob
-        
-        fit = sum(probs)
-
-        return fit
-        
-    def maxprob(self,*params):
-        """
-        Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
-        
-        Returns
-        -------
-        fit : float
-            The sum of the model valaues returned
-        """
-        
-        modVals = self.sim(*params)
-        
-        fit = sum(1-modVals)
-        
-        return fit
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -126,6 +78,26 @@ class fitAlg(object):
         self.sim = sim
 
         return 0, 0
+        
+    def fitness(self,*params):
+        """
+        Generates a fit quality value
+        
+        Returns
+        -------
+        fit : float
+            The fit quality value calculated using the fitQualFunc function
+            
+        See Also
+        --------
+        fitting.fitters.qualityFunc : the module of fitQualFunc functions
+        """
+
+        modVals = self.sim(*params)
+        
+        fit = self.fitQualFunc(modVals)
+        
+        return fit
 
     def info(self):
         """

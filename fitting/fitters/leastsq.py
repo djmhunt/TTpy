@@ -9,6 +9,8 @@ from fitAlg import fitAlg
 from scipy import optimize
 from numpy import log
 
+from qualityFunc import qualFuncIdent
+
 class leastsq(fitAlg):
     """
     Fits data based on the least squared optimizer
@@ -44,10 +46,7 @@ class leastsq(fitAlg):
         
         self.numStartPoints = numStartPoints
 
-        if fitQualFunc == "-2log":
-            self.fitness = self.logprob
-        else:
-            self.fitness = self.null
+        self.fitQualFunc = qualFuncIdent(fitQualFunc)
 
         self.fitInfo = {'Name':self.Name,
                         'shaper': fitQualFunc}

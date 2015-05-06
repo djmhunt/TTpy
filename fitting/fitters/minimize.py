@@ -10,6 +10,8 @@ from numpy import array, around
 from scipy import optimize
 from itertools import izip
 
+from qualityFunc import qualFuncIdent
+
 import pytest
 
 class minimize(fitAlg):
@@ -88,12 +90,7 @@ class minimize(fitAlg):
         self.boundFit = boundFit
         self.boundSensitivity = boundSensitivity
 
-        if fitQualFunc == "-2log":
-            self.fitness = self.logprob
-        elif fitQualFunc == "1-prob":
-            self.fitness = self.maxprob
-        else:
-            self.fitness = self.null
+        self.fitQualFunc = qualFuncIdent(fitQualFunc)
 
         self._setType(method,bounds)
 
