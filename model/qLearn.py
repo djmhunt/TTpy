@@ -82,6 +82,7 @@ class qLearn(model):
         self.currAction = None
         self.expectation = array(self.expect)
         self.probabilities = array(self.prior)
+        self.decProbs = array(self.prior)
         self.decision = None
         self.lastObs = False
 
@@ -100,8 +101,6 @@ class qLearn(model):
         -------
         action : integer or None
         """
-
-        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
@@ -163,6 +162,8 @@ class qLearn(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
+        
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
 
     def storeState(self):
         """ 
@@ -172,7 +173,7 @@ class qLearn(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.probabilities[self.currAction])
+        self.recActionProb.append(self.decProbs[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
         

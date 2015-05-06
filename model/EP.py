@@ -66,6 +66,7 @@ class EP(model):
         
         self.decision = None
         self.probabilities = array(self.prior)
+        self.decProbs = array(self.prior)
         self.lastObs = False
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -96,8 +97,6 @@ class EP(model):
         -------
         action : integer or None
         """
-
-        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
@@ -155,6 +154,8 @@ class EP(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
+        
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
 
     def storeState(self):
         """" 
@@ -166,7 +167,7 @@ class EP(model):
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.probabilities[self.currAction])
+        self.recActionProb.append(self.decProbs[self.currAction])
 
     def _newAct(self,event):
         

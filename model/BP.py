@@ -70,6 +70,7 @@ class BP(model):
 #            raise warning.
         self.posteriorProb = array(self.prior)
         self.probabilities = array(self.prior)
+        self.decProbs = array(self.prior)
         self.decision = None
         self.lastObs = False
 
@@ -88,8 +89,6 @@ class BP(model):
         -------
         action : integer or None
         """
-
-        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
@@ -146,6 +145,8 @@ class BP(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(postProb)
+        
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
 
     def storeState(self):
         """ 
@@ -155,7 +156,7 @@ class BP(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.probabilities[self.currAction])
+        self.recActionProb.append(self.decProbs[self.currAction])
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
         

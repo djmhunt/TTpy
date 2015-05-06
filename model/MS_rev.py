@@ -72,6 +72,7 @@ class MS_rev(model):
         
         self.currAction = 1
         self.probabilities = array(self.prior)
+        self.decProbs = array(self.prior)
         self.probDifference = 0
         self.activity = array(self.activity)
         self.decision = None
@@ -102,8 +103,6 @@ class MS_rev(model):
         -------
         action : integer or None
         """
-
-        self.decision = self.decisionFunc(self.probabilities)
 
         self.currAction = self.decision
 
@@ -161,6 +160,8 @@ class MS_rev(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
+        
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
 
     def storeState(self):
         """ 
@@ -169,7 +170,7 @@ class MS_rev(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.probabilities[self.currAction])
+        self.recActionProb.append(self.decProbs[self.currAction])
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
