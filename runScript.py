@@ -45,6 +45,7 @@ gamma = 0.5
 simDur = 30
 outputOptions = {'simLabel': 'qLearn_decksSet',
                  'save': True,
+                 'saveScript': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,

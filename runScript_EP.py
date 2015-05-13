@@ -48,6 +48,7 @@ numStimuli = 20
 
 outputOptions = {'simLabel': 'EP_decksSet',
                  'save': True,
+                 'saveScript': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':(alphaMax-alphaMin)/2,

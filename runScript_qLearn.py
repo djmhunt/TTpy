@@ -47,6 +47,7 @@ gammaMax = 5
 
 outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
+                 'saveScript': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':(alphaMax-alphaMin)/2,

@@ -16,6 +16,8 @@ import datetime as dt
 
 from os import getcwd, makedirs
 from os.path import isfile, exists
+from shutil import copy
+from inspect import stack
 from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
 from collections import OrderedDict, Callable
@@ -30,13 +32,17 @@ class outputting(object):
     Parameters
     ----------
     save : bool, optional
-        If true the data will be saved to files. Default True
+        If true the data will be saved to files. Default ``True``
+    saveScript : bool, optional
+        If true a copy of the top level script running the current function
+        will be copied to the log folder. Only works if save is set to ``True``
+        Default ``False``
     silent : bool, optional
-        States if a log is not written to stdout. Defaults to False
+        States if a log is not written to stdout. Defaults to ``False``
     simLabel : string, optional
         The label for the simulation
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
-        Defines the level of the log. Default logging.INFO
+        Defines the level of the log. Default ``logging.INFO``
     maxLabelLength : int, optional
         The maximum length of a label to be used as a reference for an 
         individual model-experiment combination. Default 18
@@ -56,6 +62,7 @@ class outputting(object):
 
         self.silent = kwargs.get('silent',False)
         self.save = kwargs.get('save', True)
+        self.saveScript = kwargs.get('saveScript', False)
         self.label = kwargs.pop("simLabel","Untitled")
         self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
@@ -212,6 +219,9 @@ class outputting(object):
         if self.save:
             self.folderSetup()
             self.logFile = self.newFile('log', 'txt')
+            if self.saveScript:
+                p =  stack()[-1][1]
+                copy (p,self.outputFolder)
         else:
             self.outputFolder = ''
             self.logFile =  ''

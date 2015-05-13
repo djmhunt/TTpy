@@ -43,6 +43,7 @@ gamma = 0.5#0.7#0.5#0.7
 simDur = 30
 outputOptions = {'simLabel': 'MS_rev_decksSet',
                  'save': True,
+                 'saveScript': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,

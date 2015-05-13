@@ -47,6 +47,7 @@ gammaMax = 5
 
 outputOptions = {'simLabel': 'BP_decksSet',
                  'save': True,
+                 'saveScript': True,
                  'silent': False,
                  'npErrResp' : 'raise'}#'raise','log'
 parameters = {  'alpha':(alphaMax-alphaMin)/2,
