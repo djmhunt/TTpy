@@ -55,9 +55,11 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">isinf</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log2</span><span class="p">,</span> <span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMergeNP</span>
+
+<span class="kn">from</span> <span class="nn">qualityFunc</span> <span class="kn">import</span> <span class="n">qualFuncIdent</span>
 
 <div class="viewcode-block" id="fitAlg"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg">[docs]</a><span class="k">class</span> <span class="nc">fitAlg</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -90,60 +92,10 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">null</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">}</span>
 
-<div class="viewcode-block" id="fitAlg.null"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.null">[docs]</a>    <span class="k">def</span> <span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates a fit quality value</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        fit : float</span>
-<span class="sd">            The sum of the model valaues returned</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="fitAlg.logprob"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.logprob">[docs]</a>    <span class="k">def</span> <span class="nf">logprob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2({\\vec x}^2)`</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        fit : float</span>
-<span class="sd">            The sum of the model valaues returned</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
-
-        <span class="n">logModCoiceprob</span> <span class="o">=</span> <span class="n">log2</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
-
-        <span class="n">probs</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">logModCoiceprob</span>
-        
-        <span class="n">fit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">fit</span>
-        </div>
-<div class="viewcode-block" id="fitAlg.maxprob"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.maxprob">[docs]</a>    <span class="k">def</span> <span class="nf">maxprob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates a fit quality value based on :math:`\sum 1-{\\vec x}`</span>
-<span class="sd">        </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        fit : float</span>
-<span class="sd">            The sum of the model valaues returned</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
-        
-        <span class="n">fit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">modVals</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="n">fit</span>
-</div>
 <div class="viewcode-block" id="fitAlg.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the model through the fitting algorithms and starting parameters </span>
@@ -176,6 +128,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
 
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+        </div>
+<div class="viewcode-block" id="fitAlg.fitness"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a fit quality value</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fit : float</span>
+<span class="sd">            The fit quality value calculated using the fitQualFunc function</span>
+<span class="sd">            </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        fitting.fitters.qualityFunc : the module of fitQualFunc functions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
+        
+        <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">fit</span>
 </div>
 <div class="viewcode-block" id="fitAlg.info"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

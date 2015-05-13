@@ -233,7 +233,7 @@ and then return it.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -269,7 +269,7 @@ and then return <tt class="docutils literal"><span class="pre">[event,1-event]</
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.EP" title="model.EP"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -313,7 +313,7 @@ and then return <tt class="docutils literal"><span class="pre">[event_info,1-eve
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.MS" title="model.MS"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></a>, <a class="reference internal" href="model.html#module-model.BP" title="model.BP"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -517,6 +517,68 @@ output later</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="experiment.decks.deckStimAllInfo">
+<tt class="descclassname">experiment.decks.</tt><tt class="descname">deckStimAllInfo</tt><big>(</big><em>maxEventVal</em>, <em>minEventVal</em>, <em>numActions</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#deckStimAllInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimAllInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the decks stimuli for models expecting the reward information 
+from all possible actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>maxEventVal</strong> : int</p>
+<blockquote>
+<div><p>The highest value a reward can have</p>
+</div></blockquote>
+<p><strong>minEventVal</strong> : int</p>
+<blockquote>
+<div><p>The lowest value a reward can have</p>
+</div></blockquote>
+<p><strong>numActions</strong> : int</p>
+<blockquote>
+<div><p>The number of actions the participant can perform. Assumes the lowest 
+valued action is 0</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deckStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last action. The event that is a float and action is {0,1}. The 
+function returns a list of length 2.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></a>, <a class="reference internal" href="model.decision.html#model.decision.binary.decIntBetaReac" title="model.decision.binary.decIntBetaReac"><tt class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decIntBetaReac</span></tt></a></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">experiment.decks</span> <span class="kn">import</span> <span class="n">deckStimAllInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span> <span class="o">=</span> <span class="n">deckStimAllInfo</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="experiment.decks.deckStimDirect">
 <tt class="descclassname">experiment.decks.</tt><tt class="descname">deckStimDirect</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#deckStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDirect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the decks stimuli for models expecting just the event</p>
@@ -535,7 +597,7 @@ last action. The function returns the event.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2a</span></tt></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></tt></a>, <a class="reference internal" href="model.html#module-model.qLearn2" title="model.qLearn2"><tt class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></tt></a>, <a class="reference internal" href="model.decision.html#model.decision.binary.decBeta" title="model.decision.binary.decBeta"><tt class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decBeta</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -555,7 +617,7 @@ last action. The function returns the event.</p>
 <dt id="experiment.decks.deckStimDualInfo">
 <tt class="descclassname">experiment.decks.</tt><tt class="descname">deckStimDualInfo</tt><big>(</big><em>maxEventVal</em><big>)</big><a class="reference internal" href="_modules/experiment/decks.html#deckStimDualInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDualInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the decks stimuli for models expecting the reward information 
-from two possible actions</p>
+from two possible actions. Innacurate and depreciated</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -572,7 +634,7 @@ function returns a list of length 2.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><tt class="xref py py-obj docutils literal"><span class="pre">model.BP</span></tt></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><tt class="xref py py-obj docutils literal"><span class="pre">model.EP</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS</span></tt></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><tt class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></tt></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">

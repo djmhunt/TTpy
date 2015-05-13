@@ -240,7 +240,7 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.qLearn2a</span>
+<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decBeta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
@@ -249,10 +249,65 @@
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDirect&quot;</span>
     <span class="k">return</span> <span class="n">deckStim</span>
 </div>
+<div class="viewcode-block" id="deckStimAllInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimAllInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimAllInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span> <span class="n">minEventVal</span><span class="p">,</span> <span class="n">numActions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
+<span class="sd">    from all possible actions </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    maxEventVal : int</span>
+<span class="sd">        The highest value a reward can have</span>
+<span class="sd">    minEventVal : int</span>
+<span class="sd">        The lowest value a reward can have</span>
+<span class="sd">    numActions : int</span>
+<span class="sd">        The number of actions the participant can perform. Assumes the lowest </span>
+<span class="sd">        valued action is 0</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deckStim : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
+<span class="sd">        function returns a list of length 2.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntBetaReac</span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------    </span>
+<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
+<span class="sd">    &gt;&gt;&gt; from experiment.decks import deckStimAllInfo</span>
+<span class="sd">    &gt;&gt;&gt; stim = deckStimAllInfo(10,1,2)</span>
+<span class="sd">    &gt;&gt;&gt; stim(6,0)</span>
+<span class="sd">    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])</span>
+<span class="sd">    &gt;&gt;&gt; stim(6,1)</span>
+<span class="sd">    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">numDiffEvents</span> <span class="o">=</span> <span class="n">maxEventVal</span><span class="o">-</span><span class="n">minEventVal</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">respZeros</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">numDiffEvents</span> <span class="o">*</span> <span class="n">numActions</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="n">respZeros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">stimulus</span><span class="p">[</span><span class="n">numDiffEvents</span><span class="o">*</span><span class="n">action</span> <span class="o">+</span> <span class="n">event</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">stimulus</span>
+        
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimAllInfo&quot;</span>
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;maxEventVal&quot;</span><span class="p">:</span><span class="n">maxEventVal</span><span class="p">,</span>
+                       <span class="s">&quot;minEventVal&quot;</span><span class="p">:</span><span class="n">minEventVal</span><span class="p">,</span> 
+                       <span class="s">&quot;numActions&quot;</span><span class="p">:</span><span class="n">numActions</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">deckStim</span>
+    </div>
 <div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
-<span class="sd">    from two possible actions </span>
+<span class="sd">    from two possible actions. Innacurate and depreciated</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

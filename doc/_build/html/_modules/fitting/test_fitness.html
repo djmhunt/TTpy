@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fitting.test_fitness &mdash; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fitting.test_fitness</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author: Dominic</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;../&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">pytest</span> <span class="kn">import</span> <span class="n">raises</span><span class="p">,</span> <span class="n">fixture</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">model.qLearn</span> <span class="kn">import</span> <span class="n">qLearn</span>
+<span class="kn">from</span> <span class="nn">fitting.fitness</span> <span class="kn">import</span> <span class="n">fitter</span>
+<span class="kn">from</span> <span class="nn">fitting.fitters.minimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="c">#def test_an_exception():</span>
+<span class="c">#    with raises(IndexError):</span>
+<span class="c">#        # Indexing the 30th item in a 3 item list</span>
+<span class="c">#        [5, 10, 15][30]</span>
+<span class="c">#        </span>
+      
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;function&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="modelSets"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.modelSets">[docs]</a><span class="k">def</span> <span class="nf">modelSets</span><span class="p">():</span>
+    
+    <span class="n">beta</span> <span class="o">=</span> <span class="mf">0.15</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="mf">1.5</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;alpha&#39;</span><span class="p">:</span><span class="n">alpha</span><span class="p">,</span>
+    <span class="c">#                &#39;beta&#39;:beta,</span>
+                    <span class="s">&#39;theta&#39;</span><span class="p">:</span><span class="n">theta</span><span class="p">}</span>
+    <span class="n">paramExtras</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;prior&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])}</span>
+    
+    <span class="n">modelSet</span> <span class="o">=</span> <span class="n">models</span><span class="p">((</span><span class="n">qLearn</span><span class="p">,</span><span class="n">parameters</span><span class="p">,</span><span class="n">paramExtras</span><span class="p">))</span>
+    <span class="n">modelInfos</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modelSet</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">()]</span>
+    <span class="n">modelInfo</span> <span class="o">=</span> <span class="n">modelInfos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span>
+    </div>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="participant"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.participant">[docs]</a><span class="k">def</span> <span class="nf">participant</span><span class="p">():</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;subchoice&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
+                                 <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
+                                 <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
+                                 <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> 
+                                 <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> 
+             <span class="s">&#39;subreward&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mi">7</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  
+                                 <span class="mi">8</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  
+                                 <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  
+                                 <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  
+                                 <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> 
+                                 <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  
+                                 <span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">]),</span> 
+             <span class="s">&#39;cumpts&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span>  <span class="mi">7</span><span class="p">,</span>   <span class="mi">9</span><span class="p">,</span>  <span class="mi">11</span><span class="p">,</span>  <span class="mi">21</span><span class="p">,</span>  <span class="mi">26</span><span class="p">,</span>  <span class="mi">36</span><span class="p">,</span>  <span class="mi">42</span><span class="p">,</span>  <span class="mi">43</span><span class="p">,</span>  <span class="mi">49</span><span class="p">,</span>  <span class="mi">59</span><span class="p">,</span>  <span class="mi">69</span><span class="p">,</span>  
+                              <span class="mi">79</span><span class="p">,</span>  <span class="mi">80</span><span class="p">,</span>  <span class="mi">88</span><span class="p">,</span>  <span class="mi">92</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">141</span><span class="p">,</span> <span class="mi">143</span><span class="p">,</span> 
+                              <span class="mi">144</span><span class="p">,</span> <span class="mi">145</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">158</span><span class="p">,</span> <span class="mi">166</span><span class="p">,</span> <span class="mi">172</span><span class="p">,</span> <span class="mi">173</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="mi">189</span><span class="p">,</span> 
+                              <span class="mi">199</span><span class="p">,</span> <span class="mi">209</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">237</span><span class="p">,</span> <span class="mi">238</span><span class="p">,</span> <span class="mi">239</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> 
+                              <span class="mi">257</span><span class="p">,</span> <span class="mi">267</span><span class="p">,</span> <span class="mi">271</span><span class="p">,</span> <span class="mi">281</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">311</span><span class="p">,</span> <span class="mi">319</span><span class="p">,</span> <span class="mi">329</span><span class="p">,</span> <span class="mi">336</span><span class="p">,</span> 
+                              <span class="mi">343</span><span class="p">,</span> <span class="mi">344</span><span class="p">,</span> <span class="mi">354</span><span class="p">,</span> <span class="mi">364</span><span class="p">,</span> <span class="mi">372</span><span class="p">,</span> <span class="mi">375</span><span class="p">,</span> <span class="mi">385</span><span class="p">,</span> <span class="mi">387</span><span class="p">,</span> <span class="mi">397</span><span class="p">,</span> <span class="mi">404</span><span class="p">,</span> <span class="mi">414</span><span class="p">,</span> 
+                              <span class="mi">422</span><span class="p">,</span> <span class="mi">425</span><span class="p">,</span> <span class="mi">431</span><span class="p">,</span> <span class="mi">435</span><span class="p">,</span> <span class="mi">439</span><span class="p">,</span> <span class="mi">448</span><span class="p">,</span> <span class="mi">458</span><span class="p">,</span> <span class="mi">461</span><span class="p">,</span> <span class="mi">468</span><span class="p">,</span> <span class="mi">470</span><span class="p">,</span> <span class="mi">476</span><span class="p">,</span> 
+                              <span class="mi">479</span><span class="p">,</span> <span class="mi">480</span><span class="p">,</span> <span class="mi">485</span><span class="p">])}</span>
+                              
+    <span class="k">return</span> <span class="n">data</span>
+    </div>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="probabilities"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.probabilities">[docs]</a><span class="k">def</span> <span class="nf">probabilities</span><span class="p">():</span>
+    
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span>  <span class="mf">5.000e-01</span><span class="p">,</span>   <span class="mf">3.543e-01</span><span class="p">,</span>   <span class="mf">1.824e-01</span><span class="p">,</span>   <span class="mf">9.020e-01</span><span class="p">,</span>   <span class="mf">9.734e-01</span><span class="p">,</span>
+                 <span class="mf">9.610e-01</span><span class="p">,</span>   <span class="mf">9.877e-01</span><span class="p">,</span>   <span class="mf">1.577e-02</span><span class="p">,</span>   <span class="mf">9.934e-01</span><span class="p">,</span>   <span class="mf">9.919e-01</span><span class="p">,</span>
+                 <span class="mf">9.971e-01</span><span class="p">,</span>   <span class="mf">9.987e-01</span><span class="p">,</span>   <span class="mf">6.491e-04</span><span class="p">,</span>   <span class="mf">9.997e-01</span><span class="p">,</span>   <span class="mf">9.997e-01</span><span class="p">,</span>
+                 <span class="mf">9.988e-01</span><span class="p">,</span>   <span class="mf">9.990e-01</span><span class="p">,</span>   <span class="mf">9.995e-01</span><span class="p">,</span>   <span class="mf">9.985e-01</span><span class="p">,</span>   <span class="mf">9.991e-01</span><span class="p">,</span>
+                 <span class="mf">9.996e-01</span><span class="p">,</span>   <span class="mf">4.335e-04</span><span class="p">,</span>   <span class="mf">3.341e-04</span><span class="p">,</span>   <span class="mf">2.009e-04</span><span class="p">,</span>   <span class="mf">1.338e-04</span><span class="p">,</span>
+                 <span class="mf">1.760e-04</span><span class="p">,</span>   <span class="mf">1.625e-04</span><span class="p">,</span>   <span class="mf">5.056e-04</span><span class="p">,</span>   <span class="mf">3.778e-04</span><span class="p">,</span>   <span class="mf">9.982e-01</span><span class="p">,</span>
+                 <span class="mf">3.320e-03</span><span class="p">,</span>   <span class="mf">1.427e-03</span><span class="p">,</span>   <span class="mf">9.968e-01</span><span class="p">,</span>   <span class="mf">9.984e-01</span><span class="p">,</span>   <span class="mf">9.991e-01</span><span class="p">,</span>
+                 <span class="mf">9.994e-01</span><span class="p">,</span>   <span class="mf">9.976e-01</span><span class="p">,</span>   <span class="mf">9.969e-01</span><span class="p">,</span>   <span class="mf">9.985e-01</span><span class="p">,</span>   <span class="mf">3.886e-03</span><span class="p">,</span>
+                 <span class="mf">2.265e-03</span><span class="p">,</span>   <span class="mf">1.089e-03</span><span class="p">,</span>   <span class="mf">6.058e-04</span><span class="p">,</span>   <span class="mf">1.257e-03</span><span class="p">,</span>   <span class="mf">5.524e-03</span><span class="p">,</span>
+                 <span class="mf">9.926e-01</span><span class="p">,</span>   <span class="mf">9.965e-01</span><span class="p">,</span>   <span class="mf">9.885e-01</span><span class="p">,</span>   <span class="mf">9.950e-01</span><span class="p">,</span>   <span class="mf">9.974e-01</span><span class="p">,</span>
+                 <span class="mf">9.980e-01</span><span class="p">,</span>   <span class="mf">9.865e-01</span><span class="p">,</span>   <span class="mf">9.923e-01</span><span class="p">,</span>   <span class="mf">9.934e-01</span><span class="p">,</span>   <span class="mf">9.968e-01</span><span class="p">,</span>
+                 <span class="mf">9.956e-01</span><span class="p">,</span>   <span class="mf">9.944e-01</span><span class="p">,</span>   <span class="mf">4.040e-02</span><span class="p">,</span>   <span class="mf">1.919e-01</span><span class="p">,</span>   <span class="mf">4.866e-01</span><span class="p">,</span>
+                 <span class="mf">6.115e-01</span><span class="p">,</span>   <span class="mf">6.549e-01</span><span class="p">,</span>   <span class="mf">8.503e-01</span><span class="p">,</span>   <span class="mf">4.466e-01</span><span class="p">,</span>   <span class="mf">7.331e-01</span><span class="p">,</span>
+                 <span class="mf">7.484e-01</span><span class="p">,</span>   <span class="mf">8.863e-01</span><span class="p">,</span>   <span class="mf">9.025e-01</span><span class="p">,</span>   <span class="mf">2.970e-01</span><span class="p">,</span>   <span class="mf">2.932e-01</span><span class="p">,</span>
+                 <span class="mf">8.168e-01</span><span class="p">,</span>   <span class="mf">6.691e-01</span><span class="p">,</span>   <span class="mf">8.280e-01</span><span class="p">,</span>   <span class="mf">9.286e-01</span><span class="p">,</span>   <span class="mf">2.208e-01</span><span class="p">,</span>
+                 <span class="mf">2.989e-01</span><span class="p">,</span>   <span class="mf">8.835e-01</span><span class="p">,</span>   <span class="mf">8.678e-01</span><span class="p">,</span>   <span class="mf">2.959e-01</span><span class="p">,</span>   <span class="mf">8.914e-01</span><span class="p">])</span>
+                  
+    <span class="k">return</span> <span class="n">prob</span>
+                              </div>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;function&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="fitting"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.fitting">[docs]</a><span class="k">def</span> <span class="nf">fitting</span><span class="p">():</span>
+    
+    <span class="k">def</span> <span class="nf">scaleFunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span>
+        
+    <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">dataShaper</span> <span class="o">=</span> <span class="s">&quot;-2log&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#39;constrained&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)])</span>
+
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">fitter</span><span class="p">(</span><span class="s">&#39;subchoice&#39;</span><span class="p">,</span> <span class="s">&#39;subreward&#39;</span><span class="p">,</span> <span class="s">&#39;ActionProb&#39;</span><span class="p">,</span> <span class="n">fitAlg</span><span class="p">,</span> <span class="n">scaleFunc</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span>
+    
+
+        </div>
+<div class="viewcode-block" id="TestClass"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.TestClass">[docs]</a><span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span> 
+    
+<div class="viewcode-block" id="TestClass.test_complete"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.TestClass.test_complete">[docs]</a>    <span class="k">def</span> <span class="nf">test_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fitting</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">modelSets</span><span class="p">):</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
+        <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">fitting</span>
+        
+        <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">()</span>
+        
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.038898802</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>	
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;theta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.220813253</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+        </div>
+<div class="viewcode-block" id="TestClass.test_modelInputs"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.TestClass.test_modelInputs">[docs]</a>    <span class="k">def</span> <span class="nf">test_modelInputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitting</span><span class="p">,</span> <span class="n">modelSets</span><span class="p">):</span>
+        
+        <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">fitting</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
+        <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span>
+        
+        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="s">&#39;theta&#39;</span><span class="p">]</span>
+        <span class="n">paramInputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">modelParams</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">paramNames</span><span class="p">]</span>
+        
+        <span class="n">fit</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">paramNames</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelOtherParams</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_getModInput</span><span class="p">(</span><span class="o">*</span><span class="n">paramInputs</span><span class="p">)</span>
+        
+        <span class="n">answer</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;prior&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="mf">0.5</span><span class="p">]),</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">answer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="TestClass.test_simSetup"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.TestClass.test_simSetup">[docs]</a>    <span class="k">def</span> <span class="nf">test_simSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitting</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">modelSets</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">):</span>
+        
+        <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">fitting</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
+        <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span>
+        
+        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="s">&#39;theta&#39;</span><span class="p">]</span>
+        <span class="n">paramInputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">modelParams</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">paramNames</span><span class="p">]</span>
+        
+        <span class="n">fit</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">paramNames</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelOtherParams</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">partChoices</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">scaler</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s">&#39;subchoice&#39;</span><span class="p">])</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">partRewards</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="s">&#39;subreward&#39;</span><span class="p">]</span>
+        
+        <span class="n">model</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_simSetup</span><span class="p">(</span><span class="o">*</span><span class="n">paramInputs</span><span class="p">)</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
+        
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">]</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&quot;Actions&quot;</span><span class="p">]</span>
+        <span class="n">actProb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;ActionProb&#39;</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">act</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">actProb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">actProb</span> <span class="o">-</span> <span class="n">probabilities</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+    
+<span class="c">#    pytest.set_trace()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
