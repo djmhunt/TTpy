@@ -39,15 +39,20 @@ from outputting import outputting
 ### Set the outputting, model sets and experiment sets
 beta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
+alphaMin = 0
+alphaMax = 1
 gamma = 0.5#0.7#0.5#0.7
-simDur = 30
+gammaMin = 0
+gammaMax = 5
+
 outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'gamma':gamma}
+parameters = {  'alpha':(alphaMax-alphaMin)/2,
+                'gamma':(gammaMax-gammaMin)/2}
 paramExtras = {'beta':beta,
+               'numActions':2,
                'stimFunc':deckStimDirect(),
                'decFunc':decBeta(beta = beta)} #For decks
 
@@ -99,8 +104,8 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (0,1),
-                            'gamma' : (0,5)}, 
+                  bounds = {'alpha' : (alphaMin,alphaMax),
+                            'gamma' : (gammaMin,gammaMax)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

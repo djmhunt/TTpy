@@ -11,20 +11,20 @@ recommend making a copy of this for each sucessful investigation and storing it
 from __future__ import division
 
 # Other used function
-from numpy import array, concatenate
+from numpy import array, concatenate, ones
 
 ### Import all experiments, models, outputting and interface functions
 #The experiment factory
 from experiments import experiments
 #The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
+from experiment.decks import Decks, deckStimDualInfo, deckStimDirect, deckStimAllInfo
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
 from models import models 
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decBeta, decIntBetaReac
 #The models
 from model.BP import BP
 from model.EP import EP
@@ -39,17 +39,24 @@ from outputting import outputting
 ### Set the outputting, model sets and experiment sets
 beta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
+alphaMin = 0
+alphaMax = 1
 gamma = 0.5#0.7#0.5#0.7
-simDur = 30
+gammaMin = 0
+gammaMax = 50
+numStimuli = 20
+
 outputOptions = {'simLabel': 'EP_decksSet',
                  'save': True,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'gamma':gamma}
+parameters = {  'alpha':(alphaMax-alphaMin)/2,
+                'gamma':(gammaMax-gammaMin)/2}
 paramExtras = {'beta':beta,
-               'stimFunc':deckStimDualInfo(10),
-               'decFunc':decBeta(beta = beta)} #For decks
+               'activity':ones(numStimuli)*1.05,
+               'numStimuli':numStimuli,
+               'stimFunc':deckStimAllInfo(10,1,2),
+               'decFunc':decIntBetaReac(beta = beta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((EP,parameters,paramExtras))
@@ -99,8 +106,8 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (0,1),
-                            'gamma' : (0,5)}, 
+                  bounds = {'alpha' : (alphaMin,alphaMax),
+                            'gamma' : (gammaMin,gammaMax)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
