@@ -96,7 +96,7 @@ def decIntBetaReac(responses = (0,1), beta = 0):
     def decisionFunc(probabilities):
         
         numResp = int(len(probabilities) / 2)
-        respWeights = arange(numResp)
+        respWeights = arange(1, numResp + 1)
             
         probSets = reshape(probabilities,(2,numResp))
         expectSet = sum(respWeights * probSets,1)
