@@ -244,12 +244,43 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     respZeros = zeros(numDiffEvents * numActions)
     
     def deckStim(event, action):
-        stimulus = respZeros.copy()
-        stimulus[numDiffEvents*action + event - 1] = 1
+        stimulus = respZeros.copy() + 1
+        stimulus[numDiffEvents*action + event - 1] += 1
         return stimulus
         
     deckStim.Name = "deckStimAllInfo"
     deckStim.Params = {"maxEventVal":maxEventVal,
                        "minEventVal":minEventVal, 
                        "numActions":numActions}
+    return deckStim
+    
+def deckStimDualInfo(maxEventVal):
+    """
+    Processes the decks stimuli for models expecting the reward information 
+    from two possible actions. Innacurate and depreciated
+        
+    Returns
+    -------
+    deckStim : function
+        The function expects to be passed a tuple containing the event and the
+        last action. The event that is a float and action is {0,1}. The 
+        function returns a list of length 2.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.BP, model.EP, model.MS, model.MS_rev
+    """
+    devisor = maxEventVal+1#sum(xrange(0,maxEventVal+1))
+    
+    def deckStim(event, action):
+        stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
+        stimulus = [stim,1-stim]
+        return stimulus
+        
+    deckStim.Name = "deckStimDualInfo"
     return deckStim
