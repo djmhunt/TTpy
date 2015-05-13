@@ -43,7 +43,7 @@ class MS_rev(model):
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])``
-    numActions : integer, optional
+    numStimuli : integer, optional
         The number of different reaction learning sets. Default ``2``
     activity : array, optional
         The `activity` of the neurons. The values are between ``[0,1]``
@@ -62,9 +62,9 @@ class MS_rev(model):
         self.gamma = kwargs.pop('gamma',4)
         self.alpha = kwargs.pop('alpha',0.3)
         self.beta = kwargs.pop('beta',0.3)
-        self.numActions = kwargs.pop('numActions',2)
-        self.prior = kwargs.pop('prior',ones(self.numActions)*0.5)
-        self.activity = kwargs.pop('activity',ones(self.numActions)*0.5)
+        self.numStimuli = kwargs.pop('numStimuli',2)
+        self.prior = kwargs.pop('prior',ones(self.numStimuli)*0.5)
+        self.activity = kwargs.pop('activity',ones(self.numStimuli)*0.5)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -84,7 +84,7 @@ class MS_rev(model):
                            "alpha": self.alpha,
                            "prior": self.prior,
                            "activity" : self.activity,
-                           "numActions": self.numActions,
+                           "numStimuli": self.numStimuli,
                            "stimFunc" : self.stimFunc.Name,
                            "decFunc" : self.decisionFunc.Name}
 

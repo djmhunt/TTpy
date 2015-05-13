@@ -34,7 +34,7 @@ class BP(model):
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
         Default ``array([0.5,0.5])``
-    numActions : integer, optional
+    numStimuli : integer, optional
         The number of different reaction learning sets. Default ``2``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can 
@@ -48,25 +48,25 @@ class BP(model):
 
     def __init__(self,**kwargs):
 
-        self.numActions = kwargs.pop('numActions', 2)
+        self.numStimuli = kwargs.pop('numStimuli', 2)
         self.gamma = kwargs.pop('gamma', 4)
-        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
+        self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
         self.beta = kwargs.pop('beta', 0.3)
         
         
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decBeta(responses = tuple(range(1,self.numActions+1)), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc', decBeta(responses = tuple(range(1,self.numStimuli+1)), beta = self.beta))
 
         self.parameters = {"Name": self.Name,
                            "gamma": self.gamma,
                            "beta": self.beta,
                            "prior": self.prior,
-                           "numActions": self.numActions,
+                           "numStimuli": self.numStimuli,
                            "stimFunc" : self.stimFunc.Name,
                            "decFunc" : self.decisionFunc.Name}
 
         self.currAction = 1
-#        if len(prior) != self.numActions:
+#        if len(prior) != self.numStimuli:
 #            raise warning.
         self.posteriorProb = array(self.prior)
         self.probabilities = array(self.prior)
