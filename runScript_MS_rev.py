@@ -44,6 +44,7 @@ simDur = 30
 outputOptions = {'simLabel': 'MS_rev_decksSet',
                  'save': True,
                  'saveScript': True,
+                 'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,

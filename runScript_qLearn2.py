@@ -48,6 +48,7 @@ gammaMax = 5
 outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'save': True,
                  'saveScript': True,
+                 'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {'alphaPos':(alphaMax-alphaMin)/2,

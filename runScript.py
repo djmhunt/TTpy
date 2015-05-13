@@ -46,6 +46,7 @@ simDur = 30
 outputOptions = {'simLabel': 'qLearn_decksSet',
                  'save': True,
                  'saveScript': True,
+                 'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,

@@ -39,6 +39,9 @@ class outputting(object):
         Default ``False``
     silent : bool, optional
         States if a log is not written to stdout. Defaults to ``False``
+    pickleData : bool, optional
+        If true the data for each model, experiment and participant is recorded.
+        Default is ``False``
     simLabel : string, optional
         The label for the simulation
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
@@ -63,6 +66,7 @@ class outputting(object):
         self.silent = kwargs.get('silent',False)
         self.save = kwargs.get('save', True)
         self.saveScript = kwargs.get('saveScript', False)
+        self.pickleData = kwargs.get('pickleData', False)
         self.label = kwargs.pop("simLabel","Untitled")
         self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength",18)
@@ -126,7 +130,8 @@ class outputting(object):
         "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
         avalable integer.
         
-        A subfolder is also created with the name "Pickle"
+        A subfolder is also created with the name ``Pickle`` if  pickleData is 
+        true.
         
         See Also
         --------
@@ -145,7 +150,8 @@ class outputting(object):
             folderName += str(i)
 
         folderName += "/"
-        makedirs(folderName  + 'Pickle/')
+        if self.pickleData:
+            makedirs(folderName  + 'Pickle/')
 
         self.outputFolder = folderName
 
@@ -484,7 +490,7 @@ class outputting(object):
 
         label = "_Exp-" + str(self.expSetNum) + "_Model-" + str(self.modelSetNum) + "'" + str(self.modelSetSize)
 
-        if self.outputFolder:
+        if self.outputFolder and self.pickleData:
             self.pickleLog(expData,self.outputFolder,label)
             self.pickleLog(modelData,self.outputFolder,label)
 
@@ -521,7 +527,7 @@ class outputting(object):
 
         participant.setdefault("Name","Participant" + str(self.modelSetSize))
 
-        if self.outputFolder:
+        if self.outputFolder and self.pickleData:
             self.pickleLog(expData,self.outputFolder,label)
             self.pickleLog(modelData,self.outputFolder,label)
             self.pickleLog(participant,self.outputFolder,label)
