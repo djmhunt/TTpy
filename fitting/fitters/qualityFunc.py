@@ -22,7 +22,7 @@ def qualFuncIdent(value):
     return fitness
 
                 
-def simpleSum(self,modVals):
+def simpleSum(modVals):
     """
     Generates a fit quality value based on :math:`\sum {\\vec x}`
     
@@ -34,7 +34,7 @@ def simpleSum(self,modVals):
 
     return sum(modVals)
 
-def logprob(self,modVals):
+def logprob(modVals):
     """
     Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2({\\vec x}^2)`
     
@@ -52,7 +52,7 @@ def logprob(self,modVals):
 
     return fit
     
-def maxprob(self,modVals):
+def maxprob(modVals):
     """
     Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
     
