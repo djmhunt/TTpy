@@ -14,7 +14,7 @@ from numpy import seterr, seterrcall, meshgrid, array, amax
 from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
-from collections import defaultdict
+from collections import defaultdict, Callable
 
 
 # For analysing the state of the computer
@@ -451,6 +451,90 @@ def mergeDicts(*args):
         mergedDict.update(dictionary)
         
     return mergedDict
+    
+def callableDetails(item):
+    """
+    Takes a callable item and extracts the details. 
+    
+    Currently only extracts things stored in ``item.Name`` and ``item.Params``
+    
+    Parameters
+    ----------
+    item : callable item
+    
+    Returns
+    -------
+    details : tuple pair with string and dictionary of strings
+        Contains the properties of the 
+        
+    Examples
+    --------
+    >>> from utils import callableDetails
+    >>> def foo():
+    >>>     print "foo"
+    >>>
+    >>> foo.Name = "boo"
+    >>> callableDetails(foo)
+    ('boo', None)
+    
+    >>> foo.Params = {1: 2, 2: 3}
+    >>> callableDetails(foo)
+    ('boo', {'1': '2', '2': '3'})
+    
+    """
+
+    if isinstance(item, Callable):
+        try:
+            details = {str(k): str(v).strip('[]()') for k,v in item.Params.iteritems()}
+        except:
+            details = None
+        
+        return (item.Name,details)
+        
+    else:
+        return (None, None)
+        
+def callableDetailsString(item):
+    """
+    Takes a callable item and returns a string detailing the function. 
+    
+    Currently only extracts things stored in ``item.Name`` and ``item.Params``
+    
+    Parameters
+    ----------
+    item : callable item
+    
+    Returns
+    -------
+    description : string
+        Contains the properties and name of the callable
+        
+    Examples
+    --------
+    >>> from utils import callableDetailsString
+    >>> def foo():
+    >>>     print "foo"
+    >>>
+    >>> foo.Name = "boo"
+    >>> callableDetailsString(foo)
+    'boo'
+    
+    >>> foo.Params = {1: 2, 2: 3}
+    >>> callableDetailsString(foo)
+    'boo with 1 : 2, 2 : 3'
+    
+    """
+    
+    Name, details = callableDetails(item)
+    
+    if details:    
+        properties = [k + ' : ' + str(v).strip('[]()') for k,v in details.iteritems()]
+        
+        desc = Name + " with " + ", ".join(properties)
+    else:
+        desc = Name
+    
+    return desc
 
 #if __name__ == '__main__':
 #    from timeit import timeit
