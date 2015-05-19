@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 
-Notes
------
 This is a script with all the components for running an investigation. I would 
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
@@ -16,48 +14,51 @@ from __future__ import division
 from numpy import array, concatenate
 
 ### Import all experiments, models, outputting and interface functions
-#The experiment factory
+# The experiment factory
 from experiments import experiments
-#The experiments and stimulus processors
+# The experiments and stimulus processors
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
-from models import models 
+from models import models
 # The decision methods
 from model.decision.binary import decBeta
-#The models
-from model.BP import BP
-from model.EP import EP
-from model.MS import MS
-from model.MS_rev import MS_rev
-from model.qLearn import qLearn
-from model.qLearn2 import qLearn2
+#The model
 from model.OpAL import OpAL
-from model.RVPM import RVPM
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0.0
-alpha = 0.5
-gamma = 0.5
-simDur = 30
-outputOptions = {'simLabel': 'qLearn_decksSet',
+beta = 0#0.3#0.15
+alpha = 0.5#0.2#0.5#0.2
+alphaMin = 0
+alphaMax = 1
+gamma = 0.5#0.7#0.5#0.7
+gammaMin = 0
+gammaMax = 5
+gammaDiffMin = 0
+gammaDiffMax = 0
+
+outputOptions = {'simLabel': 'OpAL_dataSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'gamma':gamma}
+parameters = {'alpha':(alphaMax-alphaMin)/2,
+              'alphaGo':(alphaMax-alphaMin)/2,
+              'alphaNogo':(alphaMax-alphaMin)/2,
+              'gamma':(gammaMax-gammaMin)/2,
+              'gammaDiff':(gammaDiffMax-gammaDiffMin)/2}
 paramExtras = {'beta':beta,
+               'numActions':2,
                'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For qLearn decks
+               'decFunc':decBeta(beta = beta)} #For decks
 
 expSets = experiments((Decks,{},{}))
-modelSet = models((qLearn,parameters,paramExtras))
+modelSet = models((OpAL,parameters,paramExtras))
 output = outputting(**outputOptions)
 
 ### For simulating experiments
@@ -68,9 +69,11 @@ output = outputting(**outputOptions)
 
 ### For data fitting
 
+from numpy import concatenate
+
 from dataFitting import dataFitting
 
-from data import data
+from data import data, datasets
 
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.fitness import fitter
@@ -102,14 +105,19 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (0,1),
-                            'gamma' : (0,5)}, 
+                  bounds = {'alpha' : (alphaMin,alphaMax),
+                            'alphaGo' : (alphaMin,alphaMax),
+                            'alphaNogo' : (alphaMin,alphaMax),
+                            'gamma' : (gammaMin,gammaMax),
+                            'gammaDiff' : (gammaDiffMin, gammaDiffMax)
+                            }, 
                   numStartPoints = 5,
                   boundFit = True)
+              
 #fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
 fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFuncSingle())
 
 # Run the data fitter
-dataFitting(expSets, modelSet, output, data = dataSet, fitter = fit)
+dataFitting(expSets, modelSet, output, data=dataSet, fitter=fit)

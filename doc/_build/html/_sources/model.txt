@@ -90,6 +90,14 @@ model.qLearn2 module
     :members:
     :undoc-members:
     :show-inheritance:
+	
+model.OpAL module
+--------------------
+
+.. automodule:: model.OpAL
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Module contents

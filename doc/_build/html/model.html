@@ -1519,6 +1519,172 @@ accessed later</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-model.OpAL">
+<span id="model-opal-module"></span><h2>model.OpAL module<a class="headerlink" href="#module-model.OpAL" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Opponent actor learning (OpAL): Modeling 
+interactive effects of striatal dopamine on reinforcement 
+learning and choice incentive.
+Collins, A. G. E., &amp; Frank, M. J. (2014).  
+Psychological Review, 121(3), 337–66. 
+doi:10.1037/a0037015</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.OpAL.OpAL">
+<em class="property">class </em><tt class="descclassname">model.OpAL.</tt><tt class="descname">OpAL</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/OpAL.html#OpAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The q-Learning algorithm</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><blockquote>
+<div><p>Learning rate parameter. Also known as the critic learning rate.</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>alphaGo <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">Learning rate parameter for Go, the positive part of the actor learning</p>
+</dd>
+<dt>alphaNogo <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">Learning rate aprameter for Nogo, the negative part of the actor learning</p>
+</dd>
+<dt>gamma <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">Sensitivity parameter for probabilities. Also known as an exploration-
+expoitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
+</dd>
+<dt>gammaDiff <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">The asymetry beween the actor weights. :math:<a href="#id1"><span class="problematic" id="id2">`</span></a></p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>ho = Beta_G - Beta = Beta_N + Beta`</strong></p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>beta <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd><p class="first last">Decision threshold parameter</p>
+</dd>
+<dt>prior <span class="classifier-delimiter">:</span> <span class="classifier">array of two floats in <tt class="docutils literal"><span class="pre">[0,1]</span></tt> or just float in range, optional</span></dt>
+<dd><p class="first last">The prior probability of of the two states being the correct one. 
+Default <tt class="docutils literal"><span class="pre">array([0.5,0.5])</span></tt></p>
+</dd>
+<dt>expect: float, optional</dt>
+<dd><p class="first last">The initialisation of the the expected reward. Default <tt class="docutils literal"><span class="pre">array([5,5])</span></tt></p>
+</dd>
+<dt>numActions <span class="classifier-delimiter">:</span> <span class="classifier">integer, optional</span></dt>
+<dd><p class="first last">The number of different reaction learning sets. Default <tt class="docutils literal"><span class="pre">2</span></tt></p>
+</dd>
+<dt>stimFunc <span class="classifier-delimiter">:</span> <span class="classifier">function, optional</span></dt>
+<dd><p class="first last">The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</dd>
+<dt>decFunc <span class="classifier-delimiter">:</span> <span class="classifier">function, optional</span></dt>
+<dd><p class="first last">The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decBeta</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="2%" />
+<col width="98%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used. currAction : int The current action chosen by the model. Used to pass participant action to model when fitting</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.OpAL.OpAL.Name">
+<tt class="descname">Name</tt><em class="property"> = 'OpAL'</em><a class="headerlink" href="#model.OpAL.OpAL.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/OpAL.html#OpAL.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/OpAL.html#OpAL.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.storeState">
+<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/OpAL.html#OpAL.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.OpAL.blankStim">
+<tt class="descclassname">model.OpAL.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/OpAL.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-model">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -1545,6 +1711,7 @@ accessed later</p>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn2">model.qLearn2 module</a></li>
+<li><a class="reference internal" href="#module-model.OpAL">model.OpAL module</a></li>
 <li><a class="reference internal" href="#module-model">Module contents</a></li>
 </ul>
 </li>
