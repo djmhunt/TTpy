@@ -6,3 +6,16 @@ A template running script can be found in ``runScript.py`` and a number of scrip
 The documentation can be found in ``./doc/_build/html``, with the top level file being ``index.html``
 
 To update the documentation you will need to install Sphinx and a set of extensions. The list of extensions can be found in ``./doc/conf.py``. To update the documentation follow the instruction in ``./doc/runNotes.txt``
+
+### Call Graph ###
+
+To see what is called you can:
+
+```
+#!python
+from pycallgraph import PyCallGraph
+from pycallgraph.output import GraphvizOutput
+with PyCallGraph(output=GraphvizOutput()):    
+    execfile('<scriptname>.py') 
+
+```
