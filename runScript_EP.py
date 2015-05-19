@@ -25,14 +25,8 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 from models import models 
 # The decision methods
 from model.decision.binary import decBeta, decIntBetaReac
-#The models
-from model.BP import BP
+#The model
 from model.EP import EP
-from model.MS import MS
-from model.MS_rev import MS_rev
-from model.qLearn import qLearn
-from model.qLearn2 import qLearn2
-from model.RVPM import RVPM
 
 from outputting import outputting
 
