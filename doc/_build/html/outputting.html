@@ -75,11 +75,22 @@ data in any form for the simulation</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>save</strong> : bool, optional</p>
 <blockquote>
-<div><p>If true the data will be saved to files. Default True</p>
+<div><p>If true the data will be saved to files. Default <tt class="docutils literal"><span class="pre">True</span></tt></p>
+</div></blockquote>
+<p><strong>saveScript</strong> : bool, optional</p>
+<blockquote>
+<div><p>If true a copy of the top level script running the current function
+will be copied to the log folder. Only works if save is set to <tt class="docutils literal"><span class="pre">True</span></tt>
+Default <tt class="docutils literal"><span class="pre">False</span></tt></p>
 </div></blockquote>
 <p><strong>silent</strong> : bool, optional</p>
 <blockquote>
-<div><p>States if a log is not written to stdout. Defaults to False</p>
+<div><p>States if a log is not written to stdout. Defaults to <tt class="docutils literal"><span class="pre">False</span></tt></p>
+</div></blockquote>
+<p><strong>pickleData</strong> : bool, optional</p>
+<blockquote>
+<div><p>If true the data for each model, experiment and participant is recorded.
+Default is <tt class="docutils literal"><span class="pre">False</span></tt></p>
 </div></blockquote>
 <p><strong>simLabel</strong> : string, optional</p>
 <blockquote>
@@ -87,7 +98,7 @@ data in any form for the simulation</p>
 </div></blockquote>
 <p><strong>logLevel</strong> : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</p>
 <blockquote>
-<div><p>Defines the level of the log. Default logging.INFO</p>
+<div><p>Defines the level of the log. Default <tt class="docutils literal"><span class="pre">logging.INFO</span></tt></p>
 </div></blockquote>
 <p><strong>maxLabelLength</strong> : int, optional</p>
 <blockquote>
@@ -248,7 +259,8 @@ silent.</p>
 previously been created then it is created as
 &#8221;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&#8221;, where &#8220;&lt;#&gt;&#8221; is the first
 avalable integer.</p>
-<p>A subfolder is also created with the name &#8220;Pickle&#8221;</p>
+<p>A subfolder is also created with the name <tt class="docutils literal"><span class="pre">Pickle</span></tt> if  pickleData is 
+true.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">

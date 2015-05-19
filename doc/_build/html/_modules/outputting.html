@@ -66,11 +66,13 @@
 
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">stack</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">seterr</span><span class="p">,</span> <span class="n">seterrcall</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">prod</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMerGen</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMerGen</span><span class="p">,</span> <span class="n">callableDetailsString</span>
 
 <div class="viewcode-block" id="outputting"><a class="viewcode-back" href="../outputting.html#outputting.outputting">[docs]</a><span class="k">class</span> <span class="nc">outputting</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -80,13 +82,20 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    save : bool, optional</span>
-<span class="sd">        If true the data will be saved to files. Default True</span>
+<span class="sd">        If true the data will be saved to files. Default ``True``</span>
+<span class="sd">    saveScript : bool, optional</span>
+<span class="sd">        If true a copy of the top level script running the current function</span>
+<span class="sd">        will be copied to the log folder. Only works if save is set to ``True``</span>
+<span class="sd">        Default ``False``</span>
 <span class="sd">    silent : bool, optional</span>
-<span class="sd">        States if a log is not written to stdout. Defaults to False</span>
+<span class="sd">        States if a log is not written to stdout. Defaults to ``False``</span>
+<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        Default is ``False``</span>
 <span class="sd">    simLabel : string, optional</span>
 <span class="sd">        The label for the simulation</span>
 <span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
-<span class="sd">        Defines the level of the log. Default logging.INFO</span>
+<span class="sd">        Defines the level of the log. Default ``logging.INFO``</span>
 <span class="sd">    maxLabelLength : int, optional</span>
 <span class="sd">        The maximum length of a label to be used as a reference for an </span>
 <span class="sd">        individual model-experiment combination. Default 18</span>
@@ -106,6 +115,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;silent&#39;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;save&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;saveScript&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;pickleData&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;simLabel&quot;</span><span class="p">,</span><span class="s">&quot;Untitled&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;logLevel&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="c">#logging.DEBUG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;maxLabelLength&quot;</span><span class="p">,</span><span class="mi">18</span><span class="p">)</span>
@@ -169,7 +180,8 @@
 <span class="sd">        &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&quot;, where &quot;&lt;#&gt;&quot; is the first</span>
 <span class="sd">        avalable integer.</span>
 <span class="sd">        </span>
-<span class="sd">        A subfolder is also created with the name &quot;Pickle&quot;</span>
+<span class="sd">        A subfolder is also created with the name ``Pickle`` if  pickleData is </span>
+<span class="sd">        true.</span>
 <span class="sd">        </span>
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -188,7 +200,8 @@
             <span class="n">folderName</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
         <span class="n">folderName</span> <span class="o">+=</span> <span class="s">&quot;/&quot;</span>
-        <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span>  <span class="o">+</span> <span class="s">&#39;Pickle/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
+            <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span>  <span class="o">+</span> <span class="s">&#39;Pickle/&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderName</span>
 
@@ -262,6 +275,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">folderSetup</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;txt&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span>  <span class="n">stack</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">copy</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span>  <span class="s">&#39;&#39;</span>
@@ -393,7 +409,7 @@
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; fitted with the parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
         
         <span class="n">modelParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
-        <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">Name</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
+        <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
         
@@ -524,7 +540,7 @@
 
         <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;_Exp-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
 
@@ -561,7 +577,7 @@
 
         <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">,</span><span class="s">&quot;Participant&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>

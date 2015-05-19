@@ -65,6 +65,7 @@
 <span class="kn">from</span> <span class="nn">modelPlot</span> <span class="kn">import</span> <span class="n">modelPlot</span>
 <span class="kn">from</span> <span class="nn">modelSetPlot</span> <span class="kn">import</span> <span class="n">modelSetPlot</span>
 <span class="kn">from</span> <span class="nn">decision.binary</span> <span class="kn">import</span> <span class="n">decBeta</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">callableDetailsString</span>
 
 <div class="viewcode-block" id="BP"><a class="viewcode-back" href="../../model.html#model.BP.BP">[docs]</a><span class="k">class</span> <span class="nc">BP</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
 
@@ -112,8 +113,8 @@
                            <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
                            <span class="s">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">,</span>
                            <span class="s">&quot;numStimuli&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">,</span>
-                           <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span><span class="p">}</span>
+                           <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">),</span>
+                           <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">)}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="c">#        if len(prior) != self.numStimuli:</span>

@@ -64,7 +64,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span><span class="p">,</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Callable</span>
 
 
 <span class="c"># For analysing the state of the computer</span>
@@ -501,6 +501,90 @@
         <span class="n">mergedDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
         
     <span class="k">return</span> <span class="n">mergedDict</span>
+    </div>
+<div class="viewcode-block" id="callableDetails"><a class="viewcode-back" href="../utils.html#utils.callableDetails">[docs]</a><span class="k">def</span> <span class="nf">callableDetails</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a callable item and extracts the details. </span>
+<span class="sd">    </span>
+<span class="sd">    Currently only extracts things stored in ``item.Name`` and ``item.Params``</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item : callable item</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    details : tuple pair with string and dictionary of strings</span>
+<span class="sd">        Contains the properties of the </span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from utils import callableDetails</span>
+<span class="sd">    &gt;&gt;&gt; def foo():</span>
+<span class="sd">    &gt;&gt;&gt;     print &quot;foo&quot;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; foo.Name = &quot;boo&quot;</span>
+<span class="sd">    &gt;&gt;&gt; callableDetails(foo)</span>
+<span class="sd">    (&#39;boo&#39;, None)</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; foo.Params = {1: 2, 2: 3}</span>
+<span class="sd">    &gt;&gt;&gt; callableDetails(foo)</span>
+<span class="sd">    (&#39;boo&#39;, {&#39;1&#39;: &#39;2&#39;, &#39;2&#39;: &#39;3&#39;})</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">Params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span><span class="n">details</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="callableDetailsString"><a class="viewcode-back" href="../utils.html#utils.callableDetailsString">[docs]</a><span class="k">def</span> <span class="nf">callableDetailsString</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a callable item and returns a string detailing the function. </span>
+<span class="sd">    </span>
+<span class="sd">    Currently only extracts things stored in ``item.Name`` and ``item.Params``</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item : callable item</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    description : string</span>
+<span class="sd">        Contains the properties and name of the callable</span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from utils import callableDetailsString</span>
+<span class="sd">    &gt;&gt;&gt; def foo():</span>
+<span class="sd">    &gt;&gt;&gt;     print &quot;foo&quot;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; foo.Name = &quot;boo&quot;</span>
+<span class="sd">    &gt;&gt;&gt; callableDetailsString(foo)</span>
+<span class="sd">    &#39;boo&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; foo.Params = {1: 2, 2: 3}</span>
+<span class="sd">    &gt;&gt;&gt; callableDetailsString(foo)</span>
+<span class="sd">    &#39;boo with 1 : 2, 2 : 3&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">Name</span><span class="p">,</span> <span class="n">details</span> <span class="o">=</span> <span class="n">callableDetails</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">details</span><span class="p">:</span>    
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+        
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">Name</span> <span class="o">+</span> <span class="s">&quot; with &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">Name</span>
+    
+    <span class="k">return</span> <span class="n">desc</span>
 
 <span class="c">#if __name__ == &#39;__main__&#39;:</span>
 <span class="c">#    from timeit import timeit</span>
