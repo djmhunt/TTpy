@@ -15,6 +15,7 @@ from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
 from decision.binary import decBeta
+from utils import callableDetailsString
 
 class BP(model):
 
@@ -62,8 +63,8 @@ class BP(model):
                            "beta": self.beta,
                            "prior": self.prior,
                            "numStimuli": self.numStimuli,
-                           "stimFunc" : self.stimFunc.Name,
-                           "decFunc" : self.decisionFunc.Name}
+                           "stimFunc" : callableDetailsString(self.stimFunc),
+                           "decFunc" : callableDetailsString(self.decisionFunc)}
 
         self.currAction = 1
 #        if len(prior) != self.numStimuli:

@@ -22,7 +22,7 @@ from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
 from collections import OrderedDict, Callable
 
-from utils import listMerGen
+from utils import listMerGen, callableDetailsString
 
 class outputting(object):
 
@@ -359,7 +359,7 @@ class outputting(object):
         message += " fitted with the parameters " + ", ".join(modelFitParams)
         
         modelParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
-        modelFuncs = [k + ' = ' + v.Name for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
+        modelFuncs = [k + ' = ' + callableDetailsString(v) for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
         message += " and using the other user specified parameters " + ", ".join(modelParams)
         message += " and the functions " + ", ".join(modelFuncs)
         

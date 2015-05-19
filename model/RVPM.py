@@ -18,7 +18,7 @@ from collections import defaultdict
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from utils import listMerge, mergeDatasets
+from utils import listMerge, mergeDatasets, callableDetailsString
 from plotting import lineplot
 
 class RVPM(model):
@@ -91,8 +91,8 @@ class RVPM(model):
                            "tau" : self.tau,
                            "z" : self.z,
                            "averaging" : self.averaging,
-                           "stimFunc" : self.stimFunc.Name,
-                           "decFunc" : self.decisionFunc.Name}
+                           "stimFunc" : callableDetailsString(self.stimFunc),
+                           "decFunc" : callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
         self.lastObs = False

@@ -20,6 +20,7 @@ from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
 from decision.binary import decBeta
+from utils import callableDetailsString
 
 class MS_rev(model):
 
@@ -85,8 +86,8 @@ class MS_rev(model):
                            "prior": self.prior,
                            "activity" : self.activity,
                            "numStimuli": self.numStimuli,
-                           "stimFunc" : self.stimFunc.Name,
-                           "decFunc" : self.decisionFunc.Name}
+                           "stimFunc" : callableDetailsString(self.stimFunc),
+                           "decFunc" : callableDetailsString(self.decisionFunc)}
 
         # Recorded information
 

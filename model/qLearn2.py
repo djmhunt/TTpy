@@ -25,6 +25,7 @@ from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
 from decision.binary import decBeta
+from utils import callableDetailsString
 
 class qLearn2(model):
 
@@ -98,8 +99,8 @@ class qLearn2(model):
                            "expectation": self.expect,
                            "prior": self.prior,
                            "numActions": self.numActions,
-                           "stimFunc" : self.stimFunc.Name,
-                           "decFunc" : self.decisionFunc.Name}
+                           "stimFunc" : callableDetailsString(self.stimFunc),
+                           "decFunc" : callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
         self.expectation = array(self.expect)
