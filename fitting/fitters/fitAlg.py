@@ -154,21 +154,22 @@ class fitAlg(object):
             if len(bounds) != len(initialParams):
                 raise ValueError('Bounds do not fit number of intial parameters', str(len(bounds)), str(len(initialParams))) 
             
-            startLists = (self.startParamVals(i, bMax = bMax, numPoints = numPoints) for i, (bMin, bMax) in izip(initialParams,bounds))
+            startLists = (self.startParamVals(i, bMin = bMin, bMax = bMax, numPoints = numPoints) for i, (bMin, bMax) in izip(initialParams,bounds))
             
         startSets = listMergeNP(*startLists)
             
         return startSets
         
-    def startParamVals(self,initial, bMax = float('Inf'), numPoints = 3):
+    def startParamVals(self,initial, bMin = float('-Inf'), bMax = float('Inf'), numPoints = 3):
         """
-        Assumes that intial parameters are positive and provides all starting 
-        values above zero
+        Provides a set of starting points
         
         Parameters
         ----------
         initial : float
             The inital starting value proposed
+        bMin : float, optional
+            The minimum value of the parameter. Default is ``float('-Inf')``
         bMax : float, optional
             The maximum value of the parameter. Default is ``float('Inf')``
         numPoints : int
@@ -184,32 +185,81 @@ class fitAlg(object):
         -----
         For each starting parameter provided a set of numStartPoints 
         starting points will be chosen, surrounding the starting point provided. If
-        the starting point provided is less than one it will be assumed that the 
-        values cannot exceed 1, otherwise, unless otherwise told, it will be 
-        assumed that they can take any value and will be chosen to be eavenly 
-        spaced around the provided value.
+        the starting point provided is less than one but greater than zero it 
+        will be assumed that the values cannot leave those bounds, otherwise, 
+        unless otherwise told, it will be assumed that they can take any 
+        positive value and will be chosen to be eavenly spaced around the 
+        provided value.
         
+        Examples
+        --------
+        >>> from fitting.fitters.fitAlg import fitAlg
+        >>> a = fitAlg()
+        >>> a.startParamVals(0.5)
+        array([ 0.25,  0.5 ,  0.75])
+        
+        >>> a.startParamVals(5)
+        array([ 2.5,  5. ,  7.5])
+        
+        >>> a.startParamVals(-5)
+        array([ 2.5,  5. ,  7.5])
+        
+        >>> a.startParamVals(5, bMin = 0, bMax = 7)
+        array([ 4.,  5.,  6.])
+        
+        >>> a.startParamVals(5, bMin = -3, bMax = 30)
+        array([ 1.,  5.,  9.])
+
+        >>> a.startParamVals(5, bMin = 0, bMax = 30)
+        array([ 2.5,  5. ,  7.5])
+        
+        >>> a.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)
+        array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])
         """
         
-        initialAbs = abs(initial)
+#        initialAbs = abs(initial)
     
-         #The number of initial points per parameter
-        divVal = (numPoints+1)/2
-        
-        # We can assume that any initial parameter proposed has the 
-        #correct order of magnitude. 
-        vMin = initialAbs / divVal
-        
+        #The number of initial points per parameter
+        divVal = (numPoints+1)/2        
         
         if bMax == None or isinf(bMax):
             # We can also assume any number smaller than one should stay 
             #smaller than one.
-            if initialAbs < 1:
-                valAbsMax = 1
+            if initial < 1 and initial > 0:
+                valMax = 1
             else:
-                valAbsMax = float('inf')
+                valMax = float('inf')
         else:
-            valAbsMax = bMax
+            valMax = bMax
+            
+        if bMin == None or isinf(bMin):
+            # We can also assume any number larger than one should stay 
+            #bigger than zero.
+            if initial > 0:
+                valMin = 0
+                
+                initialAbs = initial
+                valAbsMax = valMax
+                
+            else:
+                # this should never happen, but regardless
+                valMin = 0
+                
+                initialAbs = abs(initial)
+                valAbsMax = abs(valMax) + initialAbs
+
+        else:
+            valMin = bMin
+            
+            initialAbs = initial - valMin
+            valAbsMax = valMax - valMin
+            
+        # Now that the bounds have been set we have shifted the space to 
+        # calculate the points in the space and then shift them back. 
+            
+        # We can assume that any initial parameter proposed has the 
+        # correct order of magnitude. 
+        vMin = initialAbs / divVal
             
         if numPoints*vMin > valAbsMax:
             inc = (valAbsMax - initialAbs) / divVal
@@ -219,7 +269,7 @@ class fitAlg(object):
             vMax = vMin * numPoints
             
            
-        points = linspace(vMin, vMax, numPoints)
+        points = linspace(vMin, vMax, numPoints) + valMin
         
         return points
 

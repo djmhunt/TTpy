@@ -204,21 +204,22 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Bounds do not fit number of intial parameters&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">)))</span> 
             
-            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="n">bounds</span><span class="p">))</span>
+            <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="n">bounds</span><span class="p">))</span>
             
         <span class="n">startSets</span> <span class="o">=</span> <span class="n">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">startLists</span><span class="p">)</span>
             
         <span class="k">return</span> <span class="n">startSets</span>
         </div>
-<div class="viewcode-block" id="fitAlg.startParamVals"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParamVals">[docs]</a>    <span class="k">def</span> <span class="nf">startParamVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="fitAlg.startParamVals"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParamVals">[docs]</a>    <span class="k">def</span> <span class="nf">startParamVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;-Inf&#39;</span><span class="p">),</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Assumes that intial parameters are positive and provides all starting </span>
-<span class="sd">        values above zero</span>
+<span class="sd">        Provides a set of starting points</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        initial : float</span>
 <span class="sd">            The inital starting value proposed</span>
+<span class="sd">        bMin : float, optional</span>
+<span class="sd">            The minimum value of the parameter. Default is ``float(&#39;-Inf&#39;)``</span>
 <span class="sd">        bMax : float, optional</span>
 <span class="sd">            The maximum value of the parameter. Default is ``float(&#39;Inf&#39;)``</span>
 <span class="sd">        numPoints : int</span>
@@ -234,32 +235,81 @@
 <span class="sd">        -----</span>
 <span class="sd">        For each starting parameter provided a set of numStartPoints </span>
 <span class="sd">        starting points will be chosen, surrounding the starting point provided. If</span>
-<span class="sd">        the starting point provided is less than one it will be assumed that the </span>
-<span class="sd">        values cannot exceed 1, otherwise, unless otherwise told, it will be </span>
-<span class="sd">        assumed that they can take any value and will be chosen to be eavenly </span>
-<span class="sd">        spaced around the provided value.</span>
+<span class="sd">        the starting point provided is less than one but greater than zero it </span>
+<span class="sd">        will be assumed that the values cannot leave those bounds, otherwise, </span>
+<span class="sd">        unless otherwise told, it will be assumed that they can take any </span>
+<span class="sd">        positive value and will be chosen to be eavenly spaced around the </span>
+<span class="sd">        provided value.</span>
 <span class="sd">        </span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from fitting.fitters.fitAlg import fitAlg</span>
+<span class="sd">        &gt;&gt;&gt; a = fitAlg()</span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(0.5)</span>
+<span class="sd">        array([ 0.25,  0.5 ,  0.75])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(5)</span>
+<span class="sd">        array([ 2.5,  5. ,  7.5])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(-5)</span>
+<span class="sd">        array([ 2.5,  5. ,  7.5])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 0, bMax = 7)</span>
+<span class="sd">        array([ 4.,  5.,  6.])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = -3, bMax = 30)</span>
+<span class="sd">        array([ 1.,  5.,  9.])</span>
+
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 0, bMax = 30)</span>
+<span class="sd">        array([ 2.5,  5. ,  7.5])</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)</span>
+<span class="sd">        array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        <span class="n">initialAbs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
+<span class="c">#        initialAbs = abs(initial)</span>
     
-         <span class="c">#The number of initial points per parameter</span>
-        <span class="n">divVal</span> <span class="o">=</span> <span class="p">(</span><span class="n">numPoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
-        
-        <span class="c"># We can assume that any initial parameter proposed has the </span>
-        <span class="c">#correct order of magnitude. </span>
-        <span class="n">vMin</span> <span class="o">=</span> <span class="n">initialAbs</span> <span class="o">/</span> <span class="n">divVal</span>
-        
+        <span class="c">#The number of initial points per parameter</span>
+        <span class="n">divVal</span> <span class="o">=</span> <span class="p">(</span><span class="n">numPoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>        
         
         <span class="k">if</span> <span class="n">bMax</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">isinf</span><span class="p">(</span><span class="n">bMax</span><span class="p">):</span>
             <span class="c"># We can also assume any number smaller than one should stay </span>
             <span class="c">#smaller than one.</span>
-            <span class="k">if</span> <span class="n">initialAbs</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">initial</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">initial</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">valMax</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+                <span class="n">valMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">bMax</span>
+            <span class="n">valMax</span> <span class="o">=</span> <span class="n">bMax</span>
+            
+        <span class="k">if</span> <span class="n">bMin</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">isinf</span><span class="p">(</span><span class="n">bMin</span><span class="p">):</span>
+            <span class="c"># We can also assume any number larger than one should stay </span>
+            <span class="c">#bigger than zero.</span>
+            <span class="k">if</span> <span class="n">initial</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">valMin</span> <span class="o">=</span> <span class="mi">0</span>
+                
+                <span class="n">initialAbs</span> <span class="o">=</span> <span class="n">initial</span>
+                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">valMax</span>
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># this should never happen, but regardless</span>
+                <span class="n">valMin</span> <span class="o">=</span> <span class="mi">0</span>
+                
+                <span class="n">initialAbs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
+                <span class="n">valAbsMax</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">valMax</span><span class="p">)</span> <span class="o">+</span> <span class="n">initialAbs</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valMin</span> <span class="o">=</span> <span class="n">bMin</span>
+            
+            <span class="n">initialAbs</span> <span class="o">=</span> <span class="n">initial</span> <span class="o">-</span> <span class="n">valMin</span>
+            <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">valMax</span> <span class="o">-</span> <span class="n">valMin</span>
+            
+        <span class="c"># Now that the bounds have been set we have shifted the space to </span>
+        <span class="c"># calculate the points in the space and then shift them back. </span>
+            
+        <span class="c"># We can assume that any initial parameter proposed has the </span>
+        <span class="c"># correct order of magnitude. </span>
+        <span class="n">vMin</span> <span class="o">=</span> <span class="n">initialAbs</span> <span class="o">/</span> <span class="n">divVal</span>
             
         <span class="k">if</span> <span class="n">numPoints</span><span class="o">*</span><span class="n">vMin</span> <span class="o">&gt;</span> <span class="n">valAbsMax</span><span class="p">:</span>
             <span class="n">inc</span> <span class="o">=</span> <span class="p">(</span><span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">initialAbs</span><span class="p">)</span> <span class="o">/</span> <span class="n">divVal</span>
@@ -269,7 +319,7 @@
             <span class="n">vMax</span> <span class="o">=</span> <span class="n">vMin</span> <span class="o">*</span> <span class="n">numPoints</span>
             
            
-        <span class="n">points</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">vMin</span><span class="p">,</span> <span class="n">vMax</span><span class="p">,</span> <span class="n">numPoints</span><span class="p">)</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">vMin</span><span class="p">,</span> <span class="n">vMax</span><span class="p">,</span> <span class="n">numPoints</span><span class="p">)</span> <span class="o">+</span> <span class="n">valMin</span>
         
         <span class="k">return</span> <span class="n">points</span>
 </pre></div></div></div>

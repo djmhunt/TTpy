@@ -49,7 +49,7 @@ class OpAL(model):
         Sensitivity parameter for probabilities. Also known as an exploration-
         expoitation parameter. Defined as :math:`\\beta` in the paper
     gammaDiff : float, optional
-        The asymetry beween the actor weights. :math:`\rho = \\Beta_G - \\Beta = \\Beta_N + \\Beta`
+        The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
     beta : float, optional
         Decision threshold parameter
     prior : array of two floats in ``[0,1]`` or just float in range, optional

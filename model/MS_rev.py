@@ -166,7 +166,9 @@ class MS_rev(model):
 
     def storeState(self):
         """ 
-        Stores the state of all the important variables so that they can be accessed later 
+        Stores the state of all the important variables so that they can be accessed later
+        
+        The stored variables are ones that describe the model.
         """
 
         self.recAction.append(self.currAction)

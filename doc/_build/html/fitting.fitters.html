@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="up" title="fitting package" href="fitting.html" />
-    <link rel="next" title="outputting module" href="outputting.html" />
+    <link rel="next" title="inputs module" href="inputs.html" />
     <link rel="prev" title="fitting package" href="fitting.html" /> 
   </head>
   <body>
@@ -40,12 +40,13 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="outputting.html" title="outputting module"
+          <a href="inputs.html" title="inputs module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="fitting package"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
           <li><a href="fitting.html" accesskey="U">fitting package</a> &raquo;</li> 
       </ul>
     </div>  
@@ -205,9 +206,8 @@ given model parameters. One example is <tt class="docutils literal"><span class=
 
 <dl class="method">
 <dt id="fitting.fitters.fitAlg.fitAlg.startParamVals">
-<tt class="descname">startParamVals</tt><big>(</big><em>initial</em>, <em>bMax=inf</em>, <em>numPoints=3</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.startParamVals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assumes that intial parameters are positive and provides all starting 
-values above zero</p>
+<tt class="descname">startParamVals</tt><big>(</big><em>initial</em>, <em>bMin=-inf</em>, <em>bMax=inf</em>, <em>numPoints=3</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.startParamVals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a set of starting points</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -215,6 +215,10 @@ values above zero</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>initial</strong> : float</p>
 <blockquote>
 <div><p>The inital starting value proposed</p>
+</div></blockquote>
+<p><strong>bMin</strong> : float, optional</p>
+<blockquote>
+<div><p>The minimum value of the parameter. Default is <tt class="docutils literal"><span class="pre">float('-Inf')</span></tt></p>
 </div></blockquote>
 <p><strong>bMax</strong> : float, optional</p>
 <blockquote>
@@ -238,10 +242,42 @@ point</p>
 <p class="rubric">Notes</p>
 <p>For each starting parameter provided a set of numStartPoints 
 starting points will be chosen, surrounding the starting point provided. If
-the starting point provided is less than one it will be assumed that the 
-values cannot exceed 1, otherwise, unless otherwise told, it will be 
-assumed that they can take any value and will be chosen to be eavenly 
-spaced around the provided value.</p>
+the starting point provided is less than one but greater than zero it 
+will be assumed that the values cannot leave those bounds, otherwise, 
+unless otherwise told, it will be assumed that they can take any 
+positive value and will be chosen to be eavenly spaced around the 
+provided value.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">array([ 0.25,  0.5 ,  0.75])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([ 4.,  5.,  6.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([ 1.,  5.,  9.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -599,8 +635,8 @@ given model parameters. One example is fit.fitness</p>
   <p class="topless"><a href="fitting.html"
                         title="previous chapter">fitting package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="outputting.html"
-                        title="next chapter">outputting module</a></p>
+  <p class="topless"><a href="inputs.html"
+                        title="next chapter">inputs module</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/fitting.fitters.txt"
@@ -633,12 +669,13 @@ given model parameters. One example is fit.fitness</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="outputting.html" title="outputting module"
+          <a href="inputs.html" title="inputs module"
              >next</a> |</li>
         <li class="right" >
           <a href="fitting.html" title="fitting package"
              >previous</a> |</li>
         <li><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li><a href="modules.html" >&lt;no title&gt;</a> &raquo;</li>
           <li><a href="fitting.html" >fitting package</a> &raquo;</li> 
       </ul>
     </div>

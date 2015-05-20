@@ -34,6 +34,7 @@ Contents:
    plotting
    inputs
    vtkWriter
+   modules
 
 
 Indices and tables
