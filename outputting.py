@@ -150,6 +150,8 @@ class outputting(object):
             folderName += str(i)
 
         folderName += "/"
+        makedirs(folderName)
+        
         if self.pickleData:
             makedirs(folderName  + 'Pickle/')
 
@@ -225,9 +227,15 @@ class outputting(object):
         if self.save:
             self.folderSetup()
             self.logFile = self.newFile('log', 'txt')
+            
             if self.saveScript:
-                p =  stack()[-1][1]
-                copy (p,self.outputFolder)
+                cwd = getcwd()
+                for s in stack():
+                    p = s[1]
+                    if cwd in p and "outputting.py" not in p:
+                        copy(p,self.outputFolder)
+                        break
+
         else:
             self.outputFolder = ''
             self.logFile =  ''
