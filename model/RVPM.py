@@ -107,7 +107,7 @@ class RVPM(model):
         -------
         action : integer or None
         """
-        self.currAction = self.decisionFunc(self.TSN)
+        self.currAction = self.decision
 
         self.storeState()
 
@@ -151,7 +151,6 @@ class RVPM(model):
                 self.lastObs = False
 
             else:
-                
                 #Calculate the new information
                 self._processEvent(event)
 
@@ -188,6 +187,8 @@ class RVPM(model):
         self.TSN = self._tsnUpdate(dV,ddeltaP,ddeltaM)
         
         self.w = self._wNew(self.w,self.V,self.deltaP,self.deltaM,c)
+        
+        self.decision, self.decProbs = self.decisionFunc(self.TSN)
             
     def _wNew(self,w,V,deltaP,deltaM,c):
         new = w + self.alpha*c*V*(deltaP - deltaM)
