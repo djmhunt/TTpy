@@ -232,7 +232,6 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     
     Examples
     --------    
-    >>> from numpy import array
     >>> from experiment.decks import deckStimAllInfo
     >>> stim = deckStimAllInfo(10,1,2)
     >>> stim(6,0)
@@ -254,10 +253,10 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
                        "numActions":numActions}
     return deckStim
     
-def deckStimDualInfo(maxEventVal):
+def deckStimDualInfo(maxEventVal, epsilon):
     """
     Processes the decks stimuli for models expecting the reward information 
-    from two possible actions. Innacurate and depreciated
+    from two possible actions. 
         
     Returns
     -------
@@ -275,7 +274,7 @@ def deckStimDualInfo(maxEventVal):
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
-    devisor = maxEventVal+1#sum(xrange(0,maxEventVal+1))
+    devisor = maxEventVal + epsilon 
     
     def deckStim(event, action):
         stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
@@ -283,4 +282,5 @@ def deckStimDualInfo(maxEventVal):
         return stimulus
         
     deckStim.Name = "deckStimDualInfo"
+    deckStim.Params = {"epsilon":epsilon}
     return deckStim
