@@ -223,15 +223,16 @@ class outputting(object):
         --------
         folderSetup : creates the folders
         """
+        
 
         if self.save:
             self.folderSetup()
             self.logFile = self.newFile('log', 'txt')
             
             if self.saveScript:
-                cwd = getcwd()
+                cwd = getcwd().replace("\\","/")
                 for s in stack():
-                    p = s[1]
+                    p = s[1].replace("\\","/")
                     if cwd in p and "outputting.py" not in p:
                         copy(p,self.outputFolder)
                         break
