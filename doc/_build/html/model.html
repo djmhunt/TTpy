@@ -95,11 +95,11 @@ rather than the logistic algorithm used here.</td>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>gamma</strong> : float, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities. Default <tt class="docutils literal"><span class="pre">4</span></tt></p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter. Default <tt class="docutils literal"><span class="pre">0.3</span></tt></p>
 </div></blockquote>
@@ -120,7 +120,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -246,11 +246,11 @@ rather than the logistic algorithm used here.</td>
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -275,7 +275,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -402,11 +402,11 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -432,7 +432,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -571,17 +571,7 @@ algorithm, rather than the logistic algorithm used here.</td>
 <dt id="model.MS_rev.MS_rev">
 <em class="property">class </em><tt class="descclassname">model.MS_rev.</tt><tt class="descname">MS_rev</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
-<p>An adapted version of the Morre &amp; Sellen model
-Attributes
-&#8212;&#8212;&#8212;-
-Name : string</p>
-<blockquote>
-<div>The name of the class used when recording what has been used.</div></blockquote>
-<dl class="docutils">
-<dt>currAction <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>The current action chosen by the model. Used to pass participant action
-to model when fitting</dd>
-</dl>
+<p>An adapted version of the Morre &amp; Sellen model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -590,11 +580,11 @@ to model when fitting</dd>
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -619,9 +609,24 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+<tr class="row-even"><td>currAction</td>
+<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
 </tr>
 </tbody>
 </table>
@@ -730,7 +735,7 @@ doi:10.3389/fnhum.2011.00075</td>
 <blockquote>
 <div><p>Learning rate parameter for updating the cue-value weights. Default 0.3</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>It is a time constant that controls how quickly the neural units 
 (modeled as dynamical systems) respond to external inputs. Default 0.1</p>
@@ -1244,11 +1249,11 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <blockquote>
 <div><p>Learning rate parameter</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -1273,7 +1278,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1418,11 +1423,11 @@ Default is alpha</p>
 <div><p>The negative learning rate parameter. Used when RPE is negative. 
 Default is alpha</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -1447,7 +1452,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1560,16 +1565,16 @@ doi:10.1037/a0037015</td>
 <blockquote>
 <div><p>Learning rate aprameter for Nogo, the negative part of the actor learning</p>
 </div></blockquote>
-<p><strong>gamma</strong> : float, optional</p>
+<p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities. Also known as an exploration-
 expoitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
 </div></blockquote>
-<p><strong>gammaDiff</strong> : float, optional</p>
+<p><strong>betaDiff</strong> : float, optional</p>
 <blockquote>
 <div><p>The asymetry beween the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
 </div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
+<p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
 </div></blockquote>
@@ -1594,7 +1599,7 @@ understand and a string to identify it later. Default is blankStim</p>
 <p><strong>decFunc</strong> : function, optional</p>
 <blockquote class="last">
 <div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decBeta</p>
+in to a decision. Default is model.decision.binary.decEta</p>
 </div></blockquote>
 </td>
 </tr>

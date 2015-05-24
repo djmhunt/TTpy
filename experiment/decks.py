@@ -190,7 +190,7 @@ def deckStimDirect():
         
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decBeta
+    model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
     
     def deckStim(event, action):
@@ -228,7 +228,7 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
         
     See Also
     --------
-    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntBetaReac
+    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac
     
     Examples
     --------    

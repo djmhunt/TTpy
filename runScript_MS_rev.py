@@ -24,16 +24,16 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 # The model factory
 from models import models 
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decEta
 #The model
 from model.MS_rev import MS_rev
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0#0.3#0.15
+eta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
-gamma = 0.5#0.7#0.5#0.7
+beta = 0.5#0.7#0.5#0.7
 simDur = 30
 outputOptions = {'simLabel': 'MS_rev_decksSet',
                  'save': True,
@@ -42,10 +42,10 @@ outputOptions = {'simLabel': 'MS_rev_decksSet',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
-                'gamma':gamma}
-paramExtras = {'beta':beta,
+                'beta':beta}
+paramExtras = {'eta':eta,
                'stimFunc':deckStimDualInfo(10),
-               'decFunc':decBeta(beta = beta)} #For decks
+               'decFunc':decEta(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((MS_rev,parameters,paramExtras))
@@ -96,7 +96,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
                   bounds = {'alpha' : (0,1),
-                            'gamma' : (0,5)}, 
+                            'beta' : (0,5)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

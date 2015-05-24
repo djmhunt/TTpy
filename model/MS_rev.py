@@ -25,6 +25,7 @@ from utils import callableDetailsString
 class MS_rev(model):
 
     """An adapted version of the Morre & Sellen model
+    
     Attributes
     ----------
     Name : string

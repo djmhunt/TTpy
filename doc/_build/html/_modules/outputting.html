@@ -273,15 +273,16 @@
 <span class="sd">        --------</span>
 <span class="sd">        folderSetup : creates the folders</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">folderSetup</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;txt&#39;</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span><span class="p">:</span>
-                <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span>
+                <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">():</span>
-                    <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">cwd</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s">&quot;outputting.py&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
                         <span class="n">copy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">)</span>
                         <span class="k">break</span>

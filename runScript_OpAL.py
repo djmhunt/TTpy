@@ -24,22 +24,22 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decEta
 #The model
 from model.OpAL import OpAL
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0#0.3#0.15
+eta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
 alphaMin = 0
 alphaMax = 1
-gamma = 0.5#0.7#0.5#0.7
-gammaMin = 0
-gammaMax = 5
-gammaDiffMin = 0
-gammaDiffMax = 0
+beta = 0.5#0.7#0.5#0.7
+betaMin = 0
+betaMax = 5
+betaDiffMin = 0
+betaDiffMax = 0
 
 outputOptions = {'simLabel': 'OpAL_dataSet',
                  'save': True,
@@ -50,12 +50,12 @@ outputOptions = {'simLabel': 'OpAL_dataSet',
 parameters = {'alpha':(alphaMax-alphaMin)/2,
               'alphaGo':(alphaMax-alphaMin)/2,
               'alphaNogo':(alphaMax-alphaMin)/2,
-              'gamma':(gammaMax-gammaMin)/2,
-              'gammaDiff':(gammaDiffMax-gammaDiffMin)/2}
-paramExtras = {'beta':beta,
+              'beta':(betaMax-betaMin)/2}#,
+#              'betaDiff':(betaDiffMax-betaDiffMin)/2}
+paramExtras = {'eta':eta,
                'numActions':2,
                'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For decks
+               'decFunc':decEta(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((OpAL,parameters,paramExtras))
@@ -108,10 +108,10 @@ fitAlg = minimize(fitQualFunc = "-2log",
                   bounds = {'alpha' : (alphaMin,alphaMax),
                             'alphaGo' : (alphaMin,alphaMax),
                             'alphaNogo' : (alphaMin,alphaMax),
-                            'gamma' : (gammaMin,gammaMax),
-                            'gammaDiff' : (gammaDiffMin, gammaDiffMax)
+                            'beta' : (betaMin,betaMax)#,
+#                            'betaDiff' : (betaDiffMin, betaDiffMax)
                             }, 
-                  numStartPoints = 5,
+                  numStartPoints = 3,
                   boundFit = True)
               
 #fitAlg = leastsq(dataShaper = "-2log")

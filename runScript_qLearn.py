@@ -24,20 +24,20 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decEta
 #The model
 from model.qLearn import qLearn
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0#0.3#0.15
+eta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
 alphaMin = 0
 alphaMax = 1
-gamma = 0.5#0.7#0.5#0.7
-gammaMin = 0
-gammaMax = 5
+beta = 0.5#0.7#0.5#0.7
+betaMin = 0
+betaMax = 5
 
 outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
@@ -46,11 +46,11 @@ outputOptions = {'simLabel': 'qLearn_dataSet',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':(alphaMax-alphaMin)/2,
-                'gamma':(gammaMax-gammaMin)/2}
-paramExtras = {'beta':beta,
+                'beta':(betaMax-betaMin)/2}
+paramExtras = {'eta':eta,
                'numActions':2,
                'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For decks
+               'decFunc':decEta(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn,parameters,paramExtras))
@@ -101,7 +101,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
                   bounds = {'alpha' : (alphaMin,alphaMax),
-                            'gamma' : (gammaMin,gammaMax)}, 
+                            'beta' : (betaMin,betaMax)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

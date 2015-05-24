@@ -26,7 +26,7 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 # The model factory
 from models import models 
 # The decision methods
-from model.decision.binary import decBeta
+from model.decision.binary import decEta
 #The models
 from model.BP import BP
 from model.EP import EP
@@ -40,9 +40,9 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0.0
+eta = 0.0
 alpha = 0.5
-gamma = 0.5
+beta = 0.5
 simDur = 30
 outputOptions = {'simLabel': 'qLearn_decksSet',
                  'save': True,
@@ -51,10 +51,10 @@ outputOptions = {'simLabel': 'qLearn_decksSet',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':alpha,
-                'gamma':gamma}
-paramExtras = {'beta':beta,
+                'beta':beta}
+paramExtras = {'eta':eta,
                'stimFunc':deckStimDirect(),
-               'decFunc':decBeta(beta = beta)} #For qLearn decks
+               'decFunc':decEta(eta = eta)} #For qLearn decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn,parameters,paramExtras))
@@ -103,7 +103,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
                   bounds = {'alpha' : (0,1),
-                            'gamma' : (0,5)}, 
+                            'beta' : (0,5)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

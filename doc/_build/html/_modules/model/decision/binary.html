@@ -60,15 +60,15 @@
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">reshape</span>
 
-<div class="viewcode-block" id="decBeta"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decBeta">[docs]</a><span class="k">def</span> <span class="nf">decBeta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="decEta"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decEta">[docs]</a><span class="k">def</span> <span class="nf">decEta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">eta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decisions using a probability difference threshold</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    responses : tuple of length two, optional</span>
 <span class="sd">        Provides the two action responses expected by the experiment</span>
-<span class="sd">    beta : float, optional :math:`\\beta`</span>
-<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\beta`</span>
+<span class="sd">    eta : float, optional :math:`\\eta`</span>
+<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\eta`</span>
 <span class="sd">        If true a decision is taken. If false the function responds ``None``</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
@@ -87,7 +87,7 @@
                 
         <span class="n">prob</span> <span class="o">=</span> <span class="n">probabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">&gt;</span><span class="n">beta</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">&gt;</span><span class="n">eta</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">prob</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">:</span>
                 <span class="n">decision</span> <span class="o">=</span> <span class="n">responses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
@@ -99,13 +99,13 @@
             
         <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probabilities</span>
         
-    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decBeta&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decEta&quot;</span>
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;responses&quot;</span><span class="p">:</span> <span class="n">responses</span><span class="p">,</span>
-                           <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="n">beta</span><span class="p">}</span>
+                           <span class="s">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">}</span>
         
     <span class="k">return</span> <span class="n">decisionFunc</span>
 </div>
-<div class="viewcode-block" id="decIntBetaReac"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decIntBetaReac">[docs]</a><span class="k">def</span> <span class="nf">decIntBetaReac</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="decIntEtaReac"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decIntEtaReac">[docs]</a><span class="k">def</span> <span class="nf">decIntEtaReac</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">eta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decisions using a probability difference threshold for the expectation</span>
 <span class="sd">    from two sets of response value probabilities.</span>
@@ -119,8 +119,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    responses : tuple of length two, optional</span>
 <span class="sd">        Provides the two action responses expected by the experiment</span>
-<span class="sd">    beta : float, optional :math:`\\beta`</span>
-<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\beta`</span>
+<span class="sd">    eta : float, optional :math:`\\eta`</span>
+<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\eta`</span>
 <span class="sd">        If true a decision is taken. If false the function responds ``None``</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
@@ -136,8 +136,8 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------    </span>
 <span class="sd">    &gt;&gt;&gt; from numpy import array</span>
-<span class="sd">    &gt;&gt;&gt; from model.decision.binary import decIntBetaReac</span>
-<span class="sd">    &gt;&gt;&gt; dec = decIntBetaReac()</span>
+<span class="sd">    &gt;&gt;&gt; from model.decision.binary import decIntEtaReac</span>
+<span class="sd">    &gt;&gt;&gt; dec = decIntEtaReac()</span>
 <span class="sd">    &gt;&gt;&gt; dec(array([0.4,0.1,0.25,0.25]))</span>
 <span class="sd">    1</span>
 <span class="sd">    </span>
@@ -155,7 +155,7 @@
         
         <span class="n">prob</span> <span class="o">=</span> <span class="n">probPair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">&gt;</span><span class="n">beta</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">&gt;</span><span class="n">eta</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">prob</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">:</span>
                 <span class="n">decision</span> <span class="o">=</span> <span class="n">responses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
@@ -167,9 +167,9 @@
             
         <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probPair</span>
         
-    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decIntBetaReac&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decIntEtaReac&quot;</span>
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;responses&quot;</span><span class="p">:</span> <span class="n">responses</span><span class="p">,</span>
-                           <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="n">beta</span><span class="p">}</span>
+                           <span class="s">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">}</span>
         
     <span class="k">return</span> <span class="n">decisionFunc</span></div>
 </pre></div>

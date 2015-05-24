@@ -240,7 +240,7 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decBeta</span>
+<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
@@ -278,11 +278,10 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntBetaReac</span>
+<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac</span>
 <span class="sd">    </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------    </span>
-<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
 <span class="sd">    &gt;&gt;&gt; from experiment.decks import deckStimAllInfo</span>
 <span class="sd">    &gt;&gt;&gt; stim = deckStimAllInfo(10,1,2)</span>
 <span class="sd">    &gt;&gt;&gt; stim(6,0)</span>
@@ -304,10 +303,10 @@
                        <span class="s">&quot;numActions&quot;</span><span class="p">:</span><span class="n">numActions</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">deckStim</span>
     </div>
-<div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">):</span>
+<div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
-<span class="sd">    from two possible actions. Innacurate and depreciated</span>
+<span class="sd">    from two possible actions. </span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -325,7 +324,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">devisor</span> <span class="o">=</span> <span class="n">maxEventVal</span><span class="o">+</span><span class="mi">1</span><span class="c">#sum(xrange(0,maxEventVal+1))</span>
+    <span class="n">devisor</span> <span class="o">=</span> <span class="n">maxEventVal</span> <span class="o">+</span> <span class="n">epsilon</span> 
     
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">devisor</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">devisor</span><span class="p">))</span><span class="o">*</span><span class="n">action</span>
@@ -333,6 +332,7 @@
         <span class="k">return</span> <span class="n">stimulus</span>
         
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfo&quot;</span>
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;epsilon&quot;</span><span class="p">:</span><span class="n">epsilon</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">deckStim</span></div>
 </pre></div>
 

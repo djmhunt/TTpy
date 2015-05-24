@@ -24,20 +24,20 @@ from experiment.pavlov import Pavlov, pavlovStimTemporal
 # The model factory
 from models import models 
 # The decision methods
-from model.decision.binary import decBeta, decIntBetaReac
+from model.decision.binary import decEta, decIntEtaReac
 #The model
 from model.EP import EP
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-beta = 0#0.3#0.15
+eta = 0#0.3#0.15
 alpha = 0.5#0.2#0.5#0.2
 alphaMin = 0
 alphaMax = 1
-gamma = 0.5#0.7#0.5#0.7
-gammaMin = 0
-gammaMax = 50
+beta = 0.5#0.7#0.5#0.7
+betaMin = 0
+betaMax = 50
 numStimuli = 20
 
 outputOptions = {'simLabel': 'EP_decksSet',
@@ -47,12 +47,12 @@ outputOptions = {'simLabel': 'EP_decksSet',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 parameters = {  'alpha':(alphaMax-alphaMin)/2,
-                'gamma':(gammaMax-gammaMin)/2}
-paramExtras = {'beta':beta,
+                'beta':(betaMax-betaMin)/2}
+paramExtras = {'eta':eta,
                'activity':ones(numStimuli)*1.05,
                'numStimuli':numStimuli,
                'stimFunc':deckStimAllInfo(10,1,2),
-               'decFunc':decIntBetaReac(beta = beta)} #For decks
+               'decFunc':decIntEtaReac(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((EP,parameters,paramExtras))
@@ -103,7 +103,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log", 
                   method = 'constrained', #'unconstrained',
                   bounds = {'alpha' : (alphaMin,alphaMax),
-                            'gamma' : (gammaMin,gammaMax)}, 
+                            'beta' : (betaMin,betaMax)}, 
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
