@@ -24,7 +24,7 @@ from numpy import exp, ones, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import decBeta
+from decision.binary import decEta
 from utils import callableDetailsString
 
 class qLearn2(model):
@@ -51,9 +51,9 @@ class qLearn2(model):
     alphaNeg : float, optional
         The negative learning rate parameter. Used when RPE is negative. 
         Default is alpha    
-    gamma : float, optional
-        Sensitivity parameter for probabilities
     beta : float, optional
+        Sensitivity parameter for probabilities
+    eta : float, optional
         Decision threshold parameter
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
@@ -67,7 +67,7 @@ class qLearn2(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decBeta
+        in to a decision. Default is model.decision.binary.decEta
         
     See Also
     --------
@@ -79,20 +79,20 @@ class qLearn2(model):
     def __init__(self,**kwargs):
 
         self.numActions = kwargs.pop('numActions',2)
-        self.gamma = kwargs.pop('gamma',4)
+        self.beta = kwargs.pop('beta',4)
         self.prior = kwargs.pop('prior',ones(self.numActions)*0.5)
         self.alpha = kwargs.pop('alpha',0.3)
         self.alphaPos = kwargs.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargs.pop('alphaNeg', self.alpha)
-        self.beta = kwargs.pop('beta',0.3)
+        self.eta = kwargs.pop('eta',0.3)
         self.expect = kwargs.pop('expect',ones(self.numActions)*5)
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decBeta(beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(eta = self.eta))
 
         self.parameters = {"Name": self.Name,
-                           "gamma": self.gamma,
                            "beta": self.beta,
+                           "eta": self.eta,
                            "alpha": self.alpha,
                            "alphaPos" : self.alphaPos,
                            "alphaNeg" : self.alphaNeg,
@@ -210,7 +210,7 @@ class qLearn2(model):
 
     def _prob(self, expectation):
         
-        numerat = exp(self.gamma*expectation)
+        numerat = exp(self.beta*expectation)
         denom = sum(numerat)
 
         p = numerat / denom

@@ -16,7 +16,7 @@ from numpy import exp, zeros, array
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import decBeta
+from decision.binary import decEta
 from plotting import dataVsEvents, lineplot
 
 class MS(model):
@@ -35,9 +35,9 @@ class MS(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    gamma : float, optional
-        Sensitivity parameter for probabilities
     beta : float, optional
+        Sensitivity parameter for probabilities
+    eta : float, optional
         Decision threshold parameter
     oneProb : float in ``[0,1]``, optional
         The probability of a 1 from the first jar. This is also the probability
@@ -52,22 +52,22 @@ class MS(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decBeta
+        in to a decision. Default is model.decision.binary.decEta
     """
 
     Name = "M&S"
 
     def __init__(self,**kwargs):
         self.oneProb = kwargs.pop('oneProb',0.85)
-        self.gamma = kwargs.pop('gamma',4)
+        self.beta = kwargs.pop('beta',4)
         self.alpha = kwargs.pop('alpha',1)
-        self.beta = kwargs.pop('beta',0.5)
+        self.eta = kwargs.pop('eta',0.5)
         self.prior = kwargs.pop('prior',array([0.5,0.5]))
         self.activity = kwargs.pop('activity',array([0.5,0.5]))
         # The alpha is an activation rate paramenter. The paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = (1,2), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(responses = (1,2), eta = self.eta))
         
         self.currAction = 1
         self.probabilities = zeros(2) + self.prior
@@ -79,8 +79,8 @@ class MS(model):
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
-                           "gamma": self.gamma,
                            "beta": self.beta,
+                           "eta": self.eta,
                            "alpha": self.alpha,
                            "prior": self.prior,
                            "activity" : self.activity,
@@ -181,7 +181,7 @@ class MS(model):
         self.activity = self.activity + (1-self.activity) * event * self.alpha
 
     def _prob(self):
-        p = 1.0 / (1.0 + exp(-self.gamma*self.activity))
+        p = 1.0 / (1.0 + exp(-self.beta*self.activity))
 
         self.probabilities = p
         self.probDifference = p[0] - p[1]
@@ -208,7 +208,7 @@ class MS(model):
             A graph reproducing figures 3 & 4 from the paper
             """
 
-            gainLables = array(["Gain " + str(m["gamma"]) for m in self.modelStore])
+            gainLables = array(["Gain " + str(m["beta"]) for m in self.modelStore])
 
             dP = array([m["Probabilities"][:,0] - m["Probabilities"][:,1] for m in self.modelStore])
             events = array(self.modelStore[0]["Events"])
@@ -233,7 +233,7 @@ class MS(model):
 
             dPDiff = array([m["ProbDifference"][3]-m["ProbDifference"][2] for m in self.modelStore])
 
-            gain = array([m["gamma"] for m in self.modelStore])
+            gain = array([m["beta"] for m in self.modelStore])
 
             axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
             axisLabels["xLabel"] = "Trial number"

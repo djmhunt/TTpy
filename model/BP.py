@@ -14,7 +14,7 @@ from numpy import exp, array, ones
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import decBeta
+from decision.binary import decEta
 from utils import callableDetailsString
 
 class BP(model):
@@ -28,9 +28,9 @@ class BP(model):
         
     Parameters
     ----------
-    gamma : float, optional
-        Sensitivity parameter for probabilities. Default ``4``
     beta : float, optional
+        Sensitivity parameter for probabilities. Default ``4``
+    eta : float, optional
         Decision threshold parameter. Default ``0.3``
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
@@ -42,7 +42,7 @@ class BP(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decBeta
+        in to a decision. Default is model.decision.binary.decEta
     """
 
     Name = "BP"
@@ -50,17 +50,17 @@ class BP(model):
     def __init__(self,**kwargs):
 
         self.numStimuli = kwargs.pop('numStimuli', 2)
-        self.gamma = kwargs.pop('gamma', 4)
+        self.beta = kwargs.pop('beta', 4)
         self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
-        self.beta = kwargs.pop('beta', 0.3)
+        self.eta = kwargs.pop('eta', 0.3)
         
         
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decBeta(responses = tuple(range(1,self.numStimuli+1)), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc', decEta(responses = tuple(range(1,self.numStimuli+1)), eta = self.eta))
 
         self.parameters = {"Name": self.Name,
-                           "gamma": self.gamma,
                            "beta": self.beta,
+                           "eta": self.eta,
                            "prior": self.prior,
                            "numStimuli": self.numStimuli,
                            "stimFunc" : callableDetailsString(self.stimFunc),
@@ -170,7 +170,7 @@ class BP(model):
 
     def _prob(self, expectation):
 
-        numerat = exp(self.gamma*expectation)
+        numerat = exp(self.beta*expectation)
         denom = sum(numerat)
 
         p = numerat / denom
@@ -178,7 +178,7 @@ class BP(model):
         return p
 #
 #        diff = 2*self.posteriorProb - sum(self.posteriorProb)
-#        p = 1.0 / (1.0 + exp(-self.gamma*diff))
+#        p = 1.0 / (1.0 + exp(-self.beta*diff))
 #
 #        self.probabilities = p
         

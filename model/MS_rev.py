@@ -19,7 +19,7 @@ from numpy import exp, array, ones
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import decBeta
+from decision.binary import decEta
 from utils import callableDetailsString
 
 class MS_rev(model):
@@ -37,9 +37,9 @@ class MS_rev(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    gamma : float, optional
-        Sensitivity parameter for probabilities
     beta : float, optional
+        Sensitivity parameter for probabilities
+    eta : float, optional
         Decision threshold parameter
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
@@ -53,23 +53,23 @@ class MS_rev(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decBeta
+        in to a decision. Default is model.decision.binary.decEta
     """
 
     Name = "MS_rev"
 
     def __init__(self,**kwargs):
 
-        self.gamma = kwargs.pop('gamma',4)
+        self.beta = kwargs.pop('beta',4)
         self.alpha = kwargs.pop('alpha',0.3)
-        self.beta = kwargs.pop('beta',0.3)
+        self.eta = kwargs.pop('eta',0.3)
         self.numStimuli = kwargs.pop('numStimuli',2)
         self.prior = kwargs.pop('prior',ones(self.numStimuli)*0.5)
         self.activity = kwargs.pop('activity',ones(self.numStimuli)*0.5)
         # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decBeta(responses = (1,2), beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(responses = (1,2), eta = self.eta))
         
         self.currAction = 1
         self.probabilities = array(self.prior)
@@ -80,8 +80,8 @@ class MS_rev(model):
         self.lastObs = False
 
         self.parameters = {"Name": self.Name,
-                           "gamma": self.gamma,
                            "beta": self.beta,
+                           "eta": self.eta,
                            "alpha": self.alpha,
                            "prior": self.prior,
                            "activity" : self.activity,
@@ -183,10 +183,10 @@ class MS_rev(model):
     def _prob(self, expectation):
         # The probability of a given jar, using the Luce choice model
 
-#        li = self.activity ** self.gamma
+#        li = self.activity ** self.beta
 #        p = li/sum(li)
 
-        numerat = exp(self.gamma*expectation)
+        numerat = exp(self.beta*expectation)
         denom = sum(numerat)
 
         p = numerat / denom

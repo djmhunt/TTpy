@@ -37,7 +37,7 @@ class RVPM(model):
     ----------
     alpha : float, optional
         Learning rate parameter for updating the cue-value weights. Default 0.3
-    gamma : float, optional
+    beta : float, optional
         It is a time constant that controls how quickly the neural units 
         (modeled as dynamical systems) respond to external inputs. Default 0.1
     zeta : float, optional
@@ -65,7 +65,7 @@ class RVPM(model):
     def __init__(self,**kwargs):
 
         self.alpha = kwargs.pop('alpha',0.005)
-        self.gamma = kwargs.pop('gamma',0.1)
+        self.beta = kwargs.pop('beta',0.1)
         self.w = kwargs.pop('w',array([0.01,0.01]))
         self.zeta = kwargs.pop('zeta',2)
         self.tau = kwargs.pop('tau',160)
@@ -84,7 +84,7 @@ class RVPM(model):
         self.TSN = 0 # Temporaly shifted neuron
 
         self.parameters = {"Name": self.Name,
-                           "theta": self.gamma,
+                           "beta": self.beta,
                            "alpha": self.alpha,
                            "wInit": self.w,
                            "zeta" : self.zeta,
@@ -195,13 +195,13 @@ class RVPM(model):
         return new
     
     def _vUpdate(self,w,V,c):
-        gamma = self.gamma
-        new = -gamma*V + gamma*amax([0,dot(w,c)])
+        beta = self.beta
+        new = -beta*V + beta*amax([0,dot(w,c)])
         return new
         
     def _deltaPUpdate(self,V,deltaP,r):
-        gamma = self.gamma
-        new = -gamma*deltaP + gamma*amax([0,r-self.zeta*V])
+        beta = self.beta
+        new = -beta*deltaP + beta*amax([0,r-self.zeta*V])
         return new
         
     def _timeSigMag(self,t):
@@ -209,8 +209,8 @@ class RVPM(model):
         return signal
         
     def _deltaMUpdate(self,V,deltaM,T,r):
-        gamma = self.gamma
-        new = -gamma*deltaM + gamma*T*amax([0,self.zeta*V-r])
+        beta = self.beta
+        new = -beta*deltaM + beta*T*amax([0,self.zeta*V-r])
         return new
         
     def _tsnUpdate(self,dV,ddeltaP,ddeltaM):

@@ -22,7 +22,7 @@ from random import choice
 from model import model
 from modelPlot import modelPlot
 from modelSetPlot import modelSetPlot
-from decision.binary import decBeta
+from decision.binary import decEta
 from utils import callableDetailsString
 
 class OpAL(model):
@@ -45,12 +45,12 @@ class OpAL(model):
         Learning rate parameter for Go, the positive part of the actor learning
     alphaNogo : float, optional
         Learning rate aprameter for Nogo, the negative part of the actor learning
-    gamma : float, optional
+    beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
         expoitation parameter. Defined as :math:`\\beta` in the paper
-    gammaDiff : float, optional
+    betaDiff : float, optional
         The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
-    beta : float, optional
+    eta : float, optional
         Decision threshold parameter
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one. 
@@ -64,7 +64,7 @@ class OpAL(model):
         understand and a string to identify it later. Default is blankStim
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decBeta
+        in to a decision. Default is model.decision.binary.decEta
     """
 
     Name = "OpAL"
@@ -72,22 +72,22 @@ class OpAL(model):
     def __init__(self,**kwargs):
 
         self.numActions = kwargs.pop('numActions', 2)
-        self.gamma = kwargs.pop('gamma', 4)
-        self.gammaDiff = kwargs.pop('gammaDiff',0)
+        self.beta = kwargs.pop('beta', 4)
+        self.betaDiff = kwargs.pop('betaDiff',0)
         self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
         self.alpha = kwargs.pop('alpha', 0.3)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
-        self.beta = kwargs.pop('beta', 0.3)
+        self.eta = kwargs.pop('eta', 0.3)
         self.expect = kwargs.pop('expect', ones(self.numActions)*5)
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decBeta(beta = self.beta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(eta = self.eta))
 
         self.parameters = {"Name": self.Name,
-                           "gamma": self.gamma,
-                           "gammaDiff": self.gammaDiff,
                            "beta": self.beta,
+                           "betaDiff": self.betaDiff,
+                           "eta": self.eta,
                            "alpha": self.alpha,
                            "alphaGo": self.alphaGo,
                            "alphaNogo": self.alphaNogo,
@@ -226,13 +226,13 @@ class OpAL(model):
 
     def _prob(self, go, nogo):
         
-        gd = self.gammaDiff
+        gd = self.betaDiff
         
         actionValues = (1+gd)*go - (1-gd)*nogo
         
         self.actionValues = actionValues
 
-        numerat = exp(self.gamma*actionValues)
+        numerat = exp(self.beta*actionValues)
         denom = sum(numerat)
 
         p = numerat / denom

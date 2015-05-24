@@ -10,15 +10,15 @@ from __future__ import division
 from random import choice
 from numpy import sum, array, arange, reshape
 
-def decBeta(responses = (0,1),beta = 0):
+def decEta(responses = (0,1),eta = 0):
     """Decisions using a probability difference threshold
     
     Parameters
     ----------
     responses : tuple of length two, optional
         Provides the two action responses expected by the experiment
-    beta : float, optional :math:`\\beta`
-        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\beta`
+    eta : float, optional :math:`\\eta`
+        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\eta`
         If true a decision is taken. If false the function responds ``None``
     
     Returns
@@ -37,7 +37,7 @@ def decBeta(responses = (0,1),beta = 0):
                 
         prob = probabilities[0]
 
-        if abs(prob-0.5)>beta:
+        if abs(prob-0.5)>eta:
             if prob>0.5:
                 decision = responses[0]
             elif prob == 0.5:
@@ -49,13 +49,13 @@ def decBeta(responses = (0,1),beta = 0):
             
         return decision, probabilities
         
-    decisionFunc.Name = "binary.decBeta"
+    decisionFunc.Name = "binary.decEta"
     decisionFunc.Params = {"responses": responses,
-                           "beta": beta}
+                           "eta": eta}
         
     return decisionFunc
 
-def decIntBetaReac(responses = (0,1), beta = 0):
+def decIntEtaReac(responses = (0,1), eta = 0):
     """
     Decisions using a probability difference threshold for the expectation
     from two sets of response value probabilities.
@@ -69,8 +69,8 @@ def decIntBetaReac(responses = (0,1), beta = 0):
     ----------
     responses : tuple of length two, optional
         Provides the two action responses expected by the experiment
-    beta : float, optional :math:`\\beta`
-        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\beta`
+    eta : float, optional :math:`\\eta`
+        The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\eta`
         If true a decision is taken. If false the function responds ``None``
     
     Returns
@@ -86,8 +86,8 @@ def decIntBetaReac(responses = (0,1), beta = 0):
     Examples
     --------    
     >>> from numpy import array
-    >>> from model.decision.binary import decIntBetaReac
-    >>> dec = decIntBetaReac()
+    >>> from model.decision.binary import decIntEtaReac
+    >>> dec = decIntEtaReac()
     >>> dec(array([0.4,0.1,0.25,0.25]))
     1
     
@@ -105,7 +105,7 @@ def decIntBetaReac(responses = (0,1), beta = 0):
         
         prob = probPair[0]
 
-        if abs(prob-0.5)>beta:
+        if abs(prob-0.5)>eta:
             if prob>0.5:
                 decision = responses[0]
             elif prob == 0.5:
@@ -117,8 +117,8 @@ def decIntBetaReac(responses = (0,1), beta = 0):
             
         return decision, probPair
         
-    decisionFunc.Name = "binary.decIntBetaReac"
+    decisionFunc.Name = "binary.decIntEtaReac"
     decisionFunc.Params = {"responses": responses,
-                           "beta": beta}
+                           "eta": eta}
         
     return decisionFunc
