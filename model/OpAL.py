@@ -7,9 +7,7 @@
                 learning and choice incentive.
                 Collins, A. G. E., & Frank, M. J. (2014).  
                 Psychological Review, 121(3), 337–66. 
-                doi:10.1037/a0037015
-                
-                
+                doi:10.1037/a0037015                
 """
 
 from __future__ import division

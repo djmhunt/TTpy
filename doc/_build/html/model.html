@@ -220,6 +220,183 @@ to model when fitting</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-model.BHMM">
+<span id="model-bhmm-module"></span><h2>model.BHMM module<a class="headerlink" href="#module-model.BHMM" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Notes:</th><td class="field-body">In the version this model used the Luce choice algorithm,
+rather than the logistic algorithm used here.</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.BHMM.BHMM">
+<em class="property">class </em><tt class="descclassname">model.BHMM.</tt><tt class="descname">BHMM</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/model/BHMM.html#BHMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.model.model" title="model.model.model"><tt class="xref py py-class docutils literal"><span class="pre">model.model.model</span></tt></a></p>
+<p>The Beysian Hidden Markov Model model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities. Default <tt class="docutils literal"><span class="pre">4</span></tt></p>
+</div></blockquote>
+<p><strong>eta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter. Default <tt class="docutils literal"><span class="pre">0.3</span></tt></p>
+</div></blockquote>
+<p><strong>prior</strong> : array of two floats in <tt class="docutils literal"><span class="pre">[0,1]</span></tt> or just float in range, optional</p>
+<blockquote>
+<div><p>The prior probability of of the two states being the correct one. 
+Default <tt class="docutils literal"><span class="pre">array([0.5,0.5])</span></tt></p>
+</div></blockquote>
+<p><strong>numStimuli</strong> : integer, optional</p>
+<blockquote>
+<div><p>The number of different reaction learning sets. Default <tt class="docutils literal"><span class="pre">2</span></tt></p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can 
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decEta</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Inputs : The participant recieves for time <img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> and their choice of 
+action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/> the payoff <img src="_images/mathmpl/math-7de983e262.png" style="position: relative; bottom: -8px"/></p>
+<p>Outputs : Their action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/>. However, internal to the model and 
+potentially extractable is the probability that each action is the 
+&#8220;correct&#8221; choice.</p>
+<p>Initialisation : An arbitrary choice is made of which initial action 
+<img src="_images/mathmpl/math-e213ae0e46.png" style="position: relative; bottom: -7px"/> to go with. The probability that a hidden state 
+<img src="_images/mathmpl/math-338c8c6e10.png" style="position: relative; bottom: -7px"/> is the one given by <img src="_images/mathmpl/math-a493df687f.png" style="position: relative; bottom: -8px"/> 
+and is initially uniform and normalised.</p>
+<p>Updates : The prior probabilities of the different actions being correct 
+<img src="_images/mathmpl/math-f53439c5e0.png" style="position: relative; bottom: -8px"/> is calculated with respect to 
+the probability of reversal <img src="_images/mathmpl/math-e15357ad29.png" style="position: relative; bottom: -3px"/> and the posterior probability 
+<img src="_images/mathmpl/math-816ca158a1.png" style="position: relative; bottom: -8px"/>. If the participant has not 
+switched then</p>
+<img src="_images/mathmpl/math-e60a6a102a.png" class="center" /><p>If the participant has switched, then the probabilities become</p>
+<img src="_images/mathmpl/math-3d473fc454.png" class="center" /><p>The posterior probabilities 
+<img src="_images/mathmpl/math-1fc0ecd816.png" style="position: relative; bottom: -7px"/> is defined for 
+the action <img src="_images/mathmpl/math-45133d85aa.png" style="position: relative; bottom: -7px"/> providing the payoff <img src="_images/mathmpl/math-d89c20e879.png" style="position: relative; bottom: -7px"/> as</p>
+<img src="_images/mathmpl/math-6ef29d69ca.png" class="center" /><p>and for all other actions as</p>
+<img src="_images/mathmpl/math-29f7b8a155.png" class="center" /><p>The <img src="_images/mathmpl/math-b1967cc114.png" style="position: relative; bottom: -8px"/> is the probability at time 
+<img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> that the payoff <img src="_images/mathmpl/math-73fcbbdfa0.png" style="position: relative; bottom: -7px"/> would be returned when the 
+chosen action was the correct or incorrect. It is calculated from a normal 
+distribution where the probability distribution of payoffs are</p>
+<img src="_images/mathmpl/math-3cc49f816e.png" class="center" /><p>and a variance of <img src="_images/mathmpl/math-2d16fa995b.png" style="position: relative; bottom: -3px"/></p>
+<p>The probability that the subject switches their choice of action is</p>
+<img src="_images/mathmpl/math-c509890591.png" class="center" /><p>where <img src="_images/mathmpl/math-5149852f08.png" style="position: relative; bottom: -3px"/> is the indecision point (when it is equiprobable to 
+make either choice), and <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> is the degree of stochasticity in 
+making the choice (i.e., the exploration/exploitation parameter). Both are 
+defined in the simulation.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.BHMM.BHMM.Name">
+<tt class="descname">Name</tt><em class="property"> = 'BHMM'</em><a class="headerlink" href="#model.BHMM.BHMM.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.BHMM.BHMM.action">
+<tt class="descname">action</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BHMM.html#BHMM.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.BHMM.BHMM.outputEvolution">
+<tt class="descname">outputEvolution</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BHMM.html#BHMM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name, 
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.BHMM.BHMM.storeState">
+<tt class="descname">storeState</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BHMM.html#BHMM.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.BHMM.blankStim">
+<tt class="descclassname">model.BHMM.</tt><tt class="descname">blankStim</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/model/BHMM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote>
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+<p><strong>currAction</strong> : int</p>
+<blockquote class="last">
+<div><p>The current action chosen by the model. Used to pass participant action
+to model when fitting</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-model.EP">
 <span id="model-ep-module"></span><h2>model.EP module<a class="headerlink" href="#module-model.EP" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1714,6 +1891,7 @@ accessed later</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-model.BP">model.BP module</a></li>
+<li><a class="reference internal" href="#module-model.BHMM">model.BHMM module</a></li>
 <li><a class="reference internal" href="#module-model.EP">model.EP module</a></li>
 <li><a class="reference internal" href="#module-model.MS">model.MS module</a></li>
 <li><a class="reference internal" href="#module-model.MS_rev">model.MS_rev module</a></li>

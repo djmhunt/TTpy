@@ -18,6 +18,14 @@ model.BP module
     :members:
     :undoc-members:
     :show-inheritance:
+	
+model.BHMM module
+-----------------
+
+.. automodule:: model.BHMM
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 model.EP module
 ---------------
