@@ -86,7 +86,7 @@ def fitting():
     def scaleFunc(x):
         return x - 1
         
-    fitAlg = minimize(dataShaper = "-2log", method = 'constrained', bounds= [(0,1),(0,5)])
+    fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds={'alpha':(0,1),'theta':(0,5)})
 
     fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
@@ -96,32 +96,32 @@ def fitting():
         
 class TestClass: 
               
-    def test_startParamList(self):
+    def test_startParamVals(self):
         
         fitAlg = minimize()
         
-        ans1 = fitAlg._startParamList(0.5)
+        ans1 = fitAlg.startParamVals(0.5)
         assert (abs(ans1 - [0.25,0.5,0.75]) < 0.01 ).all()
         
-        ans2 = fitAlg._startParamList(0.5, numPoints = 4)
+        ans2 = fitAlg.startParamVals(0.5, numPoints = 4)
         assert (abs(ans2 - [0.2,0.4,0.6,0.8]) < 0.01 ).all()
         
-        ans3 = fitAlg._startParamList(0.5, bMax = 0.7, numPoints = 4)
+        ans3 = fitAlg.startParamVals(0.5, bMax = 0.7, numPoints = 4)
         assert (abs(ans3 - [0.38,0.46,0.54,0.62]) < 0.01 ).all()
         
-        ans4 = fitAlg._startParamList(0.7, numPoints = 4)
+        ans4 = fitAlg.startParamVals(0.7, numPoints = 4)
         assert (abs(ans4 - [0.52,0.64,0.76,0.88]) < 0.01 ).all()
         
-        ans5 = fitAlg._startParamList(1.2, numPoints = 4)
+        ans5 = fitAlg.startParamVals(1.2, numPoints = 4)
         assert (abs(ans5 - [0.48,0.96,1.44,1.92]) < 0.01 ).all()
             
-    def test_setStartParams(self):
+    def test_startParams(self):
         
         fitAlg = minimize()
         
         fitAlg.bounds = None
         
-        starts1 = fitAlg._setStartParams([0.5,1.2], numPoints = 3)
+        starts1 = fitAlg.startParams([0.5,1.2], numPoints = 3)
         
         ans1 = array([[ 0.25,  0.6 ], [ 0.5 ,  0.6 ], [ 0.75,  0.6 ], 
                      [ 0.25,  1.2 ], [ 0.5 ,  1.2 ], [ 0.75,  1.2 ],
@@ -131,7 +131,7 @@ class TestClass:
                                 
         fitAlg.bounds = [[0,0.7],[0,5]]
         
-        starts2 = fitAlg._setStartParams([0.5,1.2], numPoints = 3)
+        starts2 = fitAlg.startParams([0.5,1.2], numPoints = 3)
         
         ans2 = array([[ 0.4,  0.6], [ 0.5,  0.6], [ 0.6,  0.6], [ 0.4,  1.2],
                       [ 0.5,  1.2], [ 0.6,  1.2], [ 0.4,  1.8], [ 0.5,  1.8],
@@ -147,7 +147,7 @@ class TestClass:
             
             return a
             
-        fitAlg = minimize(dataShaper = "-2log")
+        fitAlg = minimize(fitQualFunc = "-2log")
         
         fitAlg.sim = sim
         
@@ -170,7 +170,7 @@ class TestClass:
         
         fitAlg.sim = fit.fitness
         
-        initParamSets = fitAlg._setStartParams([0.5,0.5], numPoints = 30)
+        initParamSets = fitAlg.startParams([0.5,0.5], numPoints = 30)
         
         result = fitAlg._methodFit(fitAlg.methodSet[0], initParamSets, fitAlg.bounds)
         

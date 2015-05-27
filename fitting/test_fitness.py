@@ -96,7 +96,7 @@ def fitting():
     def scaleFunc(x):
         return x - 1
         
-    fitAlg = minimize(dataShaper = "-2log", method = 'constrained', bounds= [(0,1),(0,40)])
+    fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds= {'alpha':(0,1),'theta':(0,40)})
 
     fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
