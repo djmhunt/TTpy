@@ -20,6 +20,10 @@ class fitAlg(object):
     fitQualFunc : function, optional
         The function used to calculate the quality of the fit. The value it 
         returns proivides the fitter with its fitting guide. Default ``fitAlg.null``
+    bounds : dictionary of tuples of length two with floats, optional
+        The boundaries for methods that use bounds. If unbounded methods are
+        specified then the bounds will be ignored. Default is ``None``, which 
+        translates to boundaries of (0,float('Inf')) for each parameter.
     numStartPoints : int, optional
         The number of starting points generated for each parameter.
         Default 4
@@ -38,14 +42,21 @@ class fitAlg(object):
     Name = 'none'
 
 
-    def __init__(self,fitQualFunc = None, numStartPoints = 4):
+    def __init__(self,fitQualFunc = None, bounds = None, numStartPoints = 4):
         
         self.numStartPoints = numStartPoints
+        self.allBounds = bounds
 
         self.fitQualFunc = qualFuncIdent(fitQualFunc)
 
-        self.fitInfo = {'Name':self.Name}
-
+        self.fitInfo = {'Name':self.Name,
+                        'fitQualityFunction': fitQualFunc,
+                        'bounds':self.allBounds,
+                        'numStartPoints' : self.numStartPoints}
+                        
+        self.boundVals = None
+        self.boundNames = None
+        
     def fit(self, sim, mParamNames, mInitialParams):
         """
         Runs the model through the fitting algorithms and starting parameters 
@@ -91,7 +102,12 @@ class fitAlg(object):
         See Also
         --------
         fitting.fitters.qualityFunc : the module of fitQualFunc functions
+        fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
         """
+
+        # Start by checking that the parameters are valid
+        if self.bounds and self.invalidParams(*params):
+            return float("inf")
 
         modVals = self.sim(*params)
         
@@ -110,6 +126,76 @@ class fitAlg(object):
         """
 
         return self.fitInfo
+        
+    def setBounds(self,mParamNames):
+        """
+        Checks if the bounds have changed
+        
+        Parameters
+        ----------
+        mParamNames : list of strings
+            An ordered list of the names of the parameters to be fitted
+        
+        Examples
+        --------
+        >>> from fitting.fitters.fitAlg import fitAlg
+        >>> a = fitAlg()
+        >>> a.setBounds([])
+        >>> a.setBounds(['string','two'])
+        >>> a.allBounds
+        {'string': (0, inf), 'two': (0, inf)}
+        >>> a.boundNames
+        ['string', 'two']
+        >>> a.boundVals
+        ￼[(0, inf), (0, inf)]
+        
+        >>> a = fitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
+        >>> a.allBounds
+        {1:(0,5),2:(0,2),3:(-1,1)}
+        >>> a.setBounds([])
+        >>> a.allBounds
+        {1:(0,5),2:(0,2),3:(-1,1)}
+        >>> a.boundNames
+        []
+        >>> a.setBounds([3,1])
+        >>> a.boundVals
+        ￼[(-1, 1), (0, 5)]
+        >>> a.setBounds([2,1])
+        >>> a.boundVals
+        ￼[(0, 2), (0, 5)]
+        """
+        
+        bounds = self.allBounds
+        boundNames = self.boundNames
+        boundVals = self.boundVals
+        
+        # Check if the bounds have changed or should be added
+        if boundNames:
+            changed = False
+            for m,b in izip(mParamNames,boundNames):
+                if m != b :
+                    changed = True
+                    break
+        else:
+            changed = True
+         
+        # If they have not, then we can leave
+        if not changed:
+            if len(mParamNames) == len(boundNames):
+                return
+
+        # If no bounds were defined
+        if not bounds:
+            boundVals = [(0,float('Inf')) for i in mParamNames]
+            self.allBounds = {k : v for k, v in izip(mParamNames, boundVals)}
+            self.boundNames = mParamNames
+            self.boundVals = boundVals
+        else:
+            self.boundVals = [ bounds[k] for k in mParamNames]
+            self.boundNames = mParamNames
+        
+        return
+
         
     def startParams(self,initialParams, bounds = None, numPoints = 3):
         """
@@ -139,6 +225,8 @@ class fitAlg(object):
         
         Examples
         --------
+        >>> from fitting.fitters.fitAlg import fitAlg
+        >>> a = fitAlg()
         >>> self.startParams([0.5,0.5], numPoints=2)
         array([[ 0.33333333,  0.33333333],
                [ 0.66666667,  0.33333333],
@@ -197,7 +285,7 @@ class fitAlg(object):
         >>> a = fitAlg()
         >>> a.startParamVals(0.5)
         array([ 0.25,  0.5 ,  0.75])
-        
+
         >>> a.startParamVals(5)
         array([ 2.5,  5. ,  7.5])
         
@@ -273,3 +361,45 @@ class fitAlg(object):
         
         return points
 
+    def invalidParams(self, *params):
+        """
+        Identifies if the parameters passed are within the bounds provided
+        
+        If they are not returns ``inf``
+        
+        Parameters
+        ----------
+        params : list of floats
+            Parameters to be passed to the sim
+            
+        Returns
+        -------
+        validity : Bool
+            If the parameters are valid or not
+        
+        Notes
+        -----
+        No note
+        
+        Examples
+        --------
+        >>> from fitting.fitters.fitAlg import fitAlg
+        >>> a = fitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
+        >>> a.setBounds([3,1])
+        >>> a.invalidParams(0,0)
+        False
+        >>> a.invalidParams(2,0)
+        True        
+        >>> a.invalidParams(0,-1)
+        True        
+        >>> a.invalidParams(6,6)
+        True
+        """
+
+        for p, (mi, ma) in izip(params,self.boundVals):
+            
+            if p < mi or p > ma:
+                return True
+        
+        return False
+        
