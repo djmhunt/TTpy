@@ -73,7 +73,7 @@
 </table>
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
-<em class="property">class </em><tt class="descclassname">fitting.fitters.fitAlg.</tt><tt class="descname">fitAlg</tt><big>(</big><em>fitQualFunc=None</em>, <em>numStartPoints=4</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fitting.fitters.fitAlg.</tt><tt class="descname">fitAlg</tt><big>(</big><em>fitQualFunc=None</em>, <em>bounds=None</em>, <em>numStartPoints=4</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>The abstact class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -84,6 +84,12 @@
 <blockquote>
 <div><p>The function used to calculate the quality of the fit. The value it 
 returns proivides the fitter with its fitting guide. Default <tt class="docutils literal"><span class="pre">fitAlg.null</span></tt></p>
+</div></blockquote>
+<p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
+<blockquote>
+<div><p>The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <tt class="docutils literal"><span class="pre">None</span></tt>, which 
+translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
 </div></blockquote>
 <p><strong>numStartPoints</strong> : int, optional</p>
 <blockquote class="last">
@@ -182,6 +188,8 @@ given model parameters. One example is <tt class="docutils literal"><span class=
 <dl class="last docutils">
 <dt><tt class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.qualityFunc</span></tt></dt>
 <dd>the module of fitQualFunc functions</dd>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg.invalidParams" title="fitting.fitters.fitAlg.fitAlg.invalidParams"><tt class="xref py py-obj docutils literal"><span class="pre">fitAlg.invalidParams</span></tt></a></dt>
+<dd>Checks if the parameters are valid and if not returns <tt class="docutils literal"><span class="pre">inf</span></tt></dd>
 </dl>
 </div>
 </dd></dl>
@@ -202,6 +210,94 @@ given model parameters. One example is <tt class="docutils literal"><span class=
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.fitAlg.fitAlg.invalidParams">
+<tt class="descname">invalidParams</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.invalidParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.invalidParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies if the parameters passed are within the bounds provided</p>
+<p>If they are not returns <tt class="docutils literal"><span class="pre">inf</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>params</strong> : list of floats</p>
+<blockquote>
+<div><p>Parameters to be passed to the sim</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>validity</strong> : Bool</p>
+<blockquote class="last">
+<div><p>If the parameters are valid or not</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>No note</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">True        </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True        </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.fitAlg.fitAlg.setBounds">
+<tt class="descname">setBounds</tt><big>(</big><em>mParamNames</em><big>)</big><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.setBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.setBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the bounds have changed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mParamNames</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>An ordered list of the names of the parameters to be fitted</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="s">&#39;string&#39;</span><span class="p">,</span><span class="s">&#39;two&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{&#39;string&#39;: (0, inf), &#39;two&#39;: (0, inf)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
+<span class="go">[&#39;string&#39;, &#39;two&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(0, inf), (0, inf)]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(-1, 1), (0, 5)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(0, 2), (0, 5)]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -322,7 +418,9 @@ each inital point</p>
 </dl>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">array([[ 0.33333333,  0.33333333],</span>
 <span class="go">       [ 0.66666667,  0.33333333],</span>
 <span class="go">       [ 0.33333333,  0.66666667],</span>
@@ -580,13 +678,13 @@ given model parameters. One example is fit.fitness</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="fitting.fitters.test_minimize.TestClass.test_setStartParams">
-<tt class="descname">test_setStartParams</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_setStartParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_setStartParams" title="Permalink to this definition">¶</a></dt>
+<dt id="fitting.fitters.test_minimize.TestClass.test_startParamVals">
+<tt class="descname">test_startParamVals</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParamVals" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="fitting.fitters.test_minimize.TestClass.test_startParamList">
-<tt class="descname">test_startParamList</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParamList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParamList" title="Permalink to this definition">¶</a></dt>
+<dt id="fitting.fitters.test_minimize.TestClass.test_startParams">
+<tt class="descname">test_startParams</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParams" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

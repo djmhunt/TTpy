@@ -147,7 +147,62 @@ decision and the probability of that decision</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decIntEtaReac</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span> <span class="o">=</span> <span class="n">decIntEtaReac</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">]))</span>
-<span class="go">1</span>
+<span class="go">(1, {0:0.44444444444, 1:0.5555555556})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.decision.discrete">
+<span id="model-decision-discrete-module"></span><h2>model.decision.discrete module<a class="headerlink" href="#module-model.decision.discrete" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<p>A collection of decision making functions where there are no limits on the 
+number of actions, but they are countable.</p>
+<dl class="function">
+<dt id="model.decision.discrete.decMaxProb">
+<tt class="descclassname">model.decision.discrete.</tt><tt class="descname">decMaxProb</tt><big>(</big><em>responses=None</em><big>)</big><a class="reference internal" href="_modules/model/decision/discrete.html#decMaxProb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.discrete.decMaxProb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decisions using a probability difference threshold</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>responses</strong> : tuple or None, optional</p>
+<blockquote>
+<div><p>Provides the action responses expected by the experiment for each
+probability estimate. If <tt class="docutils literal"><span class="pre">None</span></tt> then the responses for <img src="_images/mathmpl/math-1922d1ceaa.png" style="position: relative; bottom: -3px"/> 
+probabilities will be <img src="_images/mathmpl/math-d7aae3076d.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>Calculates the decisions based on the probabilities and returns the 
+decision and the probability of that decision</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">models.qLearn</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">models.qLearn2</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">models.OpAL</span></tt></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">decMaxProb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">decMaxProb</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="go">￼(1, {0:0.2,1:0.6,2:0.3,4:0.5})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="go">￼(1, {0:0.2,1:0.5,2:0.3,3:0.5})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="go">￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -169,6 +224,7 @@ decision and the probability of that decision</p>
 <li><a class="reference internal" href="#">model.decision package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-model.decision.binary">model.decision.binary module</a></li>
+<li><a class="reference internal" href="#module-model.decision.discrete">model.decision.discrete module</a></li>
 <li><a class="reference internal" href="#module-model.decision">Module contents</a></li>
 </ul>
 </li>

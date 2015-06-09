@@ -59,7 +59,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">rand</span>
 <span class="kn">from</span> <span class="nn">experiment</span> <span class="kn">import</span> <span class="n">experiment</span>
 <span class="c">#from plotting import dataVsEvents, varDynamics</span>
@@ -333,6 +333,42 @@
         
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfo&quot;</span>
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;epsilon&quot;</span><span class="p">:</span><span class="n">epsilon</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">deckStim</span>
+    </div>
+<div class="viewcode-block" id="deckStimDualInfoLogistic"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfoLogistic">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfoLogistic</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span><span class="n">minEventVal</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
+<span class="sd">    from two possible actions. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deckStim : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
+<span class="sd">        function returns a list of length 2.</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxEventVal</span> <span class="o">+</span> <span class="n">minEventVal</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    
+    <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        
+        <span class="n">x</span><span class="o">=</span><span class="n">exp</span><span class="p">(</span><span class="n">epsilon</span> <span class="o">*</span><span class="p">(</span><span class="n">event</span><span class="o">-</span><span class="n">mid</span><span class="p">))</span>
+        
+        <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)))</span><span class="o">*</span><span class="n">action</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">stimulus</span>
+        
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfoLogistic&quot;</span>
+    <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;midpoint&quot;</span><span class="p">:</span><span class="n">mid</span><span class="p">,</span>
+                       <span class="s">&quot;epsilon&quot;</span><span class="p">:</span><span class="n">epsilon</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">deckStim</span></div>
 </pre></div>
 

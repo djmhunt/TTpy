@@ -11,6 +11,14 @@ model.decision.binary module
     :members:
     :undoc-members:
     :show-inheritance:
+	
+model.decision.discrete module
+------------------------------
+
+.. automodule:: model.decision.discrete
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Module contents

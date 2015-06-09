@@ -59,6 +59,8 @@
 
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">reshape</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <div class="viewcode-block" id="decEta"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decEta">[docs]</a><span class="k">def</span> <span class="nf">decEta</span><span class="p">(</span><span class="n">responses</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">eta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decisions using a probability difference threshold</span>
@@ -97,7 +99,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
             
-        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probabilities</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">responses</span><span class="p">,</span><span class="n">probabilities</span><span class="p">)})</span>
+            
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probs</span>
         
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decEta&quot;</span>
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;responses&quot;</span><span class="p">:</span> <span class="n">responses</span><span class="p">,</span>
@@ -139,7 +143,7 @@
 <span class="sd">    &gt;&gt;&gt; from model.decision.binary import decIntEtaReac</span>
 <span class="sd">    &gt;&gt;&gt; dec = decIntEtaReac()</span>
 <span class="sd">    &gt;&gt;&gt; dec(array([0.4,0.1,0.25,0.25]))</span>
-<span class="sd">    1</span>
+<span class="sd">    (1, {0:0.44444444444, 1:0.5555555556})</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
         
@@ -165,13 +169,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
             
-        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probPair</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">responses</span><span class="p">,</span><span class="n">probPair</span><span class="p">)})</span>
+            
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probs</span>
         
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;binary.decIntEtaReac&quot;</span>
     <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;responses&quot;</span><span class="p">:</span> <span class="n">responses</span><span class="p">,</span>
                            <span class="s">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">}</span>
         
-    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+    <span class="k">return</span> <span class="n">decisionFunc</span>
+    </div>
 </pre></div>
 
           </div>
