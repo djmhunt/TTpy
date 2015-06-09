@@ -9,7 +9,7 @@
 """
 from __future__ import division
 
-from numpy import array, zeros
+from numpy import array, zeros, exp
 from numpy.random import rand
 from experiment import experiment
 #from plotting import dataVsEvents, varDynamics
@@ -283,4 +283,40 @@ def deckStimDualInfo(maxEventVal, epsilon):
         
     deckStim.Name = "deckStimDualInfo"
     deckStim.Params = {"epsilon":epsilon}
+    return deckStim
+    
+def deckStimDualInfoLogistic(maxEventVal,minEventVal, epsilon):
+    """
+    Processes the decks stimuli for models expecting the reward information 
+    from two possible actions. 
+        
+    Returns
+    -------
+    deckStim : function
+        The function expects to be passed a tuple containing the event and the
+        last action. The event that is a float and action is {0,1}. The 
+        function returns a list of length 2.
+        
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+        
+    See Also
+    --------
+    model.BP, model.EP, model.MS, model.MS_rev
+    """
+    mid = (maxEventVal + minEventVal)/2
+    
+    def deckStim(event, action):
+        
+        x=exp(epsilon *(event-mid))
+        
+        stim = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
+        stimulus = [stim,1-stim]
+        return stimulus
+        
+    deckStim.Name = "deckStimDualInfoLogistic"
+    deckStim.Params = {"midpoint":mid,
+                       "epsilon":epsilon}
     return deckStim
