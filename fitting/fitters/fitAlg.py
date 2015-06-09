@@ -104,12 +104,14 @@ class fitAlg(object):
         fitting.fitters.qualityFunc : the module of fitQualFunc functions
         fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
         """
+        # This is because the fitting functions return an array and we want a list
+        pms = list(*params)
 
         # Start by checking that the parameters are valid
-        if self.bounds and self.invalidParams(*params):
+        if self.allBounds and self.invalidParams(*pms):
             return float("inf")
 
-        modVals = self.sim(*params)
+        modVals = self.sim(*pms)
         
         fit = self.fitQualFunc(modVals)
         

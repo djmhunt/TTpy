@@ -70,7 +70,7 @@ class fitter(fit):
         """
 
         #Run model with given parameters
-        model = self._simSetup(*modelParameters[0])
+        model = self._simSetup(*modelParameters)
 
         # Pull out the values to be compared
 
