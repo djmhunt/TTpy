@@ -9,6 +9,8 @@ from __future__ import division
 
 from random import choice
 from numpy import sum, array, arange, reshape
+from itertools import izip
+from collections import OrderedDict
 
 def decEta(responses = (0,1),eta = 0):
     """Decisions using a probability difference threshold
@@ -47,7 +49,9 @@ def decEta(responses = (0,1),eta = 0):
         else:
             decision = None
             
-        return decision, probabilities
+        probs = OrderedDict({k:v for k,v in izip(responses,probabilities)})
+            
+        return decision, probs
         
     decisionFunc.Name = "binary.decEta"
     decisionFunc.Params = {"responses": responses,
@@ -89,7 +93,7 @@ def decIntEtaReac(responses = (0,1), eta = 0):
     >>> from model.decision.binary import decIntEtaReac
     >>> dec = decIntEtaReac()
     >>> dec(array([0.4,0.1,0.25,0.25]))
-    1
+    (1, {0:0.44444444444, 1:0.5555555556})
     
     """
         
@@ -115,10 +119,13 @@ def decIntEtaReac(responses = (0,1), eta = 0):
         else:
             decision = None
             
-        return decision, probPair
+        probs = OrderedDict({k:v for k,v in izip(responses,probPair)})
+            
+        return decision, probs
         
     decisionFunc.Name = "binary.decIntEtaReac"
     decisionFunc.Params = {"responses": responses,
                            "eta": eta}
         
     return decisionFunc
+    
