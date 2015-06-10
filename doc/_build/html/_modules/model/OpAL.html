@@ -59,8 +59,6 @@
 <span class="sd">                Psychological Review, 121(3), 337–66. </span>
 <span class="sd">                doi:10.1037/a0037015   </span>
 <span class="sd">                </span>
-<span class="sd">                </span>
-<span class="sd">:Overview:</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
@@ -116,13 +114,37 @@
 <span class="sd">    decFunc : function, optional</span>
 <span class="sd">        The function that takes the internal values of the model and turns them</span>
 <span class="sd">        in to a decision. Default is model.decision.binary.decEta</span>
+<span class="sd">        </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -----    </span>
+<span class="sd">    Actor: The chosen action is updated with</span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">    </span>
+<span class="sd">        \\delta_{d,t} = r_t-E_{d,t}</span>
+<span class="sd">        </span>
+<span class="sd">        E_{d,t+1} = E_{d,t} + \\alpha_E \\delta_{d,t}</span>
+<span class="sd">    </span>
+<span class="sd">    Critic: The chosen action is updated with</span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">        G_{d,t+1} = G_{d,t} + \\alpha_G G_{d,t} \\delta_{d,t}</span>
+<span class="sd">    </span>
+<span class="sd">        N_{d,t+1} = N_{d,t} - \\alpha_N N_{d,t} \\delta_{d,t}</span>
+<span class="sd">    </span>
+<span class="sd">    Probabilities: The probabilities for all actions are calculated using</span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">        A_{d,t} = (1+\\rho) G_{d,t}-(1+\\rho) N_{d,t}</span>
+<span class="sd">    </span>
+<span class="sd">        P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;OpAL&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;numActions&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;numActions&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;beta&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">betaDiff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;betaDiff&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>

@@ -8,17 +8,19 @@ number of actions, but they are countable.
 
 from __future__ import division
 
+from warnings import warn
+
 from random import choice
 from numpy import argmax, array, where, amax
 from itertools import izip
 from collections import OrderedDict
 
-def decMaxProb(responses = None):
+def decMaxProb(expResponses = None):
     """Decisions using a probability difference threshold
     
     Parameters
     ----------
-    responses : tuple or None, optional
+    expResponses : tuple or None, optional
         Provides the action responses expected by the experiment for each
         probability estimate. If ``None`` then the responses for :math:`N` 
         probabilities will be :math:`\\left[0,1,\\ldots,N-1\\right]`
@@ -43,14 +45,32 @@ def decMaxProb(responses = None):
     ￼(1, {0:0.2,1:0.5,2:0.3,3:0.5})
     >>> d([0.2,0.5,0.3,0.5])
     ￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})
-    
+    >>> d([0.2,0.5,0.3,0.5], validResponses=[0,2])
+    ￼(2, {0:0.2,1:0.5,2:0.3,3:0.5})
+    >>> d = decMaxProb([1,2,3])
+    >>> d([0.2,0.3,0.5], validResponses=[1,2])
+    ￼(2, {1:0.2,2:0.3,3:0.5})
+    >>> d([0.2,0.3,0.5], validResponses=[0,2])
+    model\decision\discrete.py:66: UserWarning: Some of the validResponses are not in expResponses: [0, 2]
+    warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
+    ￼(3, {1:0.2,2:0.3,3:0.5})
     """
     
-    resp = array(responses)
+    expResp = array(expResponses)
         
-    def decisionFunc(probabilities):
+    def decisionFunc(probabilities, validResponses = None):
         
-        prob = probabilities
+        if validResponses != None:
+            resp = array([r for r in expResp if r in validResponses])
+            if len(resp) != len(validResponses):
+                warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
+                resp = expResp
+                prob = probabilities
+            else:
+                prob = array([probabilities[i] for i, r in enumerate(expResp) if r in validResponses])
+        else:
+            resp = expResp
+            prob = probabilities
                 
         probMax = amax(prob)
         
@@ -60,11 +80,11 @@ def decMaxProb(responses = None):
         
         decision = choice(resp[probIndexes])
             
-        probs = OrderedDict({k:v for k,v in izip(responses,prob)})
+        probs = OrderedDict({k:v for k,v in izip(expResponses,probabilities)})
             
         return decision, probs
         
     decisionFunc.Name = "discrete.decMaxProb"
-    decisionFunc.Params = {"responses": resp}
+    decisionFunc.Params = {"expResponses": expResponses}
         
     return decisionFunc
