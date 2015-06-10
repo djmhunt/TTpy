@@ -73,7 +73,7 @@ from dataFitting import dataFitting
 from data import data
 
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
-from fitting.fitness import fitter
+from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
 
