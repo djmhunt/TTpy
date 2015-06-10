@@ -64,7 +64,7 @@ class experiment(object):
 
     def next(self):
         """
-        Produces the next bead for the iterator
+        Produces the next stimulus for the iterator
         
         Returns
         -------
