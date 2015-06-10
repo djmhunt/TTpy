@@ -7,7 +7,8 @@
                 learning and choice incentive.
                 Collins, A. G. E., & Frank, M. J. (2014).  
                 Psychological Review, 121(3), 337–66. 
-                doi:10.1037/a0037015                
+                doi:10.1037/a0037015   
+                
 """
 
 from __future__ import division
@@ -63,13 +64,37 @@ class OpAL(model):
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.binary.decEta
+        
+    Notes
+    -----    
+    Actor: The chosen action is updated with
+    
+    .. math::
+    
+        \\delta_{d,t} = r_t-E_{d,t}
+        
+        E_{d,t+1} = E_{d,t} + \\alpha_E \\delta_{d,t}
+    
+    Critic: The chosen action is updated with
+    
+    .. math::
+        G_{d,t+1} = G_{d,t} + \\alpha_G G_{d,t} \\delta_{d,t}
+    
+        N_{d,t+1} = N_{d,t} - \\alpha_N N_{d,t} \\delta_{d,t}
+    
+    Probabilities: The probabilities for all actions are calculated using
+    
+    .. math::
+        A_{d,t} = (1+\\rho) G_{d,t}-(1+\\rho) N_{d,t}
+    
+        P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}
     """
 
     Name = "OpAL"
 
     def __init__(self,**kwargs):
 
-        self.numActions = kwargs.pop('numActions', 2)
+        self.numActions = kwargs.pop('numActions', 4)
         self.beta = kwargs.pop('beta', 4)
         self.betaDiff = kwargs.pop('betaDiff',0)
         self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
