@@ -102,6 +102,9 @@ class Beads(experiment):
         Returns
         -------
         bead : {0,1}
+        nextValidActions : Tuple of ints
+            The list of valid actions that the model can respond with. Set to 
+            ``None``, as they never vary.
         
         Raises
         ------
@@ -114,8 +117,11 @@ class Beads(experiment):
             raise StopIteration
 
         self.storeState()
+        
+        nextStim = self.beads[self.t]
+        nextValidActions = None
 
-        return self.beads[self.t]
+        return nextStim, nextValidActions
 
     def receiveAction(self,action):
         """ 

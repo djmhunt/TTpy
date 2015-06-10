@@ -103,11 +103,15 @@ class Pavlov(experiment):
         
         Returns
         -------
+        nextStim : tuple of c, rewSig and stimDur, described below
         c : list of floats
             Contains the inputs for each of the stimuli
         rewSig : list of lists of floats
             Each list contains the rewards at each time
         stimDur : int
+        nextValidActions : Tuple of ints
+            The list of valid actions that the model can respond with. Set to 
+            ``None``, as they never vary.
             
         
         Raises
@@ -122,8 +126,11 @@ class Pavlov(experiment):
             
         c = self.cSet[self.index]
         rewSig = self.rewSigSet[self.index]
+        
+        nextStim = (c, rewSig, self.stimDur)
+        nextValidActions = None
 
-        return c, rewSig, self.stimDur
+        return nextStim, nextValidActions
 
     def receiveAction(self,action):
         """

@@ -69,6 +69,9 @@ class experiment(object):
         Returns
         -------
         stimulus : None
+        nextValidActions : Tuple of ints
+            The list of valid actions that the model can respond with. Set to 
+            ``None``, as they never vary.
         
         Raises
         ------
@@ -85,7 +88,7 @@ class experiment(object):
 #
 #        self._storeState()
 #
-#        return self.data[self.index]
+#        return self.data[self.index], None
 
     def __eq__(self, other):
 

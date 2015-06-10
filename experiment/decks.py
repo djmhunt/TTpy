@@ -107,6 +107,9 @@ class Decks(experiment):
         Returns
         -------
         stimulus : None
+        nextValidActions : Tuple of ints
+            The list of valid actions that the model can respond with. Set to 
+            ``None``, as they never vary.
         
         Raises
         ------
@@ -117,8 +120,11 @@ class Decks(experiment):
 
         if self.t == self.T:
             raise StopIteration
+            
+        nextStim = None
+        nextValidActions = None
 
-        return None
+        return nextStim, nextValidActions
 
     def receiveAction(self,action):
         """
