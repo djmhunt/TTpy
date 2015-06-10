@@ -41,8 +41,8 @@ def  simulation(experiments, models, outputting):
                 message = "Beginning experiment"
                 logger.debug(message)
 
-                for event in exp:
-                    model.observe(event)
+                for state in exp:
+                    model.observe(state)
                     act = model.action()
                     exp.receiveAction(act)
                     response = exp.feedback()

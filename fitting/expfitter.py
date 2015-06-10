@@ -114,8 +114,8 @@ class fitter(fit):
         Simulates the events of a simulation from the perspective of a model
         """
 
-        for event in exp:
-            model.observe(event)
+        for state in exp:
+            model.observe(state)
             act = model.action()
             exp.receiveAction(act)
             response = exp.feedback()
