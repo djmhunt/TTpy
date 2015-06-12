@@ -67,7 +67,7 @@ class MS(model):
         # The alpha is an activation rate paramenter. The paper uses a value of 1.
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(responses = (1,2), eta = self.eta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(expResponses = (1,2), eta = self.eta))
         
         self.currAction = 1
         self.probabilities = zeros(2) + self.prior

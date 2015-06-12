@@ -72,7 +72,7 @@ class EP(model):
         self.validActions = None
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(responses = (1,2), eta = self.eta))
+        self.decisionFunc = kwargs.pop('decFunc',decEta(expResponses = (1,2), eta = self.eta))
 
         self.parameters = {"Name": self.Name,
                            "alpha": self.alpha,

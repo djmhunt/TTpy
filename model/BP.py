@@ -54,7 +54,7 @@ class BP(model):
         
         
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decEta(responses = tuple(range(1,self.numStimuli+1)), eta = self.eta))
+        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses = tuple(range(1,self.numStimuli+1)), eta = self.eta))
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
