@@ -69,6 +69,7 @@ class EP(model):
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
         self.lastObs = False
+        self.validActions = None
         
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decEta(responses = (1,2), eta = self.eta))
@@ -156,7 +157,8 @@ class EP(model):
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
         
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
     def storeState(self):
         """" 

@@ -96,6 +96,7 @@ class RVPM(model):
 
         self.currAction = None
         self.lastObs = False
+        self.validActions = None
 
         # Recorded information
 

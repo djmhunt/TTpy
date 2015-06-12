@@ -30,6 +30,7 @@ class model(object):
 
         self.currAction = 1
         self.lastObs = False
+        self.validActions = None
 
         self.parameters = {"Name" : self.Name}
 
@@ -70,18 +71,19 @@ class model(object):
 
         return self.currAction
 
-    def observe(self,event):
+    def observe(self,state):
         """
         Receives the latest observation
         
         Parameters
         ----------
-        event : float or None
+        state : float or None
             The stimulus from the experiment. Returns without doing anything if
             the value of event is `None`.
         
         """
-
+        event, self.validActions = state
+        
         if event != None:
             self._update(event,'obs')
 

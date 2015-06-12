@@ -129,6 +129,7 @@ class OpAL(model):
         self.decProbs = array(self.prior)
         self.decision = None
         self.lastObs = False
+        self.validActions = None
 
         # Recorded information
 
@@ -212,7 +213,8 @@ class OpAL(model):
         #Calculate the new probabilities
         self.probabilities = self._prob(self.go, self.nogo)
         
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
     def storeState(self):
         """ 

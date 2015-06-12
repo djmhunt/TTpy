@@ -72,6 +72,7 @@ class BP(model):
         self.decProbs = array(self.prior)
         self.decision = None
         self.lastObs = False
+        self.validActions = None
 
         # Recorded information
 
@@ -145,7 +146,8 @@ class BP(model):
         #Calculate the new probabilities
         self.probabilities = self._prob(postProb)
         
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
     def storeState(self):
         """ 

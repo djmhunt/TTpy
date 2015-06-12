@@ -79,6 +79,7 @@ class MS_rev(model):
         self.activity = array(self.activity)
         self.decision = None
         self.lastObs = False
+        self.validActions = None
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
@@ -163,7 +164,8 @@ class MS_rev(model):
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
         
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
     def storeState(self):
         """ 

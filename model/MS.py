@@ -76,6 +76,7 @@ class MS(model):
         self.decision = None
         self.firstDecision = 0
         self.lastObs = False
+        self.validActions = None
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
@@ -103,7 +104,8 @@ class MS(model):
         action : integer or None
         """
 
-        self.decision = self.decisionFunc(self.probabilities)
+        self.decision = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
         self.currAction = self.decision
 

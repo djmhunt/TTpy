@@ -86,6 +86,7 @@ class qLearn(model):
         self.decProbs = array(self.prior)
         self.decision = None
         self.lastObs = False
+        self.validActions = None
 
         # Recorded information
 
@@ -164,7 +165,8 @@ class qLearn(model):
         #Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
         
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities)
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
+
 
     def storeState(self):
         """ 
