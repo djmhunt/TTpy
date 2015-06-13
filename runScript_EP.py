@@ -17,7 +17,7 @@ from numpy import array, concatenate, ones
 #The experiment factory
 from experiments import experiments
 #The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect, deckStimAllInfo
+from experiment.decks import Decks, deckStimDirect, deckStimAllInfo, deckStimDualInfo, deckStimDualInfoLogistic
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
@@ -38,7 +38,7 @@ alphaMax = 1
 beta = 0.5#0.7#0.5#0.7
 betaMin = 0
 betaMax = 50
-numStimuli = 20
+numStimuli = 2
 
 outputOptions = {'simLabel': 'EP_decksSet',
                  'save': True,
@@ -51,8 +51,8 @@ parameters = {  'alpha':(alphaMax-alphaMin)/2,
 paramExtras = {'eta':eta,
                'activity':ones(numStimuli)*1.05,
                'numStimuli':numStimuli,
-               'stimFunc':deckStimAllInfo(10,1,2),
-               'decFunc':decIntEtaReac(eta = eta)} #For decks
+               'stimFunc':deckStimDualInfo(10,0.01),
+               'decFunc':decEta(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
 modelSet = models((EP,parameters,paramExtras))

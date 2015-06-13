@@ -17,7 +17,7 @@ from numpy import array, concatenate
 #The experiment factory
 from experiments import experiments
 #The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
+from experiment.decks import Decks, deckStimDirect, deckStimAllInfo, deckStimDualInfo, deckStimDualInfoLogistic 
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
@@ -44,7 +44,7 @@ outputOptions = {'simLabel': 'MS_rev_decksSet',
 parameters = {  'alpha':alpha,
                 'beta':beta}
 paramExtras = {'eta':eta,
-               'stimFunc':deckStimDualInfo(10),
+               'stimFunc':deckStimDualInfo(10,0.01),
                'decFunc':decEta(eta = eta)} #For decks
 
 expSets = experiments((Decks,{},{}))
