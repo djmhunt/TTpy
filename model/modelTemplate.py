@@ -11,9 +11,9 @@ from modelPlot import modelPlot
 class model(object):
 
     """
-    The model class is a general template for a model. It also contains 
+    The model class is a general template for a model. It also contains
     universal methods used by all models.
-        
+
     Attributes
     ----------
     Name : string
@@ -61,7 +61,7 @@ class model(object):
     def action(self):
         """
         Returns the action of the model
-        
+
         Returns
         -------
         action : integer or None
@@ -74,23 +74,22 @@ class model(object):
     def observe(self,state):
         """
         Receives the latest observation
-        
+
         Parameters
         ----------
         state : float or None
             The stimulus from the experiment. Returns without doing anything if
             the value of event is `None`.
-        
+
         """
         event, self.validActions = state
-        
-        if event != None:
-            self._update(event,'obs')
+
+        self._update(event,'obs')
 
     def feedback(self,response):
         """
         Receives the reaction to the action
-        
+
         Parameters
         ----------
         response : float
@@ -98,8 +97,7 @@ class model(object):
             the value of response is `None`.
         """
 
-        if response != None:
-            self._update(response,'reac')
+        self._update(response,'reac')
 
     def outputEvolution(self):
         """
@@ -136,9 +134,9 @@ class model(object):
                 self.recEvents.append(events)
 
     def storeState(self):
-        """ 
+        """
         Stores the state of all the important variables so that they can be
-        accessed later 
+        accessed later
         """
 
         self.recAction.append(self.currAction)
@@ -146,7 +144,7 @@ class model(object):
     def params(self):
         """
         Returns the parameters of the model
-        
+
         Returns
         -------
         parameters : dictionary
@@ -157,7 +155,7 @@ class model(object):
     def plot(self):
         """
         Returns a plotting class relavent for this model
-        
+
         Returns
         -------
         modelPlot : model.modelPlot
@@ -167,9 +165,9 @@ class model(object):
 
     def plotSet(self):
         """
-        Returns a plotting class relavent analysis of sets of results from this 
+        Returns a plotting class relavent analysis of sets of results from this
         model
-        
+
         Returns
         -------
         modelSetPlot : model.modelSetPlot
