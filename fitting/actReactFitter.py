@@ -18,7 +18,7 @@ class fitter(fit):
 
     """
     A class for fitting data by passing the participant data through the model.
-    
+
     Used only for fitting action-response models
 
     Parameters
@@ -33,36 +33,36 @@ class fitter(fit):
         An instance of one of the fitting algorithms
     scaler : function
         Transforms the participant action form to match that of the model
-        
+
     Attributes
     ----------
     Name : string
         The Name of the fitting type
-        
+
     See Also
     --------
     fitting.fit.fit : The class this inherits many functions from
     fitting.fitters.fitAlg.fitAlg : The general fitting class
     """
-    
+
     Name = "actReactFitter"
 
     def fitness(self, *modelParameters):
         """
         Used by a fitter to generate a fit for given model parameters
-        
+
         Parameters
         ----------
         modelParameters : list of floats
             A list of the parameters used by the model in the order previously
             defined
-            
+
         Returns
         -------
         fitQuality : list of floats
             The quality of the fit. In this case defined as the choices
             made by the model
-            
+
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
@@ -89,7 +89,7 @@ class fitter(fit):
         return model
 
     def _simSetup(self, *modelParameters):
-        """ 
+        """
         Initialises the model for the running of the 'simulation'
         """
 
@@ -111,10 +111,11 @@ class fitter(fit):
 
         for action, reward in izip(parAct, parReward):
 
+            model.observe((None,None))
             model.currAction = action
             model.storeState()
             model.feedback(reward)
-            
+
 
 
 
