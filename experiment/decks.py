@@ -225,7 +225,7 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     deckStim : function
         The function expects to be passed a tuple containing the event and the
         last action. The event that is a float and action is {0,1}. The 
-        function returns a list of length 2.
+        function returns a array of length (maxEventVal-minEventVal)*numActions.
         
     Attributes
     ----------
