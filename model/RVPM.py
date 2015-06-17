@@ -95,7 +95,6 @@ class RVPM(model):
                            "decFunc" : callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
-        self.lastObs = False
         self.validActions = None
 
         # Recorded information
@@ -135,25 +134,16 @@ class RVPM(model):
 
         return results
 
-    def _update(self,event,instance):
+    def _update(self,events,instance):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-
-            #Calculate the new information
-            self._processEvent(event)
-
-            self.lastObs = True
+            if events != None:
+                self._processEvent(events)
 
         elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
-                #Calculate the new information
-                self._processEvent(event)
+            if events != None:
+                self._processEvent(events)
 
     def storeState(self):
         """

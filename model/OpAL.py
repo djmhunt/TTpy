@@ -124,7 +124,6 @@ class OpAL(model):
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
         self.decision = None
-        self.lastObs = False
         self.validActions = None
 
         # Recorded information

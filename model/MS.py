@@ -137,20 +137,12 @@ class MS(model):
     def _update(self,events,instance):
         """Processes updates to new actions"""
 
-
         if instance == 'obs':
-
-            self._processEvent(events)
-
-            self.lastObs = True
+            if events != None:
+                self._processEvent(events)
 
         elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
+            if events != None:
                 self._processEvent(events)
 
     def _processEvent(self,events):

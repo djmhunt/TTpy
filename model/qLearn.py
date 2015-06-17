@@ -85,7 +85,6 @@ class qLearn(model):
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
         self.decision = None
-        self.lastObs = False
         self.validActions = None
 
         # Recorded information
@@ -137,18 +136,12 @@ class qLearn(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-
-            self._processEvent(events)
-
-            self.lastObs = True
+            if events != None:
+                self._processEvent(events)
+            self._processAction()
 
         elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
+            if events != None:
                 self._processEvent(events)
 
     def _processEvent(self,events):
@@ -164,6 +157,8 @@ class qLearn(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
+
+    def _processAction(self):
 
         self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
 

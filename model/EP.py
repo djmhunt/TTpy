@@ -68,7 +68,6 @@ class EP(model):
         self.decision = None
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
-        self.lastObs = False
         self.validActions = None
 
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -131,18 +130,13 @@ class EP(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
+            if events != None:
+                self._processEvent(events)
+            self._processAction()
 
-            self._processEvent(events)
-
-            self.lastObs = True
 
         elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
+            if events != None:
                 self._processEvent(events)
 
     def _processEvent(self,events):
@@ -156,6 +150,8 @@ class EP(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
+
+    def _processAction(self):
 
         self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
 

@@ -78,7 +78,6 @@ class MS_rev(model):
         self.probDifference = 0
         self.activity = array(self.activity)
         self.decision = None
-        self.lastObs = False
         self.validActions = None
 
         self.parameters = {"Name": self.Name,
@@ -138,18 +137,13 @@ class MS_rev(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
+            if events != None:
+                self._processEvent(events)
+            self._processAction()
 
-            self._processEvent(events)
-
-            self.lastObs = True
 
         elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
+            if events != None:
                 self._processEvent(events)
 
     def _processEvent(self,events):
@@ -163,6 +157,8 @@ class MS_rev(model):
 
         #Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
+
+    def _processAction(self):
 
         self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
 
