@@ -39,11 +39,19 @@ class OpAL(model):
     Parameters
     ----------
     alpha : float, optional
-        Learning rate parameter. Also known as the critic learning rate.
+        Learning rate parameter, used as either the
+    alphaGoDiff : float, optional
+        The difference between ``alphaGo`` and ``alphaNogo``. Default is ``None``.
+        If not ``None`` will overwrite any parameters in ``alphaGo`` and ``alphaNogo``
+        :math:`\\alpha_G = \\alpha + \\alpha_\\delta` and :math:`\\alpha_N = \\alpha - \\alpha_\\delta`
+    alphaC : float, optional
+        The critic learning rate. Default is ``alpha``
     alphaGo : float, optional
         Learning rate parameter for Go, the positive part of the actor learning
+        Default is ``alpha``
     alphaNogo : float, optional
         Learning rate aprameter for Nogo, the negative part of the actor learning
+        Default is ``alpha``
     beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
         expoitation parameter. Defined as :math:`\\beta` in the paper
@@ -95,19 +103,25 @@ class OpAL(model):
         self.numActions = kwargs.pop('numActions', 4)
         self.beta = kwargs.pop('beta', 4)
         self.betaDiff = kwargs.pop('betaDiff',0)
-        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
+        self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
         self.alpha = kwargs.pop('alpha', 0.3)
+        self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
+        self.alphaCrit = kwargs.pop('alphaC', self.alpha)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
-        self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
+        self.expect = kwargs.pop('expect', ones(self.numActions)/self.numActions)
 
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decMaxProb(range(self.numActions)))
 
+        if self.alphaGoDiff:
+            self.alphaGo = self.alpha + self.alphaGoDiff
+            self.alphaNogo = self.alpha - self.alphaGoDiff
+
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "betaDiff": self.betaDiff,
-                           "alpha": self.alpha,
+                           "alphaCrit": self.alphaCrit,
                            "alphaGo": self.alphaGo,
                            "alphaNogo": self.alphaNogo,
                            "expectation": self.expect,
@@ -228,7 +242,7 @@ class OpAL(model):
 
         change = event - chosenExp
 
-        self.expectation[chosen] = chosenExp + self.alpha*change
+        self.expectation[chosen] = chosenExp + self.alphaCrit*change
 
         self._actor(change, chosen)
 
