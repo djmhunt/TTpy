@@ -23,13 +23,13 @@ from collections import defaultdict, Callable
 def fancyLogger(logLevel, fileName="", silent = False):
     """
     Sets up the style of logging for all the simulations
-    
+
     Parameters
     ----------
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         The lowest level to which logging is recorded
     fileName : string, optional
-        The filename that the log will be written to. If empty no log will be 
+        The filename that the log will be written to. If empty no log will be
         written to a file. Default is empty
     silent : bool, optional
         States if a log is not written to stdout. Defaults to False
@@ -95,11 +95,11 @@ def folderSetup(simType):
     ----------
     simType : string
         A description of the experiment
-        
+
     Returns
     -------
     folderName : string
-        The path to the folder 
+        The path to the folder
     """
 
     # While the folders have already been created, check for the next one
@@ -119,14 +119,14 @@ def folderSetup(simType):
 def saving(save, label):
     """
     Creates a folder and produces a log filename
-    
+
     Parameters
     ----------
     save : bool
         If a file is to be saved
     label : string
         A special label to add to the folder name
-        
+
     Returns
     -------
     folderName : string
@@ -164,24 +164,24 @@ def argProcess(**kwargs):
 
 def listMerge(*args):
     """For merging lists with objects that are not solely numbers
-    
+
     Parameters
     ----------
     args : list of lists
         A list of 1D lists of objects
-        
+
     Returns
     -------
     combinations : array
         An array with len(args) columns and a row for each combination
-    
+
     Examples
-    --------    
+    --------
     >>> utils.listMerge([1,2,3],[5,6,7]).T
     array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
            [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
-    
+
     """
 
     r=[[]]
@@ -198,19 +198,19 @@ def listMerge(*args):
 
 def listMergeNP(*args):
     """Fast merging of lists of numbers
-    
+
     Parameters
     ----------
     args : list of lists of numbers
         A list of 1D lists of numbers
-        
+
     Returns
     -------
     combinations : array
         An array with len(args) columns and a row for each combination
-    
+
     Examples
-    --------    
+    --------
     >>> utils.listMergeNP([1,2,3],[5,6,7]).T
     array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
            [5, 5, 5, 6, 6, 6, 7, 7, 7]])
@@ -219,7 +219,7 @@ def listMergeNP(*args):
 
     if len(args) == 0:
         return array([[]])
-        
+
     elif len(args) == 1:
         a = array(args[0])
         r = a.reshape((amax(a.shape),1))
@@ -235,22 +235,29 @@ def listMergeNP(*args):
 
 def listMerGen(*args):
     """Fast merging of lists of numbers
-    
+
     Parameters
     ----------
     args : list of lists of numbers
         A list of 1D lists of numbers
-        
+
     Yields
     ------
     combination : numpy.array of 1 x len(args)
         Array of all combinations
+
+    Examples
+    --------
+    >>> from utils import listMerGen
     """
     if len(args) == 0:
         r = array([[]])
     elif len(args) == 1:
         a = array(args[0])
-        r = a.reshape((amax(a.shape),1))
+        if a.shape:
+            r = a.reshape((amax(a.shape),1))
+        else:
+            r = array([[a]])
 
     else:
         A = meshgrid(*args)
@@ -274,18 +281,18 @@ def varyingParams(intObjects,params):
 def mergeDatasetRepr(data, dataLabel=''):
     """
     Take a list of dictionaries and turn it into a dictionary of lists of strings
-    
+
     Parameters
     ----------
     data : list of dicts containing strings, lists or numbers
     dataLabel : string, optional
         This string will be appended to the front of each key in the new dataset
         Default blank
-        
+
     Returns
     -------
     newStore : dictionary of lists of strings
-        For each key a list will be formed of the string representations of 
+        For each key a list will be formed of the string representations of
         each of the former key values.
 
     """
@@ -305,25 +312,25 @@ def mergeDatasetRepr(data, dataLabel=''):
     newStore = {dataLabel + k : v for k,v in partStore.iteritems()}
 
     return newStore
-    
+
 def mergeDatasets(data, extend = False):
     """
     Take a list of dictionaries and turn it into a dictionary of lists of objects
-    
+
     Parameters
     ----------
     data : list of dicts containing strings, lists or numbers
     extend : bool, optional
         If lists should be extended rather than appended. Default False
-        
+
     Returns
     -------
     newStore : dictionary of lists of objects
-        For each key a list will be formed of the former key values. If a 
+        For each key a list will be formed of the former key values. If a
         data set did not contain a key a value of None will be entered for it.
-    
+
     Examples
-    --------    
+    --------
     >>> data = [{'a':[1,2,3],'b':[7,8,9]},
                 {'b':[4,5,6],'c':'string','d':5}]
     >>> mergeDatasets(data)
@@ -336,7 +343,7 @@ def mergeDatasets(data, extend = False):
      'b': [7, 8, 9, 4, 5, 6],
      'c': [None, 'string'],
      'd': [None, 5]}
-     
+
      >>> from numpy import array
      >>> data = [{'b':array([[7,8,9],[1,2,3]])}, {'b':array([[4,5,6],[2,3,4]])}]
      >>> mergeDatasets(data, extend = True)
@@ -354,7 +361,7 @@ def mergeDatasets(data, extend = False):
 
     # For every key
     newStore = defaultdict(list)
-    for key in keySet:          
+    for key in keySet:
         for d in data:
             dv = d.get(key,None)
             if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, basestring):
@@ -367,7 +374,7 @@ def mergeDatasets(data, extend = False):
 def date():
     """
     Provides a string of todays date
-        
+
     Returns
     -------
     date : string
@@ -380,19 +387,19 @@ def date():
 def flatten(l):
     """
     Yields the elements in order from any N dimentional itterable
-    
+
     Parameters
     ----------
     l : iterable
-    
+
     Yields
     ------
     ID : (string,list)
-        A pair containing the value at each location and the co-ordinates used 
+        A pair containing the value at each location and the co-ordinates used
         to access them.
-    
+
     Examples
-    --------    
+    --------
     >>> a = [[1,2,3],[4,5,6]]
     >>> for i, loc in flatten(a): print i,loc
     1 [0, 0]
@@ -409,23 +416,23 @@ def flatten(l):
                 yield sub,[i] + loc
         else:
             yield repr(v),[i]
-            
+
 def mergeTwoDicts(x, y):
     """
     Given two dicts, merge them into a new dict as a shallow copy
-    
+
     Assumes different keys in both dictionaries
-    
+
     Parameters
     ----------
     x : dictionary
     y : dictionary
-    
+
     Returns
     -------
     mergedDict : dictionary
-    
-    
+
+
     """
     mergedDict = x.copy()
     mergedDict.update(y)
@@ -433,40 +440,40 @@ def mergeTwoDicts(x, y):
 
 def mergeDicts(*args):
     """Merges any number of dictionaries with different keys into a new dict
-    
+
     Precedence goes to key value pairs in latter dicts
-    
+
     Parameters
     ----------
     args : list of dictionaries
-        
+
     Returns
     -------
     mergedDict : dictionary
-    
+
     """
     mergedDict = {}
-    
+
     for dictionary in args:
         mergedDict.update(dictionary)
-        
+
     return mergedDict
-    
+
 def callableDetails(item):
     """
-    Takes a callable item and extracts the details. 
-    
+    Takes a callable item and extracts the details.
+
     Currently only extracts things stored in ``item.Name`` and ``item.Params``
-    
+
     Parameters
     ----------
     item : callable item
-    
+
     Returns
     -------
     details : tuple pair with string and dictionary of strings
-        Contains the properties of the 
-        
+        Contains the properties of the
+
     Examples
     --------
     >>> from utils import callableDetails
@@ -476,11 +483,11 @@ def callableDetails(item):
     >>> foo.Name = "boo"
     >>> callableDetails(foo)
     ('boo', None)
-    
+
     >>> foo.Params = {1: 2, 2: 3}
     >>> callableDetails(foo)
     ('boo', {'1': '2', '2': '3'})
-    
+
     """
 
     if isinstance(item, Callable):
@@ -488,27 +495,27 @@ def callableDetails(item):
             details = {str(k): str(v).strip('[]()') for k,v in item.Params.iteritems()}
         except:
             details = None
-        
+
         return (item.Name,details)
-        
+
     else:
         return (None, None)
-        
+
 def callableDetailsString(item):
     """
-    Takes a callable item and returns a string detailing the function. 
-    
+    Takes a callable item and returns a string detailing the function.
+
     Currently only extracts things stored in ``item.Name`` and ``item.Params``
-    
+
     Parameters
     ----------
     item : callable item
-    
+
     Returns
     -------
     description : string
         Contains the properties and name of the callable
-        
+
     Examples
     --------
     >>> from utils import callableDetailsString
@@ -518,22 +525,22 @@ def callableDetailsString(item):
     >>> foo.Name = "boo"
     >>> callableDetailsString(foo)
     'boo'
-    
+
     >>> foo.Params = {1: 2, 2: 3}
     >>> callableDetailsString(foo)
     'boo with 1 : 2, 2 : 3'
-    
+
     """
-    
+
     Name, details = callableDetails(item)
-    
-    if details:    
+
+    if details:
         properties = [k + ' : ' + str(v).strip('[]()') for k,v in details.iteritems()]
-        
+
         desc = Name + " with " + ", ".join(properties)
     else:
         desc = Name
-    
+
     return desc
 
 #if __name__ == '__main__':
