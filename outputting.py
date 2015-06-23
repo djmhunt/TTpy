@@ -102,6 +102,7 @@ class outputting(object):
         self.modelsSize = 0
         self.expSetSize = 0
         self.modelSetNum = 0
+        self.modelSetsNum = 0
         self.expSetNum = 0
 
         self.lastExpLabelID = 1
@@ -664,13 +665,13 @@ class outputting(object):
         # Initialise the class
         ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
 
-        message = "Produce plots for experiment set " + str(self.expSetNum)
+        message = "Produce plots for experiment set " + str(self.modelSetsNum)
         self.logger.info(message)
 
         self.savePlots(ep)
 
         self.modelsSize = 0
-        self.expSetNum += 1
+        self.modelSetsNum += 1
 
     def plotExperimentSet(self, expInput):
         """
@@ -816,35 +817,43 @@ class outputting(object):
     ### Excel
     def simLog(self):
         """
-        Outputs relavent data to an excel file with all the data and a csv file
+        Outputs relevent data to an excel file with all the data and a csv file
         with the estimated pertinant data
         """
 
         if not self.save:
             return
 
+        self._abridged()
+        self._totalLog()
+
+    def _totalLog(self):
+
         message = "Produce log of all experiments"
         self.logger.info(message)
 
         data = self._makeDataSet()
-        pertinantData = self._makePertinantDataSet()
-
         record = pd.DataFrame(data)
-        pertRecord = pd.DataFrame(pertinantData)
-
-#        record = record.set_index('sim')
-
         outputFile = self.newFile('simRecord', 'csv')
         record.to_csv(outputFile)
+        outputFile = self.newFile('simRecord', 'xlsx')
+        xlsxT = pd.ExcelWriter(outputFile)
+        record.to_excel(xlsxT, sheet_name='simRecord')
+        xlsxT.save()
 
+    def _abridged(self):
+
+        message = "Produce an abridged log of all experiments"
+        self.logger.info(message)
+
+        pertinantData = self._makePertinantDataSet()
+        pertRecord = pd.DataFrame(pertinantData)
         outputFile = self.newFile('abridgedRecord', 'csv')
         pertRecord.to_csv(outputFile)
-
-        outputFile = self.newFile('simRecord', 'xlsx')
-        xlsx = pd.ExcelWriter(outputFile)
-        record.to_excel(xlsx, sheet_name='simRecord')
-        pertRecord.to_excel(xlsx,sheet_name = 'abridgedRecord')
-        xlsx.save()
+        outputFile = self.newFile('simAbridgedRecord', 'xlsx')
+        xlsxA = pd.ExcelWriter(outputFile)
+        pertRecord.to_excel(xlsxA,sheet_name = 'abridgedRecord')
+        xlsxA.save()
 
     def _makeDataSet(self):
 
