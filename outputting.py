@@ -26,9 +26,9 @@ from utils import listMerGen, callableDetailsString
 
 class outputting(object):
 
-    """An class which manages the outputting to the screen and to files of all 
+    """An class which manages the outputting to the screen and to files of all
     data in any form for the simulation
-    
+
     Parameters
     ----------
     save : bool, optional
@@ -47,17 +47,17 @@ class outputting(object):
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default ``logging.INFO``
     maxLabelLength : int, optional
-        The maximum length of a label to be used as a reference for an 
+        The maximum length of a label to be used as a reference for an
         individual model-experiment combination. Default 18
     npErrResp : {'log', 'raise'}
         Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
-        
+
     See Also
     --------
     date : Identifies todays date
     saving : Sets up the log file and folder to save results
     fancyLogger : Log creator
-    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors    
+    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
     """
 
     def __init__(self,**kwargs):
@@ -99,6 +99,7 @@ class outputting(object):
         self.fitQualStore = []
 
         self.modelSetSize = 0
+        self.modelsSize = 0
         self.expSetSize = 0
         self.modelSetNum = 0
         self.expSetNum = 0
@@ -107,10 +108,10 @@ class outputting(object):
         self.lastModelLabelID = 1
 
     def end(self):
-        """ 
+        """
         To run once everything has been completed. Displays the figures if not
         silent.
-        
+
         """
 
         if not self.silent:
@@ -124,15 +125,15 @@ class outputting(object):
     def folderSetup(self):
         """
         Identifies and creates the folder the data will be stored in
-        
-        Folder will be created as "./Outputs/<simLabel>_<date>/". If that had 
+
+        Folder will be created as "./Outputs/<simLabel>_<date>/". If that had
         previously been created then it is created as
         "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
         avalable integer.
-        
-        A subfolder is also created with the name ``Pickle`` if  pickleData is 
+
+        A subfolder is also created with the name ``Pickle`` if  pickleData is
         true.
-        
+
         See Also
         --------
         newFile : Creates a new file
@@ -151,7 +152,7 @@ class outputting(object):
 
         folderName += "/"
         makedirs(folderName)
-        
+
         if self.pickleData:
             makedirs(folderName  + 'Pickle/')
 
@@ -161,14 +162,14 @@ class outputting(object):
     def newFile(self, handle, extension):
         """
         Creates a new file withe the name <handle> and the extension <extension>
-        
+
         Parameters
         ----------
         handle : string
             The file name
         extension : string
             The extension of the file
-            
+
         Returns
         -------
         fileName : string
@@ -177,10 +178,10 @@ class outputting(object):
 
         if not self.save:
             return ''
-            
+
         if extension == '':
             end = ''
-        else: 
+        else:
             end = "." + extension
 
         fileName = self.outputFolder + handle
@@ -198,12 +199,12 @@ class outputting(object):
     def getLogger(self, name):
         """
         Returns a named logger stream
-        
+
         Parameters
         ----------
         name : string
             Name of the logger
-            
+
         Returns
         -------
         logger : logging.logger instance
@@ -218,17 +219,17 @@ class outputting(object):
         """
         Creates the folder structure for the saved data and created the log file
         as log.txt
-        
+
         See Also
         --------
         folderSetup : creates the folders
         """
-        
+
 
         if self.save:
             self.folderSetup()
             self.logFile = self.newFile('log', 'txt')
-            
+
             if self.saveScript:
                 cwd = getcwd().replace("\\","/")
                 for s in stack():
@@ -243,8 +244,8 @@ class outputting(object):
 
     def fancyLogger(self, logFile = "./log.txt", logLevel = logging.INFO, npErrResp = 'log'):
         """
-        Sets up the style of logging for all the simulations  
-        
+        Sets up the style of logging for all the simulations
+
         Parameters
         ----------
         logFile = string, optional
@@ -253,7 +254,7 @@ class outputting(object):
             Defines the level of the log. Default logging.INFO
         npErrResp : {'log', 'raise'}
             Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
-            
+
         See Also
         --------
         logging : The Python standard logging library
@@ -311,19 +312,19 @@ class outputting(object):
         logging.info("Log initialised")
         if logFile:
             logging.info("The log you are reading was written to " + str(logFile))
-            
+
     def logSimParams(self, expDesc, expPltLabel, modelDesc, modelPltLabel):
         """
         Writes to the log the descrition and the label of the experiment and model
-        
+
         Parameters
         ----------
         expDesc : string
-            The description to be logged of the experiment 
+            The description to be logged of the experiment
         expPltLabel : string
             The label used for this experiment
         modelDesc : string
-            The description to be logged of the model 
+            The description to be logged of the model
         modelPltLabel : string
             The label used for this model
 
@@ -331,7 +332,7 @@ class outputting(object):
         --------
         recordSimParams : Records these parameters for later use
         """
-        
+
         message = "Simulation contains the experiment '" + expDesc + "'"
         if expDesc == expPltLabel:
             message += ". "
@@ -344,12 +345,12 @@ class outputting(object):
         else:
             message += " output with the label '" + modelPltLabel + "'."
         self.loggerSim.info(message)
-        
+
     def logSimFittingParams(self, expParams, modelName, modelFitVars, modelOtherArgs):
         """
-        Logs the model and experiment parameters that used as initial fitting 
+        Logs the model and experiment parameters that used as initial fitting
         conditions
-        
+
         Parameters
         ----------
         expParams : dict
@@ -359,45 +360,45 @@ class outputting(object):
         modelFitVars : dict
             The model parameters that will be fitted over and varied.
         modelOtherArgs : dict
-            The other parameters used in the model whose attributes have been 
+            The other parameters used in the model whose attributes have been
             modifed by the user
-        """        
+        """
         message = "The fit will use the model '" + modelName + "'"
-        
+
         modelFitParams = [k + ' around ' + str(v).strip('[]()') for k,v in modelFitVars.iteritems()]
         message += " fitted with the parameters " + ", ".join(modelFitParams)
-        
+
         modelParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
         modelFuncs = [k + ' = ' + callableDetailsString(v) for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
         message += " and using the other user specified parameters " + ", ".join(modelParams)
         message += " and the functions " + ", ".join(modelFuncs)
-        
+
         message += ". This is based on the experiment '" + expParams['Name'] + "' "
 
         expDescriptors = [k + ' = ' + str(v).strip('[]()') for k,v in expParams.iteritems() if k != 'Name']
         message += "with the parameters " + ", ".join(expDescriptors) + "."
-        
+
         self.loggerSim.info(message)
-        
+
     def logModFittedParams(self, modelFitVars, modelParams, fitQuality):
         """
-        Logs the model and experiment parameters that used as initial fitting 
+        Logs the model and experiment parameters that used as initial fitting
         conditions
-        
+
         Parameters
         ----------
         modelFitVars : dict
             The model parameters that have been fitted over and varied.
         modelParams : dict
             The model parameters for the fitted model
-        """    
+        """
         params = modelFitVars.keys()
-        
+
         modelFitParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelParams.iteritems() if k in params]
         message = "The fitted values are " + ", ".join(modelFitParams)
-        
+
         message += " with a fit quality of " + str(fitQuality) + "."
-        
+
         self.loggerSim.info(message)
 
     ### Data collection
@@ -405,25 +406,25 @@ class outputting(object):
     def recordSimParams(self,expParams,modelParams):
         """
         Record the model and experiment parameters
-        
+
         Parameters
         ----------
         expParams : dict
             The experiment parameters
         modelParams : dict
             The model parameters
-            
+
         Returns
         -------
         expDesc : string
-            The description to be logged of the experiment 
+            The description to be logged of the experiment
         expPltLabel : string
             The label used for this experiment
         modelDesc : string
-            The description to be logged of the model 
+            The description to be logged of the model
         modelPltLabel : string
             The label used for this model
-            
+
         See Also
         --------
         paramIdentifier, logSimParams
@@ -439,22 +440,22 @@ class outputting(object):
         self.expParamStore.append(expParams)
         self.modelLabelStore.append(modelPltLabel)
         self.modelParamStore.append(modelParams)
-        
+
         return expDesc, expPltLabel, modelDesc, modelPltLabel
 
     def paramIdentifier(self, params, lastLabelID):
-        """ 
+        """
         Processes the parameters of an experiment or model
-        
+
         If the description is too long to make a plot label then an ID is generated
-        
+
         Parameters
         ----------
         params : dict
             The parameters of the experiment or model. One is expected to be ``Name``
         lastLabelID: int
             The last ID number used
-            
+
         Returns
         -------
         descriptor : string
@@ -481,14 +482,14 @@ class outputting(object):
     def recordSim(self,expData,modelData):
         """
         Records the data from an experiment-model run. Creates a pickled version
-        
+
         Parameters
         ----------
         expData : dict
             The data from the experiment
         modelData : dict
             The data from the model
-        
+
         See Also
         --------
         pickleLog : records the picked data
@@ -510,12 +511,13 @@ class outputting(object):
         self.modelGroupNum.append(self.modelSetNum)
 
         self.expSetSize += 1
+        self.modelsSize += 1
         self.modelSetSize += 1
 
     def recordParticipantFit(self, participant, expData, modelData, fitQuality = None):
         """
         Record the data relevant to the participant fitting
-        
+
         Parameters
         ----------
         participant : dict
@@ -550,12 +552,13 @@ class outputting(object):
         self.modelGroupNum.append(self.modelSetNum)
 
         self.expSetSize += 1
+        self.modelsSize += 1
         self.modelSetSize += 1
 
     def recordFittingParams(self,fitInfo):
         """
-        Records and outputs to the log the parameters associated with the fitting algorithms 
-        
+        Records and outputs to the log the parameters associated with the fitting algorithms
+
         Parameters
         ----------
         fitInfo : dict
@@ -583,14 +586,14 @@ class outputting(object):
 
     ### Ploting
     def plotModel(self,modelPlot):
-        """ 
+        """
         Feeds the model data into the relevant plotting functions for the class
-        
+
         Parameters
         ----------
         modelPlot : model.modelPlot
             The model's modelPlot class
-            
+
         See Also
         --------
         model.modelPlot : The template for modelPlot class for each model
@@ -605,14 +608,14 @@ class outputting(object):
         self.savePlots(mp)
 
     def plotModelSet(self,modelSetPlot):
-        """ 
+        """
         Feeds the model set data into the relevant plotting functions for the class
-        
+
         Parameters
         ----------
         modelSetPlot : model.modelSetPlot
             The model's modelSetPlot class
-            
+
         See Also
         --------
         model.modelSetPlot : The template for modelSetPlot class for each model
@@ -636,16 +639,52 @@ class outputting(object):
     def plotExperiment(self, expInput):
         """
         Feeds the experiment data into the relevant plotting functions for the class
-        
+
         Parameters
         ----------
         expInput : (experiment.experimentPlot, dict)
-            The experiment's experimentPlot class and a dictionary of plot 
+            The experiment's experimentPlot class and a dictionary of plot
             attributes
-            
+
         See Also
         --------
         experiment.experimentPlot : The template for experimentPlot class for each experiment
+        savePlots : Saves the plots created by experimentPlot
+        """
+
+        expPlot, plotArgs = expInput
+
+        expSet = self.expStore[-self.modelsSize:]
+        expParams = self.expParamStore[-self.modelsSize:]
+        expLabels = self.expLabelStore[-self.modelsSize:]
+        modelSet = self.modelStore[-self.modelsSize:]
+        modelParams = self.modelParamStore[-self.modelsSize:]
+        modelLabels = self.modelLabelStore[-self.modelsSize:]
+
+        # Initialise the class
+        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
+
+        message = "Produce plots for experiment set " + str(self.expSetNum)
+        self.logger.info(message)
+
+        self.savePlots(ep)
+
+        self.modelsSize = 0
+        self.expSetNum += 1
+
+    def plotExperimentSet(self, expInput):
+        """
+        Feeds the experiment set data into the relevant plotting functions for the class
+
+        Parameters
+        ----------
+        expInput : (experiment.experimentSetPlot, dict)
+            The experiment's experimentSetPlot class and a dictionary of plot
+            attributes
+
+        See Also
+        --------
+        experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment
         savePlots : Saves the plots created by experimentPlot
         """
 
@@ -672,25 +711,25 @@ class outputting(object):
     def savePlots(self, plots):
         """
         Saves a list of plots in the appropriate way
-        
+
         Parameters
         ----------
         plots : list of savable objects
-            The currently accepted objects are matplotlib.pyplot.figure, 
+            The currently accepted objects are matplotlib.pyplot.figure,
             pandas.DataFrame and xml.etree.ElementTree.ElementTree
-            
+
         See Also
         --------
-        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame, 
-        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree, 
+        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame,
+        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree,
         xml.etree.ElementTree.ElementTree.outputTrees
-        
+
         """
 
         for handle, plot in plots:
             if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
 
-                fileName = self.newFile(handle, '')
+                fileName = self.newFile(handle, 'png')
 
                 self.outputFig(plot,fileName)
 
@@ -709,7 +748,7 @@ class outputting(object):
 
     def outputFig(self, fig, fileName):
         """Saves the figure to a .png file and/or displays it on the screen.
-        
+
         Parameters
         ----------
         fig : MatPlotLib figure object
@@ -734,8 +773,8 @@ class outputting(object):
     ### Pickle
     def pickleRec(self,data, handle):
         """
-        Writes the data to a picke file 
-        
+        Writes the data to a picke file
+
         Parameters
         ----------
         data : object
@@ -751,9 +790,9 @@ class outputting(object):
 
     def pickleLog(self, results,folderName, label=""):
         """
-        Stores the data in the appropriate pickle file in a Pickle subfolder 
+        Stores the data in the appropriate pickle file in a Pickle subfolder
         of the outputting folder
-        
+
         Parameters
         ----------
         results : dict
@@ -866,7 +905,7 @@ class outputting(object):
     def reframeStore(self, store, storeLabel = ''):
         """
         Take a list of dictionaries and turn it into a dictionary of lists
-        
+
         Parameters
         ----------
         store : list of dicts
@@ -874,13 +913,13 @@ class outputting(object):
         storeLabel : string, optional
             An identifier to be added to the beginning of each key string.
             Default is ''.
-            
+
         Returns
         -------
         newStore : dict of 1D lists
-            Any dictionary keys containing lists in the input have been split 
+            Any dictionary keys containing lists in the input have been split
             into multiple numbered keys
-            
+
         See Also
         --------
         dictKeySet, newDict
@@ -894,9 +933,9 @@ class outputting(object):
         return newStore
 
     def reframeSelectStore(self, store, keySet, storeLabel = ''):
-        """Take a list of dictionaries and turn it into a dictionary of lists 
+        """Take a list of dictionaries and turn it into a dictionary of lists
         containing only the useful keys
-        
+
         Parameters
         ----------
         store : list of dicts
@@ -906,17 +945,17 @@ class outputting(object):
         storeLabel : string, optional
             An identifier to be added to the beginning of each key string.
             Default is ''.
-            
+
         Returns
         -------
         newStore : dict of 1D lists
-            Any dictionary keys containing lists in the input have been split 
+            Any dictionary keys containing lists in the input have been split
             into multiple numbered keys
-            
+
         See Also
         --------
         dictSelectKeySet, newDict
-        
+
         """
 
         keySet = self.dictSelectKeySet(store,keySet)
@@ -931,24 +970,24 @@ class outputting(object):
         Generates a dictionary of keys and identifiers for the new dictionary,
         splitting any keys with lists into a set of keys, one for each element
         in the original key.
-        
+
         These are named <key><location>
-        
+
         Parameters
         ----------
         store : list of dicts
-            The dictionaries would be expected to have many of the same keys. 
-            Any dictionary keys containing lists in the input have been split 
+            The dictionaries would be expected to have many of the same keys.
+            Any dictionary keys containing lists in the input have been split
             into multiple numbered keys
-            
+
         Returns
         -------
         keySet : dict
-            The keys are the keys for the new dictionary. The values contain a 
-            two element tuple. The first element is the original name of the 
-            key and the second is the location of the value to be stored in the 
+            The keys are the keys for the new dictionary. The values contain a
+            two element tuple. The first element is the original name of the
+            key and the second is the location of the value to be stored in the
             original dictionary value array.
-            
+
         See Also
         --------
         reframeStore, newDict
@@ -980,26 +1019,26 @@ class outputting(object):
         Generates a dictionary of keys and identifiers for the new dictionary,
         including only the keys in the keys list. Any keys with lists  will
         be split into a set of keys, one for each element in the original key.
-        
+
         These are named <key><location>
-        
+
         Parameters
         ----------
         store : list of dicts
-            The dictionaries would be expected to have many of the same keys. 
-            Any dictionary keys containing lists in the input have been split 
+            The dictionaries would be expected to have many of the same keys.
+            Any dictionary keys containing lists in the input have been split
             into multiple numbered keys
         keys : list of strings
             The keys whose data will be included in the return dictionary
-            
+
         Returns
         -------
         keySet : dict
-            The keys are the keys for the new dictionary. The values contain a 
-            two element tuple. The first element is the original name of the 
-            key and the second is the location of the value to be stored in the 
+            The keys are the keys for the new dictionary. The values contain a
+            two element tuple. The first element is the original name of the
+            key and the second is the location of the value to be stored in the
             original dictionary value array.
-            
+
         See Also
         --------
         reframeSelectStore, newDict
@@ -1033,33 +1072,33 @@ class outputting(object):
 
     def newDict(self,keySet,store,storeLabel):
         """
-        Takes a list of dictionaries and returns a dictionary of 1D lists. 
-        
-        If a dictionary did not have that key or list element, then 'None' is 
+        Takes a list of dictionaries and returns a dictionary of 1D lists.
+
+        If a dictionary did not have that key or list element, then 'None' is
         put in its place
-        
+
         Parameters
         ----------
         keySet : dict
-            The keys are the keys for the new dictionary. The values contain a 
-            two element tuple. The first element is the original name of the 
-            key and the second is the location of the value to be stored in the 
+            The keys are the keys for the new dictionary. The values contain a
+            two element tuple. The first element is the original name of the
+            key and the second is the location of the value to be stored in the
             original dictionary value array.
         store : list of dicts
-            The dictionaries would be expected to have many of the same keys. 
-            Any dictionary keys containing lists in the input have been split 
+            The dictionaries would be expected to have many of the same keys.
+            Any dictionary keys containing lists in the input have been split
             into multiple numbered keys
         storeLabel : string
             An identifier to be added to the beginning of each key string.
-            
-        
+
+
         Returns
         -------
         newStore : dict
-            The new dictionary with the keys from the keySet and the values as 
-            1D lists with 'None' if the keys, value pair was not found in the 
+            The new dictionary with the keys from the keySet and the values as
+            1D lists with 'None' if the keys, value pair was not found in the
             store.
-        
+
         """
 
         partStore = OrderedDict()
@@ -1089,7 +1128,7 @@ class outputting(object):
         """
         Calculate todays date as a string in the form <year>-<month>-<day>
         and stores it in self.date
-        
+
         """
         d = dt.datetime(1987, 1, 14)
         d = d.today()

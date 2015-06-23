@@ -5,7 +5,7 @@
 from __future__ import division
 
 def  simulation(experiments, models, outputting):
-    """ 
+    """
     A framework for letting models interact with experiments and record the data
 
     Parameters
@@ -15,11 +15,11 @@ def  simulation(experiments, models, outputting):
     models : models.models
         A model factory generating each of the different models being considered
     outputing : outputting.outputting
-        
+
     See Also
     --------
     experiments.experiments, models.models, outputting.outputting
-        
+
     """
 
     logger = outputting.getLogger('Overview')
@@ -60,6 +60,8 @@ def  simulation(experiments, models, outputting):
             outputting.plotModelSet(model.plotSet())
 
         outputting.plotExperiment(exp.plot())
+
+    outputting.plotExperimentSet(exp.plotSet())
 
     outputting.simLog()
 
