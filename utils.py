@@ -249,6 +249,19 @@ def listMerGen(*args):
     Examples
     --------
     >>> from utils import listMerGen
+    >>> for i in listMerGen(0.7): print repr(i)
+    array([ 0.7])
+    >>> for i in listMerGen([0.7,0.1]): print repr(i)
+    array([ 0.7])
+    array([ 0.1])
+    >>> for i in listMerGen([0.7,0.1],[0.6]): print repr(i)
+    array([ 0.7,  0.6])
+    array([ 0.1,  0.6])
+    >>> for i in listMerGen([0.7,0.1],[]): print repr(i)
+
+    >>> for i in listMerGen([0.7,0.1],0.6): print repr(i)
+    array([ 0.7,  0.6])
+    array([ 0.1,  0.6])
     """
     if len(args) == 0:
         r = array([[]])
