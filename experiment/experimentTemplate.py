@@ -11,22 +11,23 @@ import logging
 import matplotlib.pyplot as plt
 
 from experimentPlot import experimentPlot
+from experimentSetPlot import experimentSetPlot
 
 class experiment(object):
     """The abstract experiment class from which all others inherit
-    
+
     Many general methods for experiments are found only here
-    
+
     Parameters
     ----------
     plotArgs : dict
         The arguments for plotting functions
-    
+
     Attributes
     ----------
     Name : string
         The name of the class used when recording what has been used.
-    
+
     """
 
     Name = "Empty"
@@ -38,7 +39,7 @@ class experiment(object):
         self.reset()
 
     def reset(self):
-        """ 
+        """
         Creates a new experiment instance
 
         Returns
@@ -65,14 +66,14 @@ class experiment(object):
     def next(self):
         """
         Produces the next stimulus for the iterator
-        
+
         Returns
         -------
         stimulus : None
         nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to 
+            The list of valid actions that the model can respond with. Set to
             ``None``, as they never vary.
-        
+
         Raises
         ------
         StopIteration
@@ -123,11 +124,11 @@ class experiment(object):
         pass
 
     def feedback(self):
-        """ 
+        """
         Responds to the action from the participant
-        
+
         For this experiment there is no possible response
-        
+
         Returns
         -------
         feedback : None
@@ -137,12 +138,12 @@ class experiment(object):
     def outputEvolution(self):
         """
         Returns all the relevent data for this experiment run
-        
+
         Returns
         -------
         results : dictionary
-            The dictionary contains a series of keys including Name, 
-            Observables and Actions.        
+            The dictionary contains a series of keys including Name,
+            Observables and Actions.
         """
 
         results = {"Name": self.Name,
@@ -171,9 +172,9 @@ class experiment(object):
         return self.parameters
 
     def plot(self):
-        """ 
+        """
         Returns a plotting class relavent for this experiment
-        
+
         Returns
         -------
         experimentPlot : experiment.experimentPlot.experimentPlot
@@ -184,6 +185,24 @@ class experiment(object):
 
         return self.experimentPlot, self.plotArgs
 
+    def plotSet(self):
+        """
+        Returns a plotting class relavent for this experiment set
+
+        Returns
+        -------
+        experimentSetPlot : experiment.experimentSetPlot.experimentSetPlot
+            The plots created for the experiment set
+        plotArgs : dict
+            Plot arguments that may be used within the experimentSetPlot instance
+        """
+
+        return self.experimentSetPlot, self.plotArgs
+
     class experimentPlot(experimentPlot):
 
         """Abstract class for the creation of plots relevant to a experiment"""
+
+    class experimentSetPlot(experimentSetPlot):
+
+        """Abstract class for the creation of plots relevant to a set of experiments"""
