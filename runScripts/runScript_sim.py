@@ -4,13 +4,16 @@
 
 Notes
 -----
-This is a script with all the components for running an investigation. I would 
+This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
 """
 ### Import useful functions
 # Make devision floating point by default
 from __future__ import division
+
+import sys
+sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
 from numpy import array, concatenate
@@ -24,24 +27,27 @@ from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStim
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
-from models import models 
+from models import models
 # The decision methods
 from model.decision.binary import decEta
-#The model
+#The models
+from model.BP import BP
+from model.EP import EP
+from model.MS import MS
+from model.MS_rev import MS_rev
+from model.qLearn import qLearn
+from model.qLearn2 import qLearn2
+from model.OpAL import OpAL
 from model.RVPM import RVPM
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
 eta = 0.0
-alpha = 0.005
-beta = 0.1
-w = array([0.01,0.01])
-zeta = 2
-tau = 160
-z = 100
-averaging = 3
-outputOptions = {'simLabel': 'RVPM_sim',
+alpha = 0.5
+beta = 0.5
+simDur = 30
+outputOptions = {'simLabel': 'qLearn_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
@@ -50,26 +56,14 @@ outputOptions = {'simLabel': 'RVPM_sim',
 parameters = {  'alpha':alpha,
                 'beta':beta}
 paramExtras = {'eta':eta,
-               'w':w,
-               'zeta':zeta,
-               'tau':tau,
-               'z':z,
-               'averaging':averaging,
-               'stimFunc':pavlovStimTemporal(),
-               'decFunc':decEta(eta = eta)} 
-experimentParameters = {'rewMag':4,
-                        'rewProb':array([0.87,0.33]),
-                        'stimMag':1,
-                        'stimDur':20,#200) # Stimulus duration
-                        'rewDur':4,#40) #duration of reward
-                        'simDur':30,#300) # the length of the simulation
-                        'stimRepeats':7}
+               'stimFunc':deckStimDirect(),
+               'decFunc':decEta(eta = eta)} #For qLearn decks
 
-expSets = experiments((Pavlov,experimentParameters,{}))
-modelSet = models((RVPM,parameters,paramExtras))
+expSets = experiments((Decks,{},{}))
+modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
 
-## For simulating experiments
+### For simulating experiments
 
 from simulation import simulation
 

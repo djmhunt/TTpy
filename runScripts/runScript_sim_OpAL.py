@@ -27,7 +27,7 @@ Desired plots:
 from __future__ import division
 
 import sys
-sys.path.append("../")
+sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
 from numpy import array, concatenate, arange

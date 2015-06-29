@@ -2,13 +2,16 @@
 """
 :Author: Dominic Hunt
 
-This is a script with all the components for running an investigation. I would 
+This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
 """
 ### Import useful functions
 # Make devision floating point by default
 from __future__ import division
+
+import sys
+sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
 from numpy import array, concatenate, ones
@@ -22,7 +25,7 @@ from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStim
 from experiment.pavlov import Pavlov, pavlovStimTemporal
 
 # The model factory
-from models import models 
+from models import models
 # The decision methods
 from model.decision.binary import decEta, decIntEtaReac
 #The model
@@ -78,10 +81,10 @@ from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
 
 # Import data
-dataFolders = ["../Shared folders/worthy models and data/jessdata/", 
-               "../Shared folders/worthy models and data/carlosdata/", 
-               "../Shared folders/worthy models and data/iant_studentdata/"]
-				
+dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
+               "../../Shared folders/worthy models and data/carlosdata/",
+               "../../Shared folders/worthy models and data/iant_studentdata/"]
+
 
 dataSet = datasets(dataFolders,['mat']*len(dataFolders))#"./testData/",'mat')#
 
@@ -95,15 +98,15 @@ for i in xrange(len(dataSet)):
 def scaleFuncSingle():
     def scaleFunc(x):
         return x - 1
-        
+
     scaleFunc.Name = "subOne"
     return scaleFunc
 
 # Define the fitting algorithm
-fitAlg = minimize(fitQualFunc = "-2log", 
+fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
                   bounds = {'alpha' : (alphaMin,alphaMax),
-                            'beta' : (betaMin,betaMax)}, 
+                            'beta' : (betaMin,betaMax)},
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
