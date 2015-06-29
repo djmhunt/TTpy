@@ -51,7 +51,8 @@ class modelPlot(object):
         Raises
         ------
         StopIteration
-            When there are no more figures to return"""
+            When there are no more figures to return
+        """
 
         if self.counter < len(self.figSets):
             figure = self.figSets[self.counter]

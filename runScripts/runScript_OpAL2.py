@@ -26,6 +26,9 @@ Desired plots:
 # Make devision floating point by default
 from __future__ import division
 
+import sys
+sys.path.append("../")
+
 # Other used function
 from numpy import array, concatenate, arange
 
@@ -57,19 +60,25 @@ outputOptions = {'simLabel': 'OpAL_simSet',
                  'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
 
-expSets = experiments((probSelect,{},{}))
+expParams = {'rewardProb': arange(0.5,1.1,0.1)}
+expExtraParams = {'learningLen':200}
 
-alphaGSet = arange(0,0.225,0.025)
-alphaNSet = 0.2 - alphaGSet
+expSets = experiments((probSelect,expParams,expExtraParams))
+
+sR = arange(-0.1,0.125,0.025)
+
+alphaGoDiffSet = concatenate((sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR))
 
 rhoSet = arange(-1,1.25,0.25)
 
-parameters = {'alphaGo':alphaGSet,
-              'alphaNogo':alphaNSet,
-              'betaDiff':rhoSet}
+parameters = {'alphaGoDiff':alphaGoDiffSet}#,
+#              'betaDiff':rhoSet}
 
-paramExtras = {'alpha': 0.2,
-               'beta': 1,
+paramExtras = {'alpha': 0.1,
+               'alphaC': 0.2,
+#               'alphaGoDiff':0,
+               'betaDiff':0,
+               'beta': 2,
                'numActions':4,
                'stimFunc':deckStimDirect(),
                'decFunc':decMaxProb([0,1,2,3])} #For decks

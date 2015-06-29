@@ -160,8 +160,7 @@ class MS_rev(model):
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, validResponses = self.validActions)
-
+        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
 
     def storeState(self):
         """

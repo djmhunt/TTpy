@@ -4,14 +4,14 @@
 
 :Reference: Regulatory fit effects in a choice task
                 `Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007)`.
-                Psychonomic Bulletin & Review, 14(6), 1125–32. 
+                Psychonomic Bulletin & Review, 14(6), 1125–32.
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
 from __future__ import division
 
 from numpy import array, zeros, exp
 from numpy.random import rand
-from experiment import experiment
+from experimentTemplate import experiment
 #from plotting import dataVsEvents, varDynamics
 from experimentPlot import experimentPlot
 #from utils import varyingParams
@@ -32,15 +32,15 @@ defaultDecks = deckSets["WorthyMaddox"]
 class Decks(experiment):
     """
     Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.
-    
+
     Many methods are inherited from the experiment.experiment.experiment class.
     Refer to its documentation for missing methods.
-    
+
     Attributes
     ----------
     Name : string
         The name of the class used when recording what has been used.
-    
+
     Parameters
     ----------
     draws: int, optional
@@ -48,14 +48,14 @@ class Decks(experiment):
     decks: array of floats, optional
         The decks of cards
     plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to 
-        its documentation for more details.        
+        Any arguments that will be later used by ``experimentPlot``. Refer to
+        its documentation for more details.
     """
 
     Name = "decks"
 
     def reset(self):
-        """ 
+        """
         Creates a new experiment instance
 
         Returns
@@ -103,14 +103,14 @@ class Decks(experiment):
     def next(self):
         """
         Produces the next stimulus for the iterator
-        
+
         Returns
         -------
         stimulus : None
         nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to 
+            The list of valid actions that the model can respond with. Set to
             ``None``, as they never vary.
-        
+
         Raises
         ------
         StopIteration
@@ -120,7 +120,7 @@ class Decks(experiment):
 
         if self.t == self.T:
             raise StopIteration
-            
+
         nextStim = None
         nextValidActions = None
 
@@ -182,34 +182,34 @@ class Decks(experiment):
 def deckStimDirect():
     """
     Processes the decks stimuli for models expecting just the event
-        
+
     Returns
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
         last action. The function returns the event.
-        
+
     Attributes
     ----------
     Name : string
         The identifier of the function
-        
+
     See Also
     --------
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
-    
+
     def deckStim(event, action):
         return event
-        
+
     deckStim.Name = "deckStimDirect"
     return deckStim
 
 def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     """
-    Processes the decks stimuli for models expecting the reward information 
-    from all possible actions 
-    
+    Processes the decks stimuli for models expecting the reward information
+    from all possible actions
+
     Parameters
     ----------
     maxEventVal : int
@@ -217,27 +217,27 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     minEventVal : int
         The lowest value a reward can have
     numActions : int
-        The number of actions the participant can perform. Assumes the lowest 
+        The number of actions the participant can perform. Assumes the lowest
         valued action is 0
-        
+
     Returns
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The 
+        last action. The event that is a float and action is {0,1}. The
         function returns a array of length (maxEventVal-minEventVal)*numActions.
-        
+
     Attributes
     ----------
     Name : string
         The identifier of the function
-        
+
     See Also
     --------
     model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac
-    
+
     Examples
-    --------    
+    --------
     >>> from experiment.decks import deckStimAllInfo
     >>> stim = deckStimAllInfo(10,1,2)
     >>> stim(6,0)
@@ -247,81 +247,81 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     """
     numDiffEvents = maxEventVal-minEventVal+1
     respZeros = zeros(numDiffEvents * numActions)
-    
+
     def deckStim(event, action):
         stimulus = respZeros.copy() + 1
         stimulus[numDiffEvents*action + event - 1] += 1
         return stimulus
-        
+
     deckStim.Name = "deckStimAllInfo"
     deckStim.Params = {"maxEventVal":maxEventVal,
-                       "minEventVal":minEventVal, 
+                       "minEventVal":minEventVal,
                        "numActions":numActions}
     return deckStim
-    
+
 def deckStimDualInfo(maxEventVal, epsilon):
     """
-    Processes the decks stimuli for models expecting the reward information 
-    from two possible actions. 
-        
+    Processes the decks stimuli for models expecting the reward information
+    from two possible actions.
+
     Returns
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The 
+        last action. The event that is a float and action is {0,1}. The
         function returns a list of length 2.
-        
+
     Attributes
     ----------
     Name : string
         The identifier of the function
-        
+
     See Also
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
-    devisor = maxEventVal + epsilon 
-    
+    devisor = maxEventVal + epsilon
+
     def deckStim(event, action):
         stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
         stimulus = [stim,1-stim]
         return stimulus
-        
+
     deckStim.Name = "deckStimDualInfo"
     deckStim.Params = {"epsilon":epsilon}
     return deckStim
-    
+
 def deckStimDualInfoLogistic(maxEventVal,minEventVal, epsilon):
     """
-    Processes the decks stimuli for models expecting the reward information 
-    from two possible actions. 
-        
+    Processes the decks stimuli for models expecting the reward information
+    from two possible actions.
+
     Returns
     -------
     deckStim : function
         The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The 
+        last action. The event that is a float and action is {0,1}. The
         function returns a list of length 2.
-        
+
     Attributes
     ----------
     Name : string
         The identifier of the function
-        
+
     See Also
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
     mid = (maxEventVal + minEventVal)/2
-    
+
     def deckStim(event, action):
-        
+
         x=exp(epsilon *(event-mid))
-        
+
         stim = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
         stimulus = [stim,1-stim]
         return stimulus
-        
+
     deckStim.Name = "deckStimDualInfoLogistic"
     deckStim.Params = {"midpoint":mid,
                        "epsilon":epsilon}
