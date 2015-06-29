@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from numpy import array, zeros, exp, ones
 from numpy.random import rand
 from experiment.experimentTemplate import experiment
-#from plotting import dataVsEvents, varDynamics
+from plotting import pandasPlot
 from experiment.experimentPlot import experimentPlot
 from experiment.experimentSetPlot import experimentSetPlot
 #from utils import varyingParams
@@ -248,124 +248,57 @@ class probSelect(experiment):
 
             self.df = data
 
+        def _plotSubset(self, x, y, z, sort):
+
+            data = self.df.sort(columns=sort)
+
+            selectData = pd.DataFrame(dict(
+                                (z + ' = ' + repr(v), data[data[z] == v].groupby(x).mean()[y].values)
+                                for v in data[z].unique()))
+
+            alphaGoSet = data[x].unique()
+            alphaGoSet.sort()
+            selectData[x] = alphaGoSet
+            plotData = selectData.set_index(x)
+
+            fig = pandasPlot(plotData, axisLabels = {'xlabel':x, 'ylabel':y, 'title':y})
+
+            return fig
+
 
         def biasAlpha(self):
 
-            data = self.df.sort(columns=['betaGo','alphaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('betaGo = ' + repr(v), data[data['betaGo'] == v].groupby('alphaGo').mean()['bias'].values)
-                                for v in data['betaGo'].unique()))
-
-            alphaGoSet = data['alphaGo'].unique()
-            alphaGoSet.sort()
-            selectData['alphaGo'] = alphaGoSet
-            plotData = selectData.set_index('alphaGo')
-
-            ax = plotData.plot(title = "bias")
-            ax.set_xlabel('alphaGo')
-            ax.set_ylabel('bias')
-            fig = plt.gcf()
+            fig = self._plotSubset('alphaGo', 'bias', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def biasBeta(self):
 
-            data = self.df.sort(columns=['alphaGo', 'betaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('alphaGo = ' + repr(v), data[data['alphaGo'] == v].groupby('betaGo').mean()['bias'].values)
-                                for v in data['alphaGo'].unique()))
-
-            alphaGoSet = data['betaGo'].unique()
-            alphaGoSet.sort()
-            selectData['betaGo'] = alphaGoSet
-            plotData = selectData.set_index('betaGo')
-
-            ax = plotData.plot(title = "bias")
-            ax.set_xlabel('betaGo')
-            ax.set_ylabel('bias')
-            fig = plt.gcf()
+            fig = self._plotSubset('betaGo', 'bias', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
         def chooseAlpha(self):
 
-            data = self.df.sort(columns=['betaGo','alphaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('betaGo = ' + repr(v), data[data['betaGo'] == v].groupby('alphaGo').mean()['chooseA'].values)
-                                for v in data['betaGo'].unique()))
-
-            alphaGoSet = data['alphaGo'].unique()
-            alphaGoSet.sort()
-            selectData['alphaGo'] = alphaGoSet
-            plotData = selectData.set_index('alphaGo')
-
-            ax = plotData.plot(title = "chooseA")
-            ax.set_xlabel('alphaGo')
-            ax.set_ylabel('chooseA')
-            fig = plt.gcf()
+            fig = self._plotSubset('alphaGo', 'chooseA', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def chooseBeta(self):
 
-            data = self.df.sort(columns=['alphaGo', 'betaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('alphaGo = ' + repr(v), data[data['alphaGo'] == v].groupby('betaGo').mean()['chooseA'].values)
-                                for v in data['alphaGo'].unique()))
-
-            alphaGoSet = data['betaGo'].unique()
-            alphaGoSet.sort()
-            selectData['betaGo'] = alphaGoSet
-            plotData = selectData.set_index('betaGo')
-
-            ax = plotData.plot(title = "chooseA")
-            ax.set_xlabel('betaGo')
-            ax.set_ylabel('chooseA')
-            fig = plt.gcf()
+            fig = self._plotSubset('betaGo', 'chooseA', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
         def avoidAlpha(self):
 
-            data = self.df.sort(columns=['betaGo','alphaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('betaGo = ' + repr(v), data[data['betaGo'] == v].groupby('alphaGo').mean()['avoidB'].values)
-                                for v in data['betaGo'].unique()))
-
-            alphaGoSet = data['alphaGo'].unique()
-            alphaGoSet.sort()
-            selectData['alphaGo'] = alphaGoSet
-            plotData = selectData.set_index('alphaGo')
-
-            ax = plotData.plot(title = "avoidB")
-            ax.set_xlabel('alphaGo')
-            ax.set_ylabel('avoidB')
-            fig = plt.gcf()
+            fig = self._plotSubset('alphaGo', 'avoidB', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def avoidBeta(self):
 
-            data = self.df.sort(columns=['alphaGo', 'betaGo'])
-
-            selectData = pd.DataFrame(dict(
-                                ('alphaGo = ' + repr(v), data[data['alphaGo'] == v].groupby('betaGo').mean()['avoidB'].values)
-                                for v in data['alphaGo'].unique()))
-
-            alphaGoSet = data['betaGo'].unique()
-            alphaGoSet.sort()
-            selectData['betaGo'] = alphaGoSet
-            plotData = selectData.set_index('betaGo')
-
-            ax = plotData.plot(title = "avoidB")
-            ax.set_xlabel('betaGo')
-            ax.set_ylabel('avoidB')
-            fig = plt.gcf()
+            fig = self._plotSubset('betaGo', 'avoidB', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
@@ -419,43 +352,32 @@ class probSelect(experiment):
 
             self.df = data
 
-        def biasVrewardAlpha(self):
+        def _plotSubset(self, x, y, z, sort):
 
-            data = self.df.sort(columns=['betaGo', 'alphaGo', 'rewardProb'])
+            data = self.df.sort(columns=sort)
 
             selectData = pd.DataFrame(dict(
-                                ('alphaGo = ' + repr(v), data[data['alphaGo'] == v].groupby('rewardProb').mean()['bias'].values)
-                                for v in data['alphaGo'].unique()))
+                                (z + ' = ' + repr(v), data[data[z] == v].groupby(x).mean()[y].values)
+                                for v in data[z].unique()))
 
-            alphaGoSet = data['rewardProb'].unique()
+            alphaGoSet = data[x].unique()
             alphaGoSet.sort()
-            selectData['rewardProb'] = alphaGoSet
-            plotData = selectData.set_index('rewardProb')
+            selectData[x] = alphaGoSet
+            plotData = selectData.set_index(x)
 
-            ax = plotData.plot(title = "bias")
-            ax.set_xlabel('rewardProb')
-            ax.set_ylabel('bias')
-            fig = plt.gcf()
+            fig = pandasPlot(plotData, axisLabels = {'xlabel':x, 'ylabel':y, 'title':y})
+
+            return fig
+
+        def biasVrewardAlpha(self):
+
+            fig = self._plotSubset('rewardProb', 'bias', 'alphaGo', ['betaGo', 'alphaGo', 'rewardProb'])
 
             return fig
 
         def biasVrewardBeta(self):
 
-            data = self.df.sort(columns=['alphaGo', 'betaGo', 'rewardProb'])
-
-            selectData = pd.DataFrame(dict(
-                                ('betaGo = ' + repr(v), data[data['betaGo'] == v].groupby('rewardProb').mean()['bias'].values)
-                                for v in data['betaGo'].unique()))
-
-            alphaGoSet = data['rewardProb'].unique()
-            alphaGoSet.sort()
-            selectData['rewardProb'] = alphaGoSet
-            plotData = selectData.set_index('rewardProb')
-
-            ax = plotData.plot(title = "bias")
-            ax.set_xlabel('rewardProb')
-            ax.set_ylabel('bias')
-            fig = plt.gcf()
+            fig = self._plotSubset('rewardProb', 'bias', 'betaGo', ['alphaGo', 'betaGo', 'rewardProb'])
 
             return fig
 

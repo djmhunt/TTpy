@@ -364,16 +364,46 @@ def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
 
 ### Pandas realted plotting functions
 
-def pandasPlot(data, *args, **kwargs):
+def pandasPlot(data, axisLabels = {}):
     """
     A wrapper round a pandas plotting function
+
+    Parameters
+    ----------
+    axisLabels : dictionary, optional
+        A dictionary of axis properties, all optional, containing:
+
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+        ``yMin`` : `float`,
+        ``yMax`` : `float`,
+        ``xMin`` : `float`,
+        ``xMax`` : `float`
 
     Returns
     -------
     fig : matplotlib figure object
+
+    Notes
+    -----
+    Inspired by axPlotlines
     """
 
+    xLabel = axisLabels.pop("xLabel","Event")
+    yLabel = axisLabels.pop("yLabel","Value")
+    title = axisLabels.pop("title","")
 
+#    yMin = axisLabels.pop("yMin",amin(Y))
+#    yMax = axisLabels.pop("yMax",amax(Y))
+#    xMin = axisLabels.pop("xMin",min(x))
+
+    ax = data.plot(title = title)
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    fig = plt.gcf()
+
+    return fig
 
 ### Background to plotting functions
 # Taking the final stages of plotting and providing a nice interface to do it all in one call
