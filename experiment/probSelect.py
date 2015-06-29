@@ -13,7 +13,6 @@
 from __future__ import division
 
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from numpy import array, zeros, exp, ones
 from numpy.random import rand
