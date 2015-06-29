@@ -91,6 +91,7 @@ class BPMS(model):
         self.recEvents = []
         self.recProbabilities = []
         self.recActionProb = []
+        self.recSwitchProb = []
         self.recPosteriorProb = []
         self.recDecision = []
 
@@ -121,6 +122,7 @@ class BPMS(model):
 
         results["Probabilities"] = array(self.recProbabilities)
         results["ActionProb"] = array(self.recActionProb)
+        results["SwitchProb"] = array(self.recSwitchProb)
         results["PosteriorProb"] = array(self.recPosteriorProb)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
@@ -169,6 +171,7 @@ class BPMS(model):
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
         self.recActionProb.append(self.decProbs[self.currAction])
+        self.recSwitchProb.append(self.switchProb)
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
 
