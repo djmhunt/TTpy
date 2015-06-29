@@ -824,7 +824,7 @@ class outputting(object):
         if not self.save:
             return
 
-        self._abridged()
+        self._abridgedLog()
         self._totalLog()
 
     def _totalLog(self):
@@ -841,7 +841,7 @@ class outputting(object):
         record.to_excel(xlsxT, sheet_name='simRecord')
         xlsxT.save()
 
-    def _abridged(self):
+    def _abridgedLog(self):
 
         message = "Produce an abridged log of all experiments"
         self.logger.info(message)
