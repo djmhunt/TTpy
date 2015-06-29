@@ -9,10 +9,73 @@ from __future__ import division
 
 from warnings import warn
 
-from random import choice
+from random import choice, random
 from numpy import sum, array, arange, reshape
 from itertools import izip
 from collections import OrderedDict
+
+def decSingle(expResponses = (0,1)):
+    """Decisions using a switching probability
+
+    Parameters
+    ----------
+    expResponses : tuple of length two, optional
+        Provides the two action responses expected by the experiment
+
+    Returns
+    -------
+    decisionFunc : function
+        Calculates the decisions based on the probabilities and returns the
+        decision and the probability of that decision
+
+    See Also
+    --------
+    models.BPMS, model.BHMM
+
+    Examples
+    --------
+    >>> from model.decision.binary import decSingle
+    >>> lastAct = 0
+    >>> dec = decSingle()
+    >>> dec(0.23, lastAct)
+    (0, {0,:0.77, 1:0.23})
+    """
+
+    expResponseSet = set(expResponses)
+
+    def decisionFunc(prob, lastAction, validResponses = None):
+
+        if validResponses:
+            if len(validResponses) == 1:
+                resp = validResponses[0]
+                return resp, {resp:1}
+            elif set(validResponses) != expResponseSet:
+                warn("Bad validResponses: " + str(validResponses))
+            else:
+                warn("Bad number of validResponses: " + str(validResponses))
+
+        randNum = random()
+
+        lastNotAction = list(expResponseSet.difference([lastAction]))[0]
+
+        if prob>=randNum:
+            # The decision is to switch
+            decision = lastNotAction
+        else:
+            # Keep the same decision
+            decision = lastAction
+
+        pSet = {lastNotAction:prob,
+                lastAction:1-prob}
+
+        probs = OrderedDict({k:pSet[k] for k in expResponses})
+
+        return decision, probs
+
+    decisionFunc.Name = "binary.decSingle"
+    decisionFunc.Params = {}
+
+    return decisionFunc
 
 def decEta(expResponses = (0,1),eta = 0):
     """Decisions using a probability difference threshold
@@ -37,11 +100,16 @@ def decEta(expResponses = (0,1),eta = 0):
 
     """
 
+    expResponseSet = set(expResponses)
+
     def decisionFunc(probabilities, lastAction, validResponses = None):
 
         if validResponses:
             if len(validResponses) == 1:
-                return validResponses[0], [1]
+                resp = validResponses[0]
+                return resp, {resp:1}
+            elif set(validResponses) != expResponseSet:
+                warn("Bad validResponses: " + str(validResponses))
             else:
                 warn("Bad number of validResponses: " + str(validResponses))
 
@@ -112,11 +180,16 @@ def decIntEtaReac(expResponses = (0,1), eta = 0):
 
     """
 
+    expResponseSet = set(expResponses)
+
     def decisionFunc(probabilities, lastAction, validResponses = None):
 
         if validResponses:
             if len(validResponses) == 1:
-                return validResponses[0], [1]
+                resp = validResponses[0]
+                return resp, {resp:1}
+            elif set(validResponses) != expResponseSet:
+                warn("Bad validResponses: " + str(validResponses))
             else:
                 warn("Bad number of validResponses: " + str(validResponses))
 
