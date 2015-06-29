@@ -47,7 +47,7 @@ eta = 0.0
 alpha = 0.5
 beta = 0.5
 simDur = 30
-outputOptions = {'simLabel': 'qLearn_decksSet',
+outputOptions = {'simLabel': 'qLearn_decksSim',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,

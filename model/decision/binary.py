@@ -115,7 +115,7 @@ def decEta(expResponses = (0,1),eta = 0):
 
         prob = probabilities[0]
 
-        if abs(prob-0.5)>eta:
+        if abs(prob-0.5)>=eta:
             if prob>0.5:
                 decision = expResponses[0]
             elif prob == 0.5:
