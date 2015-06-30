@@ -145,7 +145,9 @@ class BHMM(model):
                            "stimFunc" : callableDetailsString(self.stimFunc),
                            "decFunc" : callableDetailsString(self.decisionFunc)}
 
-        self.currAction = 1
+        self.currAction = 0
+        # This way for the first run you always consider that you are switching
+        self.previousAction = None
 #        if len(prior) != self.numStimuli:
 #            raise warning.
         self.posteriorProb = array(self.prior)
@@ -153,9 +155,10 @@ class BHMM(model):
         self.decProbs = array(self.prior)
         self.decision = None
         self.validActions = None
-        self.previousAction = None
+        self.switchProb = 0
         self.stayMatrix = array([[1-delta,delta],[delta,1-delta]])
         self.switchMatrix = array([[delta,1-delta],[1-delta,delta]])
+        self.actionLoc = {k:k for k in range(0,self.numStimuli)}
 
         # Recorded information
 
@@ -166,6 +169,7 @@ class BHMM(model):
         self.recSwitchProb = []
         self.recPosteriorProb = []
         self.recDecision = []
+        self.recActionLoc = []
 
     def action(self):
         """
@@ -173,7 +177,6 @@ class BHMM(model):
         -------
         action : integer or None
         """
-
         self.currAction = self.decision
 
         self.storeState()
@@ -196,6 +199,7 @@ class BHMM(model):
         results["ActionProb"] = array(self.recActionProb)
         results["SwitchProb"] = array(self.recSwitchProb)
         results["PosteriorProb"] = array(self.recPosteriorProb)
+        results["ActionLocation"] = array(self.recActionLoc)
         results["Actions"] = array(self.recAction)
         results["Decsions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
@@ -217,15 +221,17 @@ class BHMM(model):
 
     def _processEvent(self,events):
 
-        event = self.stimFunc(events, self.currAction)
+        currAction = self.currAction
+
+        event = self.stimFunc(events, currAction)
 
         self.recEvents.append(event)
 
-        postProb = self._postProb(event, self.posteriorProb, self.currAction)
+        postProb = self._postProb(event, self.posteriorProb, currAction)
         self.posteriorProb = postProb
 
         #Calculate the new probabilities
-        priorProb = self._prob(postProb)
+        priorProb = self._prob(postProb, currAction)
         self.probabilities = priorProb
 
         self.switchProb = self._switch(priorProb)
@@ -242,12 +248,15 @@ class BHMM(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.probabilities[self.actionLoc[self.currAction]])
         self.recSwitchProb.append(self.switchProb)
+        self.recActionLoc.append(self.actionLoc.values())
         self.recPosteriorProb.append(self.posteriorProb.copy())
         self.recDecision.append(self.decision)
 
     def _postProb(self, event, postProb, action):
+
+        loc = self.actionLoc
 
         li = array([postProb[action],postProb[1-action]])
         payoffs = self._payoff()
@@ -256,10 +265,13 @@ class BHMM(model):
         newProb = li
         newProb[0] = (event*li[0])/sum(brute)
 
+        loc[action] = 0
+        loc[1-action] = 1
+        self.actionLoc = loc
+
         return newProb
 
     def _prob(self, postProb, action):
-
         """Return the new prior probabilitiy that each state is the correct one
         """
 
@@ -270,6 +282,8 @@ class BHMM(model):
         else:
             # When the subject has switched
             pr = self.switchMatrix.dot(postProb)
+
+        self.previousAction = action
 
         return pr
 
@@ -283,7 +297,7 @@ class BHMM(model):
         """
 
         pI = prob[1]
-        ps = 1.0 / (1.0 - exp(self.beta * (pI - self.eta)))
+        ps = 1.0 / (1.0 - exp(-self.beta * (pI - self.eta)))
 
         return ps
 

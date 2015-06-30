@@ -15,7 +15,7 @@ from __future__ import division
 import pandas as pd
 
 from numpy import array, zeros, exp, ones
-from numpy.random import rand
+from numpy.random import rand, choice
 from experiment.experimentTemplate import experiment
 from plotting import pandasPlot
 from experiment.experimentPlot import experimentPlot
@@ -78,17 +78,23 @@ class probSelect(experiment):
         kwargs = self.kwargs.copy()
 
         rewardProb = kwargs.pop('rewardProb',0.7)
+        actRewardProb = kwargs.pop('actRewardProb',{0:rewardProb,
+                                                    1:1-rewardProb,
+                                                    2:0.5,
+                                                    3:0.5})
         learningLen = kwargs.pop("learningLen", 100)
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
         self.parameters = {"Name": self.Name,
                            "rewardProb": rewardProb,
+                           "actRewardProb": actRewardProb,
                            "learningLen": learningLen}
 
         # Set draw count
         self.t = -1
         self.rewardProb = rewardProb
+        self.actRewardProb = actRewardProb
         self.T = learningLen
         self.action = None
         self.stimVal = -1
@@ -123,7 +129,7 @@ class probSelect(experiment):
             raise StopIteration
 
         nextStim = None
-        nextValidActions = [0,1]
+        nextValidActions = choice([0,1,2,3], size = 2, replace = False)
 
         return nextStim, nextValidActions
 
@@ -138,12 +144,8 @@ class probSelect(experiment):
         """
         Responds to the action from the participant
         """
-
-        action = self.action
-        rewProb = self.rewardProb
-
-        #The probabilitiy of sucsess varies depending on if it is choice A or B
-        actRewProb = (1-action)*rewProb + action*(1-rewProb)
+        #The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2
+        actRewProb = self.actRewardProb[self.action]
 
         if actRewProb >= rand(1):
             reward = 1
@@ -260,7 +262,7 @@ class probSelect(experiment):
             selectData[x] = alphaGoSet
             plotData = selectData.set_index(x)
 
-            fig = pandasPlot(plotData, axisLabels = {'xlabel':x, 'ylabel':y, 'title':y})
+            fig = pandasPlot(plotData, axisLabels = {'xLabel':x, 'yLabel':y, 'title':y})
 
             return fig
 

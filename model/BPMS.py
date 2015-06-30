@@ -199,9 +199,8 @@ class BPMS(model):
         return newProb
 
     def _prob(self, postProb, action):
-
         """Return the new prior probabilitiy that each state is the correct one
-    """
+        """
 
         # The probability of the current state being correct, given if the previous state was correct.
         if self.previousAction == action:
