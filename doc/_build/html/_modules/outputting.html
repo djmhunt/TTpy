@@ -8,7 +8,7 @@
     
     <title>outputting &mdash; PyDM 0.9 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,15 +37,15 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for outputting</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
@@ -76,9 +76,9 @@
 
 <div class="viewcode-block" id="outputting"><a class="viewcode-back" href="../outputting.html#outputting.outputting">[docs]</a><span class="k">class</span> <span class="nc">outputting</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;An class which manages the outputting to the screen and to files of all </span>
+    <span class="sd">&quot;&quot;&quot;An class which manages the outputting to the screen and to files of all</span>
 <span class="sd">    data in any form for the simulation</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    save : bool, optional</span>
@@ -97,17 +97,17 @@
 <span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
 <span class="sd">        Defines the level of the log. Default ``logging.INFO``</span>
 <span class="sd">    maxLabelLength : int, optional</span>
-<span class="sd">        The maximum length of a label to be used as a reference for an </span>
+<span class="sd">        The maximum length of a label to be used as a reference for an</span>
 <span class="sd">        individual model-experiment combination. Default 18</span>
 <span class="sd">    npErrResp : {&#39;log&#39;, &#39;raise&#39;}</span>
 <span class="sd">        Defines the response to numpy errors. Defailt ``log``. See numpy.seterr</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    date : Identifies todays date</span>
 <span class="sd">    saving : Sets up the log file and folder to save results</span>
 <span class="sd">    fancyLogger : Log creator</span>
-<span class="sd">    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors    </span>
+<span class="sd">    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -149,18 +149,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span> <span class="o">=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="outputting.end"><a class="viewcode-back" href="../outputting.html#outputting.outputting.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        To run once everything has been completed. Displays the figures if not</span>
 <span class="sd">        silent.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
@@ -174,15 +176,15 @@
 <div class="viewcode-block" id="outputting.folderSetup"><a class="viewcode-back" href="../outputting.html#outputting.outputting.folderSetup">[docs]</a>    <span class="k">def</span> <span class="nf">folderSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Identifies and creates the folder the data will be stored in</span>
-<span class="sd">        </span>
-<span class="sd">        Folder will be created as &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;/&quot;. If that had </span>
+
+<span class="sd">        Folder will be created as &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;/&quot;. If that had</span>
 <span class="sd">        previously been created then it is created as</span>
 <span class="sd">        &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&quot;, where &quot;&lt;#&gt;&quot; is the first</span>
 <span class="sd">        avalable integer.</span>
-<span class="sd">        </span>
-<span class="sd">        A subfolder is also created with the name ``Pickle`` if  pickleData is </span>
+
+<span class="sd">        A subfolder is also created with the name ``Pickle`` if  pickleData is</span>
 <span class="sd">        true.</span>
-<span class="sd">        </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        newFile : Creates a new file</span>
@@ -201,7 +203,7 @@
 
         <span class="n">folderName</span> <span class="o">+=</span> <span class="s">&quot;/&quot;</span>
         <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
             <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span>  <span class="o">+</span> <span class="s">&#39;Pickle/&#39;</span><span class="p">)</span>
 
@@ -211,14 +213,14 @@
 <div class="viewcode-block" id="outputting.newFile"><a class="viewcode-back" href="../outputting.html#outputting.outputting.newFile">[docs]</a>    <span class="k">def</span> <span class="nf">newFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">extension</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        handle : string</span>
 <span class="sd">            The file name</span>
 <span class="sd">        extension : string</span>
 <span class="sd">            The extension of the file</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fileName : string</span>
@@ -227,10 +229,10 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="k">return</span> <span class="s">&#39;&#39;</span>
-            
+
         <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
             <span class="n">end</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-        <span class="k">else</span><span class="p">:</span> 
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">end</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span>
 
         <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">+</span> <span class="n">handle</span>
@@ -248,12 +250,12 @@
 <div class="viewcode-block" id="outputting.getLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.getLogger">[docs]</a>    <span class="k">def</span> <span class="nf">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a named logger stream</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        name : string</span>
 <span class="sd">            Name of the logger</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        logger : logging.logger instance</span>
@@ -268,17 +270,17 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the folder structure for the saved data and created the log file</span>
 <span class="sd">        as log.txt</span>
-<span class="sd">        </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        folderSetup : creates the folders</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">folderSetup</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;txt&#39;</span><span class="p">)</span>
-            
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span><span class="p">:</span>
                 <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">():</span>
@@ -293,8 +295,8 @@
 </div>
 <div class="viewcode-block" id="outputting.fancyLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.fancyLogger">[docs]</a>    <span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logFile</span> <span class="o">=</span> <span class="s">&quot;./log.txt&quot;</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="s">&#39;log&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets up the style of logging for all the simulations  </span>
-<span class="sd">        </span>
+<span class="sd">        Sets up the style of logging for all the simulations</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        logFile = string, optional</span>
@@ -303,7 +305,7 @@
 <span class="sd">            Defines the level of the log. Default logging.INFO</span>
 <span class="sd">        npErrResp : {&#39;log&#39;, &#39;raise&#39;}</span>
 <span class="sd">            Defines the response to numpy errors. Defailt ``log``. See numpy.seterr</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        logging : The Python standard logging library</span>
@@ -361,19 +363,19 @@
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Log initialised&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logFile</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">logFile</span><span class="p">))</span>
-            </div>
+</div>
 <div class="viewcode-block" id="outputting.logSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes to the log the descrition and the label of the experiment and model</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        expDesc : string</span>
-<span class="sd">            The description to be logged of the experiment </span>
+<span class="sd">            The description to be logged of the experiment</span>
 <span class="sd">        expPltLabel : string</span>
 <span class="sd">            The label used for this experiment</span>
 <span class="sd">        modelDesc : string</span>
-<span class="sd">            The description to be logged of the model </span>
+<span class="sd">            The description to be logged of the model</span>
 <span class="sd">        modelPltLabel : string</span>
 <span class="sd">            The label used for this model</span>
 
@@ -381,7 +383,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        recordSimParams : Records these parameters for later use</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Simulation contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expDesc</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
         <span class="k">if</span> <span class="n">expDesc</span> <span class="o">==</span> <span class="n">expPltLabel</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;. &quot;</span>
@@ -394,12 +396,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-        </div>
+</div>
 <div class="viewcode-block" id="outputting.logSimFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Logs the model and experiment parameters that used as initial fitting </span>
+<span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
 <span class="sd">        conditions</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        expParams : dict</span>
@@ -409,45 +411,45 @@
 <span class="sd">        modelFitVars : dict</span>
 <span class="sd">            The model parameters that will be fitted over and varied.</span>
 <span class="sd">        modelOtherArgs : dict</span>
-<span class="sd">            The other parameters used in the model whose attributes have been </span>
+<span class="sd">            The other parameters used in the model whose attributes have been</span>
 <span class="sd">            modifed by the user</span>
-<span class="sd">        &quot;&quot;&quot;</span>        
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;The fit will use the model &#39;&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
-        
+
         <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; around &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; fitted with the parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
-        
+
         <span class="n">modelParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
         <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
-        
+
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39; &quot;</span>
 
         <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s">&#39;Name&#39;</span><span class="p">]</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-        </div>
+</div>
 <div class="viewcode-block" id="outputting.logModFittedParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logModFittedParams">[docs]</a>    <span class="k">def</span> <span class="nf">logModFittedParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Logs the model and experiment parameters that used as initial fitting </span>
+<span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
 <span class="sd">        conditions</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        modelFitVars : dict</span>
 <span class="sd">            The model parameters that have been fitted over and varied.</span>
 <span class="sd">        modelParams : dict</span>
 <span class="sd">            The model parameters for the fitted model</span>
-<span class="sd">        &quot;&quot;&quot;</span>    
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        
+
         <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;The fitted values are &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
-        
+
         <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="c">### Data collection</span>
@@ -455,25 +457,25 @@
 <div class="viewcode-block" id="outputting.recordSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expParams</span><span class="p">,</span><span class="n">modelParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the model and experiment parameters</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        expParams : dict</span>
 <span class="sd">            The experiment parameters</span>
 <span class="sd">        modelParams : dict</span>
 <span class="sd">            The model parameters</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        expDesc : string</span>
-<span class="sd">            The description to be logged of the experiment </span>
+<span class="sd">            The description to be logged of the experiment</span>
 <span class="sd">        expPltLabel : string</span>
 <span class="sd">            The label used for this experiment</span>
 <span class="sd">        modelDesc : string</span>
-<span class="sd">            The description to be logged of the model </span>
+<span class="sd">            The description to be logged of the model</span>
 <span class="sd">        modelPltLabel : string</span>
 <span class="sd">            The label used for this model</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        paramIdentifier, logSimParams</span>
@@ -489,22 +491,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelPltLabel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span>
 </div>
 <div class="viewcode-block" id="outputting.paramIdentifier"><a class="viewcode-back" href="../outputting.html#outputting.outputting.paramIdentifier">[docs]</a>    <span class="k">def</span> <span class="nf">paramIdentifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lastLabelID</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the parameters of an experiment or model</span>
-<span class="sd">        </span>
+
 <span class="sd">        If the description is too long to make a plot label then an ID is generated</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        params : dict</span>
 <span class="sd">            The parameters of the experiment or model. One is expected to be ``Name``</span>
 <span class="sd">        lastLabelID: int</span>
 <span class="sd">            The last ID number used</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        descriptor : string</span>
@@ -531,14 +533,14 @@
 <div class="viewcode-block" id="outputting.recordSim"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSim">[docs]</a>    <span class="k">def</span> <span class="nf">recordSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expData</span><span class="p">,</span><span class="n">modelData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Records the data from an experiment-model run. Creates a pickled version</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        expData : dict</span>
 <span class="sd">            The data from the experiment</span>
 <span class="sd">        modelData : dict</span>
 <span class="sd">            The data from the model</span>
-<span class="sd">        </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        pickleLog : records the picked data</span>
@@ -560,12 +562,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
 </div>
 <div class="viewcode-block" id="outputting.recordParticipantFit"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordParticipantFit">[docs]</a>    <span class="k">def</span> <span class="nf">recordParticipantFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">expData</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the data relevant to the participant fitting</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        participant : dict</span>
@@ -600,12 +603,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
 </div>
 <div class="viewcode-block" id="outputting.recordFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitInfo</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Records and outputs to the log the parameters associated with the fitting algorithms </span>
-<span class="sd">        </span>
+<span class="sd">        Records and outputs to the log the parameters associated with the fitting algorithms</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fitInfo : dict</span>
@@ -633,14 +637,14 @@
 
     <span class="c">### Ploting</span></div>
 <div class="viewcode-block" id="outputting.plotModel"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotModel">[docs]</a>    <span class="k">def</span> <span class="nf">plotModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modelPlot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the model data into the relevant plotting functions for the class</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        modelPlot : model.modelPlot</span>
 <span class="sd">            The model&#39;s modelPlot class</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        model.modelPlot : The template for modelPlot class for each model</span>
@@ -655,14 +659,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="outputting.plotModelSet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotModelSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotModelSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modelSetPlot</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the model set data into the relevant plotting functions for the class</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        modelSetPlot : model.modelSetPlot</span>
 <span class="sd">            The model&#39;s modelSetPlot class</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        model.modelSetPlot : The template for modelSetPlot class for each model</span>
@@ -686,16 +690,52 @@
 <div class="viewcode-block" id="outputting.plotExperiment"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotExperiment">[docs]</a>    <span class="k">def</span> <span class="nf">plotExperiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expInput</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the experiment data into the relevant plotting functions for the class</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        expInput : (experiment.experimentPlot, dict)</span>
-<span class="sd">            The experiment&#39;s experimentPlot class and a dictionary of plot </span>
+<span class="sd">            The experiment&#39;s experimentPlot class and a dictionary of plot</span>
 <span class="sd">            attributes</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        experiment.experimentPlot : The template for experimentPlot class for each experiment</span>
+<span class="sd">        savePlots : Saves the plots created by experimentPlot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">expPlot</span><span class="p">,</span> <span class="n">plotArgs</span> <span class="o">=</span> <span class="n">expInput</span>
+
+        <span class="n">expSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+        <span class="n">expParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+        <span class="n">expLabels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+        <span class="n">modelSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+        <span class="n">modelParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+        <span class="n">modelLabels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
+
+        <span class="c"># Initialise the class</span>
+        <span class="n">ep</span> <span class="o">=</span> <span class="n">expPlot</span><span class="p">(</span><span class="n">expSet</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">expLabels</span><span class="p">,</span> <span class="n">modelSet</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">plotArgs</span><span class="p">)</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce plots for experiment set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="outputting.plotExperimentSet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotExperimentSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotExperimentSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expInput</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Feeds the experiment set data into the relevant plotting functions for the class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expInput : (experiment.experimentSetPlot, dict)</span>
+<span class="sd">            The experiment&#39;s experimentSetPlot class and a dictionary of plot</span>
+<span class="sd">            attributes</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment</span>
 <span class="sd">        savePlots : Saves the plots created by experimentPlot</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -722,25 +762,25 @@
 <div class="viewcode-block" id="outputting.savePlots"><a class="viewcode-back" href="../outputting.html#outputting.outputting.savePlots">[docs]</a>    <span class="k">def</span> <span class="nf">savePlots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plots</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves a list of plots in the appropriate way</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        plots : list of savable objects</span>
-<span class="sd">            The currently accepted objects are matplotlib.pyplot.figure, </span>
+<span class="sd">            The currently accepted objects are matplotlib.pyplot.figure,</span>
 <span class="sd">            pandas.DataFrame and xml.etree.ElementTree.ElementTree</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame, </span>
-<span class="sd">        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree, </span>
+<span class="sd">        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame,</span>
+<span class="sd">        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree,</span>
 <span class="sd">        xml.etree.ElementTree.ElementTree.outputTrees</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">handle</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plots</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;savefig&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;savefig&quot;</span><span class="p">)):</span>
 
-                <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;png&#39;</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">outputFig</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="n">fileName</span><span class="p">)</span>
 
@@ -759,7 +799,7 @@
 </div>
 <div class="viewcode-block" id="outputting.outputFig"><a class="viewcode-back" href="../outputting.html#outputting.outputting.outputFig">[docs]</a>    <span class="k">def</span> <span class="nf">outputFig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">fileName</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the figure to a .png file and/or displays it on the screen.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fig : MatPlotLib figure object</span>
@@ -784,8 +824,8 @@
     <span class="c">### Pickle</span></div>
 <div class="viewcode-block" id="outputting.pickleRec"><a class="viewcode-back" href="../outputting.html#outputting.outputting.pickleRec">[docs]</a>    <span class="k">def</span> <span class="nf">pickleRec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Writes the data to a picke file </span>
-<span class="sd">        </span>
+<span class="sd">        Writes the data to a picke file</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        data : object</span>
@@ -801,9 +841,9 @@
 </div>
 <div class="viewcode-block" id="outputting.pickleLog"><a class="viewcode-back" href="../outputting.html#outputting.outputting.pickleLog">[docs]</a>    <span class="k">def</span> <span class="nf">pickleLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span><span class="n">folderName</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores the data in the appropriate pickle file in a Pickle subfolder </span>
+<span class="sd">        Stores the data in the appropriate pickle file in a Pickle subfolder</span>
 <span class="sd">        of the outputting folder</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        results : dict</span>
@@ -827,36 +867,44 @@
     <span class="c">### Excel</span></div>
 <div class="viewcode-block" id="outputting.simLog"><a class="viewcode-back" href="../outputting.html#outputting.outputting.simLog">[docs]</a>    <span class="k">def</span> <span class="nf">simLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Outputs relavent data to an excel file with all the data and a csv file</span>
+<span class="sd">        Outputs relevent data to an excel file with all the data and a csv file</span>
 <span class="sd">        with the estimated pertinant data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="k">return</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_abridgedLog</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_totalLog</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">_totalLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
         <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce log of all experiments&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeDataSet</span><span class="p">()</span>
-        <span class="n">pertinantData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makePertinantDataSet</span><span class="p">()</span>
-
         <span class="n">record</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">pertRecord</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pertinantData</span><span class="p">)</span>
-
-<span class="c">#        record = record.set_index(&#39;sim&#39;)</span>
-
         <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s">&#39;csv&#39;</span><span class="p">)</span>
         <span class="n">record</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
+        <span class="n">xlsxT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxT</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s">&#39;simRecord&#39;</span><span class="p">)</span>
+        <span class="n">xlsxT</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_abridgedLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce an abridged log of all experiments&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="n">pertinantData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makePertinantDataSet</span><span class="p">()</span>
+        <span class="n">pertRecord</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pertinantData</span><span class="p">)</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;abridgedRecord&#39;</span><span class="p">,</span> <span class="s">&#39;csv&#39;</span><span class="p">)</span>
         <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simAbridgedRecord&#39;</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
+        <span class="n">xlsxA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+        <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxA</span><span class="p">,</span><span class="n">sheet_name</span> <span class="o">=</span> <span class="s">&#39;abridgedRecord&#39;</span><span class="p">)</span>
+        <span class="n">xlsxA</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
-        <span class="n">xlsx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
-        <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsx</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s">&#39;simRecord&#39;</span><span class="p">)</span>
-        <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsx</span><span class="p">,</span><span class="n">sheet_name</span> <span class="o">=</span> <span class="s">&#39;abridgedRecord&#39;</span><span class="p">)</span>
-        <span class="n">xlsx</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-</div>
     <span class="k">def</span> <span class="nf">_makeDataSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -916,7 +964,7 @@
 <div class="viewcode-block" id="outputting.reframeStore"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeStore">[docs]</a>    <span class="k">def</span> <span class="nf">reframeStore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take a list of dictionaries and turn it into a dictionary of lists</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        store : list of dicts</span>
@@ -924,13 +972,13 @@
 <span class="sd">        storeLabel : string, optional</span>
 <span class="sd">            An identifier to be added to the beginning of each key string.</span>
 <span class="sd">            Default is &#39;&#39;.</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        newStore : dict of 1D lists</span>
-<span class="sd">            Any dictionary keys containing lists in the input have been split </span>
+<span class="sd">            Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">            into multiple numbered keys</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        dictKeySet, newDict</span>
@@ -944,9 +992,9 @@
         <span class="k">return</span> <span class="n">newStore</span>
 </div>
 <div class="viewcode-block" id="outputting.reframeSelectStore"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeSelectStore">[docs]</a>    <span class="k">def</span> <span class="nf">reframeSelectStore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Take a list of dictionaries and turn it into a dictionary of lists </span>
+        <span class="sd">&quot;&quot;&quot;Take a list of dictionaries and turn it into a dictionary of lists</span>
 <span class="sd">        containing only the useful keys</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        store : list of dicts</span>
@@ -956,17 +1004,17 @@
 <span class="sd">        storeLabel : string, optional</span>
 <span class="sd">            An identifier to be added to the beginning of each key string.</span>
 <span class="sd">            Default is &#39;&#39;.</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        newStore : dict of 1D lists</span>
-<span class="sd">            Any dictionary keys containing lists in the input have been split </span>
+<span class="sd">            Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">            into multiple numbered keys</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        dictSelectKeySet, newDict</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">keySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictSelectKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span><span class="n">keySet</span><span class="p">)</span>
@@ -981,24 +1029,24 @@
 <span class="sd">        Generates a dictionary of keys and identifiers for the new dictionary,</span>
 <span class="sd">        splitting any keys with lists into a set of keys, one for each element</span>
 <span class="sd">        in the original key.</span>
-<span class="sd">        </span>
+
 <span class="sd">        These are named &lt;key&gt;&lt;location&gt;</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        store : list of dicts</span>
-<span class="sd">            The dictionaries would be expected to have many of the same keys. </span>
-<span class="sd">            Any dictionary keys containing lists in the input have been split </span>
+<span class="sd">            The dictionaries would be expected to have many of the same keys.</span>
+<span class="sd">            Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">            into multiple numbered keys</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        keySet : dict</span>
-<span class="sd">            The keys are the keys for the new dictionary. The values contain a </span>
-<span class="sd">            two element tuple. The first element is the original name of the </span>
-<span class="sd">            key and the second is the location of the value to be stored in the </span>
+<span class="sd">            The keys are the keys for the new dictionary. The values contain a</span>
+<span class="sd">            two element tuple. The first element is the original name of the</span>
+<span class="sd">            key and the second is the location of the value to be stored in the</span>
 <span class="sd">            original dictionary value array.</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        reframeStore, newDict</span>
@@ -1030,26 +1078,26 @@
 <span class="sd">        Generates a dictionary of keys and identifiers for the new dictionary,</span>
 <span class="sd">        including only the keys in the keys list. Any keys with lists  will</span>
 <span class="sd">        be split into a set of keys, one for each element in the original key.</span>
-<span class="sd">        </span>
+
 <span class="sd">        These are named &lt;key&gt;&lt;location&gt;</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        store : list of dicts</span>
-<span class="sd">            The dictionaries would be expected to have many of the same keys. </span>
-<span class="sd">            Any dictionary keys containing lists in the input have been split </span>
+<span class="sd">            The dictionaries would be expected to have many of the same keys.</span>
+<span class="sd">            Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">            into multiple numbered keys</span>
 <span class="sd">        keys : list of strings</span>
 <span class="sd">            The keys whose data will be included in the return dictionary</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        keySet : dict</span>
-<span class="sd">            The keys are the keys for the new dictionary. The values contain a </span>
-<span class="sd">            two element tuple. The first element is the original name of the </span>
-<span class="sd">            key and the second is the location of the value to be stored in the </span>
+<span class="sd">            The keys are the keys for the new dictionary. The values contain a</span>
+<span class="sd">            two element tuple. The first element is the original name of the</span>
+<span class="sd">            key and the second is the location of the value to be stored in the</span>
 <span class="sd">            original dictionary value array.</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        reframeSelectStore, newDict</span>
@@ -1083,33 +1131,33 @@
 </div>
 <div class="viewcode-block" id="outputting.newDict"><a class="viewcode-back" href="../outputting.html#outputting.outputting.newDict">[docs]</a>    <span class="k">def</span> <span class="nf">newDict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">keySet</span><span class="p">,</span><span class="n">store</span><span class="p">,</span><span class="n">storeLabel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes a list of dictionaries and returns a dictionary of 1D lists. </span>
-<span class="sd">        </span>
-<span class="sd">        If a dictionary did not have that key or list element, then &#39;None&#39; is </span>
+<span class="sd">        Takes a list of dictionaries and returns a dictionary of 1D lists.</span>
+
+<span class="sd">        If a dictionary did not have that key or list element, then &#39;None&#39; is</span>
 <span class="sd">        put in its place</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        keySet : dict</span>
-<span class="sd">            The keys are the keys for the new dictionary. The values contain a </span>
-<span class="sd">            two element tuple. The first element is the original name of the </span>
-<span class="sd">            key and the second is the location of the value to be stored in the </span>
+<span class="sd">            The keys are the keys for the new dictionary. The values contain a</span>
+<span class="sd">            two element tuple. The first element is the original name of the</span>
+<span class="sd">            key and the second is the location of the value to be stored in the</span>
 <span class="sd">            original dictionary value array.</span>
 <span class="sd">        store : list of dicts</span>
-<span class="sd">            The dictionaries would be expected to have many of the same keys. </span>
-<span class="sd">            Any dictionary keys containing lists in the input have been split </span>
+<span class="sd">            The dictionaries would be expected to have many of the same keys.</span>
+<span class="sd">            Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">            into multiple numbered keys</span>
 <span class="sd">        storeLabel : string</span>
 <span class="sd">            An identifier to be added to the beginning of each key string.</span>
-<span class="sd">            </span>
-<span class="sd">        </span>
+
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        newStore : dict</span>
-<span class="sd">            The new dictionary with the keys from the keySet and the values as </span>
-<span class="sd">            1D lists with &#39;None&#39; if the keys, value pair was not found in the </span>
+<span class="sd">            The new dictionary with the keys from the keySet and the values as</span>
+<span class="sd">            1D lists with &#39;None&#39; if the keys, value pair was not found in the</span>
 <span class="sd">            store.</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">partStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -1139,7 +1187,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate todays date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;</span>
 <span class="sd">        and stores it in self.date</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
@@ -1149,9 +1197,9 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -1168,7 +1216,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1177,13 +1225,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

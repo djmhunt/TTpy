@@ -11,10 +11,26 @@ Subpackages
 Submodules
 ----------
 
+model.modelTemplate module
+------------------
+
+.. automodule:: model.modelTemplate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 model.BP module
 ---------------
 
 .. automodule:: model.BP
+    :members:
+    :undoc-members:
+    :show-inheritance:
+	
+model.BPMS module
+-----------------
+
+.. automodule:: model.BPMS
     :members:
     :undoc-members:
     :show-inheritance:
@@ -55,14 +71,6 @@ model.RVPM module
 -----------------
 
 .. automodule:: model.RVPM
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.model module
-------------------
-
-.. automodule:: model.model
     :members:
     :undoc-members:
     :show-inheritance:

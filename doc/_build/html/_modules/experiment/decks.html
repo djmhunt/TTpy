@@ -8,7 +8,7 @@
     
     <title>experiment.decks &mdash; PyDM 0.9 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,15 +37,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for experiment.decks</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
@@ -54,14 +54,14 @@
 
 <span class="sd">:Reference: Regulatory fit effects in a choice task</span>
 <span class="sd">                `Worthy, D. a, Maddox, W. T., &amp; Markman, A. B. (2007)`.</span>
-<span class="sd">                Psychonomic Bulletin &amp; Review, 14(6), 1125–32. </span>
+<span class="sd">                Psychonomic Bulletin &amp; Review, 14(6), 1125–32.</span>
 <span class="sd">                Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">rand</span>
-<span class="kn">from</span> <span class="nn">experiment</span> <span class="kn">import</span> <span class="n">experiment</span>
+<span class="kn">from</span> <span class="nn">experimentTemplate</span> <span class="kn">import</span> <span class="n">experiment</span>
 <span class="c">#from plotting import dataVsEvents, varDynamics</span>
 <span class="kn">from</span> <span class="nn">experimentPlot</span> <span class="kn">import</span> <span class="n">experimentPlot</span>
 <span class="c">#from utils import varyingParams</span>
@@ -82,15 +82,15 @@
 <div class="viewcode-block" id="Decks"><a class="viewcode-back" href="../../experiment.html#experiment.decks.Decks">[docs]</a><span class="k">class</span> <span class="nc">Decks</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The name of the class used when recording what has been used.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    draws: int, optional</span>
@@ -98,14 +98,14 @@
 <span class="sd">    decks: array of floats, optional</span>
 <span class="sd">        The decks of cards</span>
 <span class="sd">    plotArgs : dictionary, optional</span>
-<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to </span>
-<span class="sd">        its documentation for more details.        </span>
+<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
+<span class="sd">        its documentation for more details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;decks&quot;</span>
 
 <div class="viewcode-block" id="Decks.reset"><a class="viewcode-back" href="../../experiment.html#experiment.decks.Decks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new experiment instance</span>
 
 <span class="sd">        Returns</span>
@@ -153,11 +153,14 @@
 <div class="viewcode-block" id="Decks.next"><a class="viewcode-back" href="../../experiment.html#experiment.decks.Decks.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        stimulus : None</span>
-<span class="sd">        </span>
+<span class="sd">        nextValidActions : Tuple of ints</span>
+<span class="sd">            The list of valid actions that the model can respond with. Set to</span>
+<span class="sd">            ``None``, as they never vary.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        StopIteration</span>
@@ -168,7 +171,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">nextStim</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span>
 </div>
 <div class="viewcode-block" id="Decks.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.decks.Decks.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -226,34 +232,34 @@
 <div class="viewcode-block" id="deckStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDirect">[docs]</a><span class="k">def</span> <span class="nf">deckStimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks stimuli for models expecting just the event</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
 <span class="sd">        last action. The function returns the event.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">event</span>
-        
+
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDirect&quot;</span>
     <span class="k">return</span> <span class="n">deckStim</span>
 </div>
 <div class="viewcode-block" id="deckStimAllInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimAllInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimAllInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span> <span class="n">minEventVal</span><span class="p">,</span> <span class="n">numActions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
-<span class="sd">    from all possible actions </span>
-<span class="sd">    </span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information</span>
+<span class="sd">    from all possible actions</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    maxEventVal : int</span>
@@ -261,27 +267,27 @@
 <span class="sd">    minEventVal : int</span>
 <span class="sd">        The lowest value a reward can have</span>
 <span class="sd">    numActions : int</span>
-<span class="sd">        The number of actions the participant can perform. Assumes the lowest </span>
+<span class="sd">        The number of actions the participant can perform. Assumes the lowest</span>
 <span class="sd">        valued action is 0</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
-<span class="sd">        function returns a list of length 2.</span>
-<span class="sd">        </span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The</span>
+<span class="sd">        function returns a array of length (maxEventVal-minEventVal)*numActions.</span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac</span>
-<span class="sd">    </span>
+
 <span class="sd">    Examples</span>
-<span class="sd">    --------    </span>
+<span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from experiment.decks import deckStimAllInfo</span>
 <span class="sd">    &gt;&gt;&gt; stim = deckStimAllInfo(10,1,2)</span>
 <span class="sd">    &gt;&gt;&gt; stim(6,0)</span>
@@ -291,81 +297,81 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">numDiffEvents</span> <span class="o">=</span> <span class="n">maxEventVal</span><span class="o">-</span><span class="n">minEventVal</span><span class="o">+</span><span class="mi">1</span>
     <span class="n">respZeros</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">numDiffEvents</span> <span class="o">*</span> <span class="n">numActions</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">respZeros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">stimulus</span><span class="p">[</span><span class="n">numDiffEvents</span><span class="o">*</span><span class="n">action</span> <span class="o">+</span> <span class="n">event</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">stimulus</span>
-        
+
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimAllInfo&quot;</span>
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;maxEventVal&quot;</span><span class="p">:</span><span class="n">maxEventVal</span><span class="p">,</span>
-                       <span class="s">&quot;minEventVal&quot;</span><span class="p">:</span><span class="n">minEventVal</span><span class="p">,</span> 
+                       <span class="s">&quot;minEventVal&quot;</span><span class="p">:</span><span class="n">minEventVal</span><span class="p">,</span>
                        <span class="s">&quot;numActions&quot;</span><span class="p">:</span><span class="n">numActions</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">deckStim</span>
-    </div>
+</div>
 <div class="viewcode-block" id="deckStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfo</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
-<span class="sd">    from two possible actions. </span>
-<span class="sd">        </span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information</span>
+<span class="sd">    from two possible actions.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The</span>
 <span class="sd">        function returns a list of length 2.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">devisor</span> <span class="o">=</span> <span class="n">maxEventVal</span> <span class="o">+</span> <span class="n">epsilon</span> 
-    
+    <span class="n">devisor</span> <span class="o">=</span> <span class="n">maxEventVal</span> <span class="o">+</span> <span class="n">epsilon</span>
+
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">devisor</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">event</span><span class="o">/</span><span class="n">devisor</span><span class="p">))</span><span class="o">*</span><span class="n">action</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">stimulus</span>
-        
+
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfo&quot;</span>
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;epsilon&quot;</span><span class="p">:</span><span class="n">epsilon</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">deckStim</span>
-    </div>
+</div>
 <div class="viewcode-block" id="deckStimDualInfoLogistic"><a class="viewcode-back" href="../../experiment.html#experiment.decks.deckStimDualInfoLogistic">[docs]</a><span class="k">def</span> <span class="nf">deckStimDualInfoLogistic</span><span class="p">(</span><span class="n">maxEventVal</span><span class="p">,</span><span class="n">minEventVal</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the decks stimuli for models expecting the reward information </span>
-<span class="sd">    from two possible actions. </span>
-<span class="sd">        </span>
+<span class="sd">    Processes the decks stimuli for models expecting the reward information</span>
+<span class="sd">    from two possible actions.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    deckStim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last action. The event that is a float and action is {0,1}. The </span>
+<span class="sd">        last action. The event that is a float and action is {0,1}. The</span>
 <span class="sd">        function returns a list of length 2.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxEventVal</span> <span class="o">+</span> <span class="n">minEventVal</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
-    
+
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        
+
         <span class="n">x</span><span class="o">=</span><span class="n">exp</span><span class="p">(</span><span class="n">epsilon</span> <span class="o">*</span><span class="p">(</span><span class="n">event</span><span class="o">-</span><span class="n">mid</span><span class="p">))</span>
-        
+
         <span class="n">stim</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)))</span><span class="o">*</span><span class="n">action</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">stimulus</span>
-        
+
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;deckStimDualInfoLogistic&quot;</span>
     <span class="n">deckStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;midpoint&quot;</span><span class="p">:</span><span class="n">mid</span><span class="p">,</span>
                        <span class="s">&quot;epsilon&quot;</span><span class="p">:</span><span class="n">epsilon</span><span class="p">}</span>
@@ -375,9 +381,9 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
@@ -394,7 +400,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -403,13 +409,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

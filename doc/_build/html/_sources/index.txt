@@ -6,16 +6,6 @@
 PyDM!
 ================================
 
-.. inheritance-diagram::
-   experiment
-   experiments
-   fitting
-   model
-   models
-   outputting
-   vtkWriter
-
-
 Contents:
 
 .. toctree::
@@ -34,7 +24,6 @@ Contents:
    plotting
    inputs
    vtkWriter
-   modules
 
 
 Indices and tables

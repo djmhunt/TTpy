@@ -8,7 +8,7 @@
     
     <title>experiment.beads &mdash; PyDM 0.9 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,15 +37,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for experiment.beads</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
@@ -53,8 +53,8 @@
 <span class="sd">:Author: Dominic Hunt</span>
 
 <span class="sd">:Reference: Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.</span>
-<span class="sd">                    `Moore, S. C., &amp; Sellen, J. L. (2006)`. </span>
-<span class="sd">                    Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9. </span>
+<span class="sd">                    `Moore, S. C., &amp; Sellen, J. L. (2006)`.</span>
+<span class="sd">                    Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9.</span>
 <span class="sd">                    Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
@@ -66,7 +66,7 @@
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">rand</span>
-<span class="kn">from</span> <span class="nn">experiment</span> <span class="kn">import</span> <span class="n">experiment</span>
+<span class="kn">from</span> <span class="nn">experimentTemplate</span> <span class="kn">import</span> <span class="n">experiment</span>
 <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">dataVsEvents</span><span class="p">,</span> <span class="n">varDynamics</span>
 <span class="kn">from</span> <span class="nn">experimentPlot</span> <span class="kn">import</span> <span class="n">experimentPlot</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">varyingParams</span>
@@ -78,32 +78,32 @@
 
 <div class="viewcode-block" id="Beads"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads">[docs]</a><span class="k">class</span> <span class="nc">Beads</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Based on the Moore&amp;Sellen Beads task</span>
-<span class="sd">    </span>
+
 <span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The name of the class used when recording what has been used.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    N : int, optional</span>
 <span class="sd">        Number of beads that could potentially be shown</span>
 <span class="sd">    beadSequence : list or array of {0,1}, optional</span>
-<span class="sd">        The sequence of beads to be shown. Bead sequences can also be embedded </span>
+<span class="sd">        The sequence of beads to be shown. Bead sequences can also be embedded</span>
 <span class="sd">        in the code and then referred to by name. The only current one is</span>
 <span class="sd">        `MooreSellen`, the default sequence.</span>
 <span class="sd">    plotArgs : dictionary, optional</span>
-<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to </span>
-<span class="sd">        its documentation for more details.    </span>
+<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
+<span class="sd">        its documentation for more details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beads&quot;</span>
 
 <div class="viewcode-block" id="Beads.reset"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new experiment instance</span>
 
 <span class="sd">        Returns</span>
@@ -148,11 +148,14 @@
 </div>
 <div class="viewcode-block" id="Beads.next"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Produces the next bead for the iterator</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bead : {0,1}</span>
-<span class="sd">        </span>
+<span class="sd">        nextValidActions : Tuple of ints</span>
+<span class="sd">            The list of valid actions that the model can respond with. Set to</span>
+<span class="sd">            ``None``, as they never vary.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        StopIteration</span>
@@ -165,12 +168,15 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">nextStim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span>
 </div>
 <div class="viewcode-block" id="Beads.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        action : {1,2, None}</span>
@@ -184,12 +190,12 @@
 <div class="viewcode-block" id="Beads.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all the relevent data for this experiment run</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        results : dictionary</span>
-<span class="sd">            The dictionary contains a series of keys including Name, </span>
-<span class="sd">            Observables and Actions.        </span>
+<span class="sd">            The dictionary contains a series of keys including Name,</span>
+<span class="sd">            Observables and Actions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
@@ -202,7 +208,7 @@
 <div class="viewcode-block" id="Beads.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.beads.Beads.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
-<span class="sd">        output later </span>
+<span class="sd">        output later</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
@@ -287,20 +293,20 @@
 </div></div></div>
 <div class="viewcode-block" id="generateSequence"><a class="viewcode-back" href="../../experiment.html#experiment.beads.generateSequence">[docs]</a><span class="k">def</span> <span class="nf">generateSequence</span><span class="p">(</span><span class="n">numBeads</span><span class="p">,</span> <span class="n">oneProb</span><span class="p">,</span> <span class="n">switchProb</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Designed to generate a sequence of beads with a probability of switching </span>
+<span class="sd">    Designed to generate a sequence of beads with a probability of switching</span>
 <span class="sd">    jar at any time.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Properties</span>
 <span class="sd">    ----------</span>
 <span class="sd">    numBeads : int</span>
 <span class="sd">        The number of beads in the sequence</span>
 <span class="sd">    oneProb : float in ``[0,1]``</span>
 <span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
-<span class="sd">        of a 0 from the second jar. </span>
+<span class="sd">        of a 0 from the second jar.</span>
 <span class="sd">    switchProb : float in ``[0,1]``</span>
-<span class="sd">        The probability that the drawn beads change the jar they are bieing </span>
+<span class="sd">        The probability that the drawn beads change the jar they are bieing</span>
 <span class="sd">        drawn from</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    sequence : list of ``{0,1}``</span>
@@ -322,107 +328,107 @@
             <span class="n">sequence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">bead</span>
 
     <span class="k">return</span> <span class="n">sequence</span>
-    </div>
+</div>
 <div class="viewcode-block" id="beadStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the beads stimuli for models expecting just the event</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of ``{1,2, None}`` </span>
+<span class="sd">        The function expects to be passed the event and a decision of ``{1,2, None}``</span>
 <span class="sd">        and then return it.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.qLearn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">event</span>
-        
+
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDirect&quot;</span>
     <span class="k">return</span> <span class="n">beadStim</span>
-    </div>
+</div>
 <div class="viewcode-block" id="beadStimDualDirect"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDualDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the beads stimuli for models expecting a tuple of ``[event,1-event]`` </span>
-<span class="sd">        </span>
+<span class="sd">    Processes the beads stimuli for models expecting a tuple of ``[event,1-event]``</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        The function expects to be passed the event and a decision of {1,2, None}</span>
 <span class="sd">        and then return ``[event,1-event]``, where the event is expected to be</span>
 <span class="sd">        ``{1,0}``.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.EP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">event</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
-        
+
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDualDirect&quot;</span>
-    
+
     <span class="k">return</span> <span class="n">beadStim</span>
 </div>
 <div class="viewcode-block" id="beadStimDualInfo"><a class="viewcode-back" href="../../experiment.html#experiment.beads.beadStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualInfo</span><span class="p">(</span><span class="n">oneProb</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the beads stimuli for models expecting the reward information </span>
-<span class="sd">    from two possible actions </span>
-<span class="sd">    </span>
+<span class="sd">    Processes the beads stimuli for models expecting the reward information</span>
+<span class="sd">    from two possible actions</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    oneProb : float in ``[0,1]``</span>
 <span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
-<span class="sd">        of a 0 from the second jar. ``event_info`` is calculated as </span>
+<span class="sd">        of a 0 from the second jar. ``event_info`` is calculated as</span>
 <span class="sd">        ``oneProb*event + (1-oneProb)*(1-event)``</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of {1,2, None} </span>
+<span class="sd">        The function expects to be passed the event and a decision of {1,2, None}</span>
 <span class="sd">        and then return ``[event_info,1-event_info]``.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The identifier of the function</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    model.MS, model.MS_rev, model.BP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">decision</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="n">oneProb</span><span class="o">*</span><span class="n">event</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">event</span><span class="p">)</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">stimulus</span>
-        
+
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;beadStimDualInfo&quot;</span>
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;oneProb&quot;</span><span class="p">:</span><span class="n">oneProb</span><span class="p">}</span>
-        
+
     <span class="k">return</span> <span class="n">beadStim</span>
 </pre></div></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
@@ -439,7 +445,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -448,13 +454,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>
