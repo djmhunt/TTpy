@@ -112,7 +112,7 @@
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decSingle</span><span class="p">(</span><span class="n">expResponses</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="o">+</span><span class="mi">1</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decSingle</span><span class="p">(</span><span class="n">expResponses</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">))))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
@@ -123,7 +123,9 @@
                            <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">),</span>
                            <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">)}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c"># This way for the first run you always consider that you are switching</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previousAction</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="c">#        if len(prior) != self.numStimuli:</span>
 <span class="c">#            raise warning.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
@@ -131,9 +133,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">decProbs</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">validActions</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">previousAction</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">switchProb</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stayMatrix</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="o">-</span><span class="n">delta</span><span class="p">,</span><span class="n">delta</span><span class="p">],[</span><span class="n">delta</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">delta</span><span class="p">]])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">switchMatrix</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="n">delta</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">delta</span><span class="p">],[</span><span class="mi">1</span><span class="o">-</span><span class="n">delta</span><span class="p">,</span><span class="n">delta</span><span class="p">]])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">)}</span>
 
         <span class="c"># Recorded information</span>
 
@@ -144,6 +147,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recSwitchProb</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionLoc</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="BPMS.action"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -151,7 +155,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        action : integer or None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
@@ -174,6 +177,7 @@
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;SwitchProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recSwitchProb</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;PosteriorProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionLocation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionLoc</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Decsions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Events&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="p">)</span>
@@ -195,15 +199,17 @@
 
     <span class="k">def</span> <span class="nf">_processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">events</span><span class="p">):</span>
 
-        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
+        <span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">currAction</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
 
-        <span class="n">postProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postProb</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
+        <span class="n">postProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postProb</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="p">,</span> <span class="n">currAction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span> <span class="o">=</span> <span class="n">postProb</span>
 
         <span class="c">#Calculate the new probabilities</span>
-        <span class="n">priorProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">postProb</span><span class="p">)</span>
+        <span class="n">priorProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">postProb</span><span class="p">,</span> <span class="n">currAction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">priorProb</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">switchProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_switch</span><span class="p">(</span><span class="n">priorProb</span><span class="p">)</span>
@@ -220,18 +226,25 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">]])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recSwitchProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">switchProb</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionLoc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_postProb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">postProb</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 
+        <span class="n">loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span>
+
         <span class="n">p</span> <span class="o">=</span> <span class="n">postProb</span> <span class="o">*</span> <span class="n">event</span>
 
-        <span class="n">li</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="n">action</span><span class="p">],</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">]])</span>
+        <span class="n">li</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="n">loc</span><span class="p">[</span><span class="n">action</span><span class="p">]],</span><span class="n">p</span><span class="p">[</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">]]])</span>
 
         <span class="n">newProb</span> <span class="o">=</span> <span class="n">li</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+
+        <span class="n">loc</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">loc</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span> <span class="o">=</span> <span class="n">loc</span>
 
         <span class="k">return</span> <span class="n">newProb</span>
 
@@ -248,6 +261,8 @@
             <span class="c"># When the subject has switched</span>
             <span class="n">pr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">switchMatrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">postProb</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">previousAction</span> <span class="o">=</span> <span class="n">action</span>
+
         <span class="k">return</span> <span class="n">pr</span>
 
     <span class="k">def</span> <span class="nf">_switch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prob</span><span class="p">):</span>
@@ -260,7 +275,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">pI</span> <span class="o">=</span> <span class="n">prob</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">ps</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">pI</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)))</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="n">pI</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)))</span>
 
         <span class="k">return</span> <span class="n">ps</span>
 </div>

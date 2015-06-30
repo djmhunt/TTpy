@@ -69,11 +69,12 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 
 <span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="kn">import</span> <span class="n">model</span>
 <span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="kn">import</span> <span class="n">modelPlot</span>
 <span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="kn">import</span> <span class="n">modelSetPlot</span>
-<span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decEta</span>
+<span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decSingle</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">callableDetailsString</span>
 
 <div class="viewcode-block" id="BHMM"><a class="viewcode-back" href="../../model.html#model.BHMM.BHMM">[docs]</a><span class="k">class</span> <span class="nc">BHMM</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
@@ -93,6 +94,10 @@
 <span class="sd">        Decision threshold parameter. Default ``0``</span>
 <span class="sd">    delta : float in range ``[0,1]``, optional</span>
 <span class="sd">        The switch probability parameter. Default ``0``</span>
+<span class="sd">    mu : float</span>
+<span class="sd">        The mean expected payoff</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        The standard deviation of the expected payoff</span>
 <span class="sd">    prior : array of two floats in ``[0,1]`` or just float in range, optional</span>
 <span class="sd">        The prior probability of of the two states being the correct one.</span>
 <span class="sd">        Default ``array([0.5,0.5])``</span>
@@ -174,6 +179,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;eta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;delta&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;mu&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;sigma&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
@@ -293,15 +300,18 @@
     <span class="k">def</span> <span class="nf">_postProb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">postProb</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 
         <span class="n">li</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">postProb</span><span class="p">[</span><span class="n">action</span><span class="p">],</span><span class="n">postProb</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">]])</span>
+        <span class="n">payoffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_payoff</span><span class="p">()</span>
 
-        <span class="n">newProb</span> <span class="o">=</span> <span class="n">li</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+        <span class="n">brute</span> <span class="o">=</span> <span class="n">payoffs</span> <span class="o">*</span> <span class="n">li</span>
+        <span class="n">newProb</span> <span class="o">=</span> <span class="n">li</span>
+        <span class="n">newProb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">event</span><span class="o">*</span><span class="n">li</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">brute</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">newProb</span>
 
     <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">postProb</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;Return the new prior probabilitiy that each state is the correct one</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c"># The probability of the current state being correct, given if the previous state was correct.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previousAction</span> <span class="o">==</span> <span class="n">action</span><span class="p">:</span>
@@ -327,21 +337,16 @@
 
         <span class="k">return</span> <span class="n">ps</span>
 
-    <span class="k">def</span> <span class="nf">_payoff</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_payoff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Payoff given for a specific action and system state</span>
-<span class="sd">        A : Action</span>
-<span class="sd">        X : System state (vec)</span>
-<span class="sd">        mu : means (vec)</span>
-<span class="sd">        sigma : standard deviations (vec)</span>
 
+<span class="sd">        Returns</span>
 <span class="sd">        Y : Payoff</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pay</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma</span><span class="p">,(</span><span class="mi">2</span><span class="p">))</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">pay</span>
+        <span class="n">pay</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,(</span><span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">))</span>
 
-        <span class="n">Y</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">A</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">Y</span>
+        <span class="k">return</span> <span class="n">pay</span>
 </div>
 <div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.BHMM.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
