@@ -52,6 +52,64 @@ from model.OpAL import OpAL
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
+expParams = {'rewardProb': arange(0.5,1,0.1)}
+expExtraParams = {'learningLen':100}
+expSets = experiments((probSelect,expParams,expExtraParams))
+
+sR = arange(-0.1,0.35,0.05)
+
+alphaGoDiffSet = concatenate((sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
+                              sR,sR,sR,sR,sR,sR,sR))
+
+rhoSet = arange(-1,1.5,0.5)
+
+parameters = {'alphaGoDiff':alphaGoDiffSet}#,
+#              'betaDiff':rhoSet}
+paramExtras = {'alpha': 0.1,
+#               'alphaGoDiff':0,
+               'alphaC': 0.1,
+               'beta': 1,
+               'betaDiff':0,
+               'numActions':4,
+               'stimFunc':deckStimDirect(),
+               'decFunc':decMaxProb([0,1,2,3])} #For decks
+modelSet = models((OpAL,parameters,paramExtras))
+
 outputOptions = {'simLabel': 'OpAL_simSet',
                  'save': True,
                  'saveScript': True,
@@ -59,28 +117,6 @@ outputOptions = {'simLabel': 'OpAL_simSet',
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
-
-expParams = {'rewardProb': 0.7}
-expExtraParams = {'learningLen':100}
-
-expSets = experiments((probSelect,expParams,expExtraParams))
-
-sR = arange(-0.1,0.125,0.025)
-
-alphaGoDiffSet = concatenate((sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR))
-
-rhoSet = arange(-1,1.25,0.25)
-
-parameters = {'alphaGoDiff':alphaGoDiffSet,
-              'betaDiff':rhoSet}
-
-paramExtras = {'alpha': 0.1,
-               'alphaC': 0.2,
-               'beta': 1,
-               'numActions':4,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decMaxProb([0,1,2,3])} #For decks
-modelSet = models((OpAL,parameters,paramExtras))
 
 ### For simulating experiments
 

@@ -34,13 +34,15 @@ from model.qLearn2 import qLearn2
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-eta = 0#0.3#0.15
-alpha = 0.5#0.2#0.5#0.2
-alphaMin = 0
-alphaMax = 1
-beta = 0.5#0.7#0.5#0.7
-betaMin = 0
-betaMax = 5
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
+eta = 0.0
+alpha = 0.5
+alphaBounds = (0,1)
+beta = 0.5
+betaBounds = (0,5)
 
 outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'save': True,
@@ -48,17 +50,20 @@ outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {'alphaPos':(alphaMax-alphaMin)/2,
-              'alphaNeg':(alphaMax-alphaMin)/2,
-              'beta':(betaMax-betaMin)/2}
+parameters = {'alphaPos':sum(alphaBounds)/2,
+              'alphaNeg':sum(alphaBounds)/2,
+              'beta':sum(betaBounds)/2}
 paramExtras = {'eta':eta,
                'numActions':2,
                'stimFunc':deckStimDirect(),
                'decFunc':decEta(eta = eta)} #For decks
 
-expSets = experiments((Decks,{},{}))
 modelSet = models((qLearn2,parameters,paramExtras))
 output = outputting(**outputOptions)
+
+bounds = {'alphaPos' : alphaBounds,
+          'alphaNeg' : alphaBounds,
+          'beta' : betaBounds}
 
 ### For simulating experiments
 #
@@ -104,9 +109,7 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alphaPos' : (alphaMin,alphaMax),
-                            'alphaNeg' : (alphaMin,alphaMax),
-                            'beta' : (betaMin,betaMax)},
+                  bounds = bounds,
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

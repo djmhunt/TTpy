@@ -36,6 +36,16 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
+expParams = {'rewMag':4,
+             'rewProb':array([0.87,0.33]),
+             'stimMag':1,
+             'stimDur':20,#200) # Stimulus duration
+             'rewDur':4,#40) #duration of reward
+             'simDur':30,#300) # the length of the simulation
+             'stimRepeats':7}
+expExtraParams = {}
+expSets = experiments((Pavlov,expParams,expExtraParams))
+
 eta = 0.0
 alpha = 0.005
 beta = 0.1
@@ -44,12 +54,7 @@ zeta = 2
 tau = 160
 z = 100
 averaging = 3
-outputOptions = {'simLabel': 'RVPM_sim',
-                 'save': True,
-                 'saveScript': True,
-                 'pickleData': False,
-                 'silent': False,
-                 'npErrResp' : 'log'}#'raise','log'
+
 parameters = {  'alpha':alpha,
                 'beta':beta}
 paramExtras = {'eta':eta,
@@ -60,16 +65,15 @@ paramExtras = {'eta':eta,
                'averaging':averaging,
                'stimFunc':pavlovStimTemporal(),
                'decFunc':decEta(eta = eta)}
-experimentParameters = {'rewMag':4,
-                        'rewProb':array([0.87,0.33]),
-                        'stimMag':1,
-                        'stimDur':20,#200) # Stimulus duration
-                        'rewDur':4,#40) #duration of reward
-                        'simDur':30,#300) # the length of the simulation
-                        'stimRepeats':7}
 
-expSets = experiments((Pavlov,experimentParameters,{}))
 modelSet = models((RVPM,parameters,paramExtras))
+
+outputOptions = {'simLabel': 'RVPM_sim',
+                 'save': True,
+                 'saveScript': True,
+                 'pickleData': False,
+                 'silent': False,
+                 'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
 
 ## For simulating experiments

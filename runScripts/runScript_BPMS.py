@@ -35,17 +35,25 @@ from model.BPMS import BPMS
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-eta = 0#0.3#0.15
-alpha = 0.5#0.2#0.5#0.2
-alphaMin = 0
-alphaMax = 1
-beta = 0.5#0.7#0.5#0.7
-betaMin = 0
-betaMax = 5
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
+eta = 0
+beta = 0.5
+betaBounds = (0,5)
 delta = 0.5
-deltaMin = 0.1#0
-deltaMax = 0.9#1
+deltaBounds = (0.1,0.9)
 numStimuli = 2
+
+parameters = {'delta':sum(deltaBounds)/2,
+              'beta':sum(betaBounds)/2}
+paramExtras = {'eta':eta,
+               'numStimuli':numStimuli,
+               'stimFunc':deckStimDualInfo(10,0.01),
+               'decFunc':decSingle()} #For decks
+
+modelSet = models((BPMS,parameters,paramExtras))
 
 outputOptions = {'simLabel': 'BPMS_decksSet',
                  'save': True,
@@ -53,23 +61,10 @@ outputOptions = {'simLabel': 'BPMS_decksSet',
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'raise'}#'raise','log'
-parameters = {'delta':(deltaMax-deltaMin)/2,
-              'beta':(betaMax-betaMin)/2}
-paramExtras = {'eta':eta,
-               'numStimuli':numStimuli,
-               'stimFunc':deckStimDualInfo(10,0.01),
-               'decFunc':decSingle()} #For decks
-
-expSets = experiments((Decks,{},{}))
-modelSet = models((BPMS,parameters,paramExtras))
 output = outputting(**outputOptions)
 
-### For simulating experiments
-#
-#from simulation import simulation
-#
-#simulation(expSets, modelSet, output)
-
+bounds = {'delta' : deltaBounds,
+          'beta' : betaBounds}
 ### For data fitting
 
 from numpy import concatenate
@@ -108,8 +103,7 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
-                  bounds = {'delta' : (deltaMin,deltaMax),
-                            'beta' : (betaMin,betaMax)},
+                  bounds = bounds,
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

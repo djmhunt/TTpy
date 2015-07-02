@@ -43,25 +43,33 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
 eta = 0.0
 alpha = 0.5
+alphaBounds = (0,1)
 beta = 0.5
-simDur = 30
+betaBounds = (0,5)
+
+parameters = {  'alpha':sum(alphaBounds)/2,
+                'beta':sum(betaBounds)/2}
+paramExtras = {'eta':eta,
+               'stimFunc':deckStimDirect(),
+               'decFunc':decEta(eta = eta)}
+modelSet = models((qLearn,parameters,paramExtras))
+
 outputOptions = {'simLabel': 'qLearn_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'beta':beta}
-paramExtras = {'eta':eta,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decEta(eta = eta)} #For qLearn decks
-
-expSets = experiments((Decks,{},{}))
-modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
+
+bounds = {'alpha' : alphaBounds,
+          'beta' : betaBounds}
 
 ### For data fitting
 
@@ -99,8 +107,7 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (0,1),
-                            'beta' : (0,5)},
+                  bounds = bounds,
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

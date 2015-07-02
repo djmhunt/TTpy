@@ -16,7 +16,7 @@ import sys
 sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate
+from numpy import array, concatenate, arange
 
 ### Import all experiments, models, outputting and interface functions
 #The experiment factory
@@ -43,24 +43,27 @@ from model.RVPM import RVPM
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
 eta = 0.0
-alpha = 0.5
-beta = 0.5
-simDur = 30
+alphaSet = arange(0.1,0.5,0.1)
+betaSet = arange(0.2,5,0.2)
+
+parameters = {  'alpha':alphaSet,
+                'beta':betaSet}
+paramExtras = {'eta':eta,
+               'stimFunc':deckStimDirect(),
+               'decFunc':decEta(eta = eta)} #For qLearn decks
+modelSet = models((qLearn,parameters,paramExtras))
+
 outputOptions = {'simLabel': 'qLearn_decksSim',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':alpha,
-                'beta':beta}
-paramExtras = {'eta':eta,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decEta(eta = eta)} #For qLearn decks
-
-expSets = experiments((Decks,{},{}))
-modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
 
 ### For simulating experiments

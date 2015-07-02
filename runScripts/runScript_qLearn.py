@@ -34,13 +34,24 @@ from model.qLearn import qLearn
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-eta = 0#0.3#0.15
-alpha = 0.5#0.2#0.5#0.2
-alphaMin = 0
-alphaMax = 1
-beta = 0.5#0.7#0.5#0.7
-betaMin = 0
-betaMax = 5
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
+eta = 0.0
+alpha = 0.5
+alphaBounds = (0,1)
+beta = 0.5
+betaBounds = (0,5)
+
+parameters = {  'alpha':sum(alphaBounds)/2,
+                'beta':sum(betaBounds)/2}
+paramExtras = {'eta':eta,
+               'numActions':2,
+               'stimFunc':deckStimDirect(),
+               'decFunc':decEta(eta = eta)} #For decks
+
+modelSet = models((qLearn,parameters,paramExtras))
 
 outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
@@ -48,16 +59,10 @@ outputOptions = {'simLabel': 'qLearn_dataSet',
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'log'}#'raise','log'
-parameters = {  'alpha':(alphaMax-alphaMin)/2,
-                'beta':(betaMax-betaMin)/2}
-paramExtras = {'eta':eta,
-               'numActions':2,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decEta(eta = eta)} #For decks
-
-expSets = experiments((Decks,{},{}))
-modelSet = models((qLearn,parameters,paramExtras))
 output = outputting(**outputOptions)
+
+bounds = {'alpha' : alphaBounds,
+          'beta' : betaBounds}
 
 ### For simulating experiments
 #
@@ -82,6 +87,7 @@ from fitting.fitters.minimize import minimize
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
                "../../Shared folders/worthy models and data/carlosdata/",
                "../../Shared folders/worthy models and data/iant_studentdata/"]
+#dataFolders = ["../testData/"]
 
 
 dataSet = datasets(dataFolders,['mat']*len(dataFolders))#"./testData/",'mat')#
@@ -103,8 +109,7 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (alphaMin,alphaMax),
-                            'beta' : (betaMin,betaMax)},
+                  bounds = bounds,
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

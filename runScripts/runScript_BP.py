@@ -34,13 +34,13 @@ from model.BP import BP
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-eta = 0#0.3#0.15
-alpha = 0.5#0.2#0.5#0.2
-alphaMin = 0
-alphaMax = 1
-beta = 0.5#0.7#0.5#0.7
-betaMin = 0
-betaMax = 5
+expParams = {}
+expExtraParams = {}
+expSets = experiments((Decks,expParams,expExtraParams))
+
+eta = 0
+beta = 0.5
+betaBounds = (0,5)
 numStimuli = 2
 
 outputOptions = {'simLabel': 'BP_decksSet',
@@ -49,22 +49,16 @@ outputOptions = {'simLabel': 'BP_decksSet',
                  'pickleData': False,
                  'silent': False,
                  'npErrResp' : 'raise'}#'raise','log'
-parameters = {  'alpha':(alphaMax-alphaMin)/2,
-                'beta':(betaMax-betaMin)/2}
+parameters = { 'beta':sum(betaBounds)/2}
 paramExtras = {'eta':eta,
                'numStimuli':numStimuli,
                'stimFunc':deckStimDualInfo(10,0.01),
                'decFunc':decEta(eta = eta)} #For decks
 
-expSets = experiments((Decks,{},{}))
 modelSet = models((BP,parameters,paramExtras))
 output = outputting(**outputOptions)
 
-### For simulating experiments
-#
-#from simulation import simulation
-#
-#simulation(expSets, modelSet, output)
+bounds = {'beta':betaBounds}
 
 ### For data fitting
 
@@ -104,8 +98,7 @@ def scaleFuncSingle():
 # Define the fitting algorithm
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
-                  bounds = {'alpha' : (alphaMin,alphaMax),
-                            'beta' : (betaMin,betaMax)},
+                  bounds = bounds,
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
