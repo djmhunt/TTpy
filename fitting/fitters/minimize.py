@@ -11,6 +11,7 @@ from scipy import optimize
 from itertools import izip
 
 from qualityFunc import qualFuncIdent
+from boundFunc import scalarBound
 
 import pytest
 
@@ -31,6 +32,9 @@ class minimize(fitAlg):
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
+    boundCostFunc : function, optional
+        A function used to calculate the penalty for exceeding the boundaries.
+        Default is ``boundFunc.scalarBound``
     numStartPoints : int, optional
         The number of starting points generated for each parameter.
         Default 4
@@ -84,7 +88,7 @@ class minimize(fitAlg):
     constrained = ['L-BFGS-B','TNC','SLSQP']
 
 
-    def __init__(self,fitQualFunc = None, method = None, bounds = None, numStartPoints = 4, boundFit = True, boundSensitivity = 5):
+    def __init__(self,fitQualFunc = None, method = None, bounds = None, boundCostFunc = scalarBound(), numStartPoints = 4, boundFit = True, boundSensitivity = 5):
 
         self.numStartPoints = numStartPoints
         self.allBounds = bounds
@@ -92,11 +96,13 @@ class minimize(fitAlg):
         self.boundSensitivity = boundSensitivity
 
         self.fitQualFunc = qualFuncIdent(fitQualFunc)
+        self.boundCostFunc = boundCostFunc
 
         self._setType(method,bounds)
 
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc,
+                        'boundaryCostFunction': boundCostFunc,
                         'bounds':self.allBounds,
                         'numStartPoints' : self.numStartPoints,
                         'boundFit' : self.boundFit,

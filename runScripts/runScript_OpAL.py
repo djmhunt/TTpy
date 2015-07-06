@@ -6,21 +6,7 @@ This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
 
-Desired plots:
-    :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`
-    :math:`\\beta_N = 1, \\beta_G in ]0,2[`
 
-    Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`
-    with:
-        :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`
-        :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`
-
-    Plot the range of
-    :math:`\\alpha_G = 0.2 - \\alpha_N` for :math:`\\alpha_N \in ]0,0.2[` and
-    :math:`\\beta_G = 2 - \\beta_N` for :math:`\\beta_N in ]0,2[` with the Y-axis being
-    Choose(A) = prob(A) - prob(M),
-    Avoid(B) = prob(M) - prob(B),
-    Bias = choose(A) - avoid(B),
 """
 ### Import useful functions
 # Make devision floating point by default
@@ -56,24 +42,25 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks,expParams,expExtraParams))
 
-sR = arange(-0.1,0.35,0.05)
+alpha = 0.1
+alphaBounds = (0,1)
+alphaC = 0.1
+beta = 1
+betaBounds = (0,10)
+eta = 0
 
-rhoSet = arange(-1,1.5,0.5)
+parameters = {'alphaC': sum(alphaBounds)/2,
+              'alphaGo': sum(alphaBounds)/2,
+              'alphaNogo': sum(alphaBounds)/2,
+              'betaGo': sum(betaBounds)/2,
+              'betaNogo': sum(betaBounds)/2}
 
-parameters = {'alphaGo':alphaGoDiffSet,
-              'alphaC': 0.1,
-              'betaDiff':rhoSet}
-
-paramExtras = {'alpha': 0.1,
-#               'alphaGoDiff':0,
-               'beta': 1,
-               'betaDiff':0,
-               'numActions':4,
+paramExtras = {'numActions':2,
                'stimFunc':deckStimDirect(),
-               'decFunc':decMaxProb([0,1,2,3])} #For decks
+               'decFunc':decEta(eta = eta)}
 modelSet = models((OpAL,parameters,paramExtras))
 
-outputOptions = {'simLabel': 'OpAL_simSet',
+outputOptions = {'simLabel': 'OpAL_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
@@ -81,16 +68,19 @@ outputOptions = {'simLabel': 'OpAL_simSet',
                  'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'alphaC' : alphaCBounds,
-          'beta' : betaBounds}
+bounds = {'alphaC': alphaBounds,
+          'alphaGo': alphaBounds,
+          'alphaNogo': alphaBounds,
+          'betaGo': betaBounds,
+          'betaNogo': betaBounds}
 
 ### For data fitting
-
-from numpy import concatenate
 
 from dataFitting import dataFitting
 
 from data import data, datasets
+
+from fitting.fitters.boundFunc import infBound, scalarBound
 
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.actReactFitter import fitter
@@ -123,6 +113,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
                   bounds = bounds,
+                  boundCostFunc = scalarBound(base = 160),
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

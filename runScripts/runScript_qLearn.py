@@ -78,6 +78,8 @@ from dataFitting import dataFitting
 
 from data import data, datasets
 
+from fitting.fitters.boundFunc import infBound, scalarBound
+
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
@@ -110,6 +112,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
                   bounds = bounds,
+                  boundCostFunc = scalarBound(base = 160),
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")
