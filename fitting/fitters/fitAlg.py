@@ -9,6 +9,7 @@ from numpy import linspace
 from itertools import izip
 from utils import listMergeNP
 
+from utils import callableDetailsString
 from qualityFunc import qualFuncIdent
 from boundFunc import scalarBound
 
@@ -18,9 +19,10 @@ class fitAlg(object):
 
     Parameters
     ----------
-    fitQualFunc : function, optional
-        The function used to calculate the quality of the fit. The value it
-        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``
+    fitQualFunc : string, optional
+        The name of the function used to calculate the quality of the fit.
+        The value it returns proivides the fitter with its fitting guide.
+        Default ``fitAlg.null``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
@@ -56,7 +58,7 @@ class fitAlg(object):
 
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc,
-                        'boundaryCostFunction': boundCostFunc,
+                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
                         'bounds':self.allBounds,
                         'numStartPoints' : self.numStartPoints}
 

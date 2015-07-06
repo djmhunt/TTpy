@@ -7,7 +7,7 @@ from __future__ import division
 from fitAlg import fitAlg
 
 from numpy import array, around
-from scipy.optimize import minimize
+from scipy.optimize import basinhopping
 from itertools import izip
 
 from utils import callableDetailsString
@@ -16,9 +16,9 @@ from boundFunc import scalarBound
 
 import pytest
 
-class minimize(fitAlg):
+class basinhopping(fitAlg):
 
-    """The class for fitting data using scipy.optimise.minimize
+    """The class for fitting data using scipy.optimise.basinhopping
 
     Parameters
     ----------
@@ -80,11 +80,12 @@ class minimize(fitAlg):
     fitting.fitters.fitAlg.fitAlg : The general fitting method class, from
                                     which this one inherits
     fitting.fit.fit : The general fitting framework class
-    scipy.optimise.minimize : The fitting class this wraps around
+    scipy.optimise.basinhopping : The fitting class this wraps around
+    scipy.optimise.minimize : The fitting class basinhopping wraps around
 
     """
 
-    Name = 'minimise'
+    Name = 'basinhopping'
 
     unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
     constrained = ['L-BFGS-B','TNC','SLSQP']
@@ -93,19 +94,18 @@ class minimize(fitAlg):
     def __init__(self,fitQualFunc = None, method = None, bounds = None, boundCostFunc = scalarBound(), numStartPoints = 4, boundFit = True, boundSensitivity = 5):
 
         self.numStartPoints = numStartPoints
-        self.allBounds = bounds
         self.boundFit = boundFit
         self.boundSensitivity = boundSensitivity
 
-        self.fitQualFunc = qualFuncIdent(fitQualFunc)
+        self.fitness = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
 
         self._setType(method,bounds)
 
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc,
+                        'bounds':self.bounds,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds':self.allBounds,
                         'numStartPoints' : self.numStartPoints,
                         'boundFit' : self.boundFit,
                         'boundSensitivity' : self.boundSensitivity
@@ -119,7 +119,6 @@ class minimize(fitAlg):
         self.count = 1
 
         self.boundVals = None
-        self.boundNames = None
 
 #    def callback(self,Xi):
 #        """
@@ -162,12 +161,21 @@ class minimize(fitAlg):
 
         method=self.method
         methodSet = self.methodSet
+        bounds = self.bounds
+        boundVals = self.boundVals
         boundFit = self.boundFit
         boundSensitivity = self.boundSensitivity
         numStartPoints = self.numStartPoints
 
-        self.setBounds(mParamNames)
-        boundVals = self.boundVals
+        if bounds == None:
+            boundVals = [(0,float('Inf')) for i in mInitialParams]
+            bounds = {k : v for k, v in izip(mParamNames, boundVals)}
+            self.bounds = bounds
+            self.boundVals = boundVals
+
+        if boundVals == None:
+            boundVals = [ bounds[k] for k in mParamNames]
+            self.boundVals = boundVals
 
         initParamSets = self.startParams(mInitialParams, bounds = boundVals, numPoints = numStartPoints)
 
@@ -208,10 +216,10 @@ class minimize(fitAlg):
 
         for i in initParamSets:
 
-            optimizeResult = minimize(self.fitness, i[:],
-                                      method=method,
-                                      bounds=bounds)#,
-#                                     callback= self.callback )
+            optimizeResult = basinhopping(self.fitness, i[:],
+                                          minimizer_kwargs = {method: method,
+                                                              bounds: bounds})#,
+#                                                             callback: self.callback})
             self.count = 1
 
             if optimizeResult.success == True:
@@ -266,21 +274,21 @@ class minimize(fitAlg):
 
         self.method = None
         self.methodSet = None
-        self.allBounds = None
+        self.bounds = None
         if isinstance(method,list):
             self.methodSet = method
-            self.allBounds = bounds
+            self.bounds = bounds
         elif method in self.unconstrained:
             self.method = method
         elif method in self.constrained:
             self.method = method
-            self.allBounds = bounds
+            self.bounds = bounds
         elif callable(method):
             self.method = method
-            self.allBounds = bounds
+            self.bounds = bounds
         elif method == 'constrained':
             self.methodSet = self.constrained
-            self.allBounds = bounds
+            self.bounds = bounds
         elif method == 'unconstrained':
             self.methodSet = self.unconstrained
         else:

@@ -9,6 +9,7 @@ from fitAlg import fitAlg
 from scipy import optimize
 from numpy import log
 
+from utils import callableDetailsString
 from qualityFunc import qualFuncIdent
 
 class leastsq(fitAlg):
@@ -19,9 +20,10 @@ class leastsq(fitAlg):
 
     Parameters
     ----------
-    fitQualFunc : function, optional
-        The function used to calculate the quality of the fit. The value it
-        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``
+    fitQualFunc : string, optional
+        The name of the function used to calculate the quality of the fit.
+        The value it returns proivides the fitter with its fitting guide.
+        Default ``fitAlg.null``
     numStartPoints : int, optional
         The number of starting points generated for each parameter.
         Default 4

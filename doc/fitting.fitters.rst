@@ -28,6 +28,14 @@ fitting.fitters.minimize module
     :undoc-members:
     :show-inheritance:
 	
+fitting.fitters.basinhopping module
+-----------------------------------
+
+.. automodule:: fitting.fitters.basinhopping
+    :members:
+    :undoc-members:
+    :show-inheritance:
+	
 fitting.fitters.boundFunc module
 --------------------------------
 
