@@ -60,6 +60,7 @@
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMergeNP</span>
 
 <span class="kn">from</span> <span class="nn">qualityFunc</span> <span class="kn">import</span> <span class="n">qualFuncIdent</span>
+<span class="kn">from</span> <span class="nn">boundFunc</span> <span class="kn">import</span> <span class="n">scalarBound</span>
 
 <div class="viewcode-block" id="fitAlg"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg">[docs]</a><span class="k">class</span> <span class="nc">fitAlg</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -68,21 +69,24 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    fitQualFunc : function, optional</span>
-<span class="sd">        The function used to calculate the quality of the fit. The value it </span>
+<span class="sd">        The function used to calculate the quality of the fit. The value it</span>
 <span class="sd">        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``</span>
 <span class="sd">    bounds : dictionary of tuples of length two with floats, optional</span>
 <span class="sd">        The boundaries for methods that use bounds. If unbounded methods are</span>
-<span class="sd">        specified then the bounds will be ignored. Default is ``None``, which </span>
+<span class="sd">        specified then the bounds will be ignored. Default is ``None``, which</span>
 <span class="sd">        translates to boundaries of (0,float(&#39;Inf&#39;)) for each parameter.</span>
+<span class="sd">    boundCostFunc : function, optional</span>
+<span class="sd">        A function used to calculate the penalty for exceeding the boundaries.</span>
+<span class="sd">        Default is ``boundFunc.scalarBound``</span>
 <span class="sd">    numStartPoints : int, optional</span>
 <span class="sd">        The number of starting points generated for each parameter.</span>
 <span class="sd">        Default 4</span>
-<span class="sd">        </span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    Name : string</span>
 <span class="sd">        The name of the fitting method</span>
-<span class="sd">        </span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    fitting.fit.fit : The general fitting framework class</span>
@@ -92,63 +96,65 @@
     <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;none&#39;</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">numStartPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
-        
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(),</span> <span class="n">numStartPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">boundCostFunc</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
+                        <span class="s">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">boundCostFunc</span><span class="p">,</span>
                         <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span><span class="p">,</span>
                         <span class="s">&#39;numStartPoints&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span><span class="p">}</span>
-                        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span> <span class="o">=</span> <span class="bp">None</span>
-        
+
 <div class="viewcode-block" id="fitAlg.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs the model through the fitting algorithms and starting parameters </span>
-<span class="sd">        and returns the best one. This is the abstract version that always </span>
+<span class="sd">        Runs the model through the fitting algorithms and starting parameters</span>
+<span class="sd">        and returns the best one. This is the abstract version that always</span>
 <span class="sd">        returns ``(0,0)``</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sim : function</span>
-<span class="sd">            The function used by a fitting algorithm to generate a fit for </span>
+<span class="sd">            The function used by a fitting algorithm to generate a fit for</span>
 <span class="sd">            given model parameters. One example is ``fit.fitness``</span>
 <span class="sd">        mParamNames : list of strings</span>
 <span class="sd">            The list of initial parameter names</span>
 <span class="sd">        mInitialParams : list of floats</span>
 <span class="sd">            The list of the intial parameters</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fitParams : list of floats</span>
 <span class="sd">            The best fitting parameters</span>
 <span class="sd">        fitQuality : float</span>
 <span class="sd">            The quality of the fit as defined by the quality function chosen.</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        fit.fitness</span>
-<span class="sd">        </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
 
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-        </div>
+</div>
 <div class="viewcode-block" id="fitAlg.fitness"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a fit quality value</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fit : float</span>
 <span class="sd">            The fit quality value calculated using the fitQualFunc function</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        fitting.fitters.qualityFunc : the module of fitQualFunc functions</span>
@@ -159,18 +165,18 @@
 
         <span class="c"># Start by checking that the parameters are valid</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="o">*</span><span class="n">pms</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundCostFunc</span><span class="p">(</span><span class="n">pms</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span><span class="p">)</span>
 
         <span class="n">modVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="p">(</span><span class="o">*</span><span class="n">pms</span><span class="p">)</span>
-        
+
         <span class="n">fit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span><span class="p">(</span><span class="n">modVals</span><span class="p">)</span>
-        
+
         <span class="k">return</span> <span class="n">fit</span>
 </div>
 <div class="viewcode-block" id="fitAlg.info"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The dictionary describing the fitting algorithm chosen</span>
-<span class="sd">        </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fitInfo : dict</span>
@@ -178,16 +184,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span>
-        </div>
+</div>
 <div class="viewcode-block" id="fitAlg.setBounds"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.setBounds">[docs]</a>    <span class="k">def</span> <span class="nf">setBounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mParamNames</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if the bounds have changed</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        mParamNames : list of strings</span>
 <span class="sd">            An ordered list of the names of the parameters to be fitted</span>
-<span class="sd">        </span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from fitting.fitters.fitAlg import fitAlg</span>
@@ -200,7 +206,7 @@
 <span class="sd">        [&#39;string&#39;, &#39;two&#39;]</span>
 <span class="sd">        &gt;&gt;&gt; a.boundVals</span>
 <span class="sd">        ￼[(0, inf), (0, inf)]</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; a = fitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})</span>
 <span class="sd">        &gt;&gt;&gt; a.allBounds</span>
 <span class="sd">        {1:(0,5),2:(0,2),3:(-1,1)}</span>
@@ -216,11 +222,11 @@
 <span class="sd">        &gt;&gt;&gt; a.boundVals</span>
 <span class="sd">        ￼[(0, 2), (0, 5)]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
         <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span>
         <span class="n">boundNames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span>
         <span class="n">boundVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
-        
+
         <span class="c"># Check if the bounds have changed or should be added</span>
         <span class="k">if</span> <span class="n">boundNames</span><span class="p">:</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">False</span>
@@ -230,7 +236,7 @@
                     <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">changed</span> <span class="o">=</span> <span class="bp">True</span>
-         
+
         <span class="c"># If they have not, then we can leave</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">changed</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mParamNames</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundNames</span><span class="p">):</span>
@@ -245,36 +251,36 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="p">[</span> <span class="n">bounds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">mParamNames</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span> <span class="o">=</span> <span class="n">mParamNames</span>
-        
+
         <span class="k">return</span>
 
-        </div>
+</div>
 <div class="viewcode-block" id="fitAlg.startParams"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParams">[docs]</a>    <span class="k">def</span> <span class="nf">startParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initialParams</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Defines a list of different starting parameters to run the minimization </span>
+<span class="sd">        Defines a list of different starting parameters to run the minimization</span>
 <span class="sd">        over</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        initialParams : list of floats</span>
 <span class="sd">            The inital starting values proposed</span>
 <span class="sd">        bounds : list of tuples of length two with floats, optional</span>
 <span class="sd">            The boundaries for methods that use bounds. If unbounded methods are</span>
-<span class="sd">            specified then the bounds will be ignored. Default is ``None``, which </span>
+<span class="sd">            specified then the bounds will be ignored. Default is ``None``, which</span>
 <span class="sd">            translates to boundaries of (0,float(&#39;Inf&#39;)) for each parameter.</span>
 <span class="sd">        numPoints : int</span>
-<span class="sd">            The number of starting parameter values to be calculated around </span>
+<span class="sd">            The number of starting parameter values to be calculated around</span>
 <span class="sd">            each inital point</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        startParamSet : list of list of floats</span>
 <span class="sd">            The generated starting parameter combinations</span>
-<span class="sd">            </span>
+
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        fitAlg.startParamVals : Used in this function</span>
-<span class="sd">        </span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from fitting.fitters.fitAlg import fitAlg</span>
@@ -290,20 +296,20 @@
             <span class="c"># We only have the values passed in as the starting parameters</span>
             <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initialParams</span><span class="p">)</span>
 
-        <span class="k">else</span><span class="p">:</span> 
+        <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Bounds do not fit number of intial parameters&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">)))</span> 
-            
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Bounds do not fit number of intial parameters&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">initialParams</span><span class="p">)))</span>
+
             <span class="n">startLists</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="n">bMax</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numPoints</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">bMin</span><span class="p">,</span> <span class="n">bMax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">initialParams</span><span class="p">,</span><span class="n">bounds</span><span class="p">))</span>
-            
+
         <span class="n">startSets</span> <span class="o">=</span> <span class="n">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">startLists</span><span class="p">)</span>
-            
+
         <span class="k">return</span> <span class="n">startSets</span>
-        </div>
+</div>
 <div class="viewcode-block" id="fitAlg.startParamVals"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.startParamVals">[docs]</a>    <span class="k">def</span> <span class="nf">startParamVals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">initial</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;-Inf&#39;</span><span class="p">),</span> <span class="n">bMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">),</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides a set of starting points</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        initial : float</span>
@@ -315,22 +321,22 @@
 <span class="sd">        numPoints : int</span>
 <span class="sd">            The number of starting parameter values to be calculated around the inital</span>
 <span class="sd">            point</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        startParams : list of floats</span>
 <span class="sd">            The generated starting parameters</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        For each starting parameter provided a set of numStartPoints </span>
+<span class="sd">        For each starting parameter provided a set of numStartPoints</span>
 <span class="sd">        starting points will be chosen, surrounding the starting point provided. If</span>
-<span class="sd">        the starting point provided is less than one but greater than zero it </span>
-<span class="sd">        will be assumed that the values cannot leave those bounds, otherwise, </span>
-<span class="sd">        unless otherwise told, it will be assumed that they can take any </span>
-<span class="sd">        positive value and will be chosen to be eavenly spaced around the </span>
+<span class="sd">        the starting point provided is less than one but greater than zero it</span>
+<span class="sd">        will be assumed that the values cannot leave those bounds, otherwise,</span>
+<span class="sd">        unless otherwise told, it will be assumed that they can take any</span>
+<span class="sd">        positive value and will be chosen to be eavenly spaced around the</span>
 <span class="sd">        provided value.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from fitting.fitters.fitAlg import fitAlg</span>
@@ -340,30 +346,30 @@
 
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(5)</span>
 <span class="sd">        array([ 2.5,  5. ,  7.5])</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(-5)</span>
 <span class="sd">        array([ 2.5,  5. ,  7.5])</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 0, bMax = 7)</span>
 <span class="sd">        array([ 4.,  5.,  6.])</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = -3, bMax = 30)</span>
 <span class="sd">        array([ 1.,  5.,  9.])</span>
 
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 0, bMax = 30)</span>
 <span class="sd">        array([ 2.5,  5. ,  7.5])</span>
-<span class="sd">        </span>
+
 <span class="sd">        &gt;&gt;&gt; a.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)</span>
 <span class="sd">        array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
+
 <span class="c">#        initialAbs = abs(initial)</span>
-    
+
         <span class="c">#The number of initial points per parameter</span>
-        <span class="n">divVal</span> <span class="o">=</span> <span class="p">(</span><span class="n">numPoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>        
-        
+        <span class="n">divVal</span> <span class="o">=</span> <span class="p">(</span><span class="n">numPoints</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+
         <span class="k">if</span> <span class="n">bMax</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">isinf</span><span class="p">(</span><span class="n">bMax</span><span class="p">):</span>
-            <span class="c"># We can also assume any number smaller than one should stay </span>
+            <span class="c"># We can also assume any number smaller than one should stay</span>
             <span class="c">#smaller than one.</span>
             <span class="k">if</span> <span class="n">initial</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">initial</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">valMax</span> <span class="o">=</span> <span class="mi">1</span>
@@ -371,68 +377,68 @@
                 <span class="n">valMax</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">valMax</span> <span class="o">=</span> <span class="n">bMax</span>
-            
+
         <span class="k">if</span> <span class="n">bMin</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">isinf</span><span class="p">(</span><span class="n">bMin</span><span class="p">):</span>
-            <span class="c"># We can also assume any number larger than one should stay </span>
+            <span class="c"># We can also assume any number larger than one should stay</span>
             <span class="c">#bigger than zero.</span>
             <span class="k">if</span> <span class="n">initial</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">valMin</span> <span class="o">=</span> <span class="mi">0</span>
-                
+
                 <span class="n">initialAbs</span> <span class="o">=</span> <span class="n">initial</span>
                 <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">valMax</span>
-                
+
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># this should never happen, but regardless</span>
                 <span class="n">valMin</span> <span class="o">=</span> <span class="mi">0</span>
-                
+
                 <span class="n">initialAbs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">initial</span><span class="p">)</span>
                 <span class="n">valAbsMax</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">valMax</span><span class="p">)</span> <span class="o">+</span> <span class="n">initialAbs</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">valMin</span> <span class="o">=</span> <span class="n">bMin</span>
-            
+
             <span class="n">initialAbs</span> <span class="o">=</span> <span class="n">initial</span> <span class="o">-</span> <span class="n">valMin</span>
             <span class="n">valAbsMax</span> <span class="o">=</span> <span class="n">valMax</span> <span class="o">-</span> <span class="n">valMin</span>
-            
-        <span class="c"># Now that the bounds have been set we have shifted the space to </span>
-        <span class="c"># calculate the points in the space and then shift them back. </span>
-            
-        <span class="c"># We can assume that any initial parameter proposed has the </span>
-        <span class="c"># correct order of magnitude. </span>
+
+        <span class="c"># Now that the bounds have been set we have shifted the space to</span>
+        <span class="c"># calculate the points in the space and then shift them back.</span>
+
+        <span class="c"># We can assume that any initial parameter proposed has the</span>
+        <span class="c"># correct order of magnitude.</span>
         <span class="n">vMin</span> <span class="o">=</span> <span class="n">initialAbs</span> <span class="o">/</span> <span class="n">divVal</span>
-            
+
         <span class="k">if</span> <span class="n">numPoints</span><span class="o">*</span><span class="n">vMin</span> <span class="o">&gt;</span> <span class="n">valAbsMax</span><span class="p">:</span>
             <span class="n">inc</span> <span class="o">=</span> <span class="p">(</span><span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">initialAbs</span><span class="p">)</span> <span class="o">/</span> <span class="n">divVal</span>
-            <span class="n">vMin</span> <span class="o">=</span> <span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">numPoints</span> <span class="o">*</span> <span class="n">inc</span> 
+            <span class="n">vMin</span> <span class="o">=</span> <span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">numPoints</span> <span class="o">*</span> <span class="n">inc</span>
             <span class="n">vMax</span> <span class="o">=</span> <span class="n">valAbsMax</span> <span class="o">-</span> <span class="n">inc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">vMax</span> <span class="o">=</span> <span class="n">vMin</span> <span class="o">*</span> <span class="n">numPoints</span>
-            
-           
+
+
         <span class="n">points</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="n">vMin</span><span class="p">,</span> <span class="n">vMax</span><span class="p">,</span> <span class="n">numPoints</span><span class="p">)</span> <span class="o">+</span> <span class="n">valMin</span>
-        
+
         <span class="k">return</span> <span class="n">points</span>
 </div>
 <div class="viewcode-block" id="fitAlg.invalidParams"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.invalidParams">[docs]</a>    <span class="k">def</span> <span class="nf">invalidParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Identifies if the parameters passed are within the bounds provided</span>
-<span class="sd">        </span>
+
 <span class="sd">        If they are not returns ``inf``</span>
-<span class="sd">        </span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        params : list of floats</span>
 <span class="sd">            Parameters to be passed to the sim</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        validity : Bool</span>
 <span class="sd">            If the parameters are valid or not</span>
-<span class="sd">        </span>
+
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
 <span class="sd">        No note</span>
-<span class="sd">        </span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from fitting.fitters.fitAlg import fitAlg</span>
@@ -441,20 +447,19 @@
 <span class="sd">        &gt;&gt;&gt; a.invalidParams(0,0)</span>
 <span class="sd">        False</span>
 <span class="sd">        &gt;&gt;&gt; a.invalidParams(2,0)</span>
-<span class="sd">        True        </span>
+<span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; a.invalidParams(0,-1)</span>
-<span class="sd">        True        </span>
+<span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; a.invalidParams(6,6)</span>
 <span class="sd">        True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="n">mi</span><span class="p">,</span> <span class="n">ma</span><span class="p">)</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span><span class="p">):</span>
-            
+
             <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">mi</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">ma</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">True</span>
-        
-        <span class="k">return</span> <span class="bp">False</span>
-        </div></div>
+
+        <span class="k">return</span> <span class="bp">False</span></div></div>
 </pre></div>
 
           </div>

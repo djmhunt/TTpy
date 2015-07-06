@@ -65,7 +65,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">ones</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">rand</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">choice</span>
 <span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">experiment</span>
 <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">pandasPlot</span>
 <span class="kn">from</span> <span class="nn">experiment.experimentPlot</span> <span class="kn">import</span> <span class="n">experimentPlot</span>
@@ -128,17 +128,23 @@
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">rewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;rewardProb&#39;</span><span class="p">,</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;actRewardProb&#39;</span><span class="p">,{</span><span class="mi">0</span><span class="p">:</span><span class="n">rewardProb</span><span class="p">,</span>
+                                                    <span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="o">-</span><span class="n">rewardProb</span><span class="p">,</span>
+                                                    <span class="mi">2</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span>
+                                                    <span class="mi">3</span><span class="p">:</span><span class="mf">0.5</span><span class="p">})</span>
         <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;plotArgs&#39;</span><span class="p">,{})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s">&quot;rewardProb&quot;</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
+                           <span class="s">&quot;actRewardProb&quot;</span><span class="p">:</span> <span class="n">actRewardProb</span><span class="p">,</span>
                            <span class="s">&quot;learningLen&quot;</span><span class="p">:</span> <span class="n">learningLen</span><span class="p">}</span>
 
         <span class="c"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewardProb</span> <span class="o">=</span> <span class="n">rewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">actRewardProb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">learningLen</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -173,7 +179,7 @@
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
         <span class="n">nextStim</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span>
 </div>
@@ -188,12 +194,8 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
-        <span class="n">rewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardProb</span>
-
-        <span class="c">#The probabilitiy of sucsess varies depending on if it is choice A or B</span>
-        <span class="n">actRewProb</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span><span class="o">*</span><span class="n">rewProb</span> <span class="o">+</span> <span class="n">action</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rewProb</span><span class="p">)</span>
+        <span class="c">#The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2</span>
+        <span class="n">actRewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">actRewProb</span> <span class="o">&gt;=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span>
@@ -310,7 +312,7 @@
             <span class="n">selectData</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphaGoSet</span>
             <span class="n">plotData</span> <span class="o">=</span> <span class="n">selectData</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
-            <span class="n">fig</span> <span class="o">=</span> <span class="n">pandasPlot</span><span class="p">(</span><span class="n">plotData</span><span class="p">,</span> <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;xlabel&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;ylabel&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">pandasPlot</span><span class="p">(</span><span class="n">plotData</span><span class="p">,</span> <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;xLabel&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;yLabel&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
 
             <span class="k">return</span> <span class="n">fig</span>
 

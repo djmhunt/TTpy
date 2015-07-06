@@ -27,15 +27,22 @@ fitting.fitters.minimize module
     :members:
     :undoc-members:
     :show-inheritance:
+	
+fitting.fitters.boundFunc module
+--------------------------------
 
-fitting.fitters.test_minimize module
-------------------------------------
-
-.. automodule:: fitting.fitters.test_minimize
+.. automodule:: fitting.fitters.boundFunc
     :members:
     :undoc-members:
     :show-inheritance:
 
+fitting.fitters.qualityFunc module
+----------------------------------
+
+.. automodule:: fitting.fitters.qualityFunc
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Module contents
 ---------------
