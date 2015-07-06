@@ -101,14 +101,16 @@ class OpAL(model):
     def __init__(self,**kwargs):
 
         self.numActions = kwargs.pop('numActions', 4)
-        self.beta = kwargs.pop('beta', 4)
+        self.beta = kwargs.pop('beta', 1)
         self.betaDiff = kwargs.pop('betaDiff',0)
-        self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
+        self.betaGo = kwargs.pop('betaGo', None)
+        self.betaNogo = kwargs.pop('betaNogo', None)
         self.alpha = kwargs.pop('alpha', 0.3)
         self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
         self.alphaCrit = kwargs.pop('alphaC', self.alpha)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
+        self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
         self.expect = kwargs.pop('expect', ones(self.numActions)/self.numActions)
 
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
@@ -118,9 +120,15 @@ class OpAL(model):
             self.alphaGo = self.alpha + self.alphaGoDiff
             self.alphaNogo = self.alpha - self.alphaGoDiff
 
+        if self.betaGo and self.alphaNogo:
+            self.beta = (self.betaGo + self.betaNogo)/2
+            self.betaDiff = (self.betaGo - self.betaNogo)/ (2 * self.beta)
+
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "betaDiff": self.betaDiff,
+                           "betaGo": self.betaGo,
+                           "betaNogo": self.betaNogo,
                            "alphaCrit": self.alphaCrit,
                            "alphaGo": self.alphaGo,
                            "alphaNogo": self.alphaNogo,
