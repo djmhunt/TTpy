@@ -16,21 +16,23 @@ import sys
 sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate
+from numpy import array, concatenate, ones
 
 ### Import all experiments, models, outputting and interface functions
-#The experiment factory
+# The experiment factory
 from experiments import experiments
-#The experiments and stimulus processors
+# The experiments and stimulus processors
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
+from experiment.probSelect import probSelect, probSelectStimDirect
 
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta
-#The models
+from model.decision.binary import decEta, decIntEtaReac, decSingle
+from model.decision.discrete import decMaxProb
+# The models
 from model.BP import BP
 from model.EP import EP
 from model.MS import MS
@@ -51,13 +53,16 @@ eta = 0.0
 alpha = 0.5
 alphaBounds = (0,1)
 beta = 0.5
-betaBounds = (0,5)
+betaBounds = (0,80)
+numStimuli = 2
 
 parameters = {  'alpha':sum(alphaBounds)/2,
                 'beta':sum(betaBounds)/2}
 paramExtras = {'eta':eta,
+               'numActions':2,
                'stimFunc':deckStimDirect(),
                'decFunc':decEta(eta = eta)}
+
 modelSet = models((qLearn,parameters,paramExtras))
 
 outputOptions = {'simLabel': 'qLearn_decksSet',
@@ -73,14 +78,19 @@ bounds = {'alpha' : alphaBounds,
 
 ### For data fitting
 
+from numpy import concatenate
+
 from dataFitting import dataFitting
 
 from data import data, datasets
+
+from fitting.fitters.boundFunc import infBound, scalarBound
 
 #from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
+from fitting.fitters.basinhopping import basinhopping
 
 # Import data
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
@@ -108,6 +118,7 @@ def scaleFuncSingle():
 fitAlg = minimize(fitQualFunc = "-2log",
                   method = 'constrained', #'unconstrained',
                   bounds = bounds,
+                  boundCostFunc = scalarBound(base = 160),
                   numStartPoints = 5,
                   boundFit = True)
 #fitAlg = leastsq(dataShaper = "-2log")

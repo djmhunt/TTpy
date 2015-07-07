@@ -2,6 +2,8 @@
 """
 :Author: Dominic Hunt
 
+Notes
+-----
 This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
@@ -14,7 +16,7 @@ import sys
 sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate
+from numpy import array, concatenate, ones
 
 ### Import all experiments, models, outputting and interface functions
 # The experiment factory
@@ -23,12 +25,14 @@ from experiments import experiments
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
+from experiment.probSelect import probSelect, probSelectStimDirect
 
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta
-#The model
+from model.decision.binary import decEta, decIntEtaReac, decSingle
+from model.decision.discrete import decMaxProb
+# The model
 from model.qLearn import qLearn
 
 from outputting import outputting
@@ -42,14 +46,15 @@ eta = 0.0
 alpha = 0.5
 alphaBounds = (0,1)
 beta = 0.5
-betaBounds = (0,5)
+betaBounds = (0,80)
+numStimuli = 2
 
 parameters = {  'alpha':sum(alphaBounds)/2,
-                'beta':sum(betaBounds)/2}
+                'beta':sum(betaBounds)/2}#beta}
 paramExtras = {'eta':eta,
-               'numActions':2,
+               'numActions':numStimuli,
                'stimFunc':deckStimDirect(),
-               'decFunc':decEta(eta = eta)} #For decks
+               'decFunc':decEta(eta = eta)}
 
 modelSet = models((qLearn,parameters,paramExtras))
 
@@ -63,12 +68,6 @@ output = outputting(**outputOptions)
 
 bounds = {'alpha' : alphaBounds,
           'beta' : betaBounds}
-
-### For simulating experiments
-#
-#from simulation import simulation
-#
-#simulation(expSets, modelSet, output)
 
 ### For data fitting
 
@@ -84,6 +83,7 @@ from fitting.fitters.boundFunc import infBound, scalarBound
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
+from fitting.fitters.basinhopping import basinhopping
 
 # Import data
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
@@ -121,4 +121,4 @@ fitAlg = minimize(fitQualFunc = "-2log",
 fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFuncSingle())
 
 # Run the data fitter
-dataFitting(expSets, modelSet, output, data=dataSet, fitter=fit)
+dataFitting(expSets, modelSet, output, data = dataSet, fitter = fit)

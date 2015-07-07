@@ -19,12 +19,13 @@ sys.path.append("../") #So code can be found from the main folder
 from numpy import array, concatenate, arange
 
 ### Import all experiments, models, outputting and interface functions
-#The experiment factory
+# The experiment factory
 from experiments import experiments
-#The experiments and stimulus processors
+# The experiments and stimulus processors
 from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
 from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
 from experiment.pavlov import Pavlov, pavlovStimTemporal
+from experiment.probSelect import probSelect, probSelectStimDirect
 
 # The model factory
 from models import models

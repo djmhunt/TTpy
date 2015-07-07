@@ -6,8 +6,8 @@ from __future__ import division
 
 from fitAlg import fitAlg
 
-from numpy import array, around
-from scipy.optimize import basinhopping
+from numpy import array, around, all
+from scipy import optimize
 from itertools import izip
 
 from utils import callableDetailsString
@@ -171,10 +171,10 @@ class basinhopping(fitAlg):
             boundVals = [(0,float('Inf')) for i in mInitialParams]
             bounds = {k : v for k, v in izip(mParamNames, boundVals)}
             self.bounds = bounds
-            self.boundVals = boundVals
+            self.boundVals = array(boundVals)
 
         if boundVals == None:
-            boundVals = [ bounds[k] for k in mParamNames]
+            boundVals = array([ bounds[k] for k in mParamNames])
             self.boundVals = boundVals
 
         initParamSets = self.startParams(mInitialParams, bounds = boundVals, numPoints = numStartPoints)
@@ -214,16 +214,18 @@ class basinhopping(fitAlg):
 
         resultSet = []
 
+        boundFunc = self._bounds
+
         for i in initParamSets:
 
-            optimizeResult = basinhopping(self.fitness, i[:],
-                                          minimizer_kwargs = {method: method,
-                                                              bounds: bounds})#,
-#                                                             callback: self.callback})
+            optimizeResult = optimize.basinhopping(self.fitness, i[:],
+                                                   accept_test = boundFunc,
+                                          minimizer_kwargs = {'method': method,
+                                                              'bounds': bounds})#,
+#                                                             'callback': self.callback})
             self.count = 1
 
-            if optimizeResult.success == True:
-                resultSet.append(optimizeResult)
+            resultSet.append(optimizeResult)
 
         bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit, boundSensitivity = boundSensitivity)
 
@@ -242,10 +244,9 @@ class basinhopping(fitAlg):
 #        data["fitVal"] = array([o.fun for o in resultSet])
 #        data['nIter'] = array([o.nit for o in resultSet])
 #        data['parameters'] = array([o.x for o in resultSet])
-#        data['success'] = array([o.success for o in resultSet])
 #        data['nfev'] = array([o.nfev for o in resultSet])
 #        data['message'] = array([o.message for o in resultSet])
-#        data['jac'] = array([o.jac for o in resultSet])
+#        data['minimization_failures'] = array([o.minimization_failures for o in resultSet])
 #        print array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T
 #        pytest.set_trace()
 
@@ -293,6 +294,17 @@ class basinhopping(fitAlg):
             self.methodSet = self.unconstrained
         else:
             self.methodSet = self.unconstrained
+
+    def _bounds(self,**kwargs):
+        """
+        Based on http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.optimize.basinhopping.html
+        """
+        boundArr = self.boundVals
+        x = kwargs["x_new"]
+        tmax = bool(all(x < boundArr[:,1]))
+        tmin = bool(all(x > boundArr[:,0]))
+
+        return tmax and tmin
 
 
 

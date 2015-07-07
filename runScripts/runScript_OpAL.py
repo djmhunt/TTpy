@@ -2,11 +2,11 @@
 """
 :Author: Dominic Hunt
 
+Notes
+-----
 This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
-
-
 """
 ### Import useful functions
 # Make devision floating point by default
@@ -30,9 +30,9 @@ from experiment.probSelect import probSelect, probSelectStimDirect
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta
+from model.decision.binary import decEta, decIntEtaReac, decSingle
 from model.decision.discrete import decMaxProb
-#The model
+# The model
 from model.OpAL import OpAL
 
 from outputting import outputting
@@ -42,12 +42,13 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks,expParams,expExtraParams))
 
-alpha = 0.1
+eta = 0.0
+alpha = 0.5
 alphaBounds = (0,1)
 alphaC = 0.1
-beta = 1
-betaBounds = (0,10)
-eta = 0
+beta = 0.5
+betaBounds = (0,80)
+numStimuli = 2
 
 parameters = {'alphaC': sum(alphaBounds)/2,
               'alphaGo': sum(alphaBounds)/2,
@@ -76,6 +77,8 @@ bounds = {'alphaC': alphaBounds,
 
 ### For data fitting
 
+from numpy import concatenate
+
 from dataFitting import dataFitting
 
 from data import data, datasets
@@ -86,6 +89,7 @@ from fitting.fitters.boundFunc import infBound, scalarBound
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
+from fitting.fitters.basinhopping import basinhopping
 
 # Import data
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",

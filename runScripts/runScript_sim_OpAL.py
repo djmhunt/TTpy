@@ -2,6 +2,8 @@
 """
 :Author: Dominic Hunt
 
+Notes
+-----
 This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each sucessful investigation and storing it
  with the data.
@@ -44,9 +46,9 @@ from experiment.probSelect import probSelect, probSelectStimDirect
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta
+from model.decision.binary import decEta, decIntEtaReac, decSingle
 from model.decision.discrete import decMaxProb
-#The model
+# The model
 from model.OpAL import OpAL
 
 from outputting import outputting

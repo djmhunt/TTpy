@@ -7,7 +7,7 @@ from __future__ import division
 from fitAlg import fitAlg
 
 from numpy import array, around
-from scipy.optimize import minimize
+from scipy import optimize
 from itertools import izip
 
 from utils import callableDetailsString
@@ -208,7 +208,7 @@ class minimize(fitAlg):
 
         for i in initParamSets:
 
-            optimizeResult = minimize(self.fitness, i[:],
+            optimizeResult = optimize.minimize(self.fitness, i[:],
                                       method=method,
                                       bounds=bounds)#,
 #                                     callback= self.callback )
