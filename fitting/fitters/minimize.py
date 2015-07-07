@@ -209,9 +209,9 @@ class minimize(fitAlg):
         for i in initParamSets:
 
             optimizeResult = optimize.minimize(self.fitness, i[:],
-                                      method=method,
-                                      bounds=bounds)#,
-#                                     callback= self.callback )
+                                               method=method,
+                                               bounds=bounds)#,
+        #                                      callback= self.callback )
             self.count = 1
 
             if optimizeResult.success == True:
@@ -239,6 +239,7 @@ class minimize(fitAlg):
 #        data['message'] = array([o.message for o in resultSet])
 #        data['jac'] = array([o.jac for o in resultSet])
 #        print array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T
+#        print array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T
 #        pytest.set_trace()
 
         # If boundary fits are acceptable
