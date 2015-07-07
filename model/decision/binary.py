@@ -96,7 +96,7 @@ def decEta(expResponses = (0,1),eta = 0):
 
     See Also
     --------
-    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2
+    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
 
     """
 

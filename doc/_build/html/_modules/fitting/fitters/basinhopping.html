@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fitting.fitters.minimize &mdash; PyDM 0.9 documentation</title>
+    <title>fitting.fitters.basinhopping &mdash; PyDM 0.9 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -47,7 +47,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for fitting.fitters.minimize</h1><div class="highlight"><pre>
+  <h1>Source code for fitting.fitters.basinhopping</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
@@ -56,7 +56,7 @@
 
 <span class="kn">from</span> <span class="nn">fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">around</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">around</span><span class="p">,</span> <span class="nb">all</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
 
@@ -66,9 +66,9 @@
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 
-<div class="viewcode-block" id="minimize"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize">[docs]</a><span class="k">class</span> <span class="nc">minimize</span><span class="p">(</span><span class="n">fitAlg</span><span class="p">):</span>
+<div class="viewcode-block" id="basinhopping"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.basinhopping.basinhopping">[docs]</a><span class="k">class</span> <span class="nc">basinhopping</span><span class="p">(</span><span class="n">fitAlg</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;The class for fitting data using scipy.optimise.minimize</span>
+    <span class="sd">&quot;&quot;&quot;The class for fitting data using scipy.optimise.basinhopping</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -130,11 +130,12 @@
 <span class="sd">    fitting.fitters.fitAlg.fitAlg : The general fitting method class, from</span>
 <span class="sd">                                    which this one inherits</span>
 <span class="sd">    fitting.fit.fit : The general fitting framework class</span>
-<span class="sd">    scipy.optimise.minimize : The fitting class this wraps around</span>
+<span class="sd">    scipy.optimise.basinhopping : The fitting class this wraps around</span>
+<span class="sd">    scipy.optimise.minimize : The fitting class basinhopping wraps around</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;minimise&#39;</span>
+    <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;basinhopping&#39;</span>
 
     <span class="n">unconstrained</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Nelder-Mead&#39;</span><span class="p">,</span><span class="s">&#39;Powell&#39;</span><span class="p">,</span><span class="s">&#39;CG&#39;</span><span class="p">,</span><span class="s">&#39;BFGS&#39;</span><span class="p">]</span>
     <span class="n">constrained</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;L-BFGS-B&#39;</span><span class="p">,</span><span class="s">&#39;TNC&#39;</span><span class="p">,</span><span class="s">&#39;SLSQP&#39;</span><span class="p">]</span>
@@ -143,19 +144,18 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(),</span> <span class="n">numStartPoints</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">boundFit</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">boundSensitivity</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundFit</span> <span class="o">=</span> <span class="n">boundFit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundSensitivity</span> <span class="o">=</span> <span class="n">boundSensitivity</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">boundCostFunc</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_setType</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="n">bounds</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
+                        <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
                         <span class="s">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">boundCostFunc</span><span class="p">),</span>
-                        <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span><span class="p">,</span>
                         <span class="s">&#39;numStartPoints&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span><span class="p">,</span>
                         <span class="s">&#39;boundFit&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundFit</span><span class="p">,</span>
                         <span class="s">&#39;boundSensitivity&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundSensitivity</span>
@@ -169,7 +169,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="c">#    def callback(self,Xi):</span>
 <span class="c">#        &quot;&quot;&quot;</span>
@@ -180,7 +179,7 @@
 <span class="c">#</span>
 <span class="c">#        self.count += 1</span>
 
-<div class="viewcode-block" id="minimize.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.minimize.minimize.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
+<div class="viewcode-block" id="basinhopping.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.basinhopping.basinhopping.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the model through the fitting algorithms and starting parameters</span>
 <span class="sd">        and returns the best one.</span>
@@ -212,12 +211,21 @@
 
         <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span>
         <span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span>
+        <span class="n">boundVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
         <span class="n">boundFit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundFit</span>
         <span class="n">boundSensitivity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundSensitivity</span>
         <span class="n">numStartPoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setBounds</span><span class="p">(</span><span class="n">mParamNames</span><span class="p">)</span>
-        <span class="n">boundVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
+        <span class="k">if</span> <span class="n">bounds</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">boundVals</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="nb">float</span><span class="p">(</span><span class="s">&#39;Inf&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mInitialParams</span><span class="p">]</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">mParamNames</span><span class="p">,</span> <span class="n">boundVals</span><span class="p">)}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">boundVals</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">boundVals</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">boundVals</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span> <span class="n">bounds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">mParamNames</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="n">boundVals</span>
 
         <span class="n">initParamSets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">(</span><span class="n">mInitialParams</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">boundVals</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="n">numStartPoints</span><span class="p">)</span>
 
@@ -256,16 +264,18 @@
 
         <span class="n">resultSet</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">boundFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounds</span>
+
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initParamSets</span><span class="p">:</span>
 
-            <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span> <span class="n">i</span><span class="p">[:],</span>
-                                      <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-                                      <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span><span class="c">#,</span>
-<span class="c">#                                     callback= self.callback )</span>
+            <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">basinhopping</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span> <span class="n">i</span><span class="p">[:],</span>
+                                                   <span class="n">accept_test</span> <span class="o">=</span> <span class="n">boundFunc</span><span class="p">,</span>
+                                          <span class="n">minimizer_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;method&#39;</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+                                                              <span class="s">&#39;bounds&#39;</span><span class="p">:</span> <span class="n">bounds</span><span class="p">})</span><span class="c">#,</span>
+<span class="c">#                                                             &#39;callback&#39;: self.callback})</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
 
-            <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
-                <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
+            <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
 
         <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="n">resultSet</span><span class="p">,</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">boundFit</span> <span class="o">=</span> <span class="n">boundFit</span><span class="p">,</span> <span class="n">boundSensitivity</span> <span class="o">=</span> <span class="n">boundSensitivity</span><span class="p">)</span>
 
@@ -284,10 +294,9 @@
 <span class="c">#        data[&quot;fitVal&quot;] = array([o.fun for o in resultSet])</span>
 <span class="c">#        data[&#39;nIter&#39;] = array([o.nit for o in resultSet])</span>
 <span class="c">#        data[&#39;parameters&#39;] = array([o.x for o in resultSet])</span>
-<span class="c">#        data[&#39;success&#39;] = array([o.success for o in resultSet])</span>
 <span class="c">#        data[&#39;nfev&#39;] = array([o.nfev for o in resultSet])</span>
 <span class="c">#        data[&#39;message&#39;] = array([o.message for o in resultSet])</span>
-<span class="c">#        data[&#39;jac&#39;] = array([o.jac for o in resultSet])</span>
+<span class="c">#        data[&#39;minimization_failures&#39;] = array([o.minimization_failures for o in resultSet])</span>
 <span class="c">#        print array([data[&#39;parameters&#39;].T[0], data[&#39;parameters&#39;].T[1], data[&quot;fitVal&quot;]]).T</span>
 <span class="c">#        pytest.set_trace()</span>
 
@@ -316,25 +325,36 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="n">method</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrained</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s">&#39;constrained&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constrained</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s">&#39;unconstrained&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">methodSet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unconstrained</span>
+
+    <span class="k">def</span> <span class="nf">_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Based on http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.optimize.basinhopping.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">boundArr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;x_new&quot;</span><span class="p">]</span>
+        <span class="n">tmax</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">boundArr</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">tmin</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">boundArr</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">tmax</span> <span class="ow">and</span> <span class="n">tmin</span>
 </pre></div></div>
 
           </div>

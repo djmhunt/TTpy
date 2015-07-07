@@ -59,6 +59,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMergeNP</span>
 
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">callableDetailsString</span>
 <span class="kn">from</span> <span class="nn">qualityFunc</span> <span class="kn">import</span> <span class="n">qualFuncIdent</span>
 <span class="kn">from</span> <span class="nn">boundFunc</span> <span class="kn">import</span> <span class="n">scalarBound</span>
 
@@ -68,9 +69,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    fitQualFunc : function, optional</span>
-<span class="sd">        The function used to calculate the quality of the fit. The value it</span>
-<span class="sd">        returns proivides the fitter with its fitting guide. Default ``fitAlg.null``</span>
+<span class="sd">    fitQualFunc : string, optional</span>
+<span class="sd">        The name of the function used to calculate the quality of the fit.</span>
+<span class="sd">        The value it returns proivides the fitter with its fitting guide.</span>
+<span class="sd">        Default ``fitAlg.null``</span>
 <span class="sd">    bounds : dictionary of tuples of length two with floats, optional</span>
 <span class="sd">        The boundaries for methods that use bounds. If unbounded methods are</span>
 <span class="sd">        specified then the bounds will be ignored. Default is ``None``, which</span>
@@ -106,7 +108,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
-                        <span class="s">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">boundCostFunc</span><span class="p">,</span>
+                        <span class="s">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">boundCostFunc</span><span class="p">),</span>
                         <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span><span class="p">,</span>
                         <span class="s">&#39;numStartPoints&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStartPoints</span><span class="p">}</span>
 
