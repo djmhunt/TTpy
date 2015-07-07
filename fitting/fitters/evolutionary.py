@@ -33,6 +33,9 @@ class evolutionary(fitAlg):
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for fitting. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
+    boundCostFunc : function, optional
+        A function used to calculate the penalty for exceeding the boundaries.
+        Default is ``boundFunc.scalarBound``
     polish : bool, optional
         If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``
         method is used to polish the best population member at the end, which
@@ -68,17 +71,19 @@ class evolutionary(fitAlg):
                         'rand1bin']
 
 
-    def __init__(self,fitQualFunc = None, strategy = None, bounds = None, polish = True):
+    def __init__(self,fitQualFunc = None, strategy = None, bounds = None, boundCostFunc = scalarBound(), polish = True):
 
         self.allBounds = bounds
         self.polish = polish
 
         self.fitQualFunc = qualFuncIdent(fitQualFunc)
+        self.boundCostFunc = boundCostFunc
 
         self._setType(strategy)
 
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc,
+                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
                         'bounds':self.allBounds,
                         'polish': polish
                         }
@@ -143,7 +148,7 @@ class evolutionary(fitAlg):
                     resultSet.append(optimizeResult)
                     strategySuccessSet.append(strategy)
 
-            bestResult = self._bestfit(resultSet, boundVals)
+            bestResult = self._bestfit(resultSet)
 
             if bestResult == None:
                 return mInitialParams, float("inf")
