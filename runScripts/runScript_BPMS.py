@@ -44,9 +44,9 @@ expSets = experiments((Decks,expParams,expExtraParams))
 
 eta = 0
 beta = 0.5
-betaBounds = (0,80)
+betaBounds = (0,1)
 delta = 0.5
-deltaBounds = (0.1,0.9)
+deltaBounds = (0.001,0.999)
 numStimuli = 2
 
 parameters = {'delta':sum(deltaBounds)/2,
@@ -54,7 +54,7 @@ parameters = {'delta':sum(deltaBounds)/2,
 paramExtras = {'eta':eta,
                'numStimuli':numStimuli,
                'stimFunc':deckStimDualInfo(10,0.01),
-               'decFunc':decSingle()} 
+               'decFunc':decSingle()}
 
 modelSet = models((BPMS,parameters,paramExtras))
 
@@ -83,6 +83,7 @@ from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
 from fitting.fitters.basinhopping import basinhopping
+from fitting.fitters.evolutionary import evolutionary
 
 # Import data
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
@@ -107,12 +108,16 @@ def scaleFuncSingle():
     return scaleFunc
 
 # Define the fitting algorithm
-fitAlg = minimize(fitQualFunc = "-2log",
-                  method = 'constrained', #'unconstrained',
-                  bounds = bounds,
-                  boundCostFunc = scalarBound(base = 160),
-                  numStartPoints = 5,
-                  boundFit = True)
+#fitAlg = minimize(fitQualFunc = "-2log",
+#                  method = 'constrained', #'unconstrained',
+#                  bounds = bounds,
+#                  boundCostFunc = scalarBound(base = 160),
+#                  numStartPoints = 5,
+#                  boundFit = True)
+fitAlg = evolutionary(fitQualFunc = "-2log",
+                      boundCostFunc = scalarBound(base = 160),
+#                      polish = False,
+                      bounds = bounds)
 #fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter

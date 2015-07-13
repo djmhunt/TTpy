@@ -85,6 +85,7 @@ from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
 from fitting.fitters.basinhopping import basinhopping
+from fitting.fitters.evolutionary import evolutionary
 
 # Import data
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
@@ -109,12 +110,16 @@ def scaleFuncSingle():
     return scaleFunc
 
 # Define the fitting algorithm
-fitAlg = minimize(fitQualFunc = "-2log",
-                  method = 'constrained', #'unconstrained',
-                  bounds = bounds,
-                  boundCostFunc = scalarBound(base = 160),
-                  numStartPoints = 5,
-                  boundFit = True)
+#fitAlg = minimize(fitQualFunc = "-2log",
+#                  method = 'constrained', #'unconstrained',
+#                  bounds = bounds,
+#                  boundCostFunc = scalarBound(base = 160),
+#                  numStartPoints = 5,
+#                  boundFit = True)
+fitAlg = evolutionary(fitQualFunc = "-2log",
+                      boundCostFunc = scalarBound(base = 160),
+                      polish = False,
+                      bounds = bounds)
 #fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
