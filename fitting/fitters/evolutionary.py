@@ -4,12 +4,12 @@
 """
 from __future__ import division
 
-from fitAlg import fitAlg
-
 from numpy import array, around
 from scipy import optimize
 from itertools import izip
+from types import NoneType
 
+from fitAlg import fitAlg
 from utils import callableDetailsString
 from qualityFunc import qualFuncIdent
 from boundFunc import scalarBound
@@ -88,7 +88,7 @@ class evolutionary(fitAlg):
                         'polish': polish
                         }
 
-        if self.strategySet == None:
+        if type(self.strategySet) is NoneType:
             self.fitInfo['strategy'] = self.strategy
         else:
             self.fitInfo['strategy'] = self.strategySet
@@ -135,7 +135,7 @@ class evolutionary(fitAlg):
         boundVals = self.boundVals
 
 
-        if strategy == None:
+        if type(strategy) is NoneType:
 
             resultSet = []
             strategySuccessSet = []
@@ -144,13 +144,13 @@ class evolutionary(fitAlg):
 
                 optimizeResult = self._strategyFit(strategy, boundVals)
 
-                if optimizeResult != None:
+                if type(optimizeResult) is not NoneType:
                     resultSet.append(optimizeResult)
                     strategySuccessSet.append(strategy)
 
             bestResult = self._bestfit(resultSet)
 
-            if bestResult == None:
+            if type(bestResult) is NoneType:
                 return mInitialParams, float("inf")
             else:
                 fitParams = bestResult.x
@@ -160,6 +160,9 @@ class evolutionary(fitAlg):
 
         else:
             optimizeResult = self._strategyFit(strategy, boundVals)
+
+            if type(optimizeResult) is NoneType:
+                return mInitialParams, float("inf")
 
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
