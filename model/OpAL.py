@@ -120,7 +120,7 @@ class OpAL(model):
             self.alphaGo = self.alpha + self.alphaGoDiff
             self.alphaNogo = self.alpha - self.alphaGoDiff
 
-        if self.betaGo and self.alphaNogo:
+        if self.betaGo and self.betaNogo:
             self.beta = (self.betaGo + self.betaNogo)/2
             self.betaDiff = (self.betaGo - self.betaNogo)/ (2 * self.beta)
 
