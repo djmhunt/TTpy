@@ -174,12 +174,34 @@ class fit(object):
 
         optional = self.mOtherParams
 
-        inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
+#        inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
+        inputs = self.getModParams(*modelParameters)
 
         for k, v in optional.iteritems():
             inputs[k] = v
 
         return inputs
+        
+    def getModParams(self, *modelParameters):
+        """
+        Compiles the kwarg model parameter arguments based on the 
+        modelParameters
+        
+        Parameters
+        ----------
+        modelParameters : list of floats
+            The parameter values in the order extacted from the modelSetup 
+            parameter dictionary
+            
+        Returns
+        -------
+        paranms : dict
+            The kwarg model parameter arguments
+        """
+
+        params = {k : v for k,v in izip(self.mParamNames, modelParameters)}
+
+        return params
 
     def _simSetup(self, *modelParameters):
         """ 
