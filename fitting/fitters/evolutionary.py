@@ -4,6 +4,8 @@
 """
 from __future__ import division
 
+import logging
+
 from numpy import array, around
 from scipy import optimize
 from itertools import izip
@@ -29,7 +31,7 @@ class evolutionary(fitAlg):
     strategy : string or list of strings, optional
         The name of the fitting strategy or list of names of fitting strategy or
         name of list of fitting strategies. Valid names found in the notes.
-        Default ``unconstrained``
+        Default ``best1bin``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for fitting. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
@@ -46,7 +48,11 @@ class evolutionary(fitAlg):
     Name : string
         The name of the fitting strategies
     strategySet : list
-        The list of valid fitting strategies
+        The list of valid fitting strategies. 
+        Currently these are: 'best1bin', 'best1exp', 'rand1exp', 
+        'randtobest1exp', 'best2exp', 'rand2exp', 'randtobest1bin',
+        'best2bin', 'rand2bin', 'rand1bin'
+        For all strategies, use 'all'
 
     See Also
     --------
@@ -97,6 +103,8 @@ class evolutionary(fitAlg):
 
         self.boundVals = None
         self.boundNames = None
+
+        self.logger = logging.getLogger('Fitting.fitters.evolutionary')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """

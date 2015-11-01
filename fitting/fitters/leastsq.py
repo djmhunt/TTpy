@@ -4,6 +4,8 @@
 """
 from __future__ import division
 
+import logging
+
 from fitAlg import fitAlg
 
 from scipy import optimize
@@ -52,6 +54,8 @@ class leastsq(fitAlg):
 
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc}
+
+        self.logger = logging.getLogger('Fitting.fitters.leastsq')
 
 
     def fit(self, sim, mParamNames, mInitialParams):

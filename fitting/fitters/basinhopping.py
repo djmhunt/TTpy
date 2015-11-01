@@ -4,6 +4,8 @@
 """
 from __future__ import division
 
+import logging
+
 from fitAlg import fitAlg
 
 from numpy import array, around, all
@@ -119,6 +121,8 @@ class basinhopping(fitAlg):
         self.count = 1
 
         self.boundVals = None
+
+        self.logger = logging.getLogger('Fitting.fitters.basinhopping')
 
 #    def callback(self,Xi):
 #        """

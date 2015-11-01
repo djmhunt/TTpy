@@ -4,6 +4,8 @@
 """
 from __future__ import division
 
+import logging
+
 from fitAlg import fitAlg
 
 from numpy import array, around
@@ -120,6 +122,8 @@ class minimize(fitAlg):
 
         self.boundVals = None
         self.boundNames = None
+
+        self.logger = logging.getLogger('Fitting.fitters.minimize')
 
 #    def callback(self,Xi):
 #        """
