@@ -205,6 +205,37 @@ def deckStimDirect():
     deckStim.Name = "deckStimDirect"
     return deckStim
 
+def deckStimDirectNormal(maxEventVal):
+    """
+    Processes the decks stimuli for models expecting just the event, but in range [0,1]
+
+    Parameters
+    ----------
+    maxEventVal : int
+        The highest value a reward can have
+
+    Returns
+    -------
+    deckStim : function
+        The function expects to be passed a tuple containing the event and the
+        last action. The function returns the event.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.opal
+    """
+
+    def deckStim(event, action):
+        return event / maxEventVal
+
+    deckStim.Name = "deckStimDirectNormal"
+    return deckStim
+
 def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     """
     Processes the decks stimuli for models expecting the reward information
