@@ -14,6 +14,7 @@ import logging
 from numpy import exp, zeros, array, amax, dot, argmax, mean, square
 from random import choice
 from collections import defaultdict
+from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -138,11 +139,11 @@ class RVPM(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
         elif instance == 'reac':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
     def storeState(self):

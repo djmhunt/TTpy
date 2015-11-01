@@ -11,6 +11,7 @@ import logging
 
 from numpy import exp, array, ones
 from random import choice
+from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -131,13 +132,13 @@ class EP(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
             self._processAction()
 
 
         elif instance == 'reac':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
     def _processEvent(self,events):

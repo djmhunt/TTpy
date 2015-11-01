@@ -12,6 +12,7 @@ from __future__ import division
 import logging
 
 from numpy import exp, zeros, array
+from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -138,11 +139,11 @@ class MS(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
         elif instance == 'reac':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
     def _processEvent(self,events):
