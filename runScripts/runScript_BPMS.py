@@ -44,7 +44,7 @@ expSets = experiments((Decks,expParams,expExtraParams))
 
 eta = 0
 beta = 0.5
-betaBounds = (0,1)
+betaBounds = (0,10)
 delta = 0.5
 deltaBounds = (0.001,0.999)
 numStimuli = 2
