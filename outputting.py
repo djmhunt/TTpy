@@ -21,6 +21,7 @@ from inspect import stack
 from numpy import seterr, seterrcall, array, ndarray, shape, prod
 from itertools import izip
 from collections import OrderedDict, Callable
+from types import NoneType
 
 from utils import listMerGen, callableDetailsString
 
@@ -866,7 +867,7 @@ class outputting(object):
 
         expData = self.reframeStore(self.expStore, 'exp_')
         modelData = self.reframeStore(self.modelStore, 'model_')
-        if self.fitInfo != None:
+        if type(self.fitInfo) is not NoneType:
             partData = self.reframeStore(self.partStore, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(partData)
@@ -892,7 +893,7 @@ class outputting(object):
         ### Must do this for experiment parameters as well
 #        data.update(expData)
         fitInfo = self.fitInfo
-        if fitInfo != None:
+        if type(fitInfo) is not NoneType:
 
             usefulKeys = []
             for fitSet in fitInfo:
@@ -1116,14 +1117,14 @@ class outputting(object):
 
             partStore.setdefault(key,[])
 
-            if initKey == None:
+            if type(initKey) is NoneType:
                 vals = [repr(s.get(key,None)) for s in store]
                 partStore[key].extend(vals)
 
             else:
                 for s in store:
                     rawVal = s.get(initKey,None)
-                    if rawVal == None:
+                    if type(rawVal) is NoneType:
                         v = None
                     else:
                         v = rawVal[loc]
