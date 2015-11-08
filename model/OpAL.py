@@ -17,6 +17,7 @@ import logging
 
 from numpy import exp, ones, array
 from random import choice
+from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -57,11 +58,15 @@ class OpAL(model):
         expoitation parameter. Defined as :math:`\\beta` in the paper
     betaDiff : float, optional
         The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
-    prior : array of two floats in ``[0,1]`` or just float in range, optional
-        The prior probability of of the two states being the correct one.
+    prior : array of floats in ``[0,1]`` or just float in range, optional
+        The prior probability of each state being the correct one.
         Default ``array([0.5,0.5])``
-    expect: float, optional
-        The initialisation of the the expected reward. Default ``array([5,5])``
+    expect : array of floats, optional
+        The initialisation of the the expected reward.
+        Default ``array([0.5,0.5])``
+    expectGo : array of floats, optional
+        The initialisation of the the expected go and nogo.
+        Default ``array([1,1])``
     numActions : integer, optional
         The number of different reaction learning sets. Default ``2``
     stimFunc : function, optional
@@ -105,13 +110,14 @@ class OpAL(model):
         self.betaDiff = kwargs.pop('betaDiff',0)
         self.betaGo = kwargs.pop('betaGo', None)
         self.betaNogo = kwargs.pop('betaNogo', None)
-        self.alpha = kwargs.pop('alpha', 0.3)
+        self.alpha = kwargs.pop('alpha', 0.1)
         self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
         self.alphaCrit = kwargs.pop('alphaC', self.alpha)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
         self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
-        self.expect = kwargs.pop('expect', ones(self.numActions)/self.numActions)
+        self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
+        self.expectGo = kwargs.pop('expectGo', ones(self.numActions)*1)
 
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decMaxProb(range(self.numActions)))
@@ -133,6 +139,7 @@ class OpAL(model):
                            "alphaGo": self.alphaGo,
                            "alphaNogo": self.alphaNogo,
                            "expectation": self.expect,
+                           "expectationGo": self.expectGo,
                            "prior": self.prior,
                            "numActions": self.numActions,
                            "stimFunc" : callableDetailsString(self.stimFunc),
@@ -140,9 +147,9 @@ class OpAL(model):
 
         self.currAction = None
         self.expectation = array(self.expect)
-        self.go = array(self.expect)
-        self.nogo = array(self.expect)
-        self.actionValues = array(self.expect)
+        self.go = array(self.expectGo)
+        self.nogo = array(self.expectGo)
+        self.actionValues = ones(self.expectation.shape)
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
         self.decision = None
@@ -202,13 +209,13 @@ class OpAL(model):
         """Processes updates to new actions"""
 
         if instance == 'obs':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
             self._processAction()
 
 
         elif instance == 'reac':
-            if events != None:
+            if type(events) is not NoneType:
                 self._processEvent(events)
 
     def _processEvent(self,events):
@@ -264,9 +271,9 @@ class OpAL(model):
 
     def _prob(self, go, nogo):
 
-        gd = self.betaDiff
+        bd = self.betaDiff
 
-        actionValues = (1+gd)*go - (1-gd)*nogo
+        actionValues = (1+bd)*go - (1-bd)*nogo
 
         self.actionValues = actionValues
 
