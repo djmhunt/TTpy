@@ -14,12 +14,16 @@ from __future__ import division
 
 import pandas as pd
 
-from numpy import array, zeros, exp, ones
+from numpy import array, zeros, exp, ones, arange
 from numpy.random import rand, choice
+from collections import defaultdict
+from itertools import izip
+
 from experiment.experimentTemplate import experiment
-from plotting import pandasPlot
+from plotting import pandasPlot, lineplot
 from experiment.experimentPlot import experimentPlot
 from experiment.experimentSetPlot import experimentSetPlot
+
 #from utils import varyingParams
 
 
@@ -43,10 +47,18 @@ class probSelect(experiment):
     rewardProb : float in range [0,1], optional
         The probability that a reward is given for choosing action A. Default
         is 0.7
+    actRewardProb : dictionary, optional
+        A dictionary of the potential actions that can be taken and the
+        probability of a reward.
+        Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}
+    rewardSize : float, optional
+        The size of reward given if sucessful. Default 1
+    numActions : int, optional
+        The number of actions that can be chosen at any given time, chosen at
+        random from actRewardProb. Default 2
     learningLen : int, optional
         The number of trials in the learning phase. As there is no feeback in
         the trasfer phase there is no trasfer phase. Default is 100
-
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -57,10 +69,9 @@ class probSelect(experiment):
     The experiment is broken up into two sections: a learning phase and a
     trasfer phase. Participants choose between pairs of four actions: A, B, M1
     and M2. Each provides a reward with a different probability: A:P>0.5,
-    B:1-P<0.5, M1=M2=0.5. In the learning phase there is only A and B, but the
-    transfer phase has all the action pairs but no feedback. This class only
-    covers the learning phase, but models are expected to be implemented as if
-    there is a transfer phase.
+    B:1-P<0.5, M1=M2=0.5. The transfer phase has all the action pairs but no
+    feedback. This class only covers the learning phase, but models are
+    expected to be implemented as if there is a transfer phase.
 
     """
 
@@ -83,21 +94,30 @@ class probSelect(experiment):
                                                     2:0.5,
                                                     3:0.5})
         learningLen = kwargs.pop("learningLen", 100)
+        numActions = kwargs.pop("numActions", 2)
+        rewardSize = kwargs.pop("rewardSize", 1)
+
+
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
         self.parameters = {"Name": self.Name,
                            "rewardProb": rewardProb,
                            "actRewardProb": actRewardProb,
-                           "learningLen": learningLen}
+                           "learningLen": learningLen,
+                           "numActions": numActions,
+                           "rewardSize": rewardSize}
 
         # Set draw count
         self.t = -1
         self.rewardProb = rewardProb
         self.actRewardProb = actRewardProb
+        self.rewardSize = rewardSize
         self.T = learningLen
         self.action = None
         self.stimVal = -1
+        self.numActions = numActions
+        self.choices = actRewardProb.keys()
 
         # Recording variables
 
@@ -129,7 +149,7 @@ class probSelect(experiment):
             raise StopIteration
 
         nextStim = None
-        nextValidActions = choice([0,1,2,3], size = 2, replace = False)
+        nextValidActions = choice(self.choices, size = self.numActions, replace = False)
 
         return nextStim, nextValidActions
 
@@ -148,7 +168,7 @@ class probSelect(experiment):
         actRewProb = self.actRewardProb[self.action]
 
         if actRewProb >= rand(1):
-            reward = 1
+            reward = self.rewardSize
         else:
             reward = 0
 
@@ -206,7 +226,7 @@ class probSelect(experiment):
 
             self.figSets = []
 
-            self.processData()
+            self.processEndData()
 
             fig = self.biasAlpha()
             self.figSets.append(("biasAlpha",fig))
@@ -226,7 +246,7 @@ class probSelect(experiment):
             fig = self.avoidBeta()
             self.figSets.append(("avoidBeta",fig))
 
-        def processData(self):
+        def processEndData(self):
             expStore = self.expStore
             modelStore = self.modelStore
             plotArgs = self.plotArgs
@@ -249,7 +269,7 @@ class probSelect(experiment):
 
             self.df = data
 
-        def _plotSubset(self, x, y, z, sort):
+        def _plotEndSubset(self, x, y, z, sort):
 
             data = self.df.sort(columns=sort)
 
@@ -269,37 +289,37 @@ class probSelect(experiment):
 
         def biasAlpha(self):
 
-            fig = self._plotSubset('alphaGo', 'bias', 'betaGo', ['betaGo','alphaGo'])
+            fig = self._plotEndSubset('alphaGo', 'bias', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def biasBeta(self):
 
-            fig = self._plotSubset('betaGo', 'bias', 'alphaGo', ['alphaGo', 'betaGo'])
+            fig = self._plotEndSubset('betaGo', 'bias', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
         def chooseAlpha(self):
 
-            fig = self._plotSubset('alphaGo', 'chooseA', 'betaGo', ['betaGo','alphaGo'])
+            fig = self._plotEndSubset('alphaGo', 'chooseA', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def chooseBeta(self):
 
-            fig = self._plotSubset('betaGo', 'chooseA', 'alphaGo', ['alphaGo', 'betaGo'])
+            fig = self._plotEndSubset('betaGo', 'chooseA', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
         def avoidAlpha(self):
 
-            fig = self._plotSubset('alphaGo', 'avoidB', 'betaGo', ['betaGo','alphaGo'])
+            fig = self._plotEndSubset('alphaGo', 'avoidB', 'betaGo', ['betaGo','alphaGo'])
 
             return fig
 
         def avoidBeta(self):
 
-            fig = self._plotSubset('betaGo', 'avoidB', 'alphaGo', ['alphaGo', 'betaGo'])
+            fig = self._plotEndSubset('betaGo', 'avoidB', 'alphaGo', ['alphaGo', 'betaGo'])
 
             return fig
 
@@ -313,6 +333,10 @@ class probSelect(experiment):
             with:
                 :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`
                 :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`
+
+            Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`
+            with varying :math:`prob(R|A) \in ]0,1[` and constant
+            :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`
         """
 
         def _figSets(self):
@@ -321,7 +345,7 @@ class probSelect(experiment):
 
             self.figSets = []
 
-            self.processData()
+            self.processEndData()
 
             fig = self.biasVrewardAlpha()
             self.figSets.append(('biasVrewardAlpha',fig))
@@ -329,7 +353,25 @@ class probSelect(experiment):
             fig = self.biasVrewardBeta()
             self.figSets.append(('biasVrewardBeta',fig))
 
-        def processData(self):
+            fig = self.convergeEforP()
+            self.figSets.append(('convergeEforP',fig))
+
+            fig = self.convergeGforP()
+            self.figSets.append(('convergeGforP',fig))
+
+            fig = self.convergeNforP()
+            self.figSets.append(('convergeNforP',fig))
+
+            fig = self.convergeEforR()
+            self.figSets.append(('convergeEforR',fig))
+
+            fig = self.convergeGforR()
+            self.figSets.append(('convergeGforR',fig))
+
+            fig = self.convergeNforR()
+            self.figSets.append(('convergeNforR',fig))
+
+        def processEndData(self):
             expStore = self.expStore
             modelStore = self.modelStore
             plotArgs = self.plotArgs
@@ -353,7 +395,30 @@ class probSelect(experiment):
 
             self.df = data
 
-        def _plotSubset(self, x, y, z, sort):
+        def processTimeData(self):
+            expStore = self.expStore
+            modelStore = self.modelStore
+            plotArgs = self.plotArgs
+
+            unGroupedData = defaultdict(defaultdict(defaultdict(list)))
+
+            for e,m in izip(expStore,modelStore):
+                unGroupedData[e['rewardSize']][e['rewardProb']]['E'].append(m['Expectation'])
+                unGroupedData[e['rewardSize']][e['rewardProb']]['G'].append(m['Go'])
+                unGroupedData[e['rewardSize']][e['rewardProb']]['N'].append(m['Nogo'])
+
+            data = {
+                    rS : {
+                        rP: [sum(rPv['E'], axis=0),
+                             sum(rPv['G'], axis=0),
+                             sum(rPv['N'], axis=0),
+                             sum(array(rPv['G'])-array(rPv['N']), axis=0)]
+                        for rP,rPv in rSv.iteritems()}
+                    for rS,rSv in unGroupedData.iteritems()}
+
+            self.dt = data
+
+        def _plotEndSubset(self, x, y, z, sort):
 
             data = self.df.sort(columns=sort)
 
@@ -370,17 +435,33 @@ class probSelect(experiment):
 
             return fig
 
+        def _plotTimeSubset(self):
+
+            return fig
+
         def biasVrewardAlpha(self):
 
-            fig = self._plotSubset('rewardProb', 'bias', 'alphaGo', ['betaGo', 'alphaGo', 'rewardProb'])
+            fig = self._plotEndSubset('rewardProb', 'bias', 'alphaGo', ['betaGo', 'alphaGo', 'rewardProb'])
 
             return fig
 
         def biasVrewardBeta(self):
 
-            fig = self._plotSubset('rewardProb', 'bias', 'betaGo', ['alphaGo', 'betaGo', 'rewardProb'])
+            fig = self._plotEndSubset('rewardProb', 'bias', 'betaGo', ['alphaGo', 'betaGo', 'rewardProb'])
 
             return fig
+
+        def convergeEforP(self):
+
+            data = self.dt.get(1,{})
+
+            Y = [data[p]['E'] for p in data.iterkeys()]
+
+            x = arange(len)
+
+            fig = lineplot()
+
+
 
 def probSelectStimDirect():
     """
