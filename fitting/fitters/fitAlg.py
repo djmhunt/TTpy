@@ -4,12 +4,13 @@
 """
 from __future__ import division
 
+import logging
+
 from math import isinf
 from numpy import linspace
 from itertools import izip
-from utils import listMergeNP
 
-from utils import callableDetailsString
+from utils import listMergeNP, callableDetailsString
 from qualityFunc import qualFuncIdent
 from boundFunc import scalarBound
 
@@ -64,6 +65,8 @@ class fitAlg(object):
 
         self.boundVals = None
         self.boundNames = None
+
+        self.logger = logging.getLogger('Fitting.fitters.fitAlg')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
