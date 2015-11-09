@@ -24,6 +24,10 @@ class fit(object):
         An instance of one of the fitting algorithms
     scaler : function
         Transforms the participant action form to match that of the model
+    fpRespVal : float, optional
+        If a floating point error occours when running a fit the fit function
+        will return a value for each element of fpRespVal.
+        Default is 1/1e100
         
     Attributes
     ----------
@@ -38,13 +42,14 @@ class fit(object):
     Name = 'none'
 
 
-    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler):
+    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler, **kwargs):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
         self.modelparam = modelParam
         self.fitAlg = fitAlg
         self.scaler = scaler
+        self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
 
         self.fitInfo = {'Name':self.Name,
                         'participantChoiceParam':partChoiceParam,

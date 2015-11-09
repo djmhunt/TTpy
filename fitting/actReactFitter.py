@@ -9,7 +9,7 @@ import logging
 from fit import fit
 
 from itertools import izip
-from numpy import log, concatenate, array
+from numpy import log, concatenate, array, ones
 from numpy import sum as asum
 #
 #from utils import listMerGen
@@ -33,6 +33,10 @@ class fitter(fit):
         An instance of one of the fitting algorithms
     scaler : function
         Transforms the participant action form to match that of the model
+    fpRespVal : float, optional
+        If a floating point error occours when running a fit the fit function
+        will return a value for each element of fpRespVal.
+        Default is 1/1e100
 
     Attributes
     ----------
@@ -70,8 +74,15 @@ class fitter(fit):
         """
 
         #Run model with given parameters
-        model = self._simSetup(*modelParameters)
-
+        try:
+            model = self._simSetup(*modelParameters)
+        except FloatingPointError:
+            logger = logging.getLogger('Fitter')
+            logger.warning("Floating point error. Abandoning fitting with parameters: " 
+                            + repr(self.getModParams(*modelParameters))
+                            + " Returning fit value " + repr(self.fpRespVal))
+            return ones(self.partRewards.shape)*self.fpRespVal  
+            
         # Pull out the values to be compared
 
         modelData = model.outputEvolution()
