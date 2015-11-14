@@ -15,6 +15,9 @@ from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
 from collections import defaultdict, Callable
+from types import NoneType
+from sys import exc_info
+from traceback import extract_tb
 
 
 # For analysing the state of the computer
@@ -555,6 +558,38 @@ def callableDetailsString(item):
         desc = Name
 
     return desc
+
+def errorResp():
+    """
+    Takes an error that has been caught and returns the details as a string
+
+    Returns
+    -------
+    description : string
+        Contains the description of the error
+
+    Examples
+    --------
+    >>> try:
+    >>>     a = 1/0.0
+    >>> except:
+    >>>     print errorResp()
+    A <type 'exceptions.ZeroDivisionError'> : "float division by zero" in <input> line 1 function <module>: a = 1/0.0
+    
+    >>> try:
+    >>>     a = b()
+    >>> except:
+    >>>     print errorResp()
+    A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()
+    
+    """
+    errorType, value, traceback = exc_info()
+    errorLoc = extract_tb(traceback)[-1]
+    description = "A " + str(errorType) + ' : "%s"' % (value)
+    description += " in " + errorLoc[0] + " line " + str(errorLoc[1])
+    description += " function " + errorLoc[2] + ": " + errorLoc[3]
+
+    return description
 
 #if __name__ == '__main__':
 #    from timeit import timeit

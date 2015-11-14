@@ -11,6 +11,7 @@ from fit import fit
 from itertools import izip
 from numpy import log, concatenate, array, ones
 from numpy import sum as asum
+from utils import errorResp
 #
 #from utils import listMerGen
 
@@ -77,8 +78,9 @@ class fitter(fit):
         try:
             model = self._simSetup(*modelParameters)
         except FloatingPointError:
+            message = errorResp()
             logger = logging.getLogger('Fitter')
-            logger.warning("Floating point error. Abandoning fitting with parameters: " 
+            logger.warning(message + "\n. Abandoning fitting with parameters: " 
                             + repr(self.getModParams(*modelParameters))
                             + " Returning fit value " + repr(self.fpRespVal))
             return ones(self.partRewards.shape)*self.fpRespVal  
