@@ -932,13 +932,13 @@ class outputting(object):
 
         See Also
         --------
-        dictKeySet, newDict
+        dictKeySet, newFlatDict
         """
 
         keySet = self.dictKeySet(store)
 
         # For every key now found
-        newStore = self.newDict(keySet,store,storeLabel)
+        newStore = self.newFlatDict(keySet,store,storeLabel)
 
         return newStore
 
@@ -964,14 +964,14 @@ class outputting(object):
 
         See Also
         --------
-        dictSelectKeySet, newDict
+        dictSelectKeySet, newFlatDict
 
         """
 
         keySet = self.dictSelectKeySet(store,keySet)
 
         # For every key now found
-        newStore = self.newDict(keySet,store,storeLabel)
+        newStore = self.newFlatDict(keySet,store,storeLabel)
 
         return newStore
 
@@ -1000,7 +1000,7 @@ class outputting(object):
 
         See Also
         --------
-        reframeStore, newDict
+        reframeStore, newFlatDict
         """
 
         # Find all the keys
@@ -1051,7 +1051,7 @@ class outputting(object):
 
         See Also
         --------
-        reframeSelectStore, newDict
+        reframeSelectStore, newFlatDict
         """
 
         # Find all the keys
@@ -1080,7 +1080,7 @@ class outputting(object):
 
         return keySet
 
-    def newDict(self,keySet,store,storeLabel):
+    def newFlatDict(self,keySet,store,storeLabel):
         """
         Takes a list of dictionaries and returns a dictionary of 1D lists.
 
