@@ -865,10 +865,10 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
         data['folder'] = self.outputFolder
 
-        expData = self.reframeStore(self.expStore, 'exp_')
-        modelData = self.reframeStore(self.modelStore, 'model_')
+        expData = self.reframeListDicts(self.expStore, 'exp_')
+        modelData = self.reframeListDicts(self.modelStore, 'model_')
         if type(self.fitInfo) is not NoneType:
-            partData = self.reframeStore(self.partStore, 'part_')
+            partData = self.reframeListDicts(self.partStore, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(partData)
 
@@ -886,7 +886,7 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
 
         # Get parameters and fitting data
-        modelParams = self.reframeStore(self.modelParamStore)
+        modelParams = self.reframeListDicts(self.modelParamStore)
         modelUsefulParams = OrderedDict((('model_' + k,v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
         data.update(modelUsefulParams)
 
@@ -901,8 +901,8 @@ class outputting(object):
                     if "Param" in k and "model" or "participant" in k:
                         usefulKeys.append(v)
 
-            modelData = self.reframeSelectStore(self.modelStore, usefulKeys, 'model_')
-            partData = self.reframeSelectStore(self.partStore, usefulKeys, 'part_')
+            modelData = self.reframeSelectListDicts(self.modelStore, usefulKeys, 'model_')
+            partData = self.reframeSelectListDicts(self.partStore, usefulKeys, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
@@ -910,9 +910,8 @@ class outputting(object):
 
         return data
 
-
     ### Utils
-    def reframeStore(self, store, storeLabel = ''):
+    def reframeListDicts(self, store, storeLabel = ''):
         """
         Take a list of dictionaries and turn it into a dictionary of lists
 
@@ -932,17 +931,17 @@ class outputting(object):
 
         See Also
         --------
-        dictKeySet, newFlatDict
+        flatDictKeySet, newFlatDict
         """
 
-        keySet = self.dictKeySet(store)
+        keySet = self.flatDictKeySet(store)
 
         # For every key now found
         newStore = self.newFlatDict(keySet,store,storeLabel)
 
         return newStore
 
-    def reframeSelectStore(self, store, keySet, storeLabel = ''):
+    def reframeSelectListDicts(self, store, keySet, storeLabel = ''):
         """Take a list of dictionaries and turn it into a dictionary of lists
         containing only the useful keys
 
@@ -964,18 +963,18 @@ class outputting(object):
 
         See Also
         --------
-        dictSelectKeySet, newFlatDict
+        flatDictSelectKeySet, newFlatDict
 
         """
 
-        keySet = self.dictSelectKeySet(store,keySet)
+        keySet = self.flatDictSelectKeySet(store,keySet)
 
         # For every key now found
         newStore = self.newFlatDict(keySet,store,storeLabel)
 
         return newStore
 
-    def dictKeySet(self,store):
+    def flatDictKeySet(self,store):
         """
         Generates a dictionary of keys and identifiers for the new dictionary,
         splitting any keys with lists into a set of keys, one for each element
@@ -1000,7 +999,7 @@ class outputting(object):
 
         See Also
         --------
-        reframeStore, newFlatDict
+        reframeListDicts, newFlatDict
         """
 
         # Find all the keys
@@ -1024,7 +1023,7 @@ class outputting(object):
 
         return keySet
 
-    def dictSelectKeySet(self,store, keys):
+    def flatDictSelectKeySet(self,store, keys):
         """
         Generates a dictionary of keys and identifiers for the new dictionary,
         including only the keys in the keys list. Any keys with lists  will
@@ -1051,7 +1050,7 @@ class outputting(object):
 
         See Also
         --------
-        reframeSelectStore, newFlatDict
+        reframeSelectListDicts, newFlatDict
         """
 
         # Find all the keys
