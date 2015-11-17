@@ -146,6 +146,49 @@ def saving(save, label):
         fileName =  ''
 
     return folderName, fileName
+    
+def newFile(handle, extension, outputFolder):
+    """
+    Creates a new file withe the name <handle> and the extension <extension>
+
+    Parameters
+    ----------
+    handle : string
+        The file name
+    extension : string
+        The extension of the file
+    outputFolder : string
+        The full path of where the file will be stored
+
+    Returns
+    -------
+    fileName : string
+        The filename allowed for the file
+        
+    Examples
+    --------
+    >>> newFile("handle", "txt", "./")
+    './handle.txt'
+    
+    >>> newFile("handle", "txt", "./Outputting/")
+    './Outputting/handle.txt'
+    """
+
+    if extension == '':
+        end = ''
+    else:
+        end = "." + extension
+
+    fileName = outputFolder + handle
+    if exists(fileName + end):
+        i = 1
+        while exists(fileName + "_" + str(i) + end):
+            i += 1
+        fileName += "_" + str(i)
+
+    fileName += end
+
+    return fileName
 
 def argProcess(**kwargs):
 
