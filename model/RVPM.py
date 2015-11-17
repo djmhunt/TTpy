@@ -126,7 +126,7 @@ class RVPM(model):
 
         av = self.averaging
 
-        results = self.parameters
+        results = self.parameters.copy()
 
         for k,v in self.generalStore.iteritems():
 

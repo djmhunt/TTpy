@@ -194,7 +194,7 @@ class BHMM(model):
             Probabilities, Actions and Events.
         """
 
-        results = self.parameters
+        results = self.parameters.copy()
 
         results["Probabilities"] = array(self.recProbabilities)
         results["ActionProb"] = array(self.recActionProb)
