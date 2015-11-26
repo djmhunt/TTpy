@@ -162,7 +162,7 @@ class RVPM(model):
             self.c = c
             self.r = r
             self._processStim(t,c,r)
-            self._updateEventStore()
+            self._updateEventStore(event)
 
     def _processStim(self,t,c,r):
 
@@ -220,6 +220,7 @@ class RVPM(model):
         self.eventStore["stim"] = []
         self.eventStore["rew"] = []
         self.eventStore["w"] = []
+        self.eventStore["event"] = []
 
         self._generalStoreSetup()
 
@@ -231,7 +232,7 @@ class RVPM(model):
         for k in self.eventStore.iterkeys():
             self.generalStore[k] = []
 
-    def _updateEventStore(self):
+    def _updateEventStore(self, event):
 
         self.eventStore["T"].append(self.T)
         self.eventStore["V"].append(self.V)
@@ -241,6 +242,7 @@ class RVPM(model):
         self.eventStore["stim"].append(self.c)
         self.eventStore["rew"].append(self.r)
         self.eventStore["w"].append(self.w)
+        self.eventStore["event"].append(event)
 
 
     def _updateGeneralStore(self):
