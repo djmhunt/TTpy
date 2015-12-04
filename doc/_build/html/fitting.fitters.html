@@ -60,6 +60,397 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-fitting.fitters.basinhopping">
+<span id="fitting-fitters-basinhopping-module"></span><h2>fitting.fitters.basinhopping module<a class="headerlink" href="#module-fitting.fitters.basinhopping" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="fitting.fitters.basinhopping.basinhopping">
+<em class="property">class </em><code class="descclassname">fitting.fitters.basinhopping.</code><code class="descname">basinhopping</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x000000000931AF98&gt;</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<p>The class for fitting data using scipy.optimise.basinhopping</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : string, optional</p>
+<blockquote>
+<div><p>The name of the function used to calculate the quality of the fit.
+The value it returns proivides the fitter with its fitting guide.
+Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></p>
+</div></blockquote>
+<p><strong>method</strong> : string or list of strings, optional</p>
+<blockquote>
+<div><p>The name of the fitting method or list of names of fitting method or
+name of list of fitting methods. Valid names found in the notes.
+Default <code class="docutils literal"><span class="pre">unconstrained</span></code></p>
+</div></blockquote>
+<p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
+<blockquote>
+<div><p>The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+</div></blockquote>
+<p><strong>boundCostFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>A function used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></p>
+</div></blockquote>
+<p><strong>numStartPoints</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of starting points generated for each parameter.
+Default 4</p>
+</div></blockquote>
+<p><strong>boundFit</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if fits that reach a boundary should be considered the same way
+as those that do not. Default is True</p>
+</div></blockquote>
+<p><strong>boundSensitivity</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>Defines the smallest number of decimal places difference (so the
+minimal difference) between a fit value and its related boundaries
+before a fit value is considered different from a boundary. The default
+is <cite>5</cite>. This is only valid if <code class="docutils literal"><span class="pre">boundFit</span></code> is <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dd>The general fitting method class, from which this one inherits</dd>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dd>The general fitting framework class</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.basinhopping</span></code></dt>
+<dd>The fitting class this wraps around</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.minimize</span></code></dt>
+<dd>The fitting class basinhopping wraps around</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>unconstrained = [&#8216;Nelder-Mead&#8217;,&#8217;Powell&#8217;,&#8217;CG&#8217;,&#8217;BFGS&#8217;]
+constrained = [&#8216;L-BFGS-B&#8217;,&#8217;TNC&#8217;,&#8217;SLSQP&#8217;]
+Custom fitting algorithms are also allowed in theory, but it has yet to be
+implemented.</p>
+<p>For each fitting function a set of different starting parameters will be
+tried. These are the combinations of all the values of the different
+parameters. For each starting parameter provided a set of numStartPoints
+starting points will be chosen, surrounding the starting point provided. If
+the starting point provided is less than one it will be assumed that the
+values cannot exceed 1, otherwise, unless otherwise told, it will be
+assumed that they can take any value and will be chosen to be eavenly
+spaced around the provided value.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the fitting method</td>
+</tr>
+<tr class="row-even"><td>unconstrained</td>
+<td>(list) The list of valid unconstrained fitting methods</td>
+</tr>
+<tr class="row-odd"><td>constrained</td>
+<td>(list) The list of valid constrained fitting methods</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.Name">
+<code class="descname">Name</code><em class="property"> = 'basinhopping'</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.constrained">
+<code class="descname">constrained</code><em class="property"> = ['L-BFGS-B', 'TNC', 'SLSQP']</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.constrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.basinhopping.basinhopping.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the model through the fitting algorithms and starting parameters
+and returns the best one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is fit.fitness</p>
+</div></blockquote>
+<p><strong>mParamNames</strong> : list of strings</p>
+<blockquote>
+<div><p>The list of initial parameter names</p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the intial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote class="last">
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.unconstrained">
+<code class="descname">unconstrained</code><em class="property"> = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.unconstrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-fitting.fitters.boundFunc">
+<span id="fitting-fitters-boundfunc-module"></span><h2>fitting.fitters.boundFunc module<a class="headerlink" href="#module-fitting.fitters.boundFunc" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="fitting.fitters.boundFunc.infBound">
+<code class="descclassname">fitting.fitters.boundFunc.</code><code class="descname">infBound</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/boundFunc.html#infBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.boundFunc.infBound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boundary excess of <code class="docutils literal"><span class="pre">inf</span></code> when over bounds</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>base</strong> : float, optional</p>
+<blockquote>
+<div><p>The cost at the bounday. Default 0</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cost</strong> : function</p>
+<blockquote class="last">
+<div><p>Calculates the cost of exceeding the bounday using the parameters and
+the boundaries, and returns the cost.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.boundFunc</span> <span class="kn">import</span> <span class="n">infBound</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">infBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">160</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">inf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">inf</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.boundFunc.scalarBound">
+<code class="descclassname">fitting.fitters.boundFunc.</code><code class="descname">scalarBound</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/boundFunc.html#scalarBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.boundFunc.scalarBound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boundary excess calculated as a scaler increase based on difference with
+bounds</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>base</strong> : float, optional</p>
+<blockquote>
+<div><p>The cost at the bounday. Default 0</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cost</strong> : function</p>
+<blockquote class="last">
+<div><p>Calculates the cost of exceeding the bounday using the parameters and
+the boundaries, and returns the cost.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.boundFunc</span> <span class="kn">import</span> <span class="n">scalarBound</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">160</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">162</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">163</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">163</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
+<span class="go">163</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-fitting.fitters.evolutionary">
+<span id="fitting-fitters-evolutionary-module"></span><h2>fitting.fitters.evolutionary module<a class="headerlink" href="#module-fitting.fitters.evolutionary" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="fitting.fitters.evolutionary.evolutionary">
+<em class="property">class </em><code class="descclassname">fitting.fitters.evolutionary.</code><code class="descname">evolutionary</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>strategy=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x000000001A661C18&gt;</em>, <em>polish=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<p>The class for fitting data using scipy.optimise.differential_evolution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : string, optional</p>
+<blockquote>
+<div><p>The name of the function used to calculate the quality of the fit.
+The value it returns proivides the fitter with its fitting guide.
+Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></p>
+</div></blockquote>
+<p><strong>strategy</strong> : string or list of strings, optional</p>
+<blockquote>
+<div><p>The name of the fitting strategy or list of names of fitting strategy or
+name of list of fitting strategies. Valid names found in the notes.
+Default <code class="docutils literal"><span class="pre">best1bin</span></code></p>
+</div></blockquote>
+<p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
+<blockquote>
+<div><p>The boundaries for fitting. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+</div></blockquote>
+<p><strong>boundCostFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>A function used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></p>
+</div></blockquote>
+<p><strong>polish</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If True (default), then scipy.optimize.minimize with the <code class="docutils literal"><span class="pre">L-BFGS-B</span></code>
+method is used to polish the best population member at the end, which
+can improve the minimization slightly.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dd>The general fitting strategy class, from which this one inherits</dd>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dd>The general fitting framework class</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.differential_evolution</span></code></dt>
+<dd>The fitting class this wraps around</dd>
+</dl>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the fitting strategies</td>
+</tr>
+<tr class="row-even"><td>strategySet</td>
+<td>(list) The list of valid fitting strategies. Currently these are: &#8216;best1bin&#8217;, &#8216;best1exp&#8217;, &#8216;rand1exp&#8217;, &#8216;randtobest1exp&#8217;, &#8216;best2exp&#8217;, &#8216;rand2exp&#8217;, &#8216;randtobest1bin&#8217;, &#8216;best2bin&#8217;, &#8216;rand2bin&#8217;, &#8216;rand1bin&#8217; For all strategies, use &#8216;all&#8217;</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.evolutionary.evolutionary.Name">
+<code class="descname">Name</code><em class="property"> = 'evolutionary'</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.evolutionary.evolutionary.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the model through the fitting algorithms and starting parameters
+and returns the best one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is fit.fitness</p>
+</div></blockquote>
+<p><strong>mParamNames</strong> : list of strings</p>
+<blockquote>
+<div><p>The list of initial parameter names</p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the intial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote class="last">
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.evolutionary.evolutionary.validStrategySet">
+<code class="descname">validStrategySet</code><em class="property"> = ['best1bin', 'best1exp', 'rand1exp', 'randtobest1exp', 'best2exp', 'rand2exp', 'randtobest1bin', 'best2bin', 'rand2bin', 'rand1bin']</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.validStrategySet" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-fitting.fitters.fitAlg">
 <span id="fitting-fitters-fitalg-module"></span><h2>fitting.fitters.fitAlg module<a class="headerlink" href="#module-fitting.fitters.fitAlg" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -72,7 +463,7 @@
 </table>
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
-<em class="property">class </em><code class="descclassname">fitting.fitters.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x000000000937BC88&gt;</em>, <em>numStartPoints=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fitters.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>numStartPoints=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The abstact class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -520,7 +911,7 @@ Default 4</p>
 </table>
 <dl class="class">
 <dt id="fitting.fitters.minimize.minimize">
-<em class="property">class </em><code class="descclassname">fitting.fitters.minimize.</code><code class="descname">minimize</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x00000000099A2AC8&gt;</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fitters.minimize.</code><code class="descname">minimize</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x00000000193346D8&gt;</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -673,265 +1064,6 @@ given model parameters. One example is fit.fitness</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-fitting.fitters.basinhopping">
-<span id="fitting-fitters-basinhopping-module"></span><h2>fitting.fitters.basinhopping module<a class="headerlink" href="#module-fitting.fitters.basinhopping" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="fitting.fitters.basinhopping.basinhopping">
-<em class="property">class </em><code class="descclassname">fitting.fitters.basinhopping.</code><code class="descname">basinhopping</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>method=None</em>, <em>bounds=None</em>, <em>boundCostFunc=&lt;function cost at 0x0000000009A2B668&gt;</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
-<p>The class for fitting data using scipy.optimise.basinhopping</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : string, optional</p>
-<blockquote>
-<div><p>The name of the function used to calculate the quality of the fit.
-The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></p>
-</div></blockquote>
-<p><strong>method</strong> : string or list of strings, optional</p>
-<blockquote>
-<div><p>The name of the fitting method or list of names of fitting method or
-name of list of fitting methods. Valid names found in the notes.
-Default <code class="docutils literal"><span class="pre">unconstrained</span></code></p>
-</div></blockquote>
-<p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
-<blockquote>
-<div><p>The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
-</div></blockquote>
-<p><strong>boundCostFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></p>
-</div></blockquote>
-<p><strong>numStartPoints</strong> : int, optional</p>
-<blockquote>
-<div><p>The number of starting points generated for each parameter.
-Default 4</p>
-</div></blockquote>
-<p><strong>boundFit</strong> : bool, optional</p>
-<blockquote>
-<div><p>Defines if fits that reach a boundary should be considered the same way
-as those that do not. Default is True</p>
-</div></blockquote>
-<p><strong>boundSensitivity</strong> : int, optional</p>
-<blockquote class="last">
-<div><p>Defines the smallest number of decimal places difference (so the
-minimal difference) between a fit value and its related boundaries
-before a fit value is considered different from a boundary. The default
-is <cite>5</cite>. This is only valid if <code class="docutils literal"><span class="pre">boundFit</span></code> is <code class="docutils literal"><span class="pre">False</span></code></p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
-<dd>The general fitting method class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
-<dd>The general fitting framework class</dd>
-<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.basinhopping</span></code></dt>
-<dd>The fitting class this wraps around</dd>
-<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.minimize</span></code></dt>
-<dd>The fitting class basinhopping wraps around</dd>
-</dl>
-</div>
-<p class="rubric">Notes</p>
-<p>unconstrained = [&#8216;Nelder-Mead&#8217;,&#8217;Powell&#8217;,&#8217;CG&#8217;,&#8217;BFGS&#8217;]
-constrained = [&#8216;L-BFGS-B&#8217;,&#8217;TNC&#8217;,&#8217;SLSQP&#8217;]
-Custom fitting algorithms are also allowed in theory, but it has yet to be
-implemented.</p>
-<p>For each fitting function a set of different starting parameters will be
-tried. These are the combinations of all the values of the different
-parameters. For each starting parameter provided a set of numStartPoints
-starting points will be chosen, surrounding the starting point provided. If
-the starting point provided is less than one it will be assumed that the
-values cannot exceed 1, otherwise, unless otherwise told, it will be
-assumed that they can take any value and will be chosen to be eavenly
-spaced around the provided value.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="19%" />
-<col width="81%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the fitting method</td>
-</tr>
-<tr class="row-even"><td>unconstrained</td>
-<td>(list) The list of valid unconstrained fitting methods</td>
-</tr>
-<tr class="row-odd"><td>constrained</td>
-<td>(list) The list of valid constrained fitting methods</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="fitting.fitters.basinhopping.basinhopping.Name">
-<code class="descname">Name</code><em class="property"> = 'basinhopping'</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="fitting.fitters.basinhopping.basinhopping.constrained">
-<code class="descname">constrained</code><em class="property"> = ['L-BFGS-B', 'TNC', 'SLSQP']</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.constrained" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="fitting.fitters.basinhopping.basinhopping.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the model through the fitting algorithms and starting parameters
-and returns the best one.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
-<blockquote>
-<div><p>The function used by a fitting algorithm to generate a fit for
-given model parameters. One example is fit.fitness</p>
-</div></blockquote>
-<p><strong>mParamNames</strong> : list of strings</p>
-<blockquote>
-<div><p>The list of initial parameter names</p>
-</div></blockquote>
-<p><strong>mInitialParams</strong> : list of floats</p>
-<blockquote>
-<div><p>The list of the intial parameters</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
-<blockquote>
-<div><p>The best fitting parameters</p>
-</div></blockquote>
-<p><strong>fitQuality</strong> : float</p>
-<blockquote class="last">
-<div><p>The quality of the fit as defined by the quality function chosen.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="fitting.fitters.basinhopping.basinhopping.unconstrained">
-<code class="descname">unconstrained</code><em class="property"> = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.unconstrained" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-fitting.fitters.boundFunc">
-<span id="fitting-fitters-boundfunc-module"></span><h2>fitting.fitters.boundFunc module<a class="headerlink" href="#module-fitting.fitters.boundFunc" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="fitting.fitters.boundFunc.infBound">
-<code class="descclassname">fitting.fitters.boundFunc.</code><code class="descname">infBound</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/boundFunc.html#infBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.boundFunc.infBound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Boundary excess of <code class="docutils literal"><span class="pre">inf</span></code> when over bounds</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>base</strong> : float, optional</p>
-<blockquote>
-<div><p>The cost at the bounday. Default 0</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cost</strong> : function</p>
-<blockquote class="last">
-<div><p>Calculates the cost of exceeding the bounday using the parameters and
-the boundaries, and returns the cost.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.boundFunc</span> <span class="kn">import</span> <span class="n">infBound</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">infBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">160</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">inf</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">inf</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="fitting.fitters.boundFunc.scalarBound">
-<code class="descclassname">fitting.fitters.boundFunc.</code><code class="descname">scalarBound</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/boundFunc.html#scalarBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.boundFunc.scalarBound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Boundary excess calculated as a scaler increase based on difference with
-bounds</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>base</strong> : float, optional</p>
-<blockquote>
-<div><p>The cost at the bounday. Default 0</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cost</strong> : function</p>
-<blockquote class="last">
-<div><p>Calculates the cost of exceeding the bounday using the parameters and
-the boundaries, and returns the cost.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">fitting.fitters.boundFunc</span> <span class="kn">import</span> <span class="n">scalarBound</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">160</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">162</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">163</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">163</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
-<span class="go">163</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
 <div class="section" id="module-fitting.fitters.qualityFunc">
 <span id="fitting-fitters-qualityfunc-module"></span><h2>fitting.fitters.qualityFunc module<a class="headerlink" href="#module-fitting.fitters.qualityFunc" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1002,6 +1134,9 @@ the boundaries, and returns the cost.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="fitting-fitters-test-minimize-module">
+<h2>fitting.fitters.test_minimize module<a class="headerlink" href="#fitting-fitters-test-minimize-module" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="module-fitting.fitters">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fitting.fitters" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -1017,12 +1152,14 @@ the boundaries, and returns the cost.</p>
   <ul>
 <li><a class="reference internal" href="#">fitting.fitters package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.basinhopping">fitting.fitters.basinhopping module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.boundFunc">fitting.fitters.boundFunc module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.evolutionary">fitting.fitters.evolutionary module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.fitAlg">fitting.fitters.fitAlg module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.leastsq">fitting.fitters.leastsq module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.minimize">fitting.fitters.minimize module</a></li>
-<li><a class="reference internal" href="#module-fitting.fitters.basinhopping">fitting.fitters.basinhopping module</a></li>
-<li><a class="reference internal" href="#module-fitting.fitters.boundFunc">fitting.fitters.boundFunc module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.qualityFunc">fitting.fitters.qualityFunc module</a></li>
+<li><a class="reference internal" href="#fitting-fitters-test-minimize-module">fitting.fitters.test_minimize module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters">Module contents</a></li>
 </ul>
 </li>

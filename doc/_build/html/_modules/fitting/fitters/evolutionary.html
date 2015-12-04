@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fitting.fitters.evolutionary &mdash; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.9 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fitting.fitters.evolutionary</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">around</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
+
+<span class="kn">from</span> <span class="nn">fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">callableDetailsString</span>
+<span class="kn">from</span> <span class="nn">qualityFunc</span> <span class="kn">import</span> <span class="n">qualFuncIdent</span>
+<span class="kn">from</span> <span class="nn">boundFunc</span> <span class="kn">import</span> <span class="n">scalarBound</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<div class="viewcode-block" id="evolutionary"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.evolutionary.evolutionary">[docs]</a><span class="k">class</span> <span class="nc">evolutionary</span><span class="p">(</span><span class="n">fitAlg</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;The class for fitting data using scipy.optimise.differential_evolution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fitQualFunc : string, optional</span>
+<span class="sd">        The name of the function used to calculate the quality of the fit.</span>
+<span class="sd">        The value it returns proivides the fitter with its fitting guide.</span>
+<span class="sd">        Default ``fitAlg.null``</span>
+<span class="sd">    strategy : string or list of strings, optional</span>
+<span class="sd">        The name of the fitting strategy or list of names of fitting strategy or</span>
+<span class="sd">        name of list of fitting strategies. Valid names found in the notes.</span>
+<span class="sd">        Default ``best1bin``</span>
+<span class="sd">    bounds : dictionary of tuples of length two with floats, optional</span>
+<span class="sd">        The boundaries for fitting. Default is ``None``, which</span>
+<span class="sd">        translates to boundaries of (0,float(&#39;Inf&#39;)) for each parameter.</span>
+<span class="sd">    boundCostFunc : function, optional</span>
+<span class="sd">        A function used to calculate the penalty for exceeding the boundaries.</span>
+<span class="sd">        Default is ``boundFunc.scalarBound``</span>
+<span class="sd">    polish : bool, optional</span>
+<span class="sd">        If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``</span>
+<span class="sd">        method is used to polish the best population member at the end, which</span>
+<span class="sd">        can improve the minimization slightly.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the fitting strategies</span>
+<span class="sd">    strategySet : list</span>
+<span class="sd">        The list of valid fitting strategies. </span>
+<span class="sd">        Currently these are: &#39;best1bin&#39;, &#39;best1exp&#39;, &#39;rand1exp&#39;, </span>
+<span class="sd">        &#39;randtobest1exp&#39;, &#39;best2exp&#39;, &#39;rand2exp&#39;, &#39;randtobest1bin&#39;,</span>
+<span class="sd">        &#39;best2bin&#39;, &#39;rand2bin&#39;, &#39;rand1bin&#39;</span>
+<span class="sd">        For all strategies, use &#39;all&#39;</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    fitting.fitters.fitAlg.fitAlg : The general fitting strategy class, from</span>
+<span class="sd">                                    which this one inherits</span>
+<span class="sd">    fitting.fit.fit : The general fitting framework class</span>
+<span class="sd">    scipy.optimise.differential_evolution : The fitting class this wraps around</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Name</span> <span class="o">=</span> <span class="s">&#39;evolutionary&#39;</span>
+
+    <span class="n">validStrategySet</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;best1bin&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;best1exp&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;rand1exp&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;randtobest1exp&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;best2exp&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;rand2exp&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;randtobest1bin&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;best2bin&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;rand2bin&#39;</span><span class="p">,</span>
+                        <span class="s">&#39;rand1bin&#39;</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">strategy</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(),</span> <span class="n">polish</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polish</span> <span class="o">=</span> <span class="n">polish</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">boundCostFunc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setType</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+                        <span class="s">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
+                        <span class="s">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">boundCostFunc</span><span class="p">),</span>
+                        <span class="s">&#39;bounds&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span><span class="p">,</span>
+                        <span class="s">&#39;polish&#39;</span><span class="p">:</span> <span class="n">polish</span>
+                        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;strategy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s">&#39;strategy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Fitting.fitters.evolutionary&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="evolutionary.fit"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.evolutionary.evolutionary.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the model through the fitting algorithms and starting parameters</span>
+<span class="sd">        and returns the best one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sim : function</span>
+<span class="sd">            The function used by a fitting algorithm to generate a fit for</span>
+<span class="sd">            given model parameters. One example is fit.fitness</span>
+<span class="sd">        mParamNames : list of strings</span>
+<span class="sd">            The list of initial parameter names</span>
+<span class="sd">        mInitialParams : list of floats</span>
+<span class="sd">            The list of the intial parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fitParams : list of floats</span>
+<span class="sd">            The best fitting parameters</span>
+<span class="sd">        fitQuality : float</span>
+<span class="sd">            The quality of the fit as defined by the quality function chosen.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        fit.fitness</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
+
+        <span class="n">strategy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strategy</span>
+        <span class="n">strategySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBounds</span><span class="p">(</span><span class="n">mParamNames</span><span class="p">)</span>
+        <span class="n">boundVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
+
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+
+            <span class="n">resultSet</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">strategySuccessSet</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategySet</span><span class="p">:</span>
+
+                <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategyFit</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">boundVals</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+                    <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
+                    <span class="n">strategySuccessSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
+
+            <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="n">resultSet</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">bestResult</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">mInitialParams</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fitParams</span> <span class="o">=</span> <span class="n">bestResult</span><span class="o">.</span><span class="n">x</span>
+                <span class="n">fitVal</span> <span class="o">=</span> <span class="n">bestResult</span><span class="o">.</span><span class="n">fun</span>
+
+                <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategyFit</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">boundVals</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">mInitialParams</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">&quot;inf&quot;</span><span class="p">)</span>
+
+            <span class="n">fitParams</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">x</span>
+            <span class="n">fitVal</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span>
+
+            <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span>
+</div>
+    <span class="k">def</span> <span class="nf">_strategyFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
+
+        <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">differential_evolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span>
+                                                         <span class="n">bounds</span><span class="p">,</span>
+                                                         <span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span><span class="p">,</span>
+                                                         <span class="n">polish</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
+                                                         <span class="n">init</span> <span class="o">=</span> <span class="s">&#39;latinhypercube&#39;</span> <span class="c"># &#39;random&#39;</span>
+                                                         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optimizeResult</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">_bestfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resultSet</span><span class="p">):</span>
+
+        <span class="c"># Check that there are fits</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resultSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="n">genFitVal</span><span class="p">,</span> <span class="n">genFitid</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">r</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">resultSet</span><span class="p">))</span>
+
+        <span class="c"># Debug code</span>
+<span class="c">#        data = {}</span>
+<span class="c">#        data[&quot;fitVal&quot;] = array([o.fun for o in resultSet])</span>
+<span class="c">#        data[&#39;nIter&#39;] = array([o.nit for o in resultSet])</span>
+<span class="c">#        data[&#39;parameters&#39;] = array([o.x for o in resultSet])</span>
+<span class="c">#        data[&#39;success&#39;] = array([o.success for o in resultSet])</span>
+<span class="c">#        data[&#39;nfev&#39;] = array([o.nfev for o in resultSet])</span>
+<span class="c">#        data[&#39;message&#39;] = array([o.message for o in resultSet])</span>
+<span class="c">#        data[&#39;jac&#39;] = array([o.jac for o in resultSet])</span>
+<span class="c">#        print array([data[&#39;parameters&#39;].T[0], data[&#39;parameters&#39;].T[1], data[&quot;fitVal&quot;]]).T</span>
+<span class="c">#        print array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T</span>
+<span class="c">#        pytest.set_trace()</span>
+
+        <span class="k">return</span> <span class="n">resultSet</span><span class="p">[</span><span class="n">genFitid</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_setType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">strategy</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span> <span class="o">=</span> <span class="n">strategy</span>
+        <span class="k">elif</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">validStrategySet</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+        <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s">&quot;all&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validStrategySet</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="s">&#39;best1bin&#39;</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

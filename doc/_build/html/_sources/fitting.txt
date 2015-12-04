@@ -11,6 +11,14 @@ Subpackages
 Submodules
 ----------
 
+fitting.actReactFitter module
+-----------------------------
+
+.. automodule:: fitting.actReactFitter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 fitting.expfitter module
 ------------------------
 
@@ -27,10 +35,10 @@ fitting.fit module
     :undoc-members:
     :show-inheritance:
 
-fitting.fitness module
-----------------------
+fitting.test_actReactFitter module
+----------------------------------
 
-.. automodule:: fitting.fitness
+.. automodule:: fitting.test_actReactFitter
     :members:
     :undoc-members:
     :show-inheritance:

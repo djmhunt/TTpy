@@ -4,6 +4,30 @@ fitting.fitters package
 Submodules
 ----------
 
+fitting.fitters.basinhopping module
+-----------------------------------
+
+.. automodule:: fitting.fitters.basinhopping
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+fitting.fitters.boundFunc module
+--------------------------------
+
+.. automodule:: fitting.fitters.boundFunc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+fitting.fitters.evolutionary module
+-----------------------------------
+
+.. automodule:: fitting.fitters.evolutionary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 fitting.fitters.fitAlg module
 -----------------------------
 
@@ -27,22 +51,6 @@ fitting.fitters.minimize module
     :members:
     :undoc-members:
     :show-inheritance:
-	
-fitting.fitters.basinhopping module
------------------------------------
-
-.. automodule:: fitting.fitters.basinhopping
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
-fitting.fitters.boundFunc module
---------------------------------
-
-.. automodule:: fitting.fitters.boundFunc
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 fitting.fitters.qualityFunc module
 ----------------------------------
@@ -51,6 +59,15 @@ fitting.fitters.qualityFunc module
     :members:
     :undoc-members:
     :show-inheritance:
+
+fitting.fitters.test_minimize module
+------------------------------------
+
+.. automodule:: fitting.fitters.test_minimize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

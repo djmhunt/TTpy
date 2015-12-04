@@ -4,14 +4,6 @@ experiment package
 Submodules
 ----------
 
-experiment.experimentTemplate module
-----------------------------
-
-.. automodule:: experiment.experimentTemplate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
 experiment.beads module
 -----------------------
 
@@ -27,22 +19,6 @@ experiment.decks module
     :members:
     :undoc-members:
     :show-inheritance:
-	
-experiment.pavlov module
-------------------------
-
-.. automodule:: experiment.pavlov
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
-experiment.probSelect module
-------------------------
-
-.. automodule:: experiment.probSelect
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 experiment.experimentPlot module
 --------------------------------
@@ -51,11 +27,35 @@ experiment.experimentPlot module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 experiment.experimentSetPlot module
---------------------------------
+-----------------------------------
 
 .. automodule:: experiment.experimentSetPlot
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+experiment.experimentTemplate module
+------------------------------------
+
+.. automodule:: experiment.experimentTemplate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+experiment.pavlov module
+------------------------
+
+.. automodule:: experiment.pavlov
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+experiment.probSelect module
+----------------------------
+
+.. automodule:: experiment.probSelect
     :members:
     :undoc-members:
     :show-inheritance:

@@ -134,82 +134,6 @@ and stores it in self.date</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="outputting.outputting.dictKeySet">
-<code class="descname">dictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.dictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.dictKeySet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
-splitting any keys with lists into a set of keys, one for each element
-in the original key.</p>
-<p>These are named &lt;key&gt;&lt;location&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
-<blockquote class="last">
-<div><p>The keys are the keys for the new dictionary. The values contain a
-two element tuple. The first element is the original name of the
-key and the second is the location of the value to be stored in the
-original dictionary value array.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.reframeStore" title="outputting.outputting.reframeStore"><code class="xref py py-obj docutils literal"><span class="pre">reframeStore</span></code></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><code class="xref py py-obj docutils literal"><span class="pre">newDict</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.dictSelectKeySet">
-<code class="descname">dictSelectKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.dictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.dictSelectKeySet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
-including only the keys in the keys list. Any keys with lists  will
-be split into a set of keys, one for each element in the original key.</p>
-<p>These are named &lt;key&gt;&lt;location&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-<p><strong>keys</strong> : list of strings</p>
-<blockquote>
-<div><p>The keys whose data will be included in the return dictionary</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
-<blockquote class="last">
-<div><p>The keys are the keys for the new dictionary. The values contain a
-two element tuple. The first element is the original name of the
-key and the second is the location of the value to be stored in the
-original dictionary value array.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.reframeSelectStore" title="outputting.outputting.reframeSelectStore"><code class="xref py py-obj docutils literal"><span class="pre">reframeSelectStore</span></code></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><code class="xref py py-obj docutils literal"><span class="pre">newDict</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="outputting.outputting.end">
 <code class="descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.end" title="Permalink to this definition">¶</a></dt>
 <dd><p>To run once everything has been completed. Displays the figures if not
@@ -248,6 +172,82 @@ silent.</p>
 <dt><code class="xref py py-obj docutils literal"><span class="pre">numpy.seterr</span></code></dt>
 <dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
 </dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.flatDictKeySet">
+<code class="descname">flatDictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.flatDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.flatDictKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+splitting any keys with lists into a set of keys, one for each element
+in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys.
+Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
+<blockquote class="last">
+<div><p>The keys are the keys for the new dictionary. The values contain a
+two element tuple. The first element is the original name of the
+key and the second is the location of the value to be stored in the
+original dictionary value array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.reframeListDicts" title="outputting.outputting.reframeListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeListDicts</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.flatDictSelectKeySet">
+<code class="descname">flatDictSelectKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.flatDictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.flatDictSelectKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+including only the keys in the keys list. Any keys with lists  will
+be split into a set of keys, one for each element in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys.
+Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+<p><strong>keys</strong> : list of strings</p>
+<blockquote>
+<div><p>The keys whose data will be included in the return dictionary</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
+<blockquote class="last">
+<div><p>The keys are the keys for the new dictionary. The values contain a
+two element tuple. The first element is the original name of the
+key and the second is the location of the value to be stored in the
+original dictionary value array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.reframeSelectListDicts" title="outputting.outputting.reframeSelectListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeSelectListDicts</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -389,8 +389,36 @@ modifed by the user</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="outputting.outputting.newDict">
-<code class="descname">newDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>store</em>, <em>storeLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newDict" title="Permalink to this definition">¶</a></dt>
+<dt id="outputting.outputting.newFile">
+<code class="descname">newFile</code><span class="sig-paren">(</span><em>handle</em>, <em>extension</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>handle</strong> : string</p>
+<blockquote>
+<div><p>The file name</p>
+</div></blockquote>
+<p><strong>extension</strong> : string</p>
+<blockquote>
+<div><p>The extension of the file</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
+<blockquote class="last">
+<div><p>The filename allowed for the file</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.newFlatDict">
+<code class="descname">newFlatDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>store</em>, <em>storeLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newFlatDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFlatDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
 <p>If a dictionary did not have that key or list element, then &#8216;None&#8217; is
 put in its place</p>
@@ -422,34 +450,6 @@ into multiple numbered keys</p>
 <div><p>The new dictionary with the keys from the keySet and the values as
 1D lists with &#8216;None&#8217; if the keys, value pair was not found in the
 store.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.newFile">
-<code class="descname">newFile</code><span class="sig-paren">(</span><em>handle</em>, <em>extension</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>handle</strong> : string</p>
-<blockquote>
-<div><p>The file name</p>
-</div></blockquote>
-<p><strong>extension</strong> : string</p>
-<blockquote>
-<div><p>The extension of the file</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
-<blockquote class="last">
-<div><p>The filename allowed for the file</p>
 </div></blockquote>
 </td>
 </tr>
@@ -798,8 +798,42 @@ Default is None</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="outputting.outputting.reframeSelectStore">
-<code class="descname">reframeSelectStore</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeSelectStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeSelectStore" title="Permalink to this definition">¶</a></dt>
+<dt id="outputting.outputting.reframeListDicts">
+<code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys</p>
+</div></blockquote>
+<p><strong>storeLabel</strong> : string, optional</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.
+Default is &#8216;&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict of 1D lists</p>
+<blockquote class="last">
+<div><p>Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.flatDictKeySet" title="outputting.outputting.flatDictKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.reframeSelectListDicts">
+<code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a list of dictionaries and turn it into a dictionary of lists
 containing only the useful keys</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -832,41 +866,7 @@ into multiple numbered keys</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.dictSelectKeySet" title="outputting.outputting.dictSelectKeySet"><code class="xref py py-obj docutils literal"><span class="pre">dictSelectKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><code class="xref py py-obj docutils literal"><span class="pre">newDict</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.reframeStore">
-<code class="descname">reframeStore</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeStore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys</p>
-</div></blockquote>
-<p><strong>storeLabel</strong> : string, optional</p>
-<blockquote>
-<div><p>An identifier to be added to the beginning of each key string.
-Default is &#8216;&#8217;.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict of 1D lists</p>
-<blockquote class="last">
-<div><p>Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.dictKeySet" title="outputting.outputting.dictKeySet"><code class="xref py py-obj docutils literal"><span class="pre">dictKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newDict" title="outputting.outputting.newDict"><code class="xref py py-obj docutils literal"><span class="pre">newDict</span></code></a></p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.flatDictSelectKeySet" title="outputting.outputting.flatDictSelectKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictSelectKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
 </div>
 </dd></dl>
 

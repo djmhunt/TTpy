@@ -11,7 +11,7 @@ model.decision.binary module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 model.decision.discrete module
 ------------------------------
 

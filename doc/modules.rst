@@ -13,6 +13,7 @@
    model
    models
    outputting
+   outputtingUtils
    plotting
    runScript
    simulation

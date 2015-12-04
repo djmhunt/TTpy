@@ -1,0 +1,432 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>model.OpALS &mdash; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for model.OpALS</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Reference: Based on the paper Opponent actor learning (OpAL): Modeling</span>
+<span class="sd">                interactive effects of striatal dopamine on reinforcement</span>
+<span class="sd">                learning and choice incentive.</span>
+<span class="sd">                Collins, A. G. E., &amp; Frank, M. J. (2014).</span>
+<span class="sd">                Psychological Review, 121(3), 337–66.</span>
+<span class="sd">                doi:10.1037/a0037015</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">absolute</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choice</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
+
+<span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="kn">import</span> <span class="n">model</span>
+<span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="kn">import</span> <span class="n">modelPlot</span>
+<span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="kn">import</span> <span class="n">modelSetPlot</span>
+<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">decMaxProb</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">callableDetailsString</span><span class="p">,</span> <span class="n">errorResp</span>
+<span class="kn">from</span> <span class="nn">outputtingUtils</span> <span class="kn">import</span> <span class="n">exportClassData</span>
+
+<div class="viewcode-block" id="OpALS"><a class="viewcode-back" href="../../model.html#model.OpALS.OpALS">[docs]</a><span class="k">class</span> <span class="nc">OpALS</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;The Opponent actor learning model modified to have saturation values</span>
+<span class="sd">    </span>
+<span class="sd">    The saturation values are the same for the actor and critic learners</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">    currAction : int</span>
+<span class="sd">        The current action chosen by the model. Used to pass participant action</span>
+<span class="sd">        to model when fitting</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        Learning rate parameter, used as either the</span>
+<span class="sd">    alphaGoNogoDiff : float, optional</span>
+<span class="sd">        The difference between ``alphaGo`` and ``alphaNogo``. Default is ``None``.</span>
+<span class="sd">        If not ``None`` will overwrite ``alphaNogo``</span>
+<span class="sd">        :math:`\\alpha_N = \\alpha_G - \\alpha_\\delta`</span>
+<span class="sd">    alphaCrit : float, optional</span>
+<span class="sd">        The critic learning rate. Default is ``alpha``</span>
+<span class="sd">    alphaGo : float, optional</span>
+<span class="sd">        Learning rate parameter for Go, the positive part of the actor learning</span>
+<span class="sd">        Default is ``alpha``</span>
+<span class="sd">    alphaNogo : float, optional</span>
+<span class="sd">        Learning rate aprameter for Nogo, the negative part of the actor learning</span>
+<span class="sd">        Default is ``alpha``</span>
+<span class="sd">    alphaGoDiff : float, optional</span>
+<span class="sd">        The difference between ``alphaCrit`` and ``alphaGo``. The default is ``None``</span>
+<span class="sd">        If not ``None``  and ``alphaNogoDiff`` is also not ``None``, it will </span>
+<span class="sd">        overwrite the ``alphaGo`` parameter</span>
+<span class="sd">        :math:`\\alpha_G = \\alpha_C + \\alpha_\\deltaG`</span>
+<span class="sd">    alphaNogoDiff : float, optional</span>
+<span class="sd">        The difference between ``alphaCrit`` and ``alphaNogo``. The default is ``None``</span>
+<span class="sd">        If not ``None``  and ``alphaGoDiff`` is also not ``None``, it will </span>
+<span class="sd">        overwrite the ``alphaNogo`` parameter</span>
+<span class="sd">        :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN`</span>
+<span class="sd">    beta : float, optional</span>
+<span class="sd">        Sensitivity parameter for probabilities. Also known as an exploration-</span>
+<span class="sd">        expoitation parameter. Defined as :math:`\\beta` in the paper</span>
+<span class="sd">    betaDiff : float, optional</span>
+<span class="sd">        The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`</span>
+<span class="sd">    prior : array of floats in ``[0,1]`` or just float in range, optional</span>
+<span class="sd">        The prior probability of each state being the correct one.</span>
+<span class="sd">        Default ``array([0.5,0.5])``</span>
+<span class="sd">    expect : array of floats, optional</span>
+<span class="sd">        The initialisation of the the expected reward.</span>
+<span class="sd">        Default ``array([0.5,0.5])``</span>
+<span class="sd">    expectGo : array of floats, optional</span>
+<span class="sd">        The initialisation of the the expected go and nogo.</span>
+<span class="sd">        Default ``array([1,1])``</span>
+<span class="sd">    numActions : integer, optional</span>
+<span class="sd">        The number of different reaction learning sets. Default ``2``</span>
+<span class="sd">    saturateVal : float, optional</span>
+<span class="sd">        The saturation value for the model. Default is 10</span>
+<span class="sd">    stimFunc : function, optional</span>
+<span class="sd">        The function that transforms the stimulus into a form the model can</span>
+<span class="sd">        understand and a string to identify it later. Default is blankStim</span>
+<span class="sd">    decFunc : function, optional</span>
+<span class="sd">        The function that takes the internal values of the model and turns them</span>
+<span class="sd">        in to a decision. Default is model.decision.binary.decEta</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Actor: The chosen action is updated with</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\delta_{d,t} = r_t-E_{d,t}</span>
+
+<span class="sd">        E_{d,t+1} = E_{d,t} + \\alpha_E \\delta_{d,t} (1-\\frac{E_{d,t}}{S})</span>
+
+<span class="sd">    Critic: The chosen action is updated with</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        G_{d,t+1} = G_{d,t} + \\alpha_G G_{d,t} \\delta_{d,t} (1-\\frac{G_{d,t}}{S})</span>
+
+<span class="sd">        N_{d,t+1} = N_{d,t} - \\alpha_N N_{d,t} \\delta_{d,t} (1-\\frac{N_{d,t}}{S})</span>
+
+<span class="sd">    Probabilities: The probabilities for all actions are calculated using</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        A_{d,t} = (1+\\rho) G_{d,t}-(1-\\rho) N_{d,t}</span>
+
+<span class="sd">        P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;OpALS&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;numActions&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;beta&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">betaDiff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;betaDiff&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">betaGo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;betaGo&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">betaNogo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;betaNogo&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoDiff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaGoNogoDiff&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaCrit</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaCrit&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaGo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaNogo&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoDiff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaGoDiff&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogoDiff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;alphaNogoDiff&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;prior&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;expect&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectGo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;expectGo&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saturateVal</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;saturateVal&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;stimFunc&#39;</span><span class="p">,</span><span class="n">blankStim</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;decFunc&#39;</span><span class="p">,</span><span class="n">decMaxProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoNogoDiff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGo</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoNogoDiff</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoDiff</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogoDiff</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alphaGo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGoDiff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogoDiff</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaGo</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaNogo</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">betaGo</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaNogo</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">betaDiff</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">betaGo</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaNogo</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+                           <span class="s">&quot;beta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
+                           <span class="s">&quot;betaDiff&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaDiff</span><span class="p">,</span>
+                           <span class="s">&quot;betaGo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaGo</span><span class="p">,</span>
+                           <span class="s">&quot;betaNogo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaNogo</span><span class="p">,</span>
+                           <span class="s">&quot;alphaCrit&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaCrit</span><span class="p">,</span>
+                           <span class="s">&quot;alphaGo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGo</span><span class="p">,</span>
+                           <span class="s">&quot;alphaNogo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogo</span><span class="p">,</span>
+                           <span class="s">&quot;expectation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">,</span>
+                           <span class="s">&quot;expectationGo&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectGo</span><span class="p">,</span>
+                           <span class="s">&quot;saturateVal&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">saturateVal</span><span class="p">,</span>
+                           <span class="s">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">,</span>
+                           <span class="s">&quot;numActions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span>
+                           <span class="s">&quot;stimFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">),</span>
+                           <span class="s">&quot;decFunc&quot;</span> <span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">)}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">go</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectGo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nogo</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectGo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decProbs</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validActions</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># Recorded information</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recGo</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recNogo</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionValues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="OpALS.action"><a class="viewcode-back" href="../../model.html#model.OpALS.OpALS.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        action : integer or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
+
+</div>
+<div class="viewcode-block" id="OpALS.outputEvolution"><a class="viewcode-back" href="../../model.html#model.OpALS.OpALS.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns all the relevent data for this model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dict</span>
+<span class="sd">            The dictionary contains a series of keys including Name,</span>
+<span class="sd">            Probabilities, Actions and Events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Events&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Expectation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Go&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recGo</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Nogo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recNogo</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionValues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionValues</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;Decisions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">)</span>
+        
+
+        <span class="k">return</span> <span class="n">results</span>
+</div>
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">events</span><span class="p">,</span><span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Processes updates to new actions&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">instance</span> <span class="o">==</span> <span class="s">&#39;obs&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_processAction</span><span class="p">()</span>
+
+
+        <span class="k">elif</span> <span class="n">instance</span> <span class="o">==</span> <span class="s">&#39;reac&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">events</span><span class="p">):</span>
+
+        <span class="n">chosen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
+
+        <span class="n">event</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recEvents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="c">#Find the new activites</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
+
+        <span class="c">#Calculate the new probabilities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">go</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nogo</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_processAction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decProbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">validResponses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validActions</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OpALS.storeState"><a class="viewcode-back" href="../../model.html#model.OpALS.OpALS.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the state of all the important variables so that they can be</span>
+<span class="sd">        accessed later</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recGo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">go</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recNogo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nogo</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionValues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_critic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">event</span><span class="p">,</span> <span class="n">chosen</span><span class="p">):</span>
+
+        <span class="n">chosenExp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
+
+        <span class="n">change</span> <span class="o">=</span> <span class="n">event</span> <span class="o">-</span> <span class="n">chosenExp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">=</span> <span class="n">chosenExp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaCrit</span><span class="o">*</span><span class="n">change</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">chosenExp</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">saturateVal</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_actor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change</span><span class="p">,</span> <span class="n">chosen</span><span class="p">):</span>
+
+        <span class="n">chosenGo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">go</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
+        <span class="n">chosenNogo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nogo</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">go</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">=</span> <span class="n">chosenGo</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaGo</span> <span class="o">*</span> <span class="n">chosenGo</span> <span class="o">*</span> <span class="n">change</span> <span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">chosenGo</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">saturateVal</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nogo</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span> <span class="o">=</span> <span class="n">chosenNogo</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaNogo</span> <span class="o">*</span> <span class="n">chosenNogo</span> <span class="o">*</span> <span class="n">change</span> <span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">chosenNogo</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">saturateVal</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">go</span><span class="p">,</span> <span class="n">nogo</span><span class="p">):</span>
+
+        <span class="n">bd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">betaDiff</span>
+
+        <span class="n">actionValues</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">bd</span><span class="p">)</span><span class="o">*</span><span class="n">go</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">bd</span><span class="p">)</span><span class="o">*</span><span class="n">nogo</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span> <span class="o">=</span> <span class="n">actionValues</span>
+
+<span class="c">#        try:</span>
+<span class="c">#            numerat = exp(self.beta*actionValues)</span>
+<span class="c">#            denom = sum(numerat)</span>
+<span class="c">#        except FloatingPointError:</span>
+<span class="c">#            message = errorResp()</span>
+<span class="c">#            print message</span>
+<span class="c">#            self.storeState()</span>
+<span class="c">#            exportClassData(self.outputEvolution(),self.parameters, outputFolder = &#39;../runScripts/Outputs/&#39;)</span>
+<span class="c">#            zq = 1</span>
+        <span class="n">numerat</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">*</span><span class="n">actionValues</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerat</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerat</span> <span class="o">/</span> <span class="n">denom</span>
+
+        <span class="k">return</span> <span class="n">p</span>
+</div>
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.OpALS.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Default stimulus processor. Does nothing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blankStimFunc : function</span>
+<span class="sd">        The function expects to be passed the event and then return it.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">event</span>
+
+    <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;blankStim&quot;</span>
+    <span class="k">return</span> <span class="n">blankStimFunc</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

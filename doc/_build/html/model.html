@@ -72,47 +72,126 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="model-modeltemplate-module">
-<h2>model.modelTemplate module<a class="headerlink" href="#model-modeltemplate-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-model.modelTemplate"></span><table class="docutils field-list" frame="void" rules="none">
+<div class="section" id="module-model.BHMM">
+<span id="model-bhmm-module"></span><h2>model.BHMM module<a class="headerlink" href="#module-model.BHMM" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
 </tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper The role of the ventromedial prefrontal cortex
+in abstract state-based inference during decision making in humans.
+Hampton, A. N., Bossaerts, P., &amp; O’Doherty, J. P. (2006).
+The Journal of Neuroscience : The Official Journal of the Society for Neuroscience,
+26(32), 8360–7.
+doi:10.1523/JNEUROSCI.1010-06.2006</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">This proposed model is itself based on the model in the book:
+An Introduction to Hidden Markov Models and Bayesian Networks
+DOI:10.1142/S0218001401000836</td>
+</tr>
 </tbody>
 </table>
 <dl class="class">
-<dt id="model.modelTemplate.model">
-<em class="property">class </em><code class="descclassname">model.modelTemplate.</code><code class="descname">model</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>The model class is a general template for a model. It also contains
-universal methods used by all models.</p>
+<dt id="model.BHMM.BHMM">
+<em class="property">class </em><code class="descclassname">model.BHMM.</code><code class="descname">BHMM</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<p>The Beysian Hidden Markov Model model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities. Default <code class="docutils literal"><span class="pre">4</span></code></p>
+</div></blockquote>
+<p><strong>eta</strong> : float, optional</p>
+<blockquote>
+<div><p>Decision threshold parameter. Default <code class="docutils literal"><span class="pre">0</span></code></p>
+</div></blockquote>
+<p><strong>delta</strong> : float in range <code class="docutils literal"><span class="pre">[0,1]</span></code>, optional</p>
+<blockquote>
+<div><p>The switch probability parameter. Default <code class="docutils literal"><span class="pre">0</span></code></p>
+</div></blockquote>
+<p><strong>mu</strong> : float</p>
+<blockquote>
+<div><p>The mean expected payoff</p>
+</div></blockquote>
+<p><strong>sigma</strong> : float</p>
+<blockquote>
+<div><p>The standard deviation of the expected payoff</p>
+</div></blockquote>
+<p><strong>prior</strong> : array of two floats in <code class="docutils literal"><span class="pre">[0,1]</span></code> or just float in range, optional</p>
+<blockquote>
+<div><p>The prior probability of of the two states being the correct one.
+Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decSingle</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Inputs : The participant recieves for time <img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> and their choice of
+action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/> the payoff <img src="_images/mathmpl/math-7de983e262.png" style="position: relative; bottom: -8px"/></p>
+<p>Outputs : Their action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/>. However, internal to the model and
+potentially extractable is the probability that each action is the
+&#8220;correct&#8221; choice.</p>
+<p>Initialisation : An arbitrary choice is made of which initial action
+<img src="_images/mathmpl/math-e213ae0e46.png" style="position: relative; bottom: -7px"/> to go with. The probability that a hidden state
+<img src="_images/mathmpl/math-338c8c6e10.png" style="position: relative; bottom: -7px"/> is the one given by <img src="_images/mathmpl/math-a493df687f.png" style="position: relative; bottom: -8px"/>
+and is initially uniform and normalised.</p>
+<p>Updates : The prior probabilities of the different actions being correct
+<img src="_images/mathmpl/math-f53439c5e0.png" style="position: relative; bottom: -8px"/> is calculated with respect to
+the probability of reversal <img src="_images/mathmpl/math-e15357ad29.png" style="position: relative; bottom: -3px"/> and the posterior probability
+<img src="_images/mathmpl/math-816ca158a1.png" style="position: relative; bottom: -8px"/>. If the participant has not
+switched then</p>
+<img src="_images/mathmpl/math-e60a6a102a.png" class="center" /><p>If the participant has switched, then the probabilities become</p>
+<img src="_images/mathmpl/math-3d473fc454.png" class="center" /><p>The posterior probabilities
+<img src="_images/mathmpl/math-1fc0ecd816.png" style="position: relative; bottom: -7px"/> is defined for
+the action <img src="_images/mathmpl/math-45133d85aa.png" style="position: relative; bottom: -7px"/> providing the payoff <img src="_images/mathmpl/math-d89c20e879.png" style="position: relative; bottom: -7px"/> as</p>
+<img src="_images/mathmpl/math-6ef29d69ca.png" class="center" /><p>and for all other actions as</p>
+<img src="_images/mathmpl/math-29f7b8a155.png" class="center" /><p>The <img src="_images/mathmpl/math-b1967cc114.png" style="position: relative; bottom: -7px"/> is the probability at time
+<img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> that the payoff <img src="_images/mathmpl/math-73fcbbdfa0.png" style="position: relative; bottom: -7px"/> would be returned when the
+chosen action was the correct or incorrect. It is calculated from a normal
+distribution where the probability distribution of payoffs are</p>
+<img src="_images/mathmpl/math-3cc49f816e.png" class="center" /><p>and a variance of <img src="_images/mathmpl/math-2d16fa995b.png" style="position: relative; bottom: -3px"/></p>
+<p>The probability that the subject switches their choice of action is</p>
+<img src="_images/mathmpl/math-c509890591.png" class="center" /><p>where <img src="_images/mathmpl/math-5149852f08.png" style="position: relative; bottom: -3px"/> is the indecision point (when it is equiprobable to
+make either choice), and <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> is the degree of stochasticity in
+making the choice (i.e., the exploration/exploitation parameter). Both are
+defined in the simulation.</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="9%" />
-<col width="91%" />
+<col width="5%" />
+<col width="95%" />
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>Name</td>
 <td>(string) The name of the class used when recording what has been used.</td>
 </tr>
-<tr class="row-even"><td>currAction</td>
-<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
-</tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="model.modelTemplate.model.Name">
-<code class="descname">Name</code><em class="property"> = 'model'</em><a class="headerlink" href="#model.modelTemplate.model.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="model.BHMM.BHMM.Name">
+<code class="descname">Name</code><em class="property"> = 'BHMM'</em><a class="headerlink" href="#model.BHMM.BHMM.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="model.modelTemplate.model.action">
-<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the action of the model</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dt id="model.BHMM.BHMM.action">
+<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -123,121 +202,160 @@ universal methods used by all models.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.modelTemplate.model.feedback">
-<code class="descname">feedback</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.feedback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Receives the reaction to the action</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>response</strong> : float</p>
-<blockquote class="last">
-<div><p>The stimulus from the experiment. Returns without doing anything if
-the value of response is <cite>None</cite>.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
-<dt id="model.modelTemplate.model.modelPlot">
-<em class="property">class </em><code class="descname">modelPlot</code><span class="sig-paren">(</span><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.modelPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.modelPlot.modelPlot" title="model.modelPlot.modelPlot"><code class="xref py py-class docutils literal"><span class="pre">model.modelPlot.modelPlot</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a model</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="model.modelTemplate.model.modelSetPlot">
-<em class="property">class </em><code class="descclassname">model.</code><code class="descname">modelSetPlot</code><span class="sig-paren">(</span><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.modelSetPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><code class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a set of models</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.modelTemplate.model.observe">
-<code class="descclassname">model.</code><code class="descname">observe</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.observe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Receives the latest observation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>state</strong> : float or None</p>
-<blockquote class="last">
-<div><p>The stimulus from the experiment. Returns without doing anything if
-the value of event is <cite>None</cite>.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.modelTemplate.model.outputEvolution">
-<code class="descclassname">model.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.BHMM.BHMM.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevent data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> : dictionary</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.modelTemplate.model.params">
-<code class="descclassname">model.</code><code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the parameters of the model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>parameters</strong> : dictionary</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.modelTemplate.model.plot">
-<code class="descclassname">model.</code><code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a plotting class relavent for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelPlot</strong> : model.modelPlot</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.modelTemplate.model.plotSet">
-<code class="descclassname">model.</code><code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.plotSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a plotting class relavent analysis of sets of results from this
-model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelSetPlot</strong> : model.modelSetPlot</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.modelTemplate.model.storeState">
-<code class="descclassname">model.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="model.BHMM.BHMM.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="model.BHMM.blankStim">
+<code class="descclassname">model.BHMM.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote>
+<div><p>The function expects to be passed the event and then return [1,0].</p>
+</div></blockquote>
+<p><strong>currAction</strong> : int</p>
+<blockquote class="last">
+<div><p>The current action chosen by the model. Used to pass participant action
+to model when fitting</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="model.BHMM.normal">
+<code class="descclassname">model.BHMM.</code><code class="descname">normal</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>scale=1.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#model.BHMM.normal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw random samples from a normal (Gaussian) distribution.</p>
+<p>The probability density function of the normal distribution, first
+derived by De Moivre and 200 years later by both Gauss and Laplace
+independently <a class="reference internal" href="#r2" id="id1">[R2]</a>, is often called the bell curve because of
+its characteristic shape (see the example below).</p>
+<p>The normal distributions occurs often in nature.  For example, it
+describes the commonly occurring distribution of samples influenced
+by a large number of tiny, random disturbances, each with its own
+unique distribution <a class="reference internal" href="#r2" id="id2">[R2]</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>loc</strong> : float</p>
+<blockquote>
+<div><p>Mean (&#8220;centre&#8221;) of the distribution.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation (spread or &#8220;width&#8221;) of the distribution.</p>
+</div></blockquote>
+<p><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote class="last">
+<div><p>Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.stats.distributions.norm</span></code></dt>
+<dd>probability density function, distribution or cumulative density function, etc.</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>The probability density for the Gaussian distribution is</p>
+<img src="_images/mathmpl/math-b24c0fb115.png" class="center" /><p>where <img src="_images/mathmpl/math-3488de1d0a.png" style="position: relative; bottom: -7px"/> is the mean and <img src="_images/mathmpl/math-293c147d21.png" style="position: relative; bottom: -3px"/> the standard deviation.
+The square of the standard deviation, <img src="_images/mathmpl/math-54bf156f7e.png" style="position: relative; bottom: -3px"/>, is called the
+variance.</p>
+<p>The function has its peak at the mean, and its &#8220;spread&#8221; increases with
+the standard deviation (the function reaches 0.607 times its maximum at
+<img src="_images/mathmpl/math-655d89f5c9.png" style="position: relative; bottom: -4px"/> and <img src="_images/mathmpl/math-a5e0617d55.png" style="position: relative; bottom: -3px"/> <a class="reference internal" href="#r2" id="id3">[R2]</a>).  This implies that
+<cite>numpy.random.normal</cite> is more likely to return samples lying close to the
+mean, rather than those far away.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[R1]</a></td><td>Wikipedia, &#8220;Normal distribution&#8221;,
+<a class="reference external" href="http://en.wikipedia.org/wiki/Normal_distribution">http://en.wikipedia.org/wiki/Normal_distribution</a></td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R2]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>, <a class="fn-backref" href="#id5">4</a>)</em> P. R. Peebles Jr., &#8220;Central Limit Theorem&#8221; in &#8220;Probability, Random
+Variables and Random Signal Principles&#8221;, 4th ed., 2001,
+pp. 51, 51, 125.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Draw samples from the distribution:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c"># mean and standard deviation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Verify the mean and the variance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Display the histogram of the samples, along with
+the probability density function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
+<span class="gp">... </span>               <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">),</span>
+<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -530,293 +648,6 @@ to model when fitting</p>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-model.BHMM">
-<span id="model-bhmm-module"></span><h2>model.BHMM module<a class="headerlink" href="#module-model.BHMM" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper The role of the ventromedial prefrontal cortex
-in abstract state-based inference during decision making in humans.
-Hampton, A. N., Bossaerts, P., &amp; O’Doherty, J. P. (2006).
-The Journal of Neuroscience : The Official Journal of the Society for Neuroscience,
-26(32), 8360–7.
-doi:10.1523/JNEUROSCI.1010-06.2006</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">This proposed model is itself based on the model in the book:
-An Introduction to Hidden Markov Models and Bayesian Networks
-DOI:10.1142/S0218001401000836</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="model.BHMM.BHMM">
-<em class="property">class </em><code class="descclassname">model.BHMM.</code><code class="descname">BHMM</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
-<p>The Beysian Hidden Markov Model model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
-<blockquote>
-<div><p>Sensitivity parameter for probabilities. Default <code class="docutils literal"><span class="pre">4</span></code></p>
-</div></blockquote>
-<p><strong>eta</strong> : float, optional</p>
-<blockquote>
-<div><p>Decision threshold parameter. Default <code class="docutils literal"><span class="pre">0</span></code></p>
-</div></blockquote>
-<p><strong>delta</strong> : float in range <code class="docutils literal"><span class="pre">[0,1]</span></code>, optional</p>
-<blockquote>
-<div><p>The switch probability parameter. Default <code class="docutils literal"><span class="pre">0</span></code></p>
-</div></blockquote>
-<p><strong>mu</strong> : float</p>
-<blockquote>
-<div><p>The mean expected payoff</p>
-</div></blockquote>
-<p><strong>sigma</strong> : float</p>
-<blockquote>
-<div><p>The standard deviation of the expected payoff</p>
-</div></blockquote>
-<p><strong>prior</strong> : array of two floats in <code class="docutils literal"><span class="pre">[0,1]</span></code> or just float in range, optional</p>
-<blockquote>
-<div><p>The prior probability of of the two states being the correct one.
-Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
-</div></blockquote>
-<p><strong>stimFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>The function that transforms the stimulus into a form the model can
-understand and a string to identify it later. Default is blankStim</p>
-</div></blockquote>
-<p><strong>decFunc</strong> : function, optional</p>
-<blockquote class="last">
-<div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decSingle</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p>Inputs : The participant recieves for time <img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> and their choice of
-action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/> the payoff <img src="_images/mathmpl/math-7de983e262.png" style="position: relative; bottom: -8px"/></p>
-<p>Outputs : Their action <img src="_images/mathmpl/math-c8e0c8518e.png" style="position: relative; bottom: -7px"/>. However, internal to the model and
-potentially extractable is the probability that each action is the
-&#8220;correct&#8221; choice.</p>
-<p>Initialisation : An arbitrary choice is made of which initial action
-<img src="_images/mathmpl/math-e213ae0e46.png" style="position: relative; bottom: -7px"/> to go with. The probability that a hidden state
-<img src="_images/mathmpl/math-338c8c6e10.png" style="position: relative; bottom: -7px"/> is the one given by <img src="_images/mathmpl/math-a493df687f.png" style="position: relative; bottom: -8px"/>
-and is initially uniform and normalised.</p>
-<p>Updates : The prior probabilities of the different actions being correct
-<img src="_images/mathmpl/math-f53439c5e0.png" style="position: relative; bottom: -8px"/> is calculated with respect to
-the probability of reversal <img src="_images/mathmpl/math-e15357ad29.png" style="position: relative; bottom: -3px"/> and the posterior probability
-<img src="_images/mathmpl/math-816ca158a1.png" style="position: relative; bottom: -8px"/>. If the participant has not
-switched then</p>
-<img src="_images/mathmpl/math-e60a6a102a.png" class="center" /><p>If the participant has switched, then the probabilities become</p>
-<img src="_images/mathmpl/math-3d473fc454.png" class="center" /><p>The posterior probabilities
-<img src="_images/mathmpl/math-1fc0ecd816.png" style="position: relative; bottom: -7px"/> is defined for
-the action <img src="_images/mathmpl/math-45133d85aa.png" style="position: relative; bottom: -7px"/> providing the payoff <img src="_images/mathmpl/math-d89c20e879.png" style="position: relative; bottom: -7px"/> as</p>
-<img src="_images/mathmpl/math-6ef29d69ca.png" class="center" /><p>and for all other actions as</p>
-<img src="_images/mathmpl/math-29f7b8a155.png" class="center" /><p>The <img src="_images/mathmpl/math-b1967cc114.png" style="position: relative; bottom: -8px"/> is the probability at time
-<img src="_images/mathmpl/math-316b65649e.png" style="position: relative; bottom: -3px"/> that the payoff <img src="_images/mathmpl/math-73fcbbdfa0.png" style="position: relative; bottom: -7px"/> would be returned when the
-chosen action was the correct or incorrect. It is calculated from a normal
-distribution where the probability distribution of payoffs are</p>
-<img src="_images/mathmpl/math-3cc49f816e.png" class="center" /><p>and a variance of <img src="_images/mathmpl/math-2d16fa995b.png" style="position: relative; bottom: -3px"/></p>
-<p>The probability that the subject switches their choice of action is</p>
-<img src="_images/mathmpl/math-c509890591.png" class="center" /><p>where <img src="_images/mathmpl/math-5149852f08.png" style="position: relative; bottom: -3px"/> is the indecision point (when it is equiprobable to
-make either choice), and <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> is the degree of stochasticity in
-making the choice (i.e., the exploration/exploitation parameter). Both are
-defined in the simulation.</p>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="5%" />
-<col width="95%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.BHMM.BHMM.Name">
-<code class="descname">Name</code><em class="property"> = 'BHMM'</em><a class="headerlink" href="#model.BHMM.BHMM.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="model.BHMM.BHMM.action">
-<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.action" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BHMM.BHMM.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name,
-Probabilities, Actions and Events.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BHMM.BHMM.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BHMM.blankStim">
-<code class="descclassname">model.BHMM.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
-<blockquote>
-<div><p>The function expects to be passed the event and then return [1,0].</p>
-</div></blockquote>
-<p><strong>currAction</strong> : int</p>
-<blockquote class="last">
-<div><p>The current action chosen by the model. Used to pass participant action
-to model when fitting</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The identifier of the function</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BHMM.normal">
-<code class="descclassname">model.BHMM.</code><code class="descname">normal</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>scale=1.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#model.BHMM.normal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw random samples from a normal (Gaussian) distribution.</p>
-<p>The probability density function of the normal distribution, first
-derived by De Moivre and 200 years later by both Gauss and Laplace
-independently <a class="reference internal" href="#r2" id="id1">[R2]</a>, is often called the bell curve because of
-its characteristic shape (see the example below).</p>
-<p>The normal distributions occurs often in nature.  For example, it
-describes the commonly occurring distribution of samples influenced
-by a large number of tiny, random disturbances, each with its own
-unique distribution <a class="reference internal" href="#r2" id="id2">[R2]</a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>loc</strong> : float</p>
-<blockquote>
-<div><p>Mean (&#8220;centre&#8221;) of the distribution.</p>
-</div></blockquote>
-<p><strong>scale</strong> : float</p>
-<blockquote>
-<div><p>Standard deviation (spread or &#8220;width&#8221;) of the distribution.</p>
-</div></blockquote>
-<p><strong>size</strong> : int or tuple of ints, optional</p>
-<blockquote class="last">
-<div><p>Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
-<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
-single value is returned.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.stats.distributions.norm</span></code></dt>
-<dd>probability density function, distribution or cumulative density function, etc.</dd>
-</dl>
-</div>
-<p class="rubric">Notes</p>
-<p>The probability density for the Gaussian distribution is</p>
-<img src="_images/mathmpl/math-b24c0fb115.png" class="center" /><p>where <img src="_images/mathmpl/math-3488de1d0a.png" style="position: relative; bottom: -7px"/> is the mean and <img src="_images/mathmpl/math-293c147d21.png" style="position: relative; bottom: -3px"/> the standard deviation.
-The square of the standard deviation, <img src="_images/mathmpl/math-54bf156f7e.png" style="position: relative; bottom: -3px"/>, is called the
-variance.</p>
-<p>The function has its peak at the mean, and its &#8220;spread&#8221; increases with
-the standard deviation (the function reaches 0.607 times its maximum at
-<img src="_images/mathmpl/math-655d89f5c9.png" style="position: relative; bottom: -5px"/> and <img src="_images/mathmpl/math-a5e0617d55.png" style="position: relative; bottom: -3px"/> <a class="reference internal" href="#r2" id="id3">[R2]</a>).  This implies that
-<cite>numpy.random.normal</cite> is more likely to return samples lying close to the
-mean, rather than those far away.</p>
-<p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r1" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[R1]</a></td><td>Wikipedia, &#8220;Normal distribution&#8221;,
-<a class="reference external" href="http://en.wikipedia.org/wiki/Normal_distribution">http://en.wikipedia.org/wiki/Normal_distribution</a></td></tr>
-</tbody>
-</table>
-<table class="docutils citation" frame="void" id="r2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R2]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>, <a class="fn-backref" href="#id5">4</a>)</em> P. R. Peebles Jr., &#8220;Central Limit Theorem&#8221; in &#8220;Probability, Random
-Variables and Random Signal Principles&#8221;, 4th ed., 2001,
-pp. 51, 51, 125.</td></tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<p>Draw samples from the distribution:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c"># mean and standard deviation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Verify the mean and the variance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Display the histogram of the samples, along with
-the probability density function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
-<span class="gp">... </span>               <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">),</span>
-<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </div>
@@ -1307,6 +1138,415 @@ Probabilities, Actions and Events.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-model.OpAL">
+<span id="model-opal-module"></span><h2>model.OpAL module<a class="headerlink" href="#module-model.OpAL" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Opponent actor learning (OpAL): Modeling
+interactive effects of striatal dopamine on reinforcement
+learning and choice incentive.
+Collins, A. G. E., &amp; Frank, M. J. (2014).
+Psychological Review, 121(3), 337–66.
+doi:10.1037/a0037015</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.OpAL.OpAL">
+<em class="property">class </em><code class="descclassname">model.OpAL.</code><code class="descname">OpAL</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<p>The Opponent actor learning model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter, used as either the</p>
+</div></blockquote>
+<p><strong>alphaGoNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaGo</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. Default is <code class="docutils literal"><span class="pre">None</span></code>.
+If not <code class="docutils literal"><span class="pre">None</span></code> will overwrite <code class="docutils literal"><span class="pre">alphaNogo</span></code>
+<img src="_images/mathmpl/math-d6b9f0b9c1.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+<p><strong>alphaCrit</strong> : float, optional</p>
+<blockquote>
+<div><p>The critic learning rate. Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter for Go, the positive part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaNogo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate aprameter for Nogo, the negative part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaGo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaNogoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaGo</span></code> parameter
+<img src="_images/mathmpl/math-af13a2175d.png" /></p>
+</div></blockquote>
+<p><strong>alphaNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaGoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaNogo</span></code> parameter
+<img src="_images/mathmpl/math-0071ab378d.png" /></p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities. Also known as an exploration-
+expoitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
+</div></blockquote>
+<p><strong>betaDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The asymetry beween the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,1]</span></code> or just float in range, optional</p>
+<blockquote>
+<div><p>The prior probability of each state being the correct one.
+Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
+</div></blockquote>
+<p><strong>expect</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The initialisation of the the expected reward.
+Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
+</div></blockquote>
+<p><strong>expectGo</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The initialisation of the the expected go and nogo.
+Default <code class="docutils literal"><span class="pre">array([1,1])</span></code></p>
+</div></blockquote>
+<p><strong>numActions</strong> : integer, optional</p>
+<blockquote>
+<div><p>The number of different reaction learning sets. Default <code class="docutils literal"><span class="pre">2</span></code></p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decEta</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Actor: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-cd13257abb.png" class="center" /><p>Critic: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-0ad26a5318.png" class="center" /><p>Probabilities: The probabilities for all actions are calculated using</p>
+<img src="_images/mathmpl/math-581a4e2b01.png" class="center" /><p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+<tr class="row-even"><td>currAction</td>
+<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.OpAL.OpAL.Name">
+<code class="descname">Name</code><em class="property"> = 'OpAL'</em><a class="headerlink" href="#model.OpAL.OpAL.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.action">
+<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL.OpAL.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.OpAL.blankStim">
+<code class="descclassname">model.OpAL.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.OpALS">
+<span id="model-opals-module"></span><h2>model.OpALS module<a class="headerlink" href="#module-model.OpALS" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Opponent actor learning (OpAL): Modeling
+interactive effects of striatal dopamine on reinforcement
+learning and choice incentive.
+Collins, A. G. E., &amp; Frank, M. J. (2014).
+Psychological Review, 121(3), 337–66.
+doi:10.1037/a0037015</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.OpALS.OpALS">
+<em class="property">class </em><code class="descclassname">model.OpALS.</code><code class="descname">OpALS</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<p>The Opponent actor learning model modified to have saturation values</p>
+<p>The saturation values are the same for the actor and critic learners</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter, used as either the</p>
+</div></blockquote>
+<p><strong>alphaGoNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaGo</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. Default is <code class="docutils literal"><span class="pre">None</span></code>.
+If not <code class="docutils literal"><span class="pre">None</span></code> will overwrite <code class="docutils literal"><span class="pre">alphaNogo</span></code>
+<img src="_images/mathmpl/math-d6b9f0b9c1.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+<p><strong>alphaCrit</strong> : float, optional</p>
+<blockquote>
+<div><p>The critic learning rate. Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter for Go, the positive part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaNogo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate aprameter for Nogo, the negative part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaGo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaNogoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaGo</span></code> parameter
+<img src="_images/mathmpl/math-af13a2175d.png" /></p>
+</div></blockquote>
+<p><strong>alphaNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaGoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaNogo</span></code> parameter
+<img src="_images/mathmpl/math-0071ab378d.png" /></p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities. Also known as an exploration-
+expoitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
+</div></blockquote>
+<p><strong>betaDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The asymetry beween the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,1]</span></code> or just float in range, optional</p>
+<blockquote>
+<div><p>The prior probability of each state being the correct one.
+Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
+</div></blockquote>
+<p><strong>expect</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The initialisation of the the expected reward.
+Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
+</div></blockquote>
+<p><strong>expectGo</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The initialisation of the the expected go and nogo.
+Default <code class="docutils literal"><span class="pre">array([1,1])</span></code></p>
+</div></blockquote>
+<p><strong>numActions</strong> : integer, optional</p>
+<blockquote>
+<div><p>The number of different reaction learning sets. Default <code class="docutils literal"><span class="pre">2</span></code></p>
+</div></blockquote>
+<p><strong>saturateVal</strong> : float, optional</p>
+<blockquote>
+<div><p>The saturation value for the model. Default is 10</p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decEta</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Actor: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-2acb1327f7.png" class="center" /><p>Critic: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-a0940e7103.png" class="center" /><p>Probabilities: The probabilities for all actions are calculated using</p>
+<img src="_images/mathmpl/math-581a4e2b01.png" class="center" /><p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+<tr class="row-even"><td>currAction</td>
+<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.OpALS.OpALS.Name">
+<code class="descname">Name</code><em class="property"> = 'OpALS'</em><a class="headerlink" href="#model.OpALS.OpALS.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.OpALS.OpALS.action">
+<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS.action" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpALS.OpALS.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpALS.OpALS.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.OpALS.blankStim">
+<code class="descclassname">model.OpALS.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="module-model.RVPM">
 <span id="model-rvpm-module"></span><h2>model.RVPM module<a class="headerlink" href="#module-model.RVPM" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1617,6 +1857,175 @@ the time. The stimulus and reward are set to 0.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.modelTemplate">
+<span id="model-modeltemplate-module"></span><h2>model.modelTemplate module<a class="headerlink" href="#module-model.modelTemplate" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.modelTemplate.model">
+<em class="property">class </em><code class="descclassname">model.modelTemplate.</code><code class="descname">model</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>The model class is a general template for a model. It also contains
+universal methods used by all models.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+<tr class="row-even"><td>currAction</td>
+<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.modelTemplate.model.Name">
+<code class="descname">Name</code><em class="property"> = 'model'</em><a class="headerlink" href="#model.modelTemplate.model.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.action">
+<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the action of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.feedback">
+<code class="descname">feedback</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the reaction to the action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>response</strong> : float</p>
+<blockquote class="last">
+<div><p>The stimulus from the experiment. Returns without doing anything if
+the value of response is <cite>None</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.modelTemplate.model.modelPlot">
+<em class="property">class </em><code class="descname">modelPlot</code><span class="sig-paren">(</span><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.modelPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelPlot.modelPlot" title="model.modelPlot.modelPlot"><code class="xref py py-class docutils literal"><span class="pre">model.modelPlot.modelPlot</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a model</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="model.modelTemplate.model.modelSetPlot">
+<em class="property">class </em><code class="descclassname">model.</code><code class="descname">modelSetPlot</code><span class="sig-paren">(</span><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.modelSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelSetPlot.modelSetPlot" title="model.modelSetPlot.modelSetPlot"><code class="xref py py-class docutils literal"><span class="pre">model.modelSetPlot.modelSetPlot</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a set of models</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.observe">
+<code class="descclassname">model.</code><code class="descname">observe</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the latest observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>state</strong> : float or None</p>
+<blockquote class="last">
+<div><p>The stimulus from the experiment. Returns without doing anything if
+the value of event is <cite>None</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.outputEvolution">
+<code class="descclassname">model.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> : dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.params">
+<code class="descclassname">model.</code><code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameters of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>parameters</strong> : dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.plot">
+<code class="descclassname">model.</code><code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelPlot</strong> : model.modelPlot</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.plotSet">
+<code class="descclassname">model.</code><code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.plotSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent analysis of sets of results from this
+model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelSetPlot</strong> : model.modelSetPlot</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.storeState">
+<code class="descclassname">model.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
 </dd></dl>
 
 </dd></dl>
@@ -1958,188 +2367,6 @@ accessed later</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-model.OpAL">
-<span id="model-opal-module"></span><h2>model.OpAL module<a class="headerlink" href="#module-model.OpAL" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Opponent actor learning (OpAL): Modeling
-interactive effects of striatal dopamine on reinforcement
-learning and choice incentive.
-Collins, A. G. E., &amp; Frank, M. J. (2014).
-Psychological Review, 121(3), 337–66.
-doi:10.1037/a0037015</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="model.OpAL.OpAL">
-<em class="property">class </em><code class="descclassname">model.OpAL.</code><code class="descname">OpAL</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
-<p>The Opponent actor learning model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
-<blockquote>
-<div><p>Learning rate parameter, used as either the</p>
-</div></blockquote>
-<p><strong>alphaGoDiff</strong> : float, optional</p>
-<blockquote>
-<div><p>The difference between <code class="docutils literal"><span class="pre">alphaGo</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. Default is <code class="docutils literal"><span class="pre">None</span></code>.
-If not <code class="docutils literal"><span class="pre">None</span></code> will overwrite any parameters in <code class="docutils literal"><span class="pre">alphaGo</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>
-<img src="_images/mathmpl/math-b5a5e430a5.png" style="position: relative; bottom: -7px"/> and <img src="_images/mathmpl/math-29a03b2570.png" style="position: relative; bottom: -7px"/></p>
-</div></blockquote>
-<p><strong>alphaC</strong> : float, optional</p>
-<blockquote>
-<div><p>The critic learning rate. Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
-</div></blockquote>
-<p><strong>alphaGo</strong> : float, optional</p>
-<blockquote>
-<div><p>Learning rate parameter for Go, the positive part of the actor learning
-Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
-</div></blockquote>
-<p><strong>alphaNogo</strong> : float, optional</p>
-<blockquote>
-<div><p>Learning rate aprameter for Nogo, the negative part of the actor learning
-Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
-</div></blockquote>
-<p><strong>beta</strong> : float, optional</p>
-<blockquote>
-<div><p>Sensitivity parameter for probabilities. Also known as an exploration-
-expoitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
-</div></blockquote>
-<p><strong>betaDiff</strong> : float, optional</p>
-<blockquote>
-<div><p>The asymetry beween the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
-</div></blockquote>
-<p><strong>prior</strong> : array of two floats in <code class="docutils literal"><span class="pre">[0,1]</span></code> or just float in range, optional</p>
-<blockquote>
-<div><p>The prior probability of of the two states being the correct one.
-Default <code class="docutils literal"><span class="pre">array([0.5,0.5])</span></code></p>
-</div></blockquote>
-<p><strong>expect: float, optional</strong></p>
-<blockquote>
-<div><p>The initialisation of the the expected reward. Default <code class="docutils literal"><span class="pre">array([5,5])</span></code></p>
-</div></blockquote>
-<p><strong>numActions</strong> : integer, optional</p>
-<blockquote>
-<div><p>The number of different reaction learning sets. Default <code class="docutils literal"><span class="pre">2</span></code></p>
-</div></blockquote>
-<p><strong>stimFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>The function that transforms the stimulus into a form the model can
-understand and a string to identify it later. Default is blankStim</p>
-</div></blockquote>
-<p><strong>decFunc</strong> : function, optional</p>
-<blockquote class="last">
-<div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decEta</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p>Actor: The chosen action is updated with</p>
-<img src="_images/mathmpl/math-cd13257abb.png" class="center" /><p>Critic: The chosen action is updated with</p>
-<img src="_images/mathmpl/math-0ad26a5318.png" class="center" /><p>Probabilities: The probabilities for all actions are calculated using</p>
-<img src="_images/mathmpl/math-581a4e2b01.png" class="center" /><p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-<tr class="row-even"><td>currAction</td>
-<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.OpAL.OpAL.Name">
-<code class="descname">Name</code><em class="property"> = 'OpAL'</em><a class="headerlink" href="#model.OpAL.OpAL.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="model.OpAL.OpAL.action">
-<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.action" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> : integer or None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.OpAL.OpAL.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name,
-Probabilities, Actions and Events.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.OpAL.OpAL.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.OpAL.blankStim">
-<code class="descclassname">model.OpAL.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
-<blockquote class="last">
-<div><p>The function expects to be passed the event and then return it.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The identifier of the function</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 <div class="section" id="module-model">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-model" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -2156,19 +2383,20 @@ accessed later</p>
 <li><a class="reference internal" href="#">model package</a><ul>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#model-modeltemplate-module">model.modelTemplate module</a></li>
+<li><a class="reference internal" href="#module-model.BHMM">model.BHMM module</a></li>
 <li><a class="reference internal" href="#module-model.BP">model.BP module</a></li>
 <li><a class="reference internal" href="#module-model.BPMS">model.BPMS module</a></li>
-<li><a class="reference internal" href="#module-model.BHMM">model.BHMM module</a></li>
 <li><a class="reference internal" href="#module-model.EP">model.EP module</a></li>
 <li><a class="reference internal" href="#module-model.MS">model.MS module</a></li>
 <li><a class="reference internal" href="#module-model.MS_rev">model.MS_rev module</a></li>
+<li><a class="reference internal" href="#module-model.OpAL">model.OpAL module</a></li>
+<li><a class="reference internal" href="#module-model.OpALS">model.OpALS module</a></li>
 <li><a class="reference internal" href="#module-model.RVPM">model.RVPM module</a></li>
 <li><a class="reference internal" href="#module-model.modelPlot">model.modelPlot module</a></li>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
+<li><a class="reference internal" href="#module-model.modelTemplate">model.modelTemplate module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn">model.qLearn module</a></li>
 <li><a class="reference internal" href="#module-model.qLearn2">model.qLearn2 module</a></li>
-<li><a class="reference internal" href="#module-model.OpAL">model.OpAL module</a></li>
 <li><a class="reference internal" href="#module-model">Module contents</a></li>
 </ul>
 </li>

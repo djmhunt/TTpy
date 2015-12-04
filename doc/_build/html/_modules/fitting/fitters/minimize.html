@@ -54,6 +54,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
+
 <span class="kn">from</span> <span class="nn">fitAlg</span> <span class="kn">import</span> <span class="n">fitAlg</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">around</span>
@@ -171,6 +173,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">boundNames</span> <span class="o">=</span> <span class="bp">None</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Fitting.fitters.minimize&#39;</span><span class="p">)</span>
+
 <span class="c">#    def callback(self,Xi):</span>
 <span class="c">#        &quot;&quot;&quot;</span>
 <span class="c">#        Used for printing state after each stage of fitting</span>
@@ -259,9 +263,9 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">initParamSets</span><span class="p">:</span>
 
             <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span> <span class="n">i</span><span class="p">[:],</span>
-                                      <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
-                                      <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span><span class="c">#,</span>
-<span class="c">#                                     callback= self.callback )</span>
+                                               <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+                                               <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span><span class="c">#,</span>
+        <span class="c">#                                      callback= self.callback )</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
 
             <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
@@ -289,6 +293,7 @@
 <span class="c">#        data[&#39;message&#39;] = array([o.message for o in resultSet])</span>
 <span class="c">#        data[&#39;jac&#39;] = array([o.jac for o in resultSet])</span>
 <span class="c">#        print array([data[&#39;parameters&#39;].T[0], data[&#39;parameters&#39;].T[1], data[&quot;fitVal&quot;]]).T</span>
+<span class="c">#        print array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T</span>
 <span class="c">#        pytest.set_trace()</span>
 
         <span class="c"># If boundary fits are acceptable</span>

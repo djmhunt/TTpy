@@ -65,6 +65,9 @@
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">exists</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">exc_info</span>
+<span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">extract_tb</span>
 
 
 <span class="c"># For analysing the state of the computer</span>
@@ -193,6 +196,49 @@
         <span class="n">fileName</span> <span class="o">=</span>  <span class="s">&#39;&#39;</span>
 
     <span class="k">return</span> <span class="n">folderName</span><span class="p">,</span> <span class="n">fileName</span>
+    </div>
+<div class="viewcode-block" id="newFile"><a class="viewcode-back" href="../utils.html#utils.newFile">[docs]</a><span class="k">def</span> <span class="nf">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    handle : string</span>
+<span class="sd">        The file name</span>
+<span class="sd">    extension : string</span>
+<span class="sd">        The extension of the file</span>
+<span class="sd">    outputFolder : string</span>
+<span class="sd">        The full path of where the file will be stored</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileName : string</span>
+<span class="sd">        The filename allowed for the file</span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; newFile(&quot;handle&quot;, &quot;txt&quot;, &quot;./&quot;)</span>
+<span class="sd">    &#39;./handle.txt&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; newFile(&quot;handle&quot;, &quot;txt&quot;, &quot;./Outputting/&quot;)</span>
+<span class="sd">    &#39;./Outputting/handle.txt&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span>
+
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">outputFolder</span> <span class="o">+</span> <span class="n">handle</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">fileName</span> <span class="o">+=</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">fileName</span> <span class="o">+=</span> <span class="n">end</span>
+
+    <span class="k">return</span> <span class="n">fileName</span>
 </div>
 <div class="viewcode-block" id="argProcess"><a class="viewcode-back" href="../utils.html#utils.argProcess">[docs]</a><span class="k">def</span> <span class="nf">argProcess</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
@@ -605,6 +651,38 @@
         <span class="n">desc</span> <span class="o">=</span> <span class="n">Name</span>
 
     <span class="k">return</span> <span class="n">desc</span>
+</div>
+<div class="viewcode-block" id="errorResp"><a class="viewcode-back" href="../utils.html#utils.errorResp">[docs]</a><span class="k">def</span> <span class="nf">errorResp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes an error that has been caught and returns the details as a string</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    description : string</span>
+<span class="sd">        Contains the description of the error</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    &gt;&gt;&gt;     a = 1/0.0</span>
+<span class="sd">    &gt;&gt;&gt; except:</span>
+<span class="sd">    &gt;&gt;&gt;     print errorResp()</span>
+<span class="sd">    A &lt;type &#39;exceptions.ZeroDivisionError&#39;&gt; : &quot;float division by zero&quot; in &lt;input&gt; line 1 function &lt;module&gt;: a = 1/0.0</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    &gt;&gt;&gt;     a = b()</span>
+<span class="sd">    &gt;&gt;&gt; except:</span>
+<span class="sd">    &gt;&gt;&gt;     print errorResp()</span>
+<span class="sd">    A &lt;type &#39;exceptions.NameError&#39;&gt; : &quot;name &#39;b&#39; is not defined&quot; in &lt;input&gt; line 2 function &lt;module&gt;: a = b()</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">errorType</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="n">exc_info</span><span class="p">()</span>
+    <span class="n">errorLoc</span> <span class="o">=</span> <span class="n">extract_tb</span><span class="p">(</span><span class="n">traceback</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s">&quot;A &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">errorType</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; : &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">+=</span> <span class="s">&quot; in &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot; line &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">errorLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">description</span> <span class="o">+=</span> <span class="s">&quot; function &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">description</span>
 
 <span class="c">#if __name__ == &#39;__main__&#39;:</span>
 <span class="c">#    from timeit import timeit</span>

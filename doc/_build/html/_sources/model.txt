@@ -11,10 +11,10 @@ Subpackages
 Submodules
 ----------
 
-model.modelTemplate module
-------------------
+model.BHMM module
+-----------------
 
-.. automodule:: model.modelTemplate
+.. automodule:: model.BHMM
     :members:
     :undoc-members:
     :show-inheritance:
@@ -26,19 +26,11 @@ model.BP module
     :members:
     :undoc-members:
     :show-inheritance:
-	
+
 model.BPMS module
 -----------------
 
 .. automodule:: model.BPMS
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
-model.BHMM module
------------------
-
-.. automodule:: model.BHMM
     :members:
     :undoc-members:
     :show-inheritance:
@@ -67,6 +59,22 @@ model.MS_rev module
     :undoc-members:
     :show-inheritance:
 
+model.OpAL module
+-----------------
+
+.. automodule:: model.OpAL
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.OpALS module
+------------------
+
+.. automodule:: model.OpALS
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 model.RVPM module
 -----------------
 
@@ -91,6 +99,14 @@ model.modelSetPlot module
     :undoc-members:
     :show-inheritance:
 
+model.modelTemplate module
+--------------------------
+
+.. automodule:: model.modelTemplate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 model.qLearn module
 -------------------
 
@@ -103,14 +119,6 @@ model.qLearn2 module
 --------------------
 
 .. automodule:: model.qLearn2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-	
-model.OpAL module
---------------------
-
-.. automodule:: model.OpAL
     :members:
     :undoc-members:
     :show-inheritance:

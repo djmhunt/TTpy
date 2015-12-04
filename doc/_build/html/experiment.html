@@ -58,213 +58,6 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="experiment-experimenttemplate-module">
-<h2>experiment.experimentTemplate module<a class="headerlink" href="#experiment-experimenttemplate-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-experiment.experimentTemplate"></span><p>&#64;author: Dominic</p>
-<dl class="class">
-<dt id="experiment.experimentTemplate.experiment">
-<em class="property">class </em><code class="descclassname">experiment.experimentTemplate.</code><code class="descname">experiment</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>The abstract experiment class from which all others inherit</p>
-<p>Many general methods for experiments are found only here</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plotArgs</strong> : dict</p>
-<blockquote class="last">
-<div><p>The arguments for plotting functions</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="5%" />
-<col width="95%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="experiment.experimentTemplate.experiment.Name">
-<code class="descname">Name</code><em class="property"> = 'Empty'</em><a class="headerlink" href="#experiment.experimentTemplate.experiment.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="class">
-<dt id="experiment.experimentTemplate.experiment.experimentPlot">
-<em class="property">class </em><code class="descname">experimentPlot</code><span class="sig-paren">(</span><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a experiment</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="experiment.experimentTemplate.experiment.experimentSetPlot">
-<em class="property">class </em><code class="descclassname">experiment.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#experiment.experimentSetPlot.experimentSetPlot" title="experiment.experimentSetPlot.experimentSetPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentSetPlot.experimentSetPlot</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a set of experiments</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.feedback">
-<code class="descclassname">experiment.</code><code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.feedback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Responds to the action from the participant</p>
-<p>For this experiment there is no possible response</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>feedback</strong> : None</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.next">
-<code class="descclassname">experiment.</code><code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next stimulus for the iterator</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>stimulus</strong> : None</p>
-<p><strong>nextValidActions</strong> : Tuple of ints</p>
-<blockquote>
-<div><p>The list of valid actions that the model can respond with. Set to
-<code class="docutils literal"><span class="pre">None</span></code>, as they never vary.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.outputEvolution">
-<code class="descclassname">experiment.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this experiment run</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name,
-Observables and Actions.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.params">
-<code class="descclassname">experiment.</code><code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the parameters of the experiment as a dictionary</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>parameters</strong> : dict</p>
-<blockquote class="last">
-<div><p>The parameters of the experiment</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.plot">
-<code class="descclassname">experiment.</code><code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a plotting class relavent for this experiment</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>experimentPlot</strong> : experiment.experimentPlot.experimentPlot</p>
-<blockquote>
-<div><p>The plots created for the experiment</p>
-</div></blockquote>
-<p><strong>plotArgs</strong> : dict</p>
-<blockquote class="last">
-<div><p>Plot arguments that may be used within the experimentPlot instance</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.plotSet">
-<code class="descclassname">experiment.</code><code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plotSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a plotting class relavent for this experiment set</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>experimentSetPlot</strong> : experiment.experimentSetPlot.experimentSetPlot</p>
-<blockquote>
-<div><p>The plots created for the experiment set</p>
-</div></blockquote>
-<p><strong>plotArgs</strong> : dict</p>
-<blockquote class="last">
-<div><p>Plot arguments that may be used within the experimentSetPlot instance</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.procede">
-<code class="descclassname">experiment.</code><code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.procede" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the experiment before the next timestep</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.receiveAction">
-<code class="descclassname">experiment.</code><code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.receiveAction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Receives the next action from the participant</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.reset">
-<code class="descclassname">experiment.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new experiment instance</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.experimentTemplate.experiment.storeState">
-<code class="descclassname">experiment.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-output later</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-experiment.beads">
 <span id="experiment-beads-module"></span><h2>experiment.beads module<a class="headerlink" href="#module-experiment.beads" title="Permalink to this headline">¶</a></h2>
 <table class="docutils field-list" frame="void" rules="none">
@@ -834,6 +627,47 @@ last action. The function returns the event.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="experiment.decks.deckStimDirectNormal">
+<code class="descclassname">experiment.decks.</code><code class="descname">deckStimDirectNormal</code><span class="sig-paren">(</span><em>maxEventVal</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/decks.html#deckStimDirectNormal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDirectNormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the decks stimuli for models expecting just the event, but in range [0,1]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>maxEventVal</strong> : int</p>
+<blockquote>
+<div><p>The highest value a reward can have</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deckStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last action. The function returns the event.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">model.opal</span></code></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="experiment.decks.deckStimDualInfo">
 <code class="descclassname">experiment.decks.</code><code class="descname">deckStimDualInfo</code><span class="sig-paren">(</span><em>maxEventVal</em>, <em>epsilon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/decks.html#deckStimDualInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.deckStimDualInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the decks stimuli for models expecting the reward information
@@ -948,6 +782,363 @@ np.random.random_sample .</p>
 <span class="go">       [ 0.49313049,  0.94909878]]) #random</span>
 </pre></div>
 </div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-experiment.experimentPlot">
+<span id="experiment-experimentplot-module"></span><h2>experiment.experimentPlot module<a class="headerlink" href="#module-experiment.experimentPlot" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="experiment.experimentPlot.experimentPlot">
+<em class="property">class </em><code class="descclassname">experiment.experimentPlot.</code><code class="descname">experimentPlot</code><span class="sig-paren">(</span><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expSet</strong> : list of dicts</p>
+<blockquote>
+<div><p>The data from each experiment run</p>
+</div></blockquote>
+<p><strong>expParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each experiment run</p>
+</div></blockquote>
+<p><strong>expLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each experiment run</p>
+</div></blockquote>
+<p><strong>modelSet</strong> : list dicts</p>
+<blockquote>
+<div><p>The data from each model run</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each model run</p>
+</div></blockquote>
+<p><strong>modelLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each model run</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The arguments for the plotting functions</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="experiment.experimentPlot.experimentPlot.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
+<blockquote class="last">
+<div><p>When there are no more figures to return</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-experiment.experimentSetPlot">
+<span id="experiment-experimentsetplot-module"></span><h2>experiment.experimentSetPlot module<a class="headerlink" href="#module-experiment.experimentSetPlot" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="experiment.experimentSetPlot.experimentSetPlot">
+<em class="property">class </em><code class="descclassname">experiment.experimentSetPlot.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentSetPlot.html#experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentSetPlot.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a set of experiments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expSets</strong> : list of dicts</p>
+<blockquote>
+<div><p>The data from each experiment run</p>
+</div></blockquote>
+<p><strong>expParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each experiment run</p>
+</div></blockquote>
+<p><strong>expLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each experiment run</p>
+</div></blockquote>
+<p><strong>modelSets</strong> : list dicts</p>
+<blockquote>
+<div><p>The data from each model run</p>
+</div></blockquote>
+<p><strong>modelParams</strong> : list of dicts</p>
+<blockquote>
+<div><p>The input parameters of each model run</p>
+</div></blockquote>
+<p><strong>modelLabels</strong> : list of strings</p>
+<blockquote>
+<div><p>The labels for each model run</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The arguments for the plotting functions</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="experiment.experimentSetPlot.experimentSetPlot.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentSetPlot.html#experimentSetPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentSetPlot.experimentSetPlot.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plots</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
+<blockquote class="last">
+<div><p>When there are no more figures to return</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-experiment.experimentTemplate">
+<span id="experiment-experimenttemplate-module"></span><h2>experiment.experimentTemplate module<a class="headerlink" href="#module-experiment.experimentTemplate" title="Permalink to this headline">¶</a></h2>
+<p>&#64;author: Dominic</p>
+<dl class="class">
+<dt id="experiment.experimentTemplate.experiment">
+<em class="property">class </em><code class="descclassname">experiment.experimentTemplate.</code><code class="descname">experiment</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>The abstract experiment class from which all others inherit</p>
+<p>Many general methods for experiments are found only here</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>The arguments for plotting functions</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="experiment.experimentTemplate.experiment.Name">
+<code class="descname">Name</code><em class="property"> = 'Empty'</em><a class="headerlink" href="#experiment.experimentTemplate.experiment.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="experiment.experimentTemplate.experiment.experimentPlot">
+<em class="property">class </em><code class="descname">experimentPlot</code><span class="sig-paren">(</span><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a experiment</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="experiment.experimentTemplate.experiment.experimentSetPlot">
+<em class="property">class </em><code class="descclassname">experiment.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentSetPlot.experimentSetPlot" title="experiment.experimentSetPlot.experimentSetPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentSetPlot.experimentSetPlot</span></code></a></p>
+<p>Abstract class for the creation of plots relevant to a set of experiments</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.feedback">
+<code class="descclassname">experiment.</code><code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responds to the action from the participant</p>
+<p>For this experiment there is no possible response</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>feedback</strong> : None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.next">
+<code class="descclassname">experiment.</code><code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next stimulus for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>stimulus</strong> : None</p>
+<p><strong>nextValidActions</strong> : Tuple of ints</p>
+<blockquote>
+<div><p>The list of valid actions that the model can respond with. Set to
+<code class="docutils literal"><span class="pre">None</span></code>, as they never vary.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.outputEvolution">
+<code class="descclassname">experiment.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevent data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Observables and Actions.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.params">
+<code class="descclassname">experiment.</code><code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameters of the experiment as a dictionary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>parameters</strong> : dict</p>
+<blockquote class="last">
+<div><p>The parameters of the experiment</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.plot">
+<code class="descclassname">experiment.</code><code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent for this experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>experimentPlot</strong> : experiment.experimentPlot.experimentPlot</p>
+<blockquote>
+<div><p>The plots created for the experiment</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>Plot arguments that may be used within the experimentPlot instance</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.plotSet">
+<code class="descclassname">experiment.</code><code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plotSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a plotting class relavent for this experiment set</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>experimentSetPlot</strong> : experiment.experimentSetPlot.experimentSetPlot</p>
+<blockquote>
+<div><p>The plots created for the experiment set</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dict</p>
+<blockquote class="last">
+<div><p>Plot arguments that may be used within the experimentSetPlot instance</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.procede">
+<code class="descclassname">experiment.</code><code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.procede" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the experiment before the next timestep</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.receiveAction">
+<code class="descclassname">experiment.</code><code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.receiveAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the next action from the participant</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.reset">
+<code class="descclassname">experiment.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new experiment instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.experimentTemplate.experiment.storeState">
+<code class="descclassname">experiment.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1306,9 +1497,9 @@ case a single float is returned).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="experiment-probselect-module">
-<h2>experiment.probSelect module<a class="headerlink" href="#experiment-probselect-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-experiment.probSelect"></span><table class="docutils field-list" frame="void" rules="none">
+<div class="section" id="module-experiment.probSelect">
+<span id="experiment-probselect-module"></span><h2>experiment.probSelect module<a class="headerlink" href="#module-experiment.probSelect" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -1437,6 +1628,21 @@ Refer to its documentation for missing methods.</p>
 <div><p>The probability that a reward is given for choosing action A. Default
 is 0.7</p>
 </div></blockquote>
+<p><strong>actRewardProb</strong> : dictionary, optional</p>
+<blockquote>
+<div><p>A dictionary of the potential actions that can be taken and the
+probability of a reward.
+Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}</p>
+</div></blockquote>
+<p><strong>rewardSize</strong> : float, optional</p>
+<blockquote>
+<div><p>The size of reward given if sucessful. Default 1</p>
+</div></blockquote>
+<p><strong>numActions</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of actions that can be chosen at any given time, chosen at
+random from actRewardProb. Default 2</p>
+</div></blockquote>
 <p><strong>learningLen</strong> : int, optional</p>
 <blockquote>
 <div><p>The number of trials in the learning phase. As there is no feeback in
@@ -1455,10 +1661,9 @@ its documentation for more details.</p>
 <p>The experiment is broken up into two sections: a learning phase and a
 trasfer phase. Participants choose between pairs of four actions: A, B, M1
 and M2. Each provides a reward with a different probability: A:P&gt;0.5,
-B:1-P&lt;0.5, M1=M2=0.5. In the learning phase there is only A and B, but the
-transfer phase has all the action pairs but no feedback. This class only
-covers the learning phase, but models are expected to be implemented as if
-there is a transfer phase.</p>
+B:1-P&lt;0.5, M1=M2=0.5. The transfer phase has all the action pairs but no
+feedback. This class only covers the learning phase, but models are
+expected to be implemented as if there is a transfer phase.</p>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -1523,8 +1728,8 @@ Bias = choose(A) - avoid(B),</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.experimentPlot.processData">
-<code class="descname">processData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentPlot.processData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentPlot.processData" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.probSelect.experimentPlot.processEndData">
+<code class="descname">processEndData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentPlot.processEndData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentPlot.processEndData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1539,9 +1744,12 @@ Bias = choose(A) - avoid(B),</p>
 <img src="_images/mathmpl/math-77a707c0bd.png" style="position: relative; bottom: -7px"/></p>
 <p>Plot Positive vs negative choice bias against <img src="_images/mathmpl/math-b7933d3375.png" style="position: relative; bottom: -8px"/>
 with:</p>
-<blockquote class="last">
+<blockquote>
 <div><img src="_images/mathmpl/math-da2f8d8074.png" style="position: relative; bottom: -7px"/>, varying <img src="_images/mathmpl/math-48bcc4838f.png" style="position: relative; bottom: -7px"/> relative to <img src="_images/mathmpl/math-b33f5c371a.png" style="position: relative; bottom: -7px"/>
 <img src="_images/mathmpl/math-36c188048b.png" style="position: relative; bottom: -7px"/>, varying <img src="_images/mathmpl/math-53386b02bf.png" style="position: relative; bottom: -7px"/> relative to <img src="_images/mathmpl/math-08ea37a25f.png" style="position: relative; bottom: -7px"/></div></blockquote>
+<p class="last">Plot time against <img src="_images/mathmpl/math-e9a32e94da.png" style="position: relative; bottom: -3px"/>, <img src="_images/mathmpl/math-8194de62bf.png" style="position: relative; bottom: -3px"/>, <img src="_images/mathmpl/math-1922d1ceaa.png" style="position: relative; bottom: -3px"/> and <img src="_images/mathmpl/math-5953bf2057.png" style="position: relative; bottom: -3px"/>
+with varying <img src="_images/mathmpl/math-ec960348c4.png" style="position: relative; bottom: -8px"/> and constant
+<img src="_images/mathmpl/math-c32567f8bf.png" style="position: relative; bottom: -7px"/> and <img src="_images/mathmpl/math-36c188048b.png" style="position: relative; bottom: -7px"/></p>
 </dd>
 </dl>
 <dl class="method">
@@ -1555,8 +1763,18 @@ with:</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.experimentSetPlot.processData">
-<code class="descname">processData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot.processData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot.processData" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.probSelect.experimentSetPlot.convergeEforP">
+<code class="descname">convergeEforP</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot.convergeEforP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot.convergeEforP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="experiment.probSelect.probSelect.experimentSetPlot.processEndData">
+<code class="descname">processEndData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot.processEndData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot.processEndData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="experiment.probSelect.probSelect.experimentSetPlot.processTimeData">
+<code class="descname">processTimeData</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot.processTimeData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot.processTimeData" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1722,156 +1940,6 @@ np.random.random_sample .</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-experiment.experimentPlot">
-<span id="experiment-experimentplot-module"></span><h2>experiment.experimentPlot module<a class="headerlink" href="#module-experiment.experimentPlot" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="experiment.experimentPlot.experimentPlot">
-<em class="property">class </em><code class="descclassname">experiment.experimentPlot.</code><code class="descname">experimentPlot</code><span class="sig-paren">(</span><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a experiment</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expSet</strong> : list of dicts</p>
-<blockquote>
-<div><p>The data from each experiment run</p>
-</div></blockquote>
-<p><strong>expParams</strong> : list of dicts</p>
-<blockquote>
-<div><p>The input parameters of each experiment run</p>
-</div></blockquote>
-<p><strong>expLabels</strong> : list of strings</p>
-<blockquote>
-<div><p>The labels for each experiment run</p>
-</div></blockquote>
-<p><strong>modelSet</strong> : list dicts</p>
-<blockquote>
-<div><p>The data from each model run</p>
-</div></blockquote>
-<p><strong>modelParams</strong> : list of dicts</p>
-<blockquote>
-<div><p>The input parameters of each model run</p>
-</div></blockquote>
-<p><strong>modelLabels</strong> : list of strings</p>
-<blockquote>
-<div><p>The labels for each model run</p>
-</div></blockquote>
-<p><strong>plotArgs</strong> : dict</p>
-<blockquote class="last">
-<div><p>The arguments for the plotting functions</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="experiment.experimentPlot.experimentPlot.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentPlot.html#experimentPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentPlot.experimentPlot.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the plots</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
-<blockquote class="last">
-<div><p>When there are no more figures to return</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="experiment-experimentsetplot-module">
-<h2>experiment.experimentSetPlot module<a class="headerlink" href="#experiment-experimentsetplot-module" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-experiment.experimentSetPlot"></span><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="experiment.experimentSetPlot.experimentSetPlot">
-<em class="property">class </em><code class="descclassname">experiment.experimentSetPlot.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentSetPlot.html#experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentSetPlot.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>Abstract class for the creation of plots relevant to a set of experiments</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expSets</strong> : list of dicts</p>
-<blockquote>
-<div><p>The data from each experiment run</p>
-</div></blockquote>
-<p><strong>expParams</strong> : list of dicts</p>
-<blockquote>
-<div><p>The input parameters of each experiment run</p>
-</div></blockquote>
-<p><strong>expLabels</strong> : list of strings</p>
-<blockquote>
-<div><p>The labels for each experiment run</p>
-</div></blockquote>
-<p><strong>modelSets</strong> : list dicts</p>
-<blockquote>
-<div><p>The data from each model run</p>
-</div></blockquote>
-<p><strong>modelParams</strong> : list of dicts</p>
-<blockquote>
-<div><p>The input parameters of each model run</p>
-</div></blockquote>
-<p><strong>modelLabels</strong> : list of strings</p>
-<blockquote>
-<div><p>The labels for each model run</p>
-</div></blockquote>
-<p><strong>plotArgs</strong> : dict</p>
-<blockquote class="last">
-<div><p>The arguments for the plotting functions</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="experiment.experimentSetPlot.experimentSetPlot.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentSetPlot.html#experimentSetPlot.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentSetPlot.experimentSetPlot.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the plots</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>figure</strong> : matplotlib.pyplot.figure</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>StopIteration</strong></p>
-<blockquote class="last">
-<div><p>When there are no more figures to return</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-experiment">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-experiment" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -1887,13 +1955,13 @@ np.random.random_sample .</p>
   <ul>
 <li><a class="reference internal" href="#">experiment package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#experiment-experimenttemplate-module">experiment.experimentTemplate module</a></li>
 <li><a class="reference internal" href="#module-experiment.beads">experiment.beads module</a></li>
 <li><a class="reference internal" href="#module-experiment.decks">experiment.decks module</a></li>
-<li><a class="reference internal" href="#module-experiment.pavlov">experiment.pavlov module</a></li>
-<li><a class="reference internal" href="#experiment-probselect-module">experiment.probSelect module</a></li>
 <li><a class="reference internal" href="#module-experiment.experimentPlot">experiment.experimentPlot module</a></li>
-<li><a class="reference internal" href="#experiment-experimentsetplot-module">experiment.experimentSetPlot module</a></li>
+<li><a class="reference internal" href="#module-experiment.experimentSetPlot">experiment.experimentSetPlot module</a></li>
+<li><a class="reference internal" href="#module-experiment.experimentTemplate">experiment.experimentTemplate module</a></li>
+<li><a class="reference internal" href="#module-experiment.pavlov">experiment.pavlov module</a></li>
+<li><a class="reference internal" href="#module-experiment.probSelect">experiment.probSelect module</a></li>
 <li><a class="reference internal" href="#module-experiment">Module contents</a></li>
 </ul>
 </li>

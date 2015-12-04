@@ -6,7 +6,7 @@
 PyDM!
 ================================
 
-This code has been tested using ``Python 2.7.8``. Apart from the standard Python libraries it also depends on the `SciPy <http://www.scipy.org/>`_ libraries. For those installing Python for the first time I would recommend the `Anaconda Python distribution <https://store.continuum.io/cshop/anaconda/>`_.
+This code has been tested using ``Python 2.7``. Apart from the standard Python libraries it also depends on the `SciPy <http://www.scipy.org/>`_ libraries. For those installing Python for the first time I would recommend the `Anaconda Python distribution <https://store.continuum.io/cshop/anaconda/>`_.
 
 Running scripts can be found in ``./runScripts/`` where a number of scripts have been created and are updated for each model. There are also two templates: ``runScript.py`` for fitting data, currently set up for fitting data to the ``Decks`` experiment, and ``runScript_sim.py`` for simulating an experiment. A visual display of the interactions in one of these scripts will soon be created.
 

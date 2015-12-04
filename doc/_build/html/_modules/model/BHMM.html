@@ -70,6 +70,7 @@
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
 
 <span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="kn">import</span> <span class="n">model</span>
 <span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="kn">import</span> <span class="n">modelPlot</span>
@@ -243,7 +244,7 @@
 <span class="sd">            Probabilities, Actions and Events.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;ActionProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="p">)</span>
@@ -260,13 +261,13 @@
         <span class="sd">&quot;&quot;&quot;Processes updates to new actions&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">instance</span> <span class="o">==</span> <span class="s">&#39;obs&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">events</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_processAction</span><span class="p">()</span>
 
 
         <span class="k">elif</span> <span class="n">instance</span> <span class="o">==</span> <span class="s">&#39;reac&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">events</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_processEvent</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">events</span><span class="p">):</span>

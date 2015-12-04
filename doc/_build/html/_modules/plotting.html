@@ -118,8 +118,8 @@
 <span class="sd">    labels : list of strings</span>
 <span class="sd">        Description of each of the m datasets in ``Y``</span>
 <span class="sd">    axisLabels : dictionary</span>
-<span class="sd">        A dictionary of axis properties, all optional, used in ``axPlotlines``. See</span>
-<span class="sd">        ``axPlotlines`` for more details.</span>
+<span class="sd">        A dictionary of axis properties, all optional, used in ``axPlotlines``.</span>
+<span class="sd">        See ``axPlotlines`` for more details.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -625,6 +625,19 @@
 <span class="c">#    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])</span>
 
     <span class="k">return</span> <span class="n">CS</span>
+    </div>
+<div class="viewcode-block" id="axQuiver"><a class="viewcode-back" href="../plotting.html#plotting.axQuiver">[docs]</a><span class="k">def</span> <span class="nf">axQuiver</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">dX</span><span class="p">,</span> <span class="n">dY</span><span class="p">,</span><span class="n">CB_label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+    <span class="c">#Work in progress</span>
+    
+    <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">DY</span><span class="p">,</span> <span class="n">pivot</span><span class="o">=</span><span class="s">&#39;mid&#39;</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">local_cmap</span><span class="p">)</span> 
+    
+    <span class="n">CBI</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s">&#39;horizontal&#39;</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">CBI</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">CB_label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xLabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">yLabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </div>
 <div class="viewcode-block" id="axPlotlines"><a class="viewcode-back" href="../plotting.html#plotting.axPlotlines">[docs]</a><span class="k">def</span> <span class="nf">axPlotlines</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>

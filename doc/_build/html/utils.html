@@ -161,6 +161,39 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="utils.errorResp">
+<code class="descclassname">utils.</code><code class="descname">errorResp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#errorResp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.errorResp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an error that has been caught and returns the details as a string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>description</strong> : string</p>
+<blockquote class="last">
+<div><p>Contains the description of the error</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span> <span class="n">errorResp</span><span class="p">()</span>
+<span class="go">A &lt;type &#39;exceptions.ZeroDivisionError&#39;&gt; : &quot;float division by zero&quot; in &lt;input&gt; line 1 function &lt;module&gt;: a = 1/0.0</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">print</span> <span class="n">errorResp</span><span class="p">()</span>
+<span class="go">A &lt;type &#39;exceptions.NameError&#39;&gt; : &quot;name &#39;b&#39; is not defined&quot; in &lt;input&gt; line 2 function &lt;module&gt;: a = b()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="utils.fancyLogger">
 <code class="descclassname">utils.</code><code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logLevel</em>, <em>fileName=''</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.fancyLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the style of logging for all the simulations</p>
@@ -445,6 +478,47 @@ data set did not contain a key a value of None will be entered for it.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.newFile">
+<code class="descclassname">utils.</code><code class="descname">newFile</code><span class="sig-paren">(</span><em>handle</em>, <em>extension</em>, <em>outputFolder</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#newFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.newFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>handle</strong> : string</p>
+<blockquote>
+<div><p>The file name</p>
+</div></blockquote>
+<p><strong>extension</strong> : string</p>
+<blockquote>
+<div><p>The extension of the file</p>
+</div></blockquote>
+<p><strong>outputFolder</strong> : string</p>
+<blockquote>
+<div><p>The full path of where the file will be stored</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
+<blockquote class="last">
+<div><p>The filename allowed for the file</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">newFile</span><span class="p">(</span><span class="s">&quot;handle&quot;</span><span class="p">,</span> <span class="s">&quot;txt&quot;</span><span class="p">,</span> <span class="s">&quot;./&quot;</span><span class="p">)</span>
+<span class="go">&#39;./handle.txt&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">newFile</span><span class="p">(</span><span class="s">&quot;handle&quot;</span><span class="p">,</span> <span class="s">&quot;txt&quot;</span><span class="p">,</span> <span class="s">&quot;./Outputting/&quot;</span><span class="p">)</span>
+<span class="go">&#39;./Outputting/handle.txt&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
