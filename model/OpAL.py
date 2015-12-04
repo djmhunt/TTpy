@@ -41,11 +41,11 @@ class OpAL(model):
     ----------
     alpha : float, optional
         Learning rate parameter, used as either the
-    alphaGoDiff : float, optional
+    alphaGoNogoDiff : float, optional
         The difference between ``alphaGo`` and ``alphaNogo``. Default is ``None``.
-        If not ``None`` will overwrite any parameters in ``alphaGo`` and ``alphaNogo``
-        :math:`\\alpha_G = \\alpha + \\alpha_\\delta` and :math:`\\alpha_N = \\alpha - \\alpha_\\delta`
-    alphaC : float, optional
+        If not ``None`` will overwrite ``alphaNogo``
+        :math:`\\alpha_N = \\alpha_G - \\alpha_\\delta`
+    alphaCrit : float, optional
         The critic learning rate. Default is ``alpha``
     alphaGo : float, optional
         Learning rate parameter for Go, the positive part of the actor learning
@@ -53,6 +53,16 @@ class OpAL(model):
     alphaNogo : float, optional
         Learning rate aprameter for Nogo, the negative part of the actor learning
         Default is ``alpha``
+    alphaGoDiff : float, optional
+        The difference between ``alphaCrit`` and ``alphaGo``. The default is ``None``
+        If not ``None``  and ``alphaNogoDiff`` is also not ``None``, it will 
+        overwrite the ``alphaGo`` parameter
+        :math:`\\alpha_G = \\alpha_C + \\alpha_\\deltaG`
+    alphaNogoDiff : float, optional
+        The difference between ``alphaCrit`` and ``alphaNogo``. The default is ``None``
+        If not ``None``  and ``alphaGoDiff`` is also not ``None``, it will 
+        overwrite the ``alphaNogo`` parameter
+        :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN` 
     beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
         expoitation parameter. Defined as :math:`\\beta` in the paper
@@ -111,10 +121,12 @@ class OpAL(model):
         self.betaGo = kwargs.pop('betaGo', None)
         self.betaNogo = kwargs.pop('betaNogo', None)
         self.alpha = kwargs.pop('alpha', 0.1)
-        self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
-        self.alphaCrit = kwargs.pop('alphaC', self.alpha)
+        self.alphaGoNogoDiff = kwargs.pop('alphaGoNogoDiff', None)
+        self.alphaCrit = kwargs.pop('alphaCrit', self.alpha)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
+        self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
+        self.alphaNogoDiff = kwargs.pop('alphaNogoDiff', None)
         self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
         self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
         self.expectGo = kwargs.pop('expectGo', ones(self.numActions)*1)
@@ -122,9 +134,12 @@ class OpAL(model):
         self.stimFunc = kwargs.pop('stimFunc',blankStim())
         self.decisionFunc = kwargs.pop('decFunc',decMaxProb(range(self.numActions)))
 
-        if self.alphaGoDiff:
+        if self.alphaGoNogoDiff:
+            self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
+            
+        if self.alphaGoDiff and self.alphaNogoDiff:
             self.alphaGo = self.alpha + self.alphaGoDiff
-            self.alphaNogo = self.alpha - self.alphaGoDiff
+            self.alphaNogo = self.alpha + self.alphaNogoDiff
 
         if self.betaGo and self.betaNogo:
             self.beta = (self.betaGo + self.betaNogo)/2
