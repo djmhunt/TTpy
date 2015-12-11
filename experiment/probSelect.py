@@ -10,7 +10,7 @@
                 doi:10.1037/a0037015
 
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import pandas as pd
 

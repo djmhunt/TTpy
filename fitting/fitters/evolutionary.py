@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 
@@ -208,8 +208,8 @@ class evolutionary(fitAlg):
 #        data['nfev'] = array([o.nfev for o in resultSet])
 #        data['message'] = array([o.message for o in resultSet])
 #        data['jac'] = array([o.jac for o in resultSet])
-#        print array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T
-#        print array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T
+#        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
+#        print(array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T)
 #        pytest.set_trace()
 
         return resultSet[genFitid]

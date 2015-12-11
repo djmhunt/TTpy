@@ -5,7 +5,7 @@
 :Notes: In the version this model used the Luce choice algorithm,
         rather than the logistic algorithm used here.
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 

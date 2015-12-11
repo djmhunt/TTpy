@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 
@@ -129,7 +129,7 @@ class basinhopping(fitAlg):
 #        Used for printing state after each stage of fitting
 #        """
 #
-#        print '{0:4d}: {1:s}'.format(self.count, Xi)
+#        print('{0:4d}: {1:s}'.format(self.count, Xi))
 #
 #        self.count += 1
 
@@ -251,7 +251,7 @@ class basinhopping(fitAlg):
 #        data['nfev'] = array([o.nfev for o in resultSet])
 #        data['message'] = array([o.message for o in resultSet])
 #        data['minimization_failures'] = array([o.minimization_failures for o in resultSet])
-#        print array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T
+#        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
 #        pytest.set_trace()
 
         # If boundary fits are acceptable

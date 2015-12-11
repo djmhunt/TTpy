@@ -7,7 +7,7 @@
                 Frontiers in Human Neuroscience, 5(August), 75.
                 doi:10.3389/fnhum.2011.00075
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 

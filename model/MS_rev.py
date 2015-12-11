@@ -10,7 +10,7 @@
 :Notes: In the original paper this model used a modified Luce choice
         algorithm, rather than the logistic algorithm used here.
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 

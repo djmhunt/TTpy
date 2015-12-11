@@ -11,7 +11,7 @@
 
 """
 
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 
@@ -126,7 +126,7 @@ class OpALS(model):
         self.betaGo = kwargs.pop('betaGo', None)
         self.betaNogo = kwargs.pop('betaNogo', None)
         self.alpha = kwargs.pop('alpha', 0.1)
-        self.alphaGoDiff = kwargs.pop('alphaGoNogoDiff', None)
+        self.alphaGoNogoDiff = kwargs.pop('alphaGoNogoDiff', None)
         self.alphaCrit = kwargs.pop('alphaCrit', self.alpha)
         self.alphaGo = kwargs.pop('alphaGo', self.alpha)
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
@@ -305,7 +305,7 @@ class OpALS(model):
 #            denom = sum(numerat)
 #        except FloatingPointError:
 #            message = errorResp()
-#            print message
+#            print(message)
 #            self.storeState()
 #            exportClassData(self.outputEvolution(),self.parameters, outputFolder = '../runScripts/Outputs/')
 #            zq = 1

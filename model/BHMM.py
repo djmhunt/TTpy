@@ -14,7 +14,7 @@
         DOI:10.1142/S0218001401000836
 
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import logging
 

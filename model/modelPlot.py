@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division
+from __future__ import division, print_function
 
 class modelPlot(object):
 

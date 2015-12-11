@@ -3,7 +3,7 @@
 :Author: Dominic Hunt
 """
 
-from __future__ import division
+from __future__ import division, print_function
 
 from numpy import log2, sum
 from collections import Callable

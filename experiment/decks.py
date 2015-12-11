@@ -7,7 +7,7 @@
                 Psychonomic Bulletin & Review, 14(6), 1125–32.
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
-from __future__ import division
+from __future__ import division, print_function
 
 from numpy import array, zeros, exp
 from numpy.random import rand

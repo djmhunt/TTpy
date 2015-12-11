@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import datetime as dt
 
@@ -295,17 +295,17 @@ def listMerGen(*args):
     Examples
     --------
     >>> from utils import listMerGen
-    >>> for i in listMerGen(0.7): print repr(i)
+    >>> for i in listMerGen(0.7): print(repr(i))
     array([ 0.7])
-    >>> for i in listMerGen([0.7,0.1]): print repr(i)
+    >>> for i in listMerGen([0.7,0.1]): print(repr(i))
     array([ 0.7])
     array([ 0.1])
-    >>> for i in listMerGen([0.7,0.1],[0.6]): print repr(i)
+    >>> for i in listMerGen([0.7,0.1],[0.6]): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
-    >>> for i in listMerGen([0.7,0.1],[]): print repr(i)
+    >>> for i in listMerGen([0.7,0.1],[]): print(repr(i))
 
-    >>> for i in listMerGen([0.7,0.1],0.6): print repr(i)
+    >>> for i in listMerGen([0.7,0.1],0.6): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
     """
@@ -460,7 +460,7 @@ def flatten(l):
     Examples
     --------
     >>> a = [[1,2,3],[4,5,6]]
-    >>> for i, loc in flatten(a): print i,loc
+    >>> for i, loc in flatten(a): print(i,loc)
     1 [0, 0]
     2 [0, 1]
     3 [0, 2]
@@ -537,7 +537,7 @@ def callableDetails(item):
     --------
     >>> from utils import callableDetails
     >>> def foo():
-    >>>     print "foo"
+    >>>     print("foo")
     >>>
     >>> foo.Name = "boo"
     >>> callableDetails(foo)
@@ -579,7 +579,7 @@ def callableDetailsString(item):
     --------
     >>> from utils import callableDetailsString
     >>> def foo():
-    >>>     print "foo"
+    >>>     print("foo")
     >>>
     >>> foo.Name = "boo"
     >>> callableDetailsString(foo)
@@ -616,13 +616,13 @@ def errorResp():
     >>> try:
     >>>     a = 1/0.0
     >>> except:
-    >>>     print errorResp()
+    >>>     print(errorResp())
     A <type 'exceptions.ZeroDivisionError'> : "float division by zero" in <input> line 1 function <module>: a = 1/0.0
     
     >>> try:
     >>>     a = b()
     >>> except:
-    >>>     print errorResp()
+    >>>     print(errorResp())
     A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()
     
     """
@@ -638,12 +638,12 @@ def errorResp():
 #    from timeit import timeit
 #    from numpy import fromfunction
 
-#    print listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
-#    print listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])
+#    print(listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4]))
+#    print(listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4]))
 
-#    print timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000)
-#    print timeit('listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMergeNP",number=500000)
+#    print(timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000))
+#    print(timeit('listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMergeNP",number=500000))
 
-#    for p in listMergeNP(array([1,2,3,4,5,6,7,8,9]).T): print p
+#    for p in listMergeNP(array([1,2,3,4,5,6,7,8,9]).T): print(p)
 #
-#    for p in listMergeNP(fromfunction(lambda i, j: i/40+2.6, (20, 1))): print p
+#    for p in listMergeNP(fromfunction(lambda i, j: i/40+2.6, (20, 1))): print(p)
