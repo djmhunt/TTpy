@@ -623,7 +623,7 @@ def errorResp():
     >>>     a = b()
     >>> except:
     >>>     print(errorResp())
-    A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()
+    A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()  
     
     """
     errorType, value, traceback = exc_info()
@@ -633,6 +633,46 @@ def errorResp():
     description += " function " + errorLoc[2] + ": " + errorLoc[3]
 
     return description
+    
+def unique(seq, idfun=None):
+    """
+    Finds the unique items in a list and returns them in order found.
+    
+    Inspired by discussion on ``http://www.peterbe.com/plog/uniqifiers-benchmark``
+    Notably f10 Andrew Dalke and f8 by Dave Kirby
+    
+    Parameters
+    ----------
+    seq : an iterable object
+        The sequence from which the unique list will be compiled
+    idfun: function, optional
+        A hashing function for transforming the items into the form that is to
+        be compared. Default is the ``None``
+
+    Returns
+    -------
+    result : list
+        The list of unique items
+
+    Examples
+    --------
+    >>> a=list('ABeeE')
+    >>> f5(a)
+    ['A','B','e','E']
+    
+    >>> f5(a, lambda x: x.lower())
+    ['A','B','e'] 
+    
+    Note
+    ----
+    Unless order is needed it is best to use list(set(seq))
+
+    """
+    seen = set()
+    if idfun is None:
+        return [x for x in seq if x not in seen and not seen.add(x)]
+    else:
+        return [x for x in seq if idfun(x) not in seen and not seen.add(idfun(x))]
 
 #if __name__ == '__main__':
 #    from timeit import timeit
