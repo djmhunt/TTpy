@@ -4,14 +4,16 @@ This module allows for the importing of participant data for use in fitting
 
 :Author: Dominic Hunt
 """
-from __future__ import division
-
-import pandas as pd
+from __future__ import division, print_function
 
 from os import listdir
 from scipy.io import loadmat
 from numpy import array, shape
 from itertools import izip, chain
+from pandas import read_excel
+from types import NoneType
+
+from utils import listMerge
 
 def datasets(folders, fileTypes):
     """
@@ -44,7 +46,7 @@ def datasets(folders, fileTypes):
         
     return dataSet
 
-def data(folder,fileType):
+def data(folder,fileType, **kwargs):
     """A function for reading in and returning a dataset
 
     Parameters
@@ -82,6 +84,10 @@ def data(folder,fileType):
     if fileType == "mat":
 
         dataSet = getmatData(folder, files)
+        
+    elif fileType == "xlsx":
+        
+        dataSet = getxlsxData(folder, files, **kwargs)
 
     return dataSet
 
@@ -115,10 +121,12 @@ def getFiles(folder, fileType):
     """
 
     files = listdir(folder)
+    
+    dataFiles = [f for f in files if f.endswith(fileType) ]
 
-    dataFiles = sortFiles(files, fileType)
+    sortedFiles = sortFiles(dataFiles, fileType)
 
-    return dataFiles
+    return sortedFiles
     
 def sortFiles(files, fileType):
     """
@@ -149,17 +157,17 @@ def sortFiles(files, fileType):
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
     
-    dataFiles = [f for f in files if f.endswith(fileType) ]
+    
     
     suffixLen = len(fileType)
     
-    prefix = getFilePrefix(dataFiles, suffixLen)
+    prefix = getFilePrefix(files, suffixLen)
     
-    sortedFiles = intCore(dataFiles,prefix,fileType)
+    sortedFiles = intCore(files,prefix,fileType)
     if sortedFiles:
         return sortedFiles
     else:
-        return dataFiles   
+        return files   
     
 def getFilePrefix(dataFiles, suffixLen):
     """
@@ -258,6 +266,7 @@ def getmatData(folder, files):
     Returns
     -------
     dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
         
     Examples
     --------
@@ -294,4 +303,71 @@ def getmatData(folder, files):
 
         dataSets.append(dataD)
 
+    return dataSets
+    
+def getxlsxData(folder, files, **kwargs):
+    """
+    Loads the data from xlsx files
+    
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    files : list of strings
+        A list of filenames
+    splitBy : string or list, optional
+        If multiple participants datasets are in one file sheet, this specifies
+        the column or columns that can distinguish and identify the rows for 
+        each participant. Default ``[]``
+    **kwargs : dict, optional
+        The keyword arguments for pandas.read_excel
+    
+    
+    Returns
+    -------
+    dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
+        
+    Examples
+    --------
+    >>> folder = './Data/'
+    >>> dataFiles = ['subj1.mat', 'subj2.mat', 'subj11.mat']
+    >>> getmatData(folder, files)
+    [{'cumpts': array([ 7, 17, 19, 21], dtype=uint8)},
+     {'cumpts': array([12, 22, 24, 26], dtype=uint8)},
+     {'cumpts': array([ 5, 15, 17, 19], dtype=uint8)}]
+     
+    See Also
+    --------
+    pandas.read_excel
+
+    
+    """
+    
+    splitBy = kwargs.pop('splitBy',[])
+    if isinstance(splitBy, str):
+        splitBy = [splitBy]
+    
+    dataSets = []
+    folder = folder
+
+    for f in files:
+
+        dat = read_excel(folder + f, **kwargs)
+        
+        if len(splitBy) > 0:
+            # The data must be split
+            participants = listMerge((list(set(dat[s])).sort() for s in splitBy))
+                
+            for p in participants:
+                
+                subDat = dat[(dat[splitBy] == p).all(axis=1)]
+                subDatDict = subDat.to_dict(orient='list')
+                subDatDict["fileName"] = f
+                dataSets.append(subDatDict)
+        else:
+            datDict = dat.to_dict(orient='list')
+            datDict["fileName"] = f
+            dataSets.append(datDict)
+            
     return dataSets
