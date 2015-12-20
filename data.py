@@ -61,10 +61,6 @@ def data(folder,fileType, **kwargs):
     -------
     dataSet : list of dictionaries
     
-    See Also
-    --------
-    data: The
-    
     Examples
     --------
     >>> folder = "./Data/"
@@ -156,6 +152,8 @@ def sortStrings(unorderedList, suffix):
     >>> sortStrings(files, fileType)
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
+    if len(unorderedList) <= 1:
+        return unorderedList
 
     suffixLen = len(suffix)
     
@@ -238,11 +236,14 @@ def intCore(unorderedList,prefix,suffix):
     """
     
     try:
-        core = [(d[len(prefix):-(len(suffix))],i) for i,d in enumerate(unorderedList)]
+        if suffix:
+            core = [(d[len(prefix):-(len(suffix))],i) for i,d in enumerate(unorderedList)]
+        else:
+            core = [(d[len(prefix):],i) for i,d in enumerate(unorderedList)]
+        coreInt = [(int(c),i) for c,i in core]
     except:
         return []
-        
-    coreInt = [(int(c),i) for c,i in core]  
+    
     coreSorted = sorted(coreInt)
     coreStr = [(str(c),i) for c,i in coreSorted]
     
@@ -356,7 +357,8 @@ def getxlsxData(folder, files, **kwargs):
         
         if len(splitBy) > 0:
             # The data must be split
-            participants = listMerge((list(set(dat[s])).sort() for s in splitBy))
+            classifierList = (sortStrings(list(set(dat[s])),'') for s in splitBy)
+            participants = listMerge(*classifierList)
                 
             for p in participants:
                 
