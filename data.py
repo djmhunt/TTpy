@@ -109,7 +109,7 @@ def getFiles(folder, fileType):
         
     See Also
     --------
-    sortFiles : sorts the files found
+    sortStrings : sorts the files found
     
     Examples
     --------
@@ -124,48 +124,48 @@ def getFiles(folder, fileType):
     
     dataFiles = [f for f in files if f.endswith(fileType) ]
 
-    sortedFiles = sortFiles(dataFiles, fileType)
+    sortedFiles = sortStrings(dataFiles, "." + fileType)
 
     return sortedFiles
     
-def sortFiles(files, fileType):
+def sortStrings(unorderedList, suffix):
     """
-    Takes valid files and sorts them if possible and necessary
+    Takes an unordered list of strings and sorts them if possible and necessary
     
     Parameters
     ----------
-    files : list of strings
-        A list of valid filenames
-    fileType : string
-        The file extension found after the ".".
+    unorderedList : list of strings
+        A list of valid strings
+    suffix : string
+        A known suffix for the string
     
     Returns
     -------
-    dataFiles : list
-        A sorted list of the the files
+    sorted list : list of strings
+        A sorted list of the the strings
         
     See Also
     --------
-    intCore : sorts the files found if they are a number
-    getPrefix : identifies file name prefixes
+    intCore : sorts the strings with the prefix and suffix removed if they are a number
+    getPrefix : identifies prefixes all strings have
     
     Examples
     --------
     >>> files = ['subj1.mat', 'subj11.mat', 'subj2.mat']
-    >>> fileType = "mat"
-    >>> sortFiles(files, fileType)
+    >>> fileType = ".mat"
+    >>> sortStrings(files, fileType)
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
 
-    suffixLen = len(fileType)+1 # the +1 for the dot
+    suffixLen = len(suffix)
     
-    prefix = getPrefix(files, suffixLen)
+    prefix = getPrefix(unorderedList, suffixLen)
     
-    sortedFiles = intCore(files,prefix,fileType)
-    if sortedFiles:
-        return sortedFiles
+    sortedList = intCore(unorderedList,prefix,suffix)
+    if sortedList:
+        return sortedList
     else:
-        return files   
+        return unorderedList   
     
 def getPrefix(unorderedList, suffixLen):
     """
