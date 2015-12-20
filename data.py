@@ -130,12 +130,12 @@ def getFiles(folder, fileType):
     
 def sortFiles(files, fileType):
     """
-    Identifies valid files and sorts them if possible
+    Takes valid files and sorts them if possible and necessary
     
     Parameters
     ----------
     files : list of strings
-        A list of filenames
+        A list of valid filenames
     fileType : string
         The file extension found after the ".".
     
@@ -151,14 +151,12 @@ def sortFiles(files, fileType):
     
     Examples
     --------
-    >>> files = ['Experiment.pptx', 'info.txt', 'subj1.mat', 'subj11.mat', 'subj2.mat']
+    >>> files = ['subj1.mat', 'subj11.mat', 'subj2.mat']
     >>> fileType = "mat"
     >>> sortFiles(files, fileType)
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
-    
-    
-    
+
     suffixLen = len(fileType)
     
     prefix = getFilePrefix(files, suffixLen)
@@ -203,29 +201,29 @@ def getFilePrefix(dataFiles, suffixLen):
             break
     return dataFiles[0][:i-1]
     
-def intCore(dataFiles,prefix,suffix):
-    """Takes the *core* part of a filename and, assuming it is an integer, 
-    sorts them. Returns the file list sorted
+def intCore(unorderedList,prefix,suffix):
+    """Takes the *core* part of a string and, assuming it is an integer, 
+    sorts them. Returns the list sorted
     
     Parameters
     ----------
-    dataFiles : list of strings
-        The complete filenames (without path)
+    unorderedList : list of strings
+        The list of strings to be sorted
     prefix : string
-        The unchanging part of the start each file name
+        The unchanging part of the start each string
     suffix : string
-        The file type
+        The unchanging known end of each string
         
     Returns
     -------
-    sortedFiles : list of strings
-        The filenames now sorted
+    sortedStrings : list of strings
+        The strings now sorted
         
     Examples
     --------
     >>> dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
     >>> prefix = 'me0'
-    >>> suffix = 'mat'
+    >>> suffix = '.mat'
     >>> intCore(dataFiles,prefix,suffix)
     ['me001.mat', 'me002.mat', 'me051.mat', 'me052.mat']
     
@@ -239,7 +237,7 @@ def intCore(dataFiles,prefix,suffix):
     """
     
     try:
-        core = [(d[len(prefix):-(len(suffix)+1)],i) for i,d in enumerate(dataFiles)]
+        core = [(d[len(prefix):-(len(suffix))],i) for i,d in enumerate(unorderedList)]
     except:
         return []
         
@@ -247,9 +245,9 @@ def intCore(dataFiles,prefix,suffix):
     coreSorted = sorted(coreInt)
     coreStr = [(str(c),i) for c,i in coreSorted]
     
-    sortedFiles = [''.join([prefix,'0'*(len(core[i][0])-len(s)),s,'.',suffix]) for s,i in coreStr]
+    sortedStrings = [''.join([prefix,'0'*(len(core[i][0])-len(s)),s,suffix]) for s,i in coreStr]
     
-    return sortedFiles
+    return sortedStrings
     
 
 def getmatData(folder, files):
