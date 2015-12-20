@@ -147,7 +147,7 @@ def sortFiles(files, fileType):
     See Also
     --------
     intCore : sorts the files found if they are a number
-    getFilePrefix : identifies file name prefixes
+    getPrefix : identifies file name prefixes
     
     Examples
     --------
@@ -157,9 +157,9 @@ def sortFiles(files, fileType):
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
 
-    suffixLen = len(fileType)
+    suffixLen = len(fileType)+1 # the +1 for the dot
     
-    prefix = getFilePrefix(files, suffixLen)
+    prefix = getPrefix(files, suffixLen)
     
     sortedFiles = intCore(files,prefix,fileType)
     if sortedFiles:
@@ -167,39 +167,40 @@ def sortFiles(files, fileType):
     else:
         return files   
     
-def getFilePrefix(dataFiles, suffixLen):
+def getPrefix(unorderedList, suffixLen):
     """
-    Identifies any initial part of the filenames that is identical 
-    for all files
+    Identifies any initial part of strings that are identical 
+    for all string
     
     Parameters
     ----------
-    dataFiles : list of strings
-        A list of filenames
+    unorderedList : list of strings
+        A list of strings to be ordered
     suffixLen : int
-        The length of the file extension found after the ".".
+        The length of the identified suffix
     
     Returns
     -------
     prefix : string
-        The initial part of the filenames that is identical for all files
+        The initial part of the strings that is identical for all strings in 
+        the list 
         
     Examples
     --------
     >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
-    >>> suffixLen = 3
-    >>> getFilePrefix(dataFiles, suffixLen)
+    >>> suffixLen = 4
+    >>> getPrefix(dataFiles, suffixLen)
     'subj'
 
     """
     
-    for i in xrange(1,len(dataFiles[0])-suffixLen):
-        sec = dataFiles[0][:i]
-        if all((sec == d[:i] for d in dataFiles)):
+    for i in xrange(1,len(unorderedList[0])-suffixLen+2): # Assuming the prefix might be the string-suffix
+        sec = unorderedList[0][:i]
+        if all((sec == d[:i] for d in unorderedList)):
             continue
         else:
             break
-    return dataFiles[0][:i-1]
+    return unorderedList[0][:i-1]
     
 def intCore(unorderedList,prefix,suffix):
     """Takes the *core* part of a string and, assuming it is an integer, 
