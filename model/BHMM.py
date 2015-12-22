@@ -207,18 +207,16 @@ class BHMM(model):
 
         return results
 
-    def _update(self,events,instance):
+    def _updateObs(self,events):
         """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
+        self._processAction()
 
-        if instance == 'obs':
-            if type(events) is not NoneType:
-                self._processEvent(events)
-            self._processAction()
-
-
-        elif instance == 'reac':
-            if type(events) is not NoneType:
-                self._processEvent(events)
+    def _updateReac(self,events):
+        """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
 
     def _processEvent(self,events):
 

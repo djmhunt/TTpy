@@ -135,16 +135,15 @@ class MS(model):
 
         return results
 
-    def _update(self,events,instance):
+    def _updateObs(self,events):
         """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
 
-        if instance == 'obs':
-            if type(events) is not NoneType:
-                self._processEvent(events)
-
-        elif instance == 'reac':
-            if type(events) is not NoneType:
-                self._processEvent(events)
+    def _updateReac(self,events):
+        """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
 
     def _processEvent(self,events):
 

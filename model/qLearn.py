@@ -14,6 +14,7 @@ import logging
 
 from numpy import exp, ones, array
 from random import choice
+from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -132,17 +133,16 @@ class qLearn(model):
 
         return results
 
-    def _update(self,events,instance):
+    def _updateObs(self,events):
         """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
+        self._processAction()
 
-        if instance == 'obs':
-            if events != None:
-                self._processEvent(events)
-            self._processAction()
-
-        elif instance == 'reac':
-            if events != None:
-                self._processEvent(events)
+    def _updateReac(self,events):
+        """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self._processEvent(events)
 
     def _processEvent(self,events):
 

@@ -5,6 +5,8 @@
 from __future__ import division, print_function
 
 from numpy import array
+from types import NoneType
+
 from modelSetPlot import modelSetPlot
 from modelPlot import modelPlot
 
@@ -77,14 +79,15 @@ class model(object):
 
         Parameters
         ----------
-        state : float or None
-            The stimulus from the experiment. Returns without doing anything if
-            the value of event is `None`.
+        state : tuple of ({int | float | tuple},{tuple of int | None})
+            The stimulus from the experiment followed by the tuple of valid 
+            actions. Returns without doing anything if the value of the 
+            stimulus is ``None``.
 
         """
         event, self.validActions = state
 
-        self._update(event,'obs')
+        self._updateObs(event)
 
     def feedback(self,response):
         """
@@ -97,7 +100,7 @@ class model(object):
             the value of response is `None`.
         """
 
-        self._update(response,'reac')
+        self._updateReac(response)
 
     def outputEvolution(self):
         """
@@ -114,24 +117,15 @@ class model(object):
 
         return results
 
-    def _update(self,events,instance):
+    def _updateObs(self,events):
         """Processes updates to new actions"""
-
-        if instance == 'obs':
-
+        if type(events) is not NoneType:
             self.recEvents.append(events)
 
-            self.lastObs = True
-
-        elif instance == 'reac':
-
-            if self.lastObs:
-
-                self.lastObs = False
-
-            else:
-
-                self.recEvents.append(events)
+    def _updateReac(self,events):
+        """Processes updates to new actions"""
+        if type(events) is not NoneType:
+            self.recEvents.append(events)
 
     def storeState(self):
         """
