@@ -24,6 +24,12 @@ class fit(object):
         An instance of one of the fitting algorithms
     scaler : function
         Transforms the participant action form to match that of the model
+    stimuliParams : list, optional
+        The keys containing the observational parameters seen by the 
+        participant before taking a decision on an action. Default ``[]``
+    actChoiceParams : string or None, optional
+        The key containing the list of possible actions a participant can take
+        at each instance. Default ``None``
     fpRespVal : float, optional
         If a floating point error occours when running a fit the fit function
         will return a value for each element of fpRespVal.
@@ -49,6 +55,8 @@ class fit(object):
         self.modelparam = modelParam
         self.fitAlg = fitAlg
         self.scaler = scaler
+        self.partStimuliParams = kwargs.pop('stimuliParams',[])
+        self.partActChoiceParams = kwargs.pop('actChoiceParams',None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
 
         self.fitInfo = {'Name':self.Name,
@@ -118,6 +126,8 @@ class fit(object):
         self.partChoices = self.scaler(partData[self.partChoiceParam])
         
         self.partRewards = partData[self.partRewardParam]
+        
+        self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
 
         fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
@@ -200,13 +210,49 @@ class fit(object):
             
         Returns
         -------
-        paranms : dict
+        params : dict
             The kwarg model parameter arguments
         """
 
         params = {k : v for k,v in izip(self.mParamNames, modelParameters)}
 
         return params
+        
+    def formatPartStim(self, partData, stimuli, validActions):
+        """
+        Finds the stimuli in the participant data and returns formatted observations
+        
+        Parameters
+        ----------
+        partData : dict
+            The participant data
+        stimuli : list of strings or ``None``
+            A list of the keys in partData representing participant stimuli
+        validActions : string or ``None``
+            The name of the key in partData where the list of valid actions
+            can be found. If ``None`` then the action list is considered to 
+            stay constant. 
+        
+        Returns
+        -------
+        observation : list of tuples
+            The tuples contain the stimuli and the valid actions for each 
+            obversation instance.
+        """
+        if stimuli:
+            
+            stimuliData = izip(*(partData[s] for s in stimuli))
+        else:
+            stimuliData = (None for i in xrange(len(partData)))
+            
+        if validActions:
+            actionData = (i for i in partData[validActions].itertuples(index=False))
+        else:
+            actionData = (None for i in xrange(len(partData)))
+            
+        observation = [(s, a) for a, s in izip(actionData, stimuliData)]
+        
+        return observation
 
     def _simSetup(self, *modelParameters):
         """ 

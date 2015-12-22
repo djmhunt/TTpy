@@ -119,12 +119,13 @@ class fitter(fit):
         Simulates the events of a simulation from the perspective of a model
         """
 
-        parAct = self.partChoices
-        parReward = self.partRewards
+        partAct = self.partChoices
+        partReward = self.partRewards
+        partObs = self.partObs
 
-        for action, reward in izip(parAct, parReward):
+        for action, reward, observation in izip(partAct, partReward, partObs):
 
-            model.observe((None,None))
+            model.observe(observation)
             model.currAction = action
             model.storeState()
             model.feedback(reward)
