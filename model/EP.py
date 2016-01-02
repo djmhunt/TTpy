@@ -128,13 +128,13 @@ class EP(model):
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)

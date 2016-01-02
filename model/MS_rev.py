@@ -23,6 +23,7 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
 from utils import callableDetailsString
 
+
 class MS_rev(model):
 
     """An adapted version of the Morre & Sellen model
@@ -60,22 +61,22 @@ class MS_rev(model):
 
     Name = "MS_rev"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-        self.beta = kwargs.pop('beta',4)
-        self.alpha = kwargs.pop('alpha',0.3)
-        self.eta = kwargs.pop('eta',0.3)
-        self.numStimuli = kwargs.pop('numStimuli',2)
-        self.prior = kwargs.pop('prior',ones(self.numStimuli)*0.5)
-        self.activity = kwargs.pop('activity',ones(self.numStimuli)*0.5)
-        # The alpha is an activation rate paramenter. The M&S paper uses a value of 1.
+        self.beta = kwargs.pop('beta', 4)
+        self.alpha = kwargs.pop('alpha', 0.3)
+        self.eta = kwargs.pop('eta', 0.3)
+        self.numStimuli = kwargs.pop('numStimuli', 2)
+        self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
+        self.activity = kwargs.pop('activity', ones(self.numStimuli)*0.5)
+        # The alpha is an activation rate parameter. The M&S paper uses a value of 1.
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(expResponses = (1,2), eta = self.eta))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
 
         self.currAction = 1
         self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
+        self.decProbabilities = array(self.prior)
         self.probDifference = 0
         self.activity = array(self.activity)
         self.decision = None
@@ -86,10 +87,10 @@ class MS_rev(model):
                            "eta": self.eta,
                            "alpha": self.alpha,
                            "prior": self.prior,
-                           "activity" : self.activity,
+                           "activity": self.activity,
                            "numStimuli": self.numStimuli,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         # Recorded information
 
@@ -129,37 +130,37 @@ class MS_rev(model):
         results["ActionProb"] = array(self.recActionProb)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         event = self.stimFunc(events, self.currAction)
 
         self.recEvents.append(event)
 
-        #Find the new activites
+        # Find the new activities
         self._newActivity(event)
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
+        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """
@@ -170,12 +171,12 @@ class MS_rev(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currAction])
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
 
     def _newActivity(self, event):
-        self.activity = self.activity + (event - self.activity)  * self.alpha
+        self.activity += (event - self.activity) * self.alpha
 
     def _prob(self, expectation):
         # The probability of a given jar, using the Luce choice model
@@ -183,12 +184,13 @@ class MS_rev(model):
 #        li = self.activity ** self.beta
 #        p = li/sum(li)
 
-        numerat = exp(self.beta*expectation)
-        denom = sum(numerat)
+        numerator = exp(self.beta*expectation)
+        denominator = sum(numerator)
 
-        p = numerat / denom
+        p = numerator / denominator
 
         return p
+
 
 def blankStim():
     """
@@ -207,7 +209,7 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return [1,0]
+        return [1, 0]
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc

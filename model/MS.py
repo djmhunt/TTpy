@@ -20,6 +20,7 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
 from plotting import dataVsEvents, lineplot
 
+
 class MS(model):
 
     """The Moore & Sellen model
@@ -58,17 +59,17 @@ class MS(model):
 
     Name = "M&S"
 
-    def __init__(self,**kwargs):
-        self.oneProb = kwargs.pop('oneProb',0.85)
-        self.beta = kwargs.pop('beta',4)
-        self.alpha = kwargs.pop('alpha',1)
-        self.eta = kwargs.pop('eta',0.5)
-        self.prior = kwargs.pop('prior',array([0.5,0.5]))
-        self.activity = kwargs.pop('activity',array([0.5,0.5]))
-        # The alpha is an activation rate paramenter. The paper uses a value of 1.
+    def __init__(self, **kwargs):
+        self.oneProb = kwargs.pop('oneProb', 0.85)
+        self.beta = kwargs.pop('beta', 4)
+        self.alpha = kwargs.pop('alpha', 1)
+        self.eta = kwargs.pop('eta', 0.5)
+        self.prior = kwargs.pop('prior', array([0.5, 0.5]))
+        self.activity = kwargs.pop('activity', array([0.5, 0.5]))
+        # The alpha is an activation rate parameter. The paper uses a value of 1.
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(expResponses = (1,2), eta = self.eta))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
 
         self.currAction = 1
         self.probabilities = zeros(2) + self.prior
@@ -85,9 +86,9 @@ class MS(model):
                            "eta": self.eta,
                            "alpha": self.alpha,
                            "prior": self.prior,
-                           "activity" : self.activity,
-                           "stimFunc" : self.stimFunc.Name,
-                           "decFunc" : self.decisionFunc.Name}
+                           "activity": self.activity,
+                           "stimFunc": self.stimFunc.Name,
+                           "decFunc": self.decisionFunc.Name}
 
         # Recorded information
 
@@ -105,8 +106,7 @@ class MS(model):
         action : integer or None
         """
 
-        self.decision = self.decisionFunc(self.probabilities, validResponses = self.validActions)
-
+        self.decision = self.decisionFunc(self.probabilities, validResponses=self.validActions)
 
         self.currAction = self.decision
 
@@ -115,7 +115,7 @@ class MS(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -130,33 +130,32 @@ class MS(model):
         results["ActionProb"] = array(self.recActionProb)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         event = self.stimFunc(events, self.currAction)
 
         self.recEvents.append(event)
 
-        #Find the new activites
+        # Find the new activities
         self._newActivity(event)
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self._prob()
-
 
     def storeState(self):
         """
@@ -172,7 +171,7 @@ class MS(model):
 
     def _newActivity(self, event):
 
-        self.activity = self.activity + (1-self.activity) * event * self.alpha
+        self.activity += (1-self.activity) * event * self.alpha
 
     def _prob(self):
         p = 1.0 / (1.0 + exp(-self.beta*self.activity))
@@ -192,10 +191,10 @@ class MS(model):
             # Create all the plots and place them in in a list to be iterated
 
             fig = self.dPChanges()
-            self.figSets.append(('dPChanges',fig))
+            self.figSets.append(('dPChanges', fig))
 
             fig = self.trial3_4Diff()
-            self.figSets.append(('trial3_4Diff',fig))
+            self.figSets.append(('trial3_4Diff', fig))
 
         def dPChanges(self):
             """
@@ -204,7 +203,7 @@ class MS(model):
 
             gainLables = array(["Gain " + str(m["beta"]) for m in self.modelStore])
 
-            dP = array([m["Probabilities"][:,0] - m["Probabilities"][:,1] for m in self.modelStore])
+            dP = array([m["Probabilities"][:, 0] - m["Probabilities"][:, 1] for m in self.modelStore])
             events = array(self.modelStore[0]["Events"])
 
             axisLabels = {"title":"Confidence by Learning Trial for Different Gain Parameters"}
@@ -215,10 +214,9 @@ class MS(model):
             axisLabels["yMin"] = 0
             eventLabel = "Beads drawn"
 
-            fig = dataVsEvents(dP,events,gainLables,eventLabel,axisLabels)
+            fig = dataVsEvents(dP, events, gainLables, eventLabel, axisLabels)
 
             return fig
-
 
         def trial3_4Diff(self):
             """
@@ -235,9 +233,10 @@ class MS(model):
 #            axisLabels["yMax"] = 0
 #            axisLabels["yMin"] = -0.5
 
-            fig = lineplot(gain,dPDiff,[],axisLabels)
+            fig = lineplot(gain, dPDiff, [], axisLabels)
 
             return fig
+
 
 def blankStim():
     """
@@ -256,7 +255,7 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return [1,0]
+        return [1, 0]
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc

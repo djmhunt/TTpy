@@ -10,6 +10,7 @@ from types import NoneType
 from modelSetPlot import modelSetPlot
 from modelPlot import modelPlot
 
+
 class model(object):
 
     """
@@ -27,14 +28,14 @@ class model(object):
 
     Name = "model"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
         """"""
 
         self.currAction = 1
         self.lastObs = False
         self.validActions = None
 
-        self.parameters = {"Name" : self.Name}
+        self.parameters = {"Name": self.Name}
 
         # Recorded information
 
@@ -59,7 +60,6 @@ class model(object):
 
         return hash(self.Name)
 
-
     def action(self):
         """
         Returns the action of the model
@@ -69,11 +69,11 @@ class model(object):
         action : integer or None
         """
 
-        self._storeState()
+        self.storeState()
 
         return self.currAction
 
-    def observe(self,state):
+    def observe(self, state):
         """
         Receives the latest observation
 
@@ -87,7 +87,7 @@ class model(object):
         """
         event, self.validActions = state
 
-        self._updateObs(event)
+        self._updateObservation(event)
 
     def feedback(self,response):
         """
@@ -100,7 +100,7 @@ class model(object):
             the value of response is `None`.
         """
 
-        self._updateReac(response)
+        self._updateReaction(response)
 
     def outputEvolution(self):
         """
@@ -112,17 +112,17 @@ class model(object):
         """
 
         results = {"Name": self.Name,
-                   "Actions":array(self.recAction),
-                   "Events":array(self.recEvents)}
+                   "Actions": array(self.recAction),
+                   "Events": array(self.recEvents)}
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self.recEvents.append(events)
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self.recEvents.append(events)
@@ -148,7 +148,7 @@ class model(object):
 
     def plot(self):
         """
-        Returns a plotting class relavent for this model
+        Returns a plotting class relevant for this model
 
         Returns
         -------
@@ -159,7 +159,7 @@ class model(object):
 
     def plotSet(self):
         """
-        Returns a plotting class relavent analysis of sets of results from this
+        Returns a plotting class relevant analysis of sets of results from this
         model
 
         Returns

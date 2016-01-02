@@ -227,7 +227,7 @@ def deckStimDirectNormal(maxEventVal):
 
     See Also
     --------
-    model.opal
+    model.opal, model.opals
     """
 
     def deckStim(event, action):

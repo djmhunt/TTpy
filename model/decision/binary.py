@@ -14,7 +14,8 @@ from numpy import sum, array, arange, reshape
 from itertools import izip
 from collections import OrderedDict
 
-def decSingle(expResponses = (0,1)):
+
+def decSingle(expResponses=(0, 1)):
     """Decisions using a switching probability
 
     Parameters
@@ -43,12 +44,12 @@ def decSingle(expResponses = (0,1)):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(prob, lastAction, validResponses = None):
+    def decisionFunc(prob, lastAction, validResponses=None):
 
         if validResponses:
             if len(validResponses) == 1:
                 resp = validResponses[0]
-                return resp, {resp:1}
+                return resp, {resp: 1}
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
@@ -58,17 +59,17 @@ def decSingle(expResponses = (0,1)):
 
         lastNotAction = list(expResponseSet.difference([lastAction]))[0]
 
-        if prob>=randNum:
+        if prob >= randNum:
             # The decision is to switch
             decision = lastNotAction
         else:
             # Keep the same decision
             decision = lastAction
 
-        pSet = {lastNotAction:prob,
-                lastAction:1-prob}
+        pSet = {lastNotAction: prob,
+                lastAction: 1-prob}
 
-        probs = OrderedDict({k:pSet[k] for k in expResponses})
+        probs = OrderedDict({k: pSet[k] for k in expResponses})
 
         return decision, probs
 
@@ -77,7 +78,8 @@ def decSingle(expResponses = (0,1)):
 
     return decisionFunc
 
-def decEta(expResponses = (0,1),eta = 0):
+
+def decEta(expResponses=(0, 1), eta=0):
     """Decisions using a probability difference threshold
 
     Parameters
@@ -102,12 +104,12 @@ def decEta(expResponses = (0,1),eta = 0):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, validResponses = None):
+    def decisionFunc(probabilities, lastAction, validResponses=None):
 
         if validResponses:
             if len(validResponses) == 1:
                 resp = validResponses[0]
-                return resp, {resp:1}
+                return resp, {resp: 1}
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
@@ -115,8 +117,8 @@ def decEta(expResponses = (0,1),eta = 0):
 
         prob = probabilities[0]
 
-        if abs(prob-0.5)>=eta:
-            if prob>0.5:
+        if abs(prob-0.5) >= eta:
+            if prob > 0.5:
                 decision = expResponses[0]
             elif prob == 0.5:
                 decision = choice(expResponses)
@@ -125,7 +127,7 @@ def decEta(expResponses = (0,1),eta = 0):
         else:
             decision = None
 
-        probs = OrderedDict({k:v for k,v in izip(expResponses,probabilities)})
+        probs = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
 
         return decision, probs
 
@@ -135,14 +137,15 @@ def decEta(expResponses = (0,1),eta = 0):
 
     return decisionFunc
 
-def decIntEtaReac(expResponses = (0,1), eta = 0):
+
+def decIntEtaReac(expResponses=(0, 1), eta=0):
     """
     Decisions using a probability difference threshold for the expectation
     from two sets of response value probabilities.
 
     It is assumed that the response values are increasing and evenly spaced.
 
-    The two sets of probabilities are provided as a one dimtentional array,
+    The two sets of probabilities are provided as a one dimensional array,
     with one set after the other.
 
     Parameters
@@ -182,12 +185,12 @@ def decIntEtaReac(expResponses = (0,1), eta = 0):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, validResponses = None):
+    def decisionFunc(probabilities, lastAction, validResponses=None):
 
         if validResponses:
             if len(validResponses) == 1:
                 resp = validResponses[0]
-                return resp, {resp:1}
+                return resp, {resp: 1}
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
@@ -196,15 +199,15 @@ def decIntEtaReac(expResponses = (0,1), eta = 0):
         numResp = int(len(probabilities) / 2)
         respWeights = arange(1, numResp + 1)
 
-        probSets = reshape(probabilities,(2,numResp))
-        expectSet = sum(respWeights * probSets,1)
+        probSets = reshape(probabilities, (2, numResp))
+        expectSet = sum(respWeights * probSets, 1)
 
         probPair = expectSet / sum(expectSet)
 
         prob = probPair[0]
 
-        if abs(prob-0.5)>eta:
-            if prob>0.5:
+        if abs(prob-0.5) >= eta:
+            if prob > 0.5:
                 decision = expResponses[0]
             elif prob == 0.5:
                 decision = choice(expResponses)
@@ -213,7 +216,7 @@ def decIntEtaReac(expResponses = (0,1), eta = 0):
         else:
             decision = None
 
-        probs = OrderedDict({k:v for k,v in izip(expResponses,probPair)})
+        probs = OrderedDict({k: v for k, v in izip(expResponses, probPair)})
 
         return decision, probs
 

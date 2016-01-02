@@ -24,12 +24,12 @@ from plotting import pandasPlot, lineplot
 from experiment.experimentPlot import experimentPlot
 from experiment.experimentSetPlot import experimentSetPlot
 
-#from utils import varyingParams
+# from utils import varyingParams
 
 
 class probSelect(experiment):
     """
-    Probabalistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.
+    Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.
                                         Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., & Hutchison, K. E. (2007).
                                         Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.
                                         doi:10.1073/pnas.0706111104
@@ -67,7 +67,7 @@ class probSelect(experiment):
     Notes
     -----
     The experiment is broken up into two sections: a learning phase and a
-    trasfer phase. Participants choose between pairs of four actions: A, B, M1
+    transfer phase. Participants choose between pairs of four actions: A, B, M1
     and M2. Each provides a reward with a different probability: A:P>0.5,
     B:1-P<0.5, M1=M2=0.5. The transfer phase has all the action pairs but no
     feedback. This class only covers the learning phase, but models are
@@ -133,10 +133,8 @@ class probSelect(experiment):
         Returns
         -------
         stimulus : None
-        nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to
-            [0,1], as the experiment has four actions, but only two in the
-            learning phase.
+        nextValidActions : Tuple of length 2 of ints
+            The list of valid actions that the model can respond with.
 
         Raises
         ------
@@ -149,7 +147,7 @@ class probSelect(experiment):
             raise StopIteration
 
         nextStim = None
-        nextValidActions = choice(self.choices, size = self.numActions, replace = False)
+        nextValidActions = choice(self.choices, size=self.numActions, replace=False)
 
         return nextStim, nextValidActions
 
@@ -164,7 +162,7 @@ class probSelect(experiment):
         """
         Responds to the action from the participant
         """
-        #The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2
+        # The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2
         actRewProb = self.actRewardProb[self.action]
 
         if actRewProb >= rand(1):

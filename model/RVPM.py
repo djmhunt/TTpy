@@ -22,8 +22,8 @@ from model.modelSetPlot import modelSetPlot
 from utils import listMerge, mergeDatasets, callableDetailsString
 from plotting import lineplot
 
-class RVPM(model):
 
+class RVPM(model):
     """The reward value and prediction model
 
     Attributes
@@ -63,37 +63,37 @@ class RVPM(model):
 
     Name = "RVPM"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-        self.alpha = kwargs.pop('alpha',0.005)
-        self.beta = kwargs.pop('beta',0.1)
-        self.w = kwargs.pop('w',array([0.01,0.01]))
-        self.zeta = kwargs.pop('zeta',2)
-        self.tau = kwargs.pop('tau',160)
-        self.z = kwargs.pop('z',100)
-        self.averaging = kwargs.pop('averaging',3)
+        self.alpha = kwargs.pop('alpha', 0.005)
+        self.beta = kwargs.pop('beta', 0.1)
+        self.w = kwargs.pop('w', array([0.01, 0.01]))
+        self.zeta = kwargs.pop('zeta', 2)
+        self.tau = kwargs.pop('tau', 160)
+        self.z = kwargs.pop('z', 100)
+        self.averaging = kwargs.pop('averaging', 3)
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',basicDecision())
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', basicDecision())
 
-        self.T = 0 # Timing sgnal value
-        self.c = 0 # The stimuli
-        self.r = 0 # Reward value
-        self.V = 0 #Reward prediction unit
-        self.deltaP = 0 # positivie prediction error unit
-        self.deltaM = 0 # negative prediction error unit
-        self.TSN = 0 # Temporaly shifted neuron
+        self.T = 0  # Timing sgnal value
+        self.c = 0  # The stimuli
+        self.r = 0  # Reward value
+        self.V = 0  # Reward prediction unit
+        self.deltaP = 0  # Positive prediction error unit
+        self.deltaM = 0  # Negative prediction error unit
+        self.TSN = 0  # Temporally shifted neuron
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "alpha": self.alpha,
                            "wInit": self.w,
-                           "zeta" : self.zeta,
-                           "tau" : self.tau,
-                           "z" : self.z,
-                           "averaging" : self.averaging,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "zeta": self.zeta,
+                           "tau": self.tau,
+                           "z": self.z,
+                           "averaging": self.averaging,
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
         self.validActions = None
@@ -115,7 +115,7 @@ class RVPM(model):
         return self.currAction
 
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -128,23 +128,22 @@ class RVPM(model):
 
         results = self.parameters.copy()
 
-        for k,v in self.generalStore.iteritems():
+        for k, v in self.generalStore.iteritems():
 
             results[k + '_early'] = v[:av]
             results[k + '_late'] = v[-av:]
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
-
 
     def storeState(self):
         """
@@ -155,72 +154,63 @@ class RVPM(model):
         self.recAction.append(self.currAction)
         self._updateGeneralStore()
 
-    def _processEvent(self,event):
+    def _processEvent(self, event):
 
-        for t,c,r in self.stimFunc(event, self.currAction):
+        for t, c, r in self.stimFunc(event, self.currAction):
 
             self.c = c
             self.r = r
-            self._processStim(t,c,r)
+            self._processStim(t, c, r)
             self._updateEventStore(event)
 
-    def _processStim(self,t,c,r):
+    def _processStim(self, t, c, r):
 
         T = self._timeSigMag(t)
 
-        dV = self._vUpdate(self.w,self.V,c)
-        self.V = self.V + dV
-        ddeltaP = self._deltaPUpdate(self.V,self.deltaP,r)
-        self.deltaP = self.deltaP + ddeltaP
+        dV = self._vUpdate(self.w, self.V, c)
+        self.V += dV
+        ddeltaP = self._deltaPUpdate(self.V, self.deltaP, r)
+        self.deltaP += ddeltaP
 
-        ddeltaM = self._deltaMUpdate(self.V,self.deltaM,T,r)
-        self.deltaM = self.deltaM + ddeltaM
+        ddeltaM = self._deltaMUpdate(self.V, self.deltaM, T, r)
+        self.deltaM += ddeltaM
 
-        self.TSN = self._tsnUpdate(dV,ddeltaP,ddeltaM)
+        self.TSN = self._tsnUpdate(dV, ddeltaP, ddeltaM)
 
-        self.w = self._wNew(self.w,self.V,self.deltaP,self.deltaM,c)
+        self.w = self._wNew(self.w, self.V, self.deltaP, self.deltaM, c)
 
-        self.decision, self.decProbs = self.decisionFunc(self.TSN)
+        self.decision, self.decProbabilities = self.decisionFunc(self.TSN)
 
-    def _wNew(self,w,V,deltaP,deltaM,c):
+    def _wNew(self, w, V, deltaP, deltaM, c):
         new = w + self.alpha*c*V*(deltaP - deltaM)
         return new
 
-    def _vUpdate(self,w,V,c):
+    def _vUpdate(self, w, V, c):
         beta = self.beta
-        new = -beta*V + beta*amax([0,dot(w,c)])
+        new = -beta*V + beta*amax([0, dot(w, c)])
         return new
 
-    def _deltaPUpdate(self,V,deltaP,r):
+    def _deltaPUpdate(self, V, deltaP, r):
         beta = self.beta
-        new = -beta*deltaP + beta*amax([0,r-self.zeta*V])
+        new = -beta*deltaP + beta*amax([0, r-self.zeta*V])
         return new
 
-    def _timeSigMag(self,t):
+    def _timeSigMag(self, t):
         signal = exp((-(t-self.tau)**2)/square(self.z))
         return signal
 
-    def _deltaMUpdate(self,V,deltaM,T,r):
+    def _deltaMUpdate(self, V, deltaM, T, r):
         beta = self.beta
-        new = -beta*deltaM + beta*T*amax([0,self.zeta*V-r])
+        new = -beta*deltaM + beta*T*amax([0, self.zeta*V-r])
         return new
 
-    def _tsnUpdate(self,dV,ddeltaP,ddeltaM):
-        signal = amax([0,self.zeta*dV]) + amax([0,ddeltaP]) - amax([0,ddeltaM])
+    def _tsnUpdate(self, dV, ddeltaP, ddeltaM):
+        signal = amax([0, self.zeta*dV]) + amax([0, ddeltaP]) - amax([0, ddeltaM])
         return signal
 
     def _storeSetup(self):
 
-        self.eventStore = {}
-        self.eventStore["T"] = []
-        self.eventStore["V"] = []
-        self.eventStore["DP"] = []
-        self.eventStore["DM"] = []
-        self.eventStore["TSN"] = []
-        self.eventStore["stim"] = []
-        self.eventStore["rew"] = []
-        self.eventStore["w"] = []
-        self.eventStore["event"] = []
+        self.eventStore = defaultdict(list)
 
         self._generalStoreSetup()
 
@@ -243,11 +233,11 @@ class RVPM(model):
         self.eventStore["rew"].append(self.r)
         self.eventStore["w"].append(self.w)
         self.eventStore["event"].append(event)
-
+        self.eventStore["decProb"].append(self.decProbabilities)
 
     def _updateGeneralStore(self):
 
-        for k,v in self.eventStore.iteritems():
+        for k, v in self.eventStore.iteritems():
             self.generalStore[k].append(array(v))
 
         for k in self.eventStore.iterkeys():
@@ -266,26 +256,26 @@ class RVPM(model):
 
             self._processData()
             fig = self.avResponse("V")
-            self.figSets.append(('VResponse',fig))
+            self.figSets.append(('VResponse', fig))
             fig = self.avResponse("DP")
-            self.figSets.append(('dPResponse',fig))
+            self.figSets.append(('dPResponse', fig))
             fig = self.avResponse("DM")
-            self.figSets.append(('dMResponse',fig))
+            self.figSets.append(('dMResponse', fig))
             fig = self.avResponse("TSN")
-            self.figSets.append(('TSNResponse',fig))
+            self.figSets.append(('TSNResponse', fig))
             fig = self.avResponse("w")
-            self.figSets.append(('wResponse',fig))
+            self.figSets.append(('wResponse', fig))
 
         def _processData(self):
 
-            self.modelData = mergeDatasets(self.modelStore, extend = True)
+            self.modelData = mergeDatasets(self.modelStore, extend=True)
 
             averagedData = defaultdict(dict)
 
             for t in ["_early","_late"]:
                 cmax = [c.argmax() for c in self.modelData["stim"+t]]
 
-                for key in ["V","DP","DM","TSN"]:#,"w"]:
+                for key in ["V", "DP", "DM", "TSN"]:  # ,"w"]:
                     averagedData[key][key+t] = self._dataAverage(self.modelData[key+t], cmax)
 
             self.modelAverages = averagedData
@@ -301,10 +291,16 @@ class RVPM(model):
 
             return meanVals
 
-        def avResponse(self,key):
+        def avResponse(self, key):
             """
             The averaged response from different parts of the model in the form
             of figure 1 from the paper
+
+            Parameters
+            ----------
+            key : string
+                The key to
+
             """
             data = self.modelAverages[key]
 
@@ -313,11 +309,11 @@ class RVPM(model):
 
             Y = array(range(len(data[dataKeys[0]][0])))
 
-            labels = ["c=" + j + " " + i for i, j in listMerge(dataKeys,dataStim)]
+            labels = ["c=" + j + " " + i for i, j in listMerge(dataKeys, dataStim)]
 
-            plotData = [data[i][int(j)] for i, j in listMerge(dataKeys,dataStim)]
+            plotData = [data[i][int(j)] for i, j in listMerge(dataKeys, dataStim)]
 
-            axisLabels = {"title":"Untitled"}
+            axisLabels = {"title": "Untitled"}
             axisLabels["xLabel"] = r"$t/10 \textrm{ms}$"
             axisLabels["yLabel"] = key
 #            axisLabels["yMax"] = 0
@@ -326,6 +322,7 @@ class RVPM(model):
             fig = lineplot(Y,plotData,labels,axisLabels)
 
             return fig
+
 
 def blankStim():
     """ The default stimulus processor generator for RVPM
@@ -350,6 +347,7 @@ def blankStim():
     blankStimFunc.Name = "blankStim"
 
     return blankStimFunc
+
 
 def basicDecision():
     """The default decision function for RVPM

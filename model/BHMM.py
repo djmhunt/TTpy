@@ -28,9 +28,9 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
-class BHMM(model):
 
-    """The Beysian Hidden Markov Model model
+class BHMM(model):
+    """The Bayesian Hidden Markov Model model
 
     Attributes
     ----------
@@ -122,44 +122,43 @@ class BHMM(model):
 
     Name = "BHMM"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-#        self.numStimuli = kwargs.pop('numStimuli', 2)
+        #        self.numStimuli = kwargs.pop('numStimuli', 2)
         self.numStimuli = 2
         self.beta = kwargs.pop('beta', 4)
-        self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
+        self.prior = kwargs.pop('prior', ones(self.numStimuli) * 0.5)
         self.eta = kwargs.pop('eta', 0)
-        delta = kwargs.pop('delta',0)
-        self.mu = kwargs.pop('mu',3)
-        self.sigma = kwargs.pop('sigma',1)
-
+        delta = kwargs.pop('delta', 0)
+        self.mu = kwargs.pop('mu', 3)
+        self.sigma = kwargs.pop('sigma', 1)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses = tuple(range(1,self.numStimuli+1))))
+        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numStimuli + 1))))
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "eta": self.eta,
                            "delta": delta,
                            "prior": self.prior,
-#                           "numStimuli": self.numStimuli,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           #                           "numStimuli": self.numStimuli,
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = 0
         # This way for the first run you always consider that you are switching
         self.previousAction = None
-#        if len(prior) != self.numStimuli:
-#            raise warning.
+        #        if len(prior) != self.numStimuli:
+        #            raise warning.
         self.posteriorProb = array(self.prior)
         self.probabilities = array(self.prior)
         self.decProbs = array(self.prior)
         self.decision = None
         self.validActions = None
         self.switchProb = 0
-        self.stayMatrix = array([[1-delta,delta],[delta,1-delta]])
-        self.switchMatrix = array([[delta,1-delta],[1-delta,delta]])
-        self.actionLoc = {k:k for k in range(0,self.numStimuli)}
+        self.stayMatrix = array([[1 - delta, delta], [delta, 1 - delta]])
+        self.switchMatrix = array([[delta, 1 - delta], [1 - delta, delta]])
+        self.actionLoc = {k: k for k in range(0, self.numStimuli)}
 
         # Recorded information
 
@@ -202,23 +201,23 @@ class BHMM(model):
         results["PosteriorProb"] = array(self.recPosteriorProb)
         results["ActionLocation"] = array(self.recActionLoc)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         currAction = self.currAction
 
@@ -229,7 +228,7 @@ class BHMM(model):
         postProb = self._postProb(event, self.posteriorProb, currAction)
         self.posteriorProb = postProb
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         priorProb = self._prob(postProb, currAction)
         self.probabilities = priorProb
 
@@ -237,7 +236,8 @@ class BHMM(model):
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.switchProb, self.currAction, validResponses = self.validActions)
+        self.decision, self.decProbs = self.decisionFunc(self.switchProb, self.currAction,
+                                                         validResponses=self.validActions)
 
     def storeState(self):
         """
@@ -257,15 +257,15 @@ class BHMM(model):
 
         loc = self.actionLoc
 
-        li = array([postProb[action],postProb[1-action]])
+        li = array([postProb[action], postProb[1 - action]])
         payoffs = self._payoff()
 
         brute = payoffs * li
         newProb = li
-        newProb[0] = (event*li[0])/sum(brute)
+        newProb[0] = (event * li[0]) / sum(brute)
 
         loc[action] = 0
-        loc[1-action] = 1
+        loc[1 - action] = 1
         self.actionLoc = loc
 
         return newProb
@@ -307,9 +307,10 @@ class BHMM(model):
         Y : Payoff
 
         """
-        pay = normal(self.mu,self.sigma,(self.numStimuli))
+        pay = normal(self.mu, self.sigma, (self.numStimuli))
 
         return pay
+
 
 def blankStim():
     """
@@ -331,7 +332,7 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return [1,0]
+        return [1, 0]
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc

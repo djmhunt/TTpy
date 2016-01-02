@@ -16,6 +16,7 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
+
 class BPMS(model):
 
     """The Beysian Predictor with Markovian Switching model
@@ -59,11 +60,10 @@ class BPMS(model):
         self.beta = kwargs.pop('beta', 4)
         self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
         self.eta = kwargs.pop('eta', 0)
-        delta = kwargs.pop('delta',0)
-
+        delta = kwargs.pop('delta', 0)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses = tuple(range(0,self.numStimuli))))
+        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(0, self.numStimuli))))
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
@@ -71,8 +71,8 @@ class BPMS(model):
                            "delta": delta,
                            "prior": self.prior,
 #                           "numStimuli": self.numStimuli,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = 0
         # This way for the first run you always consider that you are switching
@@ -81,13 +81,13 @@ class BPMS(model):
 #            raise warning.
         self.posteriorProb = array(self.prior)
         self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
+        self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
         self.switchProb = 0
-        self.stayMatrix = array([[1-delta,delta],[delta,1-delta]])
-        self.switchMatrix = array([[delta,1-delta],[1-delta,delta]])
-        self.actionLoc = {k:k for k in range(0,self.numStimuli)}
+        self.stayMatrix = array([[1-delta, delta], [delta, 1-delta]])
+        self.switchMatrix = array([[delta, 1-delta], [1-delta, delta]])
+        self.actionLoc = {k: k for k in range(0, self.numStimuli)}
 
         # Recorded information
 
@@ -130,23 +130,23 @@ class BPMS(model):
         results["PosteriorProb"] = array(self.recPosteriorProb)
         results["ActionLocation"] = array(self.recActionLoc)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         currAction = self.currAction
 
@@ -157,7 +157,7 @@ class BPMS(model):
         postProb = self._postProb(event, self.posteriorProb, currAction)
         self.posteriorProb = postProb
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         priorProb = self._prob(postProb, currAction)
         self.probabilities = priorProb
 
@@ -165,7 +165,7 @@ class BPMS(model):
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.switchProb, self.currAction, validResponses = self.validActions)
+        self.decision, self.decProbabilities = self.decisionFunc(self.switchProb, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """
@@ -187,7 +187,7 @@ class BPMS(model):
 
         p = postProb * event
 
-        li = array([p[loc[action]],p[loc[1-action]]])
+        li = array([p[loc[action]], p[loc[1-action]]])
 
         newProb = li/sum(li)
 
@@ -198,7 +198,7 @@ class BPMS(model):
         return newProb
 
     def _prob(self, postProb, action):
-        """Return the new prior probabilitiy that each state is the correct one
+        """Return the new prior probability that each state is the correct one
         """
 
         # The probability of the current state being correct, given if the previous state was correct.
@@ -227,6 +227,7 @@ class BPMS(model):
 
         return ps
 
+
 def blankStim():
     """
     Default stimulus processor. Does nothing.Returns [1,0]
@@ -247,7 +248,7 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return [1,0]
+        return [1, 0]
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc

@@ -113,11 +113,11 @@ class OpAL(model):
 
     Name = "OpAL"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
         self.numActions = kwargs.pop('numActions', 4)
         self.beta = kwargs.pop('beta', 1)
-        self.betaDiff = kwargs.pop('betaDiff',0)
+        self.betaDiff = kwargs.pop('betaDiff', 0)
         self.betaGo = kwargs.pop('betaGo', None)
         self.betaNogo = kwargs.pop('betaNogo', None)
         self.alpha = kwargs.pop('alpha', 0.1)
@@ -131,8 +131,8 @@ class OpAL(model):
         self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
         self.expectGo = kwargs.pop('expectGo', ones(self.numActions)*1)
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decMaxProb(range(self.numActions)))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decMaxProb(range(self.numActions)))
 
         if self.alphaGoNogoDiff:
             self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
@@ -143,7 +143,7 @@ class OpAL(model):
 
         if self.betaGo and self.betaNogo:
             self.beta = (self.betaGo + self.betaNogo)/2
-            self.betaDiff = (self.betaGo - self.betaNogo)/ (2 * self.beta)
+            self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
@@ -157,8 +157,8 @@ class OpAL(model):
                            "expectationGo": self.expectGo,
                            "prior": self.prior,
                            "numActions": self.numActions,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
         self.expectation = array(self.expect)
@@ -166,7 +166,7 @@ class OpAL(model):
         self.nogo = array(self.expectGo)
         self.actionValues = ones(self.expectation.shape)
         self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
+        self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
 
@@ -195,9 +195,8 @@ class OpAL(model):
 
         return self.currAction
 
-
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -215,23 +214,23 @@ class OpAL(model):
         results["Nogo"] = array(self.recNogo)
         results["ActionValues"] = array(self.recActionValues)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         chosen = self.currAction
 
@@ -239,15 +238,15 @@ class OpAL(model):
 
         self.recEvents.append(event)
 
-        #Find the new activites
+        # Find the new activites
         self._critic(event, chosen)
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self.probabilities = self._prob(self.go, self.nogo)
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
+        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """
@@ -257,14 +256,14 @@ class OpAL(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recGo.append(self.go.copy())
         self.recNogo.append(self.nogo.copy())
         self.recActionValues.append(self.actionValues.copy())
         self.recDecision.append(self.decision)
 
-    def _critic(self,event, chosen):
+    def _critic(self, event, chosen):
 
         chosenExp = self.expectation[chosen]
 
@@ -290,12 +289,13 @@ class OpAL(model):
 
         self.actionValues = actionValues
 
-        numerat = exp(self.beta*actionValues)
-        denom = sum(numerat)
+        numerator = exp(self.beta*actionValues)
+        denominator = sum(numerator)
 
-        p = numerat / denom
+        p = numerator / denominator
 
         return p
+
 
 def blankStim():
     """

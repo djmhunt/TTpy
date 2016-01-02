@@ -77,36 +77,36 @@ class qLearn2(model):
 
     Name = "qLearn2"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-        self.numActions = kwargs.pop('numActions',2)
-        self.beta = kwargs.pop('beta',4)
-        self.prior = kwargs.pop('prior',ones(self.numActions)*0.5)
-        self.alpha = kwargs.pop('alpha',0.3)
+        self.numActions = kwargs.pop('numActions', 2)
+        self.beta = kwargs.pop('beta', 4)
+        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
+        self.alpha = kwargs.pop('alpha', 0.3)
         self.alphaPos = kwargs.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargs.pop('alphaNeg', self.alpha)
-        self.eta = kwargs.pop('eta',0.3)
-        self.expect = kwargs.pop('expect',ones(self.numActions)*5)
+        self.eta = kwargs.pop('eta', 0.3)
+        self.expect = kwargs.pop('expect', ones(self.numActions)*5)
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(eta = self.eta))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decEta(eta=self.eta))
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "eta": self.eta,
                            "alpha": self.alpha,
-                           "alphaPos" : self.alphaPos,
-                           "alphaNeg" : self.alphaNeg,
+                           "alphaPos": self.alphaPos,
+                           "alphaNeg": self.alphaNeg,
                            "expectation": self.expect,
                            "prior": self.prior,
                            "numActions": self.numActions,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = None
         self.expectation = array(self.expect)
         self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
+        self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
 
@@ -132,9 +132,8 @@ class qLearn2(model):
 
         return self.currAction
 
-
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -149,23 +148,23 @@ class qLearn2(model):
         results["ActionProb"] = array(self.recActionProb)
         results["Expectation"] = array(self.recExpectation)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObs(self,events):
+    def _updateObservation(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
         self._processAction()
 
-    def _updateReac(self,events):
+    def _updateReaction(self, events):
         """Processes updates to new actions"""
         if type(events) is not NoneType:
             self._processEvent(events)
 
-    def _processEvent(self,events):
+    def _processEvent(self, events):
 
         chosen = self.currAction
 
@@ -173,15 +172,15 @@ class qLearn2(model):
 
         self.recEvents.append(event)
 
-        #Calculate jar information
+        # Calculate expectations
         self._expectUpdate(event, chosen)
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
 
     def _processAction(self):
 
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
+        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """
@@ -191,7 +190,7 @@ class qLearn2(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recDecision.append(self.decision)
 
@@ -206,12 +205,13 @@ class qLearn2(model):
 
     def _prob(self, expectation):
 
-        numerat = exp(self.beta*expectation)
-        denom = sum(numerat)
+        numerator = exp(self.beta*expectation)
+        denominator = sum(numerator)
 
-        p = numerat / denom
+        p = numerator / denominator
 
         return p
+
 
 def blankStim():
     """
