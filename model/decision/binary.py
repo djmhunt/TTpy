@@ -10,9 +10,10 @@ from __future__ import division, print_function
 from warnings import warn
 
 from random import choice, random
-from numpy import sum, array, arange, reshape
+from numpy import sum, array, arange, reshape, ones
 from itertools import izip
 from collections import OrderedDict
+from types import NoneType
 
 
 def decSingle(expResponses=(0, 1)):
@@ -28,6 +29,10 @@ def decSingle(expResponses=(0, 1)):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
+    decision : int or NoneType
+        The action to be taken by the model
+    probabilities : OrderedDict of valid responses
+        A dictionary of considered actions as keys and their associated probabilities as values
 
     See Also
     --------
@@ -44,12 +49,14 @@ def decSingle(expResponses=(0, 1)):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(prob, lastAction, validResponses=None):
+    def decisionFunc(prob, lastAction, stimulus=None, validResponses=None):
 
-        if validResponses:
+        if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
                 resp = validResponses[0]
                 return resp, {resp: 1}
+            elif len(validResponses) == 0:
+                return None, prob
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
@@ -69,9 +76,9 @@ def decSingle(expResponses=(0, 1)):
         pSet = {lastNotAction: prob,
                 lastAction: 1-prob}
 
-        probs = OrderedDict({k: pSet[k] for k in expResponses})
+        probDict = OrderedDict({k: pSet[k] for k in expResponses})
 
-        return decision, probs
+        return decision, probDict
 
     decisionFunc.Name = "binary.decSingle"
     decisionFunc.Params = {}
@@ -84,7 +91,7 @@ def decEta(expResponses=(0, 1), eta=0):
 
     Parameters
     ----------
-    expResponses : tuple of length two, optional
+    expResponses : tuple of length two containing non-negative ints, optional
         Provides the two action responses expected by the experiment
     eta : float, optional :math:`\\eta`
         The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\eta`
@@ -93,9 +100,12 @@ def decEta(expResponses=(0, 1), eta=0):
     Returns
     -------
     decisionFunc : function
-        Calculates the decisions based on the probabilities and returns the
-        decision and the probability of that decision
-
+        Calculates the decisions based on their probabilities and returns the
+        decision and the probabilities for that decision.
+    decision : int or NoneType
+        The action to be taken by the model
+    probabilities : OrderedDict of valid responses
+        A dictionary of considered actions as keys and their associated probabilities as values
     See Also
     --------
     models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
@@ -104,12 +114,14 @@ def decEta(expResponses=(0, 1), eta=0):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, validResponses=None):
+    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        if validResponses:
+        if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
                 resp = validResponses[0]
                 return resp, {resp: 1}
+            elif len(validResponses) == 0:
+                return None, probabilities
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
@@ -127,9 +139,9 @@ def decEta(expResponses=(0, 1), eta=0):
         else:
             decision = None
 
-        probs = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
+        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
 
-        return decision, probs
+        return decision, probDict
 
     decisionFunc.Name = "binary.decEta"
     decisionFunc.Params = {"expResponses": expResponses,
@@ -138,10 +150,10 @@ def decEta(expResponses=(0, 1), eta=0):
     return decisionFunc
 
 
-def decIntEtaReac(expResponses=(0, 1), eta=0):
+def decEtaSets(expResponses=(0, 1), eta=0):
     """
     Decisions using a probability difference threshold for the expectation
-    from two sets of response value probabilities.
+    from two sets of action-response value probabilities.
 
     It is assumed that the response values are increasing and evenly spaced.
 
@@ -161,6 +173,10 @@ def decIntEtaReac(expResponses=(0, 1), eta=0):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
+    decision : int or NoneType
+        The action to be taken by the model
+    probDict : OrderedDict of valid responses
+        A dictionary of considered actions as keys and their associated probabilities as values
 
     See Also
     --------
@@ -169,60 +185,72 @@ def decIntEtaReac(expResponses=(0, 1), eta=0):
     Examples
     --------
     >>> from numpy import array
-    >>> from model.decision.binary import decIntEtaReac
+    >>> from model.decision.binary import decEtaSets
     >>> lastAct = 0
-    >>> dec = decIntEtaReac()
-    >>> dec(array([0.4,0.1,0.25,0.25]), lastAct)
-    (1, {0:0.44444444444, 1:0.5555555556})
-    >>> dec(array([0.4,0.1,0.25,0.25]), lastAct, validResponses=[0])
-    (0, [1])
-    >>> dec(array([0.4,0.1,0.25,0.25]), lastAct, validResponses=[0,3])
-    model\decision\binary.py:120: UserWarning: Bad number of validResponses: [0, 3]
+    >>> dec = decEtaSets()
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct)
+    (0, {0:0.8, 1:0.2})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0])
+    (0, {0: 1})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0,3])
+    model\decision\binary.py:223: UserWarning: Bad number of validResponses: [0, 3]
     warn("Bad number of validResponses: " + str(validResponses))
-    (1, {0:0.44444444444, 1:0.5555555556})
-
+    (0, {0:0.8, 1:0.2})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[])
+    (None, {0:0.8, 1:0.2})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,0])
+    (0, {0:0.6, 1:0.4})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,1])
+    (0, {0:0.8, 1:0.2})
+    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[0,0])
+    (0, {0:0.8, 1:0.2})
     """
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, validResponses=None):
+    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        if validResponses:
+        numStim = int(len(probabilities) / 2)
+
+        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (array(stimulus) == 0).all():
+            respWeights = stimulus
+        else:
+            respWeights = ones(numStim)
+
+        probSets = reshape(probabilities, (2, numStim))
+        expectSet = sum(respWeights * probSets, 1)
+
+        probPair = expectSet / sum(expectSet)
+
+        probDict = OrderedDict({k: v for k, v in izip(expResponses, probPair)})
+
+        if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
                 resp = validResponses[0]
                 return resp, {resp: 1}
+            elif len(validResponses) == 0:
+                return None, probDict
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             else:
                 warn("Bad number of validResponses: " + str(validResponses))
 
-        numResp = int(len(probabilities) / 2)
-        respWeights = arange(1, numResp + 1)
+        probDec = probPair[0]
 
-        probSets = reshape(probabilities, (2, numResp))
-        expectSet = sum(respWeights * probSets, 1)
-
-        probPair = expectSet / sum(expectSet)
-
-        prob = probPair[0]
-
-        if abs(prob-0.5) >= eta:
-            if prob > 0.5:
+        if abs(probDec-0.5) >= eta:
+            if probDec > 0.5:
                 decision = expResponses[0]
-            elif prob == 0.5:
+            elif probDec == 0.5:
                 decision = choice(expResponses)
             else:
                 decision = expResponses[1]
         else:
             decision = None
 
-        probs = OrderedDict({k: v for k, v in izip(expResponses, probPair)})
+        return decision, probDict
 
-        return decision, probs
-
-    decisionFunc.Name = "binary.decIntEtaReac"
+    decisionFunc.Name = "binary.decEtaSets"
     decisionFunc.Params = {"expResponses": expResponses,
                            "eta": eta}
 
     return decisionFunc
-
