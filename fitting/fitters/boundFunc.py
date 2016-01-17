@@ -54,7 +54,7 @@ def infBound(base = 0):
     return cost
 
 def scalarBound(base = 0):
-    """Boundary excess calculated as a scaler increase based on difference with
+    """Boundary excess calculated as a scalar increase based on difference with
     bounds
 
     Parameters

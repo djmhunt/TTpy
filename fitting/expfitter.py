@@ -29,7 +29,7 @@ class fitter(fit):
         The key to be compared in the model data
     fitAlg : fitting.fitters.fitAlg instance
         An instance of one of the fitting algorithms
-    scaler : function
+    scalar : function
         Transforms the participant action form to match that of the model
         
     Attributes

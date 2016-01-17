@@ -6,11 +6,13 @@ from __future__ import division, print_function
 
 from itertools import izip
 from utils import mergeDicts
-from numpy import array
+from numpy import array, concatenate
+from types import NoneType
+
 
 class fit(object):
 
-    """The abstact class for fitting data
+    """The abstract class for fitting data
         
     Parameters
     ----------
@@ -22,16 +24,18 @@ class fit(object):
         The key to be compared in the model data
     fitAlg : fitting.fitters.fitAlg instance
         An instance of one of the fitting algorithms
-    scaler : function
+    scalar : function
         Transforms the participant action form to match that of the model
-    stimuliParams : list, optional
-        The keys containing the observational parameters seen by the 
-        participant before taking a decision on an action. Default ``[]``
-    actChoiceParams : string or None, optional
-        The key containing the list of possible actions a participant can take
-        at each instance. Default ``None``
+    stimuliParams : list of strings or None, optional
+        The keys containing the observational parameters seen by the
+        participant before taking a decision on an action. Default ``None``
+    actChoiceParams : string or None or list of ints, optional
+        The name of the key in partData where the list of valid actions
+        can be found. If ``None`` then the action list is considered to
+        stay constant. If a list then the list will be taken as the list
+        of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occours when running a fit the fit function
+        If a floating point error occurs when running a fit the fit function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
         
@@ -48,26 +52,28 @@ class fit(object):
     Name = 'none'
 
 
-    def __init__(self,partChoiceParam, partRewardParam, modelParam, fitAlg, scaler, **kwargs):
+    def __init__(self, partChoiceParam, partRewardParam, modelParam, fitAlg, scalar, **kwargs):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
         self.modelparam = modelParam
         self.fitAlg = fitAlg
-        self.scaler = scaler
-        self.partStimuliParams = kwargs.pop('stimuliParams',[])
-        self.partActChoiceParams = kwargs.pop('actChoiceParams',None)
+        self.scalar = scalar
+        self.partStimuliParams = kwargs.pop('stimuliParams', None)
+        self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
 
-        self.fitInfo = {'Name':self.Name,
-                        'participantChoiceParam':partChoiceParam,
-                        'participantRewardParam':partRewardParam,
-                        'modelParam':modelParam}
+        self.fitInfo = {'Name': self.Name,
+                        'participantChoiceParam': partChoiceParam,
+                        'participantRewardParam': partRewardParam,
+                        'participantStimuliParams': self.partStimuliParams,
+                        'participantActChoiceParams': self.partActChoiceParams,
+                        'modelParam': modelParam}
         try: 
-            self.fitInfo['scalerName'] = self.scaler.Name
-            self.fitInfo['scalerEffect'] = self._scalerEffect()
+            self.fitInfo['scalarName'] = self.scalar.Name
+            self.fitInfo['scalarEffect'] = self._scalarEffect()
         except AttributeError:
-            self.fitInfo['scalerEffect'] = self._scalerEffect()
+            self.fitInfo['scalarEffect'] = self._scalarEffect()
 
     def fitness(self, *modelParameters):
         """
@@ -123,7 +129,7 @@ class fit(object):
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
-        self.partChoices = self.scaler(partData[self.partChoiceParam])
+        self.partChoices = self.scalar(partData[self.partChoiceParam])
         
         self.partRewards = partData[self.partRewardParam]
         
@@ -159,9 +165,9 @@ class fit(object):
 
 #        fitInfo = mergeDicts(labeledFitAlgInfo, labeledFitInfo)
 
-        return (self.fitInfo,fitAlgInfo)
+        return self.fitInfo, fitAlgInfo
 
-    def _fittedModel(self,*fitVals):
+    def _fittedModel(self, *fitVals):
         """
         Return the best fit model
         """
@@ -214,7 +220,7 @@ class fit(object):
             The kwarg model parameter arguments
         """
 
-        params = {k : v for k,v in izip(self.mParamNames, modelParameters)}
+        params = {k: v for k, v in izip(self.mParamNames, modelParameters)}
 
         return params
         
@@ -228,28 +234,34 @@ class fit(object):
             The participant data
         stimuli : list of strings or ``None``
             A list of the keys in partData representing participant stimuli
-        validActions : string or ``None``
+        validActions : string or ``None`` or list of ints
             The name of the key in partData where the list of valid actions
             can be found. If ``None`` then the action list is considered to 
-            stay constant. 
+            stay constant. If a list then the list will be taken as the list
+            of actions that can be taken at every timestep.
         
         Returns
         -------
         observation : list of tuples
             The tuples contain the stimuli and the valid actions for each 
-            obversation instance.
+            observation instance.
         """
-        if stimuli:
-            
-            stimuliData = izip(*(partData[s] for s in stimuli))
+
+
+        if type(stimuli) is NoneType:
+            partDataLen = len(partData[self.partRewardParam])
+            stimuliData = (None for i in xrange(partDataLen))
         else:
-            stimuliData = (None for i in xrange(len(partData)))
-            
-        if validActions:
-            actionData = (i for i in partData[validActions].itertuples(index=False))
+            stimuliData = concatenate([partData[s] for s in stimuli],1)
+            partDataLen = len(stimuliData)
+
+        if type(validActions) is NoneType:
+            actionData = (None for i in xrange(partDataLen))
+        elif isinstance(validActions, basestring):
+            actionData = partData[validActions]
         else:
-            actionData = (None for i in xrange(len(partData)))
-            
+            actionData = (validActions for i in xrange(partDataLen))
+
         observation = [(s, a) for a, s in izip(actionData, stimuliData)]
         
         return observation
@@ -274,21 +286,18 @@ class fit(object):
 
         pass
 
-    def _scalerEffect(self):
+    def _scalarEffect(self):
         """
-        Presents the transformation provided by the scaler
+        Presents the transformation provided by the scalar
         
         Returns
         -------
         description : string
-            The description of the effect of the scaler
+            The description of the effect of the scalar
         """
 
-        testBed = [0,1,2,3,10]
+        testBed = [0, 1, 2, 3, 10]
 
-        response = self.scaler(array(testBed))
+        response = self.scalar(array(testBed))
 
         return repr(testBed) + " --> " + repr(list(response))
-
-
-

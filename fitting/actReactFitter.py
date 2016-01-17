@@ -32,10 +32,18 @@ class fitter(fit):
         The key to be compared in the model data
     fitAlg : fitting.fitters.fitAlg instance
         An instance of one of the fitting algorithms
-    scaler : function
+    scalar : function
         Transforms the participant action form to match that of the model
+    stimuliParams : list of strings or None, optional
+        The keys containing the observational parameters seen by the
+        participant before taking a decision on an action. Default ``None``
+    actChoiceParams : string or None or list of ints, optional
+        The name of the key in partData where the list of valid actions
+        can be found. If ``None`` then the action list is considered to
+        stay constant. If a list then the list will be taken as the list
+        of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occours when running a fit the fit function
+        If a floating point error occurs when running a fit the fit function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
 
