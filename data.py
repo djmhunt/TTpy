@@ -15,6 +15,7 @@ from types import NoneType
 
 from utils import listMerge
 
+
 def datasets(folders, fileTypes):
     """
     A function for reading in multiple datasets in one go
@@ -24,7 +25,7 @@ def datasets(folders, fileTypes):
     folders : list of strings
         The folder strings should end in a "/"
     fileType : list of strings
-        The file extensions found after the ".". Currently only mat files are 
+        The file extensions found after the ".". Currently only mat and xlsx files are
         supported.
     
     Returns
@@ -46,7 +47,8 @@ def datasets(folders, fileTypes):
         
     return dataSet
 
-def data(folder,fileType, **kwargs):
+
+def data(folder, fileType, **kwargs):
     """A function for reading in and returning a dataset
 
     Parameters
@@ -54,7 +56,7 @@ def data(folder,fileType, **kwargs):
     folder : string
         The folder string should end in a "/"
     fileType : string
-        The file extension found after the ".". Currently only mat files are 
+        The file extension found after the ".". Currently only mat and xlsx files are
         supported.
     
     Returns
@@ -86,6 +88,7 @@ def data(folder,fileType, **kwargs):
         dataSet = getxlsxData(folder, files, **kwargs)
 
     return dataSet
+
 
 def getFiles(folder, fileType):
     """
@@ -199,7 +202,8 @@ def getPrefix(unorderedList, suffixLen):
         else:
             break
     return unorderedList[0][:i-1]
-    
+
+
 def intCore(unorderedList,prefix,suffix):
     """Takes the *core* part of a string and, assuming it is an integer, 
     sorts them. Returns the list sorted
@@ -304,7 +308,8 @@ def getmatData(folder, files):
         dataSets.append(dataD)
 
     return dataSets
-    
+
+
 def getxlsxData(folder, files, **kwargs):
     """
     Loads the data from xlsx files
@@ -330,12 +335,6 @@ def getxlsxData(folder, files, **kwargs):
         
     Examples
     --------
-    >>> folder = './Data/'
-    >>> dataFiles = ['subj1.mat', 'subj2.mat', 'subj11.mat']
-    >>> getmatData(folder, files)
-    [{'cumpts': array([ 7, 17, 19, 21], dtype=uint8)},
-     {'cumpts': array([12, 22, 24, 26], dtype=uint8)},
-     {'cumpts': array([ 5, 15, 17, 19], dtype=uint8)}]
      
     See Also
     --------
@@ -353,11 +352,15 @@ def getxlsxData(folder, files, **kwargs):
 
     for f in files:
 
+        # In case the file is open, this will in fact be a temporary file and not a valid file.
+        if f.startswith('~$'):
+            continue
+
         dat = read_excel(folder + f, **kwargs)
         
         if len(splitBy) > 0:
             # The data must be split
-            classifierList = (sortStrings(list(set(dat[s])),'') for s in splitBy)
+            classifierList = (sortStrings(list(set(dat[s])), '') for s in splitBy)
             participants = listMerge(*classifierList)
                 
             for p in participants:
