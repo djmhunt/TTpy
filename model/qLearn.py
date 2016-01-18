@@ -13,8 +13,6 @@ from __future__ import division, print_function
 import logging
 
 from numpy import exp, ones, array
-from random import choice
-from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -48,7 +46,7 @@ class qLearn(model):
         Default ``array([0.5,0.5])``
     expect: float, optional
         The initialisation of the the expected reward. Default ``array([5,5])``
-    numActions : integer, optional
+    numCritics : integer, optional
         The number of different reaction learning sets. Default ``2``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -62,12 +60,13 @@ class qLearn(model):
 
     def __init__(self, **kwargs):
 
-        self.numActions = kwargs.pop('numActions', 2)
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics)*0.5)
+
         self.beta = kwargs.pop('beta', 4)
-        self.prior = kwargs.pop('prior', ones(self.numActions)*0.5)
         self.alpha = kwargs.pop('alpha', 0.3)
         self.eta = kwargs.pop('eta', 0.3)
-        self.expect = kwargs.pop('expect', ones(self.numActions)*5)
+        self.expect = kwargs.pop('expect', ones(self.numCritics)*5)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
         self.decisionFunc = kwargs.pop('decFunc', decEta(eta=self.eta))
@@ -78,7 +77,7 @@ class qLearn(model):
                            "alpha": self.alpha,
                            "expectation": self.expect,
                            "prior": self.prior,
-                           "numActions": self.numActions,
+                           "numCritics": self.numCritics,
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
@@ -97,19 +96,6 @@ class qLearn(model):
         self.recActionProb = []
         self.recExpectation = []
         self.recDecision = []
-
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -132,34 +118,13 @@ class qLearn(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
-
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self, events):
-
-        chosen = self.currAction
-
-        event = self.stimFunc(events, chosen)
-
-        self.recEvents.append(event)
+    def _updateModel(self, event):
 
         # Find the new activities
-        self._newAct(event, chosen)
+        self._newAct(event, self.currAction)
 
         # Calculate the new probabilities
         self.probabilities = self._prob(self.expectation)
-
-    def _processAction(self):
-
-        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """

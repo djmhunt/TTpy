@@ -15,9 +15,7 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, ones, array, absolute
-from random import choice
-from types import NoneType
+from numpy import exp, ones, array
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -80,7 +78,7 @@ class OpALS(model):
     expectGo : array of floats, optional
         The initialisation of the the expected go and nogo.
         Default ``array([1,1])``
-    numActions : integer, optional
+    numCritics : integer, optional
         The number of different reaction learning sets. Default ``2``
     saturateVal : float, optional
         The saturation value for the model. Default is 10
@@ -120,9 +118,11 @@ class OpALS(model):
 
     def __init__(self,**kwargs):
 
-        self.numActions = kwargs.pop('numActions', 4)
+        self.numCritics = kwargs.pop('numCritics', 4)
+        self.prior = kwargs.pop('prior', ones(self.numCritics)/self.numCritics)
+
         self.beta = kwargs.pop('beta', 1)
-        self.betaDiff = kwargs.pop('betaDiff',0)
+        self.betaDiff = kwargs.pop('betaDiff', 0)
         self.betaGo = kwargs.pop('betaGo', None)
         self.betaNogo = kwargs.pop('betaNogo', None)
         self.alpha = kwargs.pop('alpha', 0.1)
@@ -132,13 +132,12 @@ class OpALS(model):
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
         self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
         self.alphaNogoDiff = kwargs.pop('alphaNogoDiff', None)
-        self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
-        self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
-        self.expectGo = kwargs.pop('expectGo', ones(self.numActions)*1)
+        self.expect = kwargs.pop('expect', ones(self.numCritics)*0.5)
+        self.expectGo = kwargs.pop('expectGo', ones(self.numCritics)*1)
         self.saturateVal = kwargs.pop('saturateVal', 10)
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decMaxProb(range(self.numActions)))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decMaxProb(range(self.numCritics)))
 
         if self.alphaGoNogoDiff:
             self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
@@ -149,7 +148,7 @@ class OpALS(model):
 
         if self.betaGo and self.betaNogo:
             self.beta = (self.betaGo + self.betaNogo)/2
-            self.betaDiff = (self.betaGo - self.betaNogo)/ (2 * self.beta)
+            self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
@@ -163,7 +162,7 @@ class OpALS(model):
                            "expectationGo": self.expectGo,
                            "saturateVal": self.saturateVal,
                            "prior": self.prior,
-                           "numActions": self.numActions,
+                           "numCritics": self.numCritics,
                            "stimFunc" : callableDetailsString(self.stimFunc),
                            "decFunc" : callableDetailsString(self.decisionFunc)}
 
@@ -176,6 +175,7 @@ class OpALS(model):
         self.decProbs = array(self.prior)
         self.decision = None
         self.validActions = None
+        self.lastObservation = None
 
         # Recorded information
 
@@ -189,22 +189,8 @@ class OpALS(model):
         self.recActionValues = []
         self.recDecision = []
 
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
-
-
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -224,38 +210,16 @@ class OpALS(model):
         results["ActionProb"] = array(self.recActionProb)
         results["Actions"] = array(self.recAction)
         results["Decisions"] = array(self.recDecision)
-        
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
+    def _updateModel(self, event):
 
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
+        # Find the new activities
+        self._critic(event, self.currAction)
 
-    def _processEvent(self,events):
-
-        chosen = self.currAction
-
-        event = self.stimFunc(events, chosen)
-
-        self.recEvents.append(event)
-
-        #Find the new activites
-        self._critic(event, chosen)
-
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self.probabilities = self._prob(self.go, self.nogo)
-
-    def _processAction(self):
-
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
 
     def storeState(self):
         """

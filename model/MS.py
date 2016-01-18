@@ -11,14 +11,14 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, zeros, array
-from types import NoneType
+from numpy import exp, zeros, array, ones
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
 from plotting import dataVsEvents, lineplot
+from utils import callableDetailsString
 
 
 class MS(model):
@@ -60,25 +60,20 @@ class MS(model):
     Name = "M&S"
 
     def __init__(self, **kwargs):
+
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+
         self.oneProb = kwargs.pop('oneProb', 0.85)
         self.beta = kwargs.pop('beta', 4)
         self.alpha = kwargs.pop('alpha', 1)
         self.eta = kwargs.pop('eta', 0.5)
-        self.prior = kwargs.pop('prior', array([0.5, 0.5]))
-        self.activity = kwargs.pop('activity', array([0.5, 0.5]))
+
+        self.activity = kwargs.pop('activity', ones(self.numCritics) * 0.5)
         # The alpha is an activation rate parameter. The paper uses a value of 1.
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
         self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
-
-        self.currAction = 1
-        self.probabilities = zeros(2) + self.prior
-        self.probDifference = 0
-        self.activity = zeros(2) + self.activity
-        self.decision = None
-        self.firstDecision = 0
-        self.lastObs = False
-        self.validActions = None
 
         self.parameters = {"Name": self.Name,
                            "oneProb": self.oneProb,
@@ -87,8 +82,17 @@ class MS(model):
                            "alpha": self.alpha,
                            "prior": self.prior,
                            "activity": self.activity,
-                           "stimFunc": self.stimFunc.Name,
-                           "decFunc": self.decisionFunc.Name}
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
+
+        self.currAction = 1
+        self.probabilities = zeros(2) + self.prior
+        self.probDifference = 0
+        self.activity = zeros(2) + self.activity
+        self.decision = None
+        self.firstDecision = 0
+        self.lastObservation = None
+        self.validActions = None
 
         # Recorded information
 
@@ -98,21 +102,6 @@ class MS(model):
         self.recActionProb = []
         self.recActivity = []
         self.recDecision = []
-
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.decision = self.decisionFunc(self.probabilities, validResponses=self.validActions)
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -135,21 +124,7 @@ class MS(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self, events):
-
-        event = self.stimFunc(events, self.currAction)
-
-        self.recEvents.append(event)
+    def _updateModel(self, event):
 
         # Find the new activities
         self._newActivity(event)

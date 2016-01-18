@@ -10,14 +10,13 @@ from __future__ import division, print_function
 import logging
 
 from numpy import exp, array, ones
-from random import choice
-from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
 from utils import callableDetailsString
+
 
 class EP(model):
 
@@ -59,34 +58,34 @@ class EP(model):
 
     def __init__(self,**kwargs):
 
-        self.alpha = kwargs.pop('alpha',0.3)
-        self.eta = kwargs.pop('eta',0.3)
-        self.beta = kwargs.pop('beta',4)
-        self.numStimuli = kwargs.pop('numStimuli',2)
-        self.activity = kwargs.pop('activity',ones(self.numStimuli)*0.5)
-        self.prior = kwargs.pop('prior',ones(self.numStimuli)*0.5)
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
 
-        self.decision = None
-        self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
-        self.validActions = None
-        self.currAction = None
+        self.alpha = kwargs.pop('alpha', 0.3)
+        self.eta = kwargs.pop('eta', 0.3)
+        self.beta = kwargs.pop('beta', 4)
+        self.activity = kwargs.pop('activity', ones(self.numCritics) * 0.5)
 
-        self.stimFunc = kwargs.pop('stimFunc',blankStim())
-        self.decisionFunc = kwargs.pop('decFunc',decEta(expResponses = (1,2), eta = self.eta))
+        self.stimFunc = kwargs.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
 
         self.parameters = {"Name": self.Name,
                            "alpha": self.alpha,
                            "beta": self.beta,
                            "eta": self.eta,
                            "prior": self.prior,
-                           "activity" : self.activity,
-                           "numStimuli": self.numStimuli,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
+                           "activity": self.activity,
+                           "numCritics": self.numCritics,
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
+
+        self.decision = None
+        self.probabilities = array(self.prior)
+        self.decProbabilities = array(self.prior)
+        self.validActions = None
+        self.currAction = None
 
         # Recorded information
-
         self.recAction = []
         self.recEvents = []
         self.recActivity = []
@@ -94,21 +93,8 @@ class EP(model):
         self.recProbabilities = []
         self.recActionProb = []
 
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
-
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -123,37 +109,18 @@ class EP(model):
         results["ActionProb"] = array(self.recActionProb)
         results["Activity"] = array(self.recActivity)
         results["Actions"] = array(self.recAction)
-        results["Decsions"] = array(self.recDecision)
+        results["Decisions"] = array(self.recDecision)
         results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
+    def _updateModel(self, event):
 
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self,events):
-
-        event = self.stimFunc(events, self.currAction)
-
-        self.recEvents.append(event)
-
-        #Find the new activites
+        # Find the new activites
         self._newAct(event)
 
-        #Calculate the new probabilities
+        # Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
-
-    def _processAction(self):
-
-        self.decision, self.decProbs = self.decisionFunc(self.probabilities, self.currAction, validResponses = self.validActions)
 
     def storeState(self):
         """"
@@ -165,9 +132,9 @@ class EP(model):
         self.recActivity.append(self.activity.copy())
         self.recDecision.append(self.decision)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currAction])
 
-    def _newAct(self,event):
+    def _newAct(self, event):
 
         oldAct = self.activity
 
@@ -209,5 +176,4 @@ def blankStim():
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
-
 

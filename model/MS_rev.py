@@ -15,7 +15,6 @@ from __future__ import division, print_function
 import logging
 
 from numpy import exp, array, ones
-from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -63,16 +62,27 @@ class MS_rev(model):
 
     def __init__(self, **kwargs):
 
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+
         self.beta = kwargs.pop('beta', 4)
         self.alpha = kwargs.pop('alpha', 0.3)
         self.eta = kwargs.pop('eta', 0.3)
-        self.numStimuli = kwargs.pop('numStimuli', 2)
-        self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
-        self.activity = kwargs.pop('activity', ones(self.numStimuli)*0.5)
+        self.activity = kwargs.pop('activity', ones(self.numCritics) * 0.5)
         # The alpha is an activation rate parameter. The M&S paper uses a value of 1.
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
         self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
+
+        self.parameters = {"Name": self.Name,
+                           "beta": self.beta,
+                           "eta": self.eta,
+                           "alpha": self.alpha,
+                           "prior": self.prior,
+                           "activity": self.activity,
+                           "numCritics": self.numCritics,
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = 1
         self.probabilities = array(self.prior)
@@ -81,16 +91,7 @@ class MS_rev(model):
         self.activity = array(self.activity)
         self.decision = None
         self.validActions = None
-
-        self.parameters = {"Name": self.Name,
-                           "beta": self.beta,
-                           "eta": self.eta,
-                           "alpha": self.alpha,
-                           "prior": self.prior,
-                           "activity": self.activity,
-                           "numStimuli": self.numStimuli,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
+        self.lastObservation = None
 
         # Recorded information
 
@@ -100,19 +101,6 @@ class MS_rev(model):
         self.recActionProb = []
         self.recActivity = []
         self.recDecision = []
-
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
 
     def outputEvolution(self):
         """ Returns all the relevent data for this model
@@ -135,32 +123,13 @@ class MS_rev(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
-
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self, events):
-
-        event = self.stimFunc(events, self.currAction)
-
-        self.recEvents.append(event)
+    def _updateModel(self, event):
 
         # Find the new activities
         self._newActivity(event)
 
         # Calculate the new probabilities
         self.probabilities = self._prob(self.activity)
-
-    def _processAction(self):
-
-        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """

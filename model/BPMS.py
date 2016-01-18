@@ -19,7 +19,7 @@ from utils import callableDetailsString
 
 class BPMS(model):
 
-    """The Beysian Predictor with Markovian Switching model
+    """The Bayesian Predictor with Markovian Switching model
 
     Attributes
     ----------
@@ -53,41 +53,42 @@ class BPMS(model):
 
     Name = "BPMS"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-#        self.numStimuli = kwargs.pop('numStimuli', 2)
-        self.numStimuli = 2
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+
         self.beta = kwargs.pop('beta', 4)
-        self.prior = kwargs.pop('prior', ones(self.numStimuli)*0.5)
         self.eta = kwargs.pop('eta', 0)
         delta = kwargs.pop('delta', 0)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(0, self.numStimuli))))
+        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(0, self.numCritics))))
 
         self.parameters = {"Name": self.Name,
                            "beta": self.beta,
                            "eta": self.eta,
                            "delta": delta,
                            "prior": self.prior,
-#                           "numStimuli": self.numStimuli,
+                           "numCritics": self.numCritics,
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
         self.currAction = 0
         # This way for the first run you always consider that you are switching
         self.previousAction = None
-#        if len(prior) != self.numStimuli:
+#        if len(prior) != self.numCritics:
 #            raise warning.
         self.posteriorProb = array(self.prior)
         self.probabilities = array(self.prior)
         self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
+        self.lastObservation = None
         self.switchProb = 0
         self.stayMatrix = array([[1-delta, delta], [delta, 1-delta]])
         self.switchMatrix = array([[delta, 1-delta], [1-delta, delta]])
-        self.actionLoc = {k: k for k in range(0, self.numStimuli)}
+        self.actionLoc = {k: k for k in range(0, self.numCritics)}
 
         # Recorded information
 
@@ -100,20 +101,8 @@ class BPMS(model):
         self.recDecision = []
         self.recActionLoc = []
 
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
-
     def outputEvolution(self):
-        """ Returns all the relevent data for this model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -135,24 +124,9 @@ class BPMS(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
-
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self, events):
+    def _updateModel(self, event):
 
         currAction = self.currAction
-
-        event = self.stimFunc(events, currAction)
-
-        self.recEvents.append(event)
 
         postProb = self._postProb(event, self.posteriorProb, currAction)
         self.posteriorProb = postProb
@@ -162,10 +136,6 @@ class BPMS(model):
         self.probabilities = priorProb
 
         self.switchProb = self._switch(priorProb)
-
-    def _processAction(self):
-
-        self.decision, self.decProbabilities = self.decisionFunc(self.switchProb, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """

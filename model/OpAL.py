@@ -16,14 +16,13 @@ from __future__ import division, print_function
 import logging
 
 from numpy import exp, ones, array
-from random import choice
-from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decMaxProb
 from utils import callableDetailsString
+
 
 class OpAL(model):
 
@@ -51,7 +50,7 @@ class OpAL(model):
         Learning rate parameter for Go, the positive part of the actor learning
         Default is ``alpha``
     alphaNogo : float, optional
-        Learning rate aprameter for Nogo, the negative part of the actor learning
+        Learning rate parameter for Nogo, the negative part of the actor learning
         Default is ``alpha``
     alphaGoDiff : float, optional
         The difference between ``alphaCrit`` and ``alphaGo``. The default is ``None``
@@ -65,9 +64,9 @@ class OpAL(model):
         :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN` 
     beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
-        expoitation parameter. Defined as :math:`\\beta` in the paper
+        exploitation parameter. Defined as :math:`\\beta` in the paper
     betaDiff : float, optional
-        The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
+        The asymmetry between the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
     prior : array of floats in ``[0,1]`` or just float in range, optional
         The prior probability of each state being the correct one.
         Default ``array([0.5,0.5])``
@@ -77,8 +76,8 @@ class OpAL(model):
     expectGo : array of floats, optional
         The initialisation of the the expected go and nogo.
         Default ``array([1,1])``
-    numActions : integer, optional
-        The number of different reaction learning sets. Default ``2``
+    numCritics : integer, optional
+        The number of different reaction learning sets. Default ``4``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -115,7 +114,9 @@ class OpAL(model):
 
     def __init__(self, **kwargs):
 
-        self.numActions = kwargs.pop('numActions', 4)
+        self.numCritics = kwargs.pop('numCritics', 4)
+        self.prior = kwargs.pop('prior', ones(self.numCritics)/self.numCritics)
+
         self.beta = kwargs.pop('beta', 1)
         self.betaDiff = kwargs.pop('betaDiff', 0)
         self.betaGo = kwargs.pop('betaGo', None)
@@ -127,12 +128,11 @@ class OpAL(model):
         self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
         self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
         self.alphaNogoDiff = kwargs.pop('alphaNogoDiff', None)
-        self.prior = kwargs.pop('prior', ones(self.numActions)/self.numActions)
-        self.expect = kwargs.pop('expect', ones(self.numActions)*0.5)
-        self.expectGo = kwargs.pop('expectGo', ones(self.numActions)*1)
+        self.expect = kwargs.pop('expect', ones(self.numCritics)*0.5)
+        self.expectGo = kwargs.pop('expectGo', ones(self.numCritics)*1)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decMaxProb(range(self.numActions)))
+        self.decisionFunc = kwargs.pop('decFunc', decMaxProb(range(self.numCritics)))
 
         if self.alphaGoNogoDiff:
             self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
@@ -156,7 +156,7 @@ class OpAL(model):
                            "expectation": self.expect,
                            "expectationGo": self.expectGo,
                            "prior": self.prior,
-                           "numActions": self.numActions,
+                           "numCritics": self.numCritics,
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
@@ -169,6 +169,7 @@ class OpAL(model):
         self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
+        self.lastObservation = None
 
         # Recorded information
 
@@ -181,19 +182,6 @@ class OpAL(model):
         self.recNogo = []
         self.recActionValues = []
         self.recDecision = []
-
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -219,34 +207,13 @@ class OpAL(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-        self._processAction()
+    def _updateModel(self, event):
 
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _processEvent(self, events):
-
-        chosen = self.currAction
-
-        event = self.stimFunc(events, chosen)
-
-        self.recEvents.append(event)
-
-        # Find the new activites
-        self._critic(event, chosen)
+        # Find the new activities
+        self._critic(event, self.currAction)
 
         # Calculate the new probabilities
         self.probabilities = self._prob(self.go, self.nogo)
-
-    def _processAction(self):
-
-        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, validResponses=self.validActions)
 
     def storeState(self):
         """

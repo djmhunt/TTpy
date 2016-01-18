@@ -11,10 +11,8 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, zeros, array, amax, dot, argmax, mean, square
-from random import choice
+from numpy import exp, array, amax, dot, ones, mean, square
 from collections import defaultdict
-from types import NoneType
 
 from modelTemplate import model
 from model.modelPlot import modelPlot
@@ -53,6 +51,11 @@ class RVPM(model):
     averaging : int, optional
         The number of stimuli recorded from the beginning and end of each
         training set. Default is 3
+    prior : array of two floats in ``[0,1]`` or just float in range, optional
+        The prior probability of of the two states being the correct one.
+        Default ``array([0.5,0.5])``
+    numCritics : integer, optional
+        The number of different reaction learning sets. Default ``2``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -64,6 +67,9 @@ class RVPM(model):
     Name = "RVPM"
 
     def __init__(self, **kwargs):
+
+        self.numCritics = kwargs.pop('numCritics', 2)
+        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
 
         self.alpha = kwargs.pop('alpha', 0.005)
         self.beta = kwargs.pop('beta', 0.1)
@@ -95,24 +101,13 @@ class RVPM(model):
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
-        self.currAction = None
+        self.decision = None
         self.validActions = None
+        self.lastObservation = None
 
         # Recorded information
 
         self._storeSetup()
-
-    def action(self):
-        """
-        Returns
-        -------
-        action : integer or None
-        """
-        self.currAction = self.decision
-
-        self.storeState()
-
-        return self.currAction
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -135,16 +130,6 @@ class RVPM(model):
 
         return results
 
-    def _updateObservation(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
-    def _updateReaction(self, events):
-        """Processes updates to new actions"""
-        if type(events) is not NoneType:
-            self._processEvent(events)
-
     def storeState(self):
         """
         Stores the state of all the important variables so that they can be
@@ -154,7 +139,7 @@ class RVPM(model):
         self.recAction.append(self.currAction)
         self._updateGeneralStore()
 
-    def _processEvent(self, event):
+    def _updateModel(self, event):
 
         for t, c, r in self.stimFunc(event, self.currAction):
 
@@ -179,7 +164,7 @@ class RVPM(model):
 
         self.w = self._wNew(self.w, self.V, self.deltaP, self.deltaM, c)
 
-        self.decision, self.decProbabilities = self.decisionFunc(self.TSN)
+        self.probabilities = self.TSN
 
     def _wNew(self, w, V, deltaP, deltaM, c):
         new = w + self.alpha*c*V*(deltaP - deltaM)
@@ -272,7 +257,7 @@ class RVPM(model):
 
             averagedData = defaultdict(dict)
 
-            for t in ["_early","_late"]:
+            for t in ["_early", "_late"]:
                 cmax = [c.argmax() for c in self.modelData["stim"+t]]
 
                 for key in ["V", "DP", "DM", "TSN"]:  # ,"w"]:
@@ -319,7 +304,7 @@ class RVPM(model):
 #            axisLabels["yMax"] = 0
 #            axisLabels["yMin"] = -0.5
 
-            fig = lineplot(Y,plotData,labels,axisLabels)
+            fig = lineplot(Y, plotData, labels, axisLabels)
 
             return fig
 
