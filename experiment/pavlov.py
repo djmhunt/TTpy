@@ -68,13 +68,13 @@ class Pavlov(experiment):
 
         kwargs = self.kwargs.copy()
 
-        self.rewMag = kwargs.pop('rewMag',4)
-        self.rewProb = kwargs.pop('rewProb',array([0.87,0.33]))
-        self.stimMag = kwargs.pop('stimMag',1)
-        self.stimDur = kwargs.pop('stimDur',20)#200) # Stimulus duration
-        self.rewDur = kwargs.pop('rewDur',4)#40) #duration of reward
-        self.simLen = kwargs.pop('simDur',30)#300) # the length of the simulation
-        self.stimRepeats = kwargs.pop('stimRepeats',7)#72) # The number of learning runs
+        self.rewMag = kwargs.pop('rewMag', 4)
+        self.rewProb = kwargs.pop('rewProb', array([0.87, 0.33]))
+        self.stimMag = kwargs.pop('stimMag', 1)
+        self.stimDur = kwargs.pop('stimDur', 20)  # 200) # Stimulus duration
+        self.rewDur = kwargs.pop('rewDur', 4)  # 40) #duration of reward
+        self.simLen = kwargs.pop('simDur', 30)  # 300)  # the length of the simulation
+        self.stimRepeats = kwargs.pop('stimRepeats', 7)  # 72)  # The number of learning runs
 #        simLoop = kwargs.pop('simLoopLen',100) #The number of learning loops are run
 
         self.index = -1
@@ -99,7 +99,7 @@ class Pavlov(experiment):
 
     def next(self):
         """
-        Produces the next bead for the iterator
+        Produces the next stimulus for the iterator
 
         Returns
         -------
@@ -111,7 +111,7 @@ class Pavlov(experiment):
         stimDur : int
         nextValidActions : Tuple of ints
             The list of valid actions that the model can respond with. Set to
-            ``None``, as they never vary.
+            ``None``, as there are no actions.
 
 
         Raises
@@ -148,13 +148,13 @@ class Pavlov(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavent data for this
+        Plots and saves files containing all the relevant data for this
         experiment run
 
         Returns
         -------
         results : dictionary
-            Contains the class paramters as well as the other useful data
+            Contains the class parameters as well as the other useful data
         """
 
         results = self.parameters
@@ -174,9 +174,8 @@ class Pavlov(experiment):
 
         self.recActions.append(self.action)
 
-
     def _getStim(self, stimRepeats, stimMag):
-        stimChoice = choice([0,1],size = (stimRepeats,1))
+        stimChoice = choice([0, 1], size=(stimRepeats, 1))
         cSet = array([[1-sc[0],sc[0]] for sc in stimChoice])*stimMag
 
         return cSet, stimChoice
@@ -215,7 +214,7 @@ def pavlovStimTemporal():
 
     """
 
-    def pavlovStim(event, action):
+    def pavlovStim(event, action, lastObservation=None):
 
         cStim = event[0]
         rewSig = event[1]

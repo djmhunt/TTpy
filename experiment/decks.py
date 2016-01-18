@@ -12,22 +12,22 @@ from __future__ import division, print_function
 from numpy import array, zeros, exp
 from numpy.random import rand
 from experimentTemplate import experiment
-#from plotting import dataVsEvents, varDynamics
 from experimentPlot import experimentPlot
-#from utils import varyingParams
 
-###decks
-deckSets = {"WorthyMaddox": array([[ 2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  8,  1,  6,  2,  1,  1,
+
+### decks
+deckSets = {"WorthyMaddox": array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  8,  1,  6,  2,  1,  1,
                                     5,  8,  5, 10, 10,  8,  3, 10,  7, 10,  8,  3,  4,  9, 10,  3,  6,
                                     3,  5, 10, 10, 10,  7,  3,  8,  5,  8,  6,  9,  4,  4,  4, 10,  6,
                                     4, 10,  3, 10,  5, 10,  3, 10, 10,  5,  4,  6, 10,  7,  7, 10, 10,
                                     10,  3,  1,  4,  1,  3,  1,  7,  1,  3,  1,  8],
-                                    [ 7, 10,  5, 10,  6,  6, 10, 10, 10,  8,  4,  8, 10,  4,  9, 10,  8,
+                                    [7, 10,  5, 10,  6,  6, 10, 10, 10,  8,  4,  8, 10,  4,  9, 10,  8,
                                      6, 10, 10, 10,  4,  7, 10,  5, 10,  4, 10, 10,  9,  2,  9,  8, 10,
                                      7,  7,  1, 10,  2,  6,  4,  7,  2,  1,  1,  1,  7, 10,  1,  4,  2,
                                      1,  1,  1,  4,  1,  4,  1,  1,  1,  1,  3,  1,  4,  1,  1,  1,  5,
                                      1,  1,  1,  7,  2,  1,  2,  1,  4,  1,  4,  1]])}
 defaultDecks = deckSets["WorthyMaddox"]
+
 
 class Decks(experiment):
     """
@@ -65,8 +65,8 @@ class Decks(experiment):
 
         kwargs = self.kwargs.copy()
 
-        T = kwargs.pop('draws',None)
-        decks = kwargs.pop("decks",defaultDecks)
+        T = kwargs.pop('draws', None)
+        decks = kwargs.pop("decks", defaultDecks)
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
@@ -89,7 +89,7 @@ class Decks(experiment):
 
         # Set draw count
         self.t = -1
-        self.drawn = -1#[-1,-1]
+        self.drawn = -1  # [-1,-1]
         self.cardValue = None
         self.action = None
 
@@ -107,9 +107,8 @@ class Decks(experiment):
         Returns
         -------
         stimulus : None
-        nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to
-            ``None``, as they never vary.
+        nextValidActions : Tuple of ints or ``None``
+            The list of valid actions that the model can respond with. Set to (0,1), as they never vary.
 
         Raises
         ------
@@ -122,11 +121,11 @@ class Decks(experiment):
             raise StopIteration
 
         nextStim = None
-        nextValidActions = None
+        nextValidActions = (0, 1)
 
         return nextStim, nextValidActions
 
-    def receiveAction(self,action):
+    def receiveAction(self, action):
         """
         Receives the next action from the participant
         """
@@ -139,9 +138,9 @@ class Decks(experiment):
         """
 
         deckDrawn = self.action
-        cardDrawn = self.drawn + 1 #[deckDrawn] + 1
+        cardDrawn = self.drawn + 1  # [deckDrawn] + 1
 
-        self.cardValue = self.decks[deckDrawn,cardDrawn]
+        self.cardValue = self.decks[deckDrawn, cardDrawn]
 
 #        self.drawn[deckDrawn] = cardDrawn
         self.drawn = cardDrawn
@@ -179,6 +178,7 @@ class Decks(experiment):
         self.recAction[self.t] = self.action
         self.recCardVal[self.t] = self.cardValue
 
+
 def deckStimDirect():
     """
     Processes the decks stimuli for models expecting just the event
@@ -199,11 +199,12 @@ def deckStimDirect():
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
 
-    def deckStim(event, action):
+    def deckStim(event, action, lastObservation=None):
         return event
 
     deckStim.Name = "deckStimDirect"
     return deckStim
+
 
 def deckStimDirectNormal(maxEventVal):
     """
@@ -230,11 +231,12 @@ def deckStimDirectNormal(maxEventVal):
     model.opal, model.opals
     """
 
-    def deckStim(event, action):
+    def deckStim(event, action, lastObservation=None):
         return event / maxEventVal
 
     deckStim.Name = "deckStimDirectNormal"
     return deckStim
+
 
 def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     """
@@ -279,16 +281,17 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     numDiffEvents = maxEventVal-minEventVal+1
     respZeros = zeros(numDiffEvents * numActions)
 
-    def deckStim(event, action):
+    def deckStim(event, action, lastObservation=None):
         stimulus = respZeros.copy() + 1
         stimulus[numDiffEvents*action + event - 1] += 1
         return stimulus
 
     deckStim.Name = "deckStimAllInfo"
-    deckStim.Params = {"maxEventVal":maxEventVal,
-                       "minEventVal":minEventVal,
-                       "numActions":numActions}
+    deckStim.Params = {"maxEventVal": maxEventVal,
+                       "minEventVal": minEventVal,
+                       "numActions": numActions}
     return deckStim
+
 
 def deckStimDualInfo(maxEventVal, epsilon):
     """
@@ -313,16 +316,17 @@ def deckStimDualInfo(maxEventVal, epsilon):
     """
     devisor = maxEventVal + epsilon
 
-    def deckStim(event, action):
+    def deckStim(event, action, lastObservation=None):
         stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
-        stimulus = [stim,1-stim]
+        stimulus = [stim, 1-stim]
         return stimulus
 
     deckStim.Name = "deckStimDualInfo"
-    deckStim.Params = {"epsilon":epsilon}
+    deckStim.Params = {"epsilon": epsilon}
     return deckStim
 
-def deckStimDualInfoLogistic(maxEventVal,minEventVal, epsilon):
+
+def deckStimDualInfoLogistic(maxEventVal, minEventVal, epsilon):
     """
     Processes the decks stimuli for models expecting the reward information
     from two possible actions.
@@ -345,15 +349,15 @@ def deckStimDualInfoLogistic(maxEventVal,minEventVal, epsilon):
     """
     mid = (maxEventVal + minEventVal)/2
 
-    def deckStim(event, action):
+    def deckStim(event, action, lastObservation=None):
 
-        x=exp(epsilon *(event-mid))
+        x = exp(epsilon * (event-mid))
 
         stim = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
-        stimulus = [stim,1-stim]
+        stimulus = [stim, 1-stim]
         return stimulus
 
     deckStim.Name = "deckStimDualInfoLogistic"
-    deckStim.Params = {"midpoint":mid,
-                       "epsilon":epsilon}
+    deckStim.Params = {"midpoint": mid,
+                       "epsilon": epsilon}
     return deckStim

@@ -102,9 +102,8 @@ class Beads(experiment):
         Returns
         -------
         bead : {0,1}
-        nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to
-            ``None``, as they never vary.
+        nextValidActions : Tuple of ints or ``None``
+            The list of valid actions that the model can respond with. Set to (0,1), as they never vary.
 
         Raises
         ------
@@ -119,11 +118,11 @@ class Beads(experiment):
         self.storeState()
 
         nextStim = self.beads[self.t]
-        nextValidActions = None
+        nextValidActions = (0, 1)
 
         return nextStim, nextValidActions
 
-    def receiveAction(self,action):
+    def receiveAction(self, action):
         """
         Receives the next action from the participant
 
@@ -139,7 +138,7 @@ class Beads(experiment):
 
     def outputEvolution(self):
         """
-        Returns all the relevent data for this experiment run
+        Returns all the relevant data for this experiment run
 
         Returns
         -------
@@ -148,10 +147,10 @@ class Beads(experiment):
             Observables and Actions.
         """
 
-        results = { "Name": self.Name,
-                    "Observables":array(self.recBeads),
-                    "Actions": self.recAction,
-                    "FirstDecision" : self.firstDecision}
+        results = {"Name": self.Name,
+                   "Observables": array(self.recBeads),
+                   "Actions": self.recAction,
+                   "FirstDecision": self.firstDecision}
 
         return results
 
@@ -172,19 +171,19 @@ class Beads(experiment):
             self.figSets = []
 
             fig = self.plotProbJar1()
-            self.figSets.append(('Actions',fig))
+            self.figSets.append(('Actions', fig))
 
             fig = self.varCategoryDynamics()
-            self.figSets.append(('decisionCoM',fig))
+            self.figSets.append(('decisionCoM', fig))
 
             fig = self.varDynamicPlot()
-            self.figSets.append(("firstDecision",fig))
+            self.figSets.append(("firstDecision", fig))
 
         def varDynamicPlot(self):
 
             params = self.modelParams[0].keys()
 
-            paramSet = varyingParams(self.modelStore,params)
+            paramSet = varyingParams(self.modelStore, params)
             decisionTimes = array([exp["FirstDecision"] for exp in self.expStore])
 
             fig = varDynamics(paramSet, decisionTimes, **self.plotArgs)
@@ -194,14 +193,13 @@ class Beads(experiment):
         def varCategoryDynamics(self):
 
             params = self.modelParams[0].keys()
-            #We assume that the parameters are the same for all the data to be analised,
+            # We assume that the parameters are the same for all the data to be analised,
             # otherwise this data is meaningless
 
             dataSet = varyingParams(self.modelStore,params)
             dataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
 
             initData = pd.DataFrame(dataSet)
-
 
             maxDecTime = max(dataSet["decisionTimes"])
             if maxDecTime == 0:
@@ -210,7 +208,7 @@ class Beads(experiment):
                 logger.info(message)
                 return
 
-            dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1,maxDecTime+1)}
+            dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1, maxDecTime+1)}
 
             CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
 
@@ -223,11 +221,11 @@ class Beads(experiment):
             Plots a set of lines for the probability of jar 1.
             """
 
-            data = [model["Probabilities"][:,0] for model in self.modelStore]
+            data = [model["Probabilities"][:, 0] for model in self.modelStore]
 
             events = self.expStore[0]["Observables"]
 
-            axisLabels = {"title":"Opinion of next bead being white"}
+            axisLabels = {"title": "Opinion of next bead being white"}
             axisLabels["xLabel"] = "Time"
             axisLabels["yLabel"] = "Probability of Jar 1"
             axisLabels["y2Label"] = "Bead presented"
@@ -235,10 +233,9 @@ class Beads(experiment):
             axisLabels["yMin"] = 0
             eventLabel = "Beads drawn"
 
-            fig = dataVsEvents(data,events,self.modelLabels,eventLabel,axisLabels)
+            fig = dataVsEvents(data, events, self.modelLabels, eventLabel, axisLabels)
 
             return fig
-
 
 
 def generateSequence(numBeads, oneProb, switchProb):
@@ -254,30 +251,31 @@ def generateSequence(numBeads, oneProb, switchProb):
         The probability of a 1 from the first jar. This is also the probability
         of a 0 from the second jar.
     switchProb : float in ``[0,1]``
-        The probability that the drawn beads change the jar they are bieing
+        The probability that the drawn beads change the jar they are being
         drawn from
 
     Returns
     -------
     sequence : list of ``{0,1}``
-        The generated sequnce of beads
+        The generated sequence of beads
     """
 
     sequence = zeros(numBeads)
 
-    probs = rand(numBeads,2)
+    probs = rand(numBeads, 2)
     bead = 1
 
     for i in range(numBeads):
-        if probs[i,1]< switchProb:
+        if probs[i, 1] < switchProb:
             bead = 1-bead
 
-        if probs[i,0]< oneProb:
+        if probs[i, 0] < oneProb:
             sequence[i] = bead
         else:
             sequence[i] = 1-bead
 
     return sequence
+
 
 def beadStimDirect():
     """
@@ -299,11 +297,12 @@ def beadStimDirect():
     model.qLearn
     """
 
-    def beadStim(event, decision):
+    def beadStim(event, decision, lastObservation=None):
         return event
 
     beadStim.Name = "beadStimDirect"
     return beadStim
+
 
 def beadStimDualDirect():
     """
@@ -326,13 +325,14 @@ def beadStimDualDirect():
     model.EP
     """
 
-    def beadStim(event, decision):
-        stimulus = array([event,1-event])
+    def beadStim(event, decision, lastObservation=None):
+        stimulus = array([event, 1-event])
         return stimulus
 
     beadStim.Name = "beadStimDualDirect"
 
     return beadStim
+
 
 def beadStimDualInfo(oneProb):
     """
@@ -362,13 +362,13 @@ def beadStimDualInfo(oneProb):
     model.MS, model.MS_rev, model.BP
     """
 
-    def beadStim(event, decision):
+    def beadStim(event, decision, lastObservation=None):
         stim = oneProb*event + (1-oneProb)*(1-event)
-        stimulus = array([stim,1-stim])
+        stimulus = array([stim, 1-stim])
         return stimulus
 
     beadStim.Name = "beadStimDualInfo"
-    beadStim.Params = {"oneProb":oneProb}
+    beadStim.Params = {"oneProb": oneProb}
 
     return beadStim
 

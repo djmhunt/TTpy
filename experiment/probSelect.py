@@ -14,7 +14,7 @@ from __future__ import division, print_function
 
 import pandas as pd
 
-from numpy import array, zeros, exp, ones, arange
+from numpy import array, zeros, exp, ones, arange, sum
 from numpy.random import rand, choice
 from collections import defaultdict
 from itertools import izip
@@ -52,13 +52,13 @@ class probSelect(experiment):
         probability of a reward.
         Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}
     rewardSize : float, optional
-        The size of reward given if sucessful. Default 1
+        The size of reward given if successful. Default 1
     numActions : int, optional
         The number of actions that can be chosen at any given time, chosen at
         random from actRewardProb. Default 2
     learningLen : int, optional
         The number of trials in the learning phase. As there is no feeback in
-        the trasfer phase there is no trasfer phase. Default is 100
+        the trasfer phase there is no transfer phase. Default is 100
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -89,10 +89,10 @@ class probSelect(experiment):
         kwargs = self.kwargs.copy()
 
         rewardProb = kwargs.pop('rewardProb',0.7)
-        actRewardProb = kwargs.pop('actRewardProb',{0:rewardProb,
-                                                    1:1-rewardProb,
-                                                    2:0.5,
-                                                    3:0.5})
+        actRewardProb = kwargs.pop('actRewardProb',{0: rewardProb,
+                                                    1: 1-rewardProb,
+                                                    2: 0.5,
+                                                    3: 0.5})
         learningLen = kwargs.pop("learningLen", 100)
         numActions = kwargs.pop("numActions", 2)
         rewardSize = kwargs.pop("rewardSize", 1)
@@ -151,7 +151,7 @@ class probSelect(experiment):
 
         return nextStim, nextValidActions
 
-    def receiveAction(self,action):
+    def receiveAction(self, action):
         """
         Receives the next action from the participant
         """
@@ -185,7 +185,7 @@ class probSelect(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavent data for this
+        Plots and saves files containing all the relavant data for this
         experiment run
         """
 
@@ -227,22 +227,22 @@ class probSelect(experiment):
             self.processEndData()
 
             fig = self.biasAlpha()
-            self.figSets.append(("biasAlpha",fig))
+            self.figSets.append(("biasAlpha", fig))
 
             fig = self.biasBeta()
-            self.figSets.append(("biasBeta",fig))
+            self.figSets.append(("biasBeta", fig))
 
             fig = self.chooseAlpha()
-            self.figSets.append(("chooseAlpha",fig))
+            self.figSets.append(("chooseAlpha", fig))
 
             fig = self.chooseBeta()
-            self.figSets.append(("chooseBeta",fig))
+            self.figSets.append(("chooseBeta", fig))
 
             fig = self.avoidAlpha()
-            self.figSets.append(("avoidAlpha",fig))
+            self.figSets.append(("avoidAlpha", fig))
 
             fig = self.avoidBeta()
-            self.figSets.append(("avoidBeta",fig))
+            self.figSets.append(("avoidBeta", fig))
 
         def processEndData(self):
             expStore = self.expStore
@@ -346,28 +346,28 @@ class probSelect(experiment):
             self.processEndData()
 
             fig = self.biasVrewardAlpha()
-            self.figSets.append(('biasVrewardAlpha',fig))
+            self.figSets.append(('biasVrewardAlpha', fig))
 
             fig = self.biasVrewardBeta()
-            self.figSets.append(('biasVrewardBeta',fig))
+            self.figSets.append(('biasVrewardBeta', fig))
 
             fig = self.convergeEforP()
-            self.figSets.append(('convergeEforP',fig))
+            self.figSets.append(('convergeEforP', fig))
 
             fig = self.convergeGforP()
-            self.figSets.append(('convergeGforP',fig))
+            self.figSets.append(('convergeGforP', fig))
 
             fig = self.convergeNforP()
-            self.figSets.append(('convergeNforP',fig))
+            self.figSets.append(('convergeNforP', fig))
 
             fig = self.convergeEforR()
-            self.figSets.append(('convergeEforR',fig))
+            self.figSets.append(('convergeEforR', fig))
 
             fig = self.convergeGforR()
-            self.figSets.append(('convergeGforR',fig))
+            self.figSets.append(('convergeGforR', fig))
 
             fig = self.convergeNforR()
-            self.figSets.append(('convergeNforR',fig))
+            self.figSets.append(('convergeNforR', fig))
 
         def processEndData(self):
             expStore = self.expStore
@@ -400,13 +400,13 @@ class probSelect(experiment):
 
             unGroupedData = defaultdict(defaultdict(defaultdict(list)))
 
-            for e,m in izip(expStore,modelStore):
+            for e, m in izip(expStore,modelStore):
                 unGroupedData[e['rewardSize']][e['rewardProb']]['E'].append(m['Expectation'])
                 unGroupedData[e['rewardSize']][e['rewardProb']]['G'].append(m['Go'])
                 unGroupedData[e['rewardSize']][e['rewardProb']]['N'].append(m['Nogo'])
 
             data = {
-                    rS : {
+                    rS: {
                         rP: [sum(rPv['E'], axis=0),
                              sum(rPv['G'], axis=0),
                              sum(rPv['N'], axis=0),
@@ -429,13 +429,13 @@ class probSelect(experiment):
             selectData[x] = alphaGoSet
             plotData = selectData.set_index(x)
 
-            fig = pandasPlot(plotData, axisLabels = {'xlabel':x, 'ylabel':y, 'title':y})
+            fig = pandasPlot(plotData, axisLabels={'xlabel':x, 'ylabel':y, 'title':y})
 
             return fig
 
         def _plotTimeSubset(self):
-
-            return fig
+            """"""
+            # return fig
 
         def biasVrewardAlpha(self):
 
@@ -492,7 +492,7 @@ def probSelectStimDirect():
     """
 
 
-    def probSelectStim(event, action):
+    def probSelectStim(event, action, lastObservation=None):
         return event
 
     probSelectStim.Name = "probSelectStimDirect"
