@@ -84,8 +84,6 @@ class model(object):
 
         self.currAction = self.decision
 
-        self.storeState()
-
         return self.currAction
 
     def observe(self, state):
@@ -117,6 +115,7 @@ class model(object):
 
             if type(events) is not NoneType:
                 self._processEvent(events)
+                self.storeState()
             self.lastObservation = None
         else:
             # If the model is expected to act,
@@ -124,11 +123,14 @@ class model(object):
             # and calculate the next action
 
             # If the last observation still has not been processed,
-            # process it
+            # process it. There was an action but feedback was NoneType
+            # Since another action is expected it is time to learn from the previous
+            # action
             if type(lastEvents) is not NoneType:
                 self._processEvent(lastEvents)
+                self.storeState()
 
-            # Store stimuli, regardless if it is an event or a None type
+            # Store stimuli, regardless if it is an event or a NoneType
             self.lastObservation = events
 
             self._processAction(events)
@@ -153,6 +155,7 @@ class model(object):
         if type(events) is not NoneType:
             self._processEvent(events, lastObservation=self.lastObservation)
             self.lastObservation = None
+            self.storeState()
 
     def _processEvent(self, events, lastObservation=None):
 

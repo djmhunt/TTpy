@@ -135,7 +135,6 @@ class fitter(fit):
 
             model.observe(observation)
             model.currAction = action
-            model.storeState()
             model.feedback(reward)
 
 
