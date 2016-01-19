@@ -172,7 +172,7 @@ class OpALS(model):
         self.nogo = array(self.expectGo)
         self.actionValues = ones(self.expectation.shape)
         self.probabilities = array(self.prior)
-        self.decProbs = array(self.prior)
+        self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
         self.lastObservation = None
@@ -229,7 +229,7 @@ class OpALS(model):
 
         self.recAction.append(self.currAction)
         self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbs[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currAction])
         self.recExpectation.append(self.expectation.copy())
         self.recGo.append(self.go.copy())
         self.recNogo.append(self.nogo.copy())

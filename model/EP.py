@@ -84,6 +84,7 @@ class EP(model):
         self.decProbabilities = array(self.prior)
         self.validActions = None
         self.currAction = None
+        self.lastObservation = None
 
         # Recorded information
         self.recAction = []

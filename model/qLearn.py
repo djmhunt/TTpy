@@ -87,6 +87,7 @@ class qLearn(model):
         self.decProbabilities = array(self.prior)
         self.decision = None
         self.validActions = None
+        self.lastObservation = None
 
         # Recorded information
 
