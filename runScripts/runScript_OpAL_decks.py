@@ -22,10 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
-from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
-from experiment.pavlov import Pavlov, pavlovStimTemporal
-from experiment.probSelect import probSelect, probSelectStimDirect
+from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
 
 # The model factory
 from models import models
@@ -33,7 +30,7 @@ from models import models
 from model.decision.binary import decEta, decEtaSets, decSingle
 from model.decision.discrete import decMaxProb
 # The model
-from model.BP import BP
+from model.OpAL import OpAL
 
 from outputting import outputting
 
@@ -42,20 +39,29 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks, expParams, expExtraParams))
 
-eta = 0
+eta = 0.0
+alpha = 0.5
+alphaBounds = (0, 1)
+alphaC = 0.1
+alphaGoBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 10)
 numCritics = 2
 
-parameters = {'beta': sum(betaBounds) / 2}
-paramExtras = {'eta': eta,
-               'numCritics': numCritics,
-               'stimFunc': deckStimDualInfo(10, 0.01),
+parameters = {'alphaCrit': sum(alphaBounds)/2,
+              'alphaGo': sum(alphaGoBounds)/2,
+              'alphaNogo': sum(alphaGoBounds)/2,
+              'betaGo': sum(betaBounds)/2,
+              'betaNogo': sum(betaBounds)/2}
+
+paramExtras = {'numCritics': numCritics,
+               'expect': ones(numCritics) * 0.6,
+               'expectGo': ones(numCritics),
+               'stimFunc': deckStimDirectNormal(10),
                'decFunc': decEta(eta=eta)}
+modelSet = models((OpAL, parameters, paramExtras))
 
-modelSet = models((BP, parameters, paramExtras))
-
-outputOptions = {'simLabel': 'BP_decksSet',
+outputOptions = {'simLabel': 'OpAL_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
@@ -63,7 +69,11 @@ outputOptions = {'simLabel': 'BP_decksSet',
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'beta': betaBounds}
+bounds = {'alphaCrit': alphaBounds,
+          'alphaGo': alphaGoBounds,
+          'alphaNogo': alphaGoBounds,
+          'betaGo': betaBounds,
+          'betaNogo': betaBounds}
 
 ### For data fitting
 
@@ -75,7 +85,7 @@ from data import data, datasets
 
 from fitting.fitters.boundFunc import infBound, scalarBound
 
-# from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
+#from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
@@ -104,7 +114,6 @@ def scaleFuncSingle():
     scaleFunc.Name = "subOne"
     return scaleFunc
 
-
 # Define the fitting algorithm
 # fitAlg = minimize(fitQualFunc = "-2log",
 #                  method = 'constrained', #'unconstrained',
@@ -124,7 +133,9 @@ fit = fitter('subchoice',
              'ActionProb',
              fitAlg,
              scaleFuncSingle(),
-             actChoiceParams=[0, 1])
+             actChoiceParams=[0, 1],
+             fpRespVal=1/1e150
+             )
 
 # Run the data fitter
 dataFitting(expSets, modelSet, output, data=dataSet, fitter=fit)

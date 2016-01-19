@@ -22,10 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
-from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
-from experiment.pavlov import Pavlov, pavlovStimTemporal
-from experiment.probSelect import probSelect, probSelectStimDirect
+from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
 
 # The model factory
 from models import models
@@ -33,7 +30,7 @@ from models import models
 from model.decision.binary import decEta, decEtaSets, decSingle
 from model.decision.discrete import decMaxProb
 # The model
-from model.BP import BP
+from model.qLearn import qLearn
 
 from outputting import outputting
 
@@ -42,28 +39,32 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks, expParams, expExtraParams))
 
-eta = 0
+eta = 0.0
+alpha = 0.5
+alphaBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 10)
 numCritics = 2
 
-parameters = {'beta': sum(betaBounds) / 2}
-paramExtras = {'eta': eta,
+parameters = {'alpha':sum(alphaBounds)/2,
+              'beta':sum(betaBounds)/2}
+paramExtras = {'eta':eta,
                'numCritics': numCritics,
-               'stimFunc': deckStimDualInfo(10, 0.01),
+               'stimFunc': deckStimDirect(),
                'decFunc': decEta(eta=eta)}
 
-modelSet = models((BP, parameters, paramExtras))
+modelSet = models((qLearn, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'BP_decksSet',
+outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
                  'silent': False,
-                 'npErrResp': 'log'}  # 'raise','log'
+                 'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'beta': betaBounds}
+bounds = {'alpha': alphaBounds,
+          'beta': betaBounds}
 
 ### For data fitting
 
@@ -86,6 +87,7 @@ from fitting.fitters.evolutionary import evolutionary
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
                "../../Shared folders/worthy models and data/carlosdata/",
                "../../Shared folders/worthy models and data/iant_studentdata/"]
+#dataFolders = ["../testData/"]
 
 dataSet = datasets(dataFolders, ['mat'] * len(dataFolders))  # "./testData/",'mat')#
 
@@ -104,19 +106,19 @@ def scaleFuncSingle():
     scaleFunc.Name = "subOne"
     return scaleFunc
 
-
 # Define the fitting algorithm
-# fitAlg = minimize(fitQualFunc = "-2log",
+#fitAlg = minimize(fitQualFunc = "-2log",
 #                  method = 'constrained', #'unconstrained',
 #                  bounds = bounds,
 #                  boundCostFunc = scalarBound(base = 160),
 #                  numStartPoints = 5,
 #                  boundFit = True)
 fitAlg = evolutionary(fitQualFunc="-2log",
-                      bounds=bounds,
-                      boundCostFunc=scalarBound(base=160))  # ,
-#                      polish = False)
-# fitAlg = leastsq(dataShaper = "-2log")
+#                      strategy="all",
+                      boundCostFunc=scalarBound(base=160),
+#                      polish=False,
+                      bounds=bounds)
+#fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
 fit = fitter('subchoice',
@@ -124,7 +126,8 @@ fit = fitter('subchoice',
              'ActionProb',
              fitAlg,
              scaleFuncSingle(),
-             actChoiceParams=[0, 1])
+             actChoiceParams=[0, 1]
+             )
 
 # Run the data fitter
 dataFitting(expSets, modelSet, output, data=dataSet, fitter=fit)

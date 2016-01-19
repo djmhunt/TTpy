@@ -13,19 +13,16 @@ recommend making a copy of this for each sucessful investigation and storing it
 from __future__ import division
 
 import sys
-sys.path.append("../")  # So code can be found from the main folder
+sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate, arange, ones
+from numpy import array, concatenate, ones
 
 ### Import all experiments, models, outputting and interface functions
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
-from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
-from experiment.pavlov import Pavlov, pavlovStimTemporal
-from experiment.probSelect import probSelect, probSelectStimDirect
+from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
 
 # The model factory
 from models import models
@@ -33,7 +30,7 @@ from models import models
 from model.decision.binary import decEta, decEtaSets, decSingle
 from model.decision.discrete import decMaxProb
 # The model
-from model.BP import BP
+from model.BPMS import BPMS
 
 from outputting import outputting
 
@@ -45,17 +42,20 @@ expSets = experiments((Decks, expParams, expExtraParams))
 eta = 0
 beta = 0.5
 betaBounds = (0, 10)
+delta = 0.5
+deltaBounds = (0.001, 0.999)
 numCritics = 2
 
-parameters = {'beta': sum(betaBounds) / 2}
+parameters = {'delta': sum(deltaBounds)/2,
+              'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
                'numCritics': numCritics,
                'stimFunc': deckStimDualInfo(10, 0.01),
-               'decFunc': decEta(eta=eta)}
+               'decFunc': decSingle()}
 
-modelSet = models((BP, parameters, paramExtras))
+modelSet = models((BPMS, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'BP_decksSet',
+outputOptions = {'simLabel': 'BPMS_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
@@ -63,8 +63,8 @@ outputOptions = {'simLabel': 'BP_decksSet',
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'beta': betaBounds}
-
+bounds = {'delta': deltaBounds,
+          'beta': betaBounds}
 ### For data fitting
 
 from numpy import concatenate
@@ -104,7 +104,6 @@ def scaleFuncSingle():
     scaleFunc.Name = "subOne"
     return scaleFunc
 
-
 # Define the fitting algorithm
 # fitAlg = minimize(fitQualFunc = "-2log",
 #                  method = 'constrained', #'unconstrained',
@@ -114,8 +113,8 @@ def scaleFuncSingle():
 #                  boundFit = True)
 fitAlg = evolutionary(fitQualFunc="-2log",
                       bounds=bounds,
-                      boundCostFunc=scalarBound(base=160))  # ,
-#                      polish = False)
+                      boundCostFunc=scalarBound(base=160))
+#                      polish=False)
 # fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter

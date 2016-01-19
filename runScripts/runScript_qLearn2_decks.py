@@ -30,10 +30,9 @@ from experiment.probSelect import probSelect, probSelectStimDirect
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta, decEtaSets, decSingle
-from model.decision.discrete import decMaxProb
+from model.decision.binary import decEta
 # The model
-from model.BP import BP
+from model.qLearn2 import qLearn2
 
 from outputting import outputting
 
@@ -42,20 +41,25 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks, expParams, expExtraParams))
 
-eta = 0
+eta = 0.0
+alpha = 0.5
+alphaBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 10)
 numCritics = 2
 
-parameters = {'beta': sum(betaBounds) / 2}
+
+parameters = {'alphaPos': sum(alphaBounds)/2,
+              'alphaNeg': sum(alphaBounds)/2,
+              'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
-               'numCritics': numCritics,
-               'stimFunc': deckStimDualInfo(10, 0.01),
+               'numActions': 2,
+               'stimFunc': deckStimDirect(),
                'decFunc': decEta(eta=eta)}
 
-modelSet = models((BP, parameters, paramExtras))
+modelSet = models((qLearn2, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'BP_decksSet',
+outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
@@ -63,7 +67,9 @@ outputOptions = {'simLabel': 'BP_decksSet',
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'beta': betaBounds}
+bounds = {'alphaPos': alphaBounds,
+          'alphaNeg': alphaBounds,
+          'beta': betaBounds}
 
 ### For data fitting
 
@@ -104,7 +110,6 @@ def scaleFuncSingle():
     scaleFunc.Name = "subOne"
     return scaleFunc
 
-
 # Define the fitting algorithm
 # fitAlg = minimize(fitQualFunc = "-2log",
 #                  method = 'constrained', #'unconstrained',
@@ -113,10 +118,10 @@ def scaleFuncSingle():
 #                  numStartPoints = 5,
 #                  boundFit = True)
 fitAlg = evolutionary(fitQualFunc="-2log",
-                      bounds=bounds,
-                      boundCostFunc=scalarBound(base=160))  # ,
-#                      polish = False)
-# fitAlg = leastsq(dataShaper = "-2log")
+                      boundCostFunc=scalarBound(base=160),
+#                      polish=False,
+                      bounds=bounds)
+#fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
 fit = fitter('subchoice',
