@@ -124,7 +124,7 @@ def decEta(expResponses=(0, 1), eta=0):
                 return None, probabilities
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
-            else:
+            elif len(validResponses) > 2:
                 warn("Bad number of validResponses: " + str(validResponses))
 
         prob = probabilities[0]
@@ -232,7 +232,7 @@ def decEtaSets(expResponses=(0, 1), eta=0):
                 return None, probDict
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
-            else:
+            elif len(validResponses) > 2:
                 warn("Bad number of validResponses: " + str(validResponses))
 
         probDec = probPair[0]
