@@ -32,7 +32,7 @@ import sys
 sys.path.append("../") #So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate, arange
+from numpy import array, concatenate, arange, ones
 
 ### Import all experiments, models, outputting and interface functions
 # The experiment factory
@@ -54,62 +54,31 @@ from model.OpAL import OpAL
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
-expParams = {'rewardProb': arange(0.5,1,0.1)}
+expParams = {'rewardProb': 0.7}
 expExtraParams = {'learningLen':100}
 expSets = experiments((probSelect,expParams,expExtraParams))
 
-sR = arange(-0.1,0.35,0.05)
+sA = arange(-0.1,0.15,0.05)
+extended = ones((1000,len(sA)))
+extended[:,:] = sA
+alphaGoDiffSet = extended.flatten()
 
-alphaGoDiffSet = concatenate((sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,sR,
-                              sR,sR,sR,sR,sR,sR,sR))
+sR = arange(-1,1.5,0.5)
+rhoSet = sR
 
-rhoSet = arange(-1,1.5,0.5)
+numActions = 4
 
-parameters = {'alphaGoDiff':alphaGoDiffSet}#,
-#              'betaDiff':rhoSet}
+parameters = {'alphaGoDiff':alphaGoDiffSet,
+              'betaDiff':rhoSet}
 paramExtras = {'alpha': 0.1,
-#               'alphaGoDiff':0,
                'alphaC': 0.1,
                'beta': 1,
-               'betaDiff':0,
-               'numActions':4,
+#               'betaDiff':0,
+               'numActions':numActions,
+               'expect': ones(numActions)/numActions,
+               'expectGo': ones(numActions),
                'stimFunc':deckStimDirect(),
-               'decFunc':decMaxProb([0,1,2,3])} #For decks
+               'decFunc':decMaxProb(range(numActions))} #For decks
 modelSet = models((OpAL,parameters,paramExtras))
 
 outputOptions = {'simLabel': 'OpAL_simSet',
