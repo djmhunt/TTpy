@@ -167,6 +167,7 @@ def decEtaSets(expResponses=(0, 1), eta=0):
     eta : float, optional :math:`\\eta`
         The threshold for decisions. :math:`\Vert p_0-0.5\Vert> \\eta`
         If true a decision is taken. If false the function responds ``None``
+        Default ``0``
 
     Returns
     -------

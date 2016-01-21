@@ -46,7 +46,7 @@ class MS_rev(model):
     prior : array of two floats in ``[0,1]`` or just float in range, optional
         The prior probability of of the two states being the correct one.
         Default ``array([0.5,0.5])``
-    numStimuli : integer, optional
+    numCritics : integer, optional
         The number of different reaction learning sets. Default ``2``
     activity : array, optional
         The `activity` of the neurons. The values are between ``[0,1]``
