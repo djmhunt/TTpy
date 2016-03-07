@@ -47,13 +47,14 @@ alpha = 0.5
 alphaBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 10)
-numCritics = 2
+numCritics = 8
 
 parameters = {'alpha': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
                'activity': ones(numCritics) * 1.05,
                'numCritics': numCritics,
+               'prior': ones(numCritics) * 1.5,
                'stimFunc': deckStimDualInfo(10,0.01),
                'decFunc': decEta(eta=eta)}
 

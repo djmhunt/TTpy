@@ -30,7 +30,7 @@ from models import models
 from model.decision.binary import decEta, decEtaSets, decSingle
 from model.decision.discrete import decMaxProb
 # The model
-from model.qLearn import qLearn
+from model.OpAL_H import OpAL_H
 
 from outputting import outputting
 
@@ -42,29 +42,38 @@ expSets = experiments((Decks, expParams, expExtraParams))
 eta = 0.0
 alpha = 0.5
 alphaBounds = (0, 1)
+alphaC = 0.1
+alphaGoBounds = (0, 1)
 beta = 0.5
-betaBounds = (0, 30)
+betaBounds = (0, 10)
 numCritics = 2
 
-parameters = {'alpha':sum(alphaBounds)/2,
-              'beta':sum(betaBounds)/2}
-paramExtras = {'eta':eta,
-               'numCritics': numCritics,
-               'stimFunc': deckStimDirect(),
+parameters = {'alphaCrit': sum(alphaBounds)/2,
+              'alphaGo': sum(alphaGoBounds)/2,
+              'alphaNogo': sum(alphaGoBounds)/2,
+              'betaGo': sum(betaBounds)/2,
+              'betaNogo': sum(betaBounds)/2}
+
+paramExtras = {'numCritics': numCritics,
+               'expect': ones(numCritics) * 0.6,
+               'expectGo': ones(numCritics),
+               'stimFunc': deckStimDirectNormal(10),
                'decFunc': decEta(eta=eta)}
+modelSet = models((OpAL_H, parameters, paramExtras))
 
-modelSet = models((qLearn, parameters, paramExtras))
-
-outputOptions = {'simLabel': 'qLearn_dataSet',
+outputOptions = {'simLabel': 'OpAL_H_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
                  'silent': False,
-                 'npErrResp' : 'log'}#'raise','log'
+                 'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
-bounds = {'alpha': alphaBounds,
-          'beta': betaBounds}
+bounds = {'alphaCrit': alphaBounds,
+          'alphaGo': alphaGoBounds,
+          'alphaNogo': alphaGoBounds,
+          'betaGo': betaBounds,
+          'betaNogo': betaBounds}
 
 ### For data fitting
 
@@ -76,7 +85,7 @@ from data import data, datasets
 
 from fitting.fitters.boundFunc import infBound, scalarBound
 
-# from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
+#from fitting.expfitter import fitter #Not sure this will ever be used, but I want to keep it here for now
 from fitting.actReactFitter import fitter
 from fitting.fitters.leastsq import leastsq
 from fitting.fitters.minimize import minimize
@@ -87,7 +96,6 @@ from fitting.fitters.evolutionary import evolutionary
 dataFolders = ["../../Shared folders/worthy models and data/jessdata/",
                "../../Shared folders/worthy models and data/carlosdata/",
                "../../Shared folders/worthy models and data/iant_studentdata/"]
-#dataFolders = ["../testData/"]
 
 dataSet = datasets(dataFolders, ['mat'] * len(dataFolders))  # "./testData/",'mat')#
 
@@ -107,18 +115,17 @@ def scaleFuncSingle():
     return scaleFunc
 
 # Define the fitting algorithm
-#fitAlg = minimize(fitQualFunc = "-2log",
+# fitAlg = minimize(fitQualFunc = "-2log",
 #                  method = 'constrained', #'unconstrained',
 #                  bounds = bounds,
 #                  boundCostFunc = scalarBound(base = 160),
 #                  numStartPoints = 5,
 #                  boundFit = True)
 fitAlg = evolutionary(fitQualFunc="-2log",
-#                      strategy="all",
-                      boundCostFunc=scalarBound(base=160),
-#                      polish=False,
-                      bounds=bounds)
-#fitAlg = leastsq(dataShaper = "-2log")
+                      bounds=bounds,
+                      boundCostFunc=scalarBound(base=160))  # ,
+#                      polish = False)
+# fitAlg = leastsq(dataShaper = "-2log")
 
 # Set up the fitter
 fit = fitter('subchoice',
@@ -126,7 +133,8 @@ fit = fitter('subchoice',
              'ActionProb',
              fitAlg,
              scaleFuncSingle(),
-             actChoiceParams=[0, 1]
+             actChoiceParams=[0, 1],
+             fpRespVal=1/1e150
              )
 
 # Run the data fitter

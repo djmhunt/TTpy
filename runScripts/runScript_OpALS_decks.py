@@ -45,9 +45,9 @@ alphaBounds = (0, 1)
 alphaC = 0.1
 alphaGoBounds = (0, 1)
 beta = 0.5
-betaBounds = (0, 10)
+betaBounds = (0, 30)
 numCritics = 2
-saturateVal = 49
+saturateVal = 14
 
 parameters = {'alphaCrit': sum(alphaBounds)/2,
               'alphaGo': sum(alphaGoBounds)/2,

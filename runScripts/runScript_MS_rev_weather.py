@@ -49,6 +49,8 @@ numCritics = 2
 parameters = {'alpha': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
+               'numCritics': numCritics,
+               'prior': ones(numCritics) * 1.5,
                'stimFunc': deckStimDualInfo(10,0.01),
                'decFunc': decEta(eta=eta)}
 

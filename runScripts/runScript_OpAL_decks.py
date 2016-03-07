@@ -45,7 +45,7 @@ alphaBounds = (0, 1)
 alphaC = 0.1
 alphaGoBounds = (0, 1)
 beta = 0.5
-betaBounds = (0, 10)
+betaBounds = (0, 30)
 numCritics = 2
 
 parameters = {'alphaCrit': sum(alphaBounds)/2,

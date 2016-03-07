@@ -13,17 +13,16 @@ recommend making a copy of this for each successful investigation and storing it
 from __future__ import division
 
 import sys
-
 sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate, arange, ones, isnan
+from numpy import array, ones
 
 ### Import all experiments, models, outputting and interface functions
 # The experiment factory
 from experiments import experiments
 # The experiment and stimulus processors
-from experiment.weather import Weather, weatherStimAllAction
+from experiment.weather import Weather, weatherStimAllAction, weatherStimFeedObs
 
 # The model factory
 from models import models
@@ -50,7 +49,7 @@ paramExtras = {'eta': eta,
                'prior': ones(numCritics) * 1.5,
                'numCritics': numCritics,
                'stimFunc': weatherStimAllAction(2),
-               'decFunc': decMaxProbSets(expResponses=[0, 1])}
+               'decFunc': decEtaSets(eta=eta, expResponses=[0, 1])}
 
 modelSet = models((BP, parameters, paramExtras))
 
