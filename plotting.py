@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import matplotlib
 #matplotlib.use('Agg')
@@ -68,8 +68,8 @@ def lineplot(x,Y,labels,axisLabels):
     labels : list of strings
         Description of each of the m datasets in ``Y``
     axisLabels : dictionary
-        A dictionary of axis properties, all optional, used in ``axPlotlines``. See
-        ``axPlotlines`` for more details.
+        A dictionary of axis properties, all optional, used in ``axPlotlines``.
+        See ``axPlotlines`` for more details.
 
     Returns
     -------
@@ -575,6 +575,19 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
 #    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
     return CS
+    
+def axQuiver(ax,X,Y, dX, dY,CB_label = ""):
+    #Work in progress
+    
+    ax.quiver(X, Y, DE, DY, pivot='mid',cmap=local_cmap) 
+    
+    CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
+    CBI.set_label(CB_label)
+    ax.legend()
+    ax.set_title(title)
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    ax.grid()
 
 def axPlotlines(ax, x, Y, labels, axisLabels):
     """
