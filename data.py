@@ -24,7 +24,7 @@ def datasets(folders, fileTypes):
     ----------
     folders : list of strings
         The folder strings should end in a "/"
-    fileType : list of strings
+    fileTypes : list of strings
         The file extensions found after the ".". Currently only mat and xlsx files are
         supported.
     
@@ -37,9 +37,9 @@ def datasets(folders, fileTypes):
     data : The function called by this one
     """
     dataSetList = []
-    for folder, fileType in izip(folders,fileTypes):
+    for folder, fileType in izip(folders, fileTypes):
         
-        d = data(folder,fileType)
+        d = data(folder, fileType)
         
         dataSetList.append(d)
         
@@ -87,6 +87,9 @@ def data(folder, fileType, **kwargs):
         
         dataSet = getxlsxData(folder, files, **kwargs)
 
+    else:
+        dataSet = []
+
     return dataSet
 
 
@@ -121,12 +124,13 @@ def getFiles(folder, fileType):
 
     files = listdir(folder)
     
-    dataFiles = [f for f in files if f.endswith(fileType) ]
+    dataFiles = [f for f in files if f.endswith(fileType)]
 
     sortedFiles = sortStrings(dataFiles, "." + fileType)
 
     return sortedFiles
-    
+
+
 def sortStrings(unorderedList, suffix):
     """
     Takes an unordered list of strings and sorts them if possible and necessary
@@ -162,12 +166,13 @@ def sortStrings(unorderedList, suffix):
     
     prefix = getPrefix(unorderedList, suffixLen)
     
-    sortedList = intCore(unorderedList,prefix,suffix)
+    sortedList = intCore(unorderedList, prefix, suffix)
     if sortedList:
         return sortedList
     else:
         return unorderedList   
-    
+
+
 def getPrefix(unorderedList, suffixLen):
     """
     Identifies any initial part of strings that are identical 
@@ -195,7 +200,7 @@ def getPrefix(unorderedList, suffixLen):
 
     """
     
-    for i in xrange(1,len(unorderedList[0])-suffixLen+2): # Assuming the prefix might be the string-suffix
+    for i in xrange(1, len(unorderedList[0])-suffixLen+2): # Assuming the prefix might be the string-suffix
         sec = unorderedList[0][:i]
         if all((sec == d[:i] for d in unorderedList)):
             continue
@@ -204,7 +209,7 @@ def getPrefix(unorderedList, suffixLen):
     return unorderedList[0][:i-1]
 
 
-def intCore(unorderedList,prefix,suffix):
+def intCore(unorderedList, prefix, suffix):
     """Takes the *core* part of a string and, assuming it is an integer, 
     sorts them. Returns the list sorted
     
@@ -241,17 +246,17 @@ def intCore(unorderedList,prefix,suffix):
     
     try:
         if suffix:
-            core = [(d[len(prefix):-(len(suffix))],i) for i,d in enumerate(unorderedList)]
+            core = [(d[len(prefix):-(len(suffix))], i) for i, d in enumerate(unorderedList)]
         else:
-            core = [(d[len(prefix):],i) for i,d in enumerate(unorderedList)]
-        coreInt = [(int(c),i) for c,i in core]
+            core = [(d[len(prefix):], i) for i, d in enumerate(unorderedList)]
+        coreInt = [(int(c), i) for c, i in core]
     except:
         return []
     
     coreSorted = sorted(coreInt)
-    coreStr = [(str(c),i) for c,i in coreSorted]
+    coreStr = [(str(c), i) for c, i in coreSorted]
     
-    sortedStrings = [''.join([prefix,'0'*(len(core[i][0])-len(s)),s,suffix]) for s,i in coreStr]
+    sortedStrings = [''.join([prefix, '0'*(len(core[i][0])-len(s)), s, suffix]) for s, i in coreStr]
     
     return sortedStrings
     
@@ -276,7 +281,7 @@ def getmatData(folder, files):
     --------
     >>> folder = './Data/'
     >>> dataFiles = ['subj1.mat', 'subj2.mat', 'subj11.mat']
-    >>> getmatData(folder, files)
+    >>> getmatData(folder, dataFiles)
     [{'cumpts': array([ 7, 17, 19, 21], dtype=uint8)},
      {'cumpts': array([12, 22, 24, 26], dtype=uint8)},
      {'cumpts': array([ 5, 15, 17, 19], dtype=uint8)}]
@@ -291,9 +296,7 @@ def getmatData(folder, files):
 
         mat = loadmat(folder + f)
 
-        dataD = {}
-        
-        dataD["fileName"] = f
+        dataD = {"fileName": f}
 
         for m, v in mat.iteritems():
             if m[0:2] != "__":
@@ -343,7 +346,7 @@ def getxlsxData(folder, files, **kwargs):
     
     """
     
-    splitBy = kwargs.pop('splitBy',[])
+    splitBy = kwargs.pop('splitBy', [])
     if isinstance(splitBy, str):
         splitBy = [splitBy]
     
