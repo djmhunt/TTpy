@@ -4,7 +4,7 @@
 """
 from __future__ import division, print_function
 
-from numpy import array, size, isnan, ones
+from numpy import array, size, isnan, ones, reshape, sum
 from types import NoneType
 
 from modelSetPlot import modelSetPlot
@@ -26,34 +26,48 @@ class model(object):
     currAction : int
         The current action chosen by the model. Used to pass participant action
         to model when fitting
+
+    Parameters
+    ----------
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
+    numStimuli : integer, optional
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
+    numCritics : integer, optional
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0,1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones(numCritics) / numCritics)``
+    stimFunc : function, optional
+        The function that transforms the stimulus into a form the model can
+        understand and a string to identify it later. Default is blankStim
+    decFunc : function, optional
+        The function that takes the internal values of the model and turns them
+        in to a decision.
     """
 
-    Name = "model"
+    Name = "modelTemplate"
 
     def __init__(self, **kwargs):
         """"""
-        self.numCritics = kwargs.pop('numCritics', 2)
-        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+        kwargRemains = self.genStandardParameters(kwargs)
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numCritics + 1))))
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.decisionFunc = kwargRemains.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numActions + 1))))
 
-        self.currAction = 1
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
-        self.probabilities = array(self.prior)
-
-        self.parameters = {"Name": self.Name,
-                           "numCritics": self.numCritics,
-                           "prior": self.prior,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
+        self.genStandardParameterDetails()
 
         # Recorded information
+        self.genStandardResultsStore()
 
-        self.recAction = []
-        self.recEvents = []
 
     def __eq__(self, other):
 
@@ -82,109 +96,213 @@ class model(object):
         action : integer or None
         """
 
-        self.currAction = self.decision
-
         return self.currAction
 
     def observe(self, state):
         """
-        Receives the latest observation
+        Receives the latest observation and decides what to do with it
+
+        There are five possible states:
+        Observation
+        Observation Action
+        Observation Action Feedback
+        Action Feedback
+        Observation Feedback
 
         Parameters
         ----------
         state : tuple of ({int | float | tuple},{tuple of int | None})
             The stimulus from the experiment followed by the tuple of valid 
-            actions. Returns without doing anything if the value of the 
-            stimulus is ``None``.
+            actions. Passes the values onto a processing function,
+            self._updateObservation``.
 
         """
 
-        self._updateObservation(state)
-
-    def _updateObservation(self, state):
-        """Processes updates to new actions"""
-
         events, validActions = state
+
         lastEvents = self.lastObservation
         self.validActions = validActions
 
+        # If the last observation still has not been processed,
+        # and there has been no feedback, then process it.
+        # There may have been an action but feedback was NoneType
+        # Since we have another observation it is time to learn from the previous one
+        if type(lastEvents) is not NoneType:
+            self.processEvent(lastEvents, self.currAction)
+            self.storeState()
+
+        self.lastObservation = events
+
+        # If the model is not expected to act, even for a dummy action,
+        # then the currentAction can be set to the rest value
+        # Otherwise choose an action
         if type(validActions) is NoneType:
-            # If the model is not expected to act,
-            # even for a dummy action,
-            # so there will be no feedback
-
-            if type(events) is not NoneType:
-                self._processEvent(events)
-                self.storeState()
-            self.lastObservation = None
+            self.setNonAction(self.currAction)
         else:
-            # If the model is expected to act,
-            # store any observations for updating the model after the action feedback
-            # and calculate the next action
-
-            # If the last observation still has not been processed,
-            # process it. There was an action but feedback was NoneType
-            # Since another action is expected it is time to learn from the previous
-            # action
-            if type(lastEvents) is not NoneType:
-                self._processEvent(lastEvents)
-                self.storeState()
-
-            # Store stimuli, regardless if it is an event or a NoneType
-            self.lastObservation = events
-
-            self._processAction(events)
+            self.currAction, self.decProbabilities = self.chooseAction(self.probabilities, self.currAction, events, validActions)
 
     def feedback(self, response):
         """
-        Receives the reaction to the action
+        Receives the reaction to the action and processes it
 
         Parameters
         ----------
         response : float
-            The stimulus from the experiment. Returns without doing anything if
-            the value of response is `None`.
+            The response from the experiment after an action. Returns without doing
+            anything if the value of response is `None`.
         """
 
-        self._updateReaction(response)
-
-    def _updateReaction(self, events):
-        """Processes updates to feedback"""
-
         # If there is feedback
-        if type(events) is not NoneType:
-            self._processEvent(events, lastObservation=self.lastObservation)
+        if type(response) is not NoneType:
+            self.processEvent(self.lastObservation, self.currAction, response)
             self.lastObservation = None
             self.storeState()
 
-    def _processEvent(self, events, lastObservation=None):
+    def processEvent(self, observation, action=None, response=None):
+        """
+        Integrates the information from a stimulus, action, response set, regardless
+        of which of the three elements are present.
 
-        if size(events) == 0 or isnan(events):
-            event = array([None] * self.numCritics)
-            self.recEvents.append(event)
+        Parameters
+        ----------
+        stimuli : {int | float | tuple}
+            The stimuli received
+        action : int, optional
+            The chosen action of the model. Default ``None``
+        response : float, optional
+            The response from the experiment after an action. Default ``None``
+        """
+
+        self.recStimuli.append(observation)
+        self.recReward.append(response)
+
+        # If there was a reward passed but it was empty, there is nothing to update
+        if type(response) is not NoneType and (size(response) == 0 or isnan(response)):
             return
 
-        event = self.stimFunc(events, self.currAction, lastObservation=lastObservation)
+        # Find the reward expectation
+        expectedReward, stimuli, stimuliFilter = self._rewardExpectation(observation, action, response)
 
-        self.recEvents.append(event)
+        # If there was no reward, the the stimulus is the learnt 'reward'
+        if type(response) is NoneType:
+            response = stimuli
 
-        self._updateModel(event)
+        # Find the significance of the discrepency between the response and the expected reponse
+        delta = self._delta(response, expectedReward)
 
-    def _updateModel(self, event):
+        # Use that discrepency to update the model
+        self._updateModel(delta, stimuli, action)
+
+    def _rewardExpectation(self, stimuli, action, response):
+        """Calculate the reward based on the action and stimuli
+
+        This contains parts that are experiment dependent
+
+        Parameters
+        ---------
+        stimuli : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : float
+            The expected reward
+        """
+
+        # Calculate expectation by identifying the relevant stimuli for the action
+        # First identify the expectations relevant to the action
+        # Filter them weighted by the stimuli
+        # Calculate the combined value
+        # Return the value
+
+        # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
+        return 0
+
+    def _delta(self, reward, expectation):
+        """
+        Calculates the significance of the discrepancy between the response and the expected response
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+
+        Returns
+        -------
+        delta : float
+        """
+
+        return 0
+
+    def _updateModel(self, delta, stimuli, action):
         """
         Parameters
         ----------
 
-        event : list, dict or float
+        stimuli : list, dict or float
             Whatever suits the model best
 
         """
 
         # There is no model here
 
-    def _processAction(self, events):
+    def chooseAction(self, probabilities, currAction, events, validActions):
+        """
+        Chooses the next action and returns the associated probabilities
 
-        self.decision, self.decProbabilities = self.decisionFunc(self.probabilities, self.currAction, stimulus=events, validResponses=self.validActions)
+        Parameters
+        ----------
+        probabilities : list of floats
+            The probabilities associated with each combinations
+        currAction : int
+            The last chosen action
+        events : list of floats
+            The stimuli. If probActions is True then this will be unused as the probabilities will already be
+        validActions
+
+        Returns
+        -------
+        newAction : int
+            The chosen action
+        decProbabilities : list of floats
+            The weights for the different actions
+
+        """
+
+        decision, decProbabilities = self.decisionFunc(probabilities, currAction, stimulus=events, validResponses=validActions)
+        self.decision = decision
+
+        return decision, decProbabilities
+
+    def actStimMerge(self, actStimuliParam, stimFilter=1):
+        """
+        Takes the parameter to be merged by stimulli and filters it by the stimuli values
+
+        Parameters
+        ----------
+        actStimuliParam : list of floats
+            The list of values representing each action stimuli pair, where the stimuli will have their filtered
+             values merged together.
+        stimFilter : array of floats or a float, optional
+            The list of active stimuli with their weightings or one weight for all.
+            Default ``1``
+
+        Returns
+        -------
+        actionParams : list of floats
+            The parameter values associated with each action
+
+        """
+
+        actionParamSets = reshape(actStimuliParam, (self.numActions, self.numStimuli))
+        actionParamSets = actionParamSets * stimFilter
+        actionParams = sum(actionParamSets, axis=0)
+
+        return actionParams
 
     def outputEvolution(self):
         """
@@ -195,10 +313,7 @@ class model(object):
         results : dictionary
         """
 
-        results = self.parameters.copy()
-
-        results["Actions"] = array(self.recAction)
-        results["Events"] = array(self.recEvents)
+        results = self.standardResultOutput()
 
         return results
 
@@ -208,7 +323,96 @@ class model(object):
         accessed later
         """
 
+        self.storeStandardResults()
+
+    def standardResultOutput(self):
+        """
+        Returns the relevant data expected from a model as well as the parameters for the current model
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary of details about the
+
+        """
+
+        results = self.parameters.copy()
+
+        results["Actions"] = array(self.recAction)
+        results["Stimuli"] = array(self.recStimuli)
+        results["Rewards"] = array(self.recReward)
+        results["ValidActions"] = array(self.recValidActions)
+        results["Decisions"] = array(self.recDecision)
+        results["Probabilities"] = array(self.recProbabilities)
+        results["ActionProb"] = array(self.recActionProb)
+        results["DecisionProbs"] = array(self.recActionProbs)
+
+        return results
+
+    def storeStandardResults(self):
+        """
+        Updates the store of standard results found across models
+        """
+
         self.recAction.append(self.currAction)
+        self.recValidActions.append(self.validActions[:])
+        self.recDecision.append(self.decision)
+        self.recProbabilities.append(self.probabilities.copy())
+        self.recActionProbs.append(self.decProbabilities.copy())
+        self.recActionProb.append(self.decProbabilities[self.currAction])
+
+    def genStandardParameters(self, kwargs):
+        """Initialises the standard parameters and variables for a model
+        """
+
+        self.numActions = kwargs.pop('numActions', 2)
+        self.numStimuli = kwargs.pop('numStimuli', 1)
+        self.numCritics = kwargs.pop('numCritics', self.numActions * self.numStimuli)
+        self.prior = kwargs.pop('prior', ones((self.numActions, self.numStimuli)) / self.numCritics)
+
+        self.probActions = kwargs.pop('probActions', True)
+
+        self.currAction = None
+        self.decision = None
+        self.validActions = None
+        self.lastObservation = None
+
+        if self.probActions:
+            self.probabilities = ones(self.numActions) / self.numActions
+            self.decProbabilities = ones(self.numActions) / self.numActions
+        else:
+            self.probabilities = array(self.prior)
+            self.decProbabilities = array(self.prior)
+
+        return kwargs
+
+    def genStandardParameterDetails(self):
+        """
+        Generates the standard parameters descibing the model as implemented.
+        """
+
+        self.parameters = {"Name": self.Name,
+                           "numActions": self.numActions,
+                           "numStimuli": self.numStimuli,
+                           "numCritics": self.numCritics,
+                           "probActions": self.probActions,
+                           "prior": self.prior,
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
+
+    def genStandardResultsStore(self):
+        """Set up the dictionary that stores the standard variables used to track a model
+
+        """
+
+        self.recAction = []
+        self.recStimuli = []
+        self.recReward = []
+        self.recValidActions = []
+        self.recDecision = []
+        self.recProbabilities = []
+        self.recActionProbs = []
+        self.recActionProb = []
 
     def params(self):
         """
