@@ -199,8 +199,8 @@ def deckStimDirect():
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
 
-    def deckStim(event, action, lastObservation=None):
-        return event
+    def deckStim(observation, action):
+        return 1, observation
 
     deckStim.Name = "deckStimDirect"
     return deckStim
@@ -231,8 +231,8 @@ def deckStimDirectNormal(maxEventVal):
     model.opal, model.opals
     """
 
-    def deckStim(event, action, lastObservation=None):
-        return event / maxEventVal
+    def deckStim(observation, action):
+        return 1, observation / maxEventVal
 
     deckStim.Name = "deckStimDirectNormal"
     return deckStim
@@ -274,17 +274,17 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
     >>> from experiment.decks import deckStimAllInfo
     >>> stim = deckStimAllInfo(10,1,2)
     >>> stim(6,0)
-    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    (1, array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
     >>> stim(6,1)
-    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
+    (1, array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]))
     """
     numDiffEvents = maxEventVal-minEventVal+1
     respZeros = zeros(numDiffEvents * numActions)
 
-    def deckStim(event, action, lastObservation=None):
+    def deckStim(observation, action):
         stimulus = respZeros.copy() + 1
-        stimulus[numDiffEvents*action + event - 1] += 1
-        return stimulus
+        stimulus[numDiffEvents*action + observation - 1] += 1
+        return 1, stimulus
 
     deckStim.Name = "deckStimAllInfo"
     deckStim.Params = {"maxEventVal": maxEventVal,
@@ -314,12 +314,12 @@ def deckStimDualInfo(maxEventVal, epsilon):
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
-    devisor = maxEventVal + epsilon
+    divisor = maxEventVal + epsilon
 
-    def deckStim(event, action, lastObservation=None):
-        stim = (event/devisor)*(1-action) + (1-(event/devisor))*action
+    def deckStim(observation, action):
+        stim = (observation / divisor) * (1 - action) + (1 - (observation / divisor)) * action
         stimulus = [stim, 1-stim]
-        return stimulus
+        return 1, stimulus
 
     deckStim.Name = "deckStimDualInfo"
     deckStim.Params = {"epsilon": epsilon}
@@ -349,13 +349,13 @@ def deckStimDualInfoLogistic(maxEventVal, minEventVal, epsilon):
     """
     mid = (maxEventVal + minEventVal)/2
 
-    def deckStim(event, action, lastObservation=None):
+    def deckStim(observation, action):
 
-        x = exp(epsilon * (event-mid))
+        x = exp(epsilon * (observation-mid))
 
         stim = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
         stimulus = [stim, 1-stim]
-        return stimulus
+        return 1, stimulus
 
     deckStim.Name = "deckStimDualInfoLogistic"
     deckStim.Params = {"midpoint": mid,

@@ -184,7 +184,7 @@ class Weather(experiment):
         self.recAction[self.t] = self.action
 
 
-def weatherStimFeedObs():
+def weatherStimDirect():
     """
     Processes the weather stimuli for models expecting just the event
 
@@ -204,11 +204,9 @@ def weatherStimFeedObs():
     model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta
     """
 
-    def weatherStim(feedback, action, lastObservation=None):
-        if feedback == action:
-            return lastObservation
-        else:
-            return zeros(size(lastObservation))
+    def weatherStim(observation, action):
+
+        return observation, observation
 
     weatherStim.Name = "weatherStimDirect"
     return weatherStim
@@ -245,36 +243,42 @@ def weatherStimAllAction(numActions):
     --------
     >>> from experiment.weather import weatherStimAllAction
     >>> stim = weatherStimAllAction(2)
-    >>> stim(0, 0, lastObservation=array([0.5,0.8]))
-    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    >>> stim(1, 0, lastObservation=array([0.5,0.8]))
-    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
+    >>> stim(array([1, 0, 0, 1]), 0)
+    (array([1, 0, 0, 1, 0, 0, 0, 0]), array([ 1, 0, 0, 1, 1, 1, 1, 1]))
+    >>> stim(array([1, 0, 0, 1]), 1)
+    (array([0, 0, 0, 0, 1, 0, 0, 1]), array([ 1, 1, 1, 1, 1, 0, 0, 1]))
     """
 
-    def weatherStim(feedback, action, lastObservation=None):
+    def weatherStim(observation, action):
         """
         For stimuli processing
 
         Parameters
         ----------
-        feedback : int
-            The action that was the correct one
+        observation :  None or list of ints or floats
+            The last observation that was recorded
         action : int
             The action chosen by the participant
-        lastObservation : None or list of ints or floats
-            The last observation that was recorded. Generally this is optional, but not here
 
         Returns
         -------
+        activeStimuli : tuple of {0,1}
         stimulus : tuple of floats
             The events processed into a form to be used for updating the expectations
         """
 
-        s = ones((numActions, size(lastObservation)))
-        s[feedback, :] = lastObservation
-        stimulus = s.flatten()
+        obsSize = size(observation)
 
-        return tuple(stimulus)
+        s = ones((numActions, obsSize))
+        a = zeros((numActions, obsSize))
+
+        s[action, :] = observation
+        a[action, :] = observation
+
+        stimulus = tuple(s.flatten())
+        activeStimuli = tuple(a.flatten())
+
+        return activeStimuli, stimulus
 
     weatherStim.Name = "weatherStimAllAction"
     weatherStim.Params = {"numActions": numActions}

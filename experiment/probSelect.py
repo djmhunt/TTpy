@@ -460,7 +460,6 @@ class probSelect(experiment):
             fig = lineplot()
 
 
-
 def probSelectStimDirect():
     """
     Processes the selection stimuli for models expecting just the event
@@ -486,14 +485,13 @@ def probSelectStimDirect():
     >>> from experiment.probSelect import probSelectStimDirect
     >>> stim = probSelectStimDirect()
     >>> stim(1,0)
-    1
+    (1, 1)
     >>> stim(0,0)
-    0
+    (1, 0)
     """
 
-
-    def probSelectStim(event, action, lastObservation=None):
-        return event
+    def probSelectStim(observation, action):
+        return 1, observation
 
     probSelectStim.Name = "probSelectStimDirect"
     probSelectStim.Params = {}

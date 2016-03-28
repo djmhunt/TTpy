@@ -297,8 +297,8 @@ def beadStimDirect():
     model.qLearn
     """
 
-    def beadStim(event, decision, lastObservation=None):
-        return event
+    def beadStim(observation, action):
+        return 1, observation
 
     beadStim.Name = "beadStimDirect"
     return beadStim
@@ -325,9 +325,9 @@ def beadStimDualDirect():
     model.EP
     """
 
-    def beadStim(event, decision, lastObservation=None):
-        stimulus = array([event, 1-event])
-        return stimulus
+    def beadStim(observation, action):
+        stimulus = array([observation, 1-observation])
+        return 1, stimulus
 
     beadStim.Name = "beadStimDualDirect"
 
@@ -362,10 +362,10 @@ def beadStimDualInfo(oneProb):
     model.MS, model.MS_rev, model.BP
     """
 
-    def beadStim(event, decision, lastObservation=None):
-        stim = oneProb*event + (1-oneProb)*(1-event)
+    def beadStim(observation, action):
+        stim = oneProb*observation + (1-oneProb)*(1-observation)
         stimulus = array([stim, 1-stim])
-        return stimulus
+        return 1, stimulus
 
     beadStim.Name = "beadStimDualInfo"
     beadStim.Params = {"oneProb": oneProb}
