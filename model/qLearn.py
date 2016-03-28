@@ -41,13 +41,26 @@ class qLearn(model):
         Sensitivity parameter for probabilities
     eta : float, optional
         Decision threshold parameter
-    prior : array of two floats in ``[0,1]`` or just float in range, optional
-        The prior probability of of the two states being the correct one.
-        Default ``array([0.5,0.5])``
-    expect: float, optional
-        The initialisation of the the expected reward. Default ``array([5,5])``
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
+    numStimuli : integer, optional
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
     numCritics : integer, optional
-        The number of different reaction learning sets. Default ``2``
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0, 1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones(numCritics) / numCritics)``
+    expect: array of floats, optional
+        The initialisation of the the expected reward.
+        Default ``ones((numActions, numStimuli)) * 5 / numStimuli``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -60,43 +73,26 @@ class qLearn(model):
 
     def __init__(self, **kwargs):
 
-        self.numCritics = kwargs.pop('numCritics', 2)
-        self.prior = kwargs.pop('prior', ones(self.numCritics)*0.5)
+        kwargRemains = self.genStandardParameters(kwargs)
 
         self.beta = kwargs.pop('beta', 4)
         self.alpha = kwargs.pop('alpha', 0.3)
         self.eta = kwargs.pop('eta', 0.3)
-        self.expect = kwargs.pop('expect', ones(self.numCritics)*5)
+        self.expectation = kwargs.pop('expect', ones((self.numActions, self.numStimuli)) * 5 / self.numStimuli)
 
         self.stimFunc = kwargs.pop('stimFunc', blankStim())
         self.decisionFunc = kwargs.pop('decFunc', decEta(eta=self.eta))
 
-        self.parameters = {"Name": self.Name,
-                           "beta": self.beta,
-                           "eta": self.eta,
-                           "alpha": self.alpha,
-                           "expectation": self.expect,
-                           "prior": self.prior,
-                           "numCritics": self.numCritics,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
-
-        self.currAction = None
-        self.expectation = array(self.expect)
-        self.probabilities = array(self.prior)
-        self.decProbabilities = array(self.prior)
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
+        self.genStandardParameterDetails()
+        self.parameters["alpha"] = self.alpha
+        self.parameters["beta"] = self.beta
+        self.parameters["eta"] = self.eta
+        self.parameters["expectation"] = self.expectation
 
         # Recorded information
+        self.genStandardResultsStore()
 
-        self.recAction = []
-        self.recEvents = []
-        self.recProbabilities = []
-        self.recActionProb = []
         self.recExpectation = []
-        self.recDecision = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -108,24 +104,77 @@ class qLearn(model):
             Probabilities, Actions and Events.
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
-        results["Probabilities"] = array(self.recProbabilities)
-        results["ActionProb"] = array(self.recActionProb)
         results["Expectation"] = array(self.recExpectation)
-        results["Actions"] = array(self.recAction)
-        results["Decisions"] = array(self.recDecision)
-        results["Events"] = array(self.recEvents)
 
         return results
 
-    def _updateModel(self, event):
+    def _rewardExpectation(self, observation, action, response):
+        """Calculate the reward based on the action and stimuli
+
+        This contains parts that are experiment dependent
+
+        Parameters
+        ---------
+        observation : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : float
+            The expected reward
+        """
+
+        activeStimuli, stimuli = self.stimFunc(observation, action)
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.;
+        if self.numStimuli > 1:
+            actionExpectations = self.actStimMerge(self.expectation, stimuli)
+        else:
+            actionExpectations = self.expectation
+
+        expectedReward = actionExpectations[action]
+
+        return expectedReward, stimuli, activeStimuli
+
+    def _delta(self, reward, expectation):
+        """
+        Calculates the comparison between the reward and the expectation
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+
+        Returns
+        -------
+        delta
+        """
+
+        delta = reward-expectation
+
+        return delta
+
+    def _updateModel(self, delta, stimuli, action):
+
+        expectation = self.expectation
 
         # Find the new activities
-        self._newAct(event, self.currAction)
+        self._newAct(delta, stimuli, action)
 
         # Calculate the new probabilities
-        self.probabilities = self._prob(self.expectation)
+        if self.probActions:
+            # Then we need to combine the expectations before calculating the probabilities
+            actExpectations = self.actStimMerge(expectation, stimuli)
+            self.probabilities = self._prob(actExpectations)
+        else:
+            self.probabilities = self._prob(expectation)
 
     def storeState(self):
         """
@@ -133,26 +182,35 @@ class qLearn(model):
         accessed later
         """
 
-        self.recAction.append(self.currAction)
-        self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currAction])
+        self.storeStandardResults()
+
         self.recExpectation.append(self.expectation.copy())
-        self.recDecision.append(self.decision)
 
-    def _newAct(self, event, chosen):
+    def _newAct(self, delta, stimuliFilter, action):
 
-        chosenExp = self.expectation[chosen]
-
-        self.expectation[chosen] = chosenExp + self.alpha*(event - chosenExp)
+        self.expectation[action, stimuliFilter] += self.alpha*delta
 
     def _prob(self, expectation):
 
+        """
+
+        Parameters
+        ----------
+        expectation : tuple of floats
+            The expectation values
+
+        Returns
+        -------
+        probs : list of floats
+            The calculated probabilities
+
+        """
         numerator = exp(self.beta*expectation)
         denominator = sum(numerator)
 
-        p = numerator / denominator
+        probs = numerator / denominator
 
-        return p
+        return probs
 
 
 def blankStim():

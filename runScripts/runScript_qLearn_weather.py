@@ -22,7 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
+from experiment.weather import Weather, weatherStimDirect
 
 # The model factory
 from models import models
@@ -37,20 +37,23 @@ from outputting import outputting
 ### Set the outputting, model sets and experiment sets
 expParams = {}
 expExtraParams = {}
-expSets = experiments((Decks, expParams, expExtraParams))
+expSets = experiments((Weather, expParams, expExtraParams))
 
 eta = 0.0
 alpha = 0.5
 alphaBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 10)
-numCritics = 2
+numActions = 2
+numStimuli = 4
+probActions = True
 
-parameters = {'alpha':sum(alphaBounds)/2,
-              'beta':sum(betaBounds)/2}
-paramExtras = {'eta':eta,
-               'numCritics': numCritics,
-               'stimFunc': deckStimDirect(),
+parameters = {'alpha': sum(alphaBounds)/2,
+              'beta': sum(betaBounds)/2}
+paramExtras = {'eta': eta,
+               'numActions': numActions,
+               'numStimuli': numStimuli,
+               'stimFunc': weatherStimDirect(),
                'decFunc': decEta(eta=eta)}
 
 modelSet = models((qLearn, parameters, paramExtras))
