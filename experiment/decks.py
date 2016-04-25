@@ -186,8 +186,8 @@ def deckStimDirect():
     Returns
     -------
     deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The function returns the event.
+        The function expects to be passed a tuple containing the observation and the
+        last action. The function returns a tuple of ``1`` and the observation.
 
     Attributes
     ----------
@@ -206,20 +206,47 @@ def deckStimDirect():
     return deckStim
 
 
-def deckStimDirectNormal(maxEventVal):
+def deckRewDirect():
     """
-    Processes the decks stimuli for models expecting just the event, but in range [0,1]
+    Processes the decks reward for models expecting just the reward
+
+    Returns
+    -------
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    """
+
+    def deckRew(reward, action):
+        return reward
+
+    deckRew.Name = "deckRewDirect"
+    return deckRew
+
+
+def deckRewDirectNormal(maxRewardVal):
+    """
+    Processes the decks reward for models expecting just the reward, but in range [0,1]
 
     Parameters
     ----------
-    maxEventVal : int
+    maxRewardVal : int
         The highest value a reward can have
 
     Returns
     -------
-    deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The function returns the event.
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
 
     Attributes
     ----------
@@ -231,23 +258,23 @@ def deckStimDirectNormal(maxEventVal):
     model.opal, model.opals
     """
 
-    def deckStim(observation, action):
-        return 1, observation / maxEventVal
+    def deckRew(reward, action):
+        return reward / maxRewardVal
 
-    deckStim.Name = "deckStimDirectNormal"
-    return deckStim
+    deckRew.Name = "deckRewDirectNormal"
+    return deckRew
 
 
-def deckStimAllInfo(maxEventVal, minEventVal, numActions):
+def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     """
-    Processes the decks stimuli for models expecting the reward information
+    Processes the decks reward for models expecting the reward information
     from all possible actions
 
     Parameters
     ----------
-    maxEventVal : int
+    maxRewardVal : int
         The highest value a reward can have
-    minEventVal : int
+    minRewardVal : int
         The lowest value a reward can have
     numActions : int
         The number of actions the participant can perform. Assumes the lowest
@@ -255,10 +282,10 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
 
     Returns
     -------
-    deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The
-        function returns a array of length (maxEventVal-minEventVal)*numActions.
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The reward that is a float and action is {0,1}. The
+        function returns a array of length (maxRewardVal-minRewardVal)*numActions.
 
     Attributes
     ----------
@@ -271,38 +298,38 @@ def deckStimAllInfo(maxEventVal, minEventVal, numActions):
 
     Examples
     --------
-    >>> from experiment.decks import deckStimAllInfo
-    >>> stim = deckStimAllInfo(10,1,2)
-    >>> stim(6,0)
-    (1, array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
-    >>> stim(6,1)
-    (1, array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]))
+    >>> from experiment.decks import deckRewAllInfo
+    >>> rew = deckRewAllInfo(10,1,2)
+    >>> rew(6,0)
+    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    >>> rew(6,1)
+    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
     """
-    numDiffEvents = maxEventVal-minEventVal+1
-    respZeros = zeros(numDiffEvents * numActions)
+    numDiffRewards = maxRewardVal-minRewardVal+1
+    respZeros = zeros(numDiffRewards * numActions)
 
-    def deckStim(observation, action):
-        stimulus = respZeros.copy() + 1
-        stimulus[numDiffEvents*action + observation - 1] += 1
-        return 1, stimulus
+    def deckRew(reward, action):
+        rewardProc = respZeros.copy() + 1
+        rewardProc[numDiffRewards*action + reward - 1] += 1
+        return rewardProc.T
 
-    deckStim.Name = "deckStimAllInfo"
-    deckStim.Params = {"maxEventVal": maxEventVal,
-                       "minEventVal": minEventVal,
+    deckRew.Name = "deckRewAllInfo"
+    deckRew.Params = {"maxRewardVal": maxRewardVal,
+                       "minRewardVal": minRewardVal,
                        "numActions": numActions}
-    return deckStim
+    return deckRew
 
 
-def deckStimDualInfo(maxEventVal, epsilon):
+def deckRewDualInfo(maxRewardVal, epsilon):
     """
-    Processes the decks stimuli for models expecting the reward information
+    Processes the decks reward for models expecting the reward information
     from two possible actions.
 
     Returns
     -------
-    deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The reward that is a float and action is {0,1}. The
         function returns a list of length 2.
 
     Attributes
@@ -314,28 +341,28 @@ def deckStimDualInfo(maxEventVal, epsilon):
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
-    divisor = maxEventVal + epsilon
+    divisor = maxRewardVal + epsilon
 
-    def deckStim(observation, action):
-        stim = (observation / divisor) * (1 - action) + (1 - (observation / divisor)) * action
-        stimulus = [stim, 1-stim]
-        return 1, stimulus
+    def deckRew(reward, action):
+        rew = (reward / divisor) * (1 - action) + (1 - (reward / divisor)) * action
+        rewardProc = [[rew], [1-rew]]
+        return array(rewardProc)
 
-    deckStim.Name = "deckStimDualInfo"
-    deckStim.Params = {"epsilon": epsilon}
-    return deckStim
+    deckRew.Name = "deckRewDualInfo"
+    deckRew.Params = {"epsilon": epsilon}
+    return deckRew
 
 
-def deckStimDualInfoLogistic(maxEventVal, minEventVal, epsilon):
+def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
     """
-    Processes the decks stimuli for models expecting the reward information
+    Processes the decks rewards for models expecting the reward information
     from two possible actions.
 
     Returns
     -------
-    deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The event that is a float and action is {0,1}. The
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The reward is a float and action is {0,1}. The
         function returns a list of length 2.
 
     Attributes
@@ -347,17 +374,17 @@ def deckStimDualInfoLogistic(maxEventVal, minEventVal, epsilon):
     --------
     model.BP, model.EP, model.MS, model.MS_rev
     """
-    mid = (maxEventVal + minEventVal)/2
+    mid = (maxRewardVal + minRewardVal)/2
 
-    def deckStim(observation, action):
+    def deckRew(reward, action):
 
-        x = exp(epsilon * (observation-mid))
+        x = exp(epsilon * (reward-mid))
 
-        stim = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
-        stimulus = [stim, 1-stim]
-        return 1, stimulus
+        rew = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
+        rewardProc = [[rew], [1-rew]]
+        return array(rewardProc)
 
-    deckStim.Name = "deckStimDualInfoLogistic"
-    deckStim.Params = {"midpoint": mid,
+    deckRew.Name = "deckRewDualInfoLogistic"
+    deckRew.Params = {"midpoint": mid,
                        "epsilon": epsilon}
-    return deckStim
+    return deckRew

@@ -372,3 +372,29 @@ def beadStimDualInfo(oneProb):
 
     return beadStim
 
+def beadRewDirect():
+    """
+    Processes the beads reward for models expecting just the reward
+
+    Returns
+    -------
+    beadRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    """
+
+    def beadRew(reward, action):
+        return reward
+
+    beadRew.Name = "beadRewDirect"
+    return beadRew
+
