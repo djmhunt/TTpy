@@ -51,14 +51,29 @@ class RVPM(model):
     averaging : int, optional
         The number of stimuli recorded from the beginning and end of each
         training set. Default is 3
-    prior : array of two floats in ``[0,1]`` or just float in range, optional
-        The prior probability of of the two states being the correct one.
-        Default ``array([0.5,0.5])``
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
+    numStimuli : integer, optional
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
     numCritics : integer, optional
-        The number of different reaction learning sets. Default ``2``
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0, 1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones((numActions, numStimuli)) / numCritics)``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is basicDecision
@@ -68,19 +83,19 @@ class RVPM(model):
 
     def __init__(self, **kwargs):
 
-        self.numCritics = kwargs.pop('numCritics', 2)
-        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+        kwargRemains = self.genStandardParameters(kwargs)
 
-        self.alpha = kwargs.pop('alpha', 0.005)
-        self.beta = kwargs.pop('beta', 0.1)
-        self.w = kwargs.pop('w', array([0.01, 0.01]))
-        self.zeta = kwargs.pop('zeta', 2)
-        self.tau = kwargs.pop('tau', 160)
-        self.z = kwargs.pop('z', 100)
-        self.averaging = kwargs.pop('averaging', 3)
+        self.alpha = kwargRemains.pop('alpha', 0.005)
+        self.beta = kwargRemains.pop('beta', 0.1)
+        self.w = kwargRemains.pop('w', array([0.01, 0.01]))
+        self.zeta = kwargRemains.pop('zeta', 2)
+        self.tau = kwargRemains.pop('tau', 160)
+        self.z = kwargRemains.pop('z', 100)
+        self.averaging = kwargRemains.pop('averaging', 3)
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', basicDecision())
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
+        self.decisionFunc = kwargRemains.pop('decFunc', basicDecision())
 
         self.T = 0  # Timing sgnal value
         self.c = 0  # The stimuli
@@ -90,23 +105,16 @@ class RVPM(model):
         self.deltaM = 0  # Negative prediction error unit
         self.TSN = 0  # Temporally shifted neuron
 
-        self.parameters = {"Name": self.Name,
-                           "beta": self.beta,
-                           "alpha": self.alpha,
-                           "wInit": self.w,
-                           "zeta": self.zeta,
-                           "tau": self.tau,
-                           "z": self.z,
-                           "averaging": self.averaging,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
-
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
+        self.genStandardParameterDetails()
+        self.parameters["alpha"] = self.alpha
+        self.parameters["beta"] = self.beta
+        self.parameters["tau"] = self.tau
+        self.parameters["zeta"] = self.zeta
+        self.parameters["wInit"] = self.w
+        self.parameters["z"] = self.z
+        self.parameters["averaging"] = self.averagings
 
         # Recorded information
-
         self._storeSetup()
 
     def outputEvolution(self):
@@ -121,7 +129,7 @@ class RVPM(model):
 
         av = self.averaging
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
         for k, v in self.generalStore.iteritems():
 
@@ -136,10 +144,105 @@ class RVPM(model):
         accessed later
         """
 
-        self.recAction.append(self.currAction)
+        self.storeStandardResults()
         self._updateGeneralStore()
 
-    def _updateModel(self, event):
+    def _storeSetup(self):
+
+        self.eventStore = defaultdict(list)
+
+        self._generalStoreSetup()
+
+    def _generalStoreSetup(self):
+
+        self.genStandardResultsStore()
+        self.generalStore = {}
+
+        for k in self.eventStore.iterkeys():
+            self.generalStore[k] = []
+
+    def _updateEventStore(self, event):
+
+        self.eventStore["T"].append(self.T)
+        self.eventStore["V"].append(self.V)
+        self.eventStore["DP"].append(self.deltaP)
+        self.eventStore["DM"].append(self.deltaM)
+        self.eventStore["TSN"].append(self.TSN)
+        self.eventStore["stim"].append(self.c)
+        self.eventStore["rew"].append(self.r)
+        self.eventStore["w"].append(self.w)
+        self.eventStore["event"].append(event)
+        self.eventStore["decProb"].append(self.decProbabilities)
+
+    def _updateGeneralStore(self):
+
+        for k, v in self.eventStore.iteritems():
+            self.generalStore[k].append(array(v))
+
+        for k in self.eventStore.iterkeys():
+            self.eventStore[k] = []
+
+    def rewardExpectation(self, observation, action, response):
+        """Calculate the reward based on the action and stimuli
+
+        This contains parts that are experiment dependent
+
+        Parameters
+        ---------
+        observation : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : float
+            The expected reward
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
+        """
+
+        activeStimuli, stimuli = self.stimFunc(observation, action)
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numStimuli > 1:
+            actionExpectations = self.actStimMerge(self.expectation, stimuli)
+        else:
+            actionExpectations = self.expectation
+
+        expectedReward = actionExpectations[action]
+
+        return expectedReward, stimuli, activeStimuli
+
+    def delta(self, reward, expectation, action):
+        """
+        Calculates the comparison between the reward and the expectation
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+            The expected reward value
+        action : int
+            The chosen action
+
+        Returns
+        -------
+        delta
+        """
+
+        modReward = self.rewFunc(reward, action)
+
+        delta = modReward - expectation
+
+        return delta
+
+    def updateModel(self, delta, action, stimuliFilter):
 
         for t, c, r in self.stimFunc(event, self.currAction):
 
@@ -192,41 +295,6 @@ class RVPM(model):
     def _tsnUpdate(self, dV, ddeltaP, ddeltaM):
         signal = amax([0, self.zeta*dV]) + amax([0, ddeltaP]) - amax([0, ddeltaM])
         return signal
-
-    def _storeSetup(self):
-
-        self.eventStore = defaultdict(list)
-
-        self._generalStoreSetup()
-
-    def _generalStoreSetup(self):
-
-        self.recAction = []
-        self.generalStore = {}
-
-        for k in self.eventStore.iterkeys():
-            self.generalStore[k] = []
-
-    def _updateEventStore(self, event):
-
-        self.eventStore["T"].append(self.T)
-        self.eventStore["V"].append(self.V)
-        self.eventStore["DP"].append(self.deltaP)
-        self.eventStore["DM"].append(self.deltaM)
-        self.eventStore["TSN"].append(self.TSN)
-        self.eventStore["stim"].append(self.c)
-        self.eventStore["rew"].append(self.r)
-        self.eventStore["w"].append(self.w)
-        self.eventStore["event"].append(event)
-        self.eventStore["decProb"].append(self.decProbabilities)
-
-    def _updateGeneralStore(self):
-
-        for k, v in self.eventStore.iteritems():
-            self.generalStore[k].append(array(v))
-
-        for k in self.eventStore.iterkeys():
-            self.eventStore[k] = []
 
     class modelSetPlot(modelSetPlot):
 
@@ -359,4 +427,24 @@ def basicDecision():
     return basicDecisionFunc
 
 
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
 
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc

@@ -57,13 +57,16 @@ class qLearn(model):
         Default ``True``
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones(numCritics) / numCritics)``
+        Default ``ones((numActions, numStimuli)) / numCritics)``
     expect: array of floats, optional
         The initialisation of the the expected reward.
         Default ``ones((numActions, numStimuli)) * 5 / numStimuli``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.binary.decEta
@@ -75,13 +78,14 @@ class qLearn(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargs.pop('beta', 4)
-        self.alpha = kwargs.pop('alpha', 0.3)
-        self.eta = kwargs.pop('eta', 0.3)
-        self.expectation = kwargs.pop('expect', ones((self.numActions, self.numStimuli)) * 5 / self.numStimuli)
+        self.beta = kwargRemains.pop('beta', 4)
+        self.alpha = kwargRemains.pop('alpha', 0.3)
+        self.eta = kwargRemains.pop('eta', 0.3)
+        self.expectation = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) * 5 / self.numStimuli)
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decEta(eta=self.eta))
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
+        self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -110,7 +114,16 @@ class qLearn(model):
 
         return results
 
-    def _rewardExpectation(self, observation, action, response):
+    def storeState(self):
+        """
+        Stores the state of all the important variables so that they can be
+        accessed later
+        """
+
+        self.storeStandardResults()
+        self.recExpectation.append(self.expectation.copy())
+
+    def rewardExpectation(self, observation, action, response):
         """Calculate the reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -127,12 +140,16 @@ class qLearn(model):
         -------
         expectedReward : float
             The expected reward
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
         """
 
         activeStimuli, stimuli = self.stimFunc(observation, action)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.;
+        # calculate the expectations associated with each action.
         if self.numStimuli > 1:
             actionExpectations = self.actStimMerge(self.expectation, stimuli)
         else:
@@ -142,7 +159,7 @@ class qLearn(model):
 
         return expectedReward, stimuli, activeStimuli
 
-    def _delta(self, reward, expectation):
+    def delta(self, reward, expectation, action):
         """
         Calculates the comparison between the reward and the expectation
 
@@ -151,48 +168,41 @@ class qLearn(model):
         reward : float
             The reward value
         expectation : float
+            The expected reward value
+        action : int
+            The chosen action
 
         Returns
         -------
         delta
         """
 
-        delta = reward-expectation
+        modReward = self.rewFunc(reward, action)
+
+        delta = modReward-expectation
 
         return delta
 
-    def _updateModel(self, delta, stimuli, action):
-
-        expectation = self.expectation
+    def updateModel(self, delta, action, stimuliFilter):
 
         # Find the new activities
-        self._newAct(delta, stimuli, action)
+        self._newAct(delta, (action, stimuliFilter))
 
         # Calculate the new probabilities
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(expectation, stimuli)
+            actExpectations = self.actStimMerge(self.expectation, stimuliFilter)
             self.probabilities = self._prob(actExpectations)
         else:
-            self.probabilities = self._prob(expectation)
+            self.probabilities = self._prob(self.expectation)
 
-    def storeState(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
+    def _newAct(self, delta, chosen):
 
-        self.storeStandardResults()
-
-        self.recExpectation.append(self.expectation.copy())
-
-    def _newAct(self, delta, stimuliFilter, action):
-
-        self.expectation[action, stimuliFilter] += self.alpha*delta
+        self.expectation[chosen] += self.alpha*delta
 
     def _prob(self, expectation):
-
         """
+        Calculate the probabilities
 
         Parameters
         ----------
@@ -203,7 +213,6 @@ class qLearn(model):
         -------
         probs : list of floats
             The calculated probabilities
-
         """
         numerator = exp(self.beta*expectation)
         denominator = sum(numerator)
@@ -234,3 +243,26 @@ def blankStim():
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc

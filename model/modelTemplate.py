@@ -45,10 +45,13 @@ class model(object):
         Default ``True``
     prior : array of floats in ``[0,1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones(numCritics) / numCritics)``
+        Default ``ones((self.numActions, self.numStimuli)) / self.numCritics)``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision.
@@ -61,6 +64,7 @@ class model(object):
         kwargRemains = self.genStandardParameters(kwargs)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numActions + 1))))
 
         self.genStandardParameterDetails()
@@ -181,19 +185,19 @@ class model(object):
             return
 
         # Find the reward expectation
-        expectedReward, stimuli, stimuliFilter = self._rewardExpectation(observation, action, response)
+        expectedReward, stimuli, stimuliFilter = self.rewardExpectation(observation, action, response)
 
         # If there was no reward, the the stimulus is the learnt 'reward'
         if type(response) is NoneType:
             response = stimuli
 
         # Find the significance of the discrepency between the response and the expected reponse
-        delta = self._delta(response, expectedReward)
+        delta = self.delta(response, expectedReward, action)
 
         # Use that discrepency to update the model
-        self._updateModel(delta, stimuli, action)
+        self.updateModel(delta, stimuli, action)
 
-    def _rewardExpectation(self, stimuli, action, response):
+    def rewardExpectation(self, observation, action, response):
         """Calculate the reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -210,6 +214,10 @@ class model(object):
         -------
         expectedReward : float
             The expected reward
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
         """
 
         # Calculate expectation by identifying the relevant stimuli for the action
@@ -219,9 +227,9 @@ class model(object):
         # Return the value
 
         # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
-        return 0
+        return 0, 0, 0
 
-    def _delta(self, reward, expectation):
+    def delta(self, reward, expectation, action):
         """
         Calculates the significance of the discrepancy between the response and the expected response
 
@@ -230,6 +238,9 @@ class model(object):
         reward : float
             The reward value
         expectation : float
+            The expected reward value
+        action : int
+            The chosen action
 
         Returns
         -------
@@ -238,7 +249,7 @@ class model(object):
 
         return 0
 
-    def _updateModel(self, delta, stimuli, action):
+    def updateModel(self, delta, action, stimuliFilter):
         """
         Parameters
         ----------
@@ -300,7 +311,7 @@ class model(object):
 
         actionParamSets = reshape(actStimuliParam, (self.numActions, self.numStimuli))
         actionParamSets = actionParamSets * stimFilter
-        actionParams = sum(actionParamSets, axis=0)
+        actionParams = sum(actionParamSets, axis=1)
 
         return actionParams
 
@@ -481,4 +492,27 @@ def blankStim():
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc
 

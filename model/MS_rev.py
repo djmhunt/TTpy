@@ -43,16 +43,32 @@ class MS_rev(model):
         Sensitivity parameter for probabilities
     eta : float, optional
         Decision threshold parameter
-    prior : array of two floats in ``[0,1]`` or just float in range, optional
-        The prior probability of of the two states being the correct one.
-        Default ``array([0.5,0.5])``
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
+    numStimuli : integer, optional
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
     numCritics : integer, optional
-        The number of different reaction learning sets. Default ``2``
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0, 1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones((numActions, numStimuli)) / numCritics)``
     activity : array, optional
-        The `activity` of the neurons. The values are between ``[0,1]``
+        The initialisation of the `activity` of the neurons. The values are between ``[0,1]``
+        Default ``ones((numActions, numStimuli)) / numCritics``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.binary.decEta
@@ -62,45 +78,29 @@ class MS_rev(model):
 
     def __init__(self, **kwargs):
 
-        self.numCritics = kwargs.pop('numCritics', 2)
-        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+        kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargs.pop('beta', 4)
-        self.alpha = kwargs.pop('alpha', 0.3)
-        self.eta = kwargs.pop('eta', 0.3)
-        self.activity = kwargs.pop('activity', ones(self.numCritics) * 0.5)
+        self.beta = kwargRemains.pop('beta', 4)
+        self.alpha = kwargRemains.pop('alpha', 0.3)
+        self.eta = kwargRemains.pop('eta', 0.3)
+        self.activity = kwargRemains.pop('activity', ones((self.numActions, self.numStimuli)) / self.numCritics)
         # The alpha is an activation rate parameter. The M&S paper uses a value of 1.
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
+        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
 
-        self.parameters = {"Name": self.Name,
-                           "beta": self.beta,
-                           "eta": self.eta,
-                           "alpha": self.alpha,
-                           "prior": self.prior,
-                           "activity": self.activity,
-                           "numCritics": self.numCritics,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
+        self.genStandardParameterDetails()
+        self.parameters["alpha"] = self.alpha
+        self.parameters["beta"] = self.beta
+        self.parameters["eta"] = self.eta
+        self.parameters["activity"] = self.activity
 
-        self.currAction = 1
-        self.probabilities = array(self.prior)
-        self.decProbabilities = array(self.prior)
         self.probDifference = 0
-        self.activity = array(self.activity)
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
 
         # Recorded information
-
-        self.recAction = []
-        self.recEvents = []
-        self.recProbabilities = []
-        self.recActionProb = []
+        self.genStandardResultsStore()
         self.recActivity = []
-        self.recDecision = []
 
     def outputEvolution(self):
         """ Returns all the relevent data for this model
@@ -112,24 +112,10 @@ class MS_rev(model):
             Probabilities, Actions and Events.
         """
 
-        results = self.parameters.copy()
-
-        results["Probabilities"] = array(self.recProbabilities)
-        results["ActionProb"] = array(self.recActionProb)
+        results = self.standardResultOutput()
         results["Activity"] = array(self.recActivity)
-        results["Actions"] = array(self.recAction)
-        results["Decisions"] = array(self.recDecision)
-        results["Events"] = array(self.recEvents)
 
         return results
-
-    def _updateModel(self, event):
-
-        # Find the new activities
-        self._newActivity(event)
-
-        # Calculate the new probabilities
-        self.probabilities = self._prob(self.activity)
 
     def storeState(self):
         """
@@ -138,20 +124,91 @@ class MS_rev(model):
         The stored variables are ones that describe the model.
         """
 
-        self.recAction.append(self.currAction)
-        self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currAction])
+        self.storeStandardResults()
         self.recActivity.append(self.activity.copy())
-        self.recDecision.append(self.decision)
 
-    def _newActivity(self, event):
-        self.activity += (event - self.activity) * self.alpha
+    def rewardExpectation(self, observation, action, response):
+        """Calculate the reward based on the action and stimuli
+
+        This contains parts that are experiment dependent
+
+        Parameters
+        ---------
+        observation : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : float
+            The expected reward
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
+        """
+
+        activeStimuli, stimuli = self.stimFunc(observation, action)
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numStimuli > 1:
+            actionExpectations = self.actStimMerge(self.activity, stimuli)
+        else:
+            actionExpectations = self.activity
+
+        expectedReward = actionExpectations
+
+        return expectedReward, stimuli, activeStimuli
+
+    def delta(self, reward, expectation, action):
+        """
+        Calculates the comparison between the reward and the expectation
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+            The expected reward value
+        action : int
+            The chosen action
+
+        Returns
+        -------
+        delta
+        """
+
+        modReward = self.rewFunc(reward, action)
+
+        delta = modReward - expectation
+
+        return delta
+
+    def updateModel(self, delta, action, stimuliFilter):
+
+        # Find the new activities
+        self._newActivity(delta)
+
+        # Calculate the new probabilities
+        if self.probActions:
+            # Then we need to combine the expectations before calculating the probabilities
+            actExpectations = self.actStimMerge(self.activity, stimuliFilter)
+            self.probabilities = self._prob(actExpectations)
+        else:
+            self.probabilities = self._prob(self.activity)
+
+    def _newActivity(self, delta):
+
+        self.activity += delta * self.alpha
 
     def _prob(self, expectation):
         # The probability of a given jar, using the Luce choice model
 
-#        li = self.activity ** self.beta
-#        p = li/sum(li)
+        #li = self.activity ** self.beta
+        #p = li/sum(li)
 
         numerator = exp(self.beta*expectation)
         denominator = sum(numerator)
@@ -182,3 +239,26 @@ def blankStim():
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc

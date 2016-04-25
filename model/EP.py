@@ -39,16 +39,33 @@ class EP(model):
         Sensitivity parameter for probabilities
     eta : float, optional
         Decision threshold parameter
-    activity : array, optional
-        The `activity` of the neurons. The values are between ``[0,1]``
-    prior : array of two floats in ``[0,1]`` or just float in range, optional
-        The prior probability of of the two states being the correct one.
-        Default ``array([0.5,0.5])``
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
     numStimuli : integer, optional
-        The number of different reaction learning sets. Default ``2``
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
+    numCritics : integer, optional
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0,1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones((self.numActions, self.numStimuli)) / self.numCritics)``
+    activity : array, optional
+        The initialisation of the `activity` of the neurons.
+        The values are between ``[0,1]`
+        Default ``ones((numActions, numStimuli)) / numCritics```
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.binary.decEta
@@ -58,44 +75,29 @@ class EP(model):
 
     def __init__(self,**kwargs):
 
-        self.numCritics = kwargs.pop('numCritics', 2)
-        self.prior = kwargs.pop('prior', ones(self.numCritics) * 0.5)
+        kwargRemains = self.genStandardParameters(kwargs)
 
-        self.alpha = kwargs.pop('alpha', 0.3)
-        self.eta = kwargs.pop('eta', 0.3)
-        self.beta = kwargs.pop('beta', 4)
-        self.activity = kwargs.pop('activity', ones(self.numCritics) * 0.5)
+        self.alpha = kwargRemains.pop('alpha', 0.3)
+        self.eta = kwargRemains.pop('eta', 0.3)
+        self.beta = kwargRemains.pop('beta', 4)
+        self.activity = kwargRemains.pop('activity', ones((self.numActions, self.numStimuli)) / self.numCritics)
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
+        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
 
-        self.parameters = {"Name": self.Name,
-                           "alpha": self.alpha,
-                           "beta": self.beta,
-                           "eta": self.eta,
-                           "prior": self.prior,
-                           "activity": self.activity,
-                           "numCritics": self.numCritics,
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
-
-        self.decision = None
-        self.probabilities = array(self.prior)
-        self.decProbabilities = array(self.prior)
-        self.validActions = None
-        self.currAction = None
-        self.lastObservation = None
+        self.genStandardParameterDetails()
+        self.parameters["alpha"] = self.alpha
+        self.parameters["beta"] = self.beta
+        self.parameters["eta"] = self.eta
+        self.parameters["activity"] = self.activity
 
         # Recorded information
-        self.recAction = []
-        self.recEvents = []
+        self.genStandardResultsStore()
         self.recActivity = []
-        self.recDecision = []
-        self.recProbabilities = []
-        self.recActionProb = []
 
     def outputEvolution(self):
-        """ Returns all the relevant data for this model
+        """ Returns the relevant data expected from a model as well as the parameters for the current model
 
         Returns
         -------
@@ -104,24 +106,10 @@ class EP(model):
             Probabilities, Actions and Events.
         """
 
-        results = self.parameters.copy()
-
-        results["Probabilities"] = array(self.recProbabilities)
-        results["ActionProb"] = array(self.recActionProb)
+        results = self.standardResultOutput()
         results["Activity"] = array(self.recActivity)
-        results["Actions"] = array(self.recAction)
-        results["Decisions"] = array(self.recDecision)
-        results["Events"] = array(self.recEvents)
 
         return results
-
-    def _updateModel(self, event):
-
-        # Find the new activites
-        self._newAct(event)
-
-        # Calculate the new probabilities
-        self.probabilities = self._prob(self.activity)
 
     def storeState(self):
         """"
@@ -129,20 +117,96 @@ class EP(model):
         accessed later
         """
 
-        self.recAction.append(self.currAction)
+        self.storeStandardResults()
         self.recActivity.append(self.activity.copy())
-        self.recDecision.append(self.decision)
-        self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currAction])
 
-    def _newAct(self, event):
+    def rewardExpectation(self, observation, action, response):
+        """Calculate the reward based on the action and stimuli
 
-        oldAct = self.activity
+        This contains parts that are experiment dependent
 
-        self.activity = oldAct + self.alpha * (event-oldAct)
+        Parameters
+        ---------
+        observation : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : array of floats
+            The expected rewards
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
+        """
+
+        activeStimuli, stimuli = self.stimFunc(observation, action)
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numStimuli > 1:
+            actionActivity = self.actStimMerge(self.activity, stimuli)
+        else:
+            actionActivity = self.activity
+
+        return actionActivity, stimuli, activeStimuli
+
+    def delta(self, reward, expectation, action):
+        """
+        Calculates the comparison between the reward and the expectation
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+            The expected reward value
+        action : int
+            The chosen action
+
+        Returns
+        -------
+        delta
+        """
+
+        modReward = self.rewFunc(reward, action)
+
+        delta = modReward - expectation
+
+        return delta
+
+    def updateModel(self, delta, action, stimuliFilter):
+
+        # Find the new activities
+        self._newAct(delta)
+
+        # Calculate the new probabilities
+        if self.probActions:
+            actActivity = self.actStimMerge(self.activity, stimuliFilter)
+            self.probabilities = self._prob(actActivity)
+        else:
+            self.probabilities = self._prob(self.activity)
+
+    def _newAct(self, delta):
+
+        self.activity += self.alpha * delta
 
     def _prob(self, expectation):
-        """ Calculate the new probabilities of different actions """
+        """ Calculate the new probabilities of different actions
+
+        Parameters
+        ----------
+        expectation : tuple of floats
+            The expectation values
+
+        Returns
+        -------
+        p : list of floats
+            The calculated probabilities
+        """
 
         numerat = exp(self.beta*expectation)
         denom = sum(numerat)
@@ -173,8 +237,31 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return [1,0]
+        return [1, 0]
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc
 

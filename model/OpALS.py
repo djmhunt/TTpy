@@ -66,25 +66,40 @@ class OpALS(model):
         :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN`
     beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
-        expoitation parameter. Defined as :math:`\\beta` in the paper
+        exploitation parameter. Defined as :math:`\\beta` in the paper
     betaDiff : float, optional
-        The asymetry beween the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
-    prior : array of floats in ``[0,1]`` or just float in range, optional
-        The prior probability of each state being the correct one.
-        Default ``array([0.5,0.5])``
-    expect : array of floats, optional
+        The asymmetry between the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
+    numActions : integer, optional
+        The maximum number of valid actions the model can expect to receive.
+        Default 2.
+    numStimuli : integer, optional
+        The initial maximum number of stimuli the model can expect to receive.
+         Default 1.
+    numCritics : integer, optional
+        The number of different reaction learning sets.
+        Default numActions*numStimuli
+    probActions : bool, optional
+        Defines if the probabilities calculated by the model are for each
+        action-stimulus pair or for actions. That is, if the stimuli values for
+        each action are combined before the probability calculation.
+        Default ``True``
+    prior : array of floats in ``[0, 1]``, optional
+        The prior probability of of the states being the correct one.
+        Default ``ones((numActions, numStimuli)) / numCritics)``
+    expect: array of floats, optional
         The initialisation of the the expected reward.
-        Default ``array([0.5,0.5])``
+        Default ``ones((numActions, numStimuli)) / numCritics``
     expectGo : array of floats, optional
         The initialisation of the the expected go and nogo.
-        Default ``array([1,1])``
-    numCritics : integer, optional
-        The number of different reaction learning sets. Default ``2``
+        Default ``ones((numActions, numStimuli)) / numCritics``
     saturateVal : float, optional
         The saturation value for the model. Default is 10
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
+    rewFunc : function, optional
+        The function that transforms the reward into a form the model can
+        understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.binary.decEta
@@ -118,26 +133,26 @@ class OpALS(model):
 
     def __init__(self,**kwargs):
 
-        self.numCritics = kwargs.pop('numCritics', 4)
-        self.prior = kwargs.pop('prior', ones(self.numCritics)/self.numCritics)
+        kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargs.pop('beta', 1)
-        self.betaDiff = kwargs.pop('betaDiff', 0)
-        self.betaGo = kwargs.pop('betaGo', None)
-        self.betaNogo = kwargs.pop('betaNogo', None)
-        self.alpha = kwargs.pop('alpha', 0.1)
-        self.alphaGoNogoDiff = kwargs.pop('alphaGoNogoDiff', None)
-        self.alphaCrit = kwargs.pop('alphaCrit', self.alpha)
-        self.alphaGo = kwargs.pop('alphaGo', self.alpha)
-        self.alphaNogo = kwargs.pop('alphaNogo', self.alpha)
-        self.alphaGoDiff = kwargs.pop('alphaGoDiff', None)
-        self.alphaNogoDiff = kwargs.pop('alphaNogoDiff', None)
-        self.expect = kwargs.pop('expect', ones(self.numCritics)*0.5)
-        self.expectGo = kwargs.pop('expectGo', ones(self.numCritics)*1)
-        self.saturateVal = kwargs.pop('saturateVal', 10)
+        self.beta = kwargRemains.pop('beta', 1)
+        self.betaDiff = kwargRemains.pop('betaDiff', 0)
+        self.betaGo = kwargRemains.pop('betaGo', None)
+        self.betaNogo = kwargRemains.pop('betaNogo', None)
+        self.alpha = kwargRemains.pop('alpha', 0.1)
+        self.alphaGoNogoDiff = kwargRemains.pop('alphaGoNogoDiff', None)
+        self.alphaCrit = kwargRemains.pop('alphaCrit', self.alpha)
+        self.alphaGo = kwargRemains.pop('alphaGo', self.alpha)
+        self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
+        self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
+        self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
+        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numCritics)
+        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numStimuli)))
+        self.saturateVal = kwargRemains.pop('saturateVal', 10)
 
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargs.pop('decFunc', decMaxProb(range(self.numCritics)))
+        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
+        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
+        self.decisionFunc = kwargRemains.pop('decFunc', decMaxProb(range(self.numCritics)))
 
         if self.alphaGoNogoDiff:
             self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
@@ -150,44 +165,29 @@ class OpALS(model):
             self.beta = (self.betaGo + self.betaNogo)/2
             self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
-        self.parameters = {"Name": self.Name,
-                           "beta": self.beta,
-                           "betaDiff": self.betaDiff,
-                           "betaGo": self.betaGo,
-                           "betaNogo": self.betaNogo,
-                           "alphaCrit": self.alphaCrit,
-                           "alphaGo": self.alphaGo,
-                           "alphaNogo": self.alphaNogo,
-                           "expectation": self.expect,
-                           "expectationGo": self.expectGo,
-                           "saturateVal": self.saturateVal,
-                           "prior": self.prior,
-                           "numCritics": self.numCritics,
-                           "stimFunc" : callableDetailsString(self.stimFunc),
-                           "decFunc" : callableDetailsString(self.decisionFunc)}
-
-        self.currAction = None
         self.expectation = array(self.expect)
         self.go = array(self.expectGo)
         self.nogo = array(self.expectGo)
         self.actionValues = ones(self.expectation.shape)
-        self.probabilities = array(self.prior)
-        self.decProbabilities = array(self.prior)
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
+
+        self.genStandardParameterDetails()
+        self.parameters["alphaCrit"] = self.alphaCrit
+        self.parameters["alphaGo"] = self.alphaGo
+        self.parameters["alphaNogo"] = self.alphaNogo
+        self.parameters["beta"] = self.beta
+        self.parameters["betaGo"] = self.betaGo
+        self.parameters["betaNogo"] = self.betaNogo
+        self.parameters["betaDiff"] = self.betaDiff
+        self.parameters["expectation"] = self.expect
+        self.parameters["expectationGo"] = self.expectGo
+        self.parameters["saturateVal"] = self.saturateVal
 
         # Recorded information
-
-        self.recAction = []
-        self.recEvents = []
-        self.recProbabilities = []
-        self.recActionProb = []
+        self.genStandardResultsStore()
         self.recExpectation = []
         self.recGo = []
         self.recNogo = []
         self.recActionValues = []
-        self.recDecision = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -199,27 +199,13 @@ class OpALS(model):
             Probabilities, Actions and Events.
         """
 
-        results = self.parameters.copy()
-
-        results["Events"] = array(self.recEvents)
+        results = self.standardResultOutput()
         results["Expectation"] = array(self.recExpectation)
         results["Go"] = array(self.recGo)
         results["Nogo"] = array(self.recNogo)
         results["ActionValues"] = array(self.recActionValues)
-        results["Probabilities"] = array(self.recProbabilities)
-        results["ActionProb"] = array(self.recActionProb)
-        results["Actions"] = array(self.recAction)
-        results["Decisions"] = array(self.recDecision)
 
         return results
-
-    def _updateModel(self, event):
-
-        # Find the new activities
-        self._critic(event, self.currAction)
-
-        # Calculate the new probabilities
-        self.probabilities = self._prob(self.go, self.nogo)
 
     def storeState(self):
         """
@@ -227,40 +213,114 @@ class OpALS(model):
         accessed later
         """
 
-        self.recAction.append(self.currAction)
-        self.recProbabilities.append(self.probabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currAction])
+        self.storeStandardResults()
         self.recExpectation.append(self.expectation.copy())
         self.recGo.append(self.go.copy())
         self.recNogo.append(self.nogo.copy())
         self.recActionValues.append(self.actionValues.copy())
-        self.recDecision.append(self.decision)
 
-    def _critic(self,event, chosen):
+    def rewardExpectation(self, observation, action, response):
+        """Calculate the reward based on the action and stimuli
+
+        This contains parts that are experiment dependent
+
+        Parameters
+        ---------
+        observation : {int | float | tuple}
+            The set of stimuli
+        action : int or NoneType
+            The chosen action
+        response : float or NoneType
+
+        Returns
+        -------
+        expectedReward : float
+            The expected reward
+        stimuli : list of floats
+            The processed observations
+        activeStimuli : list of [0, 1] mapping to [False, True]
+            A list of the stimuli that were or were not present
+        """
+
+        activeStimuli, stimuli = self.stimFunc(observation, action)
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numStimuli > 1:
+            actionExpectations = self.actStimMerge(self.expectation, stimuli)
+        else:
+            actionExpectations = self.expectation
+
+        expectedReward = actionExpectations[action]
+
+        return expectedReward, stimuli, activeStimuli
+
+    def delta(self, reward, expectation, action):
+        """
+        Calculates the comparison between the reward and the expectation
+
+        Parameters
+        ----------
+        reward : float
+            The reward value
+        expectation : float
+            The expected reward value
+        action : int
+            The chosen action
+
+        Returns
+        -------
+        delta
+        """
+
+        modReward = self.rewFunc(reward, action)
+
+        delta = modReward - expectation
+
+        return delta
+
+    def updateModel(self, delta, action, stimuliFilter):
+
+        chosen = (action, stimuliFilter)
+
+        # Find the new activities
+        self._critic(delta, chosen)
+
+        self._actor(delta, chosen)
+
+        self._actionValues(self.go, self.nogo)
+
+        # Calculate the new probabilities
+        if self.probActions:
+            # Then we need to combine the expectations before calculating the probabilities
+            actExpectations = self.actStimMerge(self.actionValues, stimuliFilter)
+            self.probabilities = self._prob(actExpectations)
+        else:
+            self.probabilities = self._prob(self.actionValues)
+
+    def _critic(self, delta, chosen):
 
         chosenExp = self.expectation[chosen]
 
-        change = event - chosenExp
+        self.expectation[chosen] = chosenExp + self.alphaCrit * delta * (1-chosenExp/self.saturateVal)
 
-        self.expectation[chosen] = chosenExp + self.alphaCrit*change*(1-chosenExp/self.saturateVal)
-
-        self._actor(change, chosen)
-
-    def _actor(self, change, chosen):
+    def _actor(self, delta, chosen):
 
         chosenGo = self.go[chosen]
         chosenNogo = self.nogo[chosen]
 
-        self.go[chosen] = chosenGo + self.alphaGo * chosenGo * change *(1-chosenGo/self.saturateVal)
-        self.nogo[chosen] = chosenNogo - self.alphaNogo * chosenNogo * change *(1-chosenNogo/self.saturateVal)
+        self.go[chosen] = chosenGo + self.alphaGo * chosenGo * delta * (1-chosenGo/self.saturateVal)
+        self.nogo[chosen] = chosenNogo - self.alphaNogo * chosenNogo * delta * (1-chosenNogo/self.saturateVal)
 
-    def _prob(self, go, nogo):
+    def _actionValues(self, go, nogo):
 
         bd = self.betaDiff
 
-        actionValues = (1+bd)*go - (1-bd)*nogo
+        actionValues = (1 + bd) * go - (1 - bd) * nogo
 
         self.actionValues = actionValues
+
+    def _prob(self, actionValues):
 
 #        try:
 #            numerat = exp(self.beta*actionValues)
@@ -299,3 +359,26 @@ def blankStim():
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc
