@@ -22,10 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
-from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
-from experiment.pavlov import Pavlov, pavlovStimTemporal
-from experiment.probSelect import probSelect, probSelectStimDirect
+from experiment.decks import Decks, deckRewDirect, deckStimDirect
 
 # The model factory
 from models import models
@@ -46,15 +43,20 @@ alpha = 0.5
 alphaBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 30)
-numCritics = 2
+numActions = 2
+numStimuli = 1
+probActions = False
 
 
 parameters = {'alphaPos': sum(alphaBounds)/2,
               'alphaNeg': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
-               'numActions': 2,
+               'numActions': numActions,
+               'numStimuli': numStimuli,
+               'probActions': probActions,
                'stimFunc': deckStimDirect(),
+               'rewFunc': deckRewDirect(),
                'decFunc': decEta(eta=eta)}
 
 modelSet = models((qLearn2, parameters, paramExtras))

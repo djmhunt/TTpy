@@ -22,7 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
+from experiment.decks import Decks, deckStimDirect, deckRewDirect, deckRewDirectNormal
 
 # The model factory
 from models import models
@@ -46,7 +46,9 @@ alphaC = 0.1
 alphaGoBounds = (0, 1)
 beta = 0.5
 betaBounds = (0, 30)
-numCritics = 2
+numActions = 2
+numStimuli = 1
+probActions = False
 
 parameters = {'alphaCrit': sum(alphaBounds)/2,
               'alphaGo': sum(alphaGoBounds)/2,
@@ -54,10 +56,12 @@ parameters = {'alphaCrit': sum(alphaBounds)/2,
               'betaGo': sum(betaBounds)/2,
               'betaNogo': sum(betaBounds)/2}
 
-paramExtras = {'numCritics': numCritics,
-               'expect': ones(numCritics) * 0.6,
-               'expectGo': ones(numCritics),
-               'stimFunc': deckStimDirectNormal(10),
+paramExtras = {'numActions': numActions,
+               'numStimuli': numStimuli,
+               'probActions': probActions,
+               #'expect': ones(numCritics) * 0.6,
+               'stimFunc': deckStimDirect(),
+               'rewFunc': deckRewDirectNormal(10),
                'decFunc': decEta(eta=eta)}
 modelSet = models((OpAL, parameters, paramExtras))
 

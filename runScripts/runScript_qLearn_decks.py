@@ -22,7 +22,7 @@ from numpy import array, concatenate, arange, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
+from experiment.decks import Decks, deckRewDirect, deckStimDirect
 
 # The model factory
 from models import models
@@ -55,6 +55,7 @@ paramExtras = {'eta': eta,
                'numStimuli': numStimuli,
                'probActions': probActions,
                'stimFunc': deckStimDirect(),
+               'rewFunc': deckRewDirect(),
                'decFunc': decEta(eta=eta)}
 
 modelSet = models((qLearn, parameters, paramExtras))

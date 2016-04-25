@@ -22,7 +22,7 @@ from numpy import array, concatenate, ones
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDualInfoLogistic, deckStimDirect, deckStimDirectNormal
+from experiment.decks import Decks, deckRewDualInfo, deckRewDualInfoLogistic, deckStimDirect
 
 # The model factory
 from models import models
@@ -50,7 +50,8 @@ parameters = {'delta': sum(deltaBounds)/2,
               'beta': sum(betaBounds)/2}
 paramExtras = {'eta': eta,
                'numCritics': numCritics,
-               'stimFunc': deckStimDualInfo(10, 0.01),
+               'stimFunc': deckStimDirect(),
+               'rewFunc': deckRewDualInfo(10, 0.01),
                'decFunc': decSingle()}
 
 modelSet = models((BPMS, parameters, paramExtras))
