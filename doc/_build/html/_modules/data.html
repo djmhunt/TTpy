@@ -48,20 +48,23 @@
           <div class="body" role="main">
             
   <h1>Source code for data</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module allows for the importing of participant data for use in fitting</span>
 
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">listdir</span>
 <span class="kn">from</span> <span class="nn">scipy.io</span> <span class="kn">import</span> <span class="n">loadmat</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">shape</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span><span class="p">,</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">read_excel</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">listMerge</span>
+
 
 <div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../data.html#data.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">fileTypes</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -71,8 +74,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    folders : list of strings</span>
 <span class="sd">        The folder strings should end in a &quot;/&quot;</span>
-<span class="sd">    fileType : list of strings</span>
-<span class="sd">        The file extensions found after the &quot;.&quot;. Currently only mat files are </span>
+<span class="sd">    fileTypes : list of strings</span>
+<span class="sd">        The file extensions found after the &quot;.&quot;. Currently only mat and xlsx files are</span>
 <span class="sd">        supported.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
@@ -84,17 +87,18 @@
 <span class="sd">    data : The function called by this one</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dataSetList</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span><span class="n">fileTypes</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">fileTypes</span><span class="p">):</span>
         
-        <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">fileType</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
         
         <span class="n">dataSetList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
         
     <span class="n">dataSet</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">dataSetList</span><span class="p">))</span>
         
-    <span class="k">return</span> <span class="n">dataSet</span>
-</div>
-<div class="viewcode-block" id="data"><a class="viewcode-back" href="../data.html#data.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">fileType</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dataSet</span></div>
+
+
+<div class="viewcode-block" id="data"><a class="viewcode-back" href="../data.html#data.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A function for reading in and returning a dataset</span>
 
 <span class="sd">    Parameters</span>
@@ -102,16 +106,12 @@
 <span class="sd">    folder : string</span>
 <span class="sd">        The folder string should end in a &quot;/&quot;</span>
 <span class="sd">    fileType : string</span>
-<span class="sd">        The file extension found after the &quot;.&quot;. Currently only mat files are </span>
+<span class="sd">        The file extension found after the &quot;.&quot;. Currently only mat and xlsx files are</span>
 <span class="sd">        supported.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dataSet : list of dictionaries</span>
-<span class="sd">    </span>
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    data: The</span>
 <span class="sd">    </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -129,12 +129,20 @@
 
     <span class="n">files</span> <span class="o">=</span> <span class="n">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s">&quot;mat&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s2">&quot;mat&quot;</span><span class="p">:</span>
 
         <span class="n">dataSet</span> <span class="o">=</span> <span class="n">getmatData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+        
+    <span class="k">elif</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span>
+        
+        <span class="n">dataSet</span> <span class="o">=</span> <span class="n">getxlsxData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">dataSet</span>
-</div>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataSet</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">return</span> <span class="n">dataSet</span></div>
+
+
 <div class="viewcode-block" id="getFiles"><a class="viewcode-back" href="../data.html#data.getFiles">[docs]</a><span class="k">def</span> <span class="nf">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produces the list of valid input files</span>
@@ -153,7 +161,7 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    sortFiles : sorts the files found</span>
+<span class="sd">    sortStrings : sorts the files found</span>
 <span class="sd">    </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -165,109 +173,115 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">files</span> <span class="o">=</span> <span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    
+    <span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">fileType</span><span class="p">)]</span>
 
-    <span class="n">dataFiles</span> <span class="o">=</span> <span class="n">sortFiles</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+    <span class="n">sortedFiles</span> <span class="o">=</span> <span class="n">sortStrings</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">fileType</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">dataFiles</span>
-    </div>
-<div class="viewcode-block" id="sortFiles"><a class="viewcode-back" href="../data.html#data.sortFiles">[docs]</a><span class="k">def</span> <span class="nf">sortFiles</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileType</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sortedFiles</span></div>
+
+
+<div class="viewcode-block" id="sortStrings"><a class="viewcode-back" href="../data.html#data.sortStrings">[docs]</a><span class="k">def</span> <span class="nf">sortStrings</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Identifies valid files and sorts them if possible</span>
+<span class="sd">    Takes an unordered list of strings and sorts them if possible and necessary</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    files : list of strings</span>
-<span class="sd">        A list of filenames</span>
-<span class="sd">    fileType : string</span>
-<span class="sd">        The file extension found after the &quot;.&quot;.</span>
+<span class="sd">    unorderedList : list of strings</span>
+<span class="sd">        A list of valid strings</span>
+<span class="sd">    suffix : string</span>
+<span class="sd">        A known suffix for the string</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    dataFiles : list</span>
-<span class="sd">        A sorted list of the the files</span>
+<span class="sd">    sorted list : list of strings</span>
+<span class="sd">        A sorted list of the the strings</span>
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    intCore : sorts the files found if they are a number</span>
-<span class="sd">    getFilePrefix : identifies file name prefixes</span>
+<span class="sd">    intCore : sorts the strings with the prefix and suffix removed if they are a number</span>
+<span class="sd">    getPrefix : identifies prefixes all strings have</span>
 <span class="sd">    </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; files = [&#39;Experiment.pptx&#39;, &#39;info.txt&#39;, &#39;subj1.mat&#39;, &#39;subj11.mat&#39;, &#39;subj2.mat&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; fileType = &quot;mat&quot;</span>
-<span class="sd">    &gt;&gt;&gt; sortFiles(files, fileType)</span>
+<span class="sd">    &gt;&gt;&gt; files = [&#39;subj1.mat&#39;, &#39;subj11.mat&#39;, &#39;subj2.mat&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; fileType = &quot;.mat&quot;</span>
+<span class="sd">    &gt;&gt;&gt; sortStrings(files, fileType)</span>
 <span class="sd">    [&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">unorderedList</span>
+
+    <span class="n">suffixLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
     
-    <span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">fileType</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">getPrefix</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">)</span>
     
-    <span class="n">suffixLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fileType</span><span class="p">)</span>
-    
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">getFilePrefix</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">)</span>
-    
-    <span class="n">sortedFiles</span> <span class="o">=</span> <span class="n">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">fileType</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">sortedFiles</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sortedFiles</span>
+    <span class="n">sortedList</span> <span class="o">=</span> <span class="n">intCore</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sortedList</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sortedList</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dataFiles</span>   
-    </div>
-<div class="viewcode-block" id="getFilePrefix"><a class="viewcode-back" href="../data.html#data.getFilePrefix">[docs]</a><span class="k">def</span> <span class="nf">getFilePrefix</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">unorderedList</span>   </div>
+
+
+<div class="viewcode-block" id="getPrefix"><a class="viewcode-back" href="../data.html#data.getPrefix">[docs]</a><span class="k">def</span> <span class="nf">getPrefix</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Identifies any initial part of the filenames that is identical </span>
-<span class="sd">    for all files</span>
+<span class="sd">    Identifies any initial part of strings that are identical </span>
+<span class="sd">    for all string</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    dataFiles : list of strings</span>
-<span class="sd">        A list of filenames</span>
+<span class="sd">    unorderedList : list of strings</span>
+<span class="sd">        A list of strings to be ordered</span>
 <span class="sd">    suffixLen : int</span>
-<span class="sd">        The length of the file extension found after the &quot;.&quot;.</span>
+<span class="sd">        The length of the identified suffix</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    prefix : string</span>
-<span class="sd">        The initial part of the filenames that is identical for all files</span>
+<span class="sd">        The initial part of the strings that is identical for all strings in </span>
+<span class="sd">        the list </span>
 <span class="sd">        </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; dataFiles = [&#39;subj1.mat&#39;, &#39;subj11.mat&#39;, &#39;subj2.mat&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; suffixLen = 3</span>
-<span class="sd">    &gt;&gt;&gt; getFilePrefix(dataFiles, suffixLen)</span>
+<span class="sd">    &gt;&gt;&gt; suffixLen = 4</span>
+<span class="sd">    &gt;&gt;&gt; getPrefix(dataFiles, suffixLen)</span>
 <span class="sd">    &#39;subj&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="n">suffixLen</span><span class="p">):</span>
-        <span class="n">sec</span> <span class="o">=</span> <span class="n">dataFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">i</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">sec</span> <span class="o">==</span> <span class="n">d</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="n">suffixLen</span><span class="o">+</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># Assuming the prefix might be the string-suffix</span>
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">unorderedList</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">sec</span> <span class="o">==</span> <span class="n">d</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">unorderedList</span><span class="p">)):</span>
             <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">break</span>
-    <span class="k">return</span> <span class="n">dataFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    </div>
-<div class="viewcode-block" id="intCore"><a class="viewcode-back" href="../data.html#data.intCore">[docs]</a><span class="k">def</span> <span class="nf">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">suffix</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Takes the *core* part of a filename and, assuming it is an integer, </span>
-<span class="sd">    sorts them. Returns the file list sorted</span>
+    <span class="k">return</span> <span class="n">unorderedList</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="intCore"><a class="viewcode-back" href="../data.html#data.intCore">[docs]</a><span class="k">def</span> <span class="nf">intCore</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes the *core* part of a string and, assuming it is an integer, </span>
+<span class="sd">    sorts them. Returns the list sorted</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    dataFiles : list of strings</span>
-<span class="sd">        The complete filenames (without path)</span>
+<span class="sd">    unorderedList : list of strings</span>
+<span class="sd">        The list of strings to be sorted</span>
 <span class="sd">    prefix : string</span>
-<span class="sd">        The unchanging part of the start each file name</span>
+<span class="sd">        The unchanging part of the start each string</span>
 <span class="sd">    suffix : string</span>
-<span class="sd">        The file type</span>
+<span class="sd">        The unchanging known end of each string</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    sortedFiles : list of strings</span>
-<span class="sd">        The filenames now sorted</span>
+<span class="sd">    sortedStrings : list of strings</span>
+<span class="sd">        The strings now sorted</span>
 <span class="sd">        </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; dataFiles = [&#39;me001.mat&#39;, &#39;me051.mat&#39;, &#39;me002.mat&#39;, &#39;me052.mat&#39;]</span>
 <span class="sd">    &gt;&gt;&gt; prefix = &#39;me0&#39;</span>
-<span class="sd">    &gt;&gt;&gt; suffix = &#39;mat&#39;</span>
+<span class="sd">    &gt;&gt;&gt; suffix = &#39;.mat&#39;</span>
 <span class="sd">    &gt;&gt;&gt; intCore(dataFiles,prefix,suffix)</span>
 <span class="sd">    [&#39;me001.mat&#39;, &#39;me002.mat&#39;, &#39;me051.mat&#39;, &#39;me052.mat&#39;]</span>
 <span class="sd">    </span>
@@ -281,19 +295,22 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">core</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">suffix</span><span class="p">:</span>
+            <span class="n">core</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span><span class="o">-</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">))],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">core</span> <span class="o">=</span> <span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">)]</span>
+        <span class="n">coreInt</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">core</span><span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span>
-        
-    <span class="n">coreInt</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">),</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="n">core</span><span class="p">]</span>  
+    
     <span class="n">coreSorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">coreInt</span><span class="p">)</span>
-    <span class="n">coreStr</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">),</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="n">coreSorted</span><span class="p">]</span>
+    <span class="n">coreStr</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">coreSorted</span><span class="p">]</span>
     
-    <span class="n">sortedFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span><span class="p">,</span><span class="s">&#39;0&#39;</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">core</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span><span class="n">s</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="n">suffix</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="n">coreStr</span><span class="p">]</span>
+    <span class="n">sortedStrings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">core</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">s</span><span class="p">,</span> <span class="n">suffix</span><span class="p">])</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">coreStr</span><span class="p">]</span>
     
-    <span class="k">return</span> <span class="n">sortedFiles</span>
+    <span class="k">return</span> <span class="n">sortedStrings</span></div>
     
-</div>
+
 <div class="viewcode-block" id="getmatData"><a class="viewcode-back" href="../data.html#data.getmatData">[docs]</a><span class="k">def</span> <span class="nf">getmatData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads the data from MATLAB files</span>
@@ -308,12 +325,13 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dataSet : list of dictionaries</span>
+<span class="sd">        Each dictionary should represent the data of one participant</span>
 <span class="sd">        </span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; folder = &#39;./Data/&#39;</span>
 <span class="sd">    &gt;&gt;&gt; dataFiles = [&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; getmatData(folder, files)</span>
+<span class="sd">    &gt;&gt;&gt; getmatData(folder, dataFiles)</span>
 <span class="sd">    [{&#39;cumpts&#39;: array([ 7, 17, 19, 21], dtype=uint8)},</span>
 <span class="sd">     {&#39;cumpts&#39;: array([12, 22, 24, 26], dtype=uint8)},</span>
 <span class="sd">     {&#39;cumpts&#39;: array([ 5, 15, 17, 19], dtype=uint8)}]</span>
@@ -328,12 +346,10 @@
 
         <span class="n">mat</span> <span class="o">=</span> <span class="n">loadmat</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span>
 
-        <span class="n">dataD</span> <span class="o">=</span> <span class="p">{}</span>
-        
-        <span class="n">dataD</span><span class="p">[</span><span class="s">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="n">dataD</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fileName&quot;</span><span class="p">:</span> <span class="n">f</span><span class="p">}</span>
 
         <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mat</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;__&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;__&quot;</span><span class="p">:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -344,6 +360,73 @@
 
         <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataD</span><span class="p">)</span>
 
+    <span class="k">return</span> <span class="n">dataSets</span></div>
+
+
+<div class="viewcode-block" id="getxlsxData"><a class="viewcode-back" href="../data.html#data.getxlsxData">[docs]</a><span class="k">def</span> <span class="nf">getxlsxData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads the data from xlsx files</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    folder : string</span>
+<span class="sd">        The folder string should end in a &quot;/&quot;</span>
+<span class="sd">    files : list of strings</span>
+<span class="sd">        A list of filenames</span>
+<span class="sd">    splitBy : string or list, optional</span>
+<span class="sd">        If multiple participants datasets are in one file sheet, this specifies</span>
+<span class="sd">        the column or columns that can distinguish and identify the rows for </span>
+<span class="sd">        each participant. Default ``[]``</span>
+<span class="sd">    **kwargs : dict, optional</span>
+<span class="sd">        The keyword arguments for pandas.read_excel</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dataSet : list of dictionaries</span>
+<span class="sd">        Each dictionary should represent the data of one participant</span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">     </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    pandas.read_excel</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">splitBy</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;splitBy&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">splitBy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">splitBy</span> <span class="o">=</span> <span class="p">[</span><span class="n">splitBy</span><span class="p">]</span>
+    
+    <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">folder</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+
+        <span class="c1"># In case the file is open, this will in fact be a temporary file and not a valid file.</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;~$&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitBy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># The data must be split</span>
+            <span class="n">classifierList</span> <span class="o">=</span> <span class="p">(</span><span class="n">sortStrings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">])),</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splitBy</span><span class="p">)</span>
+            <span class="n">participants</span> <span class="o">=</span> <span class="n">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">classifierList</span><span class="p">)</span>
+                
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
+                
+                <span class="n">subDat</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[(</span><span class="n">dat</span><span class="p">[</span><span class="n">splitBy</span><span class="p">]</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+                <span class="n">subDatDict</span> <span class="o">=</span> <span class="n">subDat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+                <span class="n">subDatDict</span><span class="p">[</span><span class="s2">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+                <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subDatDict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datDict</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
+            <span class="n">datDict</span><span class="p">[</span><span class="s2">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datDict</span><span class="p">)</span>
+            
     <span class="k">return</span> <span class="n">dataSets</span></div>
 </pre></div>
 
@@ -384,7 +467,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

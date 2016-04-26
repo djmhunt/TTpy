@@ -79,7 +79,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expResponses</strong> : tuple of length two, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expResponses</strong> : tuple of length two containing non-negative ints, optional</p>
 <blockquote>
 <div><p>Provides the two action responses expected by the experiment</p>
 </div></blockquote>
@@ -91,27 +91,33 @@ If true a decision is taken. If false the function responds <code class="docutil
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
-<blockquote class="last">
-<div><p>Calculates the decisions based on the probabilities and returns the
-decision and the probability of that decision</p>
+<blockquote>
+<div><p>Calculates the decisions based on their probabilities and returns the
+decision and the probabilities for that decision.</p>
 </div></blockquote>
+<p><strong>decision</strong> : int or NoneType</p>
+<blockquote>
+<div><p>The action to be taken by the model</p>
+</div></blockquote>
+<p><strong>probabilities</strong> : OrderedDict of valid responses</p>
+<blockquote>
+<div><p>A dictionary of considered actions as keys and their associated probabilities as values</p>
+</div></blockquote>
+<p>See Also</p>
+<p class="last">models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL</p>
 </td>
 </tr>
 </tbody>
 </table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.BP</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.MS</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.EP</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.MS_rev</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.qLearn</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.qLearn2</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.OpAL</span></code></p>
-</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="model.decision.binary.decIntEtaReac">
-<code class="descclassname">model.decision.binary.</code><code class="descname">decIntEtaReac</code><span class="sig-paren">(</span><em>expResponses=(0</em>, <em>1)</em>, <em>eta=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/decision/binary.html#decIntEtaReac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.binary.decIntEtaReac" title="Permalink to this definition">¶</a></dt>
+<dt id="model.decision.binary.decEtaSets">
+<code class="descclassname">model.decision.binary.</code><code class="descname">decEtaSets</code><span class="sig-paren">(</span><em>expResponses=(0</em>, <em>1)</em>, <em>eta=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/decision/binary.html#decEtaSets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.binary.decEtaSets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decisions using a probability difference threshold for the expectation
-from two sets of response value probabilities.</p>
+from two sets of action-response value probabilities.</p>
 <p>It is assumed that the response values are increasing and evenly spaced.</p>
-<p>The two sets of probabilities are provided as a one dimtentional array,
+<p>The two sets of probabilities are provided as a one dimensional array,
 with one set after the other.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -124,14 +130,23 @@ with one set after the other.</p>
 <p><strong>eta</strong> : float, optional <img src="_images/mathmpl/math-0fa258552e.png" style="position: relative; bottom: -7px"/></p>
 <blockquote>
 <div><p>The threshold for decisions. <img src="_images/mathmpl/math-00d326f907.png" style="position: relative; bottom: -7px"/>
-If true a decision is taken. If false the function responds <code class="docutils literal"><span class="pre">None</span></code></p>
+If true a decision is taken. If false the function responds <code class="docutils literal"><span class="pre">None</span></code>
+Default <code class="docutils literal"><span class="pre">0</span></code></p>
 </div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Calculates the decisions based on the probabilities and returns the
 decision and the probability of that decision</p>
+</div></blockquote>
+<p><strong>decision</strong> : int or NoneType</p>
+<blockquote>
+<div><p>The action to be taken by the model</p>
+</div></blockquote>
+<p><strong>probDict</strong> : OrderedDict of valid responses</p>
+<blockquote class="last">
+<div><p>A dictionary of considered actions as keys and their associated probabilities as values</p>
 </div></blockquote>
 </td>
 </tr>
@@ -139,21 +154,29 @@ decision and the probability of that decision</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.BP</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.MS_rev</span></code>, <a class="reference internal" href="experiment.html#experiment.decks.deckStimAllInfo" title="experiment.decks.deckStimAllInfo"><code class="xref py py-obj docutils literal"><span class="pre">experiment.decks.deckStimAllInfo</span></code></a></p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.BP</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.MS_rev</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">experiment.decks.deckStimAllInfo</span></code></p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decIntEtaReac</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decEtaSets</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lastAct</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span> <span class="o">=</span> <span class="n">decIntEtaReac</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">)</span>
-<span class="go">(1, {0:0.44444444444, 1:0.5555555556})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="go">(0, [1])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.25</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-<span class="go">model\decisioninary.py:120: UserWarning: Bad number of validResponses: [0, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span> <span class="o">=</span> <span class="n">decEtaSets</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">)</span>
+<span class="go">(0, {0:0.8, 1:0.2})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">(0, {0: 1})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">model\decisioninary.py:223: UserWarning: Bad number of validResponses: [0, 3]</span>
 <span class="go">warn(&quot;Bad number of validResponses: &quot; + str(validResponses))</span>
-<span class="go">(1, {0:0.44444444444, 1:0.5555555556})</span>
+<span class="go">(0, {0:0.8, 1:0.2})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[])</span>
+<span class="go">(None, {0:0.8, 1:0.2})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">(0, {0:0.6, 1:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">(0, {0:0.8, 1:0.2})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]),</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">(0, {0:0.8, 1:0.2})</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -173,9 +196,17 @@ decision and the probability of that decision</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Calculates the decisions based on the probabilities and returns the
 decision and the probability of that decision</p>
+</div></blockquote>
+<p><strong>decision</strong> : int or NoneType</p>
+<blockquote>
+<div><p>The action to be taken by the model</p>
+</div></blockquote>
+<p><strong>probabilities</strong> : OrderedDict of valid responses</p>
+<blockquote class="last">
+<div><p>A dictionary of considered actions as keys and their associated probabilities as values</p>
 </div></blockquote>
 </td>
 </tr>
@@ -186,7 +217,7 @@ decision and the probability of that decision</p>
 <p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.BPMS</span></code>, <a class="reference internal" href="model.html#module-model.BHMM" title="model.BHMM"><code class="xref py py-obj docutils literal"><span class="pre">model.BHMM</span></code></a></p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decSingle</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="kn">import</span> <span class="n">decSingle</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lastAct</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span> <span class="o">=</span> <span class="n">decSingle</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dec</span><span class="p">(</span><span class="mf">0.23</span><span class="p">,</span> <span class="n">lastAct</span><span class="p">)</span>
@@ -216,7 +247,8 @@ number of actions, but they are countable.</p>
 <dl class="function">
 <dt id="model.decision.discrete.decMaxProb">
 <code class="descclassname">model.decision.discrete.</code><code class="descname">decMaxProb</code><span class="sig-paren">(</span><em>expResponses=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/decision/discrete.html#decMaxProb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.discrete.decMaxProb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decisions using a probability difference threshold</p>
+<dd><p>Decisions for an arbitrary number of choices</p>
+<p>Choice made by choosing the most likely</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -230,9 +262,17 @@ probabilities will be <img src="_images/mathmpl/math-d7aae3076d.png" style="posi
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Calculates the decisions based on the probabilities and returns the
 decision and the probability of that decision</p>
+</div></blockquote>
+<p><strong>decision</strong> : int or NoneType</p>
+<blockquote>
+<div><p>The action to be taken by the model</p>
+</div></blockquote>
+<p><strong>probDict</strong> : OrderedDict of valid responses</p>
+<blockquote class="last">
+<div><p>A dictionary of considered actions as keys and their associated probabilities as values</p>
 </div></blockquote>
 </td>
 </tr>
@@ -243,11 +283,11 @@ decision and the probability of that decision</p>
 <p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.qLearn</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.qLearn2</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.OpAL</span></code></p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">decMaxProb</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">decMaxProb</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lastAct</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">decMaxProb</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
-<span class="go">￼(1, {0:0.2,1:0.6,2:0.3,4:0.5})</span>
+<span class="go">￼(1, {0:0.2,1:0.6,2:0.3,3:0.5})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
 <span class="go">￼(1, {0:0.2,1:0.5,2:0.3,3:0.5})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
@@ -258,9 +298,75 @@ decision and the probability of that decision</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">￼(2, {1:0.2,2:0.3,3:0.5})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">model\decision\discrete.py:66: UserWarning: Some of the validResponses are not in expResponses: [0, 2]</span>
+<span class="go">model\decision\discrete.py:83: UserWarning: Some of the validResponses are not in expResponses: [0, 2]</span>
 <span class="go">warn(&quot;Some of the validResponses are not in expResponses: &quot; + repr(validResponses))</span>
 <span class="go">￼(3, {1:0.2,2:0.3,3:0.5})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="model.decision.discrete.decMaxProbSets">
+<code class="descclassname">model.decision.discrete.</code><code class="descname">decMaxProbSets</code><span class="sig-paren">(</span><em>expResponses=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/decision/discrete.html#decMaxProbSets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.discrete.decMaxProbSets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decisions for an arbitrary number of sets of action-response value probabilities</p>
+<p>Choice made by choosing the most likely</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expResponses</strong> : tuple or None, optional</p>
+<blockquote>
+<div><p>Provides the action responses expected by the experiment for each
+probability estimate. If <code class="docutils literal"><span class="pre">None</span></code> then the responses for <img src="_images/mathmpl/math-1922d1ceaa.png" style="position: relative; bottom: -3px"/>
+probabilities will be <img src="_images/mathmpl/math-d7aae3076d.png" style="position: relative; bottom: -6px"/></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>decisionFunc</strong> : function</p>
+<blockquote>
+<div><p>Calculates the decisions based on the probabilities and returns the
+decision and the probability of that decision</p>
+</div></blockquote>
+<p><strong>decision</strong> : int or NoneType</p>
+<blockquote>
+<div><p>The action to be taken by the model</p>
+</div></blockquote>
+<p><strong>probDict</strong> : OrderedDict of valid responses</p>
+<blockquote class="last">
+<div><p>A dictionary of considered actions as keys and their associated probabilities as values</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">models.qLearn</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.qLearn2</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">models.OpAL</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">decMaxProbSets</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lastAct</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">decMaxProbSets</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
+<span class="go">￼(2, {0:0.25,1:0.25,2:0.5})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
+<span class="go">￼(1, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
+<span class="go">￼(2, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">￼(2, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">￼(0, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">model\decision\discrete.py:181: UserWarning: Some of the validResponses are not in expResponses: [0, 3]</span>
+<span class="go">warn(&quot;Some of the validResponses are not in expResponses: &quot; + repr(validResponses))</span>
+<span class="go">￼(2, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[])</span>
+<span class="go">￼(None, {0:0.2,1:0.4,2:0.4})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">￼(2, {0:0.1,1:0.4,2:0.5})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.4</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">￼(2, {0:0.2,1:0.4,2:0.4})</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -339,7 +445,7 @@ decision and the probability of that decision</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

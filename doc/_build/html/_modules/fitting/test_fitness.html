@@ -48,14 +48,14 @@
           <div class="body" role="main">
             
   <h1>Source code for fitting.test_fitness</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">@author: Dominic</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;../&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">from</span> <span class="nn">pytest</span> <span class="kn">import</span> <span class="n">raises</span><span class="p">,</span> <span class="n">fixture</span>
@@ -67,22 +67,22 @@
 <span class="kn">from</span> <span class="nn">fitting.fitness</span> <span class="kn">import</span> <span class="n">fitter</span>
 <span class="kn">from</span> <span class="nn">fitting.fitters.minimize</span> <span class="kn">import</span> <span class="n">minimize</span>
 
-<span class="c">#def test_an_exception():</span>
-<span class="c">#    with raises(IndexError):</span>
-<span class="c">#        # Indexing the 30th item in a 3 item list</span>
-<span class="c">#        [5, 10, 15][30]</span>
-<span class="c">#        </span>
+<span class="c1">#def test_an_exception():</span>
+<span class="c1">#    with raises(IndexError):</span>
+<span class="c1">#        # Indexing the 30th item in a 3 item list</span>
+<span class="c1">#        [5, 10, 15][30]</span>
+<span class="c1">#        </span>
       
-<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;function&quot;</span><span class="p">)</span>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="modelSets"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.modelSets">[docs]</a><span class="k">def</span> <span class="nf">modelSets</span><span class="p">():</span>
     
     <span class="n">beta</span> <span class="o">=</span> <span class="mf">0.15</span>
     <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="mf">1.5</span>
-    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>  <span class="s">&#39;alpha&#39;</span><span class="p">:</span><span class="n">alpha</span><span class="p">,</span>
-    <span class="c">#                &#39;beta&#39;:beta,</span>
-                    <span class="s">&#39;theta&#39;</span><span class="p">:</span><span class="n">theta</span><span class="p">}</span>
-    <span class="n">paramExtras</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;prior&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])}</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>  <span class="s1">&#39;alpha&#39;</span><span class="p">:</span><span class="n">alpha</span><span class="p">,</span>
+    <span class="c1">#                &#39;beta&#39;:beta,</span>
+                    <span class="s1">&#39;theta&#39;</span><span class="p">:</span><span class="n">theta</span><span class="p">}</span>
+    <span class="n">paramExtras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prior&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">])}</span>
     
     <span class="n">modelSet</span> <span class="o">=</span> <span class="n">models</span><span class="p">((</span><span class="n">qLearn</span><span class="p">,</span><span class="n">parameters</span><span class="p">,</span><span class="n">paramExtras</span><span class="p">))</span>
     <span class="n">modelInfos</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">modelSet</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">()]</span>
@@ -92,22 +92,22 @@
     
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span>
     </div>
-<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">)</span>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="participant"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.participant">[docs]</a><span class="k">def</span> <span class="nf">participant</span><span class="p">():</span>
     
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;subchoice&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;subchoice&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
                                  <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
                                  <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> 
                                  <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> 
                                  <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> 
-             <span class="s">&#39;subreward&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mi">7</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  
+             <span class="s1">&#39;subreward&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mi">7</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  
                                  <span class="mi">8</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  
                                  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  
                                  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  
                                  <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> 
                                  <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  
                                  <span class="mi">1</span><span class="p">,</span>  <span class="mi">5</span><span class="p">]),</span> 
-             <span class="s">&#39;cumpts&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span>  <span class="mi">7</span><span class="p">,</span>   <span class="mi">9</span><span class="p">,</span>  <span class="mi">11</span><span class="p">,</span>  <span class="mi">21</span><span class="p">,</span>  <span class="mi">26</span><span class="p">,</span>  <span class="mi">36</span><span class="p">,</span>  <span class="mi">42</span><span class="p">,</span>  <span class="mi">43</span><span class="p">,</span>  <span class="mi">49</span><span class="p">,</span>  <span class="mi">59</span><span class="p">,</span>  <span class="mi">69</span><span class="p">,</span>  
+             <span class="s1">&#39;cumpts&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span>  <span class="mi">7</span><span class="p">,</span>   <span class="mi">9</span><span class="p">,</span>  <span class="mi">11</span><span class="p">,</span>  <span class="mi">21</span><span class="p">,</span>  <span class="mi">26</span><span class="p">,</span>  <span class="mi">36</span><span class="p">,</span>  <span class="mi">42</span><span class="p">,</span>  <span class="mi">43</span><span class="p">,</span>  <span class="mi">49</span><span class="p">,</span>  <span class="mi">59</span><span class="p">,</span>  <span class="mi">69</span><span class="p">,</span>  
                               <span class="mi">79</span><span class="p">,</span>  <span class="mi">80</span><span class="p">,</span>  <span class="mi">88</span><span class="p">,</span>  <span class="mi">92</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">114</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">133</span><span class="p">,</span> <span class="mi">141</span><span class="p">,</span> <span class="mi">143</span><span class="p">,</span> 
                               <span class="mi">144</span><span class="p">,</span> <span class="mi">145</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">156</span><span class="p">,</span> <span class="mi">158</span><span class="p">,</span> <span class="mi">166</span><span class="p">,</span> <span class="mi">172</span><span class="p">,</span> <span class="mi">173</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="mi">189</span><span class="p">,</span> 
                               <span class="mi">199</span><span class="p">,</span> <span class="mi">209</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">235</span><span class="p">,</span> <span class="mi">237</span><span class="p">,</span> <span class="mi">238</span><span class="p">,</span> <span class="mi">239</span><span class="p">,</span> <span class="mi">244</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> 
@@ -118,7 +118,7 @@
                               
     <span class="k">return</span> <span class="n">data</span>
     </div>
-<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;module&quot;</span><span class="p">)</span>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;module&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="probabilities"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.probabilities">[docs]</a><span class="k">def</span> <span class="nf">probabilities</span><span class="p">():</span>
     
     <span class="n">prob</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span>  <span class="mf">5.000e-01</span><span class="p">,</span>   <span class="mf">3.543e-01</span><span class="p">,</span>   <span class="mf">1.824e-01</span><span class="p">,</span>   <span class="mf">9.020e-01</span><span class="p">,</span>   <span class="mf">9.734e-01</span><span class="p">,</span>
@@ -140,15 +140,15 @@
                   
     <span class="k">return</span> <span class="n">prob</span>
                               </div>
-<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">&quot;function&quot;</span><span class="p">)</span>
+<span class="nd">@fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
 <div class="viewcode-block" id="fitting"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.fitting">[docs]</a><span class="k">def</span> <span class="nf">fitting</span><span class="p">():</span>
     
     <span class="k">def</span> <span class="nf">scaleFunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span>
         
-    <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="s">&quot;-2log&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#39;constrained&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;alpha&#39;</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="s">&#39;theta&#39;</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)})</span>
+    <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="s2">&quot;-2log&quot;</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;constrained&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="s1">&#39;theta&#39;</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)})</span>
 
-    <span class="n">fit</span> <span class="o">=</span> <span class="n">fitter</span><span class="p">(</span><span class="s">&#39;subchoice&#39;</span><span class="p">,</span> <span class="s">&#39;subreward&#39;</span><span class="p">,</span> <span class="s">&#39;ActionProb&#39;</span><span class="p">,</span> <span class="n">fitAlg</span><span class="p">,</span> <span class="n">scaleFunc</span><span class="p">)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">fitter</span><span class="p">(</span><span class="s1">&#39;subchoice&#39;</span><span class="p">,</span> <span class="s1">&#39;subreward&#39;</span><span class="p">,</span> <span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span> <span class="n">fitAlg</span><span class="p">,</span> <span class="n">scaleFunc</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span>
     
@@ -163,8 +163,8 @@
         <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">()</span>
         
-        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.038898802</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>	
-        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s">&#39;theta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.220813253</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.038898802</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>	
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.220813253</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
         </div>
 <div class="viewcode-block" id="TestClass.test_modelInputs"><a class="viewcode-back" href="../../fitting.html#fitting.test_fitness.TestClass.test_modelInputs">[docs]</a>    <span class="k">def</span> <span class="nf">test_modelInputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitting</span><span class="p">,</span> <span class="n">modelSets</span><span class="p">):</span>
         
@@ -172,14 +172,14 @@
         <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
         <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span>
         
-        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="s">&#39;theta&#39;</span><span class="p">]</span>
+        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span>
         <span class="n">paramInputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">modelParams</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">paramNames</span><span class="p">]</span>
         
         <span class="n">fit</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">paramNames</span>
         <span class="n">fit</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelOtherParams</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_getModInput</span><span class="p">(</span><span class="o">*</span><span class="n">paramInputs</span><span class="p">)</span>
         
-        <span class="n">answer</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s">&#39;prior&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="mf">0.5</span><span class="p">]),</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+        <span class="n">answer</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;prior&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span> <span class="mf">0.5</span><span class="p">,</span>  <span class="mf">0.5</span><span class="p">]),</span> <span class="s1">&#39;theta&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
         
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">answer</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="k">assert</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
@@ -190,22 +190,22 @@
         <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
         <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span>
         
-        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="s">&#39;theta&#39;</span><span class="p">]</span>
+        <span class="n">paramNames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span><span class="s1">&#39;theta&#39;</span><span class="p">]</span>
         <span class="n">paramInputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">modelParams</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">paramNames</span><span class="p">]</span>
         
         <span class="n">fit</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="n">fit</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">paramNames</span>
         <span class="n">fit</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelOtherParams</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">partChoices</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">scaler</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s">&#39;subchoice&#39;</span><span class="p">])</span>
-        <span class="n">fit</span><span class="o">.</span><span class="n">partRewards</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="s">&#39;subreward&#39;</span><span class="p">]</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">partChoices</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">scaler</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s1">&#39;subchoice&#39;</span><span class="p">])</span>
+        <span class="n">fit</span><span class="o">.</span><span class="n">partRewards</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="s1">&#39;subreward&#39;</span><span class="p">]</span>
         
         <span class="n">model</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">_simSetup</span><span class="p">(</span><span class="o">*</span><span class="n">paramInputs</span><span class="p">)</span>
         
         <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
         
-        <span class="n">probs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&quot;Probabilities&quot;</span><span class="p">]</span>
-        <span class="n">act</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&quot;Actions&quot;</span><span class="p">]</span>
-        <span class="n">actProb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s">&#39;ActionProb&#39;</span><span class="p">]</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Probabilities&quot;</span><span class="p">]</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span>
+        <span class="n">actProb</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">]</span>
         
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">act</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">a</span><span class="p">]</span> <span class="o">==</span> <span class="n">actProb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -214,10 +214,10 @@
 
     
 </div></div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
     
-<span class="c">#    pytest.set_trace()</span>
+<span class="c1">#    pytest.set_trace()</span>
 </pre></div>
 
           </div>
@@ -257,7 +257,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

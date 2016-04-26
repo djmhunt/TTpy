@@ -90,7 +90,7 @@
 </table>
 <dl class="class">
 <dt id="fitting.actReactFitter.fitter">
-<em class="property">class </em><code class="descclassname">fitting.actReactFitter.</code><code class="descname">fitter</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scaler</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/actReactFitter.html#fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.actReactFitter.fitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.actReactFitter.</code><code class="descname">fitter</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scalar</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/actReactFitter.html#fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.actReactFitter.fitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></p>
 <p>A class for fitting data by passing the participant data through the model.</p>
 <p>Used only for fitting action-response models</p>
@@ -114,13 +114,25 @@
 <blockquote>
 <div><p>An instance of one of the fitting algorithms</p>
 </div></blockquote>
-<p><strong>scaler</strong> : function</p>
+<p><strong>scalar</strong> : function</p>
 <blockquote>
 <div><p>Transforms the participant action form to match that of the model</p>
 </div></blockquote>
+<p><strong>stimuliParams</strong> : list of strings or None, optional</p>
+<blockquote>
+<div><p>The keys containing the observational parameters seen by the
+participant before taking a decision on an action. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+<p><strong>actChoiceParams</strong> : string or None or list of ints, optional</p>
+<blockquote>
+<div><p>The name of the key in partData where the list of valid actions
+can be found. If <code class="docutils literal"><span class="pre">None</span></code> then the action list is considered to
+stay constant. If a list then the list will be taken as the list
+of actions that can be taken at each instance. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
 <p><strong>fpRespVal</strong> : float, optional</p>
 <blockquote class="last">
-<div><p>If a floating point error occours when running a fit the fit function
+<div><p>If a floating point error occurs when running a fit the fit function
 will return a value for each element of fpRespVal.
 Default is 1/1e100</p>
 </div></blockquote>
@@ -204,7 +216,7 @@ made by the model</p>
 </table>
 <dl class="class">
 <dt id="fitting.expfitter.fitter">
-<em class="property">class </em><code class="descclassname">fitting.expfitter.</code><code class="descname">fitter</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scaler</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/expfitter.html#fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.expfitter.fitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.expfitter.</code><code class="descname">fitter</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scalar</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/expfitter.html#fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.expfitter.fitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></p>
 <p>A class for fitting data by running through an experiment</p>
 <p>To be fixed later</p>
@@ -228,7 +240,7 @@ made by the model</p>
 <blockquote>
 <div><p>An instance of one of the fitting algorithms</p>
 </div></blockquote>
-<p><strong>scaler</strong> : function</p>
+<p><strong>scalar</strong> : function</p>
 <blockquote class="last">
 <div><p>Transforms the participant action form to match that of the model</p>
 </div></blockquote>
@@ -312,9 +324,9 @@ between the model choices and the participant choices</p>
 </table>
 <dl class="class">
 <dt id="fitting.fit.fit">
-<em class="property">class </em><code class="descclassname">fitting.fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scaler</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scalar</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-<p>The abstact class for fitting data</p>
+<p>The abstract class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -335,13 +347,25 @@ between the model choices and the participant choices</p>
 <blockquote>
 <div><p>An instance of one of the fitting algorithms</p>
 </div></blockquote>
-<p><strong>scaler</strong> : function</p>
+<p><strong>scalar</strong> : function</p>
 <blockquote>
 <div><p>Transforms the participant action form to match that of the model</p>
 </div></blockquote>
+<p><strong>stimuliParams</strong> : list of strings or None, optional</p>
+<blockquote>
+<div><p>The keys containing the observational parameters seen by the
+participant before taking a decision on an action. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+<p><strong>actChoiceParams</strong> : string or None or list of ints, optional</p>
+<blockquote>
+<div><p>The name of the key in partData where the list of valid actions
+can be found. If <code class="docutils literal"><span class="pre">None</span></code> then the action list is considered to
+stay constant. If a list then the list will be taken as the list
+of actions that can be taken at each instance. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
 <p><strong>fpRespVal</strong> : float, optional</p>
 <blockquote class="last">
-<div><p>If a floating point error occours when running a fit the fit function
+<div><p>If a floating point error occurs when running a fit the fit function
 will return a value for each element of fpRespVal.
 Default is 1/1e100</p>
 </div></blockquote>
@@ -408,6 +432,42 @@ defined</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="fitting.fit.fit.formatPartStim">
+<code class="descname">formatPartStim</code><span class="sig-paren">(</span><em>partData</em>, <em>stimuli</em>, <em>validActions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.formatPartStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.formatPartStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the stimuli in the participant data and returns formatted observations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>partData</strong> : dict</p>
+<blockquote>
+<div><p>The participant data</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : list of strings or <code class="docutils literal"><span class="pre">None</span></code></p>
+<blockquote>
+<div><p>A list of the keys in partData representing participant stimuli</p>
+</div></blockquote>
+<p><strong>validActions</strong> : string or <code class="docutils literal"><span class="pre">None</span></code> or list of ints</p>
+<blockquote>
+<div><p>The name of the key in partData where the list of valid actions
+can be found. If <code class="docutils literal"><span class="pre">None</span></code> then the action list is considered to 
+stay constant. If a list then the list will be taken as the list
+of actions that can be taken at every timestep.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>observation</strong> : list of tuples</p>
+<blockquote class="last">
+<div><p>The tuples contain the stimuli and the valid actions for each 
+observation instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="fitting.fit.fit.getModInput">
 <code class="descname">getModInput</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.getModInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.getModInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compiles the kwarg model arguments based on the modelParameters and
@@ -449,7 +509,7 @@ parameter dictionary</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>paranms</strong> : dict</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>params</strong> : dict</p>
 <blockquote class="last">
 <div><p>The kwarg model parameter arguments</p>
 </div></blockquote>
@@ -529,7 +589,14 @@ are the other model parameters</p>
 </div>
 <div class="section" id="module-fitting.test_actReactFitter">
 <span id="fitting-test-actreactfitter-module"></span><h2>fitting.test_actReactFitter module<a class="headerlink" href="#module-fitting.test_actReactFitter" title="Permalink to this headline">¶</a></h2>
-<p>&#64;author: Dominic</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic</td>
+</tr>
+</tbody>
+</table>
 <dl class="class">
 <dt id="fitting.test_actReactFitter.TestClass">
 <em class="property">class </em><code class="descclassname">fitting.test_actReactFitter.</code><code class="descname">TestClass</code><a class="reference internal" href="_modules/fitting/test_actReactFitter.html#TestClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.test_actReactFitter.TestClass" title="Permalink to this definition">¶</a></dt>
@@ -650,7 +717,7 @@ are the other model parameters</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

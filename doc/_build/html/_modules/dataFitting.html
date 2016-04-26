@@ -48,10 +48,11 @@
           <div class="body" role="main">
             
   <h1>Source code for dataFitting</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">from</span> <span class="nn">simulation</span> <span class="kn">import</span> <span class="n">simulation</span>
 
@@ -84,12 +85,12 @@
 <span class="sd">    data.data : Data import function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<span class="c">#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):</span>
+<span class="c1">#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fitter</span><span class="p">,</span><span class="n">fit</span><span class="p">)):</span>
 
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;dataFitting&#39;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;dataFitting&#39;</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Data or fitter missing. Starting a simple simulation&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Data or fitter missing. Starting a simple simulation&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="n">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">)</span>
@@ -97,11 +98,11 @@
         <span class="k">return</span>
 
 
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Overview&#39;</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
     <span class="n">outputting</span><span class="o">.</span><span class="n">recordFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Beginning the data fitting&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the data fitting&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">modelInfo</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">():</span>
@@ -115,14 +116,14 @@
 
         <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 
-            <span class="c"># Find the best model values from those proposed</span>
+            <span class="c1"># Find the best model values from those proposed</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Beginning participant fit&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning participant fit&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Participant fitted&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Participant fitted&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="n">desc</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">recordSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
@@ -138,8 +139,9 @@
 
     <span class="n">outputting</span><span class="o">.</span><span class="n">simLog</span><span class="p">()</span>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
-</pre></div></div>
+    <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+</pre></div>
 
           </div>
         </div>
@@ -178,7 +180,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

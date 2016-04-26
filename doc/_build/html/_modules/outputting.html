@@ -48,14 +48,14 @@
           <div class="body" role="main">
             
   <h1>Source code for outputting</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="c">#matplotlib.interactive(True)</span>
+<span class="c1">#matplotlib.interactive(True)</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
@@ -114,14 +114,14 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;silent&#39;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;save&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;saveScript&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;pickleData&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;simLabel&quot;</span><span class="p">,</span><span class="s">&quot;Untitled&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;logLevel&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="c">#logging.DEBUG</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;maxLabelLength&quot;</span><span class="p">,</span><span class="mi">18</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;npErrResp&quot;</span><span class="p">,</span> <span class="s">&#39;log&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;silent&#39;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;save&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;saveScript&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pickleData&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;simLabel&quot;</span><span class="p">,</span><span class="s2">&quot;Untitled&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;logLevel&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="c1">#logging.DEBUG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;maxLabelLength&quot;</span><span class="p">,</span><span class="mi">18</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;npErrResp&quot;</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
 
@@ -129,13 +129,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fancyLogger</span><span class="p">(</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Framework&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Simulation&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Beginning experiment labelled: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment labelled: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="c"># Initialise the stores of information</span>
+        <span class="c1"># Initialise the stores of information</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span> <span class="o">=</span> <span class="p">[]</span>
@@ -169,11 +169,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Experiment completed. Shutting down&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed. Shutting down&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-    <span class="c">### Folder management</span>
-</div>
+    <span class="c1">### Folder management</span>
+
 <div class="viewcode-block" id="outputting.folderSetup"><a class="viewcode-back" href="../outputting.html#outputting.outputting.folderSetup">[docs]</a>    <span class="k">def</span> <span class="nf">folderSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Identifies and creates the folder the data will be stored in</span>
@@ -193,24 +193,24 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c"># While the folders have already been created, check for the next one</span>
-        <span class="n">folderName</span> <span class="o">=</span> <span class="s">&#39;./Outputs/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span>
+        <span class="c1"># While the folders have already been created, check for the next one</span>
+        <span class="n">folderName</span> <span class="o">=</span> <span class="s1">&#39;./Outputs/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span>
         <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">folderName</span> <span class="o">+=</span> <span class="s">&#39;_no_&#39;</span>
+            <span class="n">folderName</span> <span class="o">+=</span> <span class="s1">&#39;_no_&#39;</span>
             <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">folderName</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-        <span class="n">folderName</span> <span class="o">+=</span> <span class="s">&quot;/&quot;</span>
+        <span class="n">folderName</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
         <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
-            <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span>  <span class="o">+</span> <span class="s">&#39;Pickle/&#39;</span><span class="p">)</span>
+            <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span>  <span class="o">+</span> <span class="s1">&#39;Pickle/&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderName</span></div>
 
-    <span class="c">### File management</span></div>
+    <span class="c1">### File management</span>
 <div class="viewcode-block" id="outputting.newFile"><a class="viewcode-back" href="../outputting.html#outputting.outputting.newFile">[docs]</a>    <span class="k">def</span> <span class="nf">newFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">extension</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</span>
@@ -229,25 +229,25 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&#39;&#39;</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
 
-        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">end</span> <span class="o">=</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span>
 
         <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">+</span> <span class="n">handle</span>
         <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
+            <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">fileName</span> <span class="o">+=</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">fileName</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
         <span class="n">fileName</span> <span class="o">+=</span> <span class="n">end</span>
 
-        <span class="k">return</span> <span class="n">fileName</span>
+        <span class="k">return</span> <span class="n">fileName</span></div>
 
-    <span class="c">### Logging</span></div>
+    <span class="c1">### Logging</span>
 <div class="viewcode-block" id="outputting.getLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.getLogger">[docs]</a>    <span class="k">def</span> <span class="nf">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a named logger stream</span>
@@ -265,8 +265,8 @@
 
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">logger</span>
-</div>
+        <span class="k">return</span> <span class="n">logger</span></div>
+
 <div class="viewcode-block" id="outputting.saving"><a class="viewcode-back" href="../outputting.html#outputting.outputting.saving">[docs]</a>    <span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates the folder structure for the saved data and created the log file</span>
@@ -280,21 +280,21 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">folderSetup</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;log&#39;</span><span class="p">,</span> <span class="s">&#39;txt&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveScript</span><span class="p">:</span>
-                <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+                <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">():</span>
-                    <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">cwd</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s">&quot;outputting.py&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">cwd</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s2">&quot;outputting.py&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
                         <span class="n">copy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">)</span>
                         <span class="k">break</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span>  <span class="s">&#39;&#39;</span>
-</div>
-<div class="viewcode-block" id="outputting.fancyLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.fancyLogger">[docs]</a>    <span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logFile</span> <span class="o">=</span> <span class="s">&quot;./log.txt&quot;</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="s">&#39;log&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logFile</span> <span class="o">=</span>  <span class="s1">&#39;&#39;</span></div>
+
+<div class="viewcode-block" id="outputting.fancyLogger"><a class="viewcode-back" href="../outputting.html#outputting.outputting.fancyLogger">[docs]</a>    <span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logFile</span> <span class="o">=</span> <span class="s2">&quot;./log.txt&quot;</span><span class="p">,</span> <span class="n">logLevel</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npErrResp</span> <span class="o">=</span> <span class="s1">&#39;log&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sets up the style of logging for all the simulations</span>
 
@@ -322,13 +322,13 @@
            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
               <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
               <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
-              <span class="bp">self</span><span class="o">.</span><span class="n">linebuf</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">linebuf</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
            <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
               <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">buf</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
                  <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
 
-           <span class="c"># See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib</span>
+           <span class="c1"># See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib</span>
            <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
               <span class="k">try</span><span class="p">:</span>
                  <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
@@ -338,33 +338,33 @@
 
         <span class="k">if</span> <span class="n">logFile</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">logFile</span><span class="p">,</span>
-                                <span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> </span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span>
-                                <span class="n">datefmt</span><span class="o">=</span><span class="s">&#39;%m-</span><span class="si">%d</span><span class="s"> %H:%M&#39;</span><span class="p">,</span>
+                                <span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                                <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span>
                                 <span class="n">level</span> <span class="o">=</span> <span class="n">logLevel</span><span class="p">,</span>
-                                <span class="n">filemode</span><span class="o">=</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+                                <span class="n">filemode</span><span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
 
-            <span class="n">consoleFormat</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="n">consoleFormat</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
             <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logLevel</span><span class="p">)</span>
             <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">consoleFormat</span><span class="p">)</span>
-            <span class="c"># add the handler to the root logger</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+            <span class="c1"># add the handler to the root logger</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s">&#39;%m-</span><span class="si">%d</span><span class="s"> %H:%M&#39;</span><span class="p">,</span>
-                                <span class="n">format</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%(name)-12s</span><span class="s"> </span><span class="si">%(levelname)-8s</span><span class="s"> </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span>
+                                <span class="n">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
                                 <span class="n">level</span> <span class="o">=</span> <span class="n">logLevel</span><span class="p">)</span>
 
-        <span class="c"># Set the standard error output</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;STDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
-        <span class="c"># Set the numpy error output</span>
-        <span class="n">seterrcall</span><span class="p">(</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span> <span class="p">)</span>
+        <span class="c1"># Set the standard error output</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;STDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+        <span class="c1"># Set the numpy error output</span>
+        <span class="n">seterrcall</span><span class="p">(</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span> <span class="p">)</span>
         <span class="n">seterr</span><span class="p">(</span><span class="nb">all</span> <span class="o">=</span> <span class="n">npErrResp</span><span class="p">)</span>
 
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Log initialised&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Log initialised&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">logFile</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">logFile</span><span class="p">))</span>
-</div>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">logFile</span><span class="p">))</span></div>
+
 <div class="viewcode-block" id="outputting.logSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes to the log the descrition and the label of the experiment and model</span>
@@ -385,19 +385,19 @@
 <span class="sd">        recordSimParams : Records these parameters for later use</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Simulation contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expDesc</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expDesc</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
         <span class="k">if</span> <span class="n">expDesc</span> <span class="o">==</span> <span class="n">expPltLabel</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;. &quot;</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;. &quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">expPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;. &quot;</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">expPltLabel</span> <span class="o">+</span> <span class="s2">&quot;&#39;. &quot;</span>
 
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">modelDesc</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">modelDesc</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
         <span class="k">if</span> <span class="n">modelDesc</span> <span class="o">==</span> <span class="n">modelPltLabel</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;.&quot;</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;.&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s">&quot;&#39;.&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</div>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="outputting.logSimFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
@@ -415,23 +415,23 @@
 <span class="sd">            The other parameters used in the model whose attributes have been</span>
 <span class="sd">            modifed by the user</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;The fit will use the model &#39;&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fit will use the model &#39;&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
 
-        <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; around &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; fitted with the parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
+        <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; around &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; fitted with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
 
-        <span class="n">modelParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
-        <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
+        <span class="n">modelParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
+        <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;&#39; &quot;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span>
 
-        <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s">&#39;Name&#39;</span><span class="p">]</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
+        <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="outputting.logModFittedParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logModFittedParams">[docs]</a>    <span class="k">def</span> <span class="nf">logModFittedParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
@@ -446,15 +446,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-        <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;The fitted values are &quot;</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
+        <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fitted values are &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-    <span class="c">### Data collection</span>
-</div>
+    <span class="c1">### Data collection</span>
+
 <div class="viewcode-block" id="outputting.recordSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expParams</span><span class="p">,</span><span class="n">modelParams</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the model and experiment parameters</span>
@@ -493,8 +493,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelPltLabel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span>
-</div>
+        <span class="k">return</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span></div>
+
 <div class="viewcode-block" id="outputting.paramIdentifier"><a class="viewcode-back" href="../outputting.html#outputting.outputting.paramIdentifier">[docs]</a>    <span class="k">def</span> <span class="nf">paramIdentifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lastLabelID</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the parameters of an experiment or model</span>
@@ -518,19 +518,19 @@
 <span class="sd">            The last label ID used</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
 
-        <span class="n">descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s">&#39;Name&#39;</span><span class="p">]</span>
-        <span class="n">descriptor</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">descriptors</span><span class="p">)</span>
+        <span class="n">descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="n">descriptor</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">descriptors</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span><span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span><span class="p">:</span>
-            <span class="n">plotLabel</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;Run &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lastLabelID</span><span class="p">)</span>
+            <span class="n">plotLabel</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Run &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lastLabelID</span><span class="p">)</span>
             <span class="n">lastLabelID</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">plotLabel</span> <span class="o">=</span> <span class="n">descriptor</span>
 
-        <span class="k">return</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">plotLabel</span><span class="p">,</span> <span class="n">lastLabelID</span>
-</div>
+        <span class="k">return</span> <span class="n">descriptor</span><span class="p">,</span> <span class="n">plotLabel</span><span class="p">,</span> <span class="n">lastLabelID</span></div>
+
 <div class="viewcode-block" id="outputting.recordSim"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSim">[docs]</a>    <span class="k">def</span> <span class="nf">recordSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">expData</span><span class="p">,</span><span class="n">modelData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Records the data from an experiment-model run. Creates a pickled version</span>
@@ -547,10 +547,10 @@
 <span class="sd">        pickleLog : records the picked data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Beginning output processing&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning output processing&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;_Exp-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_Exp-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
@@ -564,8 +564,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 <div class="viewcode-block" id="outputting.recordParticipantFit"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordParticipantFit">[docs]</a>    <span class="k">def</span> <span class="nf">recordParticipantFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">expData</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the data relevant to the participant fitting</span>
@@ -583,12 +583,12 @@
 <span class="sd">            Default is None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Recording participant model fit&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Recording participant model fit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;_Part-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_Part-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
 
-        <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">,</span><span class="s">&quot;Participant&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">))</span>
+        <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span><span class="s2">&quot;Participant&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
@@ -605,8 +605,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 <div class="viewcode-block" id="outputting.recordFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fitInfo</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Records and outputs to the log the parameters associated with the fitting algorithms</span>
@@ -619,24 +619,24 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="n">fitInfo</span>
 
-        <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;Framework&#39;</span><span class="p">)</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Fitting information:&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Fitting information:&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fitInfo</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;For &quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;For &quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s">&quot;Name&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Name&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="n">message</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
-    <span class="c">### Ploting</span></div>
+    <span class="c1">### Ploting</span>
 <div class="viewcode-block" id="outputting.plotModel"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotModel">[docs]</a>    <span class="k">def</span> <span class="nf">plotModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modelPlot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the model data into the relevant plotting functions for the class</span>
@@ -654,11 +654,11 @@
 
         <span class="n">mp</span> <span class="o">=</span> <span class="n">modelPlot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce plots for the model &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce plots for the model &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="outputting.plotModelSet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotModelSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotModelSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">modelSetPlot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the model set data into the relevant plotting functions for the class</span>
@@ -680,14 +680,14 @@
 
         <span class="n">mp</span> <span class="o">=</span> <span class="n">modelSetPlot</span><span class="p">(</span><span class="n">modelSet</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce plots for model set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce plots for model set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">mp</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 <div class="viewcode-block" id="outputting.plotExperiment"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotExperiment">[docs]</a>    <span class="k">def</span> <span class="nf">plotExperiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expInput</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the experiment data into the relevant plotting functions for the class</span>
@@ -713,17 +713,17 @@
         <span class="n">modelParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
         <span class="n">modelLabels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span><span class="p">:]</span>
 
-        <span class="c"># Initialise the class</span>
+        <span class="c1"># Initialise the class</span>
         <span class="n">ep</span> <span class="o">=</span> <span class="n">expPlot</span><span class="p">(</span><span class="n">expSet</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">expLabels</span><span class="p">,</span> <span class="n">modelSet</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">plotArgs</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce plots for experiment set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce plots for experiment set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelSetsNum</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 <div class="viewcode-block" id="outputting.plotExperimentSet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.plotExperimentSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotExperimentSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expInput</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feeds the experiment set data into the relevant plotting functions for the class</span>
@@ -749,17 +749,17 @@
         <span class="n">modelParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span><span class="p">:]</span>
         <span class="n">modelLabels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span><span class="p">:]</span>
 
-        <span class="c"># Initialise the class</span>
+        <span class="c1"># Initialise the class</span>
         <span class="n">ep</span> <span class="o">=</span> <span class="n">expPlot</span><span class="p">(</span><span class="n">expSet</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">expLabels</span><span class="p">,</span> <span class="n">modelSet</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">plotArgs</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce plots for experiment set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce plots for experiment set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">savePlots</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span> <span class="o">+=</span> <span class="mi">1</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
 <div class="viewcode-block" id="outputting.savePlots"><a class="viewcode-back" href="../outputting.html#outputting.outputting.savePlots">[docs]</a>    <span class="k">def</span> <span class="nf">savePlots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plots</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves a list of plots in the appropriate way</span>
@@ -779,25 +779,25 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">handle</span><span class="p">,</span> <span class="n">plot</span> <span class="ow">in</span> <span class="n">plots</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;savefig&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;savefig&quot;</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;savefig&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;savefig&quot;</span><span class="p">)):</span>
 
-                <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;png&#39;</span><span class="p">)</span>
+                <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;png&#39;</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">outputFig</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="n">fileName</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;outputTrees&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;outputTrees&quot;</span><span class="p">)):</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;outputTrees&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;outputTrees&quot;</span><span class="p">)):</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
-                    <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">fileName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
                     <span class="n">plot</span><span class="o">.</span><span class="n">outputTrees</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;to_excel&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s">&quot;to_excel&quot;</span><span class="p">)):</span>
-                <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;to_excel&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span><span class="s2">&quot;to_excel&quot;</span><span class="p">)):</span>
+                <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;xlsx&#39;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
-                    <span class="n">plot</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span>
-</div>
+                    <span class="n">plot</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="outputting.outputFig"><a class="viewcode-back" href="../outputting.html#outputting.outputting.outputFig">[docs]</a>    <span class="k">def</span> <span class="nf">outputFig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">fileName</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the figure to a .png file and/or displays it on the screen.</span>
 
@@ -810,7 +810,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="c">#        plt.figure(fig.number)</span>
+<span class="c1">#        plt.figure(fig.number)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="n">ndpi</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_dpi</span><span class="p">()</span>
@@ -820,9 +820,9 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span></div>
 
-    <span class="c">### Pickle</span></div>
+    <span class="c1">### Pickle</span>
 <div class="viewcode-block" id="outputting.pickleRec"><a class="viewcode-back" href="../outputting.html#outputting.outputting.pickleRec">[docs]</a>    <span class="k">def</span> <span class="nf">pickleRec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes the data to a picke file</span>
@@ -835,12 +835,12 @@
 <span class="sd">            The name of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;pkl&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s1">&#39;pkl&#39;</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span> <span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="outputting.pickleLog"><a class="viewcode-back" href="../outputting.html#outputting.outputting.pickleLog">[docs]</a>    <span class="k">def</span> <span class="nf">pickleLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span><span class="n">folderName</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputFile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w</span> <span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="outputting.pickleLog"><a class="viewcode-back" href="../outputting.html#outputting.outputting.pickleLog">[docs]</a>    <span class="k">def</span> <span class="nf">pickleLog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span><span class="n">folderName</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the data in the appropriate pickle file in a Pickle subfolder</span>
 <span class="sd">        of the outputting folder</span>
@@ -858,14 +858,14 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">handle</span> <span class="o">=</span> <span class="s">&#39;Pickle/&#39;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="s">&quot;Name&quot;</span><span class="p">]</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="s1">&#39;Pickle/&#39;</span> <span class="o">+</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
             <span class="n">handle</span> <span class="o">+=</span> <span class="n">label</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pickleRec</span><span class="p">(</span><span class="n">results</span><span class="p">,</span><span class="n">handle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pickleRec</span><span class="p">(</span><span class="n">results</span><span class="p">,</span><span class="n">handle</span><span class="p">)</span></div>
 
-    <span class="c">### Excel</span></div>
+    <span class="c1">### Excel</span>
 <div class="viewcode-block" id="outputting.simLog"><a class="viewcode-back" href="../outputting.html#outputting.outputting.simLog">[docs]</a>    <span class="k">def</span> <span class="nf">simLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Outputs relevent data to an excel file with all the data and a csv file</span>
@@ -876,50 +876,50 @@
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_abridgedLog</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_totalLog</span><span class="p">()</span>
-</div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_totalLog</span><span class="p">()</span></div>
+
     <span class="k">def</span> <span class="nf">_totalLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce log of all experiments&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce log of all experiments&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeDataSet</span><span class="p">()</span>
         <span class="n">record</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s">&#39;csv&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s1">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
         <span class="n">record</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s1">&#39;simRecord&#39;</span><span class="p">,</span> <span class="s1">&#39;xlsx&#39;</span><span class="p">)</span>
         <span class="n">xlsxT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
-        <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxT</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s">&#39;simRecord&#39;</span><span class="p">)</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxT</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;simRecord&#39;</span><span class="p">)</span>
         <span class="n">xlsxT</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_abridgedLog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Produce an abridged log of all experiments&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Produce an abridged log of all experiments&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="n">pertinantData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makePertinantDataSet</span><span class="p">()</span>
         <span class="n">pertRecord</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pertinantData</span><span class="p">)</span>
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;abridgedRecord&#39;</span><span class="p">,</span> <span class="s">&#39;csv&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s1">&#39;abridgedRecord&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
         <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s">&#39;simAbridgedRecord&#39;</span><span class="p">,</span> <span class="s">&#39;xlsx&#39;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFile</span><span class="p">(</span><span class="s1">&#39;simAbridgedRecord&#39;</span><span class="p">,</span> <span class="s1">&#39;xlsx&#39;</span><span class="p">)</span>
         <span class="n">xlsxA</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
-        <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxA</span><span class="p">,</span><span class="n">sheet_name</span> <span class="o">=</span> <span class="s">&#39;abridgedRecord&#39;</span><span class="p">)</span>
+        <span class="n">pertRecord</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxA</span><span class="p">,</span><span class="n">sheet_name</span> <span class="o">=</span> <span class="s1">&#39;abridgedRecord&#39;</span><span class="p">)</span>
         <span class="n">xlsxA</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_makeDataSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;exp_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;exp_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span>
 
-        <span class="n">expData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="p">,</span> <span class="s">&#39;exp_&#39;</span><span class="p">)</span>
-        <span class="n">modelData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">,</span> <span class="s">&#39;model_&#39;</span><span class="p">)</span>
+        <span class="n">expData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="p">,</span> <span class="s1">&#39;exp_&#39;</span><span class="p">)</span>
+        <span class="n">modelData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">,</span> <span class="s1">&#39;model_&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="n">partData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="p">,</span> <span class="s">&#39;part_&#39;</span><span class="p">)</span>
-            <span class="n">partData</span><span class="p">[</span><span class="s">&#39;fit_quality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span>
+            <span class="n">partData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="p">,</span> <span class="s1">&#39;part_&#39;</span><span class="p">)</span>
+            <span class="n">partData</span><span class="p">[</span><span class="s1">&#39;fit_quality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span>
             <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">partData</span><span class="p">)</span>
 
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
@@ -930,38 +930,38 @@
     <span class="k">def</span> <span class="nf">_makePertinantDataSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;exp_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;exp_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span>
 
-        <span class="c"># Get parameters and fitting data</span>
+        <span class="c1"># Get parameters and fitting data</span>
         <span class="n">modelParams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="p">)</span>
-        <span class="n">modelUsefulParams</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="s">&#39;model_&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span>
+        <span class="n">modelUsefulParams</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="s1">&#39;model_&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">modelUsefulParams</span><span class="p">)</span>
 
-        <span class="c">### Must do this for experiment parameters as well</span>
-<span class="c">#        data.update(expData)</span>
+        <span class="c1">### Must do this for experiment parameters as well</span>
+<span class="c1">#        data.update(expData)</span>
         <span class="n">fitInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">fitInfo</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
 
             <span class="n">usefulKeys</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">fitSet</span> <span class="ow">in</span> <span class="n">fitInfo</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">fitSet</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="s">&quot;Param&quot;</span> <span class="ow">in</span> <span class="n">k</span> <span class="ow">and</span> <span class="s">&quot;model&quot;</span> <span class="ow">or</span> <span class="s">&quot;participant&quot;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;Param&quot;</span> <span class="ow">in</span> <span class="n">k</span> <span class="ow">and</span> <span class="s2">&quot;model&quot;</span> <span class="ow">or</span> <span class="s2">&quot;participant&quot;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
                         <span class="n">usefulKeys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
-            <span class="n">modelData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">,</span> <span class="n">usefulKeys</span><span class="p">,</span> <span class="s">&#39;model_&#39;</span><span class="p">)</span>
-            <span class="n">partData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="p">,</span> <span class="n">usefulKeys</span><span class="p">,</span> <span class="s">&#39;part_&#39;</span><span class="p">)</span>
-            <span class="n">partData</span><span class="p">[</span><span class="s">&#39;fit_quality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span>
+            <span class="n">modelData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="p">,</span> <span class="n">usefulKeys</span><span class="p">,</span> <span class="s1">&#39;model_&#39;</span><span class="p">)</span>
+            <span class="n">partData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="p">,</span> <span class="n">usefulKeys</span><span class="p">,</span> <span class="s1">&#39;part_&#39;</span><span class="p">)</span>
+            <span class="n">partData</span><span class="p">[</span><span class="s1">&#39;fit_quality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span>
             <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
             <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">partData</span><span class="p">)</span>
 
 
         <span class="k">return</span> <span class="n">data</span>
 
-    <span class="c">### Utils</span>
-<div class="viewcode-block" id="outputting.reframeListDicts"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeListDicts">[docs]</a>    <span class="k">def</span> <span class="nf">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="c1">### Utils</span>
+<div class="viewcode-block" id="outputting.reframeListDicts"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeListDicts">[docs]</a>    <span class="k">def</span> <span class="nf">reframeListDicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take a list of dictionaries and turn it into a dictionary of lists</span>
 
@@ -986,12 +986,12 @@
 
         <span class="n">keySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
 
-        <span class="c"># For every key now found</span>
+        <span class="c1"># For every key now found</span>
         <span class="n">newStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFlatDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span><span class="n">store</span><span class="p">,</span><span class="n">storeLabel</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">newStore</span>
-</div>
-<div class="viewcode-block" id="outputting.reframeSelectListDicts"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeSelectListDicts">[docs]</a>    <span class="k">def</span> <span class="nf">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">newStore</span></div>
+
+<div class="viewcode-block" id="outputting.reframeSelectListDicts"><a class="viewcode-back" href="../outputting.html#outputting.outputting.reframeSelectListDicts">[docs]</a>    <span class="k">def</span> <span class="nf">reframeSelectListDicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">storeLabel</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Take a list of dictionaries and turn it into a dictionary of lists</span>
 <span class="sd">        containing only the useful keys</span>
 
@@ -1019,11 +1019,11 @@
 
         <span class="n">keySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatDictSelectKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span><span class="n">keySet</span><span class="p">)</span>
 
-        <span class="c"># For every key now found</span>
+        <span class="c1"># For every key now found</span>
         <span class="n">newStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">newFlatDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span><span class="n">store</span><span class="p">,</span><span class="n">storeLabel</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">newStore</span>
-</div>
+        <span class="k">return</span> <span class="n">newStore</span></div>
+
 <div class="viewcode-block" id="outputting.flatDictKeySet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.flatDictKeySet">[docs]</a>    <span class="k">def</span> <span class="nf">flatDictKeySet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">store</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a dictionary of keys and identifiers for the new dictionary,</span>
@@ -1052,16 +1052,16 @@
 <span class="sd">        reframeListDicts, newFlatDict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c"># Find all the keys</span>
+        <span class="c1"># Find all the keys</span>
         <span class="n">keySet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">ndarray</span><span class="p">)):</span>
-                    <span class="c">#We need to calculate every combination of co-ordinates in the array</span>
+                    <span class="c1">#We need to calculate every combination of co-ordinates in the array</span>
                     <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
-                    <span class="c"># Now record each one</span>
+                    <span class="c1"># Now record each one</span>
                     <span class="k">for</span> <span class="n">genLoc</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">):</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genLoc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="n">loc</span> <span class="o">=</span> <span class="n">genLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1071,8 +1071,8 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">keySet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">keySet</span>
-</div>
+        <span class="k">return</span> <span class="n">keySet</span></div>
+
 <div class="viewcode-block" id="outputting.flatDictSelectKeySet"><a class="viewcode-back" href="../outputting.html#outputting.outputting.flatDictSelectKeySet">[docs]</a>    <span class="k">def</span> <span class="nf">flatDictSelectKeySet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">store</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a dictionary of keys and identifiers for the new dictionary,</span>
@@ -1103,7 +1103,7 @@
 <span class="sd">        reframeSelectListDicts, newFlatDict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c"># Find all the keys</span>
+        <span class="c1"># Find all the keys</span>
         <span class="n">keySet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
@@ -1112,12 +1112,12 @@
                 <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="n">ndarray</span><span class="p">)):</span>
                     <span class="n">vShape</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                    <span class="c"># If the length is too long, skip it. It will just clutter up the document</span>
+                    <span class="c1"># If the length is too long, skip it. It will just clutter up the document</span>
                     <span class="k">if</span> <span class="n">prod</span><span class="p">(</span><span class="n">vShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="c">#We need to calculate every combination of co-ordinates in the array</span>
+                    <span class="c1">#We need to calculate every combination of co-ordinates in the array</span>
                     <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vShape</span><span class="p">]</span>
-                    <span class="c"># Now record each one</span>
+                    <span class="c1"># Now record each one</span>
                     <span class="k">for</span> <span class="n">genLoc</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">):</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genLoc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="n">loc</span> <span class="o">=</span> <span class="n">genLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1127,8 +1127,8 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">keySet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">keySet</span>
-</div>
+        <span class="k">return</span> <span class="n">keySet</span></div>
+
 <div class="viewcode-block" id="outputting.newFlatDict"><a class="viewcode-back" href="../outputting.html#outputting.outputting.newFlatDict">[docs]</a>    <span class="k">def</span> <span class="nf">newFlatDict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">keySet</span><span class="p">,</span><span class="n">store</span><span class="p">,</span><span class="n">storeLabel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes a list of dictionaries and returns a dictionary of 1D lists.</span>
@@ -1181,8 +1181,8 @@
 
         <span class="n">newStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="n">storeLabel</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">partStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()))</span>
 
-        <span class="k">return</span> <span class="n">newStore</span>
-</div>
+        <span class="k">return</span> <span class="n">newStore</span></div>
+
 <div class="viewcode-block" id="outputting.date"><a class="viewcode-back" href="../outputting.html#outputting.outputting.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate todays date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;</span>
@@ -1191,8 +1191,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
-</pre></div></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+</pre></div>
 
           </div>
         </div>
@@ -1231,7 +1238,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>
