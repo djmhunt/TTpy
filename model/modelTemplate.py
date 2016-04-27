@@ -376,24 +376,24 @@ class model(object):
         """Initialises the standard parameters and variables for a model
         """
 
+        self.probActions = kwargs.pop('probActions', True)
         self.numActions = kwargs.pop('numActions', 2)
         self.numStimuli = kwargs.pop('numStimuli', 1)
         self.numCritics = kwargs.pop('numCritics', self.numActions * self.numStimuli)
-        self.prior = kwargs.pop('prior', ones((self.numActions, self.numStimuli)) / self.numCritics)
 
-        self.probActions = kwargs.pop('probActions', True)
+        if self.probActions:
+            defaultPrior = ones(self.numActions) / self.numActions
+        else:
+            defaultPrior = ones((self.numActions, self.numStimuli)) / self.numCritics
+        self.prior = kwargs.pop('prior', defaultPrior)
 
         self.currAction = None
         self.decision = None
         self.validActions = None
         self.lastObservation = None
 
-        if self.probActions:
-            self.probabilities = ones(self.numActions) / self.numActions
-            self.decProbabilities = ones(self.numActions) / self.numActions
-        else:
-            self.probabilities = array(self.prior)
-            self.decProbabilities = array(self.prior)
+        self.probabilities = array(self.prior)
+        self.decProbabilities = array(self.prior)
 
         return kwargs
 

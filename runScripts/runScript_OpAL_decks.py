@@ -59,7 +59,7 @@ parameters = {'alphaCrit': sum(alphaBounds)/2,
 paramExtras = {'numActions': numActions,
                'numStimuli': numStimuli,
                'probActions': probActions,
-               #'expect': ones(numCritics) * 0.6,
+               'expect': ones((numActions, numStimuli)) * 0.6,
                'stimFunc': deckStimDirect(),
                'rewFunc': deckRewDirectNormal(10),
                'decFunc': decEta(eta=eta)}

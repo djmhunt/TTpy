@@ -160,6 +160,7 @@ class OpAL(model):
             self.beta = (self.betaGo + self.betaNogo)/2
             self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
+        self.expectation = array(self.expect)
         self.go = array(self.expectGo)
         self.nogo = array(self.expectGo)
         self.actionValues = ones(self.expectation.shape)

@@ -108,6 +108,8 @@ class qLearn2(model):
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
 
+        self.expectation = array(self.expect)
+
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["alphaPos"] = self.alphaPos
@@ -115,8 +117,6 @@ class qLearn2(model):
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
         self.parameters["expectation"] = self.expectation
-
-        self.expectation = array(self.expect)
 
         # Recorded information
         self.genStandardResultsStore()
@@ -211,7 +211,7 @@ class qLearn2(model):
     def updateModel(self, delta, action, stimuliFilter):
 
         # Find the new activities
-        self._newAct(delta, stimuliFilter, stimuliFilter)
+        self._newAct(delta, stimuliFilter, action)
 
         # Calculate the new probabilities
         if self.probActions:
