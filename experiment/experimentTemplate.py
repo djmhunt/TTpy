@@ -173,7 +173,7 @@ class experiment(object):
 
     def plot(self):
         """
-        Returns a plotting class relavent for this experiment
+        Returns a plotting class relevant for this experiment
 
         Returns
         -------
