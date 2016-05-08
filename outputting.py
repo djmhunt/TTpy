@@ -24,6 +24,8 @@ from collections import OrderedDict, Callable
 from types import NoneType
 
 from utils import listMerGen, callableDetailsString
+from participants.fitResults import plotFitting
+
 
 class outputting(object):
 
@@ -61,23 +63,22 @@ class outputting(object):
     numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
     """
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
-
-        self.silent = kwargs.get('silent',False)
+        self.silent = kwargs.get('silent', False)
         self.save = kwargs.get('save', True)
         self.saveScript = kwargs.get('saveScript', False)
         self.pickleData = kwargs.get('pickleData', False)
-        self.label = kwargs.pop("simLabel","Untitled")
-        self.logLevel = kwargs.pop("logLevel",logging.INFO)#logging.DEBUG
-        self.maxLabelLength = kwargs.pop("maxLabelLength",18)
+        self.label = kwargs.pop("simLabel", "Untitled")
+        self.logLevel = kwargs.pop("logLevel", logging.INFO)# logging.DEBUG
+        self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
 
-        self.date()
+        self.date = date()
 
         self.saving()
 
-        self.fancyLogger(logFile = self.logFile, logLevel = self.logLevel, npErrResp = self.npErrResp)
+        self.fancyLogger(logFile=self.logFile, logLevel=self.logLevel, npErrResp=self.npErrResp)
 
         self.logger = logging.getLogger('Framework')
         self.loggerSim = logging.getLogger('Simulation')
@@ -113,7 +114,6 @@ class outputting(object):
         """
         To run once everything has been completed. Displays the figures if not
         silent.
-
         """
 
         if not self.silent:
@@ -131,7 +131,7 @@ class outputting(object):
         Folder will be created as "./Outputs/<simLabel>_<date>/". If that had
         previously been created then it is created as
         "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
-        avalable integer.
+        available integer.
 
         A subfolder is also created with the name ``Pickle`` if  pickleData is
         true.
@@ -139,7 +139,7 @@ class outputting(object):
         See Also
         --------
         newFile : Creates a new file
-        saving : Ceates the log system
+        saving : Creates the log system
 
         """
 
@@ -156,7 +156,7 @@ class outputting(object):
         makedirs(folderName)
 
         if self.pickleData:
-            makedirs(folderName  + 'Pickle/')
+            makedirs(folderName + 'Pickle/')
 
         self.outputFolder = folderName
 
@@ -227,35 +227,34 @@ class outputting(object):
         folderSetup : creates the folders
         """
 
-
         if self.save:
             self.folderSetup()
             self.logFile = self.newFile('log', 'txt')
 
             if self.saveScript:
-                cwd = getcwd().replace("\\","/")
+                cwd = getcwd().replace("\\", "/")
                 for s in stack():
-                    p = s[1].replace("\\","/")
+                    p = s[1].replace("\\", "/")
                     if cwd in p and "outputting.py" not in p:
-                        copy(p,self.outputFolder)
+                        copy(p, self.outputFolder)
                         break
 
         else:
             self.outputFolder = ''
-            self.logFile =  ''
+            self.logFile = ''
 
-    def fancyLogger(self, logFile = "./log.txt", logLevel = logging.INFO, npErrResp = 'log'):
+    def fancyLogger(self, logFile="./log.txt", logLevel=logging.INFO, npErrResp='log'):
         """
         Sets up the style of logging for all the simulations
 
         Parameters
         ----------
-        logFile = string, optional
+        logFile : string, optional
             Provides the path the log will be written to. Default "./log.txt"
         logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
             Defines the level of the log. Default logging.INFO
         npErrResp : {'log', 'raise'}
-            Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
+            Defines the response to numpy errors. Default ``log``. See numpy.seterr
 
         See Also
         --------
@@ -264,34 +263,33 @@ class outputting(object):
         """
 
         class streamLoggerSim(object):
-           """
-           Fake file-like stream object that redirects writes to a logger instance.
-           Based on one found at:
-               http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
-           """
-           def __init__(self, logger, log_level=logging.INFO):
-              self.logger = logger
-              self.log_level = log_level
-              self.linebuf = ''
+            """
+            Fake file-like stream object that redirects writes to a logger instance.
+            Based on one found at:
+                http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
+            """
+            def __init__(self, logger, log_level=logging.INFO):
+                self.logger = logger
+                self.log_level = log_level
+                self.linebuf = ''
 
-           def write(self, buf):
-              for line in buf.rstrip().splitlines():
-                 self.logger.log(self.log_level, line.rstrip())
+            def write(self, buf):
+                for line in buf.rstrip().splitlines():
+                    self.logger.log(self.log_level, line.rstrip())
 
-           # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
-           def flush(self):
-              try:
-                 self.logger.flush()
-              except AttributeError:
-                  pass
-
+            # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
+            def flush(self):
+                try:
+                    self.logger.flush()
+                except AttributeError:
+                    pass
 
         if logFile:
-            logging.basicConfig(filename = logFile,
+            logging.basicConfig(filename=logFile,
                                 format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                                 datefmt='%m-%d %H:%M',
-                                level = logLevel,
-                                filemode= 'w')
+                                level=logLevel,
+                                filemode='w')
 
             consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
             console = logging.StreamHandler()
@@ -302,13 +300,13 @@ class outputting(object):
         else:
             logging.basicConfig(datefmt='%m-%d %H:%M',
                                 format='%(name)-12s %(levelname)-8s %(message)s',
-                                level = logLevel)
+                                level=logLevel)
 
         # Set the standard error output
         sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
         # Set the numpy error output
-        seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
-        seterr(all = npErrResp)
+        seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
+        seterr(all=npErrResp)
 
         logging.info(self.date)
         logging.info("Log initialised")
@@ -317,7 +315,7 @@ class outputting(object):
 
     def logSimParams(self, expDesc, expPltLabel, modelDesc, modelPltLabel):
         """
-        Writes to the log the descrition and the label of the experiment and model
+        Writes to the log the description and the label of the experiment and model
 
         Parameters
         ----------
@@ -363,21 +361,21 @@ class outputting(object):
             The model parameters that will be fitted over and varied.
         modelOtherArgs : dict
             The other parameters used in the model whose attributes have been
-            modifed by the user
+            modified by the user
         """
         message = "The fit will use the model '" + modelName + "'"
 
-        modelFitParams = [k + ' around ' + str(v).strip('[]()') for k,v in modelFitVars.iteritems()]
+        modelFitParams = [k + ' around ' + str(v).strip('[]()') for k, v in modelFitVars.iteritems()]
         message += " fitted with the parameters " + ", ".join(modelFitParams)
 
-        modelParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
-        modelFuncs = [k + ' = ' + callableDetailsString(v) for k,v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
+        modelParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
+        modelFuncs = [k + ' = ' + callableDetailsString(v) for k, v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
         message += " and using the other user specified parameters " + ", ".join(modelParams)
         message += " and the functions " + ", ".join(modelFuncs)
 
         message += ". This is based on the experiment '" + expParams['Name'] + "' "
 
-        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k,v in expParams.iteritems() if k != 'Name']
+        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems() if k != 'Name']
         message += "with the parameters " + ", ".join(expDescriptors) + "."
 
         self.loggerSim.info(message)
@@ -393,10 +391,12 @@ class outputting(object):
             The model parameters that have been fitted over and varied.
         modelParams : dict
             The model parameters for the fitted model
+        fitQuality : float
+            The value of goodness of fit
         """
         params = modelFitVars.keys()
 
-        modelFitParams = [k + ' = ' + str(v).strip('[]()') for k,v in modelParams.iteritems() if k in params]
+        modelFitParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelParams.iteritems() if k in params]
         message = "The fitted values are " + ", ".join(modelFitParams)
 
         message += " with a fit quality of " + str(fitQuality) + "."
@@ -405,7 +405,7 @@ class outputting(object):
 
     ### Data collection
 
-    def recordSimParams(self,expParams,modelParams):
+    def recordSimParams(self, expParams, modelParams):
         """
         Record the model and experiment parameters
 
@@ -432,8 +432,8 @@ class outputting(object):
         paramIdentifier, logSimParams
         """
 
-        expDesc, expPltLabel, lastExpLabelID =  self.paramIdentifier(expParams, self.lastExpLabelID)
-        modelDesc, modelPltLabel, lastModelLabelID =  self.paramIdentifier(modelParams, self.lastModelLabelID)
+        expDesc, expPltLabel, lastExpLabelID = self.paramIdentifier(expParams, self.lastExpLabelID)
+        modelDesc, modelPltLabel, lastModelLabelID = self.paramIdentifier(modelParams, self.lastModelLabelID)
 
         self.lastExpLabelID = lastExpLabelID
         self.lastModelLabelID = lastModelLabelID
@@ -470,10 +470,10 @@ class outputting(object):
 
         name = params['Name'] + ": "
 
-        descriptors = [k + ' = ' + str(v).strip('[]()') for k,v in params.iteritems() if k != 'Name']
+        descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in params.iteritems() if k != 'Name']
         descriptor = name + ", ".join(descriptors)
 
-        if len(descriptor)>self.maxLabelLength:
+        if len(descriptor) > self.maxLabelLength:
             plotLabel = name + "Run " + str(lastLabelID)
             lastLabelID += 1
         else:
@@ -481,7 +481,7 @@ class outputting(object):
 
         return descriptor, plotLabel, lastLabelID
 
-    def recordSim(self,expData,modelData):
+    def recordSim(self, expData, modelData):
         """
         Records the data from an experiment-model run. Creates a pickled version
 
@@ -497,14 +497,14 @@ class outputting(object):
         pickleLog : records the picked data
         """
 
-        message = "Beginning output processing"
+        message = "Beginning simulation output processing"
         self.logger.info(message)
 
         label = "_Exp-" + str(self.expSetNum) + "_Model-" + str(self.modelSetNum) + "'" + str(self.modelSetSize)
 
         if self.outputFolder and self.pickleData:
-            self.pickleLog(expData,self.outputFolder,label)
-            self.pickleLog(modelData,self.outputFolder,label)
+            self.pickleLog(expData, self.outputFolder, label)
+            self.pickleLog(modelData, self.outputFolder, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -516,7 +516,7 @@ class outputting(object):
         self.modelsSize += 1
         self.modelSetSize += 1
 
-    def recordParticipantFit(self, participant, expData, modelData, fitQuality = None):
+    def recordParticipantFit(self, participant, expData, modelData, fitQuality=None):
         """
         Record the data relevant to the participant fitting
 
@@ -538,12 +538,21 @@ class outputting(object):
 
         label = "_Model-" + str(self.modelSetNum) + "_Part-" + str(self.modelSetSize)
 
-        participant.setdefault("Name","Participant" + str(self.modelSetSize))
+        participant.setdefault("Name", "Participant " + str(self.modelSetSize))
 
-        if self.outputFolder and self.pickleData:
-            self.pickleLog(expData,self.outputFolder,label)
-            self.pickleLog(modelData,self.outputFolder,label)
-            self.pickleLog(participant,self.outputFolder,label)
+        if self.outputFolder:
+
+            message = "Store data for participant " + str(self.modelSetSize)
+            self.logger.info(message)
+
+            ep = plotFitting(participant, modelData, fitQuality)
+
+            self.savePlots(ep)
+
+            if self.pickleData:
+                self.pickleLog(expData, self.outputFolder, label)
+                self.pickleLog(modelData, self.outputFolder, label)
+                self.pickleLog(participant, self.outputFolder, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -557,7 +566,7 @@ class outputting(object):
         self.modelsSize += 1
         self.modelSetSize += 1
 
-    def recordFittingParams(self,fitInfo):
+    def recordFittingParams(self, fitInfo):
         """
         Records and outputs to the log the parameters associated with the fitting algorithms
 
@@ -578,16 +587,15 @@ class outputting(object):
             message = "For " + f['Name'] + ":"
             log.info(message)
 
-            for k,v in f.iteritems():
+            for k, v in f.iteritems():
                 if k == "Name":
                     continue
 
                 message = k + ": " + repr(v)
                 log.info(message)
 
-
     ### Ploting
-    def plotModel(self,modelPlot):
+    def plotModel(self, modelPlot):
         """
         Feeds the model data into the relevant plotting functions for the class
 
@@ -609,7 +617,7 @@ class outputting(object):
 
         self.savePlots(mp)
 
-    def plotModelSet(self,modelSetPlot):
+    def plotModelSet(self, modelSetPlot):
         """
         Feeds the model set data into the relevant plotting functions for the class
 
@@ -729,20 +737,20 @@ class outputting(object):
         """
 
         for handle, plot in plots:
-            if hasattr(plot,"savefig") and callable(getattr(plot,"savefig")):
+            if hasattr(plot, "savefig") and callable(getattr(plot, "savefig")):
 
                 fileName = self.newFile(handle, 'png')
 
-                self.outputFig(plot,fileName)
+                self.outputFig(plot, fileName)
 
-            elif hasattr(plot,"outputTrees") and callable(getattr(plot,"outputTrees")):
+            elif hasattr(plot, "outputTrees") and callable(getattr(plot, "outputTrees")):
 
                 if self.save:
                     fileName = self.newFile(handle, '')
 
                     plot.outputTrees(fileName)
 
-            elif hasattr(plot,"to_excel") and callable(getattr(plot,"to_excel")):
+            elif hasattr(plot, "to_excel") and callable(getattr(plot, "to_excel")):
                 outputFile = self.newFile(handle, 'xlsx')
 
                 if self.save:
@@ -764,7 +772,7 @@ class outputting(object):
 
         if self.save:
             ndpi = fig.get_dpi()
-            fig.savefig(fileName,dpi=ndpi)
+            fig.savefig(fileName, dpi=ndpi)
 
         if not self.silent:
             plt.figure(fig.number)
@@ -773,9 +781,9 @@ class outputting(object):
             plt.close(fig)
 
     ### Pickle
-    def pickleRec(self,data, handle):
+    def pickleRec(self, data, handle):
         """
-        Writes the data to a picke file
+        Writes the data to a pickle file
 
         Parameters
         ----------
@@ -787,10 +795,10 @@ class outputting(object):
 
         outputFile = self.newFile(handle, 'pkl')
 
-        with open(outputFile,'w') as w :
+        with open(outputFile, 'w') as w:
             pickle.dump(data, w)
 
-    def pickleLog(self, results,folderName, label=""):
+    def pickleLog(self, results, folderName, label=""):
         """
         Stores the data in the appropriate pickle file in a Pickle subfolder
         of the outputting folder
@@ -813,13 +821,13 @@ class outputting(object):
         if label:
             handle += label
 
-        self.pickleRec(results,handle)
+        self.pickleRec(results, handle)
 
     ### Excel
     def simLog(self):
         """
         Outputs relevent data to an excel file with all the data and a csv file
-        with the estimated pertinant data
+        with the estimated pertinent data
         """
 
         if not self.save:
@@ -853,7 +861,7 @@ class outputting(object):
         pertRecord.to_csv(outputFile)
         outputFile = self.newFile('simAbridgedRecord', 'xlsx')
         xlsxA = pd.ExcelWriter(outputFile)
-        pertRecord.to_excel(xlsxA,sheet_name = 'abridgedRecord')
+        pertRecord.to_excel(xlsxA, sheet_name='abridgedRecord')
         xlsxA.save()
 
     def _makeDataSet(self):
@@ -887,7 +895,7 @@ class outputting(object):
 
         # Get parameters and fitting data
         modelParams = self.reframeListDicts(self.modelParamStore)
-        modelUsefulParams = OrderedDict((('model_' + k,v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
+        modelUsefulParams = OrderedDict((('model_' + k, v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
         data.update(modelUsefulParams)
 
         ### Must do this for experiment parameters as well
@@ -897,7 +905,7 @@ class outputting(object):
 
             usefulKeys = []
             for fitSet in fitInfo:
-                for k,v in fitSet.iteritems():
+                for k, v in fitSet.iteritems():
                     if "Param" in k and "model" or "participant" in k:
                         usefulKeys.append(v)
 
@@ -906,7 +914,6 @@ class outputting(object):
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
-
 
         return data
 
@@ -937,11 +944,11 @@ class outputting(object):
         keySet = self.flatDictKeySet(store)
 
         # For every key now found
-        newStore = self.newFlatDict(keySet,store,storeLabel)
+        newStore = self.newFlatDict(keySet, store, storeLabel)
 
         return newStore
 
-    def reframeSelectListDicts(self, store, keySet, storeLabel = ''):
+    def reframeSelectListDicts(self, store, keySet, storeLabel=''):
         """Take a list of dictionaries and turn it into a dictionary of lists
         containing only the useful keys
 
@@ -967,14 +974,14 @@ class outputting(object):
 
         """
 
-        keySet = self.flatDictSelectKeySet(store,keySet)
+        keySet = self.flatDictSelectKeySet(store, keySet)
 
         # For every key now found
-        newStore = self.newFlatDict(keySet,store,storeLabel)
+        newStore = self.newFlatDict(keySet, store, storeLabel)
 
         return newStore
 
-    def flatDictKeySet(self,store):
+    def flatDictKeySet(self, store):
         """
         Generates a dictionary of keys and identifiers for the new dictionary,
         splitting any keys with lists into a set of keys, one for each element
@@ -1008,9 +1015,9 @@ class outputting(object):
         for s in store:
             for k in s.keys():
                 v = s[k]
-                if isinstance(v, (list,ndarray)):
-                    #We need to calculate every combination of co-ordinates in the array
-                    arrSets = [range(0,i) for i in shape(v)]
+                if isinstance(v, (list, ndarray)):
+                    # We need to calculate every combination of co-ordinates in the array
+                    arrSets = [range(0, i) for i in shape(v)]
                     # Now record each one
                     for genLoc in listMerGen(*arrSets):
                         if len(genLoc) == 1:
@@ -1023,7 +1030,7 @@ class outputting(object):
 
         return keySet
 
-    def flatDictSelectKeySet(self,store, keys):
+    def flatDictSelectKeySet(self, store, keys):
         """
         Generates a dictionary of keys and identifiers for the new dictionary,
         including only the keys in the keys list. Any keys with lists  will
@@ -1060,13 +1067,13 @@ class outputting(object):
             sKeys = (k for k in s.iterkeys() if k in keys)
             for k in sKeys:
                 v = s[k]
-                if isinstance(v, (list,ndarray)):
+                if isinstance(v, (list, ndarray)):
                     vShape = shape(v)
                     # If the length is too long, skip it. It will just clutter up the document
                     if prod(vShape) > 10:
                         continue
-                    #We need to calculate every combination of co-ordinates in the array
-                    arrSets = [range(0,i) for i in vShape]
+                    # We need to calculate every combination of co-ordinates in the array
+                    arrSets = [range(0, i) for i in vShape]
                     # Now record each one
                     for genLoc in listMerGen(*arrSets):
                         if len(genLoc) == 1:
@@ -1079,7 +1086,7 @@ class outputting(object):
 
         return keySet
 
-    def newFlatDict(self,keySet,store,storeLabel):
+    def newFlatDict(self, keySet, store, storeLabel):
         """
         Takes a list of dictionaries and returns a dictionary of 1D lists.
 
@@ -1114,37 +1121,37 @@ class outputting(object):
 
         for key, (initKey, loc) in keySet.iteritems():
 
-            partStore.setdefault(key,[])
+            partStore.setdefault(key, [])
 
             if type(initKey) is NoneType:
-                vals = [repr(s.get(key,None)) for s in store]
+                vals = [repr(s.get(key, None)) for s in store]
                 partStore[key].extend(vals)
 
             else:
                 for s in store:
-                    rawVal = s.get(initKey,None)
+                    rawVal = s.get(initKey, None)
                     if type(rawVal) is NoneType:
                         v = None
                     else:
                         v = rawVal[loc]
                     partStore[key].append(v)
 
-        newStore = OrderedDict(((storeLabel + k, v) for k,v in partStore.iteritems()))
+        newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
 
         return newStore
 
-    def date(self):
-        """
-        Calculate todays date as a string in the form <year>-<month>-<day>
-        and stores it in self.date
 
-        """
-        d = dt.datetime(1987, 1, 14)
-        d = d.today()
-        self.date = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
+def date():
+    """
+    Calculate today's date as a string in the form <year>-<month>-<day>
+    and returns it
 
+    """
+    d = dt.datetime(1987, 1, 14)
+    d = d.today()
+    todayDate = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
-
+    return todayDate
 
 
 
