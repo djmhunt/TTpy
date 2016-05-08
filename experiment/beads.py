@@ -193,7 +193,7 @@ class Beads(experiment):
         def varCategoryDynamics(self):
 
             params = self.modelParams[0].keys()
-            # We assume that the parameters are the same for all the data to be analised,
+            # We assume that the parameters are the same for all the data to be analysed,
             # otherwise this data is meaningless
 
             dataSet = varyingParams(self.modelStore,params)
