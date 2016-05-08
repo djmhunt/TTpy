@@ -65,6 +65,9 @@ class OpAL_H(model):
     beta : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
         exploitation parameter. Defined as :math:`\\beta` in the paper
+    invBeta : float, optional
+        Inverse of sensitivity parameter for the probabilities.
+        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
     betaDiff : float, optional
         The asymmetry between the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
     numActions : integer, optional
@@ -131,7 +134,8 @@ class OpAL_H(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargRemains.pop('beta', 1)
+        invBeta = kwargRemains.pop('invBeta', 0.2)
+        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.betaDiff = kwargRemains.pop('betaDiff', 0)
         self.betaGo = kwargRemains.pop('betaGo', None)
         self.betaNogo = kwargRemains.pop('betaNogo', None)

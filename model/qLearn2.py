@@ -54,6 +54,9 @@ class qLearn2(model):
         Default is alpha
     beta : float, optional
         Sensitivity parameter for probabilities
+    invBeta : float, optional
+        Inverse of sensitivity parameter.
+        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
     eta : float, optional
         Decision threshold parameter
     numActions : integer, optional
@@ -97,7 +100,8 @@ class qLearn2(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargRemains.pop('beta', 4)
+        invBeta = kwargRemains.pop('invBeta', 0.2)
+        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)

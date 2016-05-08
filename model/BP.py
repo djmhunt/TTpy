@@ -29,6 +29,9 @@ class BP(model):
     ----------
     beta : float, optional
         Sensitivity parameter for probabilities. Default ``4``
+    invBeta : float, optional
+        Inverse of sensitivity parameter.
+        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
     eta : float, optional
         Decision threshold parameter. Default ``0.3``
     numActions : integer, optional
@@ -65,7 +68,8 @@ class BP(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        self.beta = kwargRemains.pop('beta', 4)
+        invBeta = kwargRemains.pop('invBeta', 0.2)
+        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.eta = kwargRemains.pop('eta', 0.3)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
