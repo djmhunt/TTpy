@@ -873,10 +873,10 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
         data['folder'] = self.outputFolder
 
-        expData = self.reframeListDicts(self.expStore, 'exp_')
-        modelData = self.reframeListDicts(self.modelStore, 'model_')
+        expData = reframeListDicts(self.expStore, 'exp_')
+        modelData = reframeListDicts(self.modelStore, 'model_')
         if type(self.fitInfo) is not NoneType:
-            partData = self.reframeListDicts(self.partStore, 'part_')
+            partData = reframeListDicts(self.partStore, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(partData)
 
@@ -894,7 +894,7 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
 
         # Get parameters and fitting data
-        modelParams = self.reframeListDicts(self.modelParamStore)
+        modelParams = reframeListDicts(self.modelParamStore)
         modelUsefulParams = OrderedDict((('model_' + k, v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
         data.update(modelUsefulParams)
 
@@ -909,236 +909,241 @@ class outputting(object):
                     if "Param" in k and "model" or "participant" in k:
                         usefulKeys.append(v)
 
-            modelData = self.reframeSelectListDicts(self.modelStore, usefulKeys, 'model_')
-            partData = self.reframeSelectListDicts(self.partStore, usefulKeys, 'part_')
+            modelData = reframeSelectListDicts(self.modelStore, usefulKeys, 'model_')
+            partData = reframeSelectListDicts(self.partStore, usefulKeys, 'part_')
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
 
         return data
 
-    ### Utils
-    def reframeListDicts(self, store, storeLabel = ''):
-        """
-        Take a list of dictionaries and turn it into a dictionary of lists
 
-        Parameters
-        ----------
-        store : list of dicts
-            The dictionaries would be expected to have many of the same keys
-        storeLabel : string, optional
-            An identifier to be added to the beginning of each key string.
-            Default is ''.
+### Utils
+def reframeListDicts(store, storeLabel=''):
+    """
+    Take a list of dictionaries and turn it into a dictionary of lists
 
-        Returns
-        -------
-        newStore : dict of 1D lists
-            Any dictionary keys containing lists in the input have been split
-            into multiple numbered keys
+    Parameters
+    ----------
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys
+    storeLabel : string, optional
+        An identifier to be added to the beginning of each key string.
+        Default is ''.
 
-        See Also
-        --------
-        flatDictKeySet, newFlatDict
-        """
+    Returns
+    -------
+    newStore : dict of 1D lists
+        Any dictionary keys containing lists in the input have been split
+        into multiple numbered keys
 
-        keySet = self.flatDictKeySet(store)
+    See Also
+    --------
+    flatDictKeySet, newFlatDict
+    """
 
-        # For every key now found
-        newStore = self.newFlatDict(keySet, store, storeLabel)
+    keySet = flatDictKeySet(store)
 
-        return newStore
+    # For every key now found
+    newStore = newFlatDict(keySet, store, storeLabel)
 
-    def reframeSelectListDicts(self, store, keySet, storeLabel=''):
-        """Take a list of dictionaries and turn it into a dictionary of lists
-        containing only the useful keys
-
-        Parameters
-        ----------
-        store : list of dicts
-            The dictionaries would be expected to have many of the same keys
-        keySet : list of strings
-            The keys whose data will be included in the return dictionary
-        storeLabel : string, optional
-            An identifier to be added to the beginning of each key string.
-            Default is ''.
-
-        Returns
-        -------
-        newStore : dict of 1D lists
-            Any dictionary keys containing lists in the input have been split
-            into multiple numbered keys
-
-        See Also
-        --------
-        flatDictSelectKeySet, newFlatDict
-
-        """
-
-        keySet = self.flatDictSelectKeySet(store, keySet)
-
-        # For every key now found
-        newStore = self.newFlatDict(keySet, store, storeLabel)
-
-        return newStore
-
-    def flatDictKeySet(self, store):
-        """
-        Generates a dictionary of keys and identifiers for the new dictionary,
-        splitting any keys with lists into a set of keys, one for each element
-        in the original key.
-
-        These are named <key><location>
-
-        Parameters
-        ----------
-        store : list of dicts
-            The dictionaries would be expected to have many of the same keys.
-            Any dictionary keys containing lists in the input have been split
-            into multiple numbered keys
-
-        Returns
-        -------
-        keySet : dict
-            The keys are the keys for the new dictionary. The values contain a
-            two element tuple. The first element is the original name of the
-            key and the second is the location of the value to be stored in the
-            original dictionary value array.
-
-        See Also
-        --------
-        reframeListDicts, newFlatDict
-        """
-
-        # Find all the keys
-        keySet = OrderedDict()
-
-        for s in store:
-            for k in s.keys():
-                v = s[k]
-                if isinstance(v, (list, ndarray)):
-                    # We need to calculate every combination of co-ordinates in the array
-                    arrSets = [range(0, i) for i in shape(v)]
-                    # Now record each one
-                    for genLoc in listMerGen(*arrSets):
-                        if len(genLoc) == 1:
-                            loc = genLoc[0]
-                        else:
-                            loc = tuple(genLoc)
-                        keySet.setdefault(k+str(loc), (k, loc))
-                else:
-                    keySet.setdefault(k, (None, None))
-
-        return keySet
-
-    def flatDictSelectKeySet(self, store, keys):
-        """
-        Generates a dictionary of keys and identifiers for the new dictionary,
-        including only the keys in the keys list. Any keys with lists  will
-        be split into a set of keys, one for each element in the original key.
-
-        These are named <key><location>
-
-        Parameters
-        ----------
-        store : list of dicts
-            The dictionaries would be expected to have many of the same keys.
-            Any dictionary keys containing lists in the input have been split
-            into multiple numbered keys
-        keys : list of strings
-            The keys whose data will be included in the return dictionary
-
-        Returns
-        -------
-        keySet : dict
-            The keys are the keys for the new dictionary. The values contain a
-            two element tuple. The first element is the original name of the
-            key and the second is the location of the value to be stored in the
-            original dictionary value array.
-
-        See Also
-        --------
-        reframeSelectListDicts, newFlatDict
-        """
-
-        # Find all the keys
-        keySet = OrderedDict()
-
-        for s in store:
-            sKeys = (k for k in s.iterkeys() if k in keys)
-            for k in sKeys:
-                v = s[k]
-                if isinstance(v, (list, ndarray)):
-                    vShape = shape(v)
-                    # If the length is too long, skip it. It will just clutter up the document
-                    if prod(vShape) > 10:
-                        continue
-                    # We need to calculate every combination of co-ordinates in the array
-                    arrSets = [range(0, i) for i in vShape]
-                    # Now record each one
-                    for genLoc in listMerGen(*arrSets):
-                        if len(genLoc) == 1:
-                            loc = genLoc[0]
-                        else:
-                            loc = tuple(genLoc)
-                        keySet.setdefault(k+str(loc), (k, loc))
-                else:
-                    keySet.setdefault(k, (None, None))
-
-        return keySet
-
-    def newFlatDict(self, keySet, store, storeLabel):
-        """
-        Takes a list of dictionaries and returns a dictionary of 1D lists.
-
-        If a dictionary did not have that key or list element, then 'None' is
-        put in its place
-
-        Parameters
-        ----------
-        keySet : dict
-            The keys are the keys for the new dictionary. The values contain a
-            two element tuple. The first element is the original name of the
-            key and the second is the location of the value to be stored in the
-            original dictionary value array.
-        store : list of dicts
-            The dictionaries would be expected to have many of the same keys.
-            Any dictionary keys containing lists in the input have been split
-            into multiple numbered keys
-        storeLabel : string
-            An identifier to be added to the beginning of each key string.
+    return newStore
 
 
-        Returns
-        -------
-        newStore : dict
-            The new dictionary with the keys from the keySet and the values as
-            1D lists with 'None' if the keys, value pair was not found in the
-            store.
+def reframeSelectListDicts(store, keySet, storeLabel=''):
+    """Take a list of dictionaries and turn it into a dictionary of lists
+    containing only the useful keys
 
-        """
+    Parameters
+    ----------
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys
+    keySet : list of strings
+        The keys whose data will be included in the return dictionary
+    storeLabel : string, optional
+        An identifier to be added to the beginning of each key string.
+        Default is ''.
 
-        partStore = OrderedDict()
+    Returns
+    -------
+    newStore : dict of 1D lists
+        Any dictionary keys containing lists in the input have been split
+        into multiple numbered keys
 
-        for key, (initKey, loc) in keySet.iteritems():
+    See Also
+    --------
+    flatDictSelectKeySet, newFlatDict
 
-            partStore.setdefault(key, [])
+    """
 
-            if type(initKey) is NoneType:
-                vals = [repr(s.get(key, None)) for s in store]
-                partStore[key].extend(vals)
+    keySet = flatDictSelectKeySet(store, keySet)
 
-            else:
-                for s in store:
-                    rawVal = s.get(initKey, None)
-                    if type(rawVal) is NoneType:
-                        v = None
+    # For every key now found
+    newStore = newFlatDict(keySet, store, storeLabel)
+
+    return newStore
+
+
+def flatDictKeySet(store):
+    """
+    Generates a dictionary of keys and identifiers for the new dictionary,
+    splitting any keys with lists into a set of keys, one for each element
+    in the original key.
+
+    These are named <key><location>
+
+    Parameters
+    ----------
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys.
+        Any dictionary keys containing lists in the input have been split
+        into multiple numbered keys
+
+    Returns
+    -------
+    keySet : dict
+        The keys are the keys for the new dictionary. The values contain a
+        two element tuple. The first element is the original name of the
+        key and the second is the location of the value to be stored in the
+        original dictionary value array.
+
+    See Also
+    --------
+    reframeListDicts, newFlatDict
+    """
+
+    # Find all the keys
+    keySet = OrderedDict()
+
+    for s in store:
+        for k in s.keys():
+            v = s[k]
+            if isinstance(v, (list, ndarray)):
+                # We need to calculate every combination of co-ordinates in the array
+                arrSets = [range(0, i) for i in shape(v)]
+                # Now record each one
+                for genLoc in listMerGen(*arrSets):
+                    if len(genLoc) == 1:
+                        loc = genLoc[0]
                     else:
-                        v = rawVal[loc]
-                    partStore[key].append(v)
+                        loc = tuple(genLoc)
+                    keySet.setdefault(k+str(loc), (k, loc))
+            else:
+                keySet.setdefault(k, (None, None))
 
-        newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
+    return keySet
 
-        return newStore
+
+def flatDictSelectKeySet(store, keys):
+    """
+    Generates a dictionary of keys and identifiers for the new dictionary,
+    including only the keys in the keys list. Any keys with lists  will
+    be split into a set of keys, one for each element in the original key.
+
+    These are named <key><location>
+
+    Parameters
+    ----------
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys.
+        Any dictionary keys containing lists in the input have been split
+        into multiple numbered keys
+    keys : list of strings
+        The keys whose data will be included in the return dictionary
+
+    Returns
+    -------
+    keySet : dict
+        The keys are the keys for the new dictionary. The values contain a
+        two element tuple. The first element is the original name of the
+        key and the second is the location of the value to be stored in the
+        original dictionary value array.
+
+    See Also
+    --------
+    reframeSelectListDicts, newFlatDict
+    """
+
+    # Find all the keys
+    keySet = OrderedDict()
+
+    for s in store:
+        sKeys = (k for k in s.iterkeys() if k in keys)
+        for k in sKeys:
+            v = s[k]
+            if isinstance(v, (list, ndarray)):
+                vShape = shape(v)
+                # If the length is too long, skip it. It will just clutter up the document
+                if prod(vShape) > 10:
+                    continue
+                # We need to calculate every combination of co-ordinates in the array
+                arrSets = [range(0, i) for i in vShape]
+                # Now record each one
+                for genLoc in listMerGen(*arrSets):
+                    if len(genLoc) == 1:
+                        loc = genLoc[0]
+                    else:
+                        loc = tuple(genLoc)
+                    keySet.setdefault(k+str(loc), (k, loc))
+            else:
+                keySet.setdefault(k, (None, None))
+
+    return keySet
+
+
+def newFlatDict(keySet, store, storeLabel):
+    """
+    Takes a list of dictionaries and returns a dictionary of 1D lists.
+
+    If a dictionary did not have that key or list element, then 'None' is
+    put in its place
+
+    Parameters
+    ----------
+    keySet : dict
+        The keys are the keys for the new dictionary. The values contain a
+        two element tuple. The first element is the original name of the
+        key and the second is the location of the value to be stored in the
+        original dictionary value array.
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys.
+        Any dictionary keys containing lists in the input have been split
+        into multiple numbered keys
+    storeLabel : string
+        An identifier to be added to the beginning of each key string.
+
+
+    Returns
+    -------
+    newStore : dict
+        The new dictionary with the keys from the keySet and the values as
+        1D lists with 'None' if the keys, value pair was not found in the
+        store.
+
+    """
+
+    partStore = OrderedDict()
+
+    for key, (initKey, loc) in keySet.iteritems():
+
+        partStore.setdefault(key, [])
+
+        if type(initKey) is NoneType:
+            vals = [repr(s.get(key, None)) for s in store]
+            partStore[key].extend(vals)
+
+        else:
+            for s in store:
+                rawVal = s.get(initKey, None)
+                if type(rawVal) is NoneType:
+                    v = None
+                else:
+                    v = rawVal[loc]
+                partStore[key].append(v)
+
+    newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
+
+    return newStore
 
 
 def date():
