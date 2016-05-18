@@ -12,7 +12,7 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from numpy import array, meshgrid, fromfunction, arange,linspace, sort
+from numpy import array, meshgrid, fromfunction, arange,linspace, sort, shape
 from scipy import histogram, amin, amax
 from scipy.interpolate import griddata
 from matplotlib.cm import get_cmap
@@ -23,10 +23,9 @@ from vtkWriter.vtkStructured import VTK_XML_Serial_Structured
 from vtkWriter.vtkUnstructured import VTK_XML_Serial_Unstructured
 from vtkWriter.vtkCSV import VTK_CSV
 
-
 ### Define the different types of lines that will be plotted and their properties.
 # Symbols
-symbols = ['-','--','-.',':','.',',','o','^','v','<','>','s','+','x','D','d','1','2','3','4','h','H','p']
+symbols = ['-', '--', '-.', ':', '.', ',', 'o', '^', 'v', '<', '>', 's', '+', 'x', 'D', 'd', '1', '2', '3', '4', 'h', 'H', 'p']
 ## Symbols + line
 #lps = ['k' + k for k in [',','.','o','^','v','<','>','s','+','x','D','d','1','2','3','4','h','H','p']]
 dots = ['.', 'o', '^', 'x', 'd', '2', 'H', ',', 'v', '+', 'D', 'p', '<', 's', '1', 'h', '4', '>', '3']
@@ -37,7 +36,7 @@ large = ['^', 'x', 'D', '4', 'd', 'p', '>', '2', ',', '3', 'H']
 large_line_width = [2]*len(large)
 lpl = lines + large
 lpl_linewidth = large_line_width + lines_width
-colours = ['g','r','b','m','0.85'] + ['k']*len(large)
+colours = ['g', 'r', 'b', 'm', '0.85'] + ['k']*len(large)
 
 ### Define the different colour maps to be considered
 #Colour plot colour map
@@ -55,8 +54,9 @@ local_cmap = wintermod_cmap
 origin = 'lower'
 #origin = 'upper'
 
+
 ### Simple lineplot
-def lineplot(x,Y,labels,axisLabels):
+def lineplot(x, Y, labels, axisLabels):
     """Produces a lineplot for multiple datasets witht he same x and y axis
 
     Uses ``axPlotlines`` for plotting
@@ -86,6 +86,7 @@ def lineplot(x,Y,labels,axisLabels):
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
+
 
 ### Response changes to different parameters
 def varDynamics(paramSet, responses, **kwargs):
@@ -117,13 +118,13 @@ def varDynamics(paramSet, responses, **kwargs):
 
     if lparams == 1:
         param = params[0]
-        fig = dim1VarDim(paramSet[param],responses, param, **kwargs)
+        fig = dim1VarDim(paramSet[param], responses, param, **kwargs)
 
     elif lparams == 2:
-        fig = dim2VarDim(paramSet[params[0]],paramSet[params[1]],responses, params[0], params[1], **kwargs)
+        fig = dim2VarDim(paramSet[params[0]], paramSet[params[1]], responses, params[0], params[1], **kwargs)
 
     elif lparams == 3:
-        fig = dim3VarDim(paramSet[params[0]],paramSet[params[1]],paramSet[params[2]],responses, params[0], params[1], params[2], **kwargs)
+        fig = dim3VarDim(paramSet[params[0]], paramSet[params[1]], paramSet[params[2]], responses, params[0], params[1], params[2], **kwargs)
 
     else:
 
@@ -131,22 +132,23 @@ def varDynamics(paramSet, responses, **kwargs):
 
     return fig
 
+
 def dim1VarDim(X,Y, varXLabel, **kwargs):
     """
     """
-    fig = plt.figure() # figsize=(8, 6), dpi=80)
+    fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     maxVal = amax(Y)
     minVal = amin(Y)
-    if minVal > 0 or minVal == None:
+    if minVal > 0 or minVal==None:
         minVal = 0
     maxVal += (maxVal-minVal)/100.0
 
-    ax.plot(X,Y)
+    ax.plot(X, Y)
 
     if minVal != maxVal:
-        ax.set_ylim((minVal,maxVal))
+        ax.set_ylim((minVal, maxVal))
     else:
         logger1 = logging.getLogger('Plots')
         logger1.warning("There is no variation in the time to decision across parameters")
@@ -159,15 +161,15 @@ def dim1VarDim(X,Y, varXLabel, **kwargs):
 
     return fig
 
-def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
+
+def dim2VarDim(X, Y, z, varXLabel, varYLabel, **kwargs):
     """
 
     Look in to fatfonts
     """
-
-    contour= kwargs.get("contour",False)
-    heatmap = kwargs.get("heatmap",True)
-    scatter = kwargs.get("scatter",False)
+    contour= kwargs.get("contour", False)
+    heatmap = kwargs.get("heatmap", True)
+    scatter = kwargs.get("scatter", False)
 
 
     zMin = amin(z)
@@ -181,13 +183,13 @@ def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
     ax = fig.add_subplot(111)
 
     if contour == True:
-        CS = axContour(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        CS = axContour(ax, X, Y, z, minZ=0, CB_label="Time to decision")
 
     if scatter == True:
-        SC = axScatter(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        SC = axScatter(ax, X, Y, z, minZ=0, CB_label="Time to decision")
 
     if heatmap == True:
-        IM = axImage(ax,X,Y,z, minZ = 0, CB_label = "Time to decision")
+        IM = axImage(ax, X, Y, z, minZ=0, CB_label="Time to decision")
 
     ax.set_xlabel(varXLabel)
     ax.set_ylabel(varYLabel)
@@ -197,7 +199,8 @@ def dim2VarDim(X,Y,z, varXLabel, varYLabel, **kwargs):
 
     return fig
 
-def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
+
+def dim3VarDim(X, Y, Z, f, varXLabel, varYLabel, varZLabel, **kwargs):
 
     paraOut = kwargs.get("paraOut", "CSV")
 
@@ -228,8 +231,8 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
                                             linspace(zMin, zMax, zJumps))
 
 #    coPoints = [(a,b,c) for a,b,c in izip(X.flatten(),Y.flatten(),Z.flatten())]
-    coPoints = [(a,b,c) for a,b,c in izip(X,Y,Z)]
-    coGrid = griddata(coPoints, f, (Xfleshed, Yfleshed,Zfleshed), method='nearest')
+    coPoints = [(a, b, c) for a, b, c in izip(X, Y, Z)]
+    coGrid = griddata(coPoints, f, (Xfleshed, Yfleshed, Zfleshed), method='nearest')
 
 #    coGridX = coGrid[1:,:,:] - coGrid[:-1,:,:]
 #    coGridY = coGrid[:,1:,:] - coGrid[:,:-1,:]
@@ -246,18 +249,19 @@ def dim3VarDim(X,Y,Z,f, varXLabel, varYLabel, varZLabel, **kwargs):
     vtk_writer.snapshot(Xfleshed,
                         Yfleshed,
                         Zfleshed,
-                        xLabel = varXLabel,
-                        yLabel = varYLabel,
-                        zLabel = varZLabel,
-#                        x_force = coGridX.flatten(),
-#                        y_force = coGridY.flatten(),
-#                        z_force = coGridZ.flatten(),
-                        radii = coGrid.flatten())
+                        xLabel=varXLabel,
+                        yLabel=varYLabel,
+                        zLabel=varZLabel,
+                        # x_force = coGridX.flatten(),
+                        # y_force = coGridY.flatten(),
+                        # z_force = coGridZ.flatten(),
+                        radii=coGrid.flatten())
 
     return vtk_writer
 
+
 ### Inputs compared to output probabilities
-def dataVsEvents(data,events,labels,eventLabel,axisLabels):
+def dataVsEvents(data, events, labels, eventLabel, axisLabels):
     """
     Line plots of data with a line plot over the top
 
@@ -288,24 +292,27 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
 
     data = array(data)
 
+    if len(shape(data)) == 1:
+        data = array([data])
+
     if len(data) > 8:
-        fig = dataSpectrumVsEvents(data,events,eventLabel,axisLabels)
+        fig = dataSpectrumVsEvents(data, events, eventLabel, axisLabels)
         return fig
 
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    y2Label = axisLabels.pop("y2Label","Event value")
+    y2Label = axisLabels.pop("y2Label", "Event value")
 
     eventTimes = range(1, len(events)+1)
     eventX = [i - 0.5 for i in eventTimes]
 
-    axPlotlines(ax,eventTimes,data, labels, axisLabels)
+    axPlotlines(ax, eventTimes, data, labels, axisLabels)
 
     axb = ax.twinx()
-    pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
+    pltLine = axb.plot(eventX, events, 'o', label=eventLabel, color='k', linewidth=2, markersize=5)
     bottom,top = axb.get_ylim()
-    axb.set_ylim((bottom - 0.01,top + 0.01))
+    axb.set_ylim((bottom - 0.01, top + 0.01))
 
     axb.set_ylabel(y2Label)
 
@@ -316,11 +323,11 @@ def dataVsEvents(data,events,labels,eventLabel,axisLabels):
     return fig
 
 
-def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
+def dataSpectrumVsEvents(data, events, eventLabel, axisLabels):
     """
     Spectogram of data with a line plot over the top
 
-    Uses axSpectrum for the spectogram
+    Uses axSpectrum for the spectrogram
 
     Parameters
     ----------
@@ -342,7 +349,7 @@ def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
 
     """
 
-    y2Label = axisLabels.pop("y2Label","Event value")
+    y2Label = axisLabels.pop("y2Label", "Event value")
 
     eventX = fromfunction(lambda i: i+0.5, (len(events),))
 
@@ -352,9 +359,9 @@ def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
     axSpectrum(ax,data, axisLabels)
 
     axb = ax.twinx()
-    pltLine = axb.plot(eventX, events, 'o', label = eventLabel, color = 'k', linewidth=2,markersize = 5)
+    pltLine = axb.plot(eventX, events, 'o', label=eventLabel, color='k', linewidth=2, markersize=5)
     bottom,top = axb.get_ylim()
-    axb.set_ylim((bottom - 0.01,top + 0.01))
+    axb.set_ylim((bottom - 0.01, top + 0.01))
 
     axb.set_ylabel(y2Label)
 
@@ -362,8 +369,8 @@ def dataSpectrumVsEvents(data,events,eventLabel,axisLabels):
 
     return fig
 
-### Pandas realted plotting functions
 
+### Pandas realted plotting functions
 def pandasPlot(data, axisLabels = {}):
     """
     A wrapper round a pandas plotting function
@@ -390,15 +397,15 @@ def pandasPlot(data, axisLabels = {}):
     Inspired by axPlotlines
     """
 
-    xLabel = axisLabels.pop("xLabel","Event")
-    yLabel = axisLabels.pop("yLabel","Value")
-    title = axisLabels.pop("title","")
+    xLabel = axisLabels.pop("xLabel", "Event")
+    yLabel = axisLabels.pop("yLabel", "Value")
+    title = axisLabels.pop("title", "")
 
-#    yMin = axisLabels.pop("yMin",amin(Y))
-#    yMax = axisLabels.pop("yMax",amax(Y))
-#    xMin = axisLabels.pop("xMin",min(x))
+#    yMin = axisLabels.pop("yMin", amin(Y))
+#    yMax = axisLabels.pop("yMax", amax(Y))
+#    xMin = axisLabels.pop("xMin", min(x))
 
-    ax = data.plot(title = title)
+    ax = data.plot(title=title)
     ax.set_xlabel(xLabel)
     ax.set_ylabel(yLabel)
     fig = plt.gcf()
@@ -409,7 +416,8 @@ def pandasPlot(data, axisLabels = {}):
 # Taking the final stages of plotting and providing a nice interface to do it all in one call
 # rather than a few dozen
 
-def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
+
+def axScatter(ax, X, Y, z, minZ=0, CB_label=""):
     """
     Produces a scatter plot on the axis with the colour of the dots being a
     third axis
@@ -440,11 +448,12 @@ def axScatter(ax,X,Y,z, minZ = 0, CB_label = ""):
 
 #    X,Y = meshgrid(x,y)
 #    sc= ax.scatter(X.flatten(),Y.flatten(),s=C)
-    sc= ax.scatter(X,Y,s=C)
+    sc= ax.scatter(X, Y, s=C)
 
     return sc
 
-def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
+
+def axImage(ax, X, Y, z, minZ=0, CB_label=""):
     """
     Produces an image on the axis
 
@@ -485,25 +494,26 @@ def axImage(ax,X,Y,z,minZ = 0,CB_label = ""):
     yMaxIm = yMax + dy
 
 #    X,Y = meshgrid(x,y)
-    Xfleshed,Yfleshed = meshgrid(linspace(xMinIm,xMaxIm,xJumps),linspace(yMinIm,yMaxIm,yJumps))
+    Xfleshed, Yfleshed = meshgrid(linspace(xMinIm, xMaxIm, xJumps), linspace(yMinIm, yMaxIm, yJumps))
 
 #    zPoints = [(a,b) for a,b in izip(X.flatten(),Y.flatten())]
-    zPoints = [(a,b) for a,b in izip(X,Y)]
+    zPoints = [(a, b) for a, b in izip(X, Y)]
     gridZ = griddata(zPoints, z, (Xfleshed, Yfleshed), method='nearest')
 
 #    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
     im = ax.imshow(gridZ, interpolation='nearest',
                     origin='lower',
                     cmap=local_cmap,
-                    extent=[xMinIm,xMaxIm,yMinIm,yMaxIm],
-                    vmin = minZ,
+                    extent=[xMinIm, xMaxIm, yMinIm, yMaxIm],
+                    vmin=minZ,
                     aspect='auto')
     CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
     CBI.set_label(CB_label)
 
     return im
 
-def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
+
+def axContour(ax, X, Y, z, minZ=0, CB_label=""):
     """
     Produces a contour plot on the axis
 
@@ -538,7 +548,7 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
         diffSort = sort(zSorted[1:]-zSorted[:-1])
         dz = diffSort[bisect_right(diffSort, 0)]
         zJumps = (maxZ - minZ)/dz + 2
-        levels = linspace(minZ,maxZ+dz,zJumps)
+        levels = linspace(minZ, maxZ+dz, zJumps)
     else:
         levels = arange(maxZ+1)
 
@@ -548,19 +558,19 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
     Ylen = len(set(Y))
 
     z = array(z)
-    Z = z.reshape((Ylen,Xlen))
+    Z = z.reshape((Ylen, Xlen))
 
-    CS = ax.contour(X,Y, Z, levels,
+    CS = ax.contour(X, Y, Z, levels,
                      origin='lower',
-                     colors = 'k',
+                     colors='k',
                      linewidths=2,
-                     extent=[xMin,xMax,yMin,yMax],
-                     extend = 'both')
+                     extent=[xMin, xMax, yMin, yMax],
+                     extend='both')
     plt.clabel(CS, levels,#[1::2],  # label every second level
                inline=1,
                fmt='%2.1f',
                fontsize=14,
-               colors = 'k')
+               colors='k')
 
 #    CS.cmap.set_under('yellow')
 #    CS.cmap.set_over('cyan')
@@ -575,8 +585,9 @@ def axContour(ax,X,Y,z,minZ = 0,CB_label = ""):
 #    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
     return CS
-    
-def axQuiver(ax,X,Y, dX, dY,CB_label = ""):
+
+
+def axQuiver(ax, X, Y, dX, dY, CB_label=""):
     #Work in progress
     
     ax.quiver(X, Y, DE, DY, pivot='mid',cmap=local_cmap) 
@@ -588,6 +599,7 @@ def axQuiver(ax,X,Y, dX, dY,CB_label = ""):
     ax.set_xlabel(xLabel)
     ax.set_ylabel(yLabel)
     ax.grid()
+
 
 def axPlotlines(ax, x, Y, labels, axisLabels):
     """
@@ -612,31 +624,34 @@ def axPlotlines(ax, x, Y, labels, axisLabels):
         ``xMax`` : `float`
     """
 
-    xLabel = axisLabels.pop("xLabel","Event")
-    yLabel = axisLabels.pop("yLabel","Value")
-    title = axisLabels.pop("title","")
+    xLabel = axisLabels.pop("xLabel", "Event")
+    yLabel = axisLabels.pop("yLabel", "Value")
+    title = axisLabels.pop("title", "")
 
-    yMin = axisLabels.pop("yMin",amin(Y))
-    yMax = axisLabels.pop("yMax",amax(Y))
-    xMin = axisLabels.pop("xMin",min(x))
+    yMin = axisLabels.pop("yMin", amin(Y))
+    yMax = axisLabels.pop("yMax", amax(Y))
+    xMin = axisLabels.pop("xMin", min(x))
     Ys = Y.shape
-    if len(Ys)== 1:
-        xMax = axisLabels.pop("xMax",Ys[0])
-        pltLines = ax.plot(x,Y, lpl[0], color = colours[0], linewidth=lpl_linewidth[0], markersize = 3)
+    if len(Ys) == 1:
+        xMax = axisLabels.pop("xMax", Ys[0])
+        pltLines = ax.plot(x, Y, lpl[0], color=colours[0], linewidth=lpl_linewidth[0], markersize=3)
     elif len(Ys) == 2:
-        xMax = axisLabels.pop("xMax",Ys[1])
+        xMax = axisLabels.pop("xMax", Ys[1])
         for i, y in enumerate(Y):
-            pltLines = ax.plot(x,y, lpl[i], label = labels[i], color = colours[i], linewidth=lpl_linewidth[i],markersize = 3)
+            pltLines = ax.plot(x, y, lpl[i], label=labels[i], color=colours[i], linewidth=lpl_linewidth[i], markersize=3)
+    else:
+        return
 
-    ax.set_ylim([yMin,yMax])
-    ax.set_xlim([xMin,xMax])
+    ax.set_ylim([yMin, yMax])
+    ax.set_xlim([xMin, xMax])
     ax.set_xlabel(xLabel)
     ax.set_ylabel(yLabel)
     ax.set_title(title)
 
-def axSpectrum(ax,Y, axisLabels):
+
+def axSpectrum(ax, Y, axisLabels):
     """
-    Produces a spectogram-like plot on the axis
+    Produces a spectrogram-like plot on the axis
 
     This is made by creating a histogram for each x-axis element.
 
@@ -660,22 +675,22 @@ def axSpectrum(ax,Y, axisLabels):
         density.
     """
 
-    xLabel = axisLabels.pop("xLabel","Events")
-    yLabel = axisLabels.pop("yLabel","Density across parameter range")
-    title = axisLabels.pop("title","")
+    xLabel = axisLabels.pop("xLabel", "Events")
+    yLabel = axisLabels.pop("yLabel", "Density across parameter range")
+    title = axisLabels.pop("title", "")
 
-    minVal = axisLabels.pop("yMin",0)
-    maxVal = axisLabels.pop("yMax",amax(Y))
-    xMin = axisLabels.pop("xMin",0)
-    xMax = axisLabels.pop("xMax",len(Y[0]))
+    minVal = axisLabels.pop("yMin", 0)
+    maxVal = axisLabels.pop("yMax", amax(Y))
+    xMin = axisLabels.pop("xMin", 0)
+    xMax = axisLabels.pop("xMax", len(Y[0]))
 
-    bins = axisLabels.pop("bins",25)
-    probDensity = axisLabels.pop("probDensity",False)
+    bins = axisLabels.pop("bins", 25)
+    probDensity = axisLabels.pop("probDensity", False)
 
     data = array(Y)
 
     # Create this histogram-like data
-    histData = [histogram(d, bins, range=(minVal,maxVal), density=True) for d in data.T]
+    histData = [histogram(d, bins, range=(minVal, maxVal), density=True) for d in data.T]
 
     if probDensity:
         plotData = array([d[0] for d in histData])
@@ -686,12 +701,12 @@ def axSpectrum(ax,Y, axisLabels):
     # To multiply by the bin size to get the actual probability of each bin
 
     im = ax.imshow(plotData.T,
-               interpolation='nearest',
-               cmap=wintermod_cmap,
-               origin='lower',
-               extent=[xMin,xMax,minVal,maxVal],
-               aspect='auto' )
-    col = plt.colorbar(im,orientation='horizontal')
+                   interpolation='nearest',
+                   cmap=wintermod_cmap,
+                   origin='lower',
+                   extent=[xMin, xMax, minVal, maxVal],
+                   aspect='auto')
+    col = plt.colorbar(im, orientation='horizontal')
     if probDensity:
         col.set_label("Probability density")
     else:
@@ -700,6 +715,7 @@ def axSpectrum(ax,Y, axisLabels):
     ax.set_xlabel(xLabel)
     ax.set_ylabel(yLabel)
     ax.set_title(title)
+
 
 def legend(*axis):
     """
@@ -721,7 +737,7 @@ def legend(*axis):
     if not lines:
         return
 
-    leg = ax.legend(lines, pltLabels,loc = 'best', fancybox=True)
+    leg = ax.legend(lines, pltLabels, loc='best', fancybox=True)
 
 
 
@@ -735,9 +751,9 @@ if __name__ == '__main__':
     x = array([1, 2, 3])
     y = array([4, 5, 6])
     z = array([7, 8, 9])
-    f = array([1,2,3,2,3,4,3,4,5,2,3,4,3,4,5,4,5,6,3,4,5,4,5,6,5,6,7])
+    f = array([1, 2, 3, 2, 3, 4, 3, 4, 5, 2, 3, 4, 3, 4, 5, 4, 5, 6, 3, 4, 5, 4, 5, 6, 5, 6, 7])
 
-    fig = dim3VarDim(x,y,z,f, 'TestX', 'TestY','TestZ')
+    fig = dim3VarDim(x, y, z, f, 'TestX', 'TestY', 'TestZ')
     fig.outputTrees("outputs/testDataStruc")
 
 #    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
