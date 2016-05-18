@@ -12,13 +12,17 @@ def plotFitting(participant, modelData, fitQuality):
 
     Parameters
     ----------
-    participant :
-    modelData :
-    fitQuality :
+    participant : dict
+        The data for the participant
+    modelData : dict
+        The data for the model instance
+    fitQuality : float
+        A description of the quality of a fit
 
     Returns
     -------
-    figSets :
+    figSets : list of matplotlib figure objects
+        The figures associated with the fitting of the participant
 
     """
     partName = participant['Name']
@@ -37,13 +41,18 @@ def plotFittingSuccess(partName, fitQuality, partActions, modActProb):
 
     Parameters
     ----------
-    partName :
-    fitQuality :
-    partActions :
-    modActProb :
+    partName : string
+        The name label for the participant
+    fitQuality : float
+        A description of the quality of a fit
+    partActions : array of floats
+        The actions for each timestep
+    modActProb : 2D array of floats
+        The action probabilities for each model. Each row represents one model.
 
     Returns
     -------
+    fig : matplotlib figure object
 
     """
 
@@ -56,6 +65,6 @@ def plotFittingSuccess(partName, fitQuality, partActions, modActProb):
     modelLabels = ["Fit of quality " + str(fitQuality)]
     eventLabel = "Participant actions"
 
-    fig = dataVsEvents(modActProb.T, partActions, modelLabels, eventLabel, axisLabels)
+    fig = dataVsEvents(modActProb, partActions, modelLabels, eventLabel, axisLabels)
 
     return fig
