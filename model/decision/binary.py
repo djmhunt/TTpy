@@ -211,7 +211,12 @@ def decEtaSets(expResponses=(0, 1), eta=0):
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        numStim = int(len(probabilities) / 2)
+        probLen = len(probabilities)
+
+        if probLen == 2:
+            numStim = 1
+        else:
+            numStim = int(probLen / 2)
 
         if type(stimulus) is not NoneType and numStim == len(stimulus) and not (array(stimulus) == 0).all():
             respWeights = stimulus
