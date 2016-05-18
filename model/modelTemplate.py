@@ -195,7 +195,7 @@ class model(object):
         delta = self.delta(response, expectedReward, action)
 
         # Use that discrepency to update the model
-        self.updateModel(delta, stimuli, action)
+        self.updateModel(delta, action, stimuli)
 
     def rewardExpectation(self, observation, action, response):
         """Calculate the reward based on the action and stimuli
