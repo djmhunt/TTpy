@@ -34,14 +34,15 @@ def simpleSum(modVals):
 
     return sum(modVals)
 
+
 def logprob(modVals):
     """
-    Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2({\\vec x}^2)`
+    Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
     
     Returns
     -------
     fit : float
-        The sum of the model valaues returned
+        The sum of the model values returned
     """
 
     logModCoiceprob = log2(modVals)
@@ -51,7 +52,31 @@ def logprob(modVals):
     fit = sum(probs)
 
     return fit
-    
+
+
+def selectLogprob(modVals):
+    """
+    Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
+
+    Returns
+    -------
+    fit : float
+        The sum of the model values returned
+    """
+
+    if (modVals >= 0.5).all():
+        logModCoiceprob = log2(modVals)
+    else:
+        modValsShaped = (modVals < 0.5) *modVals + (modVals >= 0.5) * 0.5
+        logModCoiceprob = log2(modValsShaped)
+
+    probs = -2 * logModCoiceprob
+
+    fit = sum(probs)
+
+    return fit
+
+
 def maxprob(modVals):
     """
     Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
