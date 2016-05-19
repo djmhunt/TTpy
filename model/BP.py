@@ -76,7 +76,7 @@ class BP(model):
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=tuple(range(1, self.numCritics + 1)), eta=self.eta))
 
-        self.posteriorProb = array(self.prior)
+        self.posteriorProb = ones(self.numActions) / self.numActions
 
         self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta

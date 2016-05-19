@@ -167,7 +167,7 @@ class BHMM(model):
         self.previousAction = None
         #        if len(prior) != self.numCritics:
         #            raise warning.
-        self.posteriorProb = array(self.prior)
+        self.posteriorProb = ones(self.numActions) / self.numActions
         self.switchProb = 0
         self.stayMatrix = array([[1 - delta, delta], [delta, 1 - delta]])
         self.switchMatrix = array([[delta, 1 - delta], [1 - delta, delta]])
