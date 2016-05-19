@@ -106,7 +106,7 @@ class qLearn2(model):
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
         self.eta = kwargRemains.pop('eta', 0.3)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) * 5 / self.numStimuli)
+        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numStimuli)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -228,9 +228,9 @@ class qLearn2(model):
     def _newAct(self, delta, stimuliFilter, action):
 
         if delta > 0:
-            self.expectation[action, stimuliFilter] += self.alphaPos*delta
+            self.expectation[action] += self.alphaPos*delta*stimuliFilter
         else:
-            self.expectation[action, stimuliFilter] += self.alphaNeg*delta
+            self.expectation[action] += self.alphaNeg*delta*stimuliFilter
 
     def _prob(self, expectation):
         """

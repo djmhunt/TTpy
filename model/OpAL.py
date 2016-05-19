@@ -279,12 +279,10 @@ class OpAL(model):
 
     def updateModel(self, delta, action, stimuliFilter):
 
-        chosen = (action, stimuliFilter)
-
         # Find the new activities
-        self._critic(delta, chosen)
+        self._critic(delta, action, stimuliFilter)
 
-        self._actor(delta, chosen)
+        self._actor(delta, action, stimuliFilter)
 
         self._actionValues(self.go, self.nogo)
 
@@ -296,19 +294,17 @@ class OpAL(model):
         else:
             self.probabilities = self._prob(self.actionValues)
 
-    def _critic(self, delta, chosen):
+    def _critic(self, delta, action, stimuliFilter):
 
-        chosenExp = self.expectation[chosen]
+        self.expectation[action] += self.alphaCrit * delta * stimuliFilter
 
-        self.expectation[chosen] = chosenExp + self.alphaCrit * delta
+    def _actor(self, delta, action, stimuliFilter):
 
-    def _actor(self, delta, chosen):
+        chosenGo = self.go[action] * stimuliFilter
+        chosenNogo = self.nogo[action] * stimuliFilter
 
-        chosenGo = self.go[chosen]
-        chosenNogo = self.nogo[chosen]
-
-        self.go[chosen] = chosenGo + self.alphaGo * chosenGo * delta
-        self.nogo[chosen] = chosenNogo - self.alphaNogo * chosenNogo * delta
+        self.go[action] += self.alphaGo * chosenGo * delta
+        self.nogo[action] -= self.alphaNogo * chosenNogo * delta
 
     def _actionValues(self, go, nogo):
 

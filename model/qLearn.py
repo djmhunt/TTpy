@@ -85,7 +85,7 @@ class qLearn(model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.eta = kwargRemains.pop('eta', 0.3)
-        self.expectation = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) * 5 / self.numStimuli)
+        self.expectation = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numStimuli)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -190,7 +190,7 @@ class qLearn(model):
     def updateModel(self, delta, action, stimuliFilter):
 
         # Find the new activities
-        self._newAct(delta, (action, stimuliFilter))
+        self._newAct(delta, action, stimuliFilter)
 
         # Calculate the new probabilities
         if self.probActions:
@@ -200,9 +200,9 @@ class qLearn(model):
         else:
             self.probabilities = self._prob(self.expectation)
 
-    def _newAct(self, delta, chosen):
+    def _newAct(self, delta, action, stimuliFilter):
 
-        self.expectation[chosen] += self.alpha*delta
+        self.expectation[action] += self.alpha*delta*stimuliFilter
 
     def _prob(self, expectation):
         """
