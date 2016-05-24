@@ -292,8 +292,11 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels):
 
     data = array(data)
 
-    if len(shape(data)) == 1:
+    dataShape = shape(data)
+    if len(dataShape) == 1:
         data = array([data])
+    elif len(dataShape) == 2 and dataShape[1] == 1:
+        data = data.T
 
     if len(data) > 8:
         fig = dataSpectrumVsEvents(data, events, eventLabel, axisLabels)
@@ -316,7 +319,7 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels):
 
     axb.set_ylabel(y2Label)
 
-    legend(ax,axb)
+    legend(ax, axb)
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
