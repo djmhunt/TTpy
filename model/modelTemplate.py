@@ -311,7 +311,7 @@ class model(object):
 
         actionParamSets = reshape(actStimuliParam, (self.numActions, self.numStimuli))
         actionParamSets = actionParamSets * stimFilter
-        actionParams = sum(actionParamSets, axis=1)
+        actionParams = sum(actionParamSets, axis=1, keepdims=True)
 
         return actionParams
 
@@ -354,7 +354,7 @@ class model(object):
         results["Rewards"] = array(self.recReward)
         results["ValidActions"] = array(self.recValidActions)
         results["Decisions"] = array(self.recDecision)
-        results["Probabilities"] = array(self.recProbabilities)
+        results["UpdatedProbs"] = array(self.recProbabilities)
         results["ActionProb"] = array(self.recActionProb)
         results["DecisionProbs"] = array(self.recActionProbs)
 
