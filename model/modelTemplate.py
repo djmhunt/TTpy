@@ -169,7 +169,7 @@ class model(object):
 
         Parameters
         ----------
-        stimuli : {int | float | tuple}
+        stimuli : {int | float | tuple | None}
             The stimuli received
         action : int, optional
             The chosen action of the model. Default ``None``
@@ -192,7 +192,7 @@ class model(object):
             response = stimuli
 
         # Find the significance of the discrepency between the response and the expected reponse
-        delta = self.delta(response, expectedReward, action)
+        delta = self.delta(response, expectedReward, action, stimuli)
 
         # Use that discrepency to update the model
         self.updateModel(delta, action, stimuliFilter)
@@ -229,9 +229,9 @@ class model(object):
         # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
         return 0, 0, 0
 
-    def delta(self, reward, expectation, action):
+    def delta(self, reward, expectation, action, stimuli):
         """
-        Calculates the significance of the discrepancy between the response and the expected response
+        Calculates the comparison between the reward and the expectation
 
         Parameters
         ----------
@@ -241,11 +241,15 @@ class model(object):
             The expected reward value
         action : int
             The chosen action
+        stimuli : {int | float | tuple | None}
+            The stimuli received
 
         Returns
         -------
-        delta : float
+        delta
         """
+
+        modReward = self.rewFunc(reward, action, stimuli)
 
         return 0
 
