@@ -39,7 +39,6 @@ expParams = {}
 expExtraParams = {}
 expSets = experiments((Decks, expParams, expExtraParams))
 
-eta = 0.0
 alpha = 0.5
 alphaBounds = (0, 1)
 alphaC = 0.1
@@ -49,6 +48,7 @@ betaBounds = (0, 30)
 numActions = 2
 numStimuli = 1
 probActions = False
+eta = 0.0
 
 parameters = {'alphaCrit': sum(alphaBounds)/2,
               'alphaGo': sum(alphaGoBounds)/2,
@@ -69,7 +69,7 @@ outputOptions = {'simLabel': 'OpAL_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 

@@ -41,14 +41,13 @@ expSets = experiments((Decks, expParams, expExtraParams))
 
 eta = 0
 beta = 0.5
-betaBounds = (0, 10)
+betaBounds = (0, 30)
 numActions = 2
 numStimuli = 1
 probActions = False
 
 parameters = {'beta': sum(betaBounds) / 2}
-paramExtras = {'eta': eta,
-               'numActions': numActions,
+paramExtras = {'numActions': numActions,
                'numStimuli': numStimuli,
                'probActions': probActions,
                'stimFunc': deckStimDirect(),
@@ -61,7 +60,7 @@ outputOptions = {'simLabel': 'BP_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 

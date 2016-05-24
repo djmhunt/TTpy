@@ -71,7 +71,7 @@ outputOptions = {'simLabel': 'OpALS_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'raise'}#'raise','log'
 output = outputting(**outputOptions)
 

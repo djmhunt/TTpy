@@ -46,7 +46,7 @@ beta = 0.5
 betaBounds = (0, 80)
 numActions = 2
 numStimuli = 1
-probActions = False
+probActions = True
 
 parameters = {'alpha': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
@@ -64,7 +64,7 @@ outputOptions = {'simLabel': 'MS_rev_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 

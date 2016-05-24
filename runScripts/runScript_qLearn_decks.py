@@ -50,10 +50,10 @@ probActions = False
 
 parameters = {'alpha': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
-paramExtras = {'eta': eta,
-               'numActions': numActions,
+paramExtras = {'numActions': numActions,
                'numStimuli': numStimuli,
                'probActions': probActions,
+               'expect': ones((numActions, numStimuli)) * 5,
                'stimFunc': deckStimDirect(),
                'rewFunc': deckRewDirect(),
                'decFunc': decEta(eta=eta)}
@@ -64,7 +64,7 @@ outputOptions = {'simLabel': 'qLearn_dataSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp' : 'log'}#'raise','log'
 output = outputting(**outputOptions)
 

@@ -41,15 +41,18 @@ expSets = experiments((Decks, expParams, expExtraParams))
 
 eta = 0
 beta = 0.5
-betaBounds = (0, 10)
+betaBounds = (0, 30)
 delta = 0.5
 deltaBounds = (0.001, 0.999)
-numCritics = 2
+numActions = 2
+numStimuli = 1
+probActions = False
 
 parameters = {'delta': sum(deltaBounds)/2,
               'beta': sum(betaBounds)/2}
-paramExtras = {'eta': eta,
-               'numCritics': numCritics,
+paramExtras = {'numActions': numActions,
+               'numStimuli': numStimuli,
+               'probActions': probActions,
                'stimFunc': deckStimDirect(),
                'rewFunc': deckRewDualInfo(10, 0.01),
                'decFunc': decSingle()}
@@ -60,7 +63,7 @@ outputOptions = {'simLabel': 'BPMS_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 

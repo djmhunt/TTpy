@@ -51,8 +51,7 @@ probActions = False
 parameters = {'alphaPos': sum(alphaBounds)/2,
               'alphaNeg': sum(alphaBounds)/2,
               'beta': sum(betaBounds)/2}
-paramExtras = {'eta': eta,
-               'numActions': numActions,
+paramExtras = {'numActions': numActions,
                'numStimuli': numStimuli,
                'probActions': probActions,
                'stimFunc': deckStimDirect(),
@@ -65,7 +64,7 @@ outputOptions = {'simLabel': 'qLearn2_decksSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': False,
-                 'silent': False,
+                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
