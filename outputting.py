@@ -502,9 +502,16 @@ class outputting(object):
 
         label = "_Exp-" + str(self.expSetNum) + "_Model-" + str(self.modelSetNum) + "'" + str(self.modelSetSize)
 
-        if self.outputFolder and self.pickleData:
-            self.pickleLog(expData, self.outputFolder, label)
-            self.pickleLog(modelData, self.outputFolder, label)
+        if self.outputFolder:
+
+            message = "Store data for simulation " + str(self.modelSetSize)
+            self.logger.info(message)
+
+            self._simModelLog(modelData)
+
+            if self.pickleData:
+                self.pickleLog(expData, self.outputFolder, label)
+                self.pickleLog(modelData, self.outputFolder, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -826,7 +833,7 @@ class outputting(object):
     ### Excel
     def simLog(self):
         """
-        Outputs relevent data to an excel file with all the data and a csv file
+        Outputs relevant data to an excel file with all the data and a csv file
         with the estimated pertinent data
         """
 
@@ -863,6 +870,18 @@ class outputting(object):
         xlsxA = pd.ExcelWriter(outputFile)
         pertRecord.to_excel(xlsxA, sheet_name='abridgedRecord')
         xlsxA.save()
+
+    def _simModelLog(self,modelData):
+
+        data = dictData2Lists(modelData)
+        record = pd.DataFrame(data)
+        name = "modelSim_" + str(self.modelSetSize) + "_"
+        outputFile = self.newFile(name, 'csv')
+        record.to_csv(outputFile)
+        outputFile = self.newFile(name, 'xlsx')
+        xlsxT = pd.ExcelWriter(outputFile)
+        record.to_excel(xlsxT, sheet_name=name)
+        xlsxT.save()
 
     def _makeDataSet(self):
 
@@ -914,6 +933,15 @@ class outputting(object):
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
+
+        return data
+
+    def _makeSingleModelDataSet(self):
+
+        data = OrderedDict()
+        modelData = dictArray2Lists(self.modelStore, '')
+
+        data.update(modelData)
 
         return data
 
@@ -980,6 +1008,37 @@ def reframeSelectListDicts(store, keySet, storeLabel=''):
 
     # For every key now found
     newStore = newFlatDict(keySet, store, storeLabel)
+
+    return newStore
+
+
+def dictData2Lists(store, storeLabel=''):
+    """
+    Take a dictionary of arrays, values and lists and turn it into a dictionary of lists
+
+    Parameters
+    ----------
+    store : list of dicts
+        The dictionaries would be expected to have many of the same keys
+    storeLabel : string, optional
+        An identifier to be added to the beginning of each key string.
+        Default is ''.
+
+    Returns
+    -------
+    newStore : dict of 1D lists
+        Any dictionary keys containing arrays in the input have been split
+        into multiple numbered keys
+
+    See Also
+    --------
+    flatDictKeySet, newFlatDict
+    """
+
+    keySet, maxListLen = listDictKeySet(store)
+
+    # For every key now found
+    newStore = newListDict(keySet, maxListLen, store, storeLabel)
 
     return newStore
 
@@ -1091,6 +1150,59 @@ def flatDictSelectKeySet(store, keys):
     return keySet
 
 
+def listDictKeySet(store):
+    """
+    Generates a dictionary of keys and identifiers for the new dictionary,
+    splitting any keys with arrays into a set of keys, one for each column
+    in the original key.
+
+    These are named <key><location>
+
+    Parameters
+    ----------
+    store : dict
+        The dictionary to be split up
+
+    Returns
+    -------
+    keySet : dict
+        The keys are the keys for the new dictionary. The values contain a
+        two element tuple. The first element is the original name of the
+        key and the second is the location of the value to be stored in the
+        original dictionary value array.
+    maxListLen : int
+        The longest list in the dictionary
+
+    See Also
+    --------
+    reframeListDicts, newFlatDict
+    """
+
+    # Find all the keys
+    keySet = OrderedDict()
+    maxListLen = 0
+
+    for k in store.keys():
+        v = store[k]
+        dim = shape(v)
+        if len(dim) > 1:
+            if dim[0] > maxListLen:
+                maxListLen = dim[0]
+            # We need to calculate every combination of co-ordinates in the array
+            arrSets = [range(0, i) for i in dim[1:]]
+            # Now record each one
+            for genLoc in listMerGen(*arrSets):
+                loc = list(genLoc)
+                keySet.setdefault(k+str(loc), (k, loc))
+        else:
+            if isinstance(v, (list, ndarray)):
+                if dim[0] > maxListLen:
+                    maxListLen = dim[0]
+            keySet.setdefault(k, (None, None))
+
+    return keySet, maxListLen
+
+
 def newFlatDict(keySet, store, storeLabel):
     """
     Takes a list of dictionaries and returns a dictionary of 1D lists.
@@ -1140,6 +1252,63 @@ def newFlatDict(keySet, store, storeLabel):
                 else:
                     v = rawVal[loc]
                 partStore[key].append(v)
+
+    newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
+
+    return newStore
+
+
+def newListDict(keySet, maxListLen, store, storeLabel):
+    """
+    Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
+
+    If there is a single value, then a list is created with that value repeated
+
+    Parameters
+    ----------
+    keySet : dict
+        The keys are the keys for the new dictionary. The values contain a
+        two element tuple. The first element is the original name of the
+        key and the second is the location of the value to be stored in the
+        original dictionary value array.
+    maxListLen : int
+        The longest list in the dictionary
+    store : dict
+        A dictionary of numbers, strings, lists and arrays
+    storeLabel : string
+        An identifier to be added to the beginning of each key string.
+
+
+    Returns
+    -------
+    newStore : dict
+        The new dictionary with the keys from the keySet and the values as
+        1D lists.
+
+    """
+
+    partStore = OrderedDict()
+
+    for key, (initKey, loc) in keySet.iteritems():
+
+        if type(initKey) is NoneType:
+            v = store[key]
+            if isinstance(v, (list, ndarray)):
+                vals = list(v)
+                if len(v) < maxListLen:
+                    vals.extend([None for i in range(maxListLen-len(v))])
+            else:
+                # We assume the object is a single value or string
+                vals = [v for i in range(maxListLen)]
+
+        else:
+            selection = lambda d, l: d[:, l[0]] if len(l) == 1 else selection(d, l[:-1])[:, l[-1]]
+            vals = list(selection(store[initKey], loc))
+
+            if len(vals) < maxListLen:
+                vals.extend([None for i in range(maxListLen - len(vals))])
+
+        partStore[key] = vals
 
     newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
 
