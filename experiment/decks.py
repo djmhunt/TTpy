@@ -226,7 +226,7 @@ def deckRewDirect():
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
 
-    def deckRew(reward, action):
+    def deckRew(reward, action, stimuli):
         return reward
 
     deckRew.Name = "deckRewDirect"
@@ -258,7 +258,7 @@ def deckRewDirectNormal(maxRewardVal):
     model.opal, model.opals
     """
 
-    def deckRew(reward, action):
+    def deckRew(reward, action, stimuli):
         return reward / maxRewardVal
 
     deckRew.Name = "deckRewDirectNormal"
@@ -308,7 +308,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     numDiffRewards = maxRewardVal-minRewardVal+1
     respZeros = zeros(numDiffRewards * numActions)
 
-    def deckRew(reward, action):
+    def deckRew(reward, action, stimuli):
         rewardProc = respZeros.copy() + 1
         rewardProc[numDiffRewards*action + reward - 1] += 1
         return rewardProc.T
@@ -343,7 +343,7 @@ def deckRewDualInfo(maxRewardVal, epsilon):
     """
     divisor = maxRewardVal + epsilon
 
-    def deckRew(reward, action):
+    def deckRew(reward, action, stimuli):
         rew = (reward / divisor) * (1 - action) + (1 - (reward / divisor)) * action
         rewardProc = [[rew], [1-rew]]
         return array(rewardProc)
@@ -376,7 +376,7 @@ def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
     """
     mid = (maxRewardVal + minRewardVal)/2
 
-    def deckRew(reward, action):
+    def deckRew(reward, action, stimuli):
 
         x = exp(epsilon * (reward-mid))
 

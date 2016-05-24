@@ -283,3 +283,66 @@ def weatherStimAllAction(numActions):
     weatherStim.Name = "weatherStimAllAction"
     weatherStim.Params = {"numActions": numActions}
     return weatherStim
+
+
+def weatherRewDiff():
+    """
+    Processes the weather reward for models expecting reward corrections
+
+    Returns
+    -------
+    weatherRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    """
+
+    def weatherRew(reward, action, stimuli):
+
+        if reward == action:
+            return 1
+        else:
+            return 0
+
+    weatherRew.Name = "weatherRewDiff"
+    return weatherRew
+
+
+def weatherRewDualCorrection(epsilon):
+    """
+    Processes the decks reward for models expecting the reward correction
+    from two possible actions.
+
+    Returns
+    -------
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The reward that is a float and action is {0,1}. The
+        function returns a list of length 2.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.BP, model.EP, model.MS, model.MS_rev
+    """
+
+    def weatherRew(reward, action, stimuli):
+        rewardProc = zeros((2, len(stimuli))) + epsilon
+        rewardProc[reward, stimuli] = 1
+        return array(rewardProc)
+
+    weatherRew.Name = "deckRewDualInfo"
+    weatherRew.Params = {"epsilon": epsilon}
+    return weatherRew

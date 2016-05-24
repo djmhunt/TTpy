@@ -245,7 +245,7 @@ class BHMM(model):
 
         return expectedReward, stimuli, activeStimuli
 
-    def delta(self, reward, expectation, action):
+    def delta(self, reward, expectation, action, stimuli):
         """
         Calculates the comparison between the reward and the expectation
 
@@ -257,13 +257,15 @@ class BHMM(model):
             The expected reward value
         action : int
             The chosen action
+        stimuli : {int | float | tuple | None}
+            The stimuli received
 
         Returns
         -------
         delta
         """
 
-        modReward = self.rewFunc(reward, action)
+        modReward = self.rewFunc(reward, action, stimuli)
 
         delta = modReward * expectation
 

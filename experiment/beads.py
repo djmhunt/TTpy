@@ -392,7 +392,7 @@ def beadRewDirect():
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
 
-    def beadRew(reward, action):
+    def beadRew(reward, action, stimuli):
         return reward
 
     beadRew.Name = "beadRewDirect"
