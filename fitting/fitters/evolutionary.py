@@ -189,7 +189,12 @@ class evolutionary(fitAlg):
         if optimizeResult.success == True:
             return optimizeResult
         else:
-            return None
+            if optimizeResult.message == 'Maximum number of iterations has been exceeded.':
+                message = "Maximum number of fitting iterations has been exceeded. Returning the best results found so far."
+                self.logger.info(message)
+                return optimizeResult
+            else:
+                return None
 
     def _bestfit(self, resultSet):
 
