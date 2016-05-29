@@ -30,7 +30,7 @@ def plotFitting(participant, modelData, fitQuality):
     figSets = []
 
     fig = plotFittingSuccess(partName, fitQuality, modelData["Actions"], modelData["ActionProb"])
-    figSets.append(('FittingSuccess_part_' + partName, fig))
+    figSets.append(('FittingSuccess_' + partName, fig))
 
     return figSets
 
