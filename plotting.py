@@ -30,8 +30,8 @@ symbols = ['-', '--', '-.', ':', '.', ',', 'o', '^', 'v', '<', '>', 's', '+', 'x
 #lps = ['k' + k for k in [',','.','o','^','v','<','>','s','+','x','D','d','1','2','3','4','h','H','p']]
 dots = ['.', 'o', '^', 'x', 'd', '2', 'H', ',', 'v', '+', 'D', 'p', '<', 's', '1', 'h', '4', '>', '3']
 scatterdots = ['o', '^', 'x', 'd', 'v', '+', 'p', '<', 's', 'h', '>', '8']
-lines = ['-', '--', ':', '-.','-']
-lines_width = [1,1,2,2,2]
+lines = ['-', '--', ':', '-.', '-']
+lines_width = [1, 1, 2, 2, 2]
 large = ['^', 'x', 'D', '4', 'd', 'p', '>', '2', ',', '3', 'H']
 large_line_width = [2]*len(large)
 lpl = lines + large
@@ -380,6 +380,7 @@ def pandasPlot(data, axisLabels = {}):
 
     Parameters
     ----------
+    data : pandas dataSeries
     axisLabels : dictionary, optional
         A dictionary of axis properties, all optional, containing:
 
@@ -604,7 +605,7 @@ def axQuiver(ax, X, Y, dX, dY, CB_label=""):
     ax.grid()
 
 
-def axPlotlines(ax, x, Y, labels, axisLabels):
+def axPlotlines(ax, x, Y, labels, axisLabels, dataFormatting={}):
     """
     Produces a set of lineplots on the axis
 
@@ -625,11 +626,25 @@ def axPlotlines(ax, x, Y, labels, axisLabels):
         ``yMax`` : `float`,
         ``xMin`` : `float`,
         ``xMax`` : `float`
+    dataFormatting : dictionary of string keys and values as lists of strings or floats
+        A dictionary of properties for each line to be plotted, all optional. See the start of the plotting module to
+        see all options for each option. Each list should be at least as long as ``m`` in ``Y``
+
+        ``linetype`` : If the line is dotted and if so how
+        ``colours`` : The colour of each line
+        ``linewidth`` : The thickness of the lines
+        ``markersize`` : The size of the dots at each datapoint. Default 3
     """
 
     xLabel = axisLabels.pop("xLabel", "Event")
     yLabel = axisLabels.pop("yLabel", "Value")
     title = axisLabels.pop("title", "")
+
+    lineType = dataFormatting.pop('lineType', lpl)
+    colourList = dataFormatting.pop('colours', colours)
+    linewidth = dataFormatting.pop('linewidth', lpl_linewidth)
+    markersize = dataFormatting.pop('markersize', [3 for i in xrange(len(lpl))])
+
 
     yMin = axisLabels.pop("yMin", amin(Y))
     yMax = axisLabels.pop("yMax", amax(Y))
@@ -637,11 +652,11 @@ def axPlotlines(ax, x, Y, labels, axisLabels):
     Ys = Y.shape
     if len(Ys) == 1:
         xMax = axisLabels.pop("xMax", Ys[0])
-        pltLines = ax.plot(x, Y, lpl[0], color=colours[0], linewidth=lpl_linewidth[0], markersize=3)
+        pltLines = ax.plot(x, Y, lineType[0], color=colourList[0], linewidth=linewidth[0], markersize=markersize[0])
     elif len(Ys) == 2:
         xMax = axisLabels.pop("xMax", Ys[1])
         for i, y in enumerate(Y):
-            pltLines = ax.plot(x, y, lpl[i], label=labels[i], color=colours[i], linewidth=lpl_linewidth[i], markersize=3)
+            pltLines = ax.plot(x, y, lineType[i], label=labels[i], color=colourList[i], linewidth=linewidth[i], markersize=markersize[i])
     else:
         return
 
@@ -742,22 +757,18 @@ def legend(*axis):
 
     leg = ax.legend(lines, pltLabels, loc='best', fancybox=True)
 
-
-
-
-if __name__ == '__main__':
-
+# if __name__ == '__main__':
 
 #    x = array([1, 2, 4])
 #    y = array([0.1, 0.2, 0.3])
 #    z = array([0.3, 0.4, 0.5])
-    x = array([1, 2, 3])
-    y = array([4, 5, 6])
-    z = array([7, 8, 9])
-    f = array([1, 2, 3, 2, 3, 4, 3, 4, 5, 2, 3, 4, 3, 4, 5, 4, 5, 6, 3, 4, 5, 4, 5, 6, 5, 6, 7])
-
-    fig = dim3VarDim(x, y, z, f, 'TestX', 'TestY', 'TestZ')
-    fig.outputTrees("outputs/testDataStruc")
+#     x = array([1, 2, 3])
+#     y = array([4, 5, 6])
+#     z = array([7, 8, 9])
+#     f = array([1, 2, 3, 2, 3, 4, 3, 4, 5, 2, 3, 4, 3, 4, 5, 4, 5, 6, 3, 4, 5, 4, 5, 6, 5, 6, 7])
+#
+#     fig = dim3VarDim(x, y, z, f, 'TestX', 'TestY', 'TestZ')
+#     fig.outputTrees("outputs/testDataStruc")
 
 #    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
 
