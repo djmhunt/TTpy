@@ -116,12 +116,14 @@ def decEta(expResponses=(0, 1), eta=0):
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
+        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
+
         if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
                 resp = validResponses[0]
                 return resp, {resp: 1}
             elif len(validResponses) == 0:
-                return None, probabilities
+                return None, probDict
             elif set(validResponses) != expResponseSet:
                 warn("Bad validResponses: " + str(validResponses))
             elif len(validResponses) > 2:
@@ -139,13 +141,69 @@ def decEta(expResponses=(0, 1), eta=0):
         else:
             decision = None
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
-
         return decision, probDict
 
     decisionFunc.Name = "binary.decEta"
     decisionFunc.Params = {"expResponses": expResponses,
                            "eta": eta}
+
+    return decisionFunc
+
+
+def decRandom(expResponses=(0, 1)):
+    """Decisions using a comparison with a uniform random number
+
+    Parameters
+    ----------
+    expResponses : tuple of length two containing non-negative ints, optional
+        Provides the two action responses expected by the experiment
+
+    Returns
+    -------
+    decisionFunc : function
+        Calculates the decisions based on their probabilities and returns the
+        decision and the probabilities for that decision.
+    decision : int or NoneType
+        The action to be taken by the model
+    probabilities : OrderedDict of valid responses
+        A dictionary of considered actions as keys and their associated probabilities as values
+    See Also
+    --------
+    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
+
+    """
+
+    expResponseSet = set(expResponses)
+
+    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+
+        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
+
+        if type(validResponses) is not NoneType:
+            if len(validResponses) == 1:
+                resp = validResponses[0]
+                return resp, {resp: 1}
+            elif len(validResponses) == 0:
+                return None, probDict
+            elif set(validResponses) != expResponseSet:
+                warn("Bad validResponses: " + str(validResponses))
+            elif len(validResponses) > 2:
+                warn("Bad number of validResponses: " + str(validResponses))
+
+        prob = probabilities[0]
+        decVal = random()
+
+        if prob > decVal:
+            decision = expResponses[0]
+        elif prob == decVal:
+            decision = choice(expResponses)
+        else:
+            decision = expResponses[1]
+
+        return decision, probDict
+
+    decisionFunc.Name = "binary.decRandom"
+    decisionFunc.Params = {"expResponses": expResponses}
 
     return decisionFunc
 
