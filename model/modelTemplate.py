@@ -356,6 +356,7 @@ class model(object):
         results["Actions"] = array(self.recAction)
         results["Stimuli"] = array(self.recStimuli)
         results["Rewards"] = array(self.recReward)
+        results["Expectations"] = array(self.recExpectations)
         results["ValidActions"] = array(self.recValidActions)
         results["Decisions"] = array(self.recDecision)
         results["UpdatedProbs"] = array(self.recProbabilities)
@@ -372,7 +373,8 @@ class model(object):
         self.recAction.append(self.currAction)
         self.recValidActions.append(self.validActions[:])
         self.recDecision.append(self.decision)
-        self.recProbabilities.append(self.probabilities.copy())
+        self.recExpectations.append(self.expectations.flatten())
+        self.recProbabilities.append(self.probabilities.flatten())
         self.recActionProbs.append(self.decProbabilities.copy())
         self.recActionProb.append(self.decProbabilities[self.currAction])
 
@@ -411,7 +413,7 @@ class model(object):
                            "numStimuli": self.numStimuli,
                            "numCritics": self.numCritics,
                            "probActions": self.probActions,
-                           "prior": self.prior,
+                           "prior": self.prior.copy(),
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
@@ -423,6 +425,7 @@ class model(object):
         self.recAction = []
         self.recStimuli = []
         self.recReward = []
+        self.recExpectations = []
         self.recValidActions = []
         self.recDecision = []
         self.recProbabilities = []
