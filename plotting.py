@@ -261,7 +261,7 @@ def dim3VarDim(X, Y, Z, f, varXLabel, varYLabel, varZLabel, **kwargs):
 
 
 ### Inputs compared to output probabilities
-def dataVsEvents(data, events, labels, eventLabel, axisLabels):
+def dataVsEvents(data, events, labels, eventLabel, axisLabels, dataFormatting={}):
     """
     Line plots of data with a line plot over the top
 
@@ -283,6 +283,9 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels):
         A dictionary of axis properties, all optional, containing those in
         ``axPlotlines`` as well as:
         ``y2label`` : `string` The label of the scale of events
+    dataFormatting : dictionary of string keys and values as lists of strings or floats
+        A dictionary of properties for each data line to be plotted, all optional, if there are fewer than 8. The
+        optional parameters are those defined in axPlotlines.
 
     Returns
     -------
@@ -310,7 +313,7 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels):
     eventTimes = range(1, len(events)+1)
     eventX = [i - 0.5 for i in eventTimes]
 
-    axPlotlines(ax, eventTimes, data, labels, axisLabels)
+    axPlotlines(ax, eventTimes, data, labels, axisLabels, dataFormatting=dataFormatting)
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label=eventLabel, color='k', linewidth=2, markersize=5)
@@ -321,7 +324,7 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels):
 
     legend(ax, axb)
 
-    fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
+    #fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
@@ -633,14 +636,14 @@ def axPlotlines(ax, x, Y, labels, axisLabels, dataFormatting={}):
         ``linetype`` : If the line is dotted and if so how
         ``colours`` : The colour of each line
         ``linewidth`` : The thickness of the lines
-        ``markersize`` : The size of the dots at each datapoint. Default 3
+        ``markersize`` : The size of the dots at each datapoint.
     """
 
     xLabel = axisLabels.pop("xLabel", "Event")
     yLabel = axisLabels.pop("yLabel", "Value")
     title = axisLabels.pop("title", "")
 
-    lineType = dataFormatting.pop('lineType', lpl)
+    lineType = dataFormatting.pop('linetype', lpl)
     colourList = dataFormatting.pop('colours', colours)
     linewidth = dataFormatting.pop('linewidth', lpl_linewidth)
     markersize = dataFormatting.pop('markersize', [3 for i in xrange(len(lpl))])
@@ -752,10 +755,24 @@ def legend(*axis):
         lines.extend(line)
         pltLabels.extend(pltLabel)
 
+        # for plotting the legend outside the box
+        # Shrink current axis's height by 10% on the bottom
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                         box.width, box.height * 0.9])
+
     if not lines:
         return
 
-    leg = ax.legend(lines, pltLabels, loc='best', fancybox=True)
+    ax = axis[0]
+
+    # For plotting the legend inside the plot
+    # ax.legend(lines, pltLabels, loc='best', fancybox=True)
+
+    # for plotting the legend outside the box
+    # Put a legend below current axis
+    ax.legend(lines, pltLabels, loc='upper center', bbox_to_anchor=(0.5, -0.08),
+              fancybox=True, shadow=True, ncol=2)
 
 # if __name__ == '__main__':
 
