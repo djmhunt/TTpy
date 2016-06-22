@@ -169,10 +169,10 @@ class OpALS(model):
             self.beta = (self.betaGo + self.betaNogo)/2
             self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
-        self.expectation = array(self.expect)
+        self.expectations = array(self.expect)
         self.go = array(self.expectGo)
         self.nogo = array(self.expectGo)
-        self.actionValues = ones(self.expectation.shape)
+        self.actionValues = ones(self.expectations.shape)
 
         self.genStandardParameterDetails()
         self.parameters["alphaCrit"] = self.alphaCrit
@@ -188,7 +188,6 @@ class OpALS(model):
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recExpectation = []
         self.recGo = []
         self.recNogo = []
         self.recActionValues = []
@@ -204,7 +203,6 @@ class OpALS(model):
         """
 
         results = self.standardResultOutput()
-        results["Expectation"] = array(self.recExpectation)
         results["Go"] = array(self.recGo)
         results["Nogo"] = array(self.recNogo)
         results["ActionValues"] = array(self.recActionValues)
@@ -218,7 +216,6 @@ class OpALS(model):
         """
 
         self.storeStandardResults()
-        self.recExpectation.append(self.expectation.copy())
         self.recGo.append(self.go.copy())
         self.recNogo.append(self.nogo.copy())
         self.recActionValues.append(self.actionValues.copy())
@@ -251,9 +248,9 @@ class OpALS(model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.numStimuli > 1:
-            actionExpectations = self.actStimMerge(self.expectation, stimuli)
+            actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
-            actionExpectations = self.expectation
+            actionExpectations = self.expectations
 
         expectedReward = actionExpectations[action]
 
@@ -304,7 +301,7 @@ class OpALS(model):
 
     def _critic(self, delta, action, stimuliFilter):
 
-        self.expectation[action] += self.alphaCrit * delta * (1-self.expectation[action]/self.saturateVal) * stimuliFilter
+        self.expectations[action] += self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuliFilter
 
     def _actor(self, delta, action, stimuliFilter):
 
