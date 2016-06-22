@@ -12,7 +12,8 @@ from types import NoneType
 
 from utils import newFile, listMerGen
 
-def exportClassData(data, parameters, outputFolder = "./"):
+
+def exportClassData(data, parameters, outputFolder="./"):
     """
     Takes the data returned by a model or experiment class instance and saves
     it to an Excel file
@@ -20,10 +21,10 @@ def exportClassData(data, parameters, outputFolder = "./"):
     Parameters
     ----------
     data : dict
-        A dictionary containing two dimentional arrays and some 1D 
+        A dictionary containing two dimensional arrays and some 1D
         parameters and identifiers
     parameters : dict
-        A dictionary contining some 1D arrays, floats and strings. These are
+        A dictionary containing some 1D arrays, floats and strings. These are
         seen as not changing over the simulation, so will be split if there are
         multiple items
     outputFolder : string, optional
@@ -39,12 +40,13 @@ def exportClassData(data, parameters, outputFolder = "./"):
 
     timeData = reframeEventDicts(data, parameters)
     record = pd.DataFrame(timeData)
-    outputFile = newFile(outName, 'xlsx', outputFolder = outputFolder)
+    outputFile = newFile(outName, 'xlsx', outputFolder=outputFolder)
     xlsxT = pd.ExcelWriter(outputFile)
     record.to_excel(xlsxT, sheet_name=outName)
     xlsxT.save()
-    
-def reframeEventDicts(data, parameters, storeLabel = ''):
+
+
+def reframeEventDicts(data, parameters, storeLabel=''):
     """
     Takes the data returned by a model or experiment class instance and 
     returns a dictionary of 1D lists or single items.
@@ -52,10 +54,10 @@ def reframeEventDicts(data, parameters, storeLabel = ''):
     Parameters
     ----------
     data : dict
-        A dictionary containing two dimentional arrays and some 1D 
+        A dictionary containing two dimensional arrays and some 1D
         parameters and identifiers
     parameters : dict
-        A dictionary contining some 1D arrays, floats and strings. These are
+        A dictionary containing some 1D arrays, floats and strings. These are
         seen as not changing over the simulation, so will be split if there are
         multiple items
     storeLabel : string, optional
@@ -79,7 +81,8 @@ def reframeEventDicts(data, parameters, storeLabel = ''):
     newStore = newEventDict(keySet, data, T, storeLabel)
 
     return newStore
-    
+
+
 def eventDictKeySet(data, parameters):
     """
     Generates a dictionary of keys and identifiers for the new dictionary,
@@ -91,10 +94,10 @@ def eventDictKeySet(data, parameters):
     Parameters
     ----------
     data : dict
-        A dictionary containing two dimentional arrays and some 1D 
+        A dictionary containing two dimensional arrays and some 1D
         parameters and identifiers
     parameters : dict
-        A dictionary contining some 1D arrays, floats and strings. These are
+        A dictionary containing some 1D arrays, floats and strings. These are
         seen as not changing over the simulation, so will be split if there are
         multiple items
 
@@ -122,24 +125,24 @@ def eventDictKeySet(data, parameters):
     
     for p in parameters.iterkeys():
         v = parameters[p]
-        if isinstance(v, (list,ndarray)):
+        if isinstance(v, (list, ndarray)):
             shp = shape(v)
             if size(shp) == 1:
                 if size(v) == 1:
                     paramSet.setdefault(p, (None, None))
                 else:
-                    paramSet.update(_genVarKeys(p,v))
+                    paramSet.update(_genVarKeys(p, v))
             else:
-                paramSet.update(_genVarKeys(p,v))
+                paramSet.update(_genVarKeys(p, v))
         else:
             paramSet.setdefault(p, (None, None))
-                
 
     for k in data.iterkeys():
-        if k in parameters: continue
+        if k in parameters:
+            continue
         
         v = data[k]
-        if isinstance(v, (list,ndarray)):
+        if isinstance(v, (list, ndarray)):
             shp = shape(v)
             sze = shp[0]
             if sze > T:
@@ -148,7 +151,7 @@ def eventDictKeySet(data, parameters):
             if size(shp) == 1:
                 dataSet.setdefault(k, (None, None))
             else:
-                for col in xrange(0,shp[1]):
+                for col in xrange(0, shp[1]):
                     dataSet.setdefault(k+str(col), (k, col))
         else:
             dataSet.setdefault(k, (None, None))
@@ -157,8 +160,9 @@ def eventDictKeySet(data, parameters):
     keySet.update(dataSet)
 
     return keySet, T
-    
-def newEventDict(keySet, data, T, dataLabel = ''):
+
+
+def newEventDict(keySet, data, T, dataLabel=''):
     """
     Takes the data returned by a model or experiment class instance and 
     returns a dictionary of 1D lists.
@@ -172,7 +176,7 @@ def newEventDict(keySet, data, T, dataLabel = ''):
         key and the second is the location of the value to be stored in the
         original dictionary value array.
     data : dict
-        A dictionary containing two dimentional arrays and some 1D 
+        A dictionary containing two dimensional arrays and some 1D
         parameters and identifiers
     T : int
         The length of the longest array. This represents the number of 
@@ -198,21 +202,21 @@ def newEventDict(keySet, data, T, dataLabel = ''):
 
     for key, (initKey, col) in keySet.iteritems():
 
-        partStore.setdefault(key,[])
+        partStore.setdefault(key, [])
 
         if type(initKey) is NoneType:
-            v = data.get(key,None)
+            v = data.get(key, None)
             
         else:
-            rawVal = data.get(initKey,None)
+            rawVal = data.get(initKey, None)
             if type(rawVal) is NoneType:
                 v = None
             elif size(shape(rawVal)) == 1:
                 v = array(rawVal)[col]
             else:
-                v = array(rawVal)[:,col]
+                v = array(rawVal)[:, col]
             
-        if not isinstance(v, (list,ndarray)): 
+        if not isinstance(v, (list, ndarray)):
             v = [v]
         
         sz = size(v)
@@ -221,15 +225,16 @@ def newEventDict(keySet, data, T, dataLabel = ''):
             diff = T- sz
             partStore[key].extend([None for i in xrange(diff)])
 
-    newStore = OrderedDict(((dataLabel + k, v) for k,v in partStore.iteritems()))
+    newStore = OrderedDict(((dataLabel + k, v) for k, v in partStore.iteritems()))
 
     return newStore
-    
+
+
 def _genVarKeys(p, v):
     
     pSet = OrderedDict()
     
-    arrSets = [range(0,i) for i in shape(v)]
+    arrSets = [range(0, i) for i in shape(v)]
     # Now record each one
     for genLoc in listMerGen(*arrSets):
         if len(genLoc) == 1:
