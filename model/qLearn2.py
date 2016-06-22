@@ -112,7 +112,7 @@ class qLearn2(model):
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
 
-        self.expectation = array(self.expect)
+        self.expectations = array(self.expect)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -120,11 +120,10 @@ class qLearn2(model):
         self.parameters["alphaNeg"] = self.alphaNeg
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
-        self.parameters["expectation"] = self.expectation
+        self.parameters["expectation"] = self.expectations
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recExpectation = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -138,8 +137,6 @@ class qLearn2(model):
 
         results = self.standardResultOutput()
 
-        results["Expectation"] = array(self.recExpectation)
-
         return results
 
     def storeState(self):
@@ -149,8 +146,6 @@ class qLearn2(model):
         """
 
         self.storeStandardResults()
-
-        self.recExpectation.append(self.expectation.copy())
 
     def rewardExpectation(self, observation, action, response):
         """Calculate the estimated reward based on the action and stimuli
@@ -178,11 +173,11 @@ class qLearn2(model):
         activeStimuli, stimuli = self.stimFunc(observation, action)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.;
+        # calculate the expectations associated with each action.
         if self.numStimuli > 1:
-            actionExpectations = self.actStimMerge(self.expectation, stimuli)
+            actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
-            actionExpectations = self.expectation
+            actionExpectations = self.expectations
 
         expectedReward = actionExpectations[action]
 
@@ -222,17 +217,17 @@ class qLearn2(model):
         # Calculate the new probabilities
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.expectation, stimuliFilter)
+            actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self._prob(actExpectations)
         else:
-            self.probabilities = self._prob(self.expectation)
+            self.probabilities = self._prob(self.expectations)
 
     def _newAct(self, delta, stimuliFilter, action):
 
         if delta > 0:
-            self.expectation[action] += self.alphaPos*delta*stimuliFilter
+            self.expectations[action] += self.alphaPos*delta*stimuliFilter
         else:
-            self.expectation[action] += self.alphaNeg*delta*stimuliFilter
+            self.expectations[action] += self.alphaNeg*delta*stimuliFilter
 
     def _prob(self, expectation):
         """

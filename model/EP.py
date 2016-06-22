@@ -84,7 +84,7 @@ class EP(model):
         self.eta = kwargRemains.pop('eta', 0.3)
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.activity = kwargRemains.pop('activity', ones((self.numActions, self.numStimuli)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numStimuli)) / self.numCritics)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -94,11 +94,10 @@ class EP(model):
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
-        self.parameters["activity"] = self.activity
+        self.parameters["expectations"] = self.expectations
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recActivity = []
 
     def outputEvolution(self):
         """ Returns the relevant data expected from a model as well as the parameters for the current model
@@ -111,7 +110,6 @@ class EP(model):
         """
 
         results = self.standardResultOutput()
-        results["Activity"] = array(self.recActivity)
 
         return results
 
@@ -122,7 +120,6 @@ class EP(model):
         """
 
         self.storeStandardResults()
-        self.recActivity.append(self.activity.copy())
 
     def rewardExpectation(self, observation, action, response):
         """Calculate the reward based on the action and stimuli
@@ -152,9 +149,9 @@ class EP(model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.numStimuli > 1:
-            actionActivity = self.actStimMerge(self.activity, stimuli)
+            actionActivity = self.actStimMerge(self.expectations, stimuli)
         else:
-            actionActivity = self.activity
+            actionActivity = self.expectations
 
         return actionActivity, stimuli, activeStimuli
 
@@ -191,14 +188,14 @@ class EP(model):
 
         # Calculate the new probabilities
         if self.probActions:
-            actActivity = self.actStimMerge(self.activity, stimuliFilter)
+            actActivity = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self._prob(actActivity)
         else:
-            self.probabilities = self._prob(self.activity)
+            self.probabilities = self._prob(self.expectations)
 
     def _newAct(self, delta):
 
-        self.activity += self.alpha * delta
+        self.expectations += self.alpha * delta
 
     def _prob(self, expectation):
         """ Calculate the new probabilities of different actions
@@ -221,7 +218,7 @@ class EP(model):
 
         return p
 
-#        diff = 2*self.activity - sum(self.activity)
+#        diff = 2*self.expectations - sum(self.expectations)
 #        p = 1.0 / (1.0 + exp(-self.beta*diff))
 #
 #        self.probabilities = p

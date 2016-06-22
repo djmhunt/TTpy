@@ -86,7 +86,7 @@ class MS(model):
         self.alpha = kwargRemains.pop('alpha', 1)
         self.eta = kwargRemains.pop('eta', 0.5)
 
-        self.activity = kwargRemains.pop('activity', ones((self.numActions, self.numStimuli)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numStimuli)) / self.numCritics)
         # The alpha is an activation rate parameter. The paper uses a value of 1.
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -97,14 +97,13 @@ class MS(model):
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
-        self.parameters["activity"] = self.activity
+        self.parameters["expectations"] = self.expectations
 
         self.probDifference = 0
         self.firstDecision = 0
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recActivity = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -117,7 +116,6 @@ class MS(model):
         """
 
         results = self.standardResultOutput()
-        results["Activity"] = array(self.recActivity)
 
         return results
 
@@ -128,7 +126,6 @@ class MS(model):
         """
 
         self.storeStandardResults()
-        self.recActivity.append(self.activity.copy())
 
     def rewardExpectation(self, observation, action, response):
         """Calculate the reward based on the action and stimuli
@@ -158,9 +155,9 @@ class MS(model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.numStimuli > 1:
-            actionExpectations = self.actStimMerge(self.activity, stimuli)
+            actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
-            actionExpectations = self.activity
+            actionExpectations = self.expectations
 
         expectedReward = actionExpectations
 
@@ -200,14 +197,14 @@ class MS(model):
         # Calculate the new probabilities
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.activity, stimuliFilter)
+            actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self._prob(actExpectations)
         else:
-            self.probabilities = self._prob(self.activity)
+            self.probabilities = self._prob(self.expectations)
 
     def _newActivity(self, delta):
 
-        self.activity += delta * self.alpha
+        self.expectations += delta * self.alpha
 
     def _prob(self, expectation):
         p = 1.0 / (1.0 + exp(-self.beta*expectation))
