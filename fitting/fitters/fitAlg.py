@@ -14,9 +14,10 @@ from utils import listMergeNP, callableDetailsString
 from qualityFunc import qualFuncIdent
 from boundFunc import scalarBound
 
+
 class fitAlg(object):
     """
-    The abstact class for fitting data
+    The abstract class for fitting data
 
     Parameters
     ----------
@@ -48,8 +49,7 @@ class fitAlg(object):
 
     Name = 'none'
 
-
-    def __init__(self,fitQualFunc = None, bounds = None, boundCostFunc = scalarBound(), numStartPoints = 4):
+    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4):
 
         self.numStartPoints = numStartPoints
         self.allBounds = bounds
@@ -57,11 +57,11 @@ class fitAlg(object):
         self.fitQualFunc = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
 
-        self.fitInfo = {'Name':self.Name,
+        self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds':self.allBounds,
-                        'numStartPoints' : self.numStartPoints}
+                        'bounds': self.allBounds,
+                        'numStartPoints': self.numStartPoints}
 
         self.boundVals = None
         self.boundNames = None
@@ -82,7 +82,7 @@ class fitAlg(object):
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
-            The list of the intial parameters
+            The list of the initial parameters
 
         Returns
         -------
@@ -101,7 +101,7 @@ class fitAlg(object):
 
         return 0, 0
 
-    def fitness(self,*params):
+    def fitness(self, *params):
         """
         Generates a fit quality value
 
@@ -120,7 +120,7 @@ class fitAlg(object):
 
         # Start by checking that the parameters are valid
         if self.allBounds and self.invalidParams(*pms):
-            return self.boundCostFunc(pms,self.boundVals)
+            return self.boundCostFunc(pms, self.boundVals)
 
         modVals = self.sim(*pms)
 
@@ -140,7 +140,7 @@ class fitAlg(object):
 
         return self.fitInfo
 
-    def setBounds(self,mParamNames):
+    def setBounds(self, mParamNames):
         """
         Checks if the bounds have changed
 
@@ -185,8 +185,8 @@ class fitAlg(object):
         # Check if the bounds have changed or should be added
         if boundNames:
             changed = False
-            for m,b in izip(mParamNames,boundNames):
-                if m != b :
+            for m, b in izip(mParamNames, boundNames):
+                if m != b:
                     changed = True
                     break
         else:
@@ -199,18 +199,17 @@ class fitAlg(object):
 
         # If no bounds were defined
         if not bounds:
-            boundVals = [(0,float('Inf')) for i in mParamNames]
-            self.allBounds = {k : v for k, v in izip(mParamNames, boundVals)}
+            boundVals = [(0, float('Inf')) for i in mParamNames]
+            self.allBounds = {k: v for k, v in izip(mParamNames, boundVals)}
             self.boundNames = mParamNames
             self.boundVals = boundVals
         else:
-            self.boundVals = [ bounds[k] for k in mParamNames]
+            self.boundVals = [bounds[k] for k in mParamNames]
             self.boundNames = mParamNames
 
         return
 
-
-    def startParams(self,initialParams, bounds = None, numPoints = 3):
+    def startParams(self, initialParams, bounds=None, numPoints=3):
         """
         Defines a list of different starting parameters to run the minimization
         over
@@ -247,7 +246,7 @@ class fitAlg(object):
                [ 0.66666667,  0.66666667]])
         """
 
-        if bounds == None:
+        if bounds is None:
             # We only have the values passed in as the starting parameters
             startLists = (self.startParamVals(i, numPoints = numPoints) for i in initialParams)
 
@@ -255,13 +254,13 @@ class fitAlg(object):
             if len(bounds) != len(initialParams):
                 raise ValueError('Bounds do not fit number of intial parameters', str(len(bounds)), str(len(initialParams)))
 
-            startLists = (self.startParamVals(i, bMin = bMin, bMax = bMax, numPoints = numPoints) for i, (bMin, bMax) in izip(initialParams,bounds))
+            startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in izip(initialParams, bounds))
 
         startSets = listMergeNP(*startLists)
 
         return startSets
 
-    def startParamVals(self,initial, bMin = float('-Inf'), bMax = float('Inf'), numPoints = 3):
+    def startParamVals(self, initial, bMin=float('-Inf'), bMax=float('Inf'), numPoints=3):
         """
         Provides a set of starting points
 
@@ -320,12 +319,12 @@ class fitAlg(object):
 
 #        initialAbs = abs(initial)
 
-        #The number of initial points per parameter
+        # The number of initial points per parameter
         divVal = (numPoints+1)/2
 
-        if bMax == None or isinf(bMax):
+        if bMax is None or isinf(bMax):
             # We can also assume any number smaller than one should stay
-            #smaller than one.
+            # smaller than one.
             if initial < 1 and initial > 0:
                 valMax = 1
             else:
@@ -333,9 +332,9 @@ class fitAlg(object):
         else:
             valMax = bMax
 
-        if bMin == None or isinf(bMin):
+        if bMin is None or isinf(bMin):
             # We can also assume any number larger than one should stay
-            #bigger than zero.
+            # bigger than zero.
             if initial > 0:
                 valMin = 0
 
@@ -368,7 +367,6 @@ class fitAlg(object):
             vMax = valAbsMax - inc
         else:
             vMax = vMin * numPoints
-
 
         points = linspace(vMin, vMax, numPoints) + valMin
 

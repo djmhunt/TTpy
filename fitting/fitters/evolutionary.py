@@ -18,6 +18,7 @@ from boundFunc import scalarBound
 
 import pytest
 
+
 class evolutionary(fitAlg):
 
     """The class for fitting data using scipy.optimise.differential_evolution
@@ -87,10 +88,10 @@ class evolutionary(fitAlg):
 
         self._setType(strategy)
 
-        self.fitInfo = {'Name':self.Name,
+        self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds':self.allBounds,
+                        'bounds': self.allBounds,
                         'polish': polish
                         }
 
@@ -136,12 +137,11 @@ class evolutionary(fitAlg):
 
         self.sim = sim
 
-        strategy=self.strategy
+        strategy = self.strategy
         strategySet = self.strategySet
 
         self.setBounds(mParamNames)
         boundVals = self.boundVals
-
 
         if type(strategy) is NoneType:
 
@@ -178,19 +178,37 @@ class evolutionary(fitAlg):
             return fitParams, fitVal
 
     def _strategyFit(self, strategy, bounds):
+        """
+
+        Parameters
+        ----------
+        strategy : str
+            The name of the chosen strategy
+        bounds : list of length 2 tuples containing floats
+            The bounds for each parameter being looked at
+
+        Returns
+        -------
+        optimizeResult : None or scipy.optimize.optimize.OptimizeResult instance
+
+        See Also
+        --------
+        fitting.fitters.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
+        """
 
         optimizeResult = optimize.differential_evolution(self.fitness,
                                                          bounds,
-                                                         strategy = strategy,
-                                                         polish = self.polish,
-                                                         init = 'latinhypercube' # 'random'
+                                                         strategy=strategy,
+                                                         polish=self.polish,
+                                                         init='latinhypercube'  # 'random'
                                                          )
 
-        if optimizeResult.success == True:
+        if optimizeResult.success is True:
             return optimizeResult
         else:
             if optimizeResult.message == 'Maximum number of iterations has been exceeded.':
-                message = "Maximum number of fitting iterations has been exceeded. Returning the best results found so far."
+                message = "Maximum number of fitting iterations has been exceeded. " \
+                          "Returning the best results found so far."
                 self.logger.info(message)
                 return optimizeResult
             else:
@@ -214,16 +232,17 @@ class evolutionary(fitAlg):
 #        data['message'] = array([o.message for o in resultSet])
 #        data['jac'] = array([o.jac for o in resultSet])
 #        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
-#        print(array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T)
+#        print(array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]),
+        #      array([o.fun for o in resultSet])]).T)
 #        pytest.set_trace()
 
         return resultSet[genFitid]
 
-    def _setType(self,strategy):
+    def _setType(self, strategy):
 
         self.strategy = None
         self.strategySet = None
-        if isinstance(strategy,list):
+        if isinstance(strategy, list):
             self.strategySet = strategy
         elif strategy in self.validStrategySet:
             self.strategy = strategy
@@ -231,6 +250,3 @@ class evolutionary(fitAlg):
             self.strategySet = self.validStrategySet
         else:
             self.strategy = 'best1bin'
-
-
-
