@@ -102,16 +102,21 @@ def plotExpectations(partName, fitQuality, partActions, modExpect, reward):
 
     data = append(modExpect, reward, axis=0)
 
+    yMax = ceil(amax(modExpect))
+    yMin = floor(amin(modExpect))
+    correction = (yMax-yMin)/10
+
     axisLabels = {"title": "Expectation values for participant " + partName + " with fit quality of " + str(around(fitQuality, 1))}
     axisLabels["xLabel"] = "Time"
     axisLabels["yLabel"] = "Expected reward for action"
     axisLabels["y2Label"] = "Actions by the participant"
-    axisLabels["yMax"] = ceil(amax(modExpect))
-    axisLabels["yMin"] = floor(amin(modExpect))
+    axisLabels["yMax"] = yMax + correction
+    axisLabels["yMin"] = yMin - correction
     modelLabels = ["Action " + str(i) for i in xrange(len(modExpect))]
     modelLabels.append("Reward")
     eventLabel = "Participant actions"
+    dataFormatting = {"linetype": [':', '-.', 's']}
 
-    fig = dataVsEvents(data, partActions, modelLabels, eventLabel, axisLabels)
+    fig = dataVsEvents(data, partActions, modelLabels, eventLabel, axisLabels, dataFormatting=dataFormatting)
 
     return fig
