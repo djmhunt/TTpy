@@ -10,6 +10,7 @@ from collections import OrderedDict
 
 from utils import listMerGen
 
+
 class models(object):
 
     """A factory that generates lists of model classes
@@ -17,7 +18,7 @@ class models(object):
     Parameters
     ----------
     args : a list of tuples of the form (model, parameters, modifiers)
-        Each tuple is an an model package, describing an model and 
+        Each tuple is a model package, describing a model and
         the different parameter combinations that will be tried.
         
     args tuples components
@@ -33,7 +34,7 @@ class models(object):
         of the model being studied.
     """
 
-    def __init__(self,*args):
+    def __init__(self, *args):
         """ """
 
         self.models = []
@@ -42,7 +43,7 @@ class models(object):
             model = a[0]
             variables = OrderedDict(a[1])
             other = a[2]
-            self.models.append((model,variables,other))
+            self.models.append((model, variables, other))
 
     def reset(self):
         """
@@ -75,11 +76,11 @@ class models(object):
         if self.count >= self.countLen:
             raise StopIteration
 
-        model,variables,other = self.models[self.count]
+        model, variables, other = self.models[self.count]
 
-        modelSet = self._params(model,variables,other)
+        modelSet = self._params(model, variables, other)
 
-        return (model(**record) for model,record in modelSet)
+        return (model(**record) for model, record in modelSet)
 
     def iterFitting(self):
         """ 
@@ -104,17 +105,16 @@ class models(object):
             model = m[0]
             otherArgs = m[2]
             initialVars = OrderedDict()
-            for k,v in m[1].iteritems():
+            for k, v in m[1].iteritems():
                 if amax(v) == amin(v):
                     initialVars[k] = amax(v)
                 else:
                     initialVars[k] = (amax(v)-amin(v))/2.0
 #            initialVars = {k:(amax(v)-amin(v))/2.0 for k,v in m[1].iteritems()}
 
-            yield (model,initialVars, otherArgs)
+            yield (model, initialVars, otherArgs)
 
-
-    def _params(self,model, parameters, otherArgs):
+    def _params(self, model, parameters, otherArgs):
 
         """ 
         For the given model returns a list of all that goes in to the model.
@@ -148,8 +148,8 @@ class models(object):
         modelSet = []
         for p in paramCombs:
 
-            args = {k:v for k,v in izip(params,p)}
-            for k,v in otherArgs.iteritems():
+            args = {k: v for k, v in izip(params, p)}
+            for k, v in otherArgs.iteritems():
                 args[k] = v
 
             modelSet.append([model, args])
