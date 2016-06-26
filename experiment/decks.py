@@ -48,6 +48,8 @@ class Decks(experiment):
         Number of cards drawn by the participant
     decks: array of floats, optional
         The decks of cards
+    discard: bool
+        Defines if you discard the card not chosen or if you keep it.
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -68,8 +70,9 @@ class Decks(experiment):
 
         T = kwargs.pop('draws', None)
         decks = kwargs.pop("decks", defaultDecks)
+        self.discard = kwargs.pop("discard", True)
 
-        self.plotArgs = kwargs.pop('plotArgs',{})
+        self.plotArgs = kwargs.pop('plotArgs', {})
 
         if isinstance(decks, str):
             if decks in deckSets:
@@ -86,13 +89,17 @@ class Decks(experiment):
 
         self.parameters = {"Name": self.Name,
                            "Draws": self.T,
+                           "Discard": self.discard,
                            "Decks": self.decks}
 
         # Set draw count
         self.t = -1
-        self.drawn = -1  # [-1,-1]
         self.cardValue = None
         self.action = None
+        if self.discard:
+            self.drawn = -1
+        else:
+            self.drawn = [-1, -1]
 
         # Recording variables
 
@@ -139,12 +146,15 @@ class Decks(experiment):
         """
 
         deckDrawn = self.action
-        cardDrawn = self.drawn + 1  # [deckDrawn] + 1
+
+        if self.discard:
+            cardDrawn = self.drawn + 1
+            self.drawn = cardDrawn
+        else:
+            cardDrawn = self.drawn[deckDrawn] + 1
+            self.drawn[deckDrawn] = cardDrawn
 
         self.cardValue = self.decks[deckDrawn, cardDrawn]
-
-#        self.drawn[deckDrawn] = cardDrawn
-        self.drawn = cardDrawn
 
         self.storeState()
 
@@ -387,5 +397,5 @@ def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
 
     deckRew.Name = "deckRewDualInfoLogistic"
     deckRew.Params = {"midpoint": mid,
-                       "epsilon": epsilon}
+                      "epsilon": epsilon}
     return deckRew
