@@ -102,8 +102,8 @@ def plotExpectations(partName, fitQuality, partActions, modExpect, reward):
 
     data = append(modExpect, reward, axis=0)
 
-    yMax = ceil(amax(modExpect))
-    yMin = floor(amin(modExpect))
+    yMax = ceil(amax(data))
+    yMin = floor(amin(data))
     correction = (yMax-yMin)/10
 
     axisLabels = {"title": "Expectation values for participant " + partName + " with fit quality of " + str(around(fitQuality, 1))}
