@@ -106,13 +106,11 @@ class qLearn2(model):
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
         self.eta = kwargRemains.pop('eta', 0.3)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numStimuli)
+        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numStimuli)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
-
-        self.expectations = array(self.expect)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -120,7 +118,7 @@ class qLearn2(model):
         self.parameters["alphaNeg"] = self.alphaNeg
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
-        self.parameters["expectation"] = self.expectations
+        self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
@@ -212,7 +210,7 @@ class qLearn2(model):
     def updateModel(self, delta, action, stimuliFilter):
 
         # Find the new activities
-        self._newAct(delta, stimuliFilter, action)
+        self._newAct(delta, action, stimuliFilter)
 
         # Calculate the new probabilities
         if self.probActions:
@@ -222,7 +220,7 @@ class qLearn2(model):
         else:
             self.probabilities = self._prob(self.expectations)
 
-    def _newAct(self, delta, stimuliFilter, action):
+    def _newAct(self, delta, action, stimuliFilter):
 
         if delta > 0:
             self.expectations[action] += self.alphaPos*delta*stimuliFilter
@@ -240,16 +238,16 @@ class qLearn2(model):
 
         Returns
         -------
-        p : list of floats
+        probs : list of floats
             The calculated probabilities
         """
 
         numerator = exp(self.beta*expectation)
         denominator = sum(numerator)
 
-        p = numerator / denominator
+        probs = numerator / denominator
 
-        return p
+        return probs
 
 
 def blankStim():

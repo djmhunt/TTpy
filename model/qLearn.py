@@ -123,7 +123,7 @@ class qLearn(model):
         self.storeStandardResults()
 
     def rewardExpectation(self, observation, action, response):
-        """Calculate the reward based on the action and stimuli
+        """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
 
@@ -180,7 +180,7 @@ class qLearn(model):
 
         modReward = self.rewFunc(reward, action, stimuli)
 
-        delta = modReward-expectation
+        delta = modReward - expectation
 
         return delta
 
