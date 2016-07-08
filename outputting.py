@@ -69,6 +69,7 @@ class outputting(object):
         self.save = kwargs.get('save', True)
         self.saveScript = kwargs.get('saveScript', False)
         self.pickleData = kwargs.get('pickleData', False)
+        self.simRun = kwargs.get('simRun', False)
         self.label = kwargs.pop("simLabel", "Untitled")
         self.logLevel = kwargs.pop("logLevel", logging.INFO)# logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
@@ -107,8 +108,8 @@ class outputting(object):
         self.modelSetsNum = 0
         self.expSetNum = 0
 
-        self.lastExpLabelID = 1
-        self.lastModelLabelID = 1
+        self.lastExpLabelID = 0
+        self.lastModelLabelID = 0
 
     def end(self):
         """
@@ -154,6 +155,9 @@ class outputting(object):
 
         folderName += "/"
         makedirs(folderName)
+
+        if self.simRun:
+            makedirs(folderName + 'data/')
 
         if self.pickleData:
             makedirs(folderName + 'Pickle/')
@@ -871,16 +875,16 @@ class outputting(object):
         pertRecord.to_excel(xlsxA, sheet_name='abridgedRecord')
         xlsxA.save()
 
-    def _simModelLog(self,modelData):
+    def _simModelLog(self, modelData):
 
         data = dictData2Lists(modelData)
         record = pd.DataFrame(data)
-        name = "modelSim_" + str(self.modelSetSize) + "_"
+        name = "data/modelSim_" + str(self.modelSetSize)
         outputFile = self.newFile(name, 'csv')
         record.to_csv(outputFile)
         outputFile = self.newFile(name, 'xlsx')
         xlsxT = pd.ExcelWriter(outputFile)
-        record.to_excel(xlsxT, sheet_name=name)
+        record.to_excel(xlsxT, sheet_name='modelLog')
         xlsxT.save()
 
     def _makeDataSet(self):
@@ -1299,7 +1303,8 @@ def newListDict(keySet, maxListLen, store, storeLabel):
                     vals.extend([None for i in range(maxListLen-len(v))])
             else:
                 # We assume the object is a single value or string
-                vals = [v for i in range(maxListLen)]
+                vals = [v]
+                vals.extend([None for i in range(maxListLen - 1)])
 
         else:
             selection = lambda d, l: d[:, l[0]] if len(l) == 1 else selection(d, l[:-1])[:, l[-1]]
