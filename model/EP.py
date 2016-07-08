@@ -56,10 +56,10 @@ class EP(model):
         action-stimulus pair or for actions. That is, if the stimuli values for
         each action are combined before the probability calculation.
         Default ``True``
-    prior : array of floats in ``[0,1]``, optional
+    prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((self.numActions, self.numStimuli)) / self.numCritics)``
-    activity : array, optional
+        Default ``ones((numActions, numStimuli)) / numCritics)``
+    expectations : array, optional
         The initialisation of the `activity` of the neurons.
         The values are between ``[0,1]`
         Default ``ones((numActions, numStimuli)) / numCritics```
@@ -94,7 +94,7 @@ class EP(model):
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
-        self.parameters["expectations"] = self.expectations
+        self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
@@ -114,7 +114,7 @@ class EP(model):
         return results
 
     def storeState(self):
-        """"
+        """
         Stores the state of all the important variables so that they can be
         accessed later
         """
@@ -122,7 +122,7 @@ class EP(model):
         self.storeStandardResults()
 
     def rewardExpectation(self, observation, action, response):
-        """Calculate the reward based on the action and stimuli
+        """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
 
@@ -188,6 +188,7 @@ class EP(model):
 
         # Calculate the new probabilities
         if self.probActions:
+            # Then we need to combine the expectations before calculating the probabilities
             actActivity = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self._prob(actActivity)
         else:
@@ -207,16 +208,15 @@ class EP(model):
 
         Returns
         -------
-        p : list of floats
+        probs : list of floats
             The calculated probabilities
         """
+        numerator = exp(self.beta*expectation)
+        denominator = sum(numerator)
 
-        numerat = exp(self.beta*expectation)
-        denom = sum(numerat)
+        probs = numerator / denominator
 
-        p = numerat / denom
-
-        return p
+        return probs
 
 #        diff = 2*self.expectations - sum(self.expectations)
 #        p = 1.0 / (1.0 + exp(-self.beta*diff))
@@ -225,7 +225,7 @@ class EP(model):
 
 def blankStim():
     """
-    Default stimulus processor. Does nothing.Returns [1,0]
+    Default stimulus processor. Does nothing. Returns [1,0]
 
     Returns
     -------
