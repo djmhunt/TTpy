@@ -8,12 +8,16 @@ from __future__ import division, print_function
 from numpy import log2, sum
 from collections import Callable
 
+from utils import movingaverage
+
 def qualFuncIdent(value):
     
     if isinstance(value, Callable):
         fitness = value
     elif value == "-2log":
         fitness = logprob
+    elif value == "-2AvLog":
+        fitness = logAverageProb
     elif value == "1-prob":
         fitness = maxprob
     else:
@@ -54,7 +58,7 @@ def logprob(modVals):
     return fit
 
 
-def selectLogprob(modVals):
+def logAverageProb(modVals):
     """
     Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
 
@@ -64,11 +68,9 @@ def selectLogprob(modVals):
         The sum of the model values returned
     """
 
-    if (modVals >= 0.5).all():
-        logModCoiceprob = log2(modVals)
-    else:
-        modValsShaped = (modVals < 0.5) *modVals + (modVals >= 0.5) * 0.5
-        logModCoiceprob = log2(modValsShaped)
+    correctedVals = movingaverage(modVals, 3, edgeCorrection=True)
+
+    logModCoiceprob = log2(correctedVals)
 
     probs = -2 * logModCoiceprob
 
