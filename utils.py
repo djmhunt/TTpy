@@ -10,7 +10,7 @@ import logging
 import sys
 import collections
 
-from numpy import seterr, seterrcall, meshgrid, array, amax
+from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve
 from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
@@ -23,7 +23,7 @@ from traceback import extract_tb
 # For analysing the state of the computer
 # import psutil
 
-def fancyLogger(logLevel, fileName="", silent = False):
+def fancyLogger(logLevel, fileName="", silent=False):
     """
     Sets up the style of logging for all the simulations
 
@@ -39,34 +39,33 @@ def fancyLogger(logLevel, fileName="", silent = False):
     """
 
     class streamLoggerSim(object):
-       """
-       Fake file-like stream object that redirects writes to a logger instance.
-       Based on one found at:
-           http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
-       """
-       def __init__(self, logger, log_level=logging.INFO):
-          self.logger = logger
-          self.log_level = log_level
-          self.linebuf = ''
+        """
+        Fake file-like stream object that redirects writes to a logger instance.
+        Based on one found at:
+            http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
+        """
+        def __init__(self, logger, log_level=logging.INFO):
+            self.logger = logger
+            self.log_level = log_level
+            self.linebuf = ''
 
-       def write(self, buf):
-          for line in buf.rstrip().splitlines():
-             self.logger.log(self.log_level, line.rstrip())
+        def write(self, buf):
+            for line in buf.rstrip().splitlines():
+                self.logger.log(self.log_level, line.rstrip())
 
-       # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
-       def flush(self):
-          try:
-             self.logger.flush()
-          except AttributeError:
-              pass
-
+        # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
+        def flush(self):
+            try:
+                self.logger.flush()
+            except AttributeError:
+                pass
 
     if fileName:
-        logging.basicConfig(filename = fileName,
+        logging.basicConfig(filename=fileName,
                             format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                             datefmt='%m-%d %H:%M',
-                            level = logLevel,
-                            filemode= 'w')
+                            level=logLevel,
+                            filemode='w')
 
         consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
         console = logging.StreamHandler()
@@ -77,12 +76,12 @@ def fancyLogger(logLevel, fileName="", silent = False):
     else:
         logging.basicConfig(datefmt='%m-%d %H:%M',
                             format='%(name)-12s %(levelname)-8s %(message)s',
-                            level = logLevel)
+                            level=logLevel)
 
     # Set the standard error output
     sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
     # Set the numpy error output
-    seterrcall( streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR) )
+    seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
     seterr(all='log')
 
     logging.info(date())
@@ -115,9 +114,10 @@ def folderSetup(simType):
         folderName += str(i)
 
     folderName += "/"
-    makedirs(folderName  + 'Pickle/')
+    makedirs(folderName + 'Pickle/')
 
     return folderName
+
 
 def saving(save, label):
     """
@@ -143,10 +143,11 @@ def saving(save, label):
         fileName = folderName + "log.txt"
     else:
         folderName = ''
-        fileName =  ''
+        fileName = ''
 
     return folderName, fileName
-    
+
+
 def newFile(handle, extension, outputFolder):
     """
     Creates a new file withe the name <handle> and the extension <extension>
@@ -190,6 +191,7 @@ def newFile(handle, extension, outputFolder):
 
     return fileName
 
+
 def argProcess(**kwargs):
 
     modelArgs = dict()
@@ -208,6 +210,7 @@ def argProcess(**kwargs):
 
     return expArgs, modelArgs, plotArgs, otherArgs
 
+
 def listMerge(*args):
     """For merging lists with objects that are not solely numbers
 
@@ -223,14 +226,14 @@ def listMerge(*args):
 
     Examples
     --------
-    >>> utils.listMerge([1,2,3],[5,6,7]).T
+    >>> listMerge([1, 2, 3], [5, 6, 7]).T
     array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
            [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
 
     """
 
-    r=[[]]
+    r = [[]]
     for x in args:
         r = [i+[y] for y in x for i in r]
 #        Equivalent to:
@@ -241,6 +244,7 @@ def listMerge(*args):
 #        r = t
 
     return array(r)
+
 
 def listMergeNP(*args):
     """Fast merging of lists of numbers
@@ -257,7 +261,7 @@ def listMergeNP(*args):
 
     Examples
     --------
-    >>> utils.listMergeNP([1,2,3],[5,6,7]).T
+    >>> utils.listMergeNP([1, 2, 3], [5, 6, 7]).T
     array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
            [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
@@ -279,6 +283,7 @@ def listMergeNP(*args):
 
         return r.T
 
+
 def listMerGen(*args):
     """Fast merging of lists of numbers
 
@@ -297,15 +302,15 @@ def listMerGen(*args):
     >>> from utils import listMerGen
     >>> for i in listMerGen(0.7): print(repr(i))
     array([ 0.7])
-    >>> for i in listMerGen([0.7,0.1]): print(repr(i))
+    >>> for i in listMerGen([0.7, 0.1]): print(repr(i))
     array([ 0.7])
     array([ 0.1])
-    >>> for i in listMerGen([0.7,0.1],[0.6]): print(repr(i))
+    >>> for i in listMerGen([0.7, 0.1], [0.6]): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
-    >>> for i in listMerGen([0.7,0.1],[]): print(repr(i))
+    >>> for i in listMerGen([0.7, 0.1], []): print(repr(i))
 
-    >>> for i in listMerGen([0.7,0.1],0.6): print(repr(i))
+    >>> for i in listMerGen([0.7, 0.1], 0.6): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
     """
@@ -314,28 +319,30 @@ def listMerGen(*args):
     elif len(args) == 1:
         a = array(args[0])
         if a.shape:
-            r = a.reshape((amax(a.shape),1))
+            r = a.reshape((amax(a.shape), 1))
         else:
             r = array([[a]])
 
     else:
         A = meshgrid(*args)
 
-        r = array([i.flatten()for i in A]).T
+        r = array([i.flatten() for i in A]).T
 
     for i in r:
         yield i
 
-def varyingParams(intObjects,params):
+
+def varyingParams(intObjects, params):
     """
     Takes a list of models or experiments and returns a dictionary with only the parameters
     which vary and their values
     """
 
-    initDataSet = {param:[i[param] for i in intObjects] for param in params}
-    dataSet = {param:val for param,val in initDataSet.iteritems() if val.count(val[0])!=len(val)}
+    initDataSet = {param: [i[param] for i in intObjects] for param in params}
+    dataSet = {param: val for param, val in initDataSet.iteritems() if val.count(val[0]) != len(val)}
 
     return dataSet
+
 
 def mergeDatasetRepr(data, dataLabel=''):
     """
@@ -365,14 +372,15 @@ def mergeDatasetRepr(data, dataLabel=''):
     partStore = defaultdict(list)
     for key in keySet:
         for s in data:
-            v = repr(s.get(key,None))
+            v = repr(s.get(key, None))
             partStore[key].append(v)
 
-    newStore = {dataLabel + k : v for k,v in partStore.iteritems()}
+    newStore = {dataLabel + k: v for k, v in partStore.iteritems()}
 
     return newStore
 
-def mergeDatasets(data, extend = False):
+
+def mergeDatasets(data, extend=False):
     """
     Take a list of dictionaries and turn it into a dictionary of lists of objects
 
@@ -390,14 +398,14 @@ def mergeDatasets(data, extend = False):
 
     Examples
     --------
-    >>> data = [{'a':[1,2,3],'b':[7,8,9]},
-                {'b':[4,5,6],'c':'string','d':5}]
+    >>> data = [{'a':[1, 2, 3],'b':[7, 8, 9]},
+                {'b':[4, 5, 6],'c':'string','d':5}]
     >>> mergeDatasets(data)
     {'a': [[1, 2, 3], None],
      'b': [[7, 8, 9], [4, 5, 6]],
      'c': [None, 'string'],
      'd': [None, 5]}
-    >>> mergeDatasets(data, extend = True)
+    >>> mergeDatasets(data, extend=True)
     {'a': [1, 2, 3, None],
      'b': [7, 8, 9, 4, 5, 6],
      'c': [None, 'string'],
@@ -411,18 +419,16 @@ def mergeDatasets(data, extend = False):
      {'b': [array([[7, 8, 9],
              [1, 2, 3]]), array([[4, 5, 6],
              [2, 3, 4]])]}
-
-
     """
 
     # Find all the keys
-    keySet = set(k for d in data for k in d.keys() )
+    keySet = set(k for d in data for k in d.keys())
 
     # For every key
     newStore = defaultdict(list)
     for key in keySet:
         for d in data:
-            dv = d.get(key,None)
+            dv = d.get(key, None)
             if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, basestring):
                 newStore[key].extend(dv)
             else:
@@ -430,9 +436,10 @@ def mergeDatasets(data, extend = False):
 
     return dict(newStore)
 
+
 def date():
     """
-    Provides a string of todays date
+    Provides a string of today's date
 
     Returns
     -------
@@ -443,9 +450,10 @@ def date():
     d = d.today()
     return str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
+
 def flatten(l):
     """
-    Yields the elements in order from any N dimentional itterable
+    Yields the elements in order from any N dimensional iterable
 
     Parameters
     ----------
@@ -459,7 +467,7 @@ def flatten(l):
 
     Examples
     --------
-    >>> a = [[1,2,3],[4,5,6]]
+    >>> a = [[1, 2, 3],[4, 5, 6]]
     >>> for i, loc in flatten(a): print(i,loc)
     1 [0, 0]
     2 [0, 1]
@@ -472,9 +480,10 @@ def flatten(l):
     for i, v in enumerate(l):
         if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
             for sub, loc in flatten(v):
-                yield sub,[i] + loc
+                yield sub, [i] + loc
         else:
-            yield repr(v),[i]
+            yield repr(v), [i]
+
 
 def mergeTwoDicts(x, y):
     """
@@ -497,6 +506,7 @@ def mergeTwoDicts(x, y):
     mergedDict.update(y)
     return mergedDict
 
+
 def mergeDicts(*args):
     """Merges any number of dictionaries with different keys into a new dict
 
@@ -517,6 +527,7 @@ def mergeDicts(*args):
         mergedDict.update(dictionary)
 
     return mergedDict
+
 
 def callableDetails(item):
     """
@@ -551,14 +562,15 @@ def callableDetails(item):
 
     if isinstance(item, Callable):
         try:
-            details = {str(k): str(v).strip('[]()') for k,v in item.Params.iteritems()}
+            details = {str(k): str(v).strip('[]()') for k, v in item.Params.iteritems()}
         except:
             details = None
 
-        return (item.Name,details)
+        return (item.Name, details)
 
     else:
         return (None, None)
+
 
 def callableDetailsString(item):
     """
@@ -594,13 +606,14 @@ def callableDetailsString(item):
     Name, details = callableDetails(item)
 
     if details:
-        properties = [k + ' : ' + str(v).strip('[]()') for k,v in details.iteritems()]
+        properties = [k + ' : ' + str(v).strip('[]()') for k, v in details.iteritems()]
 
         desc = Name + " with " + ", ".join(properties)
     else:
         desc = Name
 
     return desc
+
 
 def errorResp():
     """
@@ -633,7 +646,8 @@ def errorResp():
     description += " function " + errorLoc[2] + ": " + errorLoc[3]
 
     return description
-    
+
+
 def unique(seq, idfun=None):
     """
     Finds the unique items in a list and returns them in order found.
@@ -657,10 +671,10 @@ def unique(seq, idfun=None):
     Examples
     --------
     >>> a=list('ABeeE')
-    >>> f5(a)
+    >>> unique(a)
     ['A','B','e','E']
     
-    >>> f5(a, lambda x: x.lower())
+    >>> unique(a, lambda x: x.lower())
     ['A','B','e'] 
     
     Note
@@ -673,6 +687,45 @@ def unique(seq, idfun=None):
         return [x for x in seq if x not in seen and not seen.add(x)]
     else:
         return [x for x in seq if idfun(x) not in seen and not seen.add(idfun(x))]
+
+
+def movingaverage(data, windowSize, edgeCorrection=False):
+    """
+    Average over an array
+
+    Parameters
+    ----------
+    data : list of floats
+        The data to average
+    windowSize : int
+        The size of the window
+    edgeCorrection : bool
+        If ``True`` the edges are repaired so that there is no unusual dropoff
+
+    Returns
+    -------
+    convolution : array
+
+    Examples
+    --------
+    >>> movingaverage([1,1,1,1,1], 3)
+    array([ 0.66666667, 1, 1, 1, 0.66666667])
+
+    >>> movingaverage([1,1,1,1,1], 3, edgeCorrection=True)
+    array([ 1,  1,  1,  1,  1])
+
+    >>> movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
+    array([ 1.5,  2,  3,  4,  4.5])
+
+    """
+    window = ones(int(windowSize)) / float(windowSize)
+    convolution = convolve(data, window, 'same')
+
+    if edgeCorrection:
+        convolution[0] = convolution[0]*3/2
+        convolution[-1] = convolution[-1] * 3 / 2
+
+    return convolution
 
 #if __name__ == '__main__':
 #    from timeit import timeit
