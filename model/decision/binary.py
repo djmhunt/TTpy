@@ -114,7 +114,9 @@ def decEta(expResponses=(0, 1), eta=0):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+    def decisionFunc(prob, lastAction, stimulus=None, validResponses=None):
+
+        probabilities = array(prob).flatten()
 
         probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
 
@@ -175,7 +177,9 @@ def decRandom(expResponses=(0, 1)):
 
     expResponseSet = set(expResponses)
 
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+    def decisionFunc(prob, lastAction, stimulus=None, validResponses=None):
+
+        probabilities = array(prob).flatten()
 
         probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
 
