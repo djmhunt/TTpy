@@ -8,6 +8,7 @@ from itertools import izip
 from utils import mergeDicts
 from numpy import array, concatenate
 from types import NoneType
+from copy import deepcopy
 
 
 class fit(object):
@@ -50,7 +51,6 @@ class fit(object):
     """
 
     Name = 'none'
-
 
     def __init__(self, partChoiceParam, partRewardParam, modelParam, fitAlg, scalar, **kwargs):
 
@@ -101,20 +101,20 @@ class fit(object):
     def participant(self, exp, model, modelSetup, partData):
         """
         Fit participant data to a model for a given experiment
-        
+
         Parameters
         ----------
         exp : experiment.experiment.experiment inherited class
-            The experiment being fitted. If you are fitting using 
+            The experiment being fitted. If you are fitting using
             participant responses only it will not be used, so can be anything
         model : model.model.model inherited class
             The model you wish to try and fit values to
         modelSetup : (dict,dict)
-            The first dictionary is the model inital parameters. The second 
+            The first dictionary is the model initial parameters. The second
             are the other model parameters
         partData : dict
             The participant data
-        
+
         Returns
         -------
         model : model.model.model inherited class instance
@@ -125,21 +125,60 @@ class fit(object):
 
         self.exp = exp
         self.model = model
-        self.mInitialParams = modelSetup[0].values() # These are passed seperately to defineat this point the order of the parameters
+        self.mInitialParams = modelSetup[0].values() # These are passed seperately to define at this point the order of the parameters
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
         self.partChoices = self.scalar(partData[self.partChoiceParam])
-        
+
         self.partRewards = partData[self.partRewardParam]
-        
+
         self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
 
         fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
-        model = self._fittedModel(*fitVals)
+        model = self.fittedModel(*fitVals)
 
         return model, fitQuality
+
+    def participantMatchResult(self, exp, model, modelSetup, partData):
+        """
+        Run the participant data with a model with specified parameters for a given experiment
+
+        Parameters
+        ----------
+        exp : experiment.experiment.experiment inherited class
+            The experiment being fitted. If you are fitting using
+            participant responses only it will not be used, so can be anything
+        model : model.model.model inherited class
+            The model you wish to try and fit values to
+        modelSetup : (dict,dict)
+            The first dictionary is the model varying parameters. The second
+            are the other model parameters
+        partData : dict
+            The participant data
+
+        Returns
+        -------
+        model : model.model.model inherited class instance
+            The model with the best fit parameters
+        """
+
+        self.exp = exp
+        self.model = model
+        fitVals = modelSetup[0].values()  # These are passed seperately to define at this point the order of the parameters
+        self.mParamNames = modelSetup[0].keys()
+        self.mOtherParams = modelSetup[1]
+
+        self.partChoices = self.scalar(partData[self.partChoiceParam])
+
+        self.partRewards = partData[self.partRewardParam]
+
+        self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
+
+        model = self.fittedModel(*fitVals)
+
+        return model
 
     def info(self):
         """
@@ -167,14 +206,21 @@ class fit(object):
 
         return self.fitInfo, fitAlgInfo
 
-    def _fittedModel(self, *fitVals):
+    def fittedModel(self, *modelParameters):
         """
-        Return the best fit model
+        Return the model run of the model with specific parameter values
+
+        Parameters
+        ----------
+        *modelParameters : floats
+            The model parameters provided in the order defined in the model setup
+
+        Returns
+        -------
+        model : model class instance
         """
 
-        model = self._simSetup(*fitVals)
-
-        return model
+        return self.model()
 
     def getModInput(self, *modelParameters):
         """
@@ -184,7 +230,7 @@ class fit(object):
         Parameters
         ----------
         modelParameters : list of floats
-            The parameter values in the order extacted from the modelSetup 
+            The parameter values in the order extracted from the modelSetup
             parameter dictionary
             
         Returns
@@ -193,13 +239,11 @@ class fit(object):
             The kwarg model arguments
         """
 
-        optional = self.mOtherParams
-
 #        inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
         inputs = self.getModParams(*modelParameters)
 
-        for k, v in optional.iteritems():
-            inputs[k] = v
+        for k, v in self.mOtherParams.iteritems():
+            inputs[k] = deepcopy(v)
 
         return inputs
         
@@ -247,12 +291,11 @@ class fit(object):
             observation instance.
         """
 
-
         if type(stimuli) is NoneType:
             partDataLen = len(partData[self.partRewardParam])
             stimuliData = (None for i in xrange(partDataLen))
         else:
-            stimuliData = concatenate([partData[s] for s in stimuli],1)
+            stimuliData = concatenate([partData[s] for s in stimuli], 1)
             partDataLen = len(stimuliData)
 
         if type(validActions) is NoneType:
@@ -265,26 +308,6 @@ class fit(object):
         observation = [(s, a) for a, s in izip(actionData, stimuliData)]
         
         return observation
-
-    def _simSetup(self, *modelParameters):
-        """ 
-        Initialises the model for the running of the 'simulation'
-        """
-
-        args = self.getModInput(*modelParameters)
-
-        model = self.model(**args)
-
-        self._simRun(model)
-
-        return model
-
-    def _simRun(self, model):
-        """
-        Simulates the events of a simulation from the perspective of a model
-        """
-
-        pass
 
     def _scalarEffect(self):
         """

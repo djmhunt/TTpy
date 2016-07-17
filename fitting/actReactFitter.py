@@ -15,6 +15,7 @@ from utils import errorResp
 #
 #from utils import listMerGen
 
+
 class fitter(fit):
 
     """
@@ -82,62 +83,91 @@ class fitter(fit):
         fitting.fitters.fitAlg.fitAlg : The general fitting class
         """
 
-        #Run model with given parameters
+        # Run model with given parameters
         try:
-            model = self._simSetup(*modelParameters)
+            modelInstance = self.fittedModel(*modelParameters)
         except FloatingPointError:
             message = errorResp()
             logger = logging.getLogger('Fitter')
             logger.warning(message + "\n. Abandoning fitting with parameters: " 
-                            + repr(self.getModParams(*modelParameters))
-                            + " Returning fit value " + repr(self.fpRespVal))
+                                   + repr(self.getModParams(*modelParameters))
+                                   + " Returning fit value " + repr(self.fpRespVal))
             return ones(self.partRewards.shape)*self.fpRespVal  
             
         # Pull out the values to be compared
 
-        modelData = model.outputEvolution()
+        modelData = modelInstance.outputEvolution()
         modelChoices = modelData[self.modelparam]
 
         return modelChoices
 
-    def _fittedModel(self,*fitVals):
+    def fittedModel(self, *modelParameters):
         """
-        Return the best fit model
-        """
+        Return the model run of the model with specific parameter values
 
-        model = self._simSetup(*fitVals)
+        Parameters
+        ----------
+        *modelParameters : floats
+            The model parameters provided in the order defined in the model setup
 
-        return model
-
-    def _simSetup(self, *modelParameters):
-        """
-        Initialises the model for the running of the 'simulation'
-        """
-
-        args = self.getModInput(*modelParameters)
-
-        model = self.model(**args)
-
-        self._simRun(model)
-
-        return model
-
-    def _simRun(self, model):
-        """
-        Simulates the events of a simulation from the perspective of a model
+        Returns
+        -------
+        model : model class instance
         """
 
         partAct = self.partChoices
         partReward = self.partRewards
         partObs = self.partObs
 
+        modelInstance = self._simSetup(partAct, partReward, partObs, *modelParameters)
+
+        return modelInstance
+
+    def _simSetup(self, partAct, partReward, partObs, *modelParameters):
+        """
+        Initialises the model for the running of the 'simulation'
+
+        Parameters
+        ----------
+        partAct : list
+            The list of actions taken by the participant
+        partReward : list
+            The feedback received by the participant
+        partObs : list
+            The observations received by the participant
+        *modelParameters : floats
+            The model parameters provided in the order defined in the model setup
+
+        Returns
+        -------
+        modelInstance : model.modelTemplate.modelTemplate class instance
+        """
+
+        args = self.getModInput(*modelParameters)
+
+        modelInstance = self.model(**args)
+
+        self._simRun(modelInstance, partAct, partReward, partObs)
+
+        return modelInstance
+
+    def _simRun(self, modelInstance, partAct, partReward, partObs):
+        """
+        Simulates the events of a simulation from the perspective of a model
+
+        Parameters
+        ----------
+        modelInstance : model.modelTemplate.modelTemplate class instance
+        partAct : list
+            The list of actions taken by the participant
+        partReward : list
+            The feedback received by the participant
+        partObs : list
+            The observations received by the participant
+        """
+
         for action, reward, observation in izip(partAct, partReward, partObs):
 
-            model.observe(observation)
-            model.currAction = action
-            model.feedback(reward)
-
-
-
-
-
+            modelInstance.observe(observation)
+            modelInstance.currAction = action
+            modelInstance.feedback(reward)

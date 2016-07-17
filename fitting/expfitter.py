@@ -67,8 +67,8 @@ class fitter(fit):
         fitting.fitters.fitAlg.fitAlg : The general fitting class
         """
 
-        #Run model with given parameters
-        exp, model = self._simSetup(*modelParameters[0])
+        # Run model with given parameters
+        exp, model = self.fittedModel(*modelParameters)
 
         # Pull out the values to be compared
 
@@ -76,9 +76,10 @@ class fitter(fit):
         modelChoices = modelData[self.modelparam]
         partChoices = self.partChoices
 
-        #Check lengths
+        # Check lengths
         if len(partChoices) != len(modelChoices):
-            raise ValueError("The length of the model and participatiant data are different. %s:%s to %s:%s " % (self.partChoiceParam,len(partChoices),self.modelparam,len(modelChoices)))
+            raise ValueError("The length of the model and participatiant data are different. %s:%s to %s:%s " %
+                             (self.partChoiceParam, len(partChoices), self.modelparam, len(modelChoices)))
 
         # Find the difference
 
@@ -86,30 +87,49 @@ class fitter(fit):
 
         return diff
 
-    def _fittedModel(self,*fitVals):
+    def fittedModel(self, *modelParameters):
         """
-        Return the best fit model
+        Return the model run of the model with specific parameter values
+
+        Parameters
+        ----------
+        *modelParameters : floats
+            The model parameters provided in the order defined in the model setup
+
+        Returns
+        -------
+        modelInstance : model class instance
         """
 
-        exp, model = self._simSetup(*fitVals)
+        exp, modelInstance = self._simExpSetup(*modelParameters)
 
-        return model
+        return exp, modelInstance
 
-    def _simSetup(self, *modelParameters):
-        """ 
+    def _simExpSetup(self, *modelParameters):
+        """
         Initialises the model for the running of the 'simulation'
+
+        Parameters
+        ----------
+        *modelParameters : floats
+            The model parameters provided in the order defined in the model setup
+
+        Returns
+        -------
+        exp : experiment.experimentTemplate.experimentTemplate class instance
+        modelInstance : model.modelTemplate.modelTemplate class instance
         """
 
         args = self.getModInput(*modelParameters)
 
-        model = self.model(**args)
+        modelInstance = self.model(**args)
         exp = self.exp.reset()
 
-        self._simRun(exp,model)
+        self._simExpRun(exp, modelInstance)
 
-        return exp, model
+        return exp, modelInstance
 
-    def _simRun(self, exp, model):
+    def _simExpRun(self, exp, model):
         """
         Simulates the events of a simulation from the perspective of a model
         """
@@ -121,6 +141,3 @@ class fitter(fit):
             response = exp.feedback()
             model.feedback(response)
             exp.procede()
-
-
-
