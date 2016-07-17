@@ -7,6 +7,7 @@ from __future__ import division, print_function
 from itertools import izip
 from numpy import amax, amin
 from collections import OrderedDict
+from copy import copy
 
 from utils import listMerGen
 
@@ -24,7 +25,7 @@ class models(object):
     args tuples components
 
     model :  model.model.model
-    parameters : dictonary containing floats or lists of floats
+    parameters : dictionary containing floats or lists of floats
         Parameters are the variables that you are or are likely to change across 
         model instances. When a parameter contains a list, an instance of the 
         model will be created for every combination of this parameter with 
@@ -96,8 +97,8 @@ class models(object):
         model : model.model.model
             The model to be initialised
         initialVars : ordered dictionary of floats
-            The model instance paramters
-        otherArgs : dictonary of floats, strings and binary values
+            The model instance parameters
+        otherArgs : dictionary of floats, strings and binary values
         """
 
         for m in self.models:
@@ -148,9 +149,9 @@ class models(object):
         modelSet = []
         for p in paramCombs:
 
-            args = {k: v for k, v in izip(params, p)}
+            args = {k: copy(v) for k, v in izip(params, p)}
             for k, v in otherArgs.iteritems():
-                args[k] = v
+                args[k] = copy(v)
 
             modelSet.append([model, args])
 
