@@ -33,7 +33,7 @@ class fitAlg(object):
         A function used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound``
     numStartPoints : int, optional
-        The number of starting points generated for each parameter.
+        The number of starting points generated for each parameter. Only used with some fitting algorithms
         Default 4
 
     Attributes
@@ -49,7 +49,7 @@ class fitAlg(object):
 
     Name = 'none'
 
-    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4):
+    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), returnFitProgress=False, numStartPoints=4):
 
         self.numStartPoints = numStartPoints
         self.allBounds = bounds
@@ -103,17 +103,19 @@ class fitAlg(object):
 
     def fitness(self, *params):
         """
-        Generates a fit quality value
+        Generates a fit quality value used by the fitting function.
 
         Returns
         -------
-        fit : float
+        fitQuality : float
             The fit quality value calculated using the fitQualFunc function
 
         See Also
         --------
         fitting.fitters.qualityFunc : the module of fitQualFunc functions
         fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
+        fitting.fit.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
+
         """
         # This is because the fitting functions return an array and we want a list
         pms = list(*params)
@@ -151,7 +153,6 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> from fitting.fitters.fitAlg import fitAlg
         >>> a = fitAlg()
         >>> a.setBounds([])
         >>> a.setBounds(['string','two'])

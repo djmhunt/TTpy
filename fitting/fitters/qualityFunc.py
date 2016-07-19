@@ -33,7 +33,7 @@ def simpleSum(modVals):
     Returns
     -------
     fit : float
-        The sum of the model valaues returned
+        The sum of the model values returned
     """
 
     return sum(modVals)

@@ -63,7 +63,8 @@ class fitter(fit):
 
     def fitness(self, *modelParameters):
         """
-        Used by a fitter to generate a fit for given model parameters
+        Used by a fitter to generate the list of values characterising how well the model parameters describe the
+        participants actions.
 
         Parameters
         ----------
@@ -73,14 +74,14 @@ class fitter(fit):
 
         Returns
         -------
-        fitQuality : list of floats
-            The quality of the fit. In this case defined as the choices
-            made by the model
+        modelChoices : list of floats
+            The choices made by the model that will be used to characterise the quality of the fit.
 
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
         fitting.fitters.fitAlg.fitAlg : The general fitting class
+        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         # Run model with given parameters

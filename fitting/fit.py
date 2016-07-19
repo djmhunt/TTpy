@@ -77,7 +77,8 @@ class fit(object):
 
     def fitness(self, *modelParameters):
         """
-        Used by a fitter to generate a fit for given model parameters
+        Used by a fitter to generate the list of values characterising how well the model parameters describe the
+        participants actions.
         
         Parameters
         ----------
@@ -87,16 +88,18 @@ class fit(object):
             
         Returns
         -------
-        fitQuality : float
-            The quality of the fit. In this case defined as always zero
+        modelChoices : list of floats
+            The choices made by the model that will be used to characterise the quality of the fit.
+            In this case defined as ``[0]``
             
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
         fitting.fitters.fitAlg.fitAlg : The general fitting class
+        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
-        return 0
+        return [0]
 
     def participant(self, exp, model, modelSetup, partData):
         """
@@ -125,7 +128,7 @@ class fit(object):
 
         self.exp = exp
         self.model = model
-        self.mInitialParams = modelSetup[0].values() # These are passed seperately to define at this point the order of the parameters
+        self.mInitialParams = modelSetup[0].values()  # These are passed seperately to define at this point the order of the parameters
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
