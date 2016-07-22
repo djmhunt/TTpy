@@ -45,7 +45,7 @@ class VTK_XML_Serial_Unstructured(VTK_XML_Serial_General):
 #            string = string + repr(a[i]) + ' '
 #        return string
 
-    def snapshot(self, X,Y,Z, **kwargs):
+    def snapshot(self, X, Y, Z, **kwargs):
         """
         ARGUMENTS:
         x               array of x coordinates of particle centers

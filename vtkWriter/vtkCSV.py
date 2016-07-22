@@ -13,6 +13,7 @@ from itertools import izip
 
 from vtkAbstract import VTK_XML_Serial_General
 
+
 class VTK_CSV(VTK_XML_Serial_General):
     """
     USAGE:
@@ -24,8 +25,7 @@ class VTK_CSV(VTK_XML_Serial_General):
     def __init__(self):
         self.fileNames = []
 
-
-    def snapshot(self, X,Y,Z, **kwargs):
+    def snapshot(self, X, Y, Z, **kwargs):
         """
         ARGUMENTS:
         x               array of x coordinates of particle centers
@@ -34,9 +34,9 @@ class VTK_CSV(VTK_XML_Serial_General):
         radii           optional array of particle radii
         """
 
-        xLabel = kwargs.get("xLabel","x")
-        yLabel = kwargs.get("yLabel","y")
-        zLabel = kwargs.get("zLabel","z")
+        xLabel = kwargs.get("xLabel", "x")
+        yLabel = kwargs.get("yLabel", "y")
+        zLabel = kwargs.get("zLabel", "z")
 
         x = X.flatten()
         y = Y.flatten()
@@ -47,7 +47,7 @@ class VTK_CSV(VTK_XML_Serial_General):
         else:
             radii = ones(len(x))
 
-        coordsList = (repr(i) + ',' + repr(j) + ',' + repr(k) + ',' + repr(f) for i,j,k,f in izip(x,y,z,radii))
+        coordsList = (repr(i) + ',' + repr(j) + ',' + repr(k) + ',' + repr(f) for i, j, k, f in izip(x, y, z, radii))
 
         coords = '\n'.join(coordsList)
 
@@ -62,5 +62,5 @@ class VTK_CSV(VTK_XML_Serial_General):
         """
         self.fileNames.append(fileName)
 
-        with open(fileName + ".csv",'w') as o:
+        with open(fileName + ".csv", 'w') as o:
             o.write(self.output)

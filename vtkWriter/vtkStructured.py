@@ -27,7 +27,7 @@ class VTK_XML_Serial_Structured(VTK_XML_Serial_General):
         self.fileNames = []
         self.type = "s"
 
-    def snapshot(self, X,Y,Z, **kwargs):
+    def snapshot(self, X, Y, Z, **kwargs):
         """
         ARGUMENTS:
         x               array of x coordinates of particle centers
