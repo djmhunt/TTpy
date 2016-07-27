@@ -32,12 +32,15 @@ def plotFitting(participant, modelData, fitQuality):
     figSets = []
 
     fig = plotFittingSuccess(partName, fitQuality, modelData["Actions"], modelData["ActionProb"])
-    figSets.append(('FittingSuccess_' + partName, fig))
+    figSets.append(('ActionProbs_' + partName, fig))
 
     modExpect = modelData["Expectations"].T
     reward = reshape(modelData["Rewards"], (1, modExpect.shape[1]))
     fig = plotExpectations(partName, fitQuality, modelData["Actions"], modExpect, reward)
-    figSets.append(('FittingSuccess_' + partName, fig))
+    figSets.append(('ExpectationTracks_' + partName, fig))
+
+    fig = plotRewards(partName, fitQuality, modelData["Actions"], reward)
+    figSets.append(('Reward_' + partName, fig))
 
     return figSets
 
@@ -116,6 +119,49 @@ def plotExpectations(partName, fitQuality, partActions, modExpect, reward):
     modelLabels.append("Reward")
     eventLabel = "Participant actions"
     dataFormatting = {"linetype": [':', '-.', 's']}
+
+    fig = dataVsEvents(data, partActions, modelLabels, eventLabel, axisLabels, dataFormatting=dataFormatting)
+
+    return fig
+
+
+def plotRewards(partName, fitQuality, partActions, reward):
+    """
+    The participant action and rewards
+
+    Parameters
+    ----------
+    partName : string
+        The name label for the participant
+    fitQuality : float
+        A description of the quality of a fit
+    partActions : array of floats
+        The actions for each timestep
+    reward : 1D array of floats shaped as a 2D array like modExpect
+        The reward received by the participants at each point
+
+    Returns
+    -------
+    fig : matplotlib figure object
+
+    """
+
+    data = reward
+
+    yMax = ceil(amax(data))
+    yMin = floor(amin(data))
+    correction = (yMax-yMin)/10
+
+    axisLabels = {"title": "Reward values for participant " + partName + " with fit quality of " + str(around(fitQuality, 1))}
+    axisLabels["xLabel"] = "Time"
+    axisLabels["yLabel"] = "Reward for action"
+    axisLabels["y2Label"] = "Actions by the participant"
+    axisLabels["yMax"] = yMax + correction
+    axisLabels["yMin"] = yMin - correction
+    modelLabels = ["Reward"]
+    eventLabel = "Participant actions"
+    dataFormatting = {"linetype": ['s', ':', '-.'],
+                      "colours": ['b', 'g', 'r']}
 
     fig = dataVsEvents(data, partActions, modelLabels, eventLabel, axisLabels, dataFormatting=dataFormatting)
 
