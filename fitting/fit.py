@@ -5,7 +5,7 @@
 from __future__ import division, print_function
 
 from itertools import izip
-from utils import mergeDicts
+from collections import OrderedDict
 from numpy import array, concatenate
 from types import NoneType
 from copy import deepcopy
@@ -124,6 +124,9 @@ class fit(object):
             The model with the best fit parameters
         fitQuality : float
             Specifies the fit quality for this participant to the model
+        testedParams : tuple of OrderedDict and list
+            They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
         """
 
         self.exp = exp
@@ -138,11 +141,14 @@ class fit(object):
 
         self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
 
-        fitVals, fitQuality = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
+        fitVals, fitQuality, testedParams = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
         model = self.fittedModel(*fitVals)
 
-        return model, fitQuality
+        parameterCombinations = array(testedParams[0]).T
+        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, parameterCombinations)])
+
+        return model, fitQuality, (testedParamDict, testedParams[1])
 
     def participantMatchResult(self, exp, model, modelSetup, partData):
         """
