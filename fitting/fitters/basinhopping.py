@@ -18,6 +18,7 @@ from boundFunc import scalarBound
 
 import pytest
 
+
 class basinhopping(fitAlg):
 
     """The class for fitting data using scipy.optimise.basinhopping
@@ -89,11 +90,10 @@ class basinhopping(fitAlg):
 
     Name = 'basinhopping'
 
-    unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
-    constrained = ['L-BFGS-B','TNC','SLSQP']
+    unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
+    constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-
-    def __init__(self,fitQualFunc = None, method = None, bounds = None, boundCostFunc = scalarBound(), numStartPoints = 4, boundFit = True, boundSensitivity = 5):
+    def __init__(self, fitQualFunc=None, method=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4, boundFit=True, boundSensitivity=5):
 
         self.numStartPoints = numStartPoints
         self.boundFit = boundFit
@@ -102,18 +102,18 @@ class basinhopping(fitAlg):
         self.fitness = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
 
-        self._setType(method,bounds)
+        self._setType(method, bounds)
 
-        self.fitInfo = {'Name':self.Name,
+        self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
-                        'bounds':self.bounds,
+                        'bounds': self.bounds,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'numStartPoints' : self.numStartPoints,
-                        'boundFit' : self.boundFit,
-                        'boundSensitivity' : self.boundSensitivity
+                        'numStartPoints': self.numStartPoints,
+                        'boundFit': self.boundFit,
+                        'boundSensitivity': self.boundSensitivity
                         }
 
-        if self.methodSet == None:
+        if self.methodSet is None:
             self.fitInfo['method'] = self.method
         else:
             self.fitInfo['method'] = self.methodSet
@@ -121,6 +121,9 @@ class basinhopping(fitAlg):
         self.count = 1
 
         self.boundVals = None
+
+        self.testedParams = []
+        self.testedParamQualities = []
 
         self.logger = logging.getLogger('Fitting.fitters.basinhopping')
 
@@ -154,16 +157,20 @@ class basinhopping(fitAlg):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
+        testedParams : tuple of two lists
+            The two lists are a list containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
 
         See Also
         --------
         fit.fitness
-
         """
 
         self.sim = sim
+        self.testedParams = []
+        self.testedParamQualities = []
 
-        method=self.method
+        method = self.method
         methodSet = self.methodSet
         bounds = self.bounds
         boundVals = self.boundVals
@@ -171,34 +178,34 @@ class basinhopping(fitAlg):
         boundSensitivity = self.boundSensitivity
         numStartPoints = self.numStartPoints
 
-        if bounds == None:
-            boundVals = [(0,float('Inf')) for i in mInitialParams]
-            bounds = {k : v for k, v in izip(mParamNames, boundVals)}
+        if bounds is None:
+            boundVals = [(0, float('Inf')) for i in mInitialParams]
+            bounds = {k: v for k, v in izip(mParamNames, boundVals)}
             self.bounds = bounds
             self.boundVals = array(boundVals)
 
-        if boundVals == None:
-            boundVals = array([ bounds[k] for k in mParamNames])
+        if boundVals is None:
+            boundVals = array([bounds[k] for k in mParamNames])
             self.boundVals = boundVals
 
-        initParamSets = self.startParams(mInitialParams, bounds = boundVals, numPoints = numStartPoints)
+        initParamSets = self.startParams(mInitialParams, bounds=boundVals, numPoints=numStartPoints)
 
-        if method == None:
+        if method is None:
 
             resultSet = []
             methodSuccessSet = []
 
             for method in methodSet:
 
-                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
+                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
 
-                if optimizeResult != None:
+                if optimizeResult is not None:
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
 
-            bestResult = self._bestfit(resultSet, boundVals, boundFit = boundFit, boundSensitivity = boundSensitivity)
+            bestResult = self._bestfit(resultSet, boundVals, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
-            if bestResult == None:
+            if bestResult is None:
                 return mInitialParams, float("inf")
             else:
                 fitParams = bestResult.x
@@ -207,14 +214,14 @@ class basinhopping(fitAlg):
                 return fitParams, fitVal
 
         else:
-            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
+            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
 
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
 
-            return fitParams, fitVal
+            return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
-    def _methodFit(self,method, initParamSets, bounds, boundFit = True, boundSensitivity = 5):
+    def _methodFit(self, method, initParamSets, bounds, boundFit=True, boundSensitivity=5):
 
         resultSet = []
 
@@ -223,19 +230,19 @@ class basinhopping(fitAlg):
         for i in initParamSets:
 
             optimizeResult = optimize.basinhopping(self.fitness, i[:],
-                                                   accept_test = boundFunc,
-                                          minimizer_kwargs = {'method': method,
-                                                              'bounds': bounds})#,
-#                                                             'callback': self.callback})
+                                                   accept_test=boundFunc,
+                                                   minimizer_kwargs={'method': method,
+                                                                     'bounds': bounds})  # ,
+#                                                                     'callback': self.callback})
             self.count = 1
 
             resultSet.append(optimizeResult)
 
-        bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit, boundSensitivity = boundSensitivity)
+        bestResult = self._bestfit(resultSet, bounds, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
         return bestResult
 
-    def _bestfit(self, resultSet, bounds, boundFit = True, boundSensitivity = 5):
+    def _bestfit(self, resultSet, bounds, boundFit=True, boundSensitivity=5):
 
         # Check that there are fits
         if len(resultSet) == 0:
@@ -261,7 +268,7 @@ class basinhopping(fitAlg):
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in izip(r.x,bounds) if any(around(fitVal-boundVals,boundSensitivity)==0)]
+                invalid = [1 for fitVal, boundVals in izip(r.x, bounds) if any(around(fitVal-boundVals, boundSensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)
@@ -274,13 +281,12 @@ class basinhopping(fitAlg):
 
                 return reducedResults[fitid]
 
-
-    def _setType(self,method,bounds):
+    def _setType(self, method, bounds):
 
         self.method = None
         self.methodSet = None
         self.bounds = None
-        if isinstance(method,list):
+        if isinstance(method, list):
             self.methodSet = method
             self.bounds = bounds
         elif method in self.unconstrained:
@@ -299,7 +305,7 @@ class basinhopping(fitAlg):
         else:
             self.methodSet = self.unconstrained
 
-    def _bounds(self,**kwargs):
+    def _bounds(self, **kwargs):
         """
         Based on http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.optimize.basinhopping.html
         """

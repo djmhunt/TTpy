@@ -49,7 +49,7 @@ class fitAlg(object):
 
     Name = 'none'
 
-    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), returnFitProgress=False, numStartPoints=4):
+    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4):
 
         self.numStartPoints = numStartPoints
         self.allBounds = bounds
@@ -65,6 +65,9 @@ class fitAlg(object):
 
         self.boundVals = None
         self.boundNames = None
+
+        self.testedParams = []
+        self.testedParamQualities = []
 
         self.logger = logging.getLogger('Fitting.fitters.fitAlg')
 
@@ -90,6 +93,9 @@ class fitAlg(object):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
+        testedParams : tuple of two lists
+            The two lists are a list containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
 
         See Also
         --------
@@ -98,8 +104,10 @@ class fitAlg(object):
         """
 
         self.sim = sim
+        self.testedParams = []
+        self.testedParamQualities = []
 
-        return 0, 0
+        return 0, 0, (self.testedParams, self.testedParamQualities)
 
     def fitness(self, *params):
         """
@@ -126,9 +134,12 @@ class fitAlg(object):
 
         modVals = self.sim(*pms)
 
-        fit = self.fitQualFunc(modVals)
+        fitQuality = self.fitQualFunc(modVals)
 
-        return fit
+        self.testedParams.append(params)
+        self.testedParamQualities.append(fitQuality)
+
+        return fitQuality
 
     def info(self):
         """
@@ -294,7 +305,6 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> from fitting.fitters.fitAlg import fitAlg
         >>> a = fitAlg()
         >>> a.startParamVals(0.5)
         array([ 0.25,  0.5 ,  0.75])
@@ -395,20 +405,19 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> from fitting.fitters.fitAlg import fitAlg
-        >>> a = fitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
-        >>> a.setBounds([3,1])
-        >>> a.invalidParams(0,0)
+        >>> a = fitAlg(bounds = {1:(0,5), 2:(0,2), 3:(-1,1)})
+        >>> a.setBounds([3, 1])
+        >>> a.invalidParams(0, 0)
         False
-        >>> a.invalidParams(2,0)
+        >>> a.invalidParams(2, 0)
         True
-        >>> a.invalidParams(0,-1)
+        >>> a.invalidParams(0, -1)
         True
-        >>> a.invalidParams(6,6)
+        >>> a.invalidParams(6, 6)
         True
         """
 
-        for p, (mi, ma) in izip(params,self.boundVals):
+        for p, (mi, ma) in izip(params, self.boundVals):
 
             if p < mi or p > ma:
                 return True

@@ -14,6 +14,7 @@ from numpy import log
 from utils import callableDetailsString
 from qualityFunc import qualFuncIdent
 
+
 class leastsq(fitAlg):
     """
     Fits data based on the least squared optimizer
@@ -46,7 +47,7 @@ class leastsq(fitAlg):
 
     Name = 'leastsq'
 
-    def __init__(self,fitQualFunc = None, numStartPoints = 4):
+    def __init__(self, fitQualFunc=None, numStartPoints=4):
 
         self.numStartPoints = numStartPoints
 
@@ -55,14 +56,46 @@ class leastsq(fitAlg):
         self.fitInfo = {'Name':self.Name,
                         'fitQualityFunction': fitQualFunc}
 
+        self.testedParams = []
+        self.testedParamQualities = []
+
         self.logger = logging.getLogger('Fitting.fitters.leastsq')
 
-
     def fit(self, sim, mParamNames, mInitialParams):
+        """
+        Runs the model through the fitting algorithms and starting parameters
+        and returns the best one.
+
+        Parameters
+        ----------
+        sim : function
+            The function used by a fitting algorithm to generate a fit for
+            given model parameters. One example is fit.fitness
+        mParamNames : list of strings
+            The list of initial parameter names
+        mInitialParams : list of floats
+            The list of the initial parameters
+
+        Returns
+        -------
+        fitParams : list of floats
+            The best fitting parameters
+        fitQuality : float
+            The quality of the fit as defined by the quality function chosen.
+        testedParams : tuple of two lists
+            The two lists are a list containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
+
+        See Also
+        --------
+        fit.fitness
+        """
 
         self.sim = sim
+        self.testedParams = []
+        self.testedParamQualities = []
 
         fitParams, success = optimize.leastsq(self.fitness, mInitialParams[:])
 
-        return fitParams
+        return fitParams, 0, (self.testedParams, self.testedParamQualities)
 

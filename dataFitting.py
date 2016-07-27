@@ -71,15 +71,19 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             message = "Beginning participant fit"
             logger.debug(message)
 
-            modelFitted, fitQuality = fitter.participant(exp, model, modelSetup, participant)
+            modelFitted, fitQuality, testedParams = fitter.participant(exp, model, modelSetup, participant)
 
             message = "Participant fitted"
             logger.debug(message)
 
-            desc = outputting.recordSimParams(exp.params(),modelFitted.params())
+            desc = outputting.recordSimParams(exp.params(), modelFitted.params())
             outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality)
 
-            outputting.recordParticipantFit(participant, exp.outputEvolution(),modelFitted.outputEvolution(), fitQuality)
+            outputting.recordParticipantFit(participant,
+                                            exp.outputEvolution(),
+                                            modelFitted.outputEvolution(),
+                                            fitQuality,
+                                            testedParams)
 
             outputting.plotModel(modelFitted.plot())
 

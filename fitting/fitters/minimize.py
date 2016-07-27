@@ -18,6 +18,7 @@ from boundFunc import scalarBound
 
 import pytest
 
+
 class minimize(fitAlg):
 
     """The class for fitting data using scipy.optimise.minimize
@@ -88,11 +89,10 @@ class minimize(fitAlg):
 
     Name = 'minimise'
 
-    unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
-    constrained = ['L-BFGS-B','TNC','SLSQP']
+    unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
+    constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-
-    def __init__(self,fitQualFunc = None, method = None, bounds = None, boundCostFunc = scalarBound(), numStartPoints = 4, boundFit = True, boundSensitivity = 5):
+    def __init__(self, fitQualFunc=None, method=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4, boundFit=True, boundSensitivity=5):
 
         self.numStartPoints = numStartPoints
         self.allBounds = bounds
@@ -102,18 +102,18 @@ class minimize(fitAlg):
         self.fitQualFunc = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
 
-        self._setType(method,bounds)
+        self._setType(method, bounds)
 
-        self.fitInfo = {'Name':self.Name,
+        self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds':self.allBounds,
-                        'numStartPoints' : self.numStartPoints,
-                        'boundFit' : self.boundFit,
-                        'boundSensitivity' : self.boundSensitivity
+                        'bounds': self.allBounds,
+                        'numStartPoints': self.numStartPoints,
+                        'boundFit': self.boundFit,
+                        'boundSensitivity': self.boundSensitivity
                         }
 
-        if self.methodSet == None:
+        if self.methodSet is None:
             self.fitInfo['method'] = self.method
         else:
             self.fitInfo['method'] = self.methodSet
@@ -122,6 +122,9 @@ class minimize(fitAlg):
 
         self.boundVals = None
         self.boundNames = None
+
+        self.testedParams = []
+        self.testedParamQualities = []
 
         self.logger = logging.getLogger('Fitting.fitters.minimize')
 
@@ -147,7 +150,7 @@ class minimize(fitAlg):
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
-            The list of the intial parameters
+            The list of the initial parameters
 
         Returns
         -------
@@ -155,16 +158,20 @@ class minimize(fitAlg):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
+        testedParams : tuple of two lists
+            The two lists are a list containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
 
         See Also
         --------
         fit.fitness
-
         """
 
         self.sim = sim
+        self.testedParams = []
+        self.testedParamQualities = []
 
-        method=self.method
+        method = self.method
         methodSet = self.methodSet
         boundFit = self.boundFit
         boundSensitivity = self.boundSensitivity
@@ -173,24 +180,24 @@ class minimize(fitAlg):
         self.setBounds(mParamNames)
         boundVals = self.boundVals
 
-        initParamSets = self.startParams(mInitialParams, bounds = boundVals, numPoints = numStartPoints)
+        initParamSets = self.startParams(mInitialParams, bounds=boundVals, numPoints=numStartPoints)
 
-        if method == None:
+        if method is None:
 
             resultSet = []
             methodSuccessSet = []
 
             for method in methodSet:
 
-                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
+                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
 
-                if optimizeResult != None:
+                if optimizeResult is not None:
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
 
-            bestResult = self._bestfit(resultSet, boundVals, boundFit = boundFit, boundSensitivity = boundSensitivity)
+            bestResult = self._bestfit(resultSet, boundVals, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
-            if bestResult == None:
+            if bestResult is None:
                 return mInitialParams, float("inf")
             else:
                 fitParams = bestResult.x
@@ -199,14 +206,14 @@ class minimize(fitAlg):
                 return fitParams, fitVal
 
         else:
-            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit = boundFit)
+            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
 
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
 
-            return fitParams, fitVal
+            return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
-    def _methodFit(self,method, initParamSets, bounds, boundFit = True, boundSensitivity = 5):
+    def _methodFit(self, method, initParamSets, bounds, boundFit=True, boundSensitivity=5):
 
         resultSet = []
 
@@ -214,18 +221,18 @@ class minimize(fitAlg):
 
             optimizeResult = optimize.minimize(self.fitness, i[:],
                                                method=method,
-                                               bounds=bounds)#,
+                                               bounds=bounds)  # ,
         #                                      callback= self.callback )
             self.count = 1
 
-            if optimizeResult.success == True:
+            if optimizeResult.success is True:
                 resultSet.append(optimizeResult)
 
-        bestResult = self._bestfit(resultSet, bounds, boundFit = boundFit, boundSensitivity = boundSensitivity)
+        bestResult = self._bestfit(resultSet, bounds, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
         return bestResult
 
-    def _bestfit(self, resultSet, bounds, boundFit = True, boundSensitivity = 5):
+    def _bestfit(self, resultSet, bounds, boundFit=True, boundSensitivity=5):
 
         # Check that there are fits
         if len(resultSet) == 0:
@@ -253,7 +260,7 @@ class minimize(fitAlg):
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in izip(r.x,bounds) if any(around(fitVal-boundVals,boundSensitivity)==0)]
+                invalid = [1 for fitVal, boundVals in izip(r.x, bounds) if any(around(fitVal-boundVals, boundSensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)
@@ -266,13 +273,12 @@ class minimize(fitAlg):
 
                 return reducedResults[fitid]
 
-
-    def _setType(self,method,bounds):
+    def _setType(self, method, bounds):
 
         self.method = None
         self.methodSet = None
         self.allBounds = None
-        if isinstance(method,list):
+        if isinstance(method, list):
             self.methodSet = method
             self.allBounds = bounds
         elif method in self.unconstrained:
@@ -290,6 +296,3 @@ class minimize(fitAlg):
             self.methodSet = self.unconstrained
         else:
             self.methodSet = self.unconstrained
-
-
-

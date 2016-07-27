@@ -77,8 +77,7 @@ class evolutionary(fitAlg):
                         'rand2bin',
                         'rand1bin']
 
-
-    def __init__(self,fitQualFunc = None, strategy = None, bounds = None, boundCostFunc = scalarBound(), polish = True):
+    def __init__(self, fitQualFunc=None, strategy=None, bounds=None, boundCostFunc=scalarBound(), polish=True):
 
         self.allBounds = bounds
         self.polish = polish
@@ -105,6 +104,9 @@ class evolutionary(fitAlg):
         self.boundVals = None
         self.boundNames = None
 
+        self.testedParams = []
+        self.testedParamQualities = []
+
         self.logger = logging.getLogger('Fitting.fitters.evolutionary')
 
     def fit(self, sim, mParamNames, mInitialParams):
@@ -128,6 +130,9 @@ class evolutionary(fitAlg):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
+        testedParams : tuple of two lists
+            The two lists are a list containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
 
         See Also
         --------
@@ -136,6 +141,8 @@ class evolutionary(fitAlg):
         """
 
         self.sim = sim
+        self.testedParams = []
+        self.testedParamQualities = []
 
         strategy = self.strategy
         strategySet = self.strategySet
@@ -149,33 +156,30 @@ class evolutionary(fitAlg):
             strategySuccessSet = []
 
             for strategy in strategySet:
-
                 optimizeResult = self._strategyFit(strategy, boundVals)
-
                 if type(optimizeResult) is not NoneType:
                     resultSet.append(optimizeResult)
                     strategySuccessSet.append(strategy)
-
             bestResult = self._bestfit(resultSet)
 
             if type(bestResult) is NoneType:
-                return mInitialParams, float("inf")
+                fitParams = mInitialParams
+                fitVal = float("inf")
             else:
                 fitParams = bestResult.x
                 fitVal = bestResult.fun
-
-                return fitParams, fitVal
 
         else:
             optimizeResult = self._strategyFit(strategy, boundVals)
 
             if type(optimizeResult) is NoneType:
-                return mInitialParams, float("inf")
+                fitParams = mInitialParams
+                fitVal = float("inf")
+            else:
+                fitParams = optimizeResult.x
+                fitVal = optimizeResult.fun
 
-            fitParams = optimizeResult.x
-            fitVal = optimizeResult.fun
-
-            return fitParams, fitVal
+        return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
     def _strategyFit(self, strategy, bounds):
         """
