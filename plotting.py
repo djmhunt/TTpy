@@ -12,7 +12,7 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from numpy import array, meshgrid, fromfunction, arange,linspace, sort, shape
+from numpy import array, meshgrid, fromfunction, arange, linspace, sort, shape
 from scipy import histogram, amin, amax
 from scipy.interpolate import griddata
 from matplotlib.cm import get_cmap
@@ -39,20 +39,20 @@ lpl_linewidth = large_line_width + lines_width
 colours = ['g', 'r', 'b', 'm', '0.85'] + ['k']*len(large)
 
 ### Define the different colour maps to be considered
-#Colour plot colour map
+# Colour plot colour map
 defaultCMap = {'blue': ((0.0, 1.0, 1.0), (0.0000000001, 1.0, 1.0), (1.0, 0.5, 0.5)),
                'green': ((0.0, 1.0, 1.0), (0.0000000001, 0.0, 0.0), (1.0, 1.0, 1.0)),
                  'red': ((0.0, 1.0, 1.0), (0.0000000001, 0.0, 0.0), (1.0, 0.0, 0.0))}
-#local_cmap = matplotlib.colors.LinearSegmentedColormap('local_colormap',defaultCMap)
+# local_cmap = matplotlib.colors.LinearSegmentedColormap('local_colormap',defaultCMap)
 wintermodCMap = {'blue': ((0.0, 1.0, 1.0), (0.0000000000000001, 1.0, 1.0), (1.0, 0.5, 0.5)),
-               'green': ((0.0, 1.0, 1.0), (0.0000000000000001, 1.0, 0.0), (1.0, 1.0, 1.0)),
+                 'green': ((0.0, 1.0, 1.0), (0.0000000000000001, 1.0, 0.0), (1.0, 1.0, 1.0)),
                  'red': ((0.0, 1.0, 1.0), (0.0000000000000001, 1.0, 0.0), (1.0, 0.0, 0.0))}
 wintermod_cmap = matplotlib.colors.LinearSegmentedColormap('local_colormap_winter',wintermodCMap)
 local_cmap = wintermod_cmap
-#local_cmap = get_cmap('winter')
+# local_cmap = get_cmap('winter')
 
 origin = 'lower'
-#origin = 'upper'
+# origin = 'upper'
 
 
 ### Simple lineplot
@@ -79,7 +79,7 @@ def lineplot(x, Y, labels, axisLabels):
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    axPlotlines(ax,x,Y, labels, axisLabels)
+    axPlotlines(ax, x, Y, labels, axisLabels)
 
     legend(ax)
 
@@ -89,10 +89,10 @@ def lineplot(x, Y, labels, axisLabels):
 
 
 ### Response changes to different parameters
-def varDynamics(paramSet, responses, **kwargs):
+def paramDynamics(paramSet, responses, axisLabels, **kwargs):
     """Plots response changes to different parameters
 
-    Uses ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for plotting
+    Uses ``paramD1Dynamics``, ``paramD2Dynamics`` and ``paramD3Dynamics`` for plotting
     depending on number of parameters chosen. See their documentation for more
     detail.
 
@@ -102,13 +102,16 @@ def varDynamics(paramSet, responses, **kwargs):
         The keys are the parameter names. The values are a list or array of
         floats, showing the different values of the parameter looked at.
     responses : array of floats
+        The measure over which the parameters are being evaluated
+    axisLabels : dict of strings or floats
+        Axis information such as labels or axis title. See the different subfunctions for specific parameter list
     kwargs : dictionary
         kwargs depend on number of parameters chosen. See documentation for
-        ``dim1VarDim``, ``dim2VarDim`` and ``dim3VarDim`` for kwarg lists
+        ``paramD1Dynamics``, ``paramD2Dynamics`` and ``paramD3Dynamics`` for kwarg lists
 
     Returns
     -------
-    fig : matplotlib figure object or, if ``dim3VarDim`` has been used, a ``vtkWriter`` object
+    fig : matplotlib figure object or, if ``paramD3Dynamics`` has been used, a ``vtkWriter`` object
 
     """
 
@@ -117,14 +120,31 @@ def varDynamics(paramSet, responses, **kwargs):
     params = paramSet.keys()
 
     if lparams == 1:
-        param = params[0]
-        fig = dim1VarDim(paramSet[param], responses, param, **kwargs)
+        axisLabels.setdefault("xLabel", params[0])
+        fig = paramD1Dynamics(paramSet[params[0]],
+                              responses,
+                              axisLabels,
+                              **kwargs)
 
     elif lparams == 2:
-        fig = dim2VarDim(paramSet[params[0]], paramSet[params[1]], responses, params[0], params[1], **kwargs)
+        axisLabels.setdefault("xLabel", params[0])
+        axisLabels.setdefault("yLabel", params[1])
+        fig = paramD2Dynamics(paramSet[params[0]],
+                              paramSet[params[1]],
+                              responses,
+                              axisLabels,
+                              **kwargs)
 
     elif lparams == 3:
-        fig = dim3VarDim(paramSet[params[0]], paramSet[params[1]], paramSet[params[2]], responses, params[0], params[1], params[2], **kwargs)
+        axisLabels.setdefault("xLabel", params[0])
+        axisLabels.setdefault("yLabel", params[1])
+        axisLabels.setdefault("zLabel", params[2])
+        fig = paramD3Dynamics(paramSet[params[0]],
+                              paramSet[params[1]],
+                              paramSet[params[2]],
+                              responses,
+                              axisLabels,
+                              **kwargs)
 
     else:
 
@@ -133,15 +153,35 @@ def varDynamics(paramSet, responses, **kwargs):
     return fig
 
 
-def dim1VarDim(X,Y, varXLabel, **kwargs):
+def paramD1Dynamics(X, Y, axisLabels, **kwargs):
     """
+
+    Parameters
+    ----------
+    X : array of size m*n of floats
+    Y : array of size m*n of floats
+    axisLabels : dictionary
+        A dictionary of axis titles, all optional, containing:
+
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+
+    Returns
+    -------
+    fig : matplotlib figure object
     """
+
+    xLabel = axisLabels.pop("xLabel", "Parameter")
+    yLabel = axisLabels.pop("yLabel", "Value")
+    title = axisLabels.pop("title", "")
+
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
     maxVal = amax(Y)
     minVal = amin(Y)
-    if minVal > 0 or minVal==None:
+    if (minVal > 0) or (minVal is None):
         minVal = 0
     maxVal += (maxVal-minVal)/100.0
 
@@ -150,59 +190,99 @@ def dim1VarDim(X,Y, varXLabel, **kwargs):
     if minVal != maxVal:
         ax.set_ylim((minVal, maxVal))
     else:
-        logger1 = logging.getLogger('Plots')
-        logger1.warning("There is no variation in the time to decision across parameters")
+        logger = logging.getLogger('Plots')
+        logger.warning("There is no variation in the " + yLabel + " across " + xLabel)
 
-    ax.set_xlabel(varXLabel)
-    ax.set_ylabel("Time to decision")
-    plt.title("Time to decision across parameters")
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+    plt.title(title)
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
 
-def dim2VarDim(X, Y, z, varXLabel, varYLabel, **kwargs):
+def paramD2Dynamics(X, Y, z, axisLabels, **kwargs):
+    """
+    A set of two dimensional plots superimposed on each other
+
+    Parameters
+    ----------
+    X : array of size m*n of floats
+    Y : array of size m*n of floats
+    z : list or array of floats
+        The magnitude values for the X,Y locations
+    axisLabels : dictionary
+        A dictionary of axis titles, all optional, containing:
+
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+        ``cbLabel`` : `string`,
+    contour : bool, optional
+        Present the data as a contour plot using axContour. Default ``False``
+    heatmap : bool, optional
+        Presents the data as a square pixel heatmap using axImage. Default ``True``
+    scatter : bool, optional
+        Presents the data as a scatter plot using axScatter. Default ``False``
+    minZ : float, optional
+        Specifies what the minimum value of ``z`` should be set to. Default, ``0``
+
+    Returns
+    -------
+    fig : matplotlib figure object
     """
 
-    Look in to fatfonts
-    """
-    contour= kwargs.get("contour", False)
+    #Look in to fatfonts
+
+    xLabel = axisLabels.pop("xLabel", "Parameter 1")
+    yLabel = axisLabels.pop("yLabel", "Parameter 2")
+    title = axisLabels.pop("title", "")
+    CB_label = axisLabels.pop("cbLabel", "")
+
+    contour = kwargs.get("contour", False)
     heatmap = kwargs.get("heatmap", True)
     scatter = kwargs.get("scatter", False)
-
+    minZ = kwargs.get("minZ", 0)
+    cmap = kwargs.get("cmap", local_cmap)
 
     zMin = amin(z)
     zMax = amax(z)
     if zMin == zMax:
         logger = logging.getLogger('Plots')
-        logger.warning("There is no variation in the time to decision across parameters")
+        logger.warning("There is no variation in the " + yLabel + " across " + xLabel)
         return None
 
-    fig = plt.figure()  # figsize=(8, 6), dpi=80)
+    fig = plt.figure(figsize=(12, 9), dpi=80)
     ax = fig.add_subplot(111)
 
-    if contour == True:
-        CS = axContour(ax, X, Y, z, minZ=0, CB_label="Time to decision")
+    CB = None
+    if scatter is True:
+        SC, CB = axScatter(ax, X, Y, z, minZ=minZ, CB=CB, CB_label=CB_label, cmap=cmap)
 
-    if scatter == True:
-        SC = axScatter(ax, X, Y, z, minZ=0, CB_label="Time to decision")
+    if contour is True:
+        CS, CB = axContour(ax, X, Y, z, minZ=minZ, CB=CB, CB_label=CB_label, cmap=cmap)
 
-    if heatmap == True:
-        IM = axImage(ax, X, Y, z, minZ=0, CB_label="Time to decision")
+    if heatmap is True:
+        IM, CB = axImage(ax, X, Y, z, minZ=minZ, CB=CB, CB_label=CB_label, cmap=cmap)
 
-    ax.set_xlabel(varXLabel)
-    ax.set_ylabel(varYLabel)
-    plt.title('Time to decision across parameters')
+    ax.set_xlabel(xLabel)
+    ax.set_ylabel(yLabel)
+
+    plt.title(title)
 
     fig.tight_layout(pad=0.6, w_pad=0.5, h_pad=1.0)
 
     return fig
 
 
-def dim3VarDim(X, Y, Z, f, varXLabel, varYLabel, varZLabel, **kwargs):
+def paramD3Dynamics(X, Y, Z, f, axisLabels, **kwargs):
 
-    paraOut = kwargs.get("paraOut", "CSV")
+    xLabel = axisLabels.pop("xLabel", "Parameter 1")
+    yLabel = axisLabels.pop("yLabel", "Parameter 2")
+    zLabel = axisLabels.pop("zLabel", "Parameter 3")
+
+    paraOut = kwargs.get("paraviewInput", "CSV")
 
     xMin = amin(X)
     xMax = amax(X)
@@ -249,9 +329,9 @@ def dim3VarDim(X, Y, Z, f, varXLabel, varYLabel, varZLabel, **kwargs):
     vtk_writer.snapshot(Xfleshed,
                         Yfleshed,
                         Zfleshed,
-                        xLabel=varXLabel,
-                        yLabel=varYLabel,
-                        zLabel=varZLabel,
+                        xLabel=xLabel,
+                        yLabel=yLabel,
+                        zLabel=zLabel,
                         # x_force = coGridX.flatten(),
                         # y_force = coGridY.flatten(),
                         # z_force = coGridZ.flatten(),
@@ -284,8 +364,8 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels, dataFormatting={}
         ``axPlotlines`` as well as:
         ``y2label`` : `string` The label of the scale of events
     dataFormatting : dictionary of string keys and values as lists of strings or floats
-        A dictionary of properties for each data line to be plotted, all optional, if there are fewer than 8. The
-        optional parameters are those defined in axPlotlines.
+        A dictionary of properties for each data line to be plotted, all optional, if there are fewer than 8 datasets.
+        The optional parameters are those defined in axPlotlines.
 
     Returns
     -------
@@ -317,7 +397,7 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels, dataFormatting={}
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label=eventLabel, color='k', linewidth=2, markersize=5)
-    bottom,top = axb.get_ylim()
+    bottom, top = axb.get_ylim()
     axb.set_ylim((bottom - 0.01, top + 0.01))
 
     axb.set_ylabel(y2Label)
@@ -362,11 +442,11 @@ def dataSpectrumVsEvents(data, events, eventLabel, axisLabels):
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    axSpectrum(ax,data, axisLabels)
+    axSpectrum(ax, data, axisLabels)
 
     axb = ax.twinx()
     pltLine = axb.plot(eventX, events, 'o', label=eventLabel, color='k', linewidth=2, markersize=5)
-    bottom,top = axb.get_ylim()
+    bottom, top = axb.get_ylim()
     axb.set_ylim((bottom - 0.01, top + 0.01))
 
     axb.set_ylabel(y2Label)
@@ -424,7 +504,7 @@ def pandasPlot(data, axisLabels = {}):
 # rather than a few dozen
 
 
-def axScatter(ax, X, Y, z, minZ=0, CB_label=""):
+def axScatter(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap):
     """
     Produces a scatter plot on the axis with the colour of the dots being a
     third axis
@@ -438,29 +518,44 @@ def axScatter(ax, X, Y, z, minZ=0, CB_label=""):
         The magnitude values for the X,Y locations
     minZ : float, optional
         The lowest valid value of the colour map
+    CB : matplotlib colorbar or ``None``, optional
+        The colorbar object for the figure if one has already been created. Default is ``None``
     CB_label : string, optional
-        The colour bar label
+        The colour bar label. Unused in this instance
+    cmap : matplotlib colormap object or name of known colormap
+        The colormap to be used by this to represent the z data. Default local_cmap defined in this plotting module
 
     Returns
     -------
     sc : matplotlib scatter object
+    CB : matplotlib colorbar
+        The colorbar object for the figure if one has already been created
     """
 
     maxZ = amax(z)
 
-    minC = 1
-    maxC = 301
-    zScale = (maxC - minC) / float(maxZ - minZ)
-    C = minC + (z-amin(z))*zScale
+    # For changing the dot size
+    # minC = 1
+    # maxC = 301
+    # zScale = (maxC - minC) / float(maxZ - minZ)
+    # C = minC + (z-amin(z))*zScale
 
-#    X,Y = meshgrid(x,y)
-#    sc= ax.scatter(X.flatten(),Y.flatten(),s=C)
-    sc= ax.scatter(X, Y, s=C)
+    sc = ax.scatter(X.flatten(), Y.flatten(), s=10, c=z, cmap=cmap, edgecolors="face")
 
-    return sc
+    if CB is None:
+        CB = plt.colorbar(sc, ax=ax, orientation='horizontal', shrink=0.8, extend='both')
+        CB.set_label(CB_label)
+    else:
+        # Check if the range needs increasing
+        oldCMin, oldCMax = sc.get_clim()
+        minZ = oldCMin if oldCMin < minZ else minZ
+        maxZ = oldCMax if oldCMax > maxZ else maxZ
+        sc.set_clim([minZ, maxZ])
+
+    return sc, CB
 
 
-def axImage(ax, X, Y, z, minZ=0, CB_label=""):
+def axImage(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap):
     """
     Produces an image on the axis
 
@@ -473,12 +568,18 @@ def axImage(ax, X, Y, z, minZ=0, CB_label=""):
         The magnitude values for the X,Y locations
     minZ : float, optional
         The lowest valid value of the colour map
+    CB : matplotlib colorbar or ``None``, optional
+        The colorbar object for the figure if one has already been created. Default is ``None``
     CB_label : string, optional
         The colour bar label
+    cmap : matplotlib colormap object or name of known colormap
+        The colormap to be used by this to represent the z data. Default local_cmap defined in this plotting module
 
     Returns
     -------
     IM : matplotlib image object
+    CB : matplotlib colorbar
+        The colorbar object for the figure if one has already been created
     """
 
     xMin = amin(X)
@@ -509,18 +610,25 @@ def axImage(ax, X, Y, z, minZ=0, CB_label=""):
 
 #    qm = plt.pcolormesh(gridZ, cmap = local_cmap)
     im = ax.imshow(gridZ, interpolation='nearest',
-                    origin='lower',
-                    cmap=local_cmap,
-                    extent=[xMinIm, xMaxIm, yMinIm, yMaxIm],
-                    vmin=minZ,
-                    aspect='auto')
-    CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
-    CBI.set_label(CB_label)
+                   origin='lower',
+                   cmap=cmap,
+                   extent=[xMinIm, xMaxIm, yMinIm, yMaxIm],
+                   vmin=minZ,
+                   aspect='auto')
+    if CB is None:
+        CB = plt.colorbar(im, ax=ax, orientation='horizontal', shrink=0.8, extend='both')
+        CB.set_label(CB_label)
+    else:
+        # Check if the range needs increasing
+        oldCMin, oldCMax = im.get_clim()
+        minZ = oldCMin if oldCMin < minZ else minZ
+        maxZ = oldCMax if oldCMax > amax(z) else amax(z)
+        im.set_clim([minZ, maxZ])
 
-    return im
+    return im, CB
 
 
-def axContour(ax, X, Y, z, minZ=0, CB_label=""):
+def axContour(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap, maxContours=20):
     """
     Produces a contour plot on the axis
 
@@ -533,47 +641,54 @@ def axContour(ax, X, Y, z, minZ=0, CB_label=""):
         The magnitude values for the X,Y locations
     minZ : float, optional
         The value of the lowest contour
+    CB : matplotlib colorbar or ``None``, optional
+        The colorbar object for the figure if one has already been created. Default is ``None``
     CB_label : string, optional
         The colour bar label
+    cmap : matplotlib colormap object or name of known colormap
+        The colormap to be used by this to represent the z data. Default local_cmap defined in this plotting module
+    maxContours : int, optional
+        The maximum number of contours - 2 that can be shown. Default 20
 
     Returns
     -------
     CS : matplotlib contour object
+    CB : matplotlib colorbar
+        The colorbar object for the figure if one has already been created
     """
 
     xMin = amin(X)
     xMax = amax(X)
     yMin = amin(Y)
     yMax = amax(Y)
-
     maxZ = amax(z)
+
+    xi = linspace(xMin, xMax, 50)
+    yi = linspace(yMin, yMax, 50)
+    ZGrid = griddata((X, Y), z, (xi[None, :], yi[:, None]), method='cubic')
+    XGrid, YGrid = meshgrid(xi, yi)
+
     if maxZ == minZ:
         maxZ += 1
     zSorted = sort(z)
-    i = bisect_right(zSorted, 0)
-    if i != len(zSorted):
-        diffSort = sort(zSorted[1:]-zSorted[:-1])
-        dz = diffSort[bisect_right(diffSort, 0)]
-        zJumps = (maxZ - minZ)/dz + 2
-        levels = linspace(minZ, maxZ+dz, zJumps)
+    diffSort = sort(zSorted[1:]-zSorted[:-1])
+    dz = diffSort[0]
+    potentialJumps = (maxZ - minZ)/dz
+    if potentialJumps > maxContours:
+        zJumps = maxContours
+        dz = (maxZ - minZ)/(zJumps - 2)
     else:
-        levels = arange(maxZ+1)
+        zJumps = potentialJumps + 2
+    levels = linspace(minZ, maxZ+dz, zJumps)
 
-#    X,Y = meshgrid(x,y)
-
-    Xlen = len(set(X))
-    Ylen = len(set(Y))
-
-    z = array(z)
-    Z = z.reshape((Ylen, Xlen))
-
-    CS = ax.contour(X, Y, Z, levels,
-                     origin='lower',
-                     colors='k',
-                     linewidths=2,
-                     extent=[xMin, xMax, yMin, yMax],
-                     extend='both')
-    plt.clabel(CS, levels,#[1::2],  # label every second level
+    CS = ax.contour(XGrid, YGrid, ZGrid, levels,
+                    origin='lower',
+                    colors='k',
+                    linewidths=2,
+                    extent=[xMin, xMax, yMin, yMax],
+                    extend='both')
+    plt.clabel(CS,
+               CS.levels,  # [1::2],  # label every second level
                inline=1,
                fmt='%2.1f',
                fontsize=14,
@@ -583,21 +698,58 @@ def axContour(ax, X, Y, z, minZ=0, CB_label=""):
 #    CS.cmap.set_over('cyan')
     CS.cmap.set_bad("red")
 
-    CB = plt.colorbar(CS, shrink=0.8, extend='both')
-    CB.set_label(CB_label)
+    if CB is None:
+        CB = plt.colorbar(CS, ax=ax, orientation='horizontal', shrink=0.8, extend='both')
+        CB.set_label(CB_label)
+    else:
+        # Check if the range needs increasing
+        oldCMin, oldCMax = CS.get_clim()
+        minZ = oldCMin if oldCMin < minZ else minZ
+        maxZ = oldCMax if oldCMax > maxZ else maxZ
+        CS.set_clim([minZ, maxZ])
 
 #    # Improving the position of the contour bar legend
 #    l,b,w,h = ax.get_position().bounds
 #    ll,bb,ww,hh = CB.ax.get_position().bounds
 #    CB.ax.set_position([ll, b+0.1*h, ww, h*0.8])
 
-    return CS
+    return CS, CB
 
 
-def axQuiver(ax, X, Y, dX, dY, CB_label=""):
-    #Work in progress
+def axQuiver(ax, X, Y, dX, dY, axisLabels, CB_label=""):
+    """
+    Quiver plot or flow plot depending on your terminology
+
+    A work in progress
+
+    Parameters
+    ----------
+    ax : matplotlib axis object
+    X : array of size m*n of floats
+        The horizontal axis locations of the points
+    Y : array of size m*n of floats
+        The vertical axis locations of the points
+    dX : array of size m*n of floats
+        The horizontal axis magnitudes for the arrows
+    dY : array of size m*n of floats
+        The vertical axis magnitudes for the arrows
+    axisLabels : dictionary
+        A dictionary of axis titles, all optional, containing:
+
+        ``xlabel`` : `string`,
+        ``ylabel`` : `string`,
+        ``title`` : `string`,
+    CB_label : basestring
+        The label of the colourbar. Default is empty
+
+    """
+    # Work in progress
+
+    xLabel = axisLabels.pop("xLabel", "Event")
+    yLabel = axisLabels.pop("yLabel", "Value")
+    title = axisLabels.pop("title", "")
     
-    ax.quiver(X, Y, DE, DY, pivot='mid',cmap=local_cmap) 
+    im = ax.quiver(X, Y, dX, dY, pivot='mid', cmap=local_cmap)
     
     CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
     CBI.set_label(CB_label)
@@ -738,21 +890,23 @@ def axSpectrum(ax, Y, axisLabels):
     ax.set_title(title)
 
 
-def legend(*axis):
+def legend(*axis, **kwargs):
     """
-    Adds a legend to each axis
+    Adds a legend to each subplot in a figure
 
     Parameters
     ----------
     axis : a list of matplotlib axis objects
     """
 
-    lines = []
+    embed = kwargs.pop('embed', False)
+
+    lineList = []
     pltLabels = []
     for ax in axis:
 
         line, pltLabel = ax.get_legend_handles_labels()
-        lines.extend(line)
+        lineList.extend(line)
         pltLabels.extend(pltLabel)
 
         # for plotting the legend outside the box
@@ -761,18 +915,48 @@ def legend(*axis):
         ax.set_position([box.x0, box.y0 + box.height * 0.1,
                          box.width, box.height * 0.9])
 
-    if not lines:
+    if not lineList:
         return
 
     ax = axis[0]
 
     # For plotting the legend inside the plot
-    # ax.legend(lines, pltLabels, loc='best', fancybox=True)
+    if embed:
+        ax.legend(lineList, pltLabels, loc='best', fancybox=True)
+    else:
+        # for plotting the legend outside the box
+        # Put a legend below current axis
+        ax.legend(lineList, pltLabels, loc='upper center', bbox_to_anchor=(0.5, -0.08),
+                  fancybox=True, shadow=True, ncol=2)
 
-    # for plotting the legend outside the box
-    # Put a legend below current axis
-    ax.legend(lines, pltLabels, loc='upper center', bbox_to_anchor=(0.5, -0.08),
-              fancybox=True, shadow=True, ncol=2)
+
+def addPoint(xPos, yPos, ax, colour="red"):
+    """
+
+
+    Inspired by http://stackoverflow.com/questions/9215658/plot-a-circle-with-pyplot
+
+    Parameters
+    ----------
+    xPos
+    yPos
+    ax
+    colour
+
+    Returns
+    -------
+
+    """
+
+    for x, y in izip(xPos, yPos):
+        ax.plot(x, y, 'o', color=colour)
+
+
+def addCircle(xPos, yPos, ax, circleSize=[2], colour=["red"]):
+
+    for x, y, s, c in izip(xPos, yPos, circleSize, colour):
+        circle = plt.Circle((x, y), s, color=c)
+        ax.add_artist(circle)
 
 # if __name__ == '__main__':
 
@@ -784,10 +968,10 @@ def legend(*axis):
 #     z = array([7, 8, 9])
 #     f = array([1, 2, 3, 2, 3, 4, 3, 4, 5, 2, 3, 4, 3, 4, 5, 4, 5, 6, 3, 4, 5, 4, 5, 6, 5, 6, 7])
 #
-#     fig = dim3VarDim(x, y, z, f, 'TestX', 'TestY', 'TestZ')
+#     fig = paramD3Dynamics(x, y, z, f, 'TestX', 'TestY', 'TestZ')
 #     fig.outputTrees("outputs/testDataStruc")
 
-#    fig = dim2VarDim(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
+#    fig = paramD2Dynamics(x,y,z, 'TestX', 'TestY', contour=False, heatmap = False, scatter = True)
 
 #    X = array([[1, 2, 4], [1, 2, 4], [1, 2, 4]])
 #    Y = array([[ 0.1,  0.1,  0.1], [ 0.2,  0.2,  0.2], [ 0.3,  0.3,  0.3]])
