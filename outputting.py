@@ -14,17 +14,19 @@ import cPickle as pickle
 import pandas as pd
 import datetime as dt
 
+import shutil as shu
 from os import getcwd, makedirs
 from os.path import isfile, exists
-from shutil import copy
 from inspect import stack
-from numpy import seterr, seterrcall, array, ndarray, shape, prod
+from numpy import seterr, seterrcall, array, ndarray, shape, prod, log10, around, size
 from itertools import izip
 from collections import OrderedDict, Callable
 from types import NoneType
+from copy import copy, deepcopy
 
 from utils import listMerGen, callableDetailsString
 from participants.fitResults import plotFitting
+from plotting import paramDynamics, addPoint
 
 
 class outputting(object):
@@ -53,7 +55,9 @@ class outputting(object):
         The maximum length of a label to be used as a reference for an
         individual model-experiment combination. Default 18
     npErrResp : {'log', 'raise'}
-        Defines the response to numpy errors. Defailt ``log``. See numpy.seterr
+        Defines the response to numpy errors. Default ``log``. See numpy.seterr
+    saveFittingProgress : bool, optional
+        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
 
     See Also
     --------
@@ -74,6 +78,7 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel", logging.INFO)# logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
+        self.saveFittingProgress = kwargs.pop("saveFittingProgress", False)
 
         self.date = date()
 
@@ -156,7 +161,7 @@ class outputting(object):
         folderName += "/"
         makedirs(folderName)
 
-        if self.simRun:
+        if self.simRun or self.saveFittingProgress:
             makedirs(folderName + 'data/')
 
         if self.pickleData:
@@ -240,7 +245,7 @@ class outputting(object):
                 for s in stack():
                     p = s[1].replace("\\", "/")
                     if cwd in p and "outputting.py" not in p:
-                        copy(p, self.outputFolder)
+                        shu.copy(p, self.outputFolder)
                         break
 
         else:
@@ -514,8 +519,8 @@ class outputting(object):
             self._simModelLog(modelData)
 
             if self.pickleData:
-                self.pickleLog(expData, self.outputFolder, label)
-                self.pickleLog(modelData, self.outputFolder, label)
+                self.pickleLog(expData, label)
+                self.pickleLog(modelData, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -527,7 +532,7 @@ class outputting(object):
         self.modelsSize += 1
         self.modelSetSize += 1
 
-    def recordParticipantFit(self, participant, expData, modelData, fitQuality=None):
+    def recordParticipantFit(self, participant, expData, modelData, fitQuality=None, fittingData=None):
         """
         Record the data relevant to the participant fitting
 
@@ -542,6 +547,9 @@ class outputting(object):
         fitQuality : float, optional
             The quality of the fit as provided by the fitting function
             Default is None
+        fittingData : tuple of OrderedDict and list
+            The tuple contains an ordered dictionary containing the parameter values tested, in the order they were
+            tested, and the fit qualities of these parameters.
         """
 
         message = "Recording participant model fit"
@@ -549,7 +557,9 @@ class outputting(object):
 
         label = "_Model-" + str(self.modelSetNum) + "_Part-" + str(self.modelSetSize)
 
-        participant.setdefault("Name", "Participant " + str(self.modelSetSize))
+        participantName = "Participant " + str(self.modelSetSize)
+
+        participant.setdefault("Name", participantName)
 
         if self.outputFolder:
 
@@ -557,13 +567,15 @@ class outputting(object):
             self.logger.info(message)
 
             ep = plotFitting(participant, modelData, fitQuality)
-
             self.savePlots(ep)
 
+            if self.saveFittingProgress:
+                self.recordFittingSequence(fittingData, fitQuality, label, participant)
+
             if self.pickleData:
-                self.pickleLog(expData, self.outputFolder, label)
-                self.pickleLog(modelData, self.outputFolder, label)
-                self.pickleLog(participant, self.outputFolder, label)
+                self.pickleLog(expData, label)
+                self.pickleLog(modelData, label)
+                self.pickleLog(participant, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -606,6 +618,41 @@ class outputting(object):
                 log.info(message)
 
     ### Ploting
+    def recordFittingSequence(self, fittingData, fitQuality, label, participant):
+
+        extendedLabel = "ParameterFits" + label
+
+        paramSet = fittingData[0]
+        paramLabels = paramSet.keys()
+        fitQualities = fittingData[1]
+
+        self._makeFittingDataSet(paramSet, fitQualities, fitQuality, extendedLabel, participant)
+
+        axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
+
+        if len(paramSet) == 1:
+            axisLabels["yLabel"] = r'log_{10}(Fit quality)'
+            fig = paramDynamics(paramSet,
+                                log10(fitQualities),
+                                axisLabels)
+            addPoint([paramSet[paramLabels[0]][-1]], [fitQuality], fig.axes[0])
+        elif len(paramSet) == 2:
+            axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
+            fig = paramDynamics(paramSet,
+                                log10(fitQualities),
+                                axisLabels,
+                                contour=True,
+                                heatmap=False,
+                                scatter=True,
+                                cmap="viridis")
+            addPoint([paramSet[paramLabels[0]][-1]], [paramSet[paramLabels[1]][-1]], fig.axes[0])
+        else:
+            fig = paramDynamics(paramSet,
+                                log10(fitQualities),
+                                axisLabels)
+
+        self.savePlots([(extendedLabel, fig)])
+
     def plotModel(self, modelPlot):
         """
         Feeds the model data into the relevant plotting functions for the class
@@ -735,9 +782,10 @@ class outputting(object):
 
         Parameters
         ----------
-        plots : list of savable objects
+        plots : list of (string, savable object)
             The currently accepted objects are matplotlib.pyplot.figure,
             pandas.DataFrame and xml.etree.ElementTree.ElementTree
+            The string is the handle of the figure
 
         See Also
         --------
@@ -809,7 +857,7 @@ class outputting(object):
         with open(outputFile, 'w') as w:
             pickle.dump(data, w)
 
-    def pickleLog(self, results, folderName, label=""):
+    def pickleLog(self, results, label=""):
         """
         Stores the data in the appropriate pickle file in a Pickle subfolder
         of the outputting folder
@@ -818,8 +866,6 @@ class outputting(object):
         ----------
         results : dict
             The data to be stored
-        folderName : string
-            The path to the outputting folder
         label : string, optional
             A label for the results file
         """
@@ -896,10 +942,10 @@ class outputting(object):
         data['model_Group_Num'] = self.modelGroupNum
         data['folder'] = self.outputFolder
 
-        expData = reframeListDicts(self.expStore, 'exp_')
-        modelData = reframeListDicts(self.modelStore, 'model_')
+        expData = reframeListDicts(self.expStore, 'exp')
+        modelData = reframeListDicts(self.modelStore, 'model')
         if type(self.fitInfo) is not NoneType:
-            partData = reframeListDicts(self.partStore, 'part_')
+            partData = reframeListDicts(self.partStore, 'part')
             partData['fit_quality'] = self.fitQualStore
             data.update(partData)
 
@@ -932,22 +978,48 @@ class outputting(object):
                     if "Param" in k and "model" or "participant" in k:
                         usefulKeys.append(v)
 
-            modelData = reframeSelectListDicts(self.modelStore, usefulKeys, 'model_')
-            partData = reframeSelectListDicts(self.partStore, usefulKeys, 'part_')
+            modelData = reframeSelectListDicts(self.modelStore, usefulKeys, 'model')
+            partData = reframeSelectListDicts(self.partStore, usefulKeys, 'part')
             partData['fit_quality'] = self.fitQualStore
             data.update(modelData)
             data.update(partData)
 
         return data
 
-    def _makeSingleModelDataSet(self):
+    def _makeFittingDataSet(self, paramSet, fitQualities, fitQuality, extendedLabel, participant):
 
         data = OrderedDict()
-        modelData = dictArray2Lists(self.modelStore, '')
+        data['exp_Label'] = self.expLabelStore
+        data['model_Label'] = self.modelLabelStore
+        data['exp_Group_Num'] = self.expGroupNum
+        data['model_Group_Num'] = self.modelGroupNum
+        data['folder'] = self.outputFolder
+        partFittingKeys, partFittingMaxListLen = listDictKeySet(participant)
+        partData = newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
+        data.update(partData)
 
-        data.update(modelData)
+        paramFittingDict = copy(paramSet)
+        paramFittingDict['fitQuality'] = fitQuality
+        paramFittingDict["fitQualities"] = fitQualities
+        data.update(paramFittingDict)
+        recordFittingKeys, recordFittingMaxListLen = listDictKeySet(data)
+        recordData = newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
 
-        return data
+        record = pd.DataFrame(recordData)
+        name = "data/" + extendedLabel
+        outputFile = self.newFile(name, 'xlsx')
+        xlsxT = pd.ExcelWriter(outputFile)
+        record.to_excel(xlsxT, sheet_name='ParameterFits')
+        xlsxT.save()
+
+    # def _makeSingleModelDataSet(self):
+    #
+    #     data = OrderedDict()
+    #     modelData = dictArray2Lists(self.modelStore, '')
+    #
+    #     data.update(modelData)
+    #
+    #     return data
 
 
 ### Utils
@@ -1064,11 +1136,8 @@ def flatDictKeySet(store):
 
     Returns
     -------
-    keySet : dict
-        The keys are the keys for the new dictionary. The values contain a
-        two element tuple. The first element is the original name of the
-        key and the second is the location of the value to be stored in the
-        original dictionary value array.
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
 
     See Also
     --------
@@ -1079,20 +1148,19 @@ def flatDictKeySet(store):
     keySet = OrderedDict()
 
     for s in store:
-        for k in s.keys():
+        for k in s.iterkeys():
+            if k in keySet:
+                continue
             v = s[k]
             if isinstance(v, (list, ndarray)):
-                # We need to calculate every combination of co-ordinates in the array
-                arrSets = [range(0, i) for i in shape(v)]
-                # Now record each one
-                for genLoc in listMerGen(*arrSets):
-                    if len(genLoc) == 1:
-                        loc = genLoc[0]
-                    else:
-                        loc = tuple(genLoc)
-                    keySet.setdefault(k+str(loc), (k, loc))
+                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=False)
+                if listSet is not NoneType:
+                    keySet[k] = listSet
+            elif isinstance(v, dict):
+                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=False)
+                keySet[k] = dictKeySet
             else:
-                keySet.setdefault(k, (None, None))
+                 keySet[k] = None
 
     return keySet
 
@@ -1116,11 +1184,8 @@ def flatDictSelectKeySet(store, keys):
 
     Returns
     -------
-    keySet : dict
-        The keys are the keys for the new dictionary. The values contain a
-        two element tuple. The first element is the original name of the
-        key and the second is the location of the value to be stored in the
-        original dictionary value array.
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
 
     See Also
     --------
@@ -1133,23 +1198,18 @@ def flatDictSelectKeySet(store, keys):
     for s in store:
         sKeys = (k for k in s.iterkeys() if k in keys)
         for k in sKeys:
+            if k in keySet:
+                continue
             v = s[k]
             if isinstance(v, (list, ndarray)):
-                vShape = shape(v)
-                # If the length is too long, skip it. It will just clutter up the document
-                if prod(vShape) > 10:
-                    continue
-                # We need to calculate every combination of co-ordinates in the array
-                arrSets = [range(0, i) for i in vShape]
-                # Now record each one
-                for genLoc in listMerGen(*arrSets):
-                    if len(genLoc) == 1:
-                        loc = genLoc[0]
-                    else:
-                        loc = tuple(genLoc)
-                    keySet.setdefault(k+str(loc), (k, loc))
+                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=True)
+                if listSet is not NoneType:
+                    keySet[k] = listSet
+            elif isinstance(v, dict):
+                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=True)
+                keySet[k] = dictKeySet
             else:
-                keySet.setdefault(k, (None, None))
+                 keySet[k] = None
 
     return keySet
 
@@ -1169,11 +1229,8 @@ def listDictKeySet(store):
 
     Returns
     -------
-    keySet : dict
-        The keys are the keys for the new dictionary. The values contain a
-        two element tuple. The first element is the original name of the
-        key and the second is the location of the value to be stored in the
-        original dictionary value array.
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
     maxListLen : int
         The longest list in the dictionary
 
@@ -1182,32 +1239,12 @@ def listDictKeySet(store):
     reframeListDicts, newFlatDict
     """
 
-    # Find all the keys
-    keySet = OrderedDict()
-    maxListLen = 0
-
-    for k in store.keys():
-        v = store[k]
-        dim = shape(v)
-        if len(dim) > 1:
-            if dim[0] > maxListLen:
-                maxListLen = dim[0]
-            # We need to calculate every combination of co-ordinates in the array
-            arrSets = [range(0, i) for i in dim[1:]]
-            # Now record each one
-            for genLoc in listMerGen(*arrSets):
-                loc = list(genLoc)
-                keySet.setdefault(k+str(loc), (k, loc))
-        else:
-            if isinstance(v, (list, ndarray)):
-                if dim[0] > maxListLen:
-                    maxListLen = dim[0]
-            keySet.setdefault(k, (None, None))
+    keySet, maxListLen = dictKeyGen(store, maxListLen=0, returnList=True, abridge=False)
 
     return keySet, maxListLen
 
 
-def newFlatDict(keySet, store, storeLabel):
+def newFlatDict(keySet, store, labelPrefix):
     """
     Takes a list of dictionaries and returns a dictionary of 1D lists.
 
@@ -1216,16 +1253,13 @@ def newFlatDict(keySet, store, storeLabel):
 
     Parameters
     ----------
-    keySet : dict
-        The keys are the keys for the new dictionary. The values contain a
-        two element tuple. The first element is the original name of the
-        key and the second is the location of the value to be stored in the
-        original dictionary value array.
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
     store : list of dicts
         The dictionaries would be expected to have many of the same keys.
         Any dictionary keys containing lists in the input have been split
         into multiple numbered keys
-    storeLabel : string
+    labelPrefix : string
         An identifier to be added to the beginning of each key string.
 
 
@@ -1236,33 +1270,64 @@ def newFlatDict(keySet, store, storeLabel):
         1D lists with 'None' if the keys, value pair was not found in the
         store.
 
+    Examples
+    --------
+    >>> from numpy import array
+    >>> from collections import OrderedDict
+    >>> from outputting import flatDictKeySet
+    >>> store = [{'test': 'string',
+                 'dict': {'test': 1, },
+                 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]),
+                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
+                 'num': 23.6,
+                 'array': array([1, 2, 3])}]
+    >>> keySet = flatDictKeySet(store)
+    >>> newFlatDict(keySet, store, '')
+    OrderedDict([('OrderedDict_0', ['0.5']), ('OrderedDict_1', ['0.5']),
+                 ('list_(0, 0)', [1]), (list_(1, 0)', [7]), ('list_(0, 1)', [2]), ('list_(1, 1)', [8]),
+                 ('list_(0, 2)', [3]), ('list_(1, 2)', [9]), ('list_(0, 3)', [4]), ('list_(1, 3)', [10]),
+                 ('list_(0, 4)', [5]), ('list_(1, 4)', [11]), ('list_(0, 5)', [6]), ('list_(1, 5)', [12]),
+                 ('num', ['23.6']),
+                 ('dict_test', ['1']),
+                 ('test', ["'string'"]),
+                 ('array_[0]', [array([1])]), ('array_[1]', [array([2])]), ('array_[2]', [array([3])])])
     """
+    newStore = OrderedDict()
 
-    partStore = OrderedDict()
+    if labelPrefix:
+        labelPrefix += "_"
 
-    for key, (initKey, loc) in keySet.iteritems():
+    for key, loc in keySet.iteritems():
 
-        partStore.setdefault(key, [])
+        newKey = labelPrefix + str(key)
 
-        if type(initKey) is NoneType:
-            vals = [repr(s.get(key, None)) for s in store]
-            partStore[key].extend(vals)
+        if isinstance(loc, dict):
+            subStore = [s[key] for s in store]
+            keyStoreSet = newFlatDict(loc, subStore, newKey)
+            newStore.update(keyStoreSet)
+
+        elif isinstance(loc, (list, ndarray)):
+            for locCo in loc:
+                tempList = []
+                for s in store:
+                    rawVal = s.get(key, None)
+                    if type(rawVal) is NoneType:
+                        tempList.append(None)
+                    else:
+                        try:
+                            tempList.append(rawVal[locCo])
+                        except TypeError:
+                            tempList.append(listSelection(rawVal, locCo))
+                newStore.setdefault(newKey + "_" + str(locCo), tempList)
 
         else:
-            for s in store:
-                rawVal = s.get(initKey, None)
-                if type(rawVal) is NoneType:
-                    v = None
-                else:
-                    v = rawVal[loc]
-                partStore[key].append(v)
-
-    newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
+            vals = [repr(s.get(key, None)) for s in store]
+            newStore.setdefault(newKey, vals)
 
     return newStore
 
 
-def newListDict(keySet, maxListLen, store, storeLabel):
+def newListDict(keySet, maxListLen, store, labelPrefix):
     """
     Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
 
@@ -1270,18 +1335,14 @@ def newListDict(keySet, maxListLen, store, storeLabel):
 
     Parameters
     ----------
-    keySet : dict
-        The keys are the keys for the new dictionary. The values contain a
-        two element tuple. The first element is the original name of the
-        key and the second is the location of the value to be stored in the
-        original dictionary value array.
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
     maxListLen : int
         The longest list in the dictionary
     store : dict
         A dictionary of numbers, strings, lists and arrays
-    storeLabel : string
+    labelPrefix : string
         An identifier to be added to the beginning of each key string.
-
 
     Returns
     -------
@@ -1289,35 +1350,245 @@ def newListDict(keySet, maxListLen, store, storeLabel):
         The new dictionary with the keys from the keySet and the values as
         1D lists.
 
+    Examples
+    --------
+    >>> from numpy import array
+    >>> from collections import OrderedDict
+    >>> from outputting import listDictKeySet
+    >>> store = {'test': 'string',
+                 'dict': {'test': 1, },
+                 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]),
+                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
+                 'num': 23.6,
+                 'array': array([1, 2, 3])}
+    >>> keySet, maxListLen = listDictKeySet(store)
+    >>> newListDict(keySet, maxListLen, store, '')
+    OrderedDict([('OrderedDict_0', [0.5, None, None, None, None, None]),
+                 ('OrderedDict_1', [0.5, None, None, None, None, None]),
+                 ('list_[0]', [1, 2, 3, 4, 5, 6]),
+                 ('list_[1]', [7, 8, 9, 10, 11, 12]),
+                 ('num', [23.6, None, None, None, None, None]),
+                 ('dict_test', [1, None, None, None, None, None]),
+                 ('test', ['string', None, None, None, None, None]),
+                 ('array', [1, 2, 3, None, None, None])])
     """
 
-    partStore = OrderedDict()
+    newStore = OrderedDict()
 
-    for key, (initKey, loc) in keySet.iteritems():
+    if labelPrefix:
+        labelPrefix += "_"
 
-        if type(initKey) is NoneType:
-            v = store[key]
-            if isinstance(v, (list, ndarray)):
-                vals = list(v)
-                if len(v) < maxListLen:
-                    vals.extend([None for i in range(maxListLen-len(v))])
-            else:
-                # We assume the object is a single value or string
-                vals = [v]
-                vals.extend([None for i in range(maxListLen - 1)])
+    for key, loc in keySet.iteritems():
+
+        newKey = labelPrefix + str(key)
+
+        if isinstance(loc, dict):
+            keyStoreSet = newListDict(loc, maxListLen, store[key], newKey)
+            newStore.update(keyStoreSet)
+
+        elif isinstance(loc, (list, ndarray)):
+            for locCo in loc:
+                vals = list(listSelection(store[key], locCo))
+                vals = pad(vals, maxListLen)
+                newStore[newKey + "_" + str(locCo)] = vals
 
         else:
-            selection = lambda d, l: d[:, l[0]] if len(l) == 1 else selection(d, l[:-1])[:, l[-1]]
-            vals = list(selection(store[initKey], loc))
-
-            if len(vals) < maxListLen:
-                vals.extend([None for i in range(maxListLen - len(vals))])
-
-        partStore[key] = vals
-
-    newStore = OrderedDict(((storeLabel + k, v) for k, v in partStore.iteritems()))
+            v = store[key]
+            if isinstance(v, (list, ndarray)):
+                vals = pad(list(v), maxListLen)
+            else:
+                # We assume the object is a single value or string
+                vals = pad([v], maxListLen)
+            newStore[newKey] = vals
 
     return newStore
+
+
+def pad(vals, maxListLen):
+    vLen = size(vals)
+    if vLen < maxListLen:
+        vals.extend([None for i in range(maxListLen - vLen)])
+    return vals
+
+
+def listSelection(data, loc):
+    """
+
+    Parameters
+    ----------
+    data
+    loc
+
+    Returns
+    -------
+
+    Examples
+    --------
+    >>> listSelection([1,2,3], [0])
+    1
+    >>> listSelection([[1, 2, 3], [4, 5, 6]], [0])
+    [1, 2, 3]
+    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0,2))
+    3
+    """
+    if len(loc) == 1:
+        return data[loc[0]]
+    else:
+        return listSelection(data, loc[:-1])[loc[-1]]
+
+
+def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
+    """
+
+    Parameters
+    ----------
+    store : dict
+        The dictionary to be broken down into keys
+    maxListLen : int or float with no decimal places or None, optional
+        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+        this should stay ``None``. Default ``None``
+    returnList : bool, optional
+        Defines if the lists will be broken into 1D lists or values. Default ``False``
+    abridge : bool, optional
+        Defines if the final dataset will be a summary or the whole lot. Default ``False``
+
+    Returns
+    -------
+    keySet : OrderedDict with values of OrderedDict, list or None
+        The dictionary of keys to be extracted
+    maxListLen : int or None
+        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+        this should stay ``None``.
+
+    Examples
+    --------
+    >>> from numpy import array
+    >>> store = {'test': 'string',
+                 'dict': {'test': 1},
+                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
+                 'num': 23.6,
+                 'array': array([1, 2, 3])}
+    >>> dictKeyGen(store, maxListLen=None, returnList=False, abridge=False)
+    (OrderedDict([('test', None),
+                  ('list', [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)]),
+                  ('array', array([[0], [1], [2]])),
+                  ('num', None),
+                  ('dict', OrderedDict([('test', None)]))]),
+    None)
+    >>> dictKeyGen(store, maxListLen=None, returnList=False, abridge=True)
+    (OrderedDict([('test', None),
+                  ('list', None),
+                  ('array', array([[0], [1], [2]])),
+                  ('num', None),
+                  ('dict', OrderedDict([('test', None)]))]),
+    None)
+    >>> dictKeyGen(store, maxListLen=None, returnList=True, abridge=True)
+    (OrderedDict([('test', None),
+                  ('list', array([[0], [1]])),
+                  ('array', None),
+                  ('num', None),
+                  ('dict', OrderedDict([('test', None)]))]),
+    6L)
+    >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
+    (OrderedDict([('test', None),
+                  ('list', array([[0], [1]])),
+                  ('array', None),
+                  ('num', None),
+                  ('dict', OrderedDict([('test', None)]))]),
+    7)
+    """
+    keySet = OrderedDict()
+
+    for k in store.keys():
+        v = store[k]
+        if isinstance(v, (list, ndarray)):
+            listSet, maxListLen = listKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
+            if listSet is not NoneType:
+                keySet.setdefault(k, listSet)
+        elif isinstance(v, dict):
+            dictKeySet, maxListLen = dictKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
+            keySet.setdefault(k, dictKeySet)
+        else:
+            keySet.setdefault(k, None)
+
+    return keySet, maxListLen
+
+
+def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
+    """
+
+    Parameters
+    ----------
+    data : numpy.ndarray or list
+        The list to be broken down
+    maxListLen : int or float with no decimal places or None, optional
+        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+        this should stay ``None``. Default ``None``
+    returnList : bool, optional
+        Defines if the lists will be broken into 1D lists or values. Default ``False``
+    abridge : bool, optional
+        Defines if the final dataset will be a summary or the whole lot. Default ``False``
+
+    Returns
+    -------
+    returnList : None or list of tuples of ints or ints
+        The list of co-ordinates for the elements to be extracted from the data. If None the list is used as-is.
+    maxListLen : int or None
+        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+        this should stay ``None``.
+
+    Examples
+    --------
+    >>> listKeyGen([1, 2, 3], maxListLen=None, returnList=False, abridge=False)
+    (array([[0], [1], [2]]), None)
+    >>> listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=False, abridge=False)
+    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)], None)
+    >>> listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=True, abridge=False)
+    (array([[0], [1]]), 3L)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=False)
+    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)], None)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=True)
+    (None, None)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)
+    (array([[0], [1]]), 6L)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=2, returnList=True, abridge=True)
+    (array([[0], [1]]), 6L)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=7, returnList=True, abridge=True)
+    (array([[0], [1]]), 7)
+    >>> listKeyGen([[1, 2, 3, 4, 5, 6]], maxListLen=None, returnList=True, abridge=True)
+    (array([[0]]), 6L)
+    >>> listKeyGen([1, 2, 3, 4, 5, 6], maxListLen=None, returnList=True, abridge=True)
+    (None, 6L)
+    """
+
+    if returnList:
+        dataShape = list(shape(data))
+        dataShapeFirst = dataShape.pop(-1)
+        if type(maxListLen) is NoneType:
+            maxListLen = dataShapeFirst
+        elif dataShapeFirst > maxListLen:
+            maxListLen = dataShapeFirst
+
+    else:
+        dataShape = shape(data)
+
+    # If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document
+    if abridge and prod(dataShape) > 10:
+        return None, maxListLen
+
+    # We need to calculate every combination of co-ordinates in the array
+    arrSets = [range(0, i) for i in dataShape]
+    # Now record each one
+    locList = [tuple(loc) for loc in listMerGen(*arrSets)]
+    listItemLen = len(locList[0])
+    if listItemLen == 1:
+        returnList = array(locList)#.flatten()
+    elif listItemLen == 0:
+        return None, maxListLen
+    else:
+        returnList = locList
+
+    return returnList, maxListLen
 
 
 def date():
