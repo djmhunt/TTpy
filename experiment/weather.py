@@ -12,7 +12,7 @@ from __future__ import division, print_function
 from numpy import array, zeros, exp, size, ones, nan
 from numpy.random import rand
 from experimentTemplate import experiment
-# from plotting import dataVsEvents, varDynamics
+# from plotting import dataVsEvents, paramDynamics
 from experimentPlot import experimentPlot
 
 # from utils import varyingParams

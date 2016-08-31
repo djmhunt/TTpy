@@ -17,7 +17,7 @@ import pandas as pd
 from numpy import array, zeros
 from numpy.random import rand
 from experimentTemplate import experiment
-from plotting import dataVsEvents, varDynamics
+from plotting import dataVsEvents, paramDynamics
 from experimentPlot import experimentPlot
 from utils import varyingParams
 
@@ -186,7 +186,7 @@ class Beads(experiment):
             paramSet = varyingParams(self.modelStore, params)
             decisionTimes = array([exp["FirstDecision"] for exp in self.expStore])
 
-            fig = varDynamics(paramSet, decisionTimes, **self.plotArgs)
+            fig = paramDynamics(paramSet, decisionTimes, **self.plotArgs)
 
             return fig
 
