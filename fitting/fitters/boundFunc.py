@@ -23,7 +23,6 @@ def infBound(base = 0):
 
     Examples
     --------
-    >>> from fitting.fitters.boundFunc import infBound
     >>> cst = infBound(base = 160)
     >>> cst([0.5,2], [(0,1),(0,5)])
     160
@@ -70,7 +69,6 @@ def scalarBound(base = 0):
 
     Examples
     --------
-    >>> from fitting.fitters.boundFunc import scalarBound
     >>> cst = scalarBound(base = 160)
     >>> cst([0.5,2], [(0,1),(0,5)])
     160
