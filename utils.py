@@ -272,7 +272,7 @@ def listMergeNP(*args):
 
     elif len(args) == 1:
         a = array(args[0])
-        r = a.reshape((amax(a.shape),1))
+        r = a.reshape((amax(a.shape), 1))
 
         return r
 
@@ -299,7 +299,6 @@ def listMerGen(*args):
 
     Examples
     --------
-    >>> from utils import listMerGen
     >>> for i in listMerGen(0.7): print(repr(i))
     array([ 0.7])
     >>> for i in listMerGen([0.7, 0.1]): print(repr(i))
@@ -735,6 +734,7 @@ def movingaverage(data, windowSize, edgeCorrection=False):
 #    print(listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4]))
 
 #    print(timeit('listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMerge",number=500000))
+
 #    print(timeit('listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])', setup="from __main__ import listMergeNP",number=500000))
 
 #    for p in listMergeNP(array([1,2,3,4,5,6,7,8,9]).T): print(p)
