@@ -198,12 +198,12 @@ class minimize(fitAlg):
             bestResult = self._bestfit(resultSet, boundVals, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
             if bestResult is None:
-                return mInitialParams, float("inf")
+                return mInitialParams, float("inf"), (self.testedParams, self.testedParamQualities)
             else:
                 fitParams = bestResult.x
                 fitVal = bestResult.fun
 
-                return fitParams, fitVal
+                return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
         else:
             optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
