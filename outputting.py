@@ -20,7 +20,7 @@ from os.path import isfile, exists
 from inspect import stack
 from numpy import seterr, seterrcall, array, ndarray, shape, prod, log10, around, size
 from itertools import izip
-from collections import OrderedDict, Callable
+from collections import OrderedDict, Callable, defaultdict
 from types import NoneType
 from copy import copy, deepcopy
 
@@ -41,7 +41,7 @@ class outputting(object):
     saveScript : bool, optional
         If true a copy of the top level script running the current function
         will be copied to the log folder. Only works if save is set to ``True``
-        Default ``False``
+        Default ``True``
     silent : bool, optional
         States if a log is not written to stdout. Defaults to ``False``
     pickleData : bool, optional
@@ -58,6 +58,8 @@ class outputting(object):
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
     saveFittingProgress : bool, optional
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
+    saveFigures : bool, optional
+        Defines if figures are produced or not. Default is ``True``
 
     See Also
     --------
@@ -71,27 +73,16 @@ class outputting(object):
 
         self.silent = kwargs.get('silent', False)
         self.save = kwargs.get('save', True)
-        self.saveScript = kwargs.get('saveScript', False)
+        self.saveScript = kwargs.get('saveScript', True)
         self.pickleData = kwargs.get('pickleData', False)
         self.simRun = kwargs.get('simRun', False)
+        self.saveFittingProgress = kwargs.pop("saveFittingProgress", False)
+        self.saveFigures = kwargs.pop("saveFigures", True)
         self.label = kwargs.pop("simLabel", "Untitled")
         self.logLevel = kwargs.pop("logLevel", logging.INFO)# logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
-        self.saveFittingProgress = kwargs.pop("saveFittingProgress", False)
-
-        self.date = date()
-
-        self.saving()
-
-        self.fancyLogger(logFile=self.logFile, logLevel=self.logLevel, npErrResp=self.npErrResp)
-
-        self.logger = logging.getLogger('Framework')
-        self.loggerSim = logging.getLogger('Simulation')
-
-        message = "Beginning experiment labelled: " + self.label
-        self.logger.info(message)
-
+        
         # Initialise the stores of information
 
         self.expStore = []
@@ -105,6 +96,7 @@ class outputting(object):
         self.partStore = []
         self.fitInfo = None
         self.fitQualStore = []
+        self.outputFileCounts = defaultdict(int)
 
         self.modelSetSize = 0
         self.modelsSize = 0
@@ -115,6 +107,18 @@ class outputting(object):
 
         self.lastExpLabelID = 0
         self.lastModelLabelID = 0
+
+        self.date = date()
+
+        self.saving()
+
+        self.fancyLogger(logFile=self.logFile, logLevel=self.logLevel, npErrResp=self.npErrResp)
+
+        self.logger = logging.getLogger('Framework')
+        self.loggerSim = logging.getLogger('Simulation')
+
+        message = "Beginning experiment labelled: " + self.label
+        self.logger.info(message)        
 
     def end(self):
         """
@@ -196,12 +200,16 @@ class outputting(object):
             end = "." + extension
 
         fileName = self.outputFolder + handle
-        if exists(fileName + end):
-            i = 1
-            while exists(fileName + "_" + str(i) + end):
-                i += 1
-            fileName += "_" + str(i)
 
+        lastCount = self.outputFileCounts[fileName]
+        self.outputFileCounts[fileName] += 1
+        if lastCount > 0:
+            fileName += "_" + str(lastCount)
+        # if exists(fileName + end):
+        #     i = 1
+        #     while exists(fileName + "_" + str(i) + end):
+        #         i += 1
+        #     fileName += "_" + str(i)
         fileName += end
 
         return fileName
@@ -566,8 +574,9 @@ class outputting(object):
             message = "Store data for participant " + str(self.modelSetSize)
             self.logger.info(message)
 
-            ep = plotFitting(participant, modelData, fitQuality)
-            self.savePlots(ep)
+            if self.saveFigures:
+                ep = plotFitting(participant, modelData, fitQuality)
+                self.savePlots(ep)
 
             if self.saveFittingProgress:
                 self.recordFittingSequence(fittingData, fitQuality, label, participant)
@@ -628,6 +637,9 @@ class outputting(object):
 
         self._makeFittingDataSet(paramSet, fitQualities, fitQuality, extendedLabel, participant)
 
+        if not self.saveFigures:
+            return
+
         axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
 
         if len(paramSet) == 1:
@@ -668,6 +680,9 @@ class outputting(object):
         savePlots : Saves the plots created by modelPlot
         """
 
+        if not self.saveFigures:
+            return
+
         mp = modelPlot(self.modelStore[-1], self.modelParamStore[-1], self.modelLabelStore[-1])
 
         message = "Produce plots for the model " + self.modelLabelStore[-1]
@@ -689,6 +704,9 @@ class outputting(object):
         model.modelSetPlot : The template for modelSetPlot class for each model
         savePlots : Saves the plots created by modelSetPlot
         """
+
+        if not self.saveFigures:
+            return
 
         modelSet = self.modelStore[-self.modelSetSize:]
         modelParams = self.modelParamStore[-self.modelSetSize:]
@@ -719,6 +737,9 @@ class outputting(object):
         experiment.experimentPlot : The template for experimentPlot class for each experiment
         savePlots : Saves the plots created by experimentPlot
         """
+
+        if not self.saveFigures:
+            return
 
         expPlot, plotArgs = expInput
 
@@ -755,6 +776,8 @@ class outputting(object):
         experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment
         savePlots : Saves the plots created by experimentPlot
         """
+        if not self.saveFigures:
+            return
 
         expPlot, plotArgs = expInput
 
