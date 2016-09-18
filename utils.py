@@ -10,12 +10,12 @@ import logging
 import sys
 import collections
 
-from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve
-from itertools import izip, chain
+from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange
+#from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
 from collections import defaultdict, Callable
-from types import NoneType
+#from types import NoneType
 from sys import exc_info
 from traceback import extract_tb
 
@@ -707,22 +707,35 @@ def movingaverage(data, windowSize, edgeCorrection=False):
 
     Examples
     --------
-    >>> movingaverage([1,1,1,1,1], 3)
+    >>> movingaverage([1, 1, 1, 1, 1], 3)
     array([ 0.66666667, 1, 1, 1, 0.66666667])
 
-    >>> movingaverage([1,1,1,1,1], 3, edgeCorrection=True)
+    >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)
+    array([ 0.5 ,  0.75,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  0.75])
+
+    >>> movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)
     array([ 1,  1,  1,  1,  1])
 
     >>> movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
     array([ 1.5,  2,  3,  4,  4.5])
 
+    >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)
+    array([1 ,  1,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  1])
+
+    >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 7, edgeCorrection=True)
+    array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
     """
     window = ones(int(windowSize)) / float(windowSize)
     convolution = convolve(data, window, 'same')
 
-    if edgeCorrection:
-        convolution[0] = convolution[0]*3/2
-        convolution[-1] = convolution[-1] * 3 / 2
+    if edgeCorrection and windowSize > 1:
+        leftEdge = windowSize // 2
+        leftSet = arange(leftEdge)
+        convolution[:leftEdge] /= ((leftEdge + (windowSize % 2) + leftSet) / windowSize)
+        rightEdge = (windowSize - 1) // 2
+        rightSet = arange(rightEdge, 0, -1)
+        convolution[-rightEdge:] /= ((leftEdge + rightSet) / windowSize)
 
     return convolution
 
