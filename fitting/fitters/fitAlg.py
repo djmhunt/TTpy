@@ -111,7 +111,12 @@ class fitAlg(object):
 
     def fitness(self, *params):
         """
-        Generates a fit quality value used by the fitting function.
+        Generates a fit quality value used by the fitting function. This is the function passed to the fitting function.
+
+        Parameters
+        ----------
+        *params : array of floats
+            The paramaters proposed by the fitting algorithm
 
         Returns
         -------
@@ -132,6 +137,7 @@ class fitAlg(object):
         if self.allBounds and self.invalidParams(*pms):
             return self.boundCostFunc(pms, self.boundVals)
 
+        # Run the simulation with these parameters
         modVals = self.sim(*pms)
 
         fitQuality = self.fitQualFunc(modVals)
@@ -249,7 +255,6 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> from fitting.fitters.fitAlg import fitAlg
         >>> a = fitAlg()
         >>> self.startParams([0.5,0.5], numPoints=2)
         array([[ 0.33333333,  0.33333333],
@@ -264,7 +269,7 @@ class fitAlg(object):
 
         else:
             if len(bounds) != len(initialParams):
-                raise ValueError('Bounds do not fit number of intial parameters', str(len(bounds)), str(len(initialParams)))
+                raise ValueError('Bounds do not fit number of initial parameters', str(len(bounds)), str(len(initialParams)))
 
             startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in izip(initialParams, bounds))
 
