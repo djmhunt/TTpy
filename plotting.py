@@ -12,8 +12,8 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from numpy import array, meshgrid, fromfunction, arange, linspace, sort, shape
-from scipy import histogram, amin, amax
+from numpy import array, meshgrid, fromfunction, arange, linspace, sort, shape, nanmax, nanmin
+from scipy import histogram#, amin, amax
 from scipy.interpolate import griddata
 from matplotlib.cm import get_cmap
 #from mayavi import mlab #import quiver3d, flow
@@ -179,8 +179,8 @@ def paramD1Dynamics(X, Y, axisLabels, **kwargs):
     fig = plt.figure()  # figsize=(8, 6), dpi=80)
     ax = fig.add_subplot(111)
 
-    maxVal = amax(Y)
-    minVal = amin(Y)
+    maxVal = nanmax(Y)
+    minVal = nanmin(Y)
     if (minVal > 0) or (minVal is None):
         minVal = 0
     maxVal += (maxVal-minVal)/100.0
@@ -246,8 +246,8 @@ def paramD2Dynamics(X, Y, z, axisLabels, **kwargs):
     minZ = kwargs.get("minZ", 0)
     cmap = kwargs.get("cmap", local_cmap)
 
-    zMin = amin(z)
-    zMax = amax(z)
+    zMin = nanmin(z)
+    zMax = nanmax(z)
     if zMin == zMax:
         logger = logging.getLogger('Plots')
         logger.warning("There is no variation in the " + yLabel + " across " + xLabel)
@@ -284,20 +284,20 @@ def paramD3Dynamics(X, Y, Z, f, axisLabels, **kwargs):
 
     paraOut = kwargs.get("paraviewInput", "CSV")
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
-    zMin = amin(Y)
-    zMax = amax(Y)
+    xMin = nanmin(X)
+    xMax = nanmax(X)
+    yMin = nanmin(Y)
+    yMax = nanmax(Y)
+    zMin = nanmin(Y)
+    zMax = nanmax(Y)
 
     xS = sort(list(set(X)))
     yS = sort(list(set(Y)))
     zS = sort(list(set(Z)))
 
-    dx = amin(xS[1:]-xS[:-1])
-    dy = amin(yS[1:]-yS[:-1])
-    dz = amin(zS[1:]-zS[:-1])
+    dx = nanmin(xS[1:]-xS[:-1])
+    dy = nanmin(yS[1:]-yS[:-1])
+    dz = nanmin(zS[1:]-zS[:-1])
     xJumps = (xMax - xMin)/dx + 1
     yJumps = (yMax - yMin)/dy + 1
     zJumps = (zMax - zMin)/dz + 1
@@ -381,7 +381,7 @@ def dataVsEvents(data, events, labels, eventLabel, axisLabels, dataFormatting={}
     elif len(dataShape) == 2 and dataShape[1] == 1:
         data = data.T
 
-    if len(data) > 8:
+    if len(data) > 9:
         fig = dataSpectrumVsEvents(data, events, eventLabel, axisLabels)
         return fig
 
@@ -488,8 +488,8 @@ def pandasPlot(data, axisLabels = {}):
     yLabel = axisLabels.pop("yLabel", "Value")
     title = axisLabels.pop("title", "")
 
-#    yMin = axisLabels.pop("yMin", amin(Y))
-#    yMax = axisLabels.pop("yMax", amax(Y))
+#    yMin = axisLabels.pop("yMin", nanmin(Y))
+#    yMax = axisLabels.pop("yMax", nanmax(Y))
 #    xMin = axisLabels.pop("xMin", min(x))
 
     ax = data.plot(title=title)
@@ -532,13 +532,13 @@ def axScatter(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap):
         The colorbar object for the figure if one has already been created
     """
 
-    maxZ = amax(z)
+    maxZ = nanmax(z)
 
     # For changing the dot size
     # minC = 1
     # maxC = 301
     # zScale = (maxC - minC) / float(maxZ - minZ)
-    # C = minC + (z-amin(z))*zScale
+    # C = minC + (z-nanmin(z))*zScale
 
     sc = ax.scatter(X.flatten(), Y.flatten(), s=10, c=z, cmap=cmap, edgecolors="face")
 
@@ -582,16 +582,16 @@ def axImage(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap):
         The colorbar object for the figure if one has already been created
     """
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
+    xMin = nanmin(X)
+    xMax = nanmax(X)
+    yMin = nanmin(Y)
+    yMax = nanmax(Y)
 
     xS = sort(list(set(X)))
     yS = sort(list(set(Y)))
 
-    dx = amin(xS[1:]-xS[:-1])
-    dy = amin(yS[1:]-yS[:-1])
+    dx = nanmin(xS[1:]-xS[:-1])
+    dy = nanmin(yS[1:]-yS[:-1])
 
     xJumps = (xMax - xMin)/dx + 2
     yJumps = (yMax - yMin)/dy + 2
@@ -622,7 +622,7 @@ def axImage(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap):
         # Check if the range needs increasing
         oldCMin, oldCMax = im.get_clim()
         minZ = oldCMin if oldCMin < minZ else minZ
-        maxZ = oldCMax if oldCMax > amax(z) else amax(z)
+        maxZ = oldCMax if oldCMax > nanmax(z) else nanmax(z)
         im.set_clim([minZ, maxZ])
 
     return im, CB
@@ -657,15 +657,19 @@ def axContour(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap, maxCon
         The colorbar object for the figure if one has already been created
     """
 
-    xMin = amin(X)
-    xMax = amax(X)
-    yMin = amin(Y)
-    yMax = amax(Y)
-    maxZ = amax(z)
+    xMin = nanmin(X)
+    xMax = nanmax(X)
+    yMin = nanmin(Y)
+    yMax = nanmax(Y)
+    maxZ = nanmax(z)
 
     xi = linspace(xMin, xMax, 50)
     yi = linspace(yMin, yMax, 50)
-    ZGrid = griddata((X, Y), z, (xi[None, :], yi[:, None]), method='cubic')
+    ZGrid = griddata((X, Y), 
+                     z, 
+                     (xi[None, :], yi[:, None]), 
+                     fill_value=0, 
+                     method='cubic')
     XGrid, YGrid = meshgrid(xi, yi)
 
     if maxZ == minZ:
@@ -801,8 +805,8 @@ def axPlotlines(ax, x, Y, labels, axisLabels, dataFormatting={}):
     markersize = dataFormatting.pop('markersize', [3 for i in xrange(len(lpl))])
 
 
-    yMin = axisLabels.pop("yMin", amin(Y))
-    yMax = axisLabels.pop("yMax", amax(Y))
+    yMin = axisLabels.pop("yMin", nanmin(Y))
+    yMax = axisLabels.pop("yMax", nanmax(Y))
     xMin = axisLabels.pop("xMin", min(x))
     Ys = Y.shape
     if len(Ys) == 1:
@@ -853,7 +857,7 @@ def axSpectrum(ax, Y, axisLabels):
     title = axisLabels.pop("title", "")
 
     minVal = axisLabels.pop("yMin", 0)
-    maxVal = axisLabels.pop("yMax", amax(Y))
+    maxVal = axisLabels.pop("yMax", nanmax(Y))
     xMin = axisLabels.pop("xMin", 0)
     xMax = axisLabels.pop("xMax", len(Y[0]))
 
@@ -980,10 +984,10 @@ def addCircle(xPos, yPos, ax, circleSize=[2], colour=["red"]):
 #    fig = plt.figure()  # figsize=(8, 6), dpi=80)
 #    ax = fig.add_subplot(111)
 #
-#    minZ = amin(Z)-1
-#    maxZ = amax(Z)+2
+#    minZ = nanmin(Z)-1
+#    maxZ = nanmax(Z)+2
 #    levels = arange(minZ,maxZ,2)
-#    area = [amin(X),amax(X),amin(Y),amax(Y)]
+#    area = [nanmin(X),nanmax(X),nanmin(Y),nanmax(Y)]
 #
 #    qm = plt.pcolormesh(X, Y, Z,
 #                   cmap = local_cmap)
