@@ -7,6 +7,7 @@ from __future__ import division, print_function
 from fit import fit
 
 from itertools import izip
+from types import NoneType
 
 class fitter(fit):
 
@@ -47,24 +48,23 @@ class fitter(fit):
 
     def fitness(self, *modelParameters):
         """
-        Used by a fitter to generate a fit for given model parameters
+        Used by a fitter to generate the list of values characterising how well given model parameters perform
         
         Parameters
         ----------
         modelParameters : list of floats
-            A list of the parameters used by the model in the order previously
-            defined
+            A list of the parameters used by the model in the order previously defined
             
         Returns
         -------
-        fitQuality : list of floats
-            The quality of the fit. In this case defined the differences 
-            between the model choices and the participant choices
+        modelPerformance : list of floats
+            The performance metric for the model that will be used to characterise the quality of the fit.
             
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
         fitting.fitters.fitAlg.fitAlg : The general fitting class
+        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         # Run model with given parameters
@@ -85,7 +85,12 @@ class fitter(fit):
 
         diff = modelChoices - partChoices
 
-        return diff
+        if self.fitSubsetChosen is not NoneType:
+            modelPerformance = diff[self.fitSubsetChosen]
+        else:
+            modelPerformance = diff
+
+        return modelPerformance
 
     def fittedModel(self, *modelParameters):
         """

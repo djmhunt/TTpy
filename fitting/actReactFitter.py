@@ -9,9 +9,9 @@ import logging
 from fit import fit
 
 from itertools import izip
-from numpy import log, concatenate, array, ones
-from numpy import sum as asum
+from numpy import array, ones
 from utils import errorResp
+from types import NoneType
 #
 #from utils import listMerGen
 
@@ -69,13 +69,12 @@ class fitter(fit):
         Parameters
         ----------
         modelParameters : list of floats
-            A list of the parameters used by the model in the order previously
-            defined
+            A list of the parameters used by the model in the order previously defined
 
         Returns
         -------
-        modelChoices : list of floats
-            The choices made by the model that will be used to characterise the quality of the fit.
+        modelPerformance : list of floats
+            The performance metric for the model that will be used to characterise the quality of the fit.
 
         See Also
         --------
@@ -100,7 +99,12 @@ class fitter(fit):
         modelData = modelInstance.outputEvolution()
         modelChoices = modelData[self.modelparam]
 
-        return modelChoices
+        if self.fitSubsetChosen is not NoneType:
+            modelPerformance = modelChoices[self.fitSubsetChosen]
+        else:
+            modelPerformance = modelChoices
+
+        return modelPerformance
 
     def fittedModel(self, *modelParameters):
         """

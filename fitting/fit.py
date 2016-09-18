@@ -6,7 +6,7 @@ from __future__ import division, print_function
 
 from itertools import izip
 from collections import OrderedDict
-from numpy import array, concatenate
+from numpy import array, concatenate, isnan, ndarray
 from types import NoneType
 from copy import deepcopy
 
@@ -39,6 +39,10 @@ class fit(object):
         If a floating point error occurs when running a fit the fit function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
+    fitSubset : ``float('Nan')``, ``None`` or list of int, optional
+        Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+        This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
+        feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
         
     Attributes
     ----------
@@ -62,6 +66,7 @@ class fit(object):
         self.partStimuliParams = kwargs.pop('stimuliParams', None)
         self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
+        self.fitSubset = kwargs.pop('fitSubset', None)
 
         self.fitInfo = {'Name': self.Name,
                         'participantChoiceParam': partChoiceParam,
@@ -128,6 +133,7 @@ class fit(object):
             They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
             fit qualities of these parameters.
         """
+        fitSubset = self.fitSubset
 
         self.exp = exp
         self.model = model
@@ -140,6 +146,16 @@ class fit(object):
         self.partRewards = partData[self.partRewardParam]
 
         self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
+
+        if fitSubset is not None:
+            if isinstance(fitSubset, [list, ndarray]):
+                self.fitSubsetChosen = fitSubset
+            elif isnan(fitSubset):
+                self.fitSubsetChosen = isnan(self.partRewards)
+            else:
+                self.fitSubsetChosen = None
+        else:
+            self.fitSubsetChosen = None
 
         fitVals, fitQuality, testedParams = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
@@ -304,8 +320,8 @@ class fit(object):
             partDataLen = len(partData[self.partRewardParam])
             stimuliData = (None for i in xrange(partDataLen))
         else:
-            stimuliData = concatenate([partData[s] for s in stimuli], 1)
-            partDataLen = len(stimuliData)
+            stimuliData = array([partData[s] for s in stimuli]).T
+            partDataLen = stimuliData.shape[0]
 
         if type(validActions) is NoneType:
             actionData = (None for i in xrange(partDataLen))
