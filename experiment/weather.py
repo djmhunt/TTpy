@@ -31,9 +31,16 @@ cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1],
                          [0, 1, 1, 1], [1, 0, 0, 0], [1, 1, 1, 0], [1, 0, 0, 1]]}
 defaultCues = cueSets["Pickering"]
 
-actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2,
-                                1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, nan,
-                                nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan, nan]}
+actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 
+                                1, 2, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 2, 
+                                2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 
+                                2, 1, 1, 1, 1, 2, 2, 2, nan, nan, nan, nan, nan, 
+                                nan, nan, nan, nan, nan, nan, nan, nan, nan],
+                  "TestRew": [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 
+                              0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1,
+                              1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0,
+                              0, 0, 0, 1, 1, 1, nan, nan, nan, nan, nan, nan, 
+                              nan, nan, nan, nan, nan, nan, nan, nan]}
 defaultActualities = actualityLists["Pickering"]
 
 
@@ -288,12 +295,15 @@ def weatherStimAllAction(numActions):
 def weatherRewDiff():
     """
     Processes the weather reward for models expecting reward corrections
+    
+    Parameters
+    ----------
 
     Returns
     -------
     weatherRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
+        The function expects to be passed a tuple containing the reward the
+        last action and the last stimuli. The function returns the reward.
 
     Attributes
     ----------
@@ -324,9 +334,9 @@ def weatherRewDualCorrection(epsilon):
     Returns
     -------
     deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The reward that is a float and action is {0,1}. The
-        function returns a list of length 2.
+        The function expects to be passed a tuple containing the reward the
+        last action and the last stimuli. The reward that is a float and 
+        action is {0,1}. The function returns a list of length 2.
 
     Attributes
     ----------
