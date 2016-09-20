@@ -12,7 +12,7 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from numpy import array, meshgrid, fromfunction, arange, linspace, sort, shape, nanmax, nanmin
+from numpy import array, meshgrid, fromfunction, arange, linspace, sort, shape, nanmax, nanmin, log10
 from scipy import histogram#, amin, amax
 from scipy.interpolate import griddata
 from matplotlib.cm import get_cmap
@@ -676,7 +676,8 @@ def axContour(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap, maxCon
         maxZ += 1
     zSorted = sort(z)
     diffSort = sort(zSorted[1:]-zSorted[:-1])
-    dz = diffSort[0]
+    usableDiffs = diffSort[diffSort > 10**(round(log10(diffSort[-1])) - 2)]
+    dz = usableDiffs[0]
     potentialJumps = (maxZ - minZ)/dz
     if potentialJumps > maxContours:
         zJumps = maxContours
