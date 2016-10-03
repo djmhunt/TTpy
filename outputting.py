@@ -18,11 +18,11 @@ import shutil as shu
 from os import getcwd, makedirs
 from os.path import isfile, exists
 from inspect import stack
-from numpy import seterr, seterrcall, array, ndarray, shape, prod, log10, around, size
+from numpy import seterr, seterrcall, array, ndarray, shape, prod, log10, around, size, amax, amin
 from itertools import izip
 from collections import OrderedDict, Callable, defaultdict
 from types import NoneType
-from copy import copy, deepcopy
+from copy import copy
 
 from utils import listMerGen, callableDetailsString
 from participants.fitResults import plotFitting
@@ -641,17 +641,27 @@ class outputting(object):
             return
 
         axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
+        
+        fitQualityMax = amax(fitQualities)
+        fitQualityMin = amin(fitQualities)
+        if fitQualityMin <= 0:
+            fitQualityMin = 1
+            
+        if (log10(fitQualityMax) - log10(fitQualityMin)) > 2 and log10(fitQualityMin) >= 0:
+            results = log10(fitQualities)
+        else:
+            results = fitQualities
 
         if len(paramSet) == 1:
             axisLabels["yLabel"] = r'log_{10}(Fit quality)'
             fig = paramDynamics(paramSet,
-                                log10(fitQualities),
+                                results,
                                 axisLabels)
             addPoint([paramSet[paramLabels[0]][-1]], [fitQuality], fig.axes[0])
         elif len(paramSet) == 2:
             axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
             fig = paramDynamics(paramSet,
-                                log10(fitQualities),
+                                results,
                                 axisLabels,
                                 contour=True,
                                 heatmap=False,
@@ -660,7 +670,7 @@ class outputting(object):
             addPoint([paramSet[paramLabels[0]][-1]], [paramSet[paramLabels[1]][-1]], fig.axes[0])
         else:
             fig = paramDynamics(paramSet,
-                                log10(fitQualities),
+                                results,
                                 axisLabels)
 
         self.savePlots([(extendedLabel, fig)])
