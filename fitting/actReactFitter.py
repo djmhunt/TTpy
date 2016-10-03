@@ -9,7 +9,7 @@ import logging
 from fit import fit
 
 from itertools import izip
-from numpy import array, ones
+from numpy import array, ones, isnan
 from utils import errorResp
 from types import NoneType
 #
@@ -92,7 +92,7 @@ class fitter(fit):
             logger.warning(message + "\n. Abandoning fitting with parameters: " 
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning fit value " + repr(self.fpRespVal))
-            return ones(self.partRewards.shape)*self.fpRespVal  
+            return ones(array(self.partRewards).shape)*self.fpRespVal  
             
         # Pull out the values to be compared
 
@@ -103,6 +103,15 @@ class fitter(fit):
             modelPerformance = modelChoices[self.fitSubsetChosen]
         else:
             modelPerformance = modelChoices
+            
+        if isnan(modelPerformance).any():
+            logger = logging.getLogger('Fitter')
+            message = "model performance values contain NaN" 
+            logger.warning(message + ".\n Abandoning fitting with parameters: " 
+                                   + repr(self.getModParams(*modelParameters))
+                                   + " Returning fit value " + repr(self.fpRespVal))
+            return ones(array(self.partRewards).shape)*self.fpRespVal 
+            
 
         return modelPerformance
 
