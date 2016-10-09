@@ -6,7 +6,7 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import array, around
+from numpy import array, around, nanargmin, isnan
 from scipy import optimize
 from itertools import izip
 from types import NoneType
@@ -49,8 +49,8 @@ class evolutionary(fitAlg):
     Name : string
         The name of the fitting strategies
     strategySet : list
-        The list of valid fitting strategies. 
-        Currently these are: 'best1bin', 'best1exp', 'rand1exp', 
+        The list of valid fitting strategies.
+        Currently these are: 'best1bin', 'best1exp', 'rand1exp',
         'randtobest1exp', 'best2exp', 'rand2exp', 'randtobest1bin',
         'best2bin', 'rand2bin', 'rand1bin'
         For all strategies, use 'all'
@@ -212,7 +212,9 @@ class evolutionary(fitAlg):
         else:
             if optimizeResult.message == 'Maximum number of iterations has been exceeded.':
                 message = "Maximum number of fitting iterations has been exceeded. " \
-                          "Returning the best results found so far."
+                          "Returning the best results found so far: "
+                message += "Params " + str(optimizeResult.x)
+                message += " Fit quality " + str(optimizeResult.fun)
                 self.logger.info(message)
                 return optimizeResult
             else:
@@ -224,7 +226,7 @@ class evolutionary(fitAlg):
         if len(resultSet) == 0:
             return None
 
-        genFitVal, genFitid = min((r.fun, idx) for (idx, r) in enumerate(resultSet))
+        genFitid = nanargmin([r.fun for r in resultSet])
 
         # Debug code
 #        data = {}

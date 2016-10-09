@@ -8,7 +8,7 @@ import logging
 
 from fitAlg import fitAlg
 
-from numpy import array, around
+from numpy import array, around, nanargmin
 from scipy import optimize
 from itertools import izip
 
@@ -238,7 +238,7 @@ class minimize(fitAlg):
         if len(resultSet) == 0:
             return None
 
-        genFitVal, genFitid = min((r.fun, idx) for (idx, r) in enumerate(resultSet))
+        genFitid = nanargmin([r.fun for r in resultSet])
 
         # Debug code
 #        data = {}
@@ -269,7 +269,7 @@ class minimize(fitAlg):
                 return resultSet[genFitid]
 
             else:
-                fitVal, fitid = min((r.fun, idx) for (idx, r) in enumerate(reducedResults))
+                fitid = nanargmin([r.fun for r in reducedResults])
 
                 return reducedResults[fitid]
 
