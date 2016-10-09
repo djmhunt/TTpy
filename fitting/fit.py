@@ -148,7 +148,7 @@ class fit(object):
         self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
 
         if fitSubset is not None:
-            if isinstance(fitSubset, [list, ndarray]):
+            if isinstance(fitSubset, (list, ndarray)):
                 self.fitSubsetChosen = fitSubset
             elif isnan(fitSubset):
                 self.fitSubsetChosen = isnan(self.partRewards)
