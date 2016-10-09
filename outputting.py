@@ -585,6 +585,7 @@ class outputting(object):
                 self.pickleLog(expData, label)
                 self.pickleLog(modelData, label)
                 self.pickleLog(participant, label)
+                self.pickleLog(fittingData, label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
