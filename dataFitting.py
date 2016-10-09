@@ -53,7 +53,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
     outputting.recordFittingParams(fitter.info())
 
     message = "Beginning the data fitting"
-    logger.debug(message)
+    logger.info(message)
 
     for modelInfo in models.iterFitting():
 
@@ -69,7 +69,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             # Find the best model values from those proposed
 
             message = "Beginning participant fit"
-            logger.debug(message)
+            logger.info(message)
 
             modelFitted, fitQuality, testedParams = fitter.participant(exp, model, modelSetup, participant)
 
