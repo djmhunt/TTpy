@@ -4,7 +4,9 @@ This module allows for the importing of participant data for use in fitting
 
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
+
+import cPickle as pickle
 
 from os import listdir
 from scipy.io import loadmat
@@ -12,6 +14,8 @@ from numpy import array, shape
 from itertools import izip, chain
 from pandas import read_excel
 from types import NoneType
+from collections import Iterable, defaultdict, deque
+from re import search, finditer
 
 from utils import listMerge
 
@@ -87,6 +91,10 @@ def data(folder, fileType, **kwargs):
         
         dataSet = getxlsxData(folder, files, **kwargs)
 
+    elif fileType == "pickle":
+
+        dataSet = getpickleData(folder, files, **kwargs)
+
     else:
         dataSet = []
 
@@ -150,7 +158,7 @@ def sortStrings(unorderedList, suffix):
     See Also
     --------
     intCore : sorts the strings with the prefix and suffix removed if they are a number
-    getPrefix : identifies prefixes all strings have
+    getUniquePrefix : identifies prefixes all strings have
     
     Examples
     --------
@@ -164,7 +172,7 @@ def sortStrings(unorderedList, suffix):
 
     suffixLen = len(suffix)
     
-    prefix = getPrefix(unorderedList, suffixLen)
+    prefix = getUniquePrefix(unorderedList, suffixLen)
     
     sortedList = intCore(unorderedList, prefix, suffix)
     if sortedList:
@@ -173,7 +181,7 @@ def sortStrings(unorderedList, suffix):
         return unorderedList   
 
 
-def getPrefix(unorderedList, suffixLen):
+def getUniquePrefix(unorderedList, suffixLen):
     """
     Identifies any initial part of strings that are identical 
     for all string
@@ -195,7 +203,7 @@ def getPrefix(unorderedList, suffixLen):
     --------
     >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
     >>> suffixLen = 4
-    >>> getPrefix(dataFiles, suffixLen)
+    >>> getUniquePrefix(dataFiles, suffixLen)
     'subj'
 
     """
@@ -290,7 +298,6 @@ def getmatData(folder, files):
     """
 
     dataSets = []
-    folder = folder
 
     for f in files:
 
@@ -343,7 +350,6 @@ def getxlsxData(folder, files, **kwargs):
     --------
     pandas.read_excel
 
-    
     """
     
     splitBy = kwargs.pop('splitBy', [])
@@ -351,7 +357,6 @@ def getxlsxData(folder, files, **kwargs):
         splitBy = [splitBy]
     
     dataSets = []
-    folder = folder
 
     for f in files:
 
@@ -378,3 +383,153 @@ def getxlsxData(folder, files, **kwargs):
             dataSets.append(datDict)
             
     return dataSets
+
+
+def getpickleData(folder, files, **kwargs):
+    """
+    Loads the data from python pickle files
+
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    files : list of strings
+        A list of filenames
+    validFiles : list of strings or None, optional
+        A list of the names of numbered pickled files to be imported. Default None
+    groupbyNumber : bool, optional
+        Defines if the different valid files should be put together by their number. Default ``False``
+
+    Returns
+    -------
+    dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
+
+    Examples
+    --------
+
+    """
+    validFiles = kwargs.pop('validFiles', None)
+    groupbyNumber = kwargs.pop('groupbyNumber', False)
+
+    if type(validFiles) is NoneType:
+        validFileList = files
+    else:
+        # Check which files are valid
+        validFileList = []
+        for f in files:
+            if sum(1 for v in validFiles if f.startswith(v)) > 0:
+                validFileList.append(f)
+
+    if groupbyNumber:
+        dataSets = getpickledGroupedValidFiles(folder, validFileList)
+    else:
+        dataSets = getpickleValidFiles(folder, validFileList)
+
+    return dataSets
+
+
+def getpickleValidFiles(folder, validFileList):
+    """
+    Loads the data from valid python pickle files
+
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    validFileList : list of strings
+        A list of the names of numbered pickled files to be imported
+
+    Returns
+    -------
+    dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
+
+    Examples
+    --------
+
+    """
+    dataSets = []
+    for fileName in validFileList:
+        dataSets.append(getpickledFileData(folder, fileName))
+
+    return dataSets
+
+
+def getpickledGroupedValidFiles(folder, validFileList):
+    """
+    Loads the data from valid python pickle files and returns them grouped by number
+
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    validFileList : list of strings
+        A list of the names of numbered pickled files to be imported
+
+    Returns
+    -------
+    dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
+
+    Examples
+    --------
+
+    """
+    dataSets = []
+
+    # group by the last number on the filename
+    groupedFiles = defaultdict(list)
+    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in validFileList]
+    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, validFileList)]
+    for n, d, f in izip(numsplit, footSplit, validFileList):
+        groupedFiles[f[n:d]].append((f[:n], f[d:]))
+
+    # Sort the keys for groupFiles
+    sortedGroups = sorted(groupedFiles.iterkeys())
+
+    for gn in sortedGroups:
+        fileGroup = groupedFiles[gn]
+        fileNames = [(wrap[0], wrap[0] + gn + wrap[1]) for wrap in fileGroup]
+        dataSets.update({getpickledFileData(folder, fileName, header=header) for header, fileName in fileNames})
+
+    return dataSets
+
+
+def getpickledFileData(folder, fileName, header=''):
+    """
+    Loads the data from a python pickle file and returns it as a dictionary if it is not already one
+
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    validFileList : list of strings
+        A list of the names of numbered pickled files to be imported
+    header : string, optional
+        A prefix to put in front of each dictionary key
+
+    Returns
+    -------
+    dataSet : dictionary
+        A dictionary of the data contained in the pickled file.
+
+    Examples
+    --------
+
+    """
+    with open(folder + fileName) as o:
+        dat = pickle.load(o)
+        dat["fileName"] = fileName
+
+        if isinstance(dat, dict):
+            finalData = {header + k: v for k, v in dat.iteritems()}
+        elif isinstance(dat, Iterable):
+            transformedData = dict()
+            for n, i in enumerate(dat):
+                transformedData[header + str(n)] = i
+            finalData = transformedData
+        else:
+            finalData = {header + "data": dat}
+
+    return finalData
