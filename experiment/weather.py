@@ -7,7 +7,7 @@
             Learning & Memory(Cold Spring Harbor, N.Y.), 1(2), 106–120.
             http://doi.org/10.1101/lm.1.2.106
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from numpy import array, zeros, exp, size, ones, nan
 from numpy.random import rand

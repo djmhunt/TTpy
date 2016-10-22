@@ -5,7 +5,7 @@
 A collection of decision making functions where there are only two possible actions
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from warnings import warn
 

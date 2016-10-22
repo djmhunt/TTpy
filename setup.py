@@ -56,7 +56,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='neuroscience modelling Goldsmiths psychology',
+    keywords='neuroscience modelling Goldsmiths psychology PhD Dominic_Hunt',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().

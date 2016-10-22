@@ -7,7 +7,7 @@
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9.
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 #matplotlib.interactive(True)
 import logging

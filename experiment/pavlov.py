@@ -8,7 +8,7 @@
                 doi:10.3389/fnhum.2011.00075
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from numpy import array, ones, zeros, concatenate
 from numpy.random import choice, random

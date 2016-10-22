@@ -3,7 +3,7 @@
 :Author: Dominic Hunt
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from numpy import array
 

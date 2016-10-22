@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
@@ -12,7 +12,7 @@ from scipy import optimize
 from numpy import log
 
 from utils import callableDetailsString
-from qualityFunc import qualFuncIdent
+from fitting.fitters.qualityFunc import qualFuncIdent
 
 
 class leastsq(fitAlg):

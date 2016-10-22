@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
@@ -11,10 +11,10 @@ from scipy import optimize
 from itertools import izip
 from types import NoneType
 
-from fitAlg import fitAlg
+from fitting.fitters.fitAlg import fitAlg
 from utils import callableDetailsString
-from qualityFunc import qualFuncIdent
-from boundFunc import scalarBound
+from fitting.fitters.qualityFunc import qualFuncIdent
+from fitting.fitters.boundFunc import scalarBound
 
 import pytest
 
