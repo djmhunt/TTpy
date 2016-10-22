@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import matplotlib
 #matplotlib.interactive(True)
@@ -200,9 +200,10 @@ class outputting(object):
             end = "." + extension
 
         fileName = self.outputFolder + handle
+        fileNameForm = fileName + end
 
-        lastCount = self.outputFileCounts[fileName]
-        self.outputFileCounts[fileName] += 1
+        lastCount = self.outputFileCounts[fileNameForm]
+        self.outputFileCounts[fileNameForm] += 1
         if lastCount > 0:
             fileName += "_" + str(lastCount)
         # if exists(fileName + end):
@@ -527,8 +528,8 @@ class outputting(object):
             self._simModelLog(modelData)
 
             if self.pickleData:
-                self.pickleLog(expData, label)
-                self.pickleLog(modelData, label)
+                self.pickleLog(expData, "_expData" + label)
+                self.pickleLog(modelData, "_modelData" + label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -555,9 +556,13 @@ class outputting(object):
         fitQuality : float, optional
             The quality of the fit as provided by the fitting function
             Default is None
-        fittingData : tuple of OrderedDict and list
-            The tuple contains an ordered dictionary containing the parameter values tested, in the order they were
-            tested, and the fit qualities of these parameters.
+        fittingData : dict, optional
+            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
+            tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default ``None``
+
+        See Also
+        --------
+        pickleLog : records the picked data
         """
 
         message = "Recording participant model fit"
@@ -582,10 +587,10 @@ class outputting(object):
                 self.recordFittingSequence(fittingData, fitQuality, label, participant)
 
             if self.pickleData:
-                self.pickleLog(expData, label)
-                self.pickleLog(modelData, label)
-                self.pickleLog(participant, label)
-                self.pickleLog(fittingData, label)
+                self.pickleLog(expData, "_expData" + label)
+                self.pickleLog(modelData, "_modelData" + label)
+                self.pickleLog(participant, "_partData" + label)
+                self.pickleLog(fittingData, "_fitData" + label)
 
         self.expStore.append(expData)
         self.modelStore.append(modelData)
@@ -632,9 +637,9 @@ class outputting(object):
 
         extendedLabel = "ParameterFits" + label
 
-        paramSet = fittingData[0]
+        paramSet = fittingData["testedParameters"]
         paramLabels = paramSet.keys()
-        fitQualities = fittingData[1]
+        fitQualities = fittingData["fitQualities"]
 
         self._makeFittingDataSet(paramSet, fitQualities, fitQuality, extendedLabel, participant)
 
