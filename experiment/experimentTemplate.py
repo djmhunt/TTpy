@@ -10,8 +10,8 @@ import logging
 
 import matplotlib.pyplot as plt
 
-from experimentPlot import experimentPlot
-from experimentSetPlot import experimentSetPlot
+from experiment.experimentPlot import experimentPlot
+from experiment.experimentSetPlot import experimentSetPlot
 
 class experiment(object):
     """The abstract experiment class from which all others inherit

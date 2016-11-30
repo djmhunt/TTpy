@@ -11,8 +11,8 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 from numpy import array, zeros, exp
 from numpy.random import rand
-from experimentTemplate import experiment
-from experimentPlot import experimentPlot
+from experiment.experimentTemplate import experiment
+from experiment.experimentPlot import experimentPlot
 
 
 ### decks
