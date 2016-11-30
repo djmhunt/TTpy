@@ -2,9 +2,9 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import amax, amin, floor, ceil, around, reshape, append
+from numpy import floor, ceil, around, reshape, append, nanmax, nanmin#, amax, amin
 
 from plotting import dataVsEvents
 
@@ -34,7 +34,7 @@ def plotFitting(participant, modelData, fitQuality):
     fig = plotFittingSuccess(partName, fitQuality, modelData["Actions"], modelData["ActionProb"])
     figSets.append(('ActionProbs_' + partName, fig))
 
-    modExpect = modelData["Expectations"].T
+    modExpect = modelData["Expectations"]
     reward = reshape(modelData["Rewards"], (1, modExpect.shape[1]))
     fig = plotExpectations(partName, fitQuality, modelData["Actions"], modExpect, reward)
     figSets.append(('ExpectationTracks_' + partName, fig))
@@ -70,8 +70,8 @@ def plotFittingSuccess(partName, fitQuality, partActions, modActProb):
     axisLabels["xLabel"] = "Time"
     axisLabels["yLabel"] = "Probability of participant action being the best one"
     axisLabels["y2Label"] = "Actions by the participant"
-    axisLabels["yMax"] = ceil(amax(partActions))
-    axisLabels["yMin"] = floor(amin(partActions))
+    axisLabels["yMax"] = ceil(nanmax(partActions))
+    axisLabels["yMin"] = floor(nanmin(partActions))
     modelLabels = ["Fit of quality " + str(around(fitQuality, 1))]
     eventLabel = "Participant actions"
 
@@ -102,12 +102,16 @@ def plotExpectations(partName, fitQuality, partActions, modExpect, reward):
     fig : matplotlib figure object
 
     """
+    modExpectLen = len(modExpect)
 
     data = append(modExpect, reward, axis=0)
 
-    yMax = ceil(amax(data))
-    yMin = floor(amin(data))
+    yMax = ceil(nanmax(data))
+    yMin = floor(nanmin(data))
     correction = (yMax-yMin)/10
+    
+    linetype = [':', '-.', '--', '-', '.', ',', 'o', '^'][:modExpectLen]
+    linetype.append('s')
 
     axisLabels = {"title": "Expectation values for participant " + partName + " with fit quality of " + str(around(fitQuality, 1))}
     axisLabels["xLabel"] = "Time"
@@ -115,10 +119,10 @@ def plotExpectations(partName, fitQuality, partActions, modExpect, reward):
     axisLabels["y2Label"] = "Actions by the participant"
     axisLabels["yMax"] = yMax + correction
     axisLabels["yMin"] = yMin - correction
-    modelLabels = ["Action " + str(i) for i in xrange(len(modExpect))]
+    modelLabels = ["Action stimulus" + str(i) for i in xrange(modExpectLen)]
     modelLabels.append("Reward")
     eventLabel = "Participant actions"
-    dataFormatting = {"linetype": [':', '-.', 's']}
+    dataFormatting = {"linetype": linetype}
 
     fig = dataVsEvents(data, partActions, modelLabels, eventLabel, axisLabels, dataFormatting=dataFormatting)
 
@@ -148,8 +152,8 @@ def plotRewards(partName, fitQuality, partActions, reward):
 
     data = reward
 
-    yMax = ceil(amax(data))
-    yMin = floor(amin(data))
+    yMax = ceil(nanmax(data))
+    yMin = floor(nanmin(data))
     correction = (yMax-yMin)/10
 
     axisLabels = {"title": "Reward values for participant " + partName + " with fit quality of " + str(around(fitQuality, 1))}
