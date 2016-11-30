@@ -6,7 +6,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitAlg import fitAlg
+from fitting.fitters.fitAlg import fitAlg
 
 from scipy import optimize
 from numpy import log
@@ -47,13 +47,16 @@ class leastsq(fitAlg):
 
     Name = 'leastsq'
 
-    def __init__(self, fitQualFunc=None, numStartPoints=4):
+    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.numStartPoints = numStartPoints
-
-        self.fitQualFunc = qualFuncIdent(fitQualFunc)
+        self.numStartPoints = kwargs.pop("numStartPoints", 4)
+        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+        self.boundCostFunc = boundCostFunc
+        self.allBounds = bounds
 
         self.fitInfo = {'Name':self.Name,
+                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
+                        'bounds': self.allBounds,
                         'fitQualityFunction': fitQualFunc}
 
         self.testedParams = []

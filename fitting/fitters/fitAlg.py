@@ -11,8 +11,8 @@ from numpy import linspace
 from itertools import izip
 
 from utils import listMergeNP, callableDetailsString
-from qualityFunc import qualFuncIdent
-from boundFunc import scalarBound
+from fitting.fitters.qualityFunc import qualFuncIdent
+from fitting.fitters.boundFunc import scalarBound
 
 
 class fitAlg(object):
@@ -49,13 +49,12 @@ class fitAlg(object):
 
     Name = 'none'
 
-    def __init__(self, fitQualFunc=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4):
+    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.numStartPoints = numStartPoints
-        self.allBounds = bounds
-
-        self.fitQualFunc = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
+        self.allBounds = bounds
+        self.numStartPoints = kwargs.pop("numStartPoints", 4)
+        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
 
         self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,

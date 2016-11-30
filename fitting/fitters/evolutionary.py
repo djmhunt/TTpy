@@ -77,13 +77,14 @@ class evolutionary(fitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, fitQualFunc=None, strategy=None, bounds=None, boundCostFunc=scalarBound(), polish=True):
+    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.allBounds = bounds
-        self.polish = polish
+        strategy = kwargs.pop("strategy", None)
 
-        self.fitQualFunc = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
+        self.allBounds = bounds
+        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+        self.polish = kwargs.pop("polish", True)
 
         self._setType(strategy)
 
@@ -91,7 +92,7 @@ class evolutionary(fitAlg):
                         'fitQualityFunction': fitQualFunc,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
                         'bounds': self.allBounds,
-                        'polish': polish
+                        'polish': self.polish
                         }
 
         if type(self.strategySet) is NoneType:

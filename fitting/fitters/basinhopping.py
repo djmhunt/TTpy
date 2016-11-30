@@ -93,14 +93,16 @@ class basinhopping(fitAlg):
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, fitQualFunc=None, method=None, bounds=None, boundCostFunc=scalarBound(), numStartPoints=4, boundFit=True, boundSensitivity=5):
+    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.numStartPoints = numStartPoints
-        self.boundFit = boundFit
-        self.boundSensitivity = boundSensitivity
+        method = kwargs.pop("method", None)
 
-        self.fitness = qualFuncIdent(fitQualFunc)
         self.boundCostFunc = boundCostFunc
+        self.allBounds = bounds
+        self.numStartPoints = kwargs.pop("numStartPoints", 4)
+        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+        self.boundFit = kwargs.pop("boundFit", True)
+        self.boundSensitivity = kwargs.pop("boundSensitivity", 5)
 
         self._setType(method, bounds)
 
@@ -229,7 +231,7 @@ class basinhopping(fitAlg):
 
         for i in initParamSets:
 
-            optimizeResult = optimize.basinhopping(self.fitness, i[:],
+            optimizeResult = optimize.basinhopping(self.fitQualFunc, i[:],
                                                    accept_test=boundFunc,
                                                    minimizer_kwargs={'method': method,
                                                                      'bounds': bounds})  # ,
