@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fitting package &mdash; PyDM 0.9 documentation</title>
+    <title>fitting package &#8212; PyDM 0.9 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="fitting.fitters package" href="fitting.fitters.html" />
     <link rel="prev" title="model.decision package" href="model.decision.html" /> 
@@ -44,7 +46,7 @@
         <li class="right" >
           <a href="model.decision.html" title="model.decision package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -61,11 +63,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="fitting.fitters.html">fitting.fitters package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.basinhopping">fitting.fitters.basinhopping module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#fitting-fitters-basinhopping-module">fitting.fitters.basinhopping module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.boundFunc">fitting.fitters.boundFunc module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.evolutionary">fitting.fitters.evolutionary module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.fitAlg">fitting.fitters.fitAlg module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.leastsq">fitting.fitters.leastsq module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#fitting-fitters-leastsq-module">fitting.fitters.leastsq module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.minimize">fitting.fitters.minimize module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.qualityFunc">fitting.fitters.qualityFunc module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting.fitters.html#fitting-fitters-test-minimize-module">fitting.fitters.test_minimize module</a></li>
@@ -163,28 +165,27 @@ Default is 1/1e100</p>
 </table>
 <dl class="attribute">
 <dt id="fitting.actReactFitter.fitter.Name">
-<code class="descname">Name</code><em class="property"> = 'actReactFitter'</em><a class="headerlink" href="#fitting.actReactFitter.fitter.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u'actReactFitter'</em><a class="headerlink" href="#fitting.actReactFitter.fitter.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="fitting.actReactFitter.fitter.fitness">
 <code class="descname">fitness</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/actReactFitter.html#fitter.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.actReactFitter.fitter.fitness" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by a fitter to generate a fit for given model parameters</p>
+<dd><p>Used by a fitter to generate the list of values characterising how well the model parameters describe the
+participants actions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelParameters</strong> : list of floats</p>
 <blockquote>
-<div><p>A list of the parameters used by the model in the order previously
-defined</p>
+<div><p>A list of the parameters used by the model in the order previously defined</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitQuality</strong> : list of floats</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>modelPerformance</strong> : list of floats</p>
 <blockquote class="last">
-<div><p>The quality of the fit. In this case defined as the choices
-made by the model</p>
+<div><p>The performance metric for the model that will be used to characterise the quality of the fit.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -197,120 +198,38 @@ made by the model</p>
 <dd>Fits participant data</dd>
 <dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting class</dd>
+<dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fitness" title="fitting.fitters.fitAlg.fitAlg.fitness"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg.fitness</span></code></a></dt>
+<dd>The function that this one is called by</dd>
 </dl>
 </div>
 </dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-fitting.expfitter">
-<span id="fitting-expfitter-module"></span><h2>fitting.expfitter module<a class="headerlink" href="#module-fitting.expfitter" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="fitting.expfitter.fitter">
-<em class="property">class </em><code class="descclassname">fitting.expfitter.</code><code class="descname">fitter</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scalar</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/expfitter.html#fitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.expfitter.fitter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></p>
-<p>A class for fitting data by running through an experiment</p>
-<p>To be fixed later</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>partChoiceParam</strong> : string</p>
-<blockquote>
-<div><p>The key to be compared in the participant data</p>
-</div></blockquote>
-<p><strong>partRewardParam</strong> : string</p>
-<blockquote>
-<div><p>The key containing the participant reward data</p>
-</div></blockquote>
-<p><strong>modelParam</strong> : string</p>
-<blockquote>
-<div><p>The key to be compared in the model data</p>
-</div></blockquote>
-<p><strong>fitAlg</strong> : fitting.fitters.fitAlg instance</p>
-<blockquote>
-<div><p>An instance of one of the fitting algorithms</p>
-</div></blockquote>
-<p><strong>scalar</strong> : function</p>
-<blockquote class="last">
-<div><p>Transforms the participant action form to match that of the model</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
-<dd>The class this inherits many functions from</dd>
-<dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
-<dd>The general fitting class</dd>
-</dl>
-</div>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the fitting type</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="fitting.expfitter.fitter.Name">
-<code class="descname">Name</code><em class="property"> = 'experimentFitter'</em><a class="headerlink" href="#fitting.expfitter.fitter.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="method">
-<dt id="fitting.expfitter.fitter.fitness">
-<code class="descname">fitness</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/expfitter.html#fitter.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.expfitter.fitter.fitness" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by a fitter to generate a fit for given model parameters</p>
+<dt id="fitting.actReactFitter.fitter.fittedModel">
+<code class="descname">fittedModel</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/actReactFitter.html#fitter.fittedModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.actReactFitter.fitter.fittedModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the model run of the model with specific parameter values</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelParameters</strong> : list of floats</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>*modelParameters</strong> : floats</p>
 <blockquote>
-<div><p>A list of the parameters used by the model in the order previously
-defined</p>
+<div><p>The model parameters provided in the order defined in the model setup</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitQuality</strong> : list of floats</p>
-<blockquote class="last">
-<div><p>The quality of the fit. In this case defined the differences 
-between the model choices and the participant choices</p>
-</div></blockquote>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>model</strong> : model class instance</p>
 </td>
 </tr>
 </tbody>
 </table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fit.fit.participant" title="fitting.fit.fit.participant"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit.participant</span></code></a></dt>
-<dd>Fits participant data</dd>
-<dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
-<dd>The general fitting class</dd>
-</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="fitting-expfitter-module">
+<h2>fitting.expfitter module<a class="headerlink" href="#fitting-expfitter-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-fitting.fit">
 <span id="fitting-fit-module"></span><h2>fitting.fit module<a class="headerlink" href="#module-fitting.fit" title="Permalink to this headline">¶</a></h2>
@@ -325,7 +244,7 @@ between the model choices and the participant choices</p>
 <dl class="class">
 <dt id="fitting.fit.fit">
 <em class="property">class </em><code class="descclassname">fitting.fit.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>partChoiceParam</em>, <em>partRewardParam</em>, <em>modelParam</em>, <em>fitAlg</em>, <em>scalar</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The abstract class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -364,10 +283,16 @@ stay constant. If a list then the list will be taken as the list
 of actions that can be taken at each instance. Default <code class="docutils literal"><span class="pre">None</span></code></p>
 </div></blockquote>
 <p><strong>fpRespVal</strong> : float, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>If a floating point error occurs when running a fit the fit function
 will return a value for each element of fpRespVal.
 Default is 1/1e100</p>
+</div></blockquote>
+<p><strong>fitSubset</strong> : <code class="docutils literal"><span class="pre">float('Nan')</span></code>, <code class="docutils literal"><span class="pre">None</span></code> or list of int, optional</p>
+<blockquote class="last">
+<div><p>Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+This can either be described as a list of trial numbers or, by passing <code class="docutils literal"><span class="pre">float('Nan')</span></code>, all those trials whose
+feedback was <code class="docutils literal"><span class="pre">float('Nan')</span></code>. Default <code class="docutils literal"><span class="pre">None</span></code>, which means all trials will be used.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -394,13 +319,14 @@ Default is 1/1e100</p>
 </table>
 <dl class="attribute">
 <dt id="fitting.fit.fit.Name">
-<code class="descname">Name</code><em class="property"> = 'none'</em><a class="headerlink" href="#fitting.fit.fit.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u'none'</em><a class="headerlink" href="#fitting.fit.fit.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="fitting.fit.fit.fitness">
 <code class="descname">fitness</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.fitness" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used by a fitter to generate a fit for given model parameters</p>
+<dd><p>Used by a fitter to generate the list of values characterising how well the model parameters describe the
+participants actions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -412,9 +338,10 @@ defined</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitQuality</strong> : float</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>modelChoices</strong> : list of floats</p>
 <blockquote class="last">
-<div><p>The quality of the fit. In this case defined as always zero</p>
+<div><p>The choices made by the model that will be used to characterise the quality of the fit.
+In this case defined as <code class="docutils literal"><span class="pre">[0]</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -427,8 +354,31 @@ defined</p>
 <dd>Fits participant data</dd>
 <dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting class</dd>
+<dt><a class="reference internal" href="fitting.fitters.html#fitting.fitters.fitAlg.fitAlg.fitness" title="fitting.fitters.fitAlg.fitAlg.fitness"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg.fitness</span></code></a></dt>
+<dd>The function that this one is called by</dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fit.fit.fittedModel">
+<code class="descname">fittedModel</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.fittedModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.fittedModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the model run of the model with specific parameter values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>*modelParameters</strong> : floats</p>
+<blockquote>
+<div><p>The model parameters provided in the order defined in the model setup</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>model</strong> : model class instance</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -450,7 +400,7 @@ defined</p>
 <p><strong>validActions</strong> : string or <code class="docutils literal"><span class="pre">None</span></code> or list of ints</p>
 <blockquote>
 <div><p>The name of the key in partData where the list of valid actions
-can be found. If <code class="docutils literal"><span class="pre">None</span></code> then the action list is considered to 
+can be found. If <code class="docutils literal"><span class="pre">None</span></code> then the action list is considered to
 stay constant. If a list then the list will be taken as the list
 of actions that can be taken at every timestep.</p>
 </div></blockquote>
@@ -458,7 +408,7 @@ of actions that can be taken at every timestep.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>observation</strong> : list of tuples</p>
 <blockquote class="last">
-<div><p>The tuples contain the stimuli and the valid actions for each 
+<div><p>The tuples contain the stimuli and the valid actions for each
 observation instance.</p>
 </div></blockquote>
 </td>
@@ -478,7 +428,7 @@ previously specified other parameters</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelParameters</strong> : list of floats</p>
 <blockquote>
-<div><p>The parameter values in the order extacted from the modelSetup 
+<div><p>The parameter values in the order extracted from the modelSetup
 parameter dictionary</p>
 </div></blockquote>
 </td>
@@ -496,7 +446,7 @@ parameter dictionary</p>
 <dl class="method">
 <dt id="fitting.fit.fit.getModParams">
 <code class="descname">getModParams</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.getModParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.getModParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles the kwarg model parameter arguments based on the 
+<dd><p>Compiles the kwarg model parameter arguments based on the
 modelParameters</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -504,7 +454,7 @@ modelParameters</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelParameters</strong> : list of floats</p>
 <blockquote>
-<div><p>The parameter values in the order extacted from the modelSetup 
+<div><p>The parameter values in the order extacted from the modelSetup
 parameter dictionary</p>
 </div></blockquote>
 </td>
@@ -552,7 +502,7 @@ parameter dictionary</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>exp</strong> : experiment.experiment.experiment inherited class</p>
 <blockquote>
-<div><p>The experiment being fitted. If you are fitting using 
+<div><p>The experiment being fitted. If you are fitting using
 participant responses only it will not be used, so can be anything</p>
 </div></blockquote>
 <p><strong>model</strong> : model.model.model inherited class</p>
@@ -561,7 +511,7 @@ participant responses only it will not be used, so can be anything</p>
 </div></blockquote>
 <p><strong>modelSetup</strong> : (dict,dict)</p>
 <blockquote>
-<div><p>The first dictionary is the model inital parameters. The second 
+<div><p>The first dictionary is the model initial parameters. The second
 are the other model parameters</p>
 </div></blockquote>
 <p><strong>partData</strong> : dict</p>
@@ -575,8 +525,51 @@ are the other model parameters</p>
 <div><p>The model with the best fit parameters</p>
 </div></blockquote>
 <p><strong>fitQuality</strong> : float</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Specifies the fit quality for this participant to the model</p>
+</div></blockquote>
+<p><strong>testedParams</strong> : tuple of OrderedDict and list</p>
+<blockquote class="last">
+<div><p>They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
+fit qualities of these parameters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitting.fit.fit.participantMatchResult">
+<code class="descname">participantMatchResult</code><span class="sig-paren">(</span><em>exp</em>, <em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fit.html#fit.participantMatchResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fit.fit.participantMatchResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the participant data with a model with specified parameters for a given experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>exp</strong> : experiment.experiment.experiment inherited class</p>
+<blockquote>
+<div><p>The experiment being fitted. If you are fitting using
+participant responses only it will not be used, so can be anything</p>
+</div></blockquote>
+<p><strong>model</strong> : model.model.model inherited class</p>
+<blockquote>
+<div><p>The model you wish to try and fit values to</p>
+</div></blockquote>
+<p><strong>modelSetup</strong> : (dict,dict)</p>
+<blockquote>
+<div><p>The first dictionary is the model varying parameters. The second
+are the other model parameters</p>
+</div></blockquote>
+<p><strong>partData</strong> : dict</p>
+<blockquote>
+<div><p>The participant data</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> : model.model.model inherited class instance</p>
+<blockquote class="last">
+<div><p>The model with the best fit parameters</p>
 </div></blockquote>
 </td>
 </tr>
@@ -658,7 +651,7 @@ are the other model parameters</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-fitting.actReactFitter">fitting.actReactFitter module</a></li>
-<li><a class="reference internal" href="#module-fitting.expfitter">fitting.expfitter module</a></li>
+<li><a class="reference internal" href="#fitting-expfitter-module">fitting.expfitter module</a></li>
 <li><a class="reference internal" href="#module-fitting.fit">fitting.fit module</a></li>
 <li><a class="reference internal" href="#module-fitting.test_actReactFitter">fitting.test_actReactFitter module</a></li>
 <li><a class="reference internal" href="#fitting-test-fitness-module">fitting.test_fitness module</a></li>
@@ -683,14 +676,11 @@ are the other model parameters</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -712,12 +702,12 @@ are the other model parameters</p>
         <li class="right" >
           <a href="model.decision.html" title="model.decision package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>outputting module &mdash; PyDM 0.9 documentation</title>
+    <title>outputting module &#8212; PyDM 0.9 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="utils module" href="utils.html" />
     <link rel="prev" title="fitting.fitters package" href="fitting.fitters.html" /> 
@@ -44,7 +46,7 @@
         <li class="right" >
           <a href="fitting.fitters.html" title="fitting.fitters package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -63,10 +65,442 @@
 </tr>
 </tbody>
 </table>
+<dl class="function">
+<dt id="outputting.date">
+<code class="descclassname">outputting.</code><code class="descname">date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate today&#8217;s date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
+and returns it</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.dictData2Lists">
+<code class="descclassname">outputting.</code><code class="descname">dictData2Lists</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#dictData2Lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.dictData2Lists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a dictionary of arrays, values and lists and turn it into a dictionary of lists</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys</p>
+</div></blockquote>
+<p><strong>storeLabel</strong> : string, optional</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.
+Default is &#8216;&#8217;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict of 1D lists</p>
+<blockquote class="last">
+<div><p>Any dictionary keys containing arrays in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.flatDictKeySet" title="outputting.flatDictKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictKeySet</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.dictKeyGen">
+<code class="descclassname">outputting.</code><code class="descname">dictKeyGen</code><span class="sig-paren">(</span><em>store</em>, <em>maxListLen=None</em>, <em>returnList=False</em>, <em>abridge=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#dictKeyGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.dictKeyGen" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : dict</p>
+<blockquote>
+<div><p>The dictionary to be broken down into keys</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int or float with no decimal places or None, optional</p>
+<blockquote>
+<div><p>If returnList is <code class="docutils literal"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal"><span class="pre">False</span></code>
+this should stay <code class="docutils literal"><span class="pre">None</span></code>. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+<p><strong>returnList</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+<p><strong>abridge</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote>
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int or None</p>
+<blockquote class="last">
+<div><p>If returnList is <code class="docutils literal"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal"><span class="pre">False</span></code>
+this should stay <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+<span class="go">             &#39;dict&#39;: {&#39;test&#39;: 1},</span>
+<span class="go">             &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
+<span class="go">             &#39;num&#39;: 23.6,</span>
+<span class="go">             &#39;array&#39;: array([1, 2, 3])}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">(OrderedDict([(&#39;test&#39;, None),</span>
+<span class="go">              (&#39;list&#39;, [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)]),</span>
+<span class="go">              (&#39;array&#39;, array([[0], [1], [2]])),</span>
+<span class="go">              (&#39;num&#39;, None),</span>
+<span class="go">              (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
+<span class="go">None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(OrderedDict([(&#39;test&#39;, None),</span>
+<span class="go">              (&#39;list&#39;, None),</span>
+<span class="go">              (&#39;array&#39;, array([[0], [1], [2]])),</span>
+<span class="go">              (&#39;num&#39;, None),</span>
+<span class="go">              (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
+<span class="go">None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(OrderedDict([(&#39;test&#39;, None),</span>
+<span class="go">              (&#39;list&#39;, array([[0], [1]])),</span>
+<span class="go">              (&#39;array&#39;, None),</span>
+<span class="go">              (&#39;num&#39;, None),</span>
+<span class="go">              (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
+<span class="go">6L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(OrderedDict([(&#39;test&#39;, None),</span>
+<span class="go">              (&#39;list&#39;, array([[0], [1]])),</span>
+<span class="go">              (&#39;array&#39;, None),</span>
+<span class="go">              (&#39;num&#39;, None),</span>
+<span class="go">              (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
+<span class="go">7)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.flatDictKeySet">
+<code class="descclassname">outputting.</code><code class="descname">flatDictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#flatDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.flatDictKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+splitting any keys with lists into a set of keys, one for each element
+in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys.
+Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote class="last">
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.reframeListDicts" title="outputting.reframeListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeListDicts</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.flatDictSelectKeySet">
+<code class="descclassname">outputting.</code><code class="descname">flatDictSelectKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#flatDictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.flatDictSelectKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+including only the keys in the keys list. Any keys with lists  will
+be split into a set of keys, one for each element in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys.
+Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+<p><strong>keys</strong> : list of strings</p>
+<blockquote>
+<div><p>The keys whose data will be included in the return dictionary</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote class="last">
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.reframeSelectListDicts" title="outputting.reframeSelectListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeSelectListDicts</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.listDictKeySet">
+<code class="descclassname">outputting.</code><code class="descname">listDictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#listDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.listDictKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+splitting any keys with arrays into a set of keys, one for each column
+in the original key.</p>
+<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : dict</p>
+<blockquote>
+<div><p>The dictionary to be split up</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote>
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int</p>
+<blockquote class="last">
+<div><p>The longest list in the dictionary</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.reframeListDicts" title="outputting.reframeListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeListDicts</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.listKeyGen">
+<code class="descclassname">outputting.</code><code class="descname">listKeyGen</code><span class="sig-paren">(</span><em>data</em>, <em>maxListLen=None</em>, <em>returnList=False</em>, <em>abridge=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#listKeyGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.listKeyGen" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy.ndarray or list</p>
+<blockquote>
+<div><p>The list to be broken down</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int or float with no decimal places or None, optional</p>
+<blockquote>
+<div><p>If returnList is <code class="docutils literal"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal"><span class="pre">False</span></code>
+this should stay <code class="docutils literal"><span class="pre">None</span></code>. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+<p><strong>returnList</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+<p><strong>abridge</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>returnList</strong> : None or list of tuples of ints or ints</p>
+<blockquote>
+<div><p>The list of co-ordinates for the elements to be extracted from the data. If None the list is used as-is.</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int or None</p>
+<blockquote class="last">
+<div><p>If returnList is <code class="docutils literal"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal"><span class="pre">False</span></code>
+this should stay <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">(array([[0], [1], [2]]), None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)], None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">(array([[0], [1]]), 3L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)], None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(None, None)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(array([[0], [1]]), 6L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(array([[0], [1]]), 6L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(array([[0], [1]]), 7)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(array([[0]]), 6L)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listKeyGen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(None, 6L)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.listSelection">
+<code class="descclassname">outputting.</code><code class="descname">listSelection</code><span class="sig-paren">(</span><em>data</em>, <em>loc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#listSelection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.listSelection" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong></p>
+<p class="last"><strong>loc</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">listSelection</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listSelection</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">[1, 2, 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listSelection</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.newFlatDict">
+<code class="descclassname">outputting.</code><code class="descname">newFlatDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>store</em>, <em>labelPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#newFlatDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.newFlatDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
+<p>If a dictionary did not have that key or list element, then &#8216;None&#8217; is
+put in its place</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote>
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+<p><strong>store</strong> : list of dicts</p>
+<blockquote>
+<div><p>The dictionaries would be expected to have many of the same keys.
+Any dictionary keys containing lists in the input have been split
+into multiple numbered keys</p>
+</div></blockquote>
+<p><strong>labelPrefix</strong> : string</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict</p>
+<blockquote class="last">
+<div><p>The new dictionary with the keys from the keySet and the values as
+1D lists with &#8216;None&#8217; if the keys, value pair was not found in the
+store.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">outputting</span> <span class="k">import</span> <span class="n">flatDictKeySet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+<span class="go">             &#39;dict&#39;: {&#39;test&#39;: 1, },</span>
+<span class="go">             &#39;OrderedDict&#39;: OrderedDict([(0, 0.5), (1, 0.5)]),</span>
+<span class="go">             &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
+<span class="go">             &#39;num&#39;: 23.6,</span>
+<span class="go">             &#39;array&#39;: array([1, 2, 3])}]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keySet</span> <span class="o">=</span> <span class="n">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">newFlatDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="go">OrderedDict([(&#39;OrderedDict_0&#39;, [&#39;0.5&#39;]), (&#39;OrderedDict_1&#39;, [&#39;0.5&#39;]),</span>
+<span class="go">             (&#39;list_(0, 0)&#39;, [1]), (list_(1, 0)&#39;, [7]), (&#39;list_(0, 1)&#39;, [2]), (&#39;list_(1, 1)&#39;, [8]),</span>
+<span class="go">             (&#39;list_(0, 2)&#39;, [3]), (&#39;list_(1, 2)&#39;, [9]), (&#39;list_(0, 3)&#39;, [4]), (&#39;list_(1, 3)&#39;, [10]),</span>
+<span class="go">             (&#39;list_(0, 4)&#39;, [5]), (&#39;list_(1, 4)&#39;, [11]), (&#39;list_(0, 5)&#39;, [6]), (&#39;list_(1, 5)&#39;, [12]),</span>
+<span class="go">             (&#39;num&#39;, [&#39;23.6&#39;]),</span>
+<span class="go">             (&#39;dict_test&#39;, [&#39;1&#39;]),</span>
+<span class="go">             (&#39;test&#39;, [&quot;&#39;string&#39;&quot;]),</span>
+<span class="go">             (&#39;array_[0]&#39;, [array([1])]), (&#39;array_[1]&#39;, [array([2])]), (&#39;array_[2]&#39;, [array([3])])])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.newListDict">
+<code class="descclassname">outputting.</code><code class="descname">newListDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>maxListLen</em>, <em>store</em>, <em>labelPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#newListDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.newListDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.</p>
+<p>If there is a single value, then a list is created with that value repeated</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keySet</strong> : OrderedDict with values of OrderedDict, list or None</p>
+<blockquote>
+<div><p>The dictionary of keys to be extracted</p>
+</div></blockquote>
+<p><strong>maxListLen</strong> : int</p>
+<blockquote>
+<div><p>The longest list in the dictionary</p>
+</div></blockquote>
+<p><strong>store</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary of numbers, strings, lists and arrays</p>
+</div></blockquote>
+<p><strong>labelPrefix</strong> : string</p>
+<blockquote>
+<div><p>An identifier to be added to the beginning of each key string.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict</p>
+<blockquote class="last">
+<div><p>The new dictionary with the keys from the keySet and the values as
+1D lists.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">outputting</span> <span class="k">import</span> <span class="n">listDictKeySet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">store</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+<span class="go">             &#39;dict&#39;: {&#39;test&#39;: 1, },</span>
+<span class="go">             &#39;OrderedDict&#39;: OrderedDict([(0, 0.5), (1, 0.5)]),</span>
+<span class="go">             &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
+<span class="go">             &#39;num&#39;: 23.6,</span>
+<span class="go">             &#39;array&#39;: array([1, 2, 3])}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">listDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">newListDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="go">OrderedDict([(&#39;OrderedDict_0&#39;, [0.5, None, None, None, None, None]),</span>
+<span class="go">             (&#39;OrderedDict_1&#39;, [0.5, None, None, None, None, None]),</span>
+<span class="go">             (&#39;list_[0]&#39;, [1, 2, 3, 4, 5, 6]),</span>
+<span class="go">             (&#39;list_[1]&#39;, [7, 8, 9, 10, 11, 12]),</span>
+<span class="go">             (&#39;num&#39;, [23.6, None, None, None, None, None]),</span>
+<span class="go">             (&#39;dict_test&#39;, [1, None, None, None, None, None]),</span>
+<span class="go">             (&#39;test&#39;, [&#39;string&#39;, None, None, None, None, None]),</span>
+<span class="go">             (&#39;array&#39;, [1, 2, 3, None, None, None])])</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="class">
 <dt id="outputting.outputting">
 <em class="property">class </em><code class="descclassname">outputting.</code><code class="descname">outputting</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>An class which manages the outputting to the screen and to files of all
 data in any form for the simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -81,7 +515,7 @@ data in any form for the simulation</p>
 <blockquote>
 <div><p>If true a copy of the top level script running the current function
 will be copied to the log folder. Only works if save is set to <code class="docutils literal"><span class="pre">True</span></code>
-Default <code class="docutils literal"><span class="pre">False</span></code></p>
+Default <code class="docutils literal"><span class="pre">True</span></code></p>
 </div></blockquote>
 <p><strong>silent</strong> : bool, optional</p>
 <blockquote>
@@ -106,8 +540,16 @@ Default is <code class="docutils literal"><span class="pre">False</span></code><
 individual model-experiment combination. Default 18</p>
 </div></blockquote>
 <p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
+<blockquote>
+<div><p>Defines the response to numpy errors. Default <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
+</div></blockquote>
+<p><strong>saveFittingProgress</strong> : bool, optional</p>
+<blockquote>
+<div><p>Specifies if the results from each iteration of the fitting process should be returned. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+<p><strong>saveFigures</strong> : bool, optional</p>
 <blockquote class="last">
-<div><p>Defines the response to numpy errors. Defailt <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
+<div><p>Defines if figures are produced or not. Default is <code class="docutils literal"><span class="pre">True</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -116,7 +558,7 @@ individual model-experiment combination. Default 18</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.date" title="outputting.outputting.date"><code class="xref py py-obj docutils literal"><span class="pre">date</span></code></a></dt>
+<dt><a class="reference internal" href="#outputting.date" title="outputting.date"><code class="xref py py-obj docutils literal"><span class="pre">date</span></code></a></dt>
 <dd>Identifies todays date</dd>
 <dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><code class="xref py py-obj docutils literal"><span class="pre">saving</span></code></a></dt>
 <dd>Sets up the log file and folder to save results</dd>
@@ -127,13 +569,6 @@ individual model-experiment combination. Default 18</p>
 </dl>
 </div>
 <dl class="method">
-<dt id="outputting.outputting.date">
-<code class="descname">date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate todays date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
-and stores it in self.date</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="outputting.outputting.end">
 <code class="descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.end" title="Permalink to this definition">¶</a></dt>
 <dd><p>To run once everything has been completed. Displays the figures if not
@@ -142,13 +577,13 @@ silent.</p>
 
 <dl class="method">
 <dt id="outputting.outputting.fancyLogger">
-<code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logFile='./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp='log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logFile=u'./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the style of logging for all the simulations</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>logFile = string, optional</strong></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>logFile</strong> : string, optional</p>
 <blockquote>
 <div><p>Provides the path the log will be written to. Default &#8221;./log.txt&#8221;</p>
 </div></blockquote>
@@ -158,7 +593,7 @@ silent.</p>
 </div></blockquote>
 <p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
 <blockquote class="last">
-<div><p>Defines the response to numpy errors. Defailt <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
+<div><p>Defines the response to numpy errors. Default <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
 </div></blockquote>
 </td>
 </tr>
@@ -167,87 +602,11 @@ silent.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference external" href="http://docs.python.org/library/logging.html#module-logging" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">logging</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/2/library/logging.html#module-logging" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">logging</span></code></a></dt>
 <dd>The Python standard logging library</dd>
 <dt><code class="xref py py-obj docutils literal"><span class="pre">numpy.seterr</span></code></dt>
 <dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
 </dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.flatDictKeySet">
-<code class="descname">flatDictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.flatDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.flatDictKeySet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
-splitting any keys with lists into a set of keys, one for each element
-in the original key.</p>
-<p>These are named &lt;key&gt;&lt;location&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
-<blockquote class="last">
-<div><p>The keys are the keys for the new dictionary. The values contain a
-two element tuple. The first element is the original name of the
-key and the second is the location of the value to be stored in the
-original dictionary value array.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.reframeListDicts" title="outputting.outputting.reframeListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeListDicts</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.flatDictSelectKeySet">
-<code class="descname">flatDictSelectKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.flatDictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.flatDictSelectKeySet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
-including only the keys in the keys list. Any keys with lists  will
-be split into a set of keys, one for each element in the original key.</p>
-<p>These are named &lt;key&gt;&lt;location&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-<p><strong>keys</strong> : list of strings</p>
-<blockquote>
-<div><p>The keys whose data will be included in the return dictionary</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
-<blockquote class="last">
-<div><p>The keys are the keys for the new dictionary. The values contain a
-two element tuple. The first element is the original name of the
-key and the second is the location of the value to be stored in the
-original dictionary value array.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.reframeSelectListDicts" title="outputting.outputting.reframeSelectListDicts"><code class="xref py py-obj docutils literal"><span class="pre">reframeSelectListDicts</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -258,7 +617,7 @@ original dictionary value array.</p>
 <p>Folder will be created as &#8221;./Outputs/&lt;simLabel&gt;_&lt;date&gt;/&#8221;. If that had
 previously been created then it is created as
 &#8221;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&#8221;, where &#8220;&lt;#&gt;&#8221; is the first
-avalable integer.</p>
+available integer.</p>
 <p>A subfolder is also created with the name <code class="docutils literal"><span class="pre">Pickle</span></code> if  pickleData is
 true.</p>
 <div class="admonition seealso">
@@ -267,7 +626,7 @@ true.</p>
 <dt><a class="reference internal" href="#outputting.outputting.newFile" title="outputting.outputting.newFile"><code class="xref py py-obj docutils literal"><span class="pre">newFile</span></code></a></dt>
 <dd>Creates a new file</dd>
 <dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><code class="xref py py-obj docutils literal"><span class="pre">saving</span></code></a></dt>
-<dd>Ceates the log system</dd>
+<dd>Creates the log system</dd>
 </dl>
 </div>
 </dd></dl>
@@ -310,8 +669,12 @@ conditions</p>
 <div><p>The model parameters that have been fitted over and varied.</p>
 </div></blockquote>
 <p><strong>modelParams</strong> : dict</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The model parameters for the fitted model</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote class="last">
+<div><p>The value of goodness of fit</p>
 </div></blockquote>
 </td>
 </tr>
@@ -343,7 +706,7 @@ conditions</p>
 <p><strong>modelOtherArgs</strong> : dict</p>
 <blockquote class="last">
 <div><p>The other parameters used in the model whose attributes have been
-modifed by the user</p>
+modified by the user</p>
 </div></blockquote>
 </td>
 </tr>
@@ -354,7 +717,7 @@ modifed by the user</p>
 <dl class="method">
 <dt id="outputting.outputting.logSimParams">
 <code class="descname">logSimParams</code><span class="sig-paren">(</span><em>expDesc</em>, <em>expPltLabel</em>, <em>modelDesc</em>, <em>modelPltLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes to the log the descrition and the label of the experiment and model</p>
+<dd><p>Writes to the log the description and the label of the experiment and model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -409,47 +772,6 @@ modifed by the user</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> : string</p>
 <blockquote class="last">
 <div><p>The filename allowed for the file</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.newFlatDict">
-<code class="descname">newFlatDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>store</em>, <em>storeLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newFlatDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFlatDict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
-<p>If a dictionary did not have that key or list element, then &#8216;None&#8217; is
-put in its place</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keySet</strong> : dict</p>
-<blockquote>
-<div><p>The keys are the keys for the new dictionary. The values contain a
-two element tuple. The first element is the original name of the
-key and the second is the location of the value to be stored in the
-original dictionary value array.</p>
-</div></blockquote>
-<p><strong>store</strong> : list of dicts</p>
-<blockquote>
-<div><p>The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</div></blockquote>
-<p><strong>storeLabel</strong> : string</p>
-<blockquote>
-<div><p>An identifier to be added to the beginning of each key string.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict</p>
-<blockquote class="last">
-<div><p>The new dictionary with the keys from the keySet and the values as
-1D lists with &#8216;None&#8217; if the keys, value pair was not found in the
-store.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -518,7 +840,7 @@ store.</p>
 
 <dl class="method">
 <dt id="outputting.outputting.pickleLog">
-<code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>folderName</em>, <em>label=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>label=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the data in the appropriate pickle file in a Pickle subfolder
 of the outputting folder</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -528,10 +850,6 @@ of the outputting folder</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
 <blockquote>
 <div><p>The data to be stored</p>
-</div></blockquote>
-<p><strong>folderName</strong> : string</p>
-<blockquote>
-<div><p>The path to the outputting folder</p>
 </div></blockquote>
 <p><strong>label</strong> : string, optional</p>
 <blockquote class="last">
@@ -546,7 +864,7 @@ of the outputting folder</p>
 <dl class="method">
 <dt id="outputting.outputting.pickleRec">
 <code class="descname">pickleRec</code><span class="sig-paren">(</span><em>data</em>, <em>handle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleRec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the data to a picke file</p>
+<dd><p>Writes the data to a pickle file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -694,8 +1012,13 @@ attributes</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="outputting.outputting.recordFittingSequence">
+<code class="descname">recordFittingSequence</code><span class="sig-paren">(</span><em>fittingData</em>, <em>label</em>, <em>participant</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordFittingSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordFittingSequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="outputting.outputting.recordParticipantFit">
-<code class="descname">recordParticipantFit</code><span class="sig-paren">(</span><em>participant</em>, <em>expData</em>, <em>modelData</em>, <em>fitQuality=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">recordParticipantFit</code><span class="sig-paren">(</span><em>participant</em>, <em>expData</em>, <em>modelData</em>, <em>fitQuality=None</em>, <em>fittingData=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record the data relevant to the participant fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -714,14 +1037,26 @@ attributes</p>
 <div><p>The data from the model</p>
 </div></blockquote>
 <p><strong>fitQuality</strong> : float, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The quality of the fit as provided by the fitting function
 Default is None</p>
+</div></blockquote>
+<p><strong>fittingData</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
+tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default <code class="docutils literal"><span class="pre">None</span></code></p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.pickleLog" title="outputting.outputting.pickleLog"><code class="xref py py-obj docutils literal"><span class="pre">pickleLog</span></code></a></dt>
+<dd>records the picked data</dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -798,8 +1133,60 @@ Default is None</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="outputting.outputting.reframeListDicts">
-<code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
+<dt id="outputting.outputting.savePlots">
+<code class="descname">savePlots</code><span class="sig-paren">(</span><em>plots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.savePlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.savePlots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a list of plots in the appropriate way</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plots</strong> : list of (string, savable object)</p>
+<blockquote class="last">
+<div><p>The currently accepted objects are matplotlib.pyplot.figure,
+pandas.DataFrame and xml.etree.ElementTree.ElementTree
+The string is the handle of the figure</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="vtkWriter.html#module-vtkWriter" title="vtkWriter"><code class="xref py py-obj docutils literal"><span class="pre">vtkWriter</span></code></a>, <a class="reference internal" href="plotting.html#module-plotting" title="plotting"><code class="xref py py-obj docutils literal"><span class="pre">plotting</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.figure</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame.to_excel</span></code>, <a class="reference external" href="https://docs.python.org/2/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree.outputTrees</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.saving">
+<code class="descname">saving</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.saving" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the folder structure for the saved data and created the log file
+as log.txt</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.outputting.folderSetup" title="outputting.outputting.folderSetup"><code class="xref py py-obj docutils literal"><span class="pre">folderSetup</span></code></a></dt>
+<dd>creates the folders</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.simLog">
+<code class="descname">simLog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.simLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.simLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs relevant data to an excel file with all the data and a csv file
+with the estimated pertinent data</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.pad">
+<code class="descclassname">outputting.</code><code class="descname">pad</code><span class="sig-paren">(</span><em>vals</em>, <em>maxListLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#pad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.pad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="outputting.reframeListDicts">
+<code class="descclassname">outputting.</code><code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -827,13 +1214,13 @@ into multiple numbered keys</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.flatDictKeySet" title="outputting.outputting.flatDictKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+<p class="last"><a class="reference internal" href="#outputting.flatDictKeySet" title="outputting.flatDictKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictKeySet</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="outputting.outputting.reframeSelectListDicts">
-<code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt id="outputting.reframeSelectListDicts">
+<code class="descclassname">outputting.</code><code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a list of dictionaries and turn it into a dictionary of lists
 containing only the useful keys</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -866,54 +1253,8 @@ into multiple numbered keys</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.flatDictSelectKeySet" title="outputting.outputting.flatDictSelectKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictSelectKeySet</span></code></a>, <a class="reference internal" href="#outputting.outputting.newFlatDict" title="outputting.outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
+<p class="last"><a class="reference internal" href="#outputting.flatDictSelectKeySet" title="outputting.flatDictSelectKeySet"><code class="xref py py-obj docutils literal"><span class="pre">flatDictSelectKeySet</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal"><span class="pre">newFlatDict</span></code></a></p>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.savePlots">
-<code class="descname">savePlots</code><span class="sig-paren">(</span><em>plots</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.savePlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.savePlots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves a list of plots in the appropriate way</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>plots</strong> : list of savable objects</p>
-<blockquote class="last">
-<div><p>The currently accepted objects are matplotlib.pyplot.figure,
-pandas.DataFrame and xml.etree.ElementTree.ElementTree</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="vtkWriter.html#module-vtkWriter" title="vtkWriter"><code class="xref py py-obj docutils literal"><span class="pre">vtkWriter</span></code></a>, <a class="reference internal" href="plotting.html#module-plotting" title="plotting"><code class="xref py py-obj docutils literal"><span class="pre">plotting</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.figure</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">pandas.DataFrame.to_excel</span></code>, <a class="reference external" href="http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.ElementTree" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">xml.etree.ElementTree.ElementTree.outputTrees</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.saving">
-<code class="descname">saving</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.saving" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the folder structure for the saved data and created the log file
-as log.txt</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.folderSetup" title="outputting.outputting.folderSetup"><code class="xref py py-obj docutils literal"><span class="pre">folderSetup</span></code></a></dt>
-<dd>creates the folders</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.simLog">
-<code class="descname">simLog</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.simLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.simLog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Outputs relevent data to an excel file with all the data and a csv file
-with the estimated pertinant data</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -940,14 +1281,11 @@ with the estimated pertinant data</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -969,12 +1307,12 @@ with the estimated pertinant data</p>
         <li class="right" >
           <a href="fitting.fitters.html" title="fitting.fitters package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

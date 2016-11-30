@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>model package &mdash; PyDM 0.9 documentation</title>
+    <title>model package &#8212; PyDM 0.9 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="model.decision package" href="model.decision.html" />
     <link rel="prev" title="models module" href="models.html" /> 
@@ -44,7 +46,7 @@
         <li class="right" >
           <a href="models.html" title="models module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -105,6 +107,11 @@ DOI:10.1142/S0218001401000836</td>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities. Default <code class="docutils literal"><span class="pre">4</span></code></p>
+</div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
 </div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
@@ -220,7 +227,7 @@ defined in the simulation.</p>
 
 <dl class="method">
 <dt id="model.BHMM.BHMM.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -237,6 +244,10 @@ defined in the simulation.</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -272,10 +283,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -448,23 +459,23 @@ pp. 51, 51, 125.</td></tr>
 </table>
 <p class="rubric">Examples</p>
 <p>Draw samples from the distribution:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># mean and standard deviation</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># mean and standard deviation</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Verify the mean and the variance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
 <span class="go">True</span>
 </pre></div>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
 <span class="go">True</span>
 </pre></div>
 </div>
 <p>Display the histogram of the samples, along with
 the probability density function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
 <span class="gp">... </span>               <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">),</span>
 <span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
@@ -474,260 +485,8 @@ the probability density function:</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-model.BP">
-<span id="model-bp-module"></span><h2>model.BP module<a class="headerlink" href="#module-model.BP" title="Permalink to this headline">¶</a></h2>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<dl class="class">
-<dt id="model.BP.BP">
-<em class="property">class </em><code class="descclassname">model.BP.</code><code class="descname">BP</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
-<p>The Bayesian predictor model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
-<blockquote>
-<div><p>Sensitivity parameter for probabilities. Default <code class="docutils literal"><span class="pre">4</span></code></p>
-</div></blockquote>
-<p><strong>eta</strong> : float, optional</p>
-<blockquote>
-<div><p>Decision threshold parameter. Default <code class="docutils literal"><span class="pre">0.3</span></code></p>
-</div></blockquote>
-<p><strong>numActions</strong> : integer, optional</p>
-<blockquote>
-<div><p>The maximum number of valid actions the model can expect to receive.
-Default 2.</p>
-</div></blockquote>
-<p><strong>numStimuli</strong> : integer, optional</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
-<dd><p class="first last">Default 1.</p>
-</dd>
-</dl>
-</div></blockquote>
-<p><strong>numCritics</strong> : integer, optional</p>
-<blockquote>
-<div><p>The number of different reaction learning sets.
-Default numActions*numStimuli</p>
-</div></blockquote>
-<p><strong>probActions</strong> : bool, optional</p>
-<blockquote>
-<div><p>Defines if the probabilities calculated by the model are for each
-action-stimulus pair or for actions. That is, if the stimuli values for
-each action are combined before the probability calculation.
-Default <code class="docutils literal"><span class="pre">True</span></code></p>
-</div></blockquote>
-<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional</p>
-<blockquote>
-<div><p>The prior probability of of the states being the correct one.
-Default <code class="docutils literal"><span class="pre">ones((numActions,</span> <span class="pre">numStimuli))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></p>
-</div></blockquote>
-<p><strong>stimFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>The function that transforms the stimulus into a form the model can
-understand and a string to identify it later. Default is blankStim</p>
-</div></blockquote>
-<p><strong>rewFunc</strong> : function, optional</p>
-<blockquote>
-<div><p>The function that transforms the reward into a form the model can
-understand. Default is blankRew</p>
-</div></blockquote>
-<p><strong>decFunc</strong> : function, optional</p>
-<blockquote class="last">
-<div><p>The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.binary.decEta</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="5%" />
-<col width="95%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The name of the class used when recording what has been used.</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.BP.BP.Name">
-<code class="descname">Name</code><em class="property"> = 'BP'</em><a class="headerlink" href="#model.BP.BP.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="model.BP.BP.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.delta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the comparison between the reward and the expectation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>reward</strong> : float</p>
-<blockquote>
-<div><p>The reward value</p>
-</div></blockquote>
-<p><strong>expectation</strong> : float</p>
-<blockquote>
-<div><p>The expected reward value</p>
-</div></blockquote>
-<p><strong>action</strong> : int</p>
-<blockquote>
-<div><p>The chosen action</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">delta</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BP.BP.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevant data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
-<blockquote class="last">
-<div><p>The dictionary contains a series of keys including Name,
-Probabilities, Actions and Events.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BP.BP.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em>, <em>action</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.rewardExpectation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the reward based on the action and stimuli</p>
-<p>This contains parts that are experiment dependent</p>
-<dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
-</dl>
-<p>response : float or NoneType</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>expectedReward</strong> : float</p>
-<blockquote>
-<div><p>The expected reward</p>
-</div></blockquote>
-<p><strong>stimuli</strong> : list of floats</p>
-<blockquote>
-<div><p>The processed observations</p>
-</div></blockquote>
-<p><strong>activeStimuli</strong> : list of [0, 1] mapping to [False, True]</p>
-<blockquote class="last">
-<div><p>A list of the stimuli that were or were not present</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BP.BP.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the state of all the important variables so that they can be
-accessed later</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="model.BP.BP.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#BP.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.BP.updateModel" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BP.blankRew">
-<code class="descclassname">model.BP.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankRewFunc</strong> : function</p>
-<blockquote class="last">
-<div><p>The function expects to be passed the reward and then return it.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The identifier of the function</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BP.blankStim">
-<code class="descclassname">model.BP.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BP.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BP.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.Returns ([1,0], None)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
-<blockquote>
-<div><p>The function expects to be passed the event and then return [1,0].</p>
-</div></blockquote>
-<p><strong>currAction</strong> : int</p>
-<blockquote class="last">
-<div><p>The current action chosen by the model. Used to pass participant action
-to model when fitting</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="9%" />
-<col width="91%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>Name</td>
-<td>(string) The identifier of the function</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<div class="section" id="model-bp-module">
+<h2>model.BP module<a class="headerlink" href="#model-bp-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-model.BPMS">
 <span id="model-bpms-module"></span><h2>model.BPMS module<a class="headerlink" href="#module-model.BPMS" title="Permalink to this headline">¶</a></h2>
@@ -752,6 +511,11 @@ to model when fitting</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities. Default <code class="docutils literal"><span class="pre">4</span></code></p>
+</div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
 </div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
@@ -833,7 +597,7 @@ you can only have two stimuli</p>
 
 <dl class="method">
 <dt id="model.BPMS.BPMS.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPMS.html#BPMS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPMS.BPMS.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPMS.html#BPMS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPMS.BPMS.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -850,6 +614,10 @@ you can only have two stimuli</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -885,10 +653,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1023,6 +791,11 @@ rather than the logistic algorithm used here.</td>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
@@ -1052,12 +825,12 @@ action-stimulus pair or for actions. That is, if the stimuli values for
 each action are combined before the probability calculation.
 Default <code class="docutils literal"><span class="pre">True</span></code></p>
 </div></blockquote>
-<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,1]</span></code>, optional</p>
+<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional</p>
 <blockquote>
 <div><p>The prior probability of of the states being the correct one.
-Default <code class="docutils literal"><span class="pre">ones((self.numActions,</span> <span class="pre">self.numStimuli))</span> <span class="pre">/</span> <span class="pre">self.numCritics)</span></code></p>
+Default <code class="docutils literal"><span class="pre">ones((numActions,</span> <span class="pre">numStimuli))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></p>
 </div></blockquote>
-<p><strong>activity</strong> : array, optional</p>
+<p><strong>expectations</strong> : array, optional</p>
 <blockquote>
 <div><p>The initialisation of the <cite>activity</cite> of the neurons.
 The values are between <code class="docutils literal"><span class="pre">[0,1]`</span>
@@ -1104,7 +877,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.EP.EP.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/EP.html#EP.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/EP.html#EP.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1121,6 +894,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1153,13 +930,13 @@ Probabilities, Actions and Events.</p>
 <dl class="method">
 <dt id="model.EP.EP.rewardExpectation">
 <code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em>, <em>action</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/EP.html#EP.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.rewardExpectation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the reward based on the action and stimuli</p>
+<dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1187,8 +964,7 @@ Probabilities, Actions and Events.</p>
 <dl class="method">
 <dt id="model.EP.EP.storeState">
 <code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/EP.html#EP.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.EP.storeState" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8221;
-Stores the state of all the important variables so that they can be
+<dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
@@ -1232,7 +1008,7 @@ accessed later</p>
 <dl class="function">
 <dt id="model.EP.blankStim">
 <code class="descclassname">model.EP.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/EP.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.EP.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<dd><p>Default stimulus processor. Does nothing. Returns [1,0]</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1291,6 +1067,11 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <p><strong>beta</strong> : float, optional</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
+</div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
 </div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
@@ -1372,7 +1153,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.MS.MS.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS.html#MS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS.html#MS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS.MS.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1389,6 +1170,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1443,10 +1228,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1581,6 +1366,11 @@ algorithm, rather than the logistic algorithm used here.</td>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
@@ -1661,7 +1451,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.MS_rev.MS_rev.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1679,6 +1469,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <blockquote>
 <div><p>The chosen action</p>
 </div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">delta</p>
@@ -1691,7 +1485,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <dl class="method">
 <dt id="model.MS_rev.MS_rev.outputEvolution">
 <code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the relevent data for this model</p>
+<dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1713,10 +1507,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1885,6 +1679,11 @@ overwrite the <code class="docutils literal"><span class="pre">alphaNogo</span><
 <div><p>Sensitivity parameter for probabilities. Also known as an exploration-
 exploitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter for the probabilities.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>betaDiff</strong> : float, optional</p>
 <blockquote>
 <div><p>The asymmetry between the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
@@ -1974,7 +1773,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.OpAL.OpAL.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL.html#OpAL.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL.OpAL.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1991,6 +1790,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -2026,10 +1829,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2199,6 +2002,11 @@ overwrite the <code class="docutils literal"><span class="pre">alphaNogo</span><
 <div><p>Sensitivity parameter for probabilities. Also known as an exploration-
 exploitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter for the probabilities.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>betaDiff</strong> : float, optional</p>
 <blockquote>
 <div><p>The asymmetry between the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
@@ -2292,7 +2100,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.OpALS.OpALS.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#OpALS.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.OpALS.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2309,6 +2117,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -2344,10 +2156,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2419,6 +2231,328 @@ accessed later</p>
 <dl class="function">
 <dt id="model.OpALS.blankStim">
 <code class="descclassname">model.OpALS.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpALS.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpALS.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankStimFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-model.OpAL_H">
+<span id="model-opal-h-module"></span><h2>model.OpAL_H module<a class="headerlink" href="#module-model.OpAL_H" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Opponent actor learning (OpAL): Modeling
+interactive effects of striatal dopamine on reinforcement
+learning and choice incentive.
+Collins, A. G. E., &amp; Frank, M. J. (2014).
+Psychological Review, 121(3), 337–66.
+doi:10.1037/a0037015</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.OpAL_H.OpAL_H">
+<em class="property">class </em><code class="descclassname">model.OpAL_H.</code><code class="descname">OpAL_H</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<p>The Opponent actor learning model without Hebbian learning</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>alpha</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter, used as either the</p>
+</div></blockquote>
+<p><strong>alphaGoNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaGo</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. Default is <code class="docutils literal"><span class="pre">None</span></code>.
+If not <code class="docutils literal"><span class="pre">None</span></code> will overwrite <code class="docutils literal"><span class="pre">alphaNogo</span></code>
+<img src="_images/mathmpl/math-d6b9f0b9c1.png" style="position: relative; bottom: -6px"/></p>
+</div></blockquote>
+<p><strong>alphaCrit</strong> : float, optional</p>
+<blockquote>
+<div><p>The critic learning rate. Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter for Go, the positive part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaNogo</strong> : float, optional</p>
+<blockquote>
+<div><p>Learning rate parameter for Nogo, the negative part of the actor learning
+Default is <code class="docutils literal"><span class="pre">alpha</span></code></p>
+</div></blockquote>
+<p><strong>alphaGoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaGo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaNogoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaGo</span></code> parameter
+<img src="_images/mathmpl/math-af13a2175d.png" /></p>
+</div></blockquote>
+<p><strong>alphaNogoDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The difference between <code class="docutils literal"><span class="pre">alphaCrit</span></code> and <code class="docutils literal"><span class="pre">alphaNogo</span></code>. The default is <code class="docutils literal"><span class="pre">None</span></code>
+If not <code class="docutils literal"><span class="pre">None</span></code>  and <code class="docutils literal"><span class="pre">alphaGoDiff</span></code> is also not <code class="docutils literal"><span class="pre">None</span></code>, it will 
+overwrite the <code class="docutils literal"><span class="pre">alphaNogo</span></code> parameter
+<img src="_images/mathmpl/math-0071ab378d.png" /></p>
+</div></blockquote>
+<p><strong>beta</strong> : float, optional</p>
+<blockquote>
+<div><p>Sensitivity parameter for probabilities. Also known as an exploration-
+exploitation parameter. Defined as <img src="_images/mathmpl/math-59ed813421.png" style="position: relative; bottom: -7px"/> in the paper</p>
+</div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter for the probabilities.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
+<p><strong>betaDiff</strong> : float, optional</p>
+<blockquote>
+<div><p>The asymmetry between the actor weights. <img src="_images/mathmpl/math-2de171723c.png" style="position: relative; bottom: -7px"/></p>
+</div></blockquote>
+<p><strong>numActions</strong> : integer, optional</p>
+<blockquote>
+<div><p>The maximum number of valid actions the model can expect to receive.
+Default 2.</p>
+</div></blockquote>
+<p><strong>numStimuli</strong> : integer, optional</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
+<dd><p class="first last">Default 1.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>numCritics</strong> : integer, optional</p>
+<blockquote>
+<div><p>The number of different reaction learning sets.
+Default numActions*numStimuli</p>
+</div></blockquote>
+<p><strong>probActions</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the probabilities calculated by the model are for each
+action-stimulus pair or for actions. That is, if the stimuli values for
+each action are combined before the probability calculation.
+Default <code class="docutils literal"><span class="pre">True</span></code></p>
+</div></blockquote>
+<p><strong>prior</strong> : array of floats in <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional</p>
+<blockquote>
+<div><p>The prior probability of of the states being the correct one.
+Default <code class="docutils literal"><span class="pre">ones((numActions,</span> <span class="pre">numStimuli))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></p>
+</div></blockquote>
+<p><strong>expect: array of floats, optional</strong></p>
+<blockquote>
+<div><p>The initialisation of the the expected reward.
+Default <code class="docutils literal"><span class="pre">ones((numActions,</span> <span class="pre">numStimuli))</span> <span class="pre">/</span> <span class="pre">numCritics</span></code></p>
+</div></blockquote>
+<p><strong>expectGo</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The initialisation of the the expected go and nogo.
+Default <code class="docutils literal"><span class="pre">ones((numActions,</span> <span class="pre">numStimuli))</span> <span class="pre">/</span> <span class="pre">numCritics</span></code></p>
+</div></blockquote>
+<p><strong>stimFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p>
+</div></blockquote>
+<p><strong>rewFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>The function that transforms the reward into a form the model can
+understand. Default is blankRew</p>
+</div></blockquote>
+<p><strong>decFunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decEta</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Actor: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-cd13257abb.png" class="center" /><p>Critic: The chosen action is updated with</p>
+<img src="_images/mathmpl/math-41510b7f42.png" class="center" /><p>Probabilities: The probabilities for all actions are calculated using</p>
+<img src="_images/mathmpl/math-581a4e2b01.png" class="center" /><p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+<tr class="row-even"><td>currAction</td>
+<td>(int) The current action chosen by the model. Used to pass participant action to model when fitting</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.OpAL_H.OpAL_H.Name">
+<code class="descname">Name</code><em class="property"> = 'OpAL_H'</em><a class="headerlink" href="#model.OpAL_H.OpAL_H.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL_H.OpAL_H.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the comparison between the reward and the expectation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>reward</strong> : float</p>
+<blockquote>
+<div><p>The reward value</p>
+</div></blockquote>
+<p><strong>expectation</strong> : float</p>
+<blockquote>
+<div><p>The expected reward value</p>
+</div></blockquote>
+<p><strong>action</strong> : int</p>
+<blockquote>
+<div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">delta</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL_H.OpAL_H.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dict</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL_H.OpAL_H.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em>, <em>action</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the reward based on the action and stimuli</p>
+<p>This contains parts that are experiment dependent</p>
+<dl class="docutils">
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
+</dl>
+<p>response : float or NoneType</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>expectedReward</strong> : float</p>
+<blockquote>
+<div><p>The expected reward</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : list of floats</p>
+<blockquote>
+<div><p>The processed observations</p>
+</div></blockquote>
+<p><strong>activeStimuli</strong> : list of [0, 1] mapping to [False, True]</p>
+<blockquote class="last">
+<div><p>A list of the stimuli that were or were not present</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL_H.OpAL_H.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.OpAL_H.OpAL_H.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#OpAL_H.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.OpAL_H.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.OpAL_H.blankRew">
+<code class="descclassname">model.OpAL_H.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.blankRew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default reward processor. Does nothing. Returns reward</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>blankRewFunc</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the reward and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="model.OpAL_H.blankStim">
+<code class="descclassname">model.OpAL_H.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/OpAL_H.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.OpAL_H.blankStim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Default stimulus processor. Does nothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2573,7 +2707,7 @@ in to a decision. Default is basicDecision</p>
 
 <dl class="method">
 <dt id="model.RVPM.RVPM.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/RVPM.html#RVPM.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/RVPM.html#RVPM.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.RVPM.RVPM.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2590,6 +2724,10 @@ in to a decision. Default is basicDecision</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -2651,10 +2789,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -2789,7 +2927,7 @@ the time. The stimulus and reward are set to 0.</p>
 <dl class="class">
 <dt id="model.modelPlot.modelPlot">
 <em class="property">class </em><code class="descclassname">model.modelPlot.</code><code class="descname">modelPlot</code><span class="sig-paren">(</span><em>model</em>, <em>modelParams</em>, <em>modelLabel</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelPlot.html#modelPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelPlot.modelPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Abstract class for the creation of plots relevant to a model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2848,7 +2986,7 @@ the time. The stimulus and reward are set to 0.</p>
 <dl class="class">
 <dt id="model.modelSetPlot.modelSetPlot">
 <em class="property">class </em><code class="descclassname">model.modelSetPlot.</code><code class="descname">modelSetPlot</code><span class="sig-paren">(</span><em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelSetPlot.html#modelSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelSetPlot.modelSetPlot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>Abstract class for the creation of plots for sets of results from a model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2972,7 +3110,7 @@ to model when fitting</p>
 <dl class="class">
 <dt id="model.modelTemplate.model">
 <em class="property">class </em><code class="descclassname">model.modelTemplate.</code><code class="descname">model</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The model class is a general template for a model. It also contains
 universal methods used by all models.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3045,7 +3183,7 @@ in to a decision.</p>
 </table>
 <dl class="attribute">
 <dt id="model.modelTemplate.model.Name">
-<code class="descname">Name</code><em class="property"> = 'modelTemplate'</em><a class="headerlink" href="#model.modelTemplate.model.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u'modelTemplate'</em><a class="headerlink" href="#model.modelTemplate.model.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3134,8 +3272,8 @@ Default <code class="docutils literal"><span class="pre">1</span></code></p>
 
 <dl class="method">
 <dt id="model.modelTemplate.model.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.delta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the significance of the discrepancy between the response and the expected response</p>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3152,9 +3290,13 @@ Default <code class="docutils literal"><span class="pre">1</span></code></p>
 <blockquote>
 <div><p>The chosen action</p>
 </div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>delta</strong> : float</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">delta</p>
 </td>
 </tr>
 </tbody>
@@ -3228,7 +3370,7 @@ Observation Feedback</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>state</strong> : tuple of ({int | float | tuple},{tuple of int | None})</p>
 <blockquote class="last">
-<div><p>The stimulus from the experiment followed by the tuple of valid 
+<div><p>The stimulus from the experiment followed by the tuple of valid
 actions. Passes the values onto a processing function,
 self._updateObservation``.</p>
 </div></blockquote>
@@ -3304,7 +3446,7 @@ of which of the three elements are present.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stimuli</strong> : {int | float | tuple}</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stimuli</strong> : {int | float | tuple | None}</p>
 <blockquote>
 <div><p>The stimuli received</p>
 </div></blockquote>
@@ -3328,10 +3470,10 @@ of which of the three elements are present.</p>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>stimuli <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>stimuli</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3499,6 +3641,11 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
@@ -3574,12 +3721,12 @@ in to a decision. Default is model.decision.binary.decEta</p>
 </table>
 <dl class="attribute">
 <dt id="model.qLearn.qLearn.Name">
-<code class="descname">Name</code><em class="property"> = 'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u'qLearn'</em><a class="headerlink" href="#model.qLearn.qLearn.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn.qLearn.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn.html#qLearn.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn.html#qLearn.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3596,6 +3743,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -3628,13 +3779,13 @@ Probabilities, Actions and Events.</p>
 <dl class="method">
 <dt id="model.qLearn.qLearn.rewardExpectation">
 <code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em>, <em>action</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn.html#qLearn.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn.qLearn.rewardExpectation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the reward based on the action and stimuli</p>
+<dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3785,6 +3936,11 @@ Default is alpha</p>
 <blockquote>
 <div><p>Sensitivity parameter for probabilities</p>
 </div></blockquote>
+<p><strong>invBeta</strong> : float, optional</p>
+<blockquote>
+<div><p>Inverse of sensitivity parameter.
+Defined as <img src="_images/mathmpl/math-487658844c.png" style="position: relative; bottom: -13px"/>. Default <code class="docutils literal"><span class="pre">0.2</span></code></p>
+</div></blockquote>
 <p><strong>eta</strong> : float, optional</p>
 <blockquote>
 <div><p>Decision threshold parameter</p>
@@ -3872,7 +4028,7 @@ in to a decision. Default is model.decision.binary.decEta</p>
 
 <dl class="method">
 <dt id="model.qLearn2.qLearn2.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2.html#qLearn2.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2.qLearn2.delta" title="Permalink to this definition">¶</a></dt>
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2.html#qLearn2.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2.qLearn2.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3889,6 +4045,10 @@ in to a decision. Default is model.decision.binary.decEta</p>
 <p><strong>action</strong> : int</p>
 <blockquote>
 <div><p>The chosen action</p>
+</div></blockquote>
+<p><strong>stimuli</strong> : {int | float | tuple | None}</p>
+<blockquote>
+<div><p>The stimuli received</p>
 </div></blockquote>
 </td>
 </tr>
@@ -3924,10 +4084,10 @@ Probabilities, Actions and Events.</p>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <dl class="docutils">
-<dt>observation <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span></dt>
-<dd>The set of stimuli</dd>
-<dt>action <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span></dt>
-<dd>The chosen action</dd>
+<dt>observation</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">{int | float | tuple}</span><dd>The set of stimuli</dd>
+<dt>action</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int or NoneType</span><dd>The chosen action</dd>
 </dl>
 <p>response : float or NoneType</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3984,13 +4144,14 @@ accessed later</p>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-model.BHMM">model.BHMM module</a></li>
-<li><a class="reference internal" href="#module-model.BP">model.BP module</a></li>
+<li><a class="reference internal" href="#model-bp-module">model.BP module</a></li>
 <li><a class="reference internal" href="#module-model.BPMS">model.BPMS module</a></li>
 <li><a class="reference internal" href="#module-model.EP">model.EP module</a></li>
 <li><a class="reference internal" href="#module-model.MS">model.MS module</a></li>
 <li><a class="reference internal" href="#module-model.MS_rev">model.MS_rev module</a></li>
 <li><a class="reference internal" href="#module-model.OpAL">model.OpAL module</a></li>
 <li><a class="reference internal" href="#module-model.OpALS">model.OpALS module</a></li>
+<li><a class="reference internal" href="#module-model.OpAL_H">model.OpAL_H module</a></li>
 <li><a class="reference internal" href="#module-model.RVPM">model.RVPM module</a></li>
 <li><a class="reference internal" href="#module-model.modelPlot">model.modelPlot module</a></li>
 <li><a class="reference internal" href="#module-model.modelSetPlot">model.modelSetPlot module</a></li>
@@ -4018,14 +4179,11 @@ accessed later</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -4047,12 +4205,12 @@ accessed later</p>
         <li class="right" >
           <a href="models.html" title="models module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

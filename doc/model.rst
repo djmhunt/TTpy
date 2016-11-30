@@ -75,6 +75,14 @@ model.OpALS module
     :undoc-members:
     :show-inheritance:
 
+model.OpAL_H module
+-------------------
+
+.. automodule:: model.OpAL_H
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 model.RVPM module
 -----------------
 

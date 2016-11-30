@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>participants.fitResults &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for participants.fitResults</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">floor</span><span class="p">,</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">around</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="n">append</span><span class="p">,</span> <span class="n">nanmax</span><span class="p">,</span> <span class="n">nanmin</span><span class="c1">#, amax, amin</span>
+
+<span class="kn">from</span> <span class="nn">plotting</span> <span class="k">import</span> <span class="n">dataVsEvents</span>
+
+
+<div class="viewcode-block" id="plotFitting"><a class="viewcode-back" href="../../participants.html#participants.fitResults.plotFitting">[docs]</a><span class="k">def</span> <span class="nf">plotFitting</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    participant : dict</span>
+<span class="sd">        The data for the participant</span>
+<span class="sd">    modelData : dict</span>
+<span class="sd">        The data for the model instance</span>
+<span class="sd">    fitQuality : float</span>
+<span class="sd">        A description of the quality of a fit</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    figSets : list of matplotlib figure objects</span>
+<span class="sd">        The figures associated with the fitting of the participant</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">partName</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+
+    <span class="n">figSets</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plotFittingSuccess</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">],</span> <span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;ActionProb&quot;</span><span class="p">])</span>
+    <span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;ActionProbs_&#39;</span> <span class="o">+</span> <span class="n">partName</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+    <span class="n">modExpect</span> <span class="o">=</span> <span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;Expectations&quot;</span><span class="p">]</span>
+    <span class="n">reward</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;Rewards&quot;</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">modExpect</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plotExpectations</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">],</span> <span class="n">modExpect</span><span class="p">,</span> <span class="n">reward</span><span class="p">)</span>
+    <span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;ExpectationTracks_&#39;</span> <span class="o">+</span> <span class="n">partName</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plotRewards</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">modelData</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">],</span> <span class="n">reward</span><span class="p">)</span>
+    <span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;Reward_&#39;</span> <span class="o">+</span> <span class="n">partName</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">figSets</span></div>
+
+
+<div class="viewcode-block" id="plotFittingSuccess"><a class="viewcode-back" href="../../participants.html#participants.fitResults.plotFittingSuccess">[docs]</a><span class="k">def</span> <span class="nf">plotFittingSuccess</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">modActProb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The success of accurately providing the participants action as the most likely</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    partName : string</span>
+<span class="sd">        The name label for the participant</span>
+<span class="sd">    fitQuality : float</span>
+<span class="sd">        A description of the quality of a fit</span>
+<span class="sd">    partActions : array of floats</span>
+<span class="sd">        The actions for each timestep</span>
+<span class="sd">    modActProb : 2D array of floats</span>
+<span class="sd">        The action probabilities for each model. Each row represents one model.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Model fit value performance for participant &quot;</span> <span class="o">+</span> <span class="n">partName</span><span class="p">}</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;xLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Time&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Probability of participant action being the best one&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;y2Label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Actions by the participant&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">nanmax</span><span class="p">(</span><span class="n">partActions</span><span class="p">))</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">nanmin</span><span class="p">(</span><span class="n">partActions</span><span class="p">))</span>
+    <span class="n">modelLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Fit of quality &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">around</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span>
+    <span class="n">eventLabel</span> <span class="o">=</span> <span class="s2">&quot;Participant actions&quot;</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">dataVsEvents</span><span class="p">(</span><span class="n">modActProb</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">eventLabel</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plotExpectations"><a class="viewcode-back" href="../../participants.html#participants.fitResults.plotExpectations">[docs]</a><span class="k">def</span> <span class="nf">plotExpectations</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">modExpect</span><span class="p">,</span> <span class="n">reward</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The success of accurately providing the participants action as the most likely</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    partName : string</span>
+<span class="sd">        The name label for the participant</span>
+<span class="sd">    fitQuality : float</span>
+<span class="sd">        A description of the quality of a fit</span>
+<span class="sd">    partActions : array of floats</span>
+<span class="sd">        The actions for each timestep</span>
+<span class="sd">    modExpect : 2D array of floats</span>
+<span class="sd">        The action reward expectations for each model. Each row represents one model.</span>
+<span class="sd">    reward : 1D array of floats shaped as a 2D array like modExpect</span>
+<span class="sd">        The reward received by the participants at each point</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">modExpectLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modExpect</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">modExpect</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">yMax</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">nanmax</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">yMin</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">nanmin</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">correction</span> <span class="o">=</span> <span class="p">(</span><span class="n">yMax</span><span class="o">-</span><span class="n">yMin</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span>
+    
+    <span class="n">linetype</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">][:</span><span class="n">modExpectLen</span><span class="p">]</span>
+    <span class="n">linetype</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+
+    <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Expectation values for participant &quot;</span> <span class="o">+</span> <span class="n">partName</span> <span class="o">+</span> <span class="s2">&quot; with fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">around</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">,</span> <span class="mi">1</span><span class="p">))}</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;xLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Time&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Expected reward for action&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;y2Label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Actions by the participant&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yMax</span> <span class="o">+</span> <span class="n">correction</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yMin</span> <span class="o">-</span> <span class="n">correction</span>
+    <span class="n">modelLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Action stimulus&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">modExpectLen</span><span class="p">)]</span>
+    <span class="n">modelLabels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Reward&quot;</span><span class="p">)</span>
+    <span class="n">eventLabel</span> <span class="o">=</span> <span class="s2">&quot;Participant actions&quot;</span>
+    <span class="n">dataFormatting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;linetype&quot;</span><span class="p">:</span> <span class="n">linetype</span><span class="p">}</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">dataVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">eventLabel</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">,</span> <span class="n">dataFormatting</span><span class="o">=</span><span class="n">dataFormatting</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plotRewards"><a class="viewcode-back" href="../../participants.html#participants.fitResults.plotRewards">[docs]</a><span class="k">def</span> <span class="nf">plotRewards</span><span class="p">(</span><span class="n">partName</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">reward</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The participant action and rewards</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    partName : string</span>
+<span class="sd">        The name label for the participant</span>
+<span class="sd">    fitQuality : float</span>
+<span class="sd">        A description of the quality of a fit</span>
+<span class="sd">    partActions : array of floats</span>
+<span class="sd">        The actions for each timestep</span>
+<span class="sd">    reward : 1D array of floats shaped as a 2D array like modExpect</span>
+<span class="sd">        The reward received by the participants at each point</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fig : matplotlib figure object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">reward</span>
+
+    <span class="n">yMax</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">(</span><span class="n">nanmax</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">yMin</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">nanmin</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">correction</span> <span class="o">=</span> <span class="p">(</span><span class="n">yMax</span><span class="o">-</span><span class="n">yMin</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span>
+
+    <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Reward values for participant &quot;</span> <span class="o">+</span> <span class="n">partName</span> <span class="o">+</span> <span class="s2">&quot; with fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">around</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">,</span> <span class="mi">1</span><span class="p">))}</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;xLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Time&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Reward for action&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;y2Label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Actions by the participant&quot;</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yMax</span> <span class="o">+</span> <span class="n">correction</span>
+    <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yMin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yMin</span> <span class="o">-</span> <span class="n">correction</span>
+    <span class="n">modelLabels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Reward&quot;</span><span class="p">]</span>
+    <span class="n">eventLabel</span> <span class="o">=</span> <span class="s2">&quot;Participant actions&quot;</span>
+    <span class="n">dataFormatting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;linetype&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;-.&#39;</span><span class="p">],</span>
+                      <span class="s2">&quot;colours&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">]}</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">dataVsEvents</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">partActions</span><span class="p">,</span> <span class="n">modelLabels</span><span class="p">,</span> <span class="n">eventLabel</span><span class="p">,</span> <span class="n">axisLabels</span><span class="p">,</span> <span class="n">dataFormatting</span><span class="o">=</span><span class="n">dataFormatting</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

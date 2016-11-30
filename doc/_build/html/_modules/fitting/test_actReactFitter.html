@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fitting.test_actReactFitter &mdash; PyDM 0.9 documentation</title>
+    <title>fitting.test_actReactFitter &#8212; PyDM 0.9 documentation</title>
     
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -24,6 +24,8 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
     <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
@@ -37,8 +39,8 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,20 +54,20 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">pytest</span> <span class="kn">import</span> <span class="n">raises</span><span class="p">,</span> <span class="n">fixture</span>
+<span class="kn">from</span> <span class="nn">pytest</span> <span class="k">import</span> <span class="n">raises</span><span class="p">,</span> <span class="n">fixture</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
 
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">models</span>
-<span class="kn">from</span> <span class="nn">model.qLearn</span> <span class="kn">import</span> <span class="n">qLearn</span>
-<span class="kn">from</span> <span class="nn">fitting.actReactFitter</span> <span class="kn">import</span> <span class="n">fitter</span>
-<span class="kn">from</span> <span class="nn">fitting.fitters.minimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="k">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">model.qLearn</span> <span class="k">import</span> <span class="n">qLearn</span>
+<span class="kn">from</span> <span class="nn">fitting.actReactFitter</span> <span class="k">import</span> <span class="n">fitter</span>
+<span class="kn">from</span> <span class="nn">fitting.fitters.minimize</span> <span class="k">import</span> <span class="n">minimize</span>
 
 <span class="c1">#def test_an_exception():</span>
 <span class="c1">#    with raises(IndexError):</span>
@@ -160,7 +162,7 @@
         <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelSets</span>
         <span class="n">fit</span><span class="p">,</span> <span class="n">fitAlg</span> <span class="o">=</span> <span class="n">fitting</span>
         
-        <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
+        <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">()</span>
         
         <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.038898802</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span>	
@@ -228,14 +230,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -251,13 +250,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>

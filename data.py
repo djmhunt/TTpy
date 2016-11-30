@@ -23,7 +23,7 @@ from utils import listMerge
 def datasets(folders, fileTypes):
     """
     A function for reading in multiple datasets in one go
-    
+
     Parameters
     ----------
     folders : list of strings
@@ -31,24 +31,24 @@ def datasets(folders, fileTypes):
     fileTypes : list of strings
         The file extensions found after the ".". Currently only mat and xlsx files are
         supported.
-    
+
     Returns
     -------
     dataSet : list of dictionaries
-    
+
     See Also
     --------
     data : The function called by this one
     """
     dataSetList = []
     for folder, fileType in izip(folders, fileTypes):
-        
+
         d = data(folder, fileType)
-        
+
         dataSetList.append(d)
-        
+
     dataSet = list(chain(*dataSetList))
-        
+
     return dataSet
 
 
@@ -62,11 +62,11 @@ def data(folder, fileType, **kwargs):
     fileType : string
         The file extension found after the ".". Currently only mat and xlsx files are
         supported.
-    
+
     Returns
     -------
     dataSet : list of dictionaries
-    
+
     Examples
     --------
     >>> folder = "./Data/"
@@ -86,12 +86,12 @@ def data(folder, fileType, **kwargs):
     if fileType == "mat":
 
         dataSet = getmatData(folder, files)
-        
+
     elif fileType == "xlsx":
-        
+
         dataSet = getxlsxData(folder, files, **kwargs)
 
-    elif fileType == "pickle":
+    elif fileType == "pkl":
 
         dataSet = getpickleData(folder, files, **kwargs)
 
@@ -104,23 +104,23 @@ def data(folder, fileType, **kwargs):
 def getFiles(folder, fileType):
     """
     Produces the list of valid input files
-    
+
     Parameters
     ----------
     folder : string
         The folder string should end in a "/"
     fileType : string
         The file extension found after the ".".
-    
+
     Returns
     -------
     dataFiles : list
         A sorted list of the the files
-        
+
     See Also
     --------
     sortStrings : sorts the files found
-    
+
     Examples
     --------
     >>> folder = "./Data/"
@@ -131,7 +131,7 @@ def getFiles(folder, fileType):
     """
 
     files = listdir(folder)
-    
+
     dataFiles = [f for f in files if f.endswith(fileType)]
 
     sortedFiles = sortStrings(dataFiles, "." + fileType)
@@ -142,24 +142,24 @@ def getFiles(folder, fileType):
 def sortStrings(unorderedList, suffix):
     """
     Takes an unordered list of strings and sorts them if possible and necessary
-    
+
     Parameters
     ----------
     unorderedList : list of strings
         A list of valid strings
     suffix : string
         A known suffix for the string
-    
+
     Returns
     -------
     sorted list : list of strings
         A sorted list of the the strings
-        
+
     See Also
     --------
     intCore : sorts the strings with the prefix and suffix removed if they are a number
     getUniquePrefix : identifies prefixes all strings have
-    
+
     Examples
     --------
     >>> files = ['subj1.mat', 'subj11.mat', 'subj2.mat']
@@ -171,34 +171,34 @@ def sortStrings(unorderedList, suffix):
         return unorderedList
 
     suffixLen = len(suffix)
-    
+
     prefix = getUniquePrefix(unorderedList, suffixLen)
-    
+
     sortedList = intCore(unorderedList, prefix, suffix)
     if sortedList:
         return sortedList
     else:
-        return unorderedList   
+        return unorderedList
 
 
 def getUniquePrefix(unorderedList, suffixLen):
     """
-    Identifies any initial part of strings that are identical 
+    Identifies any initial part of strings that are identical
     for all string
-    
+
     Parameters
     ----------
     unorderedList : list of strings
         A list of strings to be ordered
     suffixLen : int
         The length of the identified suffix
-    
+
     Returns
     -------
     prefix : string
-        The initial part of the strings that is identical for all strings in 
-        the list 
-        
+        The initial part of the strings that is identical for all strings in
+        the list
+
     Examples
     --------
     >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
@@ -207,7 +207,7 @@ def getUniquePrefix(unorderedList, suffixLen):
     'subj'
 
     """
-    
+
     for i in xrange(1, len(unorderedList[0])-suffixLen+2): # Assuming the prefix might be the string-suffix
         sec = unorderedList[0][:i]
         if all((sec == d[:i] for d in unorderedList)):
@@ -218,9 +218,9 @@ def getUniquePrefix(unorderedList, suffixLen):
 
 
 def intCore(unorderedList, prefix, suffix):
-    """Takes the *core* part of a string and, assuming it is an integer, 
+    """Takes the *core* part of a string and, assuming it is an integer,
     sorts them. Returns the list sorted
-    
+
     Parameters
     ----------
     unorderedList : list of strings
@@ -229,12 +229,12 @@ def intCore(unorderedList, prefix, suffix):
         The unchanging part of the start each string
     suffix : string
         The unchanging known end of each string
-        
+
     Returns
     -------
     sortedStrings : list of strings
         The strings now sorted
-        
+
     Examples
     --------
     >>> dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
@@ -242,7 +242,7 @@ def intCore(unorderedList, prefix, suffix):
     >>> suffix = '.mat'
     >>> intCore(dataFiles,prefix,suffix)
     ['me001.mat', 'me002.mat', 'me051.mat', 'me052.mat']
-    
+
     >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj12.mat', 'subj2.mat']
     >>> prefix = 'subj'
     >>> suffix = 'mat'
@@ -251,7 +251,7 @@ def intCore(unorderedList, prefix, suffix):
 
 
     """
-    
+
     try:
         if suffix:
             core = [(d[len(prefix):-(len(suffix))], i) for i, d in enumerate(unorderedList)]
@@ -260,31 +260,31 @@ def intCore(unorderedList, prefix, suffix):
         coreInt = [(int(c), i) for c, i in core]
     except:
         return []
-    
+
     coreSorted = sorted(coreInt)
     coreStr = [(str(c), i) for c, i in coreSorted]
-    
+
     sortedStrings = [''.join([prefix, '0'*(len(core[i][0])-len(s)), s, suffix]) for s, i in coreStr]
-    
+
     return sortedStrings
-    
+
 
 def getmatData(folder, files):
     """
     Loads the data from MATLAB files
-    
+
     Parameters
     ----------
     folder : string
         The folder string should end in a "/"
     files : list of strings
         A list of filenames
-    
+
     Returns
     -------
     dataSet : list of dictionaries
         Each dictionary should represent the data of one participant
-        
+
     Examples
     --------
     >>> folder = './Data/'
@@ -294,7 +294,7 @@ def getmatData(folder, files):
      {'cumpts': array([12, 22, 24, 26], dtype=uint8)},
      {'cumpts': array([ 5, 15, 17, 19], dtype=uint8)}]
 
-    
+
     """
 
     dataSets = []
@@ -323,7 +323,7 @@ def getmatData(folder, files):
 def getxlsxData(folder, files, **kwargs):
     """
     Loads the data from xlsx files
-    
+
     Parameters
     ----------
     folder : string
@@ -332,30 +332,30 @@ def getxlsxData(folder, files, **kwargs):
         A list of filenames
     splitBy : string or list, optional
         If multiple participants datasets are in one file sheet, this specifies
-        the column or columns that can distinguish and identify the rows for 
+        the column or columns that can distinguish and identify the rows for
         each participant. Default ``[]``
     **kwargs : dict, optional
         The keyword arguments for pandas.read_excel
-    
-    
+
+
     Returns
     -------
     dataSet : list of dictionaries
         Each dictionary should represent the data of one participant
-        
+
     Examples
     --------
-     
+
     See Also
     --------
     pandas.read_excel
 
     """
-    
+
     splitBy = kwargs.pop('splitBy', [])
     if isinstance(splitBy, str):
         splitBy = [splitBy]
-    
+
     dataSets = []
 
     for f in files:
@@ -365,14 +365,14 @@ def getxlsxData(folder, files, **kwargs):
             continue
 
         dat = read_excel(folder + f, **kwargs)
-        
+
         if len(splitBy) > 0:
             # The data must be split
             classifierList = (sortStrings(list(set(dat[s])), '') for s in splitBy)
             participants = listMerge(*classifierList)
-                
+
             for p in participants:
-                
+
                 subDat = dat[(dat[splitBy] == p).all(axis=1)]
                 subDatDict = subDat.to_dict(orient='list')
                 subDatDict["fileName"] = f
@@ -381,7 +381,7 @@ def getxlsxData(folder, files, **kwargs):
             datDict = dat.to_dict(orient='list')
             datDict["fileName"] = f
             dataSets.append(datDict)
-            
+
     return dataSets
 
 

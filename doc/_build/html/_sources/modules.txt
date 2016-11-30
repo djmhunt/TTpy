@@ -1,5 +1,5 @@
-..
-==
+Code
+====
 
 .. toctree::
    :maxdepth: 4
@@ -9,13 +9,17 @@
    experiment
    experiments
    fitting
-   inputs
    model
    models
    outputting
    outputtingUtils
+   participantModelParamMatch
+   participants
    plotting
-   runScript
+   pyan
+   setup
    simulation
+   test
    utils
+   utils_test
    vtkWriter

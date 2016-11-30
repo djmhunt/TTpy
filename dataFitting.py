@@ -9,8 +9,8 @@ from simulation import simulation
 from fitting.fit import fit
 
 def dataFitting(experiments, models, outputting, data = None, fitter = None):
-    """ 
-    A framework for fitting models to data for experiments, along with 
+    """
+    A framework for fitting models to data for experiments, along with
     recording the plots and data associated with the best fits.
 
     Parameters
@@ -25,7 +25,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
         Each dictionary should all contain the keys associated with the fitting
     fitter : fitting.fit.fit
         A fitting class instance
-    
+
     See Also
     --------
     experiments.experiments : The experiments factory
@@ -36,7 +36,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
     """
 
 #    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):
-    if not (isinstance(data, list) and isinstance(fitter,fit)):
+    if not (isinstance(data, list)): #and isinstance(fitter, fit)):
 
         logger = outputting.getLogger('dataFitting')
 
@@ -61,7 +61,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
         modelSetup = modelInfo[1:]
 
         exp = experiments.create(0)
-        
+
         outputting.logSimFittingParams(exp.params(), model.Name, modelSetup[0], modelSetup[1])
 
         for participant in data:
@@ -71,7 +71,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             message = "Beginning participant fit"
             logger.info(message)
 
-            modelFitted, fitQuality, testedParams = fitter.participant(exp, model, modelSetup, participant)
+            modelFitted, fitQuality, fittingData = fitter.participant(exp, model, modelSetup, participant)
 
             message = "Participant fitted"
             logger.debug(message)
@@ -83,7 +83,7 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
                                             exp.outputEvolution(),
                                             modelFitted.outputEvolution(),
                                             fitQuality,
-                                            testedParams)
+                                            fittingData)
 
             outputting.plotModel(modelFitted.plot())
 

@@ -60,6 +60,14 @@ experiment.probSelect module
     :undoc-members:
     :show-inheritance:
 
+experiment.weather module
+-------------------------
+
+.. automodule:: experiment.weather
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

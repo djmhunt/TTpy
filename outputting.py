@@ -82,7 +82,7 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel", logging.INFO)# logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
-        
+
         # Initialise the stores of information
 
         self.expStore = []
@@ -118,7 +118,7 @@ class outputting(object):
         self.loggerSim = logging.getLogger('Simulation')
 
         message = "Beginning experiment labelled: " + self.label
-        self.logger.info(message)        
+        self.logger.info(message)
 
     def end(self):
         """
@@ -525,7 +525,8 @@ class outputting(object):
             message = "Store data for simulation " + str(self.modelSetSize)
             self.logger.info(message)
 
-            self._simModelLog(modelData)
+            if self.simRun:
+                self._simModelLog(modelData)
 
             if self.pickleData:
                 self.pickleLog(expData, "_expData" + label)
@@ -584,7 +585,7 @@ class outputting(object):
                 self.savePlots(ep)
 
             if self.saveFittingProgress:
-                self.recordFittingSequence(fittingData, fitQuality, label, participant)
+                self.recordFittingSequence(fittingData, label, participant)
 
             if self.pickleData:
                 self.pickleLog(expData, "_expData" + label)
@@ -633,26 +634,28 @@ class outputting(object):
                 log.info(message)
 
     ### Ploting
-    def recordFittingSequence(self, fittingData, fitQuality, label, participant):
+    def recordFittingSequence(self, fittingData, label, participant):
 
         extendedLabel = "ParameterFits" + label
 
         paramSet = fittingData["testedParameters"]
         paramLabels = paramSet.keys()
         fitQualities = fittingData["fitQualities"]
+        fitQuality = fittingData["fitQuality"]
+        finalParameters = fittingData["finalParameters"]
 
-        self._makeFittingDataSet(paramSet, fitQualities, fitQuality, extendedLabel, participant)
+        self._makeFittingDataSet(fittingData, extendedLabel, participant)
 
         if not self.saveFigures:
             return
 
         axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
-        
+
         fitQualityMax = amax(fitQualities)
         fitQualityMin = amin(fitQualities)
         if fitQualityMin <= 0:
             fitQualityMin = 1
-            
+
         if (log10(fitQualityMax) - log10(fitQualityMin)) > 2 and log10(fitQualityMin) >= 0:
             results = log10(fitQualities)
         else:
@@ -663,7 +666,7 @@ class outputting(object):
             fig = paramDynamics(paramSet,
                                 results,
                                 axisLabels)
-            addPoint([paramSet[paramLabels[0]][-1]], [fitQuality], fig.axes[0])
+            addPoint([finalParameters[paramLabels[0]]], [fitQuality], fig.axes[0])
         elif len(paramSet) == 2:
             axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
             fig = paramDynamics(paramSet,
@@ -673,7 +676,7 @@ class outputting(object):
                                 heatmap=False,
                                 scatter=True,
                                 cmap="viridis")
-            addPoint([paramSet[paramLabels[0]][-1]], [paramSet[paramLabels[1]][-1]], fig.axes[0])
+            addPoint([finalParameters[paramLabels[0]]], [finalParameters[paramLabels[1]]], fig.axes[0])
         else:
             fig = paramDynamics(paramSet,
                                 results,
@@ -1025,7 +1028,7 @@ class outputting(object):
 
         return data
 
-    def _makeFittingDataSet(self, paramSet, fitQualities, fitQuality, extendedLabel, participant):
+    def _makeFittingDataSet(self, fittingData, extendedLabel, participant):
 
         data = OrderedDict()
         data['exp_Label'] = self.expLabelStore
@@ -1037,9 +1040,11 @@ class outputting(object):
         partData = newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
         data.update(partData)
 
-        paramFittingDict = copy(paramSet)
-        paramFittingDict['fitQuality'] = fitQuality
-        paramFittingDict["fitQualities"] = fitQualities
+        paramFittingDict = copy(fittingData["testedParameters"])
+        paramFittingDict['fitQuality'] = fittingData["fitQuality"]
+        paramFittingDict["fitQualities"] = fittingData["fitQualities"]
+        for k, v in fittingData["finalParameters"].iteritems():
+            paramFittingDict[k + "final"] = v
         data.update(paramFittingDict)
         recordFittingKeys, recordFittingMaxListLen = listDictKeySet(data)
         recordData = newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
