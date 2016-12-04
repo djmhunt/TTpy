@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from itertools import izip
 from collections import OrderedDict
@@ -14,7 +14,7 @@ from copy import deepcopy
 class fit(object):
 
     """The abstract class for fitting data
-        
+
     Parameters
     ----------
     partChoiceParam : string
@@ -43,12 +43,12 @@ class fit(object):
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
         This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
         feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
-        
+
     Attributes
     ----------
     Name : string
         The name of the fitting type
-        
+
     See Also
     --------
     fitting.fitters.fitAlg.fitAlg : The general fitting class
@@ -74,7 +74,7 @@ class fit(object):
                         'participantStimuliParams': self.partStimuliParams,
                         'participantActChoiceParams': self.partActChoiceParams,
                         'modelParam': modelParam}
-        try: 
+        try:
             self.fitInfo['scalarName'] = self.scalar.Name
             self.fitInfo['scalarEffect'] = self._scalarEffect()
         except AttributeError:
@@ -84,19 +84,19 @@ class fit(object):
         """
         Used by a fitter to generate the list of values characterising how well the model parameters describe the
         participants actions.
-        
+
         Parameters
         ----------
         modelParameters : list of floats
             A list of the parameters used by the model in the order previously
             defined
-            
+
         Returns
         -------
         modelChoices : list of floats
             The choices made by the model that will be used to characterise the quality of the fit.
             In this case defined as ``[0]``
-            
+
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
@@ -161,10 +161,14 @@ class fit(object):
 
         model = self.fittedModel(*fitVals)
 
-        parameterCombinations = array(testedParams[0]).T
-        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, parameterCombinations)])
+        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, array(testedParams[0]).T)])
 
-        return model, fitQuality, (testedParamDict, testedParams[1])
+        fittingData = {"testedParameters": testedParamDict,
+                       "fitQualities": testedParams[1],
+                       "fitQuality":fitQuality,
+                       "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
+
+        return model, fitQuality, fittingData
 
     def participantMatchResult(self, exp, model, modelSetup, partData):
         """
@@ -208,14 +212,14 @@ class fit(object):
     def info(self):
         """
         The information relating to the fitting method used
-        
+
         Includes information on the fitting algorithm used
-        
+
         Returns
         -------
         info : (dict,dict)
             The fitting info and the fitting.fitters info
-            
+
         See Also
         --------
         fitting.fitters.fitAlg.fitAlg.info
@@ -251,13 +255,13 @@ class fit(object):
         """
         Compiles the kwarg model arguments based on the modelParameters and
         previously specified other parameters
-        
+
         Parameters
         ----------
         modelParameters : list of floats
             The parameter values in the order extracted from the modelSetup
             parameter dictionary
-            
+
         Returns
         -------
         inputs : dict
@@ -271,18 +275,18 @@ class fit(object):
             inputs[k] = deepcopy(v)
 
         return inputs
-        
+
     def getModParams(self, *modelParameters):
         """
-        Compiles the kwarg model parameter arguments based on the 
+        Compiles the kwarg model parameter arguments based on the
         modelParameters
-        
+
         Parameters
         ----------
         modelParameters : list of floats
-            The parameter values in the order extacted from the modelSetup 
+            The parameter values in the order extacted from the modelSetup
             parameter dictionary
-            
+
         Returns
         -------
         params : dict
@@ -292,11 +296,11 @@ class fit(object):
         params = {k: v for k, v in izip(self.mParamNames, modelParameters)}
 
         return params
-        
+
     def formatPartStim(self, partData, stimuli, validActions):
         """
         Finds the stimuli in the participant data and returns formatted observations
-        
+
         Parameters
         ----------
         partData : dict
@@ -305,14 +309,14 @@ class fit(object):
             A list of the keys in partData representing participant stimuli
         validActions : string or ``None`` or list of ints
             The name of the key in partData where the list of valid actions
-            can be found. If ``None`` then the action list is considered to 
+            can be found. If ``None`` then the action list is considered to
             stay constant. If a list then the list will be taken as the list
             of actions that can be taken at every timestep.
-        
+
         Returns
         -------
         observation : list of tuples
-            The tuples contain the stimuli and the valid actions for each 
+            The tuples contain the stimuli and the valid actions for each
             observation instance.
         """
 
@@ -331,13 +335,13 @@ class fit(object):
             actionData = (validActions for i in xrange(partDataLen))
 
         observation = [(s, a) for a, s in izip(actionData, stimuliData)]
-        
+
         return observation
 
     def _scalarEffect(self):
         """
         Presents the transformation provided by the scalar
-        
+
         Returns
         -------
         description : string
