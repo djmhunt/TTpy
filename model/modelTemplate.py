@@ -2,13 +2,13 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from numpy import array, size, isnan, ones, reshape, sum
 from types import NoneType
 
-from modelSetPlot import modelSetPlot
-from modelPlot import modelPlot
+from model.modelSetPlot import modelSetPlot
+from model.modelPlot import modelPlot
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
@@ -116,7 +116,7 @@ class model(object):
         Parameters
         ----------
         state : tuple of ({int | float | tuple},{tuple of int | None})
-            The stimulus from the experiment followed by the tuple of valid 
+            The stimulus from the experiment followed by the tuple of valid
             actions. Passes the values onto a processing function,
             self._updateObservation``.
 
@@ -176,7 +176,6 @@ class model(object):
         response : float, optional
             The response from the experiment after an action. Default ``None``
         """
-
         self.recStimuli.append(observation)
         self.recReward.append(response)
 
@@ -187,11 +186,13 @@ class model(object):
         # Find the reward expectation
         expectedReward, stimuli, stimuliFilter = self.rewardExpectation(observation, action, response)
 
+        self.recExpectedReward.append(expectedReward)
+
         # If there was no reward, the the stimulus is the learnt 'reward'
         if type(response) is NoneType:
             response = stimuli
 
-        # Find the significance of the discrepency between the response and the expected reponse
+        # Find the significance of the discrepancy between the response and the expected response
         delta = self.delta(response, expectedReward, action, stimuli)
 
         # Use that discrepency to update the model
@@ -354,12 +355,13 @@ class model(object):
         results = self.parameters.copy()
 
         results["Actions"] = array(self.recAction)
-        results["Stimuli"] = array(self.recStimuli)
+        results["Stimuli"] = array(self.recStimuli).T
         results["Rewards"] = array(self.recReward)
-        results["Expectations"] = array(self.recExpectations)
-        results["ValidActions"] = array(self.recValidActions)
+        results["Expectations"] = array(self.recExpectations).T
+        results["ExpectedRewards"] = array(self.recExpectedReward)
+        results["ValidActions"] = array(self.recValidActions).T
         results["Decisions"] = array(self.recDecision)
-        results["UpdatedProbs"] = array(self.recProbabilities)
+        results["UpdatedProbs"] = array(self.recProbabilities).T
         results["ActionProb"] = array(self.recActionProb)
         results["DecisionProbs"] = array(self.recActionProbs)
 
@@ -426,6 +428,7 @@ class model(object):
         self.recStimuli = []
         self.recReward = []
         self.recExpectations = []
+        self.recExpectedReward = []
         self.recValidActions = []
         self.recDecision = []
         self.recProbabilities = []
