@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyan package &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pyan-package">
+<h1>pyan package<a class="headerlink" href="#pyan-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyan.pyan">
+<span id="pyan-pyan-module"></span><h2>pyan.pyan module<a class="headerlink" href="#module-pyan.pyan" title="Permalink to this headline">¶</a></h2>
+<p>pyan.py - Generate approximate call graphs for Python programs.</p>
+<p>This program takes one or more Python source files, does a superficial
+analysis, and constructs a directed graph of the objects in the combined
+source, and how they define or use each other.  The graph can be output
+for rendering by e.g. GraphViz or yEd.</p>
+<dl class="class">
+<dt id="pyan.pyan.CallGraphVisitor">
+<em class="property">class </em><code class="descclassname">pyan.pyan.</code><code class="descname">CallGraphVisitor</code><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A visitor that can be walked over a Python AST, and will derive
+information about the objects in the AST and how they use each other.</p>
+<p>A single CallGraphVisitor object can be run over several ASTs (from a
+set of source files).  The resulting information is the aggregate from
+all files.  This way use information between objects in different files
+can be gathered.</p>
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.add_defines_edge">
+<code class="descname">add_defines_edge</code><span class="sig-paren">(</span><em>from_node</em>, <em>to_node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.add_defines_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.add_defines_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a defines edge in the graph between two nodes.
+N.B. This will mark both nodes as defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.add_uses_edge">
+<code class="descname">add_uses_edge</code><span class="sig-paren">(</span><em>from_node</em>, <em>to_node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.add_uses_edge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.add_uses_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a uses edge in the graph between two nodes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.contract_nonexistents">
+<code class="descname">contract_nonexistents</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.contract_nonexistents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.contract_nonexistents" title="Permalink to this definition">¶</a></dt>
+<dd><p>For all use edges to non-existent (i.e. not defined nodes) X.name, replace with edge to <a href="#id1"><span class="problematic" id="id2">*</span></a>.name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.cull_inherited">
+<code class="descname">cull_inherited</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.cull_inherited"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.cull_inherited" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each use edge from W to X.name, if it also has an edge to W to Y.name where Y is used by X, then remove the first edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.expand_unknowns">
+<code class="descname">expand_unknowns</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.expand_unknowns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.expand_unknowns" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each unknown node <a href="#id3"><span class="problematic" id="id4">*</span></a>.name, replace all its incoming edges with edges to X.name for all possible Xs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.find_scope">
+<code class="descname">find_scope</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.find_scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.find_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search in the scope stack for the top-most scope containing name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.get_current_namespace">
+<code class="descname">get_current_namespace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.get_current_namespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.get_current_namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a node representing the current namespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.get_node">
+<code class="descname">get_node</code><span class="sig-paren">(</span><em>namespace</em>, <em>name</em>, <em>orig_node=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.get_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the unique node matching the namespace and name.
+Creates a new node if one doesn&#8217;t already exist.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of name in the current scope.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.set_value">
+<code class="descname">set_value</code><span class="sig-paren">(</span><em>name</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.set_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.set_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of name in the current scope.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.to_dot">
+<code class="descname">to_dot</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.to_dot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.to_dot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.to_tgf">
+<code class="descname">to_tgf</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.to_tgf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.to_tgf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitAssAttr">
+<code class="descname">visitAssAttr</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitAssAttr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitAssAttr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitAssName">
+<code class="descname">visitAssName</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitAssName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitAssName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitAssign">
+<code class="descname">visitAssign</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitAssign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitAssign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitCallFunc">
+<code class="descname">visitCallFunc</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitCallFunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitCallFunc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitClass">
+<code class="descname">visitClass</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitConst">
+<code class="descname">visitConst</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitConst"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitConst" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitDiscard">
+<code class="descname">visitDiscard</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitDiscard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitDiscard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitFrom">
+<code class="descname">visitFrom</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitFrom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitFrom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitFunction">
+<code class="descname">visitFunction</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitFunction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitGetattr">
+<code class="descname">visitGetattr</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitGetattr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitGetattr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitImport">
+<code class="descname">visitImport</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitImport"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitImport" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitModule">
+<code class="descname">visitModule</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitModule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitModule" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.CallGraphVisitor.visitName">
+<code class="descname">visitName</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#CallGraphVisitor.visitName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.CallGraphVisitor.visitName" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyan.pyan.Node">
+<em class="property">class </em><code class="descclassname">pyan.pyan.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>namespace</em>, <em>name</em>, <em>orig_node</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>A node is an object in the call graph.  Nodes have names, and are in
+namespaces.  The full name of a node is its namespace, a dot, and its name.
+If the namespace is Null, it is rendered as <a href="#id5"><span class="problematic" id="id6">*</span></a>, and considered as an unknown
+node.  The meaning of this is that a use-edge to an unknown node is created
+when the analysis cannot determine which actual node is being used.</p>
+<dl class="method">
+<dt id="pyan.pyan.Node.get_label">
+<code class="descname">get_label</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node.get_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node.get_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a label for this node, suitable for use in graph formats.
+Unique nodes should have unique labels; and labels should not contain
+problematic characters like dots or asterisks.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.Node.get_level">
+<code class="descname">get_level</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node.get_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node.get_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the level of this node (in terms of nested namespaces).</p>
+<p>The level is defined as the number of &#8216;.&#8217; in the namespace, plus one.
+Top level is level 0.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.Node.get_name">
+<code class="descname">get_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the full name of this node.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.Node.get_short_name">
+<code class="descname">get_short_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node.get_short_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node.get_short_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the short name (i.e. excluding the namespace), of this Node.
+Names of unknown nodes will include the <a href="#id7"><span class="problematic" id="id8">*</span></a>. prefix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyan.pyan.Node.get_toplevel_namespace">
+<code class="descname">get_toplevel_namespace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#Node.get_toplevel_namespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.Node.get_toplevel_namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the top-level namespace of this node, or &#8220;&#8221; if none.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyan.pyan.get_module_name">
+<code class="descclassname">pyan.pyan.</code><code class="descname">get_module_name</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#get_module_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.get_module_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to determine the full module name of a source file, by figuring out
+if its directory looks like a package (i.e. has an __init__.py file).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyan.pyan.hsl2rgb">
+<code class="descclassname">pyan.pyan.</code><code class="descname">hsl2rgb</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#hsl2rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.hsl2rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert HSL color tuple to RGB.</p>
+<dl class="docutils">
+<dt>Parameters:  H,S,L, where</dt>
+<dd>H,S,L = HSL values as double-precision floats, with each component in [0,1].</dd>
+<dt>Return value:</dt>
+<dd>R,G,B tuple</dd>
+<dt>For more information:</dt>
+<dd><a class="reference external" href="https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL">https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyan.pyan.htmlize_rgb">
+<code class="descclassname">pyan.pyan.</code><code class="descname">htmlize_rgb</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#htmlize_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.htmlize_rgb" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTML-ize an RGB(A) color.</p>
+<dl class="docutils">
+<dt>Parameters:  R,G,B[,alpha], where</dt>
+<dd>R,G,B = RGB values as double-precision floats, with each component in [0,1].
+alpha = optional alpha component for translucency, in [0,1]. (1.0 = opaque)</dd>
+<dt>Example:</dt>
+<dd>htmlize_rgb(1.0, 0.5, 0)       =&gt;  &#8220;#FF8000&#8221;    (RGB)
+htmlize_rgb(1.0, 0.5, 0, 0.5)  =&gt;  &#8220;#FF800080&#8221;  (RGBA)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyan.pyan.main">
+<code class="descclassname">pyan.pyan.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyan.pyan.verbose_output">
+<code class="descclassname">pyan.pyan.</code><code class="descname">verbose_output</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyan/pyan.html#verbose_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyan.pyan.verbose_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyan">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyan" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyan package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyan.pyan">pyan.pyan module</a></li>
+<li><a class="reference internal" href="#module-pyan">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pyan.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

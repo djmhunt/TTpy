@@ -1,0 +1,569 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>data module &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
+    <link rel="next" title="experiments module" href="experiments.html" />
+    <link rel="prev" title="dataFitting module" href="dataFitting.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experiments.html" title="experiments module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.html" title="dataFitting module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-data">
+<span id="data-module"></span><h1>data module<a class="headerlink" href="#module-data" title="Permalink to this headline">¶</a></h1>
+<p>This module allows for the importing of participant data for use in fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="data.data">
+<code class="descclassname">data.</code><code class="descname">data</code><span class="sig-paren">(</span><em>folder</em>, <em>fileType</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function for reading in and returning a dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>fileType</strong> : string</p>
+<blockquote>
+<div><p>The file extension found after the &#8221;.&#8221;. Currently only mat and xlsx files are
+supported.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataSet</strong> : list of dictionaries</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s2">&quot;./Data/&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s2">&quot;mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span><span class="n">fileType</span><span class="p">)</span>
+<span class="go">[{&#39;cumpts&#39;: array([ 7, 17, 19, 21], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([12, 22, 24, 26], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([ 5, 15, 17, 19], dtype=uint8)}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.datasets">
+<code class="descclassname">data.</code><code class="descname">datasets</code><span class="sig-paren">(</span><em>folders</em>, <em>fileTypes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function for reading in multiple datasets in one go</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folders</strong> : list of strings</p>
+<blockquote>
+<div><p>The folder strings should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>fileTypes</strong> : list of strings</p>
+<blockquote>
+<div><p>The file extensions found after the &#8221;.&#8221;. Currently only mat and xlsx files are
+supported.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataSet</strong> : list of dictionaries</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#module-data" title="data"><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></a></dt>
+<dd>The function called by this one</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getFiles">
+<code class="descclassname">data.</code><code class="descname">getFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>fileType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the list of valid input files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>fileType</strong> : string</p>
+<blockquote>
+<div><p>The file extension found after the &#8221;.&#8221;.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataFiles</strong> : list</p>
+<blockquote class="last">
+<div><p>A sorted list of the the files</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#data.sortStrings" title="data.sortStrings"><code class="xref py py-obj docutils literal"><span class="pre">sortStrings</span></code></a></dt>
+<dd>sorts the files found</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s2">&quot;./Data/&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s2">&quot;mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getUniquePrefix">
+<code class="descclassname">data.</code><code class="descname">getUniquePrefix</code><span class="sig-paren">(</span><em>unorderedList</em>, <em>suffixLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getUniquePrefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getUniquePrefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies any initial part of strings that are identical
+for all string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unorderedList</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of strings to be ordered</p>
+</div></blockquote>
+<p><strong>suffixLen</strong> : int</p>
+<blockquote>
+<div><p>The length of the identified suffix</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>prefix</strong> : string</p>
+<blockquote class="last">
+<div><p>The initial part of the strings that is identical for all strings in
+the list</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffixLen</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getUniquePrefix</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">)</span>
+<span class="go">&#39;subj&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getmatData">
+<code class="descclassname">data.</code><code class="descname">getmatData</code><span class="sig-paren">(</span><em>folder</em>, <em>files</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getmatData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getmatData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from MATLAB files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>files</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : list of dictionaries</p>
+<blockquote class="last">
+<div><p>Each dictionary should represent the data of one participant</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;./Data/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj2.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj11.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">getmatData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)</span>
+<span class="go">[{&#39;cumpts&#39;: array([ 7, 17, 19, 21], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([12, 22, 24, 26], dtype=uint8)},</span>
+<span class="go"> {&#39;cumpts&#39;: array([ 5, 15, 17, 19], dtype=uint8)}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getpickleData">
+<code class="descclassname">data.</code><code class="descname">getpickleData</code><span class="sig-paren">(</span><em>folder</em>, <em>files</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickleData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from python pickle files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>files</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+<p><strong>validFiles</strong> : list of strings or None, optional</p>
+<blockquote>
+<div><p>A list of the names of numbered pickled files to be imported. Default None</p>
+</div></blockquote>
+<p><strong>groupbyNumber</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if the different valid files should be put together by their number. Default <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : list of dictionaries</p>
+<blockquote class="last">
+<div><p>Each dictionary should represent the data of one participant</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getpickleValidFiles">
+<code class="descclassname">data.</code><code class="descname">getpickleValidFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>validFileList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickleValidFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickleValidFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from valid python pickle files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>validFileList</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of the names of numbered pickled files to be imported</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : list of dictionaries</p>
+<blockquote class="last">
+<div><p>Each dictionary should represent the data of one participant</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getpickledFileData">
+<code class="descclassname">data.</code><code class="descname">getpickledFileData</code><span class="sig-paren">(</span><em>folder</em>, <em>fileName</em>, <em>header=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledFileData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledFileData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from a python pickle file and returns it as a dictionary if it is not already one</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>validFileList</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of the names of numbered pickled files to be imported</p>
+</div></blockquote>
+<p><strong>header</strong> : string, optional</p>
+<blockquote>
+<div><p>A prefix to put in front of each dictionary key</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>A dictionary of the data contained in the pickled file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getpickledGroupedValidFiles">
+<code class="descclassname">data.</code><code class="descname">getpickledGroupedValidFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>validFileList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledGroupedValidFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledGroupedValidFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from valid python pickle files and returns them grouped by number</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>validFileList</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of the names of numbered pickled files to be imported</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : list of dictionaries</p>
+<blockquote class="last">
+<div><p>Each dictionary should represent the data of one participant</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.getxlsxData">
+<code class="descclassname">data.</code><code class="descname">getxlsxData</code><span class="sig-paren">(</span><em>folder</em>, <em>files</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getxlsxData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getxlsxData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the data from xlsx files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
+<blockquote>
+<div><p>The folder string should end in a &#8220;/&#8221;</p>
+</div></blockquote>
+<p><strong>files</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of filenames</p>
+</div></blockquote>
+<p><strong>splitBy</strong> : string or list, optional</p>
+<blockquote>
+<div><p>If multiple participants datasets are in one file sheet, this specifies
+the column or columns that can distinguish and identify the rows for
+each participant. Default <code class="docutils literal"><span class="pre">[]</span></code></p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : dict, optional</p>
+<blockquote>
+<div><p>The keyword arguments for pandas.read_excel</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dataSet</strong> : list of dictionaries</p>
+<blockquote class="last">
+<div><p>Each dictionary should represent the data of one participant</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">pandas.read_excel</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.intCore">
+<code class="descclassname">data.</code><code class="descname">intCore</code><span class="sig-paren">(</span><em>unorderedList</em>, <em>prefix</em>, <em>suffix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#intCore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.intCore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the <em>core</em> part of a string and, assuming it is an integer,
+sorts them. Returns the list sorted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unorderedList</strong> : list of strings</p>
+<blockquote>
+<div><p>The list of strings to be sorted</p>
+</div></blockquote>
+<p><strong>prefix</strong> : string</p>
+<blockquote>
+<div><p>The unchanging part of the start each string</p>
+</div></blockquote>
+<p><strong>suffix</strong> : string</p>
+<blockquote>
+<div><p>The unchanging known end of each string</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sortedStrings</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>The strings now sorted</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;me001.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;me051.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;me002.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;me052.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;me0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;.mat&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">suffix</span><span class="p">)</span>
+<span class="go">[&#39;me001.mat&#39;, &#39;me002.mat&#39;, &#39;me051.mat&#39;, &#39;me052.mat&#39;]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj12.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;subj&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;mat&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">intCore</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span><span class="n">prefix</span><span class="p">,</span><span class="n">suffix</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;, &#39;subj12.mat&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="data.sortStrings">
+<code class="descclassname">data.</code><code class="descname">sortStrings</code><span class="sig-paren">(</span><em>unorderedList</em>, <em>suffix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#sortStrings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.sortStrings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an unordered list of strings and sorts them if possible and necessary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unorderedList</strong> : list of strings</p>
+<blockquote>
+<div><p>A list of valid strings</p>
+</div></blockquote>
+<p><strong>suffix</strong> : string</p>
+<blockquote>
+<div><p>A known suffix for the string</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sorted list</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>A sorted list of the the strings</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#data.intCore" title="data.intCore"><code class="xref py py-obj docutils literal"><span class="pre">intCore</span></code></a></dt>
+<dd>sorts the strings with the prefix and suffix removed if they are a number</dd>
+<dt><a class="reference internal" href="#data.getUniquePrefix" title="data.getUniquePrefix"><code class="xref py py-obj docutils literal"><span class="pre">getUniquePrefix</span></code></a></dt>
+<dd>identifies prefixes all strings have</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subj1.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj11.mat&#39;</span><span class="p">,</span> <span class="s1">&#39;subj2.mat&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileType</span> <span class="o">=</span> <span class="s2">&quot;.mat&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sortStrings</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+<span class="go">[&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dataFitting.html"
+                        title="previous chapter">dataFitting module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="experiments.html"
+                        title="next chapter">experiments module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/data.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="experiments.html" title="experiments module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.html" title="dataFitting module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>outputtingUtils &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for outputtingUtils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">size</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">newFile</span><span class="p">,</span> <span class="n">listMerGen</span>
+
+
+<div class="viewcode-block" id="exportClassData"><a class="viewcode-back" href="../outputtingUtils.html#outputtingUtils.exportClassData">[docs]</a><span class="k">def</span> <span class="nf">exportClassData</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">outputFolder</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes the data returned by a model or experiment class instance and saves</span>
+<span class="sd">    it to an Excel file</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary containing two dimensional arrays and some 1D</span>
+<span class="sd">        parameters and identifiers</span>
+<span class="sd">    parameters : dict</span>
+<span class="sd">        A dictionary containing some 1D arrays, floats and strings. These are</span>
+<span class="sd">        seen as not changing over the simulation, so will be split if there are</span>
+<span class="sd">        multiple items</span>
+<span class="sd">    outputFolder : string, optional</span>
+<span class="sd">        The full path of where the file will be stored. Default is &quot;./&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing : None</span>
+<span class="sd">        It saves an xlsx</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+    <span class="n">outName</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_record&#39;</span>
+
+    <span class="n">timeData</span> <span class="o">=</span> <span class="n">reframeEventDicts</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">timeData</span><span class="p">)</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="n">newFile</span><span class="p">(</span><span class="n">outName</span><span class="p">,</span> <span class="s1">&#39;xlsx&#39;</span><span class="p">,</span> <span class="n">outputFolder</span><span class="o">=</span><span class="n">outputFolder</span><span class="p">)</span>
+    <span class="n">xlsxT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+    <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxT</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">outName</span><span class="p">)</span>
+    <span class="n">xlsxT</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="reframeEventDicts"><a class="viewcode-back" href="../outputtingUtils.html#outputtingUtils.reframeEventDicts">[docs]</a><span class="k">def</span> <span class="nf">reframeEventDicts</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">storeLabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes the data returned by a model or experiment class instance and </span>
+<span class="sd">    returns a dictionary of 1D lists or single items.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary containing two dimensional arrays and some 1D</span>
+<span class="sd">        parameters and identifiers</span>
+<span class="sd">    parameters : dict</span>
+<span class="sd">        A dictionary containing some 1D arrays, floats and strings. These are</span>
+<span class="sd">        seen as not changing over the simulation, so will be split if there are</span>
+<span class="sd">        multiple items</span>
+<span class="sd">    storeLabel : string, optional</span>
+<span class="sd">        An identifier to be added to the beginning of each key string.</span>
+<span class="sd">        Default is &#39;&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newStore : dict of 1D lists or single items</span>
+<span class="sd">        Any dictionary keys containing 2D lists in the input have been split</span>
+<span class="sd">        into its constituent columns</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    exportClassData, eventDictKeySet, newEventDict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">keySet</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">eventDictKeySet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+
+    <span class="c1"># For every key now found</span>
+    <span class="n">newStore</span> <span class="o">=</span> <span class="n">newEventDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">storeLabel</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">newStore</span></div>
+
+
+<div class="viewcode-block" id="eventDictKeySet"><a class="viewcode-back" href="../outputtingUtils.html#outputtingUtils.eventDictKeySet">[docs]</a><span class="k">def</span> <span class="nf">eventDictKeySet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a dictionary of keys and identifiers for the new dictionary,</span>
+<span class="sd">    splitting any keys with 2D lists into a set of keys, one for each column</span>
+<span class="sd">    in the original key.</span>
+
+<span class="sd">    These are named &lt;key&gt;&lt;column number&gt;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary containing two dimensional arrays and some 1D</span>
+<span class="sd">        parameters and identifiers</span>
+<span class="sd">    parameters : dict</span>
+<span class="sd">        A dictionary containing some 1D arrays, floats and strings. These are</span>
+<span class="sd">        seen as not changing over the simulation, so will be split if there are</span>
+<span class="sd">        multiple items</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    keySet : dict</span>
+<span class="sd">        The keys are the keys for the new dictionary. The values contain a</span>
+<span class="sd">        two element tuple. The first element is the original name of the</span>
+<span class="sd">        key and the second is the location of the value to be stored in the</span>
+<span class="sd">        original dictionary value array.</span>
+<span class="sd">    T : int</span>
+<span class="sd">        The length of the longest array. This represents the number of </span>
+<span class="sd">        timesteps that have elapsed since the start of the simulation. </span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    exportClassData, newEventDict, reframeEventDicts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find all the keys</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">paramSet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">dataSet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">shp</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">shp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">paramSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">paramSet</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_genVarKeys</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">paramSet</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_genVarKeys</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paramSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">continue</span>
+        
+        <span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">shp</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">sze</span> <span class="o">=</span> <span class="n">shp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">sze</span> <span class="o">&gt;</span> <span class="n">T</span><span class="p">:</span>
+                    <span class="n">T</span> <span class="o">=</span> <span class="n">sze</span>
+                    
+            <span class="k">if</span> <span class="n">size</span><span class="p">(</span><span class="n">shp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">dataSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shp</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="n">dataSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            
+    <span class="n">keySet</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">paramSet</span><span class="p">)</span>
+    <span class="n">keySet</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dataSet</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="newEventDict"><a class="viewcode-back" href="../outputtingUtils.html#outputtingUtils.newEventDict">[docs]</a><span class="k">def</span> <span class="nf">newEventDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">dataLabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes the data returned by a model or experiment class instance and </span>
+<span class="sd">    returns a dictionary of 1D lists.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    keySet : dict</span>
+<span class="sd">        The keys are the keys for the new dictionary. The values contain a</span>
+<span class="sd">        two element tuple. The first element is the original name of the</span>
+<span class="sd">        key and the second is the location of the value to be stored in the</span>
+<span class="sd">        original dictionary value array.</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary containing two dimensional arrays and some 1D</span>
+<span class="sd">        parameters and identifiers</span>
+<span class="sd">    T : int</span>
+<span class="sd">        The length of the longest array. This represents the number of </span>
+<span class="sd">        timesteps that have elapsed since the start of the simulation.</span>
+<span class="sd">    dataLabel : string</span>
+<span class="sd">        An identifier to be added to the beginning of each key string.</span>
+<span class="sd">        Default &#39;&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newStore : dict</span>
+<span class="sd">        The new dictionary with the keys from the keySet and the values as</span>
+<span class="sd">        1D lists with &#39;None&#39; if the keys, value pair was not found in the</span>
+<span class="sd">        store.</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    exportClassData, eventDictKeySet, reframeEventDicts</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">partStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">initKey</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="ow">in</span> <span class="n">keySet</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+        <span class="n">partStore</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">initKey</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rawVal</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">initKey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rawVal</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="n">size</span><span class="p">(</span><span class="n">shape</span><span class="p">(</span><span class="n">rawVal</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">rawVal</span><span class="p">)[</span><span class="n">col</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">rawVal</span><span class="p">)[:,</span> <span class="n">col</span><span class="p">]</span>
+            
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
+        
+        <span class="n">sz</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">partStore</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sz</span> <span class="o">!=</span> <span class="n">T</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">T</span><span class="o">-</span> <span class="n">sz</span>
+            <span class="n">partStore</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">diff</span><span class="p">)])</span>
+
+    <span class="n">newStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="n">dataLabel</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="n">newStore</span></div>
+
+
+<span class="k">def</span> <span class="nf">_genVarKeys</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    
+    <span class="n">pSet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    
+    <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="c1"># Now record each one</span>
+    <span class="k">for</span> <span class="n">genLoc</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genLoc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">genLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">genLoc</span><span class="p">)</span>
+        <span class="n">pSet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">loc</span><span class="p">),</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">loc</span><span class="p">))</span>
+        
+    <span class="k">return</span> <span class="n">pSet</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

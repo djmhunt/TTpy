@@ -1,0 +1,848 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>utils &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">seterr</span><span class="p">,</span> <span class="n">seterrcall</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">amax</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">convolve</span><span class="p">,</span> <span class="n">arange</span>
+<span class="c1">#from itertools import izip, chain</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="c1">#from types import NoneType</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">exc_info</span>
+<span class="kn">from</span> <span class="nn">traceback</span> <span class="k">import</span> <span class="n">extract_tb</span>
+
+
+<span class="c1"># For analysing the state of the computer</span>
+<span class="c1"># import psutil</span>
+
+<div class="viewcode-block" id="fancyLogger"><a class="viewcode-back" href="../utils.html#utils.fancyLogger">[docs]</a><span class="k">def</span> <span class="nf">fancyLogger</span><span class="p">(</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">fileName</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets up the style of logging for all the simulations</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
+<span class="sd">        The lowest level to which logging is recorded</span>
+<span class="sd">    fileName : string, optional</span>
+<span class="sd">        The filename that the log will be written to. If empty no log will be</span>
+<span class="sd">        written to a file. Default is empty</span>
+<span class="sd">    silent : bool, optional</span>
+<span class="sd">        States if a log is not written to stdout. Defaults to False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">streamLoggerSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fake file-like stream object that redirects writes to a logger instance.</span>
+<span class="sd">        Based on one found at:</span>
+<span class="sd">            http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">linebuf</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">buf</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+
+        <span class="c1"># See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib</span>
+        <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">fileName</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">fileName</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span>
+                            <span class="n">level</span><span class="o">=</span><span class="n">logLevel</span><span class="p">,</span>
+                            <span class="n">filemode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+        <span class="n">consoleFormat</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logLevel</span><span class="p">)</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">consoleFormat</span><span class="p">)</span>
+        <span class="c1"># add the handler to the root logger</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1"> %H:%M&#39;</span><span class="p">,</span>
+                            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(name)-12s</span><span class="s1"> </span><span class="si">%(levelname)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">level</span><span class="o">=</span><span class="n">logLevel</span><span class="p">)</span>
+
+    <span class="c1"># Set the standard error output</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;STDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+    <span class="c1"># Set the numpy error output</span>
+    <span class="n">seterrcall</span><span class="p">(</span><span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">))</span>
+    <span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">date</span><span class="p">())</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Log initialised&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fileName</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The log you are reading was written to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fileName</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="folderSetup"><a class="viewcode-back" href="../utils.html#utils.folderSetup">[docs]</a><span class="k">def</span> <span class="nf">folderSetup</span><span class="p">(</span><span class="n">simType</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identifies and creates the folder the data will be stored in</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    simType : string</span>
+<span class="sd">        A description of the experiment</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    folderName : string</span>
+<span class="sd">        The path to the folder</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># While the folders have already been created, check for the next one</span>
+    <span class="n">folderName</span> <span class="o">=</span> <span class="s1">&#39;./Outputs/&#39;</span> <span class="o">+</span> <span class="n">date</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">simType</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">folderName</span> <span class="o">+=</span> <span class="s1">&#39;_no_&#39;</span>
+        <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">folderName</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">folderName</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
+    <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="s1">&#39;Pickle/&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">folderName</span></div>
+
+
+<div class="viewcode-block" id="saving"><a class="viewcode-back" href="../utils.html#utils.saving">[docs]</a><span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a folder and produces a log filename</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    save : bool</span>
+<span class="sd">        If a file is to be saved</span>
+<span class="sd">    label : string</span>
+<span class="sd">        A special label to add to the folder name</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    folderName : string</span>
+<span class="sd">        Path for the folder. If save is False, &quot;&quot;</span>
+<span class="sd">    fileName : string</span>
+<span class="sd">        Full file name of log.txt with path. If save is False, &quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+        <span class="n">folderName</span> <span class="o">=</span> <span class="n">folderSetup</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="n">folderName</span> <span class="o">+</span> <span class="s2">&quot;log.txt&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">folderName</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">return</span> <span class="n">folderName</span><span class="p">,</span> <span class="n">fileName</span></div>
+
+
+<div class="viewcode-block" id="newFile"><a class="viewcode-back" href="../utils.html#utils.newFile">[docs]</a><span class="k">def</span> <span class="nf">newFile</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">extension</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    handle : string</span>
+<span class="sd">        The file name</span>
+<span class="sd">    extension : string</span>
+<span class="sd">        The extension of the file</span>
+<span class="sd">    outputFolder : string</span>
+<span class="sd">        The full path of where the file will be stored</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fileName : string</span>
+<span class="sd">        The filename allowed for the file</span>
+<span class="sd">        </span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; newFile(&quot;handle&quot;, &quot;txt&quot;, &quot;./&quot;)</span>
+<span class="sd">    &#39;./handle.txt&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; newFile(&quot;handle&quot;, &quot;txt&quot;, &quot;./Outputting/&quot;)</span>
+<span class="sd">    &#39;./Outputting/handle.txt&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">extension</span>
+
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">outputFolder</span> <span class="o">+</span> <span class="n">handle</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">end</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">fileName</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">fileName</span> <span class="o">+=</span> <span class="n">end</span>
+
+    <span class="k">return</span> <span class="n">fileName</span></div>
+
+
+<div class="viewcode-block" id="argProcess"><a class="viewcode-back" href="../utils.html#utils.argProcess">[docs]</a><span class="k">def</span> <span class="nf">argProcess</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">modelArgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">expArgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">plotArgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">otherArgs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;m_&quot;</span><span class="p">):</span>
+            <span class="n">modelArgs</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;e_&quot;</span><span class="p">):</span>
+            <span class="n">expArgs</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;p_&quot;</span><span class="p">):</span>
+            <span class="n">plotArgs</span><span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">otherArgs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">expArgs</span><span class="p">,</span> <span class="n">modelArgs</span><span class="p">,</span> <span class="n">plotArgs</span><span class="p">,</span> <span class="n">otherArgs</span></div>
+
+
+<div class="viewcode-block" id="listMerge"><a class="viewcode-back" href="../utils.html#utils.listMerge">[docs]</a><span class="k">def</span> <span class="nf">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For merging lists with objects that are not solely numbers</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : list of lists</span>
+<span class="sd">        A list of 1D lists of objects</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    combinations : array</span>
+<span class="sd">        An array with len(args) columns and a row for each combination</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; listMerge([1, 2, 3], [5, 6, 7]).T</span>
+<span class="sd">    array([[1, 2, 3, 1, 2, 3, 1, 2, 3],</span>
+<span class="sd">           [5, 5, 5, 6, 6, 6, 7, 7, 7]])</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="p">[[]]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
+<span class="c1">#        Equivalent to:</span>
+<span class="c1">#        t = []</span>
+<span class="c1">#        for y in x:</span>
+<span class="c1">#            for i in r:</span>
+<span class="c1">#                t.append(i+[y])</span>
+<span class="c1">#        r = t</span>
+
+    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="listMergeNP"><a class="viewcode-back" href="../utils.html#utils.listMergeNP">[docs]</a><span class="k">def</span> <span class="nf">listMergeNP</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fast merging of lists of numbers</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : list of lists of numbers</span>
+<span class="sd">        A list of 1D lists of numbers</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    combinations : array</span>
+<span class="sd">        An array with len(args) columns and a row for each combination</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; utils.listMergeNP([1, 2, 3], [5, 6, 7]).T</span>
+<span class="sd">    array([[1, 2, 3, 1, 2, 3, 1, 2, 3],</span>
+<span class="sd">           [5, 5, 5, 6, 6, 6, 7, 7, 7]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">array</span><span class="p">([[]])</span>
+
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">amax</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">r</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="listMerGen"><a class="viewcode-back" href="../utils.html#utils.listMerGen">[docs]</a><span class="k">def</span> <span class="nf">listMerGen</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fast merging of lists of numbers</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : list of lists of numbers</span>
+<span class="sd">        A list of 1D lists of numbers</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    combination : numpy.array of 1 x len(args)</span>
+<span class="sd">        Array of all combinations</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; for i in listMerGen(0.7): print(repr(i))</span>
+<span class="sd">    array([ 0.7])</span>
+<span class="sd">    &gt;&gt;&gt; for i in listMerGen([0.7, 0.1]): print(repr(i))</span>
+<span class="sd">    array([ 0.7])</span>
+<span class="sd">    array([ 0.1])</span>
+<span class="sd">    &gt;&gt;&gt; for i in listMerGen([0.7, 0.1], [0.6]): print(repr(i))</span>
+<span class="sd">    array([ 0.7,  0.6])</span>
+<span class="sd">    array([ 0.1,  0.6])</span>
+<span class="sd">    &gt;&gt;&gt; for i in listMerGen([0.7, 0.1], []): print(repr(i))</span>
+
+<span class="sd">    &gt;&gt;&gt; for i in listMerGen([0.7, 0.1], 0.6): print(repr(i))</span>
+<span class="sd">    array([ 0.7,  0.6])</span>
+<span class="sd">    array([ 0.1,  0.6])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[]])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">amax</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="n">a</span><span class="p">]])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">meshgrid</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">i</span></div>
+
+
+<div class="viewcode-block" id="varyingParams"><a class="viewcode-back" href="../utils.html#utils.varyingParams">[docs]</a><span class="k">def</span> <span class="nf">varyingParams</span><span class="p">(</span><span class="n">intObjects</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a list of models or experiments and returns a dictionary with only the parameters</span>
+<span class="sd">    which vary and their values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">initDataSet</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">intObjects</span><span class="p">]</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">}</span>
+    <span class="n">dataSet</span> <span class="o">=</span> <span class="p">{</span><span class="n">param</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">initDataSet</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">val</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)}</span>
+
+    <span class="k">return</span> <span class="n">dataSet</span></div>
+
+
+<div class="viewcode-block" id="mergeDatasetRepr"><a class="viewcode-back" href="../utils.html#utils.mergeDatasetRepr">[docs]</a><span class="k">def</span> <span class="nf">mergeDatasetRepr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataLabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a list of dictionaries and turn it into a dictionary of lists of strings</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list of dicts containing strings, lists or numbers</span>
+<span class="sd">    dataLabel : string, optional</span>
+<span class="sd">        This string will be appended to the front of each key in the new dataset</span>
+<span class="sd">        Default blank</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newStore : dictionary of lists of strings</span>
+<span class="sd">        For each key a list will be formed of the string representations of</span>
+<span class="sd">        each of the former key values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find all the keys</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">keySet</span> <span class="o">=</span> <span class="n">keySet</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># For every key</span>
+    <span class="n">partStore</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keySet</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="n">partStore</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="n">newStore</span> <span class="o">=</span> <span class="p">{</span><span class="n">dataLabel</span> <span class="o">+</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">newStore</span></div>
+
+
+<div class="viewcode-block" id="mergeDatasets"><a class="viewcode-back" href="../utils.html#utils.mergeDatasets">[docs]</a><span class="k">def</span> <span class="nf">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a list of dictionaries and turn it into a dictionary of lists of objects</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list of dicts containing strings, lists or numbers</span>
+<span class="sd">    extend : bool, optional</span>
+<span class="sd">        If lists should be extended rather than appended. Default False</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newStore : dictionary of lists of objects</span>
+<span class="sd">        For each key a list will be formed of the former key values. If a</span>
+<span class="sd">        data set did not contain a key a value of None will be entered for it.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; data = [{&#39;a&#39;:[1, 2, 3],&#39;b&#39;:[7, 8, 9]},</span>
+<span class="sd">                {&#39;b&#39;:[4, 5, 6],&#39;c&#39;:&#39;string&#39;,&#39;d&#39;:5}]</span>
+<span class="sd">    &gt;&gt;&gt; mergeDatasets(data)</span>
+<span class="sd">    {&#39;a&#39;: [[1, 2, 3], None],</span>
+<span class="sd">     &#39;b&#39;: [[7, 8, 9], [4, 5, 6]],</span>
+<span class="sd">     &#39;c&#39;: [None, &#39;string&#39;],</span>
+<span class="sd">     &#39;d&#39;: [None, 5]}</span>
+<span class="sd">    &gt;&gt;&gt; mergeDatasets(data, extend=True)</span>
+<span class="sd">    {&#39;a&#39;: [1, 2, 3, None],</span>
+<span class="sd">     &#39;b&#39;: [7, 8, 9, 4, 5, 6],</span>
+<span class="sd">     &#39;c&#39;: [None, &#39;string&#39;],</span>
+<span class="sd">     &#39;d&#39;: [None, 5]}</span>
+
+<span class="sd">     &gt;&gt;&gt; from numpy import array</span>
+<span class="sd">     &gt;&gt;&gt; data = [{&#39;b&#39;:array([[7,8,9],[1,2,3]])}, {&#39;b&#39;:array([[4,5,6],[2,3,4]])}]</span>
+<span class="sd">     &gt;&gt;&gt; mergeDatasets(data, extend = True)</span>
+<span class="sd">     {&#39;b&#39;: [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}</span>
+<span class="sd">     &gt;&gt;&gt; mergeDatasets(data)</span>
+<span class="sd">     {&#39;b&#39;: [array([[7, 8, 9],</span>
+<span class="sd">             [1, 2, 3]]), array([[4, 5, 6],</span>
+<span class="sd">             [2, 3, 4]])]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Find all the keys</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="c1"># For every key</span>
+    <span class="n">newStore</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keySet</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">dv</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">extend</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dv</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dv</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+                <span class="n">newStore</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newStore</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dv</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">newStore</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="date"><a class="viewcode-back" href="../utils.html#utils.date">[docs]</a><span class="k">def</span> <span class="nf">date</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provides a string of today&#39;s date</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    date : string</span>
+<span class="sd">        The string is of the form [year]-[month]-[day]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1987</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">year</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">month</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">day</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../utils.html#utils.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Yields the elements in order from any N dimensional iterable</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    l : iterable</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    ID : (string,list)</span>
+<span class="sd">        A pair containing the value at each location and the co-ordinates used</span>
+<span class="sd">        to access them.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; a = [[1, 2, 3],[4, 5, 6]]</span>
+<span class="sd">    &gt;&gt;&gt; for i, loc in flatten(a): print(i,loc)</span>
+<span class="sd">    1 [0, 0]</span>
+<span class="sd">    2 [0, 1]</span>
+<span class="sd">    3 [0, 2]</span>
+<span class="sd">    4 [1, 0]</span>
+<span class="sd">    5 [1, 1]</span>
+<span class="sd">    6 [1, 2]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">sub</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">flatten</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">sub</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">loc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="mergeTwoDicts"><a class="viewcode-back" href="../utils.html#utils.mergeTwoDicts">[docs]</a><span class="k">def</span> <span class="nf">mergeTwoDicts</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given two dicts, merge them into a new dict as a shallow copy</span>
+
+<span class="sd">    Assumes different keys in both dictionaries</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : dictionary</span>
+<span class="sd">    y : dictionary</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mergedDict : dictionary</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mergedDict</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">mergedDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mergedDict</span></div>
+
+
+<div class="viewcode-block" id="mergeDicts"><a class="viewcode-back" href="../utils.html#utils.mergeDicts">[docs]</a><span class="k">def</span> <span class="nf">mergeDicts</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merges any number of dictionaries with different keys into a new dict</span>
+
+<span class="sd">    Precedence goes to key value pairs in latter dicts</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : list of dictionaries</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mergedDict : dictionary</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mergedDict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">dictionary</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">mergedDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dictionary</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mergedDict</span></div>
+
+
+<div class="viewcode-block" id="callableDetails"><a class="viewcode-back" href="../utils.html#utils.callableDetails">[docs]</a><span class="k">def</span> <span class="nf">callableDetails</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a callable item and extracts the details.</span>
+
+<span class="sd">    Currently only extracts things stored in ``item.Name`` and ``item.Params``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item : callable item</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    details : tuple pair with string and dictionary of strings</span>
+<span class="sd">        Contains the properties of the</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from utils import callableDetails</span>
+<span class="sd">    &gt;&gt;&gt; def foo():</span>
+<span class="sd">    &gt;&gt;&gt;     print(&quot;foo&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; foo.Name = &quot;boo&quot;</span>
+<span class="sd">    &gt;&gt;&gt; callableDetails(foo)</span>
+<span class="sd">    (&#39;boo&#39;, None)</span>
+
+<span class="sd">    &gt;&gt;&gt; foo.Params = {1: 2, 2: 3}</span>
+<span class="sd">    &gt;&gt;&gt; callableDetails(foo)</span>
+<span class="sd">    (&#39;boo&#39;, {&#39;1&#39;: &#39;2&#39;, &#39;2&#39;: &#39;3&#39;})</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">Params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">details</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="callableDetailsString"><a class="viewcode-back" href="../utils.html#utils.callableDetailsString">[docs]</a><span class="k">def</span> <span class="nf">callableDetailsString</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a callable item and returns a string detailing the function.</span>
+
+<span class="sd">    Currently only extracts things stored in ``item.Name`` and ``item.Params``</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    item : callable item</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    description : string</span>
+<span class="sd">        Contains the properties and name of the callable</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from utils import callableDetailsString</span>
+<span class="sd">    &gt;&gt;&gt; def foo():</span>
+<span class="sd">    &gt;&gt;&gt;     print(&quot;foo&quot;)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; foo.Name = &quot;boo&quot;</span>
+<span class="sd">    &gt;&gt;&gt; callableDetailsString(foo)</span>
+<span class="sd">    &#39;boo&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; foo.Params = {1: 2, 2: 3}</span>
+<span class="sd">    &gt;&gt;&gt; callableDetailsString(foo)</span>
+<span class="sd">    &#39;boo with 1 : 2, 2 : 3&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Name</span><span class="p">,</span> <span class="n">details</span> <span class="o">=</span> <span class="n">callableDetails</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">Name</span> <span class="o">+</span> <span class="s2">&quot; with &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">Name</span>
+
+    <span class="k">return</span> <span class="n">desc</span></div>
+
+
+<div class="viewcode-block" id="errorResp"><a class="viewcode-back" href="../utils.html#utils.errorResp">[docs]</a><span class="k">def</span> <span class="nf">errorResp</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes an error that has been caught and returns the details as a string</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    description : string</span>
+<span class="sd">        Contains the description of the error</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    &gt;&gt;&gt;     a = 1/0.0</span>
+<span class="sd">    &gt;&gt;&gt; except:</span>
+<span class="sd">    &gt;&gt;&gt;     print(errorResp())</span>
+<span class="sd">    A &lt;type &#39;exceptions.ZeroDivisionError&#39;&gt; : &quot;float division by zero&quot; in &lt;input&gt; line 1 function &lt;module&gt;: a = 1/0.0</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    &gt;&gt;&gt;     a = b()</span>
+<span class="sd">    &gt;&gt;&gt; except:</span>
+<span class="sd">    &gt;&gt;&gt;     print(errorResp())</span>
+<span class="sd">    A &lt;type &#39;exceptions.NameError&#39;&gt; : &quot;name &#39;b&#39; is not defined&quot; in &lt;input&gt; line 2 function &lt;module&gt;: a = b()  </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">errorType</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span> <span class="o">=</span> <span class="n">exc_info</span><span class="p">()</span>
+    <span class="n">errorLoc</span> <span class="o">=</span> <span class="n">extract_tb</span><span class="p">(</span><span class="n">traceback</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;A &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">errorType</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; : &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot; in &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; line &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">errorLoc</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">description</span> <span class="o">+=</span> <span class="s2">&quot; function &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="n">errorLoc</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">description</span></div>
+
+
+<div class="viewcode-block" id="unique"><a class="viewcode-back" href="../utils.html#utils.unique">[docs]</a><span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">idfun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the unique items in a list and returns them in order found.</span>
+<span class="sd">    </span>
+<span class="sd">    Inspired by discussion on ``http://www.peterbe.com/plog/uniqifiers-benchmark``</span>
+<span class="sd">    Notably f10 Andrew Dalke and f8 by Dave Kirby</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seq : an iterable object</span>
+<span class="sd">        The sequence from which the unique list will be compiled</span>
+<span class="sd">    idfun: function, optional</span>
+<span class="sd">        A hashing function for transforming the items into the form that is to</span>
+<span class="sd">        be compared. Default is the ``None``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : list</span>
+<span class="sd">        The list of unique items</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; a=list(&#39;ABeeE&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; unique(a)</span>
+<span class="sd">    [&#39;A&#39;,&#39;B&#39;,&#39;e&#39;,&#39;E&#39;]</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; unique(a, lambda x: x.lower())</span>
+<span class="sd">    [&#39;A&#39;,&#39;B&#39;,&#39;e&#39;] </span>
+<span class="sd">    </span>
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Unless order is needed it is best to use list(set(seq))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">idfun</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">seq</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">seq</span> <span class="k">if</span> <span class="n">idfun</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">idfun</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span></div>
+
+
+<div class="viewcode-block" id="movingaverage"><a class="viewcode-back" href="../utils.html#utils.movingaverage">[docs]</a><span class="k">def</span> <span class="nf">movingaverage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">windowSize</span><span class="p">,</span> <span class="n">edgeCorrection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># type: (List[float], int, Optional[bool]) -&gt; ndarray</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average over an array</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list of floats</span>
+<span class="sd">        The data to average</span>
+<span class="sd">    windowSize : int</span>
+<span class="sd">        The size of the window</span>
+<span class="sd">    edgeCorrection : bool</span>
+<span class="sd">        If ``True`` the edges are repaired so that there is no unusual dropoff</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    convolution : array</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 1, 1, 1, 1], 3)</span>
+<span class="sd">    array([ 0.66666667, 1, 1, 1, 0.66666667])</span>
+
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)</span>
+<span class="sd">    array([ 0.5 ,  0.75,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  0.75])</span>
+
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)</span>
+<span class="sd">    array([ 1,  1,  1,  1,  1])</span>
+
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)</span>
+<span class="sd">    array([ 1.5,  2,  3,  4,  4.5])</span>
+
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)</span>
+<span class="sd">    array([1 ,  1,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  1])</span>
+
+<span class="sd">    &gt;&gt;&gt; movingaverage([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 7, edgeCorrection=True)</span>
+<span class="sd">    array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">windowSize</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">windowSize</span><span class="p">)</span>
+    <span class="n">convolution</span> <span class="o">=</span> <span class="n">convolve</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="s1">&#39;same&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">edgeCorrection</span> <span class="ow">and</span> <span class="n">windowSize</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">leftEdge</span> <span class="o">=</span> <span class="n">windowSize</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">leftSet</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="n">leftEdge</span><span class="p">)</span>
+        <span class="n">convolution</span><span class="p">[:</span><span class="n">leftEdge</span><span class="p">]</span> <span class="o">/=</span> <span class="p">((</span><span class="n">leftEdge</span> <span class="o">+</span> <span class="p">(</span><span class="n">windowSize</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">leftSet</span><span class="p">)</span> <span class="o">/</span> <span class="n">windowSize</span><span class="p">)</span>
+        <span class="n">rightEdge</span> <span class="o">=</span> <span class="p">(</span><span class="n">windowSize</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">rightSet</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="n">rightEdge</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">convolution</span><span class="p">[</span><span class="o">-</span><span class="n">rightEdge</span><span class="p">:]</span> <span class="o">/=</span> <span class="p">((</span><span class="n">leftEdge</span> <span class="o">+</span> <span class="n">rightSet</span><span class="p">)</span> <span class="o">/</span> <span class="n">windowSize</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convolution</span></div>
+
+<span class="c1">#if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#    from timeit import timeit</span>
+<span class="c1">#    from numpy import fromfunction</span>
+
+<span class="c1">#    print(listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4]))</span>
+<span class="c1">#    print(listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4]))</span>
+
+<span class="c1">#    print(timeit(&#39;listMerge([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])&#39;, setup=&quot;from __main__ import listMerge&quot;,number=500000))</span>
+
+<span class="c1">#    print(timeit(&#39;listMergeNP([1,2,3,4,5,6,7,8,9],[5,6,7,8,9,1,2,3,4])&#39;, setup=&quot;from __main__ import listMergeNP&quot;,number=500000))</span>
+
+<span class="c1">#    for p in listMergeNP(array([1,2,3,4,5,6,7,8,9]).T): print(p)</span>
+<span class="c1">#</span>
+<span class="c1">#    for p in listMergeNP(fromfunction(lambda i, j: i/40+2.6, (20, 1))): print(p)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dataFitting &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dataFitting</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">simulation</span> <span class="k">import</span> <span class="n">simulation</span>
+
+<span class="kn">from</span> <span class="nn">fitting.fit</span> <span class="k">import</span> <span class="n">fit</span>
+
+<div class="viewcode-block" id="dataFitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.dataFitting">[docs]</a><span class="k">def</span> <span class="nf">dataFitting</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fitter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A framework for fitting models to data for experiments, along with</span>
+<span class="sd">    recording the plots and data associated with the best fits.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    experiments : experiments.experiments</span>
+<span class="sd">        An experiment factory generating each of the different experiments being considered</span>
+<span class="sd">    models : models.models</span>
+<span class="sd">        A model factory generating each of the different models being considered</span>
+<span class="sd">    outputing : outputting.outputting</span>
+<span class="sd">        An outputting class instance</span>
+<span class="sd">    data : list of dictionaries</span>
+<span class="sd">        Each dictionary should all contain the keys associated with the fitting</span>
+<span class="sd">    fitter : fitting.fit.fit</span>
+<span class="sd">        A fitting class instance</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    experiments.experiments : The experiments factory</span>
+<span class="sd">    models.models : The model factory</span>
+<span class="sd">    outputting.outputting : The outputting class</span>
+<span class="sd">    fitting.fit.fit : Abstract class for fitting data</span>
+<span class="sd">    data.data : Data import function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="c1">#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span> <span class="c1">#and isinstance(fitter, fit)):</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;dataFitting&#39;</span><span class="p">)</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Data or fitter missing. Starting a simple simulation&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="n">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">)</span>
+
+        <span class="k">return</span>
+
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+
+    <span class="n">outputting</span><span class="o">.</span><span class="n">recordFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the data fitting&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">modelInfo</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">():</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">modelSetup</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">outputting</span><span class="o">.</span><span class="n">logSimFittingParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+
+            <span class="c1"># Find the best model values from those proposed</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning participant fit&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">fittingData</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Participant fitted&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+            <span class="n">desc</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">recordSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
+            <span class="n">outputting</span><span class="o">.</span><span class="n">logModFittedParams</span><span class="p">(</span><span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">)</span>
+
+            <span class="n">outputting</span><span class="o">.</span><span class="n">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span>
+                                            <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span>
+                                            <span class="n">modelFitted</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span>
+                                            <span class="n">fitQuality</span><span class="p">,</span>
+                                            <span class="n">fittingData</span><span class="p">)</span>
+
+            <span class="n">outputting</span><span class="o">.</span><span class="n">plotModel</span><span class="p">(</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">plot</span><span class="p">())</span>
+
+        <span class="n">outputting</span><span class="o">.</span><span class="n">plotModelSet</span><span class="p">(</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">plotSet</span><span class="p">())</span>
+
+    <span class="n">outputting</span><span class="o">.</span><span class="n">plotExperiment</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">plot</span><span class="p">())</span>
+
+    <span class="n">outputting</span><span class="o">.</span><span class="n">simLog</span><span class="p">()</span>
+
+    <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

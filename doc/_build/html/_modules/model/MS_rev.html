@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>model.MS_rev &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for model.MS_rev</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Reference: Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.</span>
+<span class="sd">                    Moore, S. C., &amp; Sellen, J. L. (2006).</span>
+<span class="sd">                    Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9.</span>
+<span class="sd">                    Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441</span>
+
+<span class="sd">:Notes: In the original paper this model used a modified Luce choice</span>
+<span class="sd">        algorithm, rather than the logistic algorithm used here.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span>
+
+<span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
+<span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="k">import</span> <span class="n">modelPlot</span>
+<span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="k">import</span> <span class="n">modelSetPlot</span>
+<span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="k">import</span> <span class="n">decEta</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">callableDetailsString</span>
+
+
+<div class="viewcode-block" id="MS_rev"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev">[docs]</a><span class="k">class</span> <span class="nc">MS_rev</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;An adapted version of the Morre &amp; Sellen model</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">    currAction : int</span>
+<span class="sd">        The current action chosen by the model. Used to pass participant action</span>
+<span class="sd">        to model when fitting</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        Learning rate parameter</span>
+<span class="sd">    beta : float, optional</span>
+<span class="sd">        Sensitivity parameter for probabilities</span>
+<span class="sd">    invBeta : float, optional</span>
+<span class="sd">        Inverse of sensitivity parameter.</span>
+<span class="sd">        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``</span>
+<span class="sd">    eta : float, optional</span>
+<span class="sd">        Decision threshold parameter</span>
+<span class="sd">    numActions : integer, optional</span>
+<span class="sd">        The maximum number of valid actions the model can expect to receive.</span>
+<span class="sd">        Default 2.</span>
+<span class="sd">    numStimuli : integer, optional</span>
+<span class="sd">        The initial maximum number of stimuli the model can expect to receive.</span>
+<span class="sd">         Default 1.</span>
+<span class="sd">    numCritics : integer, optional</span>
+<span class="sd">        The number of different reaction learning sets.</span>
+<span class="sd">        Default numActions*numStimuli</span>
+<span class="sd">    probActions : bool, optional</span>
+<span class="sd">        Defines if the probabilities calculated by the model are for each</span>
+<span class="sd">        action-stimulus pair or for actions. That is, if the stimuli values for</span>
+<span class="sd">        each action are combined before the probability calculation.</span>
+<span class="sd">        Default ``True``</span>
+<span class="sd">    prior : array of floats in ``[0, 1]``, optional</span>
+<span class="sd">        The prior probability of of the states being the correct one.</span>
+<span class="sd">        Default ``ones((numActions, numStimuli)) / numCritics)``</span>
+<span class="sd">    activity : array, optional</span>
+<span class="sd">        The initialisation of the `activity` of the neurons. The values are between ``[0,1]``</span>
+<span class="sd">        Default ``ones((numActions, numStimuli)) / numCritics``</span>
+<span class="sd">    stimFunc : function, optional</span>
+<span class="sd">        The function that transforms the stimulus into a form the model can</span>
+<span class="sd">        understand and a string to identify it later. Default is blankStim</span>
+<span class="sd">    rewFunc : function, optional</span>
+<span class="sd">        The function that transforms the reward into a form the model can</span>
+<span class="sd">        understand. Default is blankRew</span>
+<span class="sd">    decFunc : function, optional</span>
+<span class="sd">        The function that takes the internal values of the model and turns them</span>
+<span class="sd">        in to a decision. Default is model.decision.binary.decEta</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;MS_rev&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">kwargRemains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">invBeta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;invBeta&#39;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">invBeta</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;expectations&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span><span class="p">)</span>
+        <span class="c1"># The alpha is an activation rate parameter. The M&amp;S paper uses a value of 1.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decEta</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">eta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;expectations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">probDifference</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Recorded information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardResultsStore</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MS_rev.outputEvolution"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dict</span>
+<span class="sd">            The dictionary contains a series of keys including Name,</span>
+<span class="sd">            Probabilities, Actions and Events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="MS_rev.storeState"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the state of all the important variables so that they can be accessed later</span>
+
+<span class="sd">        The stored variables are ones that describe the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeStandardResults</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MS_rev.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the reward based on the action and stimuli</span>
+
+<span class="sd">        This contains parts that are experiment dependent</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        observation : {int | float | tuple}</span>
+<span class="sd">            The set of stimuli</span>
+<span class="sd">        action : int or NoneType</span>
+<span class="sd">            The chosen action</span>
+<span class="sd">        response : float or NoneType</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        expectedReward : float</span>
+<span class="sd">            The expected reward</span>
+<span class="sd">        stimuli : list of floats</span>
+<span class="sd">            The processed observations</span>
+<span class="sd">        activeStimuli : list of [0, 1] mapping to [False, True]</span>
+<span class="sd">            A list of the stimuli that were or were not present</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimuli</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
+        <span class="c1"># calculate the expectations associated with each action.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span>
+
+        <span class="n">expectedReward</span> <span class="o">=</span> <span class="n">actionExpectations</span>
+
+        <span class="k">return</span> <span class="n">expectedReward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">activeStimuli</span></div>
+
+<div class="viewcode-block" id="MS_rev.delta"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the comparison between the reward and the expectation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reward : float</span>
+<span class="sd">            The reward value</span>
+<span class="sd">        expectation : float</span>
+<span class="sd">            The expected reward value</span>
+<span class="sd">        action : int</span>
+<span class="sd">            The chosen action</span>
+<span class="sd">        stimuli : {int | float | tuple | None}</span>
+<span class="sd">            The stimuli received</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        delta</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">modReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">modReward</span> <span class="o">-</span> <span class="n">expectation</span>
+
+        <span class="k">return</span> <span class="n">delta</span></div>
+
+<div class="viewcode-block" id="MS_rev.updateModel"><a class="viewcode-back" href="../../model.html#model.MS_rev.MS_rev.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+
+        <span class="c1"># Find the new activities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_newActivity</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the new probabilities</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">probActions</span><span class="p">:</span>
+            <span class="c1"># Then we need to combine the expectations before calculating the probabilities</span>
+            <span class="n">actExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">actExpectations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_newActivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">+=</span> <span class="n">delta</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+
+    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectation</span><span class="p">):</span>
+        <span class="c1"># The probability of a given jar, using the Luce choice model</span>
+
+        <span class="c1">#li = self.expectations ** self.beta</span>
+        <span class="c1">#p = li/sum(li)</span>
+
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">*</span><span class="n">expectation</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+
+        <span class="k">return</span> <span class="n">p</span></div>
+
+
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.MS_rev.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Default stimulus processor. Does nothing.Returns [1,0]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blankStimFunc : function</span>
+<span class="sd">        The function expects to be passed the event and then return [1,0].</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankStim&quot;</span>
+    <span class="k">return</span> <span class="n">blankStimFunc</span></div>
+
+
+<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.html#model.MS_rev.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Default reward processor. Does nothing. Returns reward</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blankRewFunc : function</span>
+<span class="sd">        The function expects to be passed the reward and then return it.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">blankRewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reward</span>
+
+    <span class="n">blankRewFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankRew&quot;</span>
+    <span class="k">return</span> <span class="n">blankRewFunc</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

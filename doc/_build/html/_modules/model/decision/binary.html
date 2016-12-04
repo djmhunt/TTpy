@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>model.decision.binary &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for model.decision.binary</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">A collection of decision making functions where there are only two possible actions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">choice</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="n">ones</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+
+
+<div class="viewcode-block" id="decSingle"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decSingle">[docs]</a><span class="k">def</span> <span class="nf">decSingle</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Decisions using a switching probability</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expResponses : tuple of length two, optional</span>
+<span class="sd">        Provides the two action responses expected by the experiment</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    decisionFunc : function</span>
+<span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
+<span class="sd">        decision and the probability of that decision</span>
+<span class="sd">    decision : int or NoneType</span>
+<span class="sd">        The action to be taken by the model</span>
+<span class="sd">    probabilities : OrderedDict of valid responses</span>
+<span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    models.BPMS, model.BHMM</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from model.decision.binary import decSingle</span>
+<span class="sd">    &gt;&gt;&gt; lastAct = 0</span>
+<span class="sd">    &gt;&gt;&gt; dec = decSingle()</span>
+<span class="sd">    &gt;&gt;&gt; dec(0.23, lastAct)</span>
+<span class="sd">    (0, {0,:0.77, 1:0.23})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="p">{</span><span class="n">resp</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prob</span>
+            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expResponseSet</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+
+        <span class="n">randNum</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
+
+        <span class="n">lastNotAction</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expResponseSet</span><span class="o">.</span><span class="n">difference</span><span class="p">([</span><span class="n">lastAction</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;=</span> <span class="n">randNum</span><span class="p">:</span>
+            <span class="c1"># The decision is to switch</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">lastNotAction</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Keep the same decision</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">lastAction</span>
+
+        <span class="n">pSet</span> <span class="o">=</span> <span class="p">{</span><span class="n">lastNotAction</span><span class="p">:</span> <span class="n">prob</span><span class="p">,</span>
+                <span class="n">lastAction</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">}</span>
+
+        <span class="n">probDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">pSet</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">expResponses</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
+
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.decSingle&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+
+
+<div class="viewcode-block" id="decEta"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decEta">[docs]</a><span class="k">def</span> <span class="nf">decEta</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">eta</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decisions using a probability difference threshold</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expResponses : tuple of length two containing non-negative ints, optional</span>
+<span class="sd">        Provides the two action responses expected by the experiment</span>
+<span class="sd">    eta : float, optional :math:`\\eta`</span>
+<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\eta`</span>
+<span class="sd">        If true a decision is taken. If false the function responds ``None``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    decisionFunc : function</span>
+<span class="sd">        Calculates the decisions based on their probabilities and returns the</span>
+<span class="sd">        decision and the probabilities for that decision.</span>
+<span class="sd">    decision : int or NoneType</span>
+<span class="sd">        The action to be taken by the model</span>
+<span class="sd">    probabilities : OrderedDict of valid responses</span>
+<span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="n">probDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">)})</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="p">{</span><span class="n">resp</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
+            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expResponseSet</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">probabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">eta</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
+
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.decEta&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expResponses&quot;</span><span class="p">:</span> <span class="n">expResponses</span><span class="p">,</span>
+                           <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+
+
+<div class="viewcode-block" id="decRandom"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decRandom">[docs]</a><span class="k">def</span> <span class="nf">decRandom</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Decisions using a comparison with a uniform random number</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expResponses : tuple of length two containing non-negative ints, optional</span>
+<span class="sd">        Provides the two action responses expected by the experiment</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    decisionFunc : function</span>
+<span class="sd">        Calculates the decisions based on their probabilities and returns the</span>
+<span class="sd">        decision and the probabilities for that decision.</span>
+<span class="sd">    decision : int or NoneType</span>
+<span class="sd">        The action to be taken by the model</span>
+<span class="sd">    probabilities : OrderedDict of valid responses</span>
+<span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="n">probDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">)})</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="p">{</span><span class="n">resp</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
+            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expResponseSet</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">probabilities</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">decVal</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="n">decVal</span><span class="p">:</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">prob</span> <span class="o">==</span> <span class="n">decVal</span><span class="p">:</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
+
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.decRandom&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expResponses&quot;</span><span class="p">:</span> <span class="n">expResponses</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+
+
+<div class="viewcode-block" id="decEtaSets"><a class="viewcode-back" href="../../../model.decision.html#model.decision.binary.decEtaSets">[docs]</a><span class="k">def</span> <span class="nf">decEtaSets</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">eta</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decisions using a probability difference threshold for the expectation</span>
+<span class="sd">    from two sets of action-response value probabilities.</span>
+
+<span class="sd">    It is assumed that the response values are increasing and evenly spaced.</span>
+
+<span class="sd">    The two sets of probabilities are provided as a one dimensional array,</span>
+<span class="sd">    with one set after the other.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expResponses : tuple of length two, optional</span>
+<span class="sd">        Provides the two action responses expected by the experiment</span>
+<span class="sd">    eta : float, optional :math:`\\eta`</span>
+<span class="sd">        The threshold for decisions. :math:`\Vert p_0-0.5\Vert&gt; \\eta`</span>
+<span class="sd">        If true a decision is taken. If false the function responds ``None``</span>
+<span class="sd">        Default ``0``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    decisionFunc : function</span>
+<span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
+<span class="sd">        decision and the probability of that decision</span>
+<span class="sd">    decision : int or NoneType</span>
+<span class="sd">        The action to be taken by the model</span>
+<span class="sd">    probDict : OrderedDict of valid responses</span>
+<span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    models.BP, models.MS_rev, experiment.decks.deckStimAllInfo</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
+<span class="sd">    &gt;&gt;&gt; from model.decision.binary import decEtaSets</span>
+<span class="sd">    &gt;&gt;&gt; lastAct = 0</span>
+<span class="sd">    &gt;&gt;&gt; dec = decEtaSets()</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct)</span>
+<span class="sd">    (0, {0:0.8, 1:0.2})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0])</span>
+<span class="sd">    (0, {0: 1})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0,3])</span>
+<span class="sd">    model\decision\binary.py:223: UserWarning: Bad number of validResponses: [0, 3]</span>
+<span class="sd">    warn(&quot;Bad number of validResponses: &quot; + str(validResponses))</span>
+<span class="sd">    (0, {0:0.8, 1:0.2})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[])</span>
+<span class="sd">    (None, {0:0.8, 1:0.2})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,0])</span>
+<span class="sd">    (0, {0:0.6, 1:0.4})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,1])</span>
+<span class="sd">    (0, {0:0.8, 1:0.2})</span>
+<span class="sd">    &gt;&gt;&gt; dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[0,0])</span>
+<span class="sd">    (0, {0:0.8, 1:0.2})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">probLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">probLen</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">numStim</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numStim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">probLen</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stimulus</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span> <span class="ow">and</span> <span class="n">numStim</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimulus</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">stimulus</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">respWeights</span> <span class="o">=</span> <span class="n">stimulus</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">respWeights</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">numStim</span><span class="p">)</span>
+
+        <span class="n">probSets</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">numStim</span><span class="p">))</span>
+        <span class="n">expectSet</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">respWeights</span> <span class="o">*</span> <span class="n">probSets</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">probPair</span> <span class="o">=</span> <span class="n">expectSet</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">expectSet</span><span class="p">)</span>
+
+        <span class="n">probDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probPair</span><span class="p">)})</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="p">{</span><span class="n">resp</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
+            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expResponseSet</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+
+        <span class="n">probDec</span> <span class="o">=</span> <span class="n">probPair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">probDec</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">eta</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">probDec</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">probDec</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">decision</span> <span class="o">=</span> <span class="n">expResponses</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
+
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.decEtaSets&quot;</span>
+    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;expResponses&quot;</span><span class="p">:</span> <span class="n">expResponses</span><span class="p">,</span>
+                           <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">eta</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>

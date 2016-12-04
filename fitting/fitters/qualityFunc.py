@@ -15,8 +15,8 @@ def qualFuncIdent(value, **kwargs):
 
     if isinstance(value, Callable):
         fitness = value
-    elif value == "BIC":
-        fitness = BIC(**kwargs)
+    elif value == "BIC2":
+        fitness = BIC2(**kwargs)
     elif value == "-2log":
         fitness = logprob
     elif value == "-2AvLog":
@@ -97,11 +97,13 @@ def maxprob(modVals):
     return fit
 
 
-def BIC(**kwargs):
+def BIC2(**kwargs):
     # type : (int, float) -> Callable[[Union[ndarray, list]], float]
 
     numParams = kwargs.pop("numParams", 2)
     qualityThreshold = kwargs.pop("qualityThreshold", 20)
+    numActions = kwargs.pop("numActions", 2)
+    randActProb = kwargs.pop("randActProb", 1/numActions)
 
     def BICfunc(modVals):
         # type: (Union[ndarray, list]) -> float
@@ -123,13 +125,13 @@ def BIC(**kwargs):
         # guessing model
 
         BICval = numParams * log2(amax(numSamples)) + logprob(modVals)
-        BICrandom = logprob(ones(numSamples) * 0.5)
-        qualityConvertor = qualityThreshold ** (2/BICrandom)
+        BICrandom = logprob(ones(numSamples) * randActProb)
+        qualityConvertor = qualityThreshold**(2/BICrandom)
 
-        fit = qualityConvertor * exp(BICval/BICrandom - 1)
+        fit = qualityConvertor * 2**(BICval/BICrandom - 1)
 
         return fit
 
-    BICfunc.Name = "BIC"
+    BICfunc.Name = "BIC2"
     BICfunc.Params = {"numParams": numParams}
     return BICfunc

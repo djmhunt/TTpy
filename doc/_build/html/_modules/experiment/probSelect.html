@@ -1,0 +1,590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>experiment.probSelect &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for experiment.probSelect</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Reference: Opponent actor learning (OpAL): Modeling</span>
+<span class="sd">                interactive effects of striatal dopamine on reinforcement</span>
+<span class="sd">                learning and choice incentive.</span>
+<span class="sd">                Collins, A. G. E., &amp; Frank, M. J. (2014).</span>
+<span class="sd">                Psychological Review, 121(3), 337–66.</span>
+<span class="sd">                doi:10.1037/a0037015</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="nb">sum</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">choice</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span>
+
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
+<span class="kn">from</span> <span class="nn">plotting</span> <span class="k">import</span> <span class="n">pandasPlot</span><span class="p">,</span> <span class="n">lineplot</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentPlot</span> <span class="k">import</span> <span class="n">experimentPlot</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentSetPlot</span> <span class="k">import</span> <span class="n">experimentSetPlot</span>
+
+<span class="c1"># from utils import varyingParams</span>
+
+
+<div class="viewcode-block" id="probSelect"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect">[docs]</a><span class="k">class</span> <span class="nc">probSelect</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</span>
+<span class="sd">                                        Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., &amp; Hutchison, K. E. (2007).</span>
+<span class="sd">                                        Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.</span>
+<span class="sd">                                        doi:10.1073/pnas.0706111104</span>
+
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
+<span class="sd">    Refer to its documentation for missing methods.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rewardProb : float in range [0,1], optional</span>
+<span class="sd">        The probability that a reward is given for choosing action A. Default</span>
+<span class="sd">        is 0.7</span>
+<span class="sd">    actRewardProb : dictionary, optional</span>
+<span class="sd">        A dictionary of the potential actions that can be taken and the</span>
+<span class="sd">        probability of a reward.</span>
+<span class="sd">        Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}</span>
+<span class="sd">    rewardSize : float, optional</span>
+<span class="sd">        The size of reward given if successful. Default 1</span>
+<span class="sd">    numActions : int, optional</span>
+<span class="sd">        The number of actions that can be chosen at any given time, chosen at</span>
+<span class="sd">        random from actRewardProb. Default 2</span>
+<span class="sd">    learningLen : int, optional</span>
+<span class="sd">        The number of trials in the learning phase. As there is no feeback in</span>
+<span class="sd">        the trasfer phase there is no transfer phase. Default is 100</span>
+<span class="sd">    plotArgs : dictionary, optional</span>
+<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
+<span class="sd">        its documentation for more details.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The experiment is broken up into two sections: a learning phase and a</span>
+<span class="sd">    transfer phase. Participants choose between pairs of four actions: A, B, M1</span>
+<span class="sd">    and M2. Each provides a reward with a different probability: A:P&gt;0.5,</span>
+<span class="sd">    B:1-P&lt;0.5, M1=M2=0.5. The transfer phase has all the action pairs but no</span>
+<span class="sd">    feedback. This class only covers the learning phase, but models are</span>
+<span class="sd">    expected to be implemented as if there is a transfer phase.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probSelect&quot;</span>
+
+<div class="viewcode-block" id="probSelect.reset"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a new experiment instance</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : The cleaned up object instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">rewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">,</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;actRewardProb&#39;</span><span class="p">,{</span><span class="mi">0</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
+                                                    <span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">rewardProb</span><span class="p">,</span>
+                                                    <span class="mi">2</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                                                    <span class="mi">3</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+        <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numActions&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">rewardSize</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rewardSize&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,{})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+                           <span class="s2">&quot;rewardProb&quot;</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
+                           <span class="s2">&quot;actRewardProb&quot;</span><span class="p">:</span> <span class="n">actRewardProb</span><span class="p">,</span>
+                           <span class="s2">&quot;learningLen&quot;</span><span class="p">:</span> <span class="n">learningLen</span><span class="p">,</span>
+                           <span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">,</span>
+                           <span class="s2">&quot;rewardSize&quot;</span><span class="p">:</span> <span class="n">rewardSize</span><span class="p">}</span>
+
+        <span class="c1"># Set draw count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardProb</span> <span class="o">=</span> <span class="n">rewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">actRewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span> <span class="o">=</span> <span class="n">rewardSize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">learningLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">numActions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">actRewardProb</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="c1"># Recording variables</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">learningLen</span><span class="p">)</span><span class="o">*-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">learningLen</span><span class="p">)</span><span class="o">*-</span><span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="probSelect.next"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produces the next stimulus for the iterator</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimulus : None</span>
+<span class="sd">        nextValidActions : Tuple of length 2 of ints</span>
+<span class="sd">            The list of valid actions that the model can respond with.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+        <span class="n">nextStim</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
+
+<div class="viewcode-block" id="probSelect.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receives the next action from the participant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
+
+<div class="viewcode-block" id="probSelect.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Responds to the action from the participant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2</span>
+        <span class="n">actRewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">actRewProb</span> <span class="o">&gt;=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span> <span class="o">=</span> <span class="n">reward</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">reward</span></div>
+
+<div class="viewcode-block" id="probSelect.procede"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the experiment after feedback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="probSelect.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots and saves files containing all the relavant data for this</span>
+<span class="sd">        experiment run</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;stimVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="probSelect.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
+<span class="sd">        output later &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Desired plots:</span>
+<span class="sd">            :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`</span>
+<span class="sd">            :math:`\\beta_N = 1, \\beta_G in ]0,2[`</span>
+
+<span class="sd">            Plot the range of</span>
+<span class="sd">            :math:`\\alpha_G = 0.2 - \\alpha_N` for :math:`\\alpha_N \in ]0,0.2[` and</span>
+<span class="sd">            :math:`\\beta_G = 2 - \\beta_N` for :math:`\\beta_N in ]0,2[` with the Y-axis being</span>
+<span class="sd">            Choose(A) = prob(A) - prob(M),</span>
+<span class="sd">            Avoid(B) = prob(M) - prob(B),</span>
+<span class="sd">            Bias = choose(A) - avoid(B),</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_figSets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="c1"># Create all the plots and place them in in a list to be iterated</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">processEndData</span><span class="p">()</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biasAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;biasAlpha&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biasBeta</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;biasBeta&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;chooseAlpha&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseBeta</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;chooseBeta&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">avoidAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;avoidAlpha&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">avoidBeta</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;avoidBeta&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.processEndData"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.processEndData">[docs]</a>        <span class="k">def</span> <span class="nf">processEndData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">expStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span>
+            <span class="n">modelStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span>
+            <span class="n">plotArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span>
+
+            <span class="n">probFinal</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;Probabilities&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;ProbA&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbB&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbM1&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbM2&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span>
+                                 <span class="s1">&#39;alphaGo&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;alphaNogo&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;alphaNogo&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;betaDiff&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">])})</span>
+
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;chooseA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbM1&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;avoidB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbM1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbB&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;chooseA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;avoidB&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaNogo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">data</span></div>
+
+        <span class="k">def</span> <span class="nf">_plotEndSubset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sort</span><span class="p">):</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">sort</span><span class="p">)</span>
+
+            <span class="n">selectData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+                                <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+
+            <span class="n">alphaGoSet</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">alphaGoSet</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">selectData</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphaGoSet</span>
+            <span class="n">plotData</span> <span class="o">=</span> <span class="n">selectData</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">pandasPlot</span><span class="p">(</span><span class="n">plotData</span><span class="p">,</span> <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xLabel&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;yLabel&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+
+            <span class="k">return</span> <span class="n">fig</span>
+
+
+<div class="viewcode-block" id="probSelect.experimentPlot.biasAlpha"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.biasAlpha">[docs]</a>        <span class="k">def</span> <span class="nf">biasAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.biasBeta"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.biasBeta">[docs]</a>        <span class="k">def</span> <span class="nf">biasBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.chooseAlpha"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.chooseAlpha">[docs]</a>        <span class="k">def</span> <span class="nf">chooseAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;chooseA&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.chooseBeta"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.chooseBeta">[docs]</a>        <span class="k">def</span> <span class="nf">chooseBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;chooseA&#39;</span><span class="p">,</span> <span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.avoidAlpha"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.avoidAlpha">[docs]</a>        <span class="k">def</span> <span class="nf">avoidAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;avoidB&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentPlot.avoidBeta"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot.avoidBeta">[docs]</a>        <span class="k">def</span> <span class="nf">avoidBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;avoidB&#39;</span><span class="p">,</span> <span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div></div>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentSetPlot</span><span class="p">(</span><span class="n">experimentSetPlot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Desired plots:</span>
+<span class="sd">            :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`</span>
+<span class="sd">            :math:`\\beta_N = 1, \\beta_G in ]0,2[`</span>
+
+<span class="sd">            Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`</span>
+<span class="sd">            with:</span>
+<span class="sd">                :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`</span>
+<span class="sd">                :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`</span>
+
+<span class="sd">            Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`</span>
+<span class="sd">            with varying :math:`prob(R|A) \in ]0,1[` and constant</span>
+<span class="sd">            :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">_figSets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="c1"># Create all the plots and place them in in a list to be iterated</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">processEndData</span><span class="p">()</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biasVrewardAlpha</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;biasVrewardAlpha&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">biasVrewardBeta</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;biasVrewardBeta&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeEforP</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeEforP&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeGforP</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeGforP&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeNforP</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeNforP&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeEforR</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeEforR&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeGforR</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeGforR&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergeNforR</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figSets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;convergeNforR&#39;</span><span class="p">,</span> <span class="n">fig</span><span class="p">))</span>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot.processEndData"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot.processEndData">[docs]</a>        <span class="k">def</span> <span class="nf">processEndData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">expStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span>
+            <span class="n">modelStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span>
+            <span class="n">plotArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span>
+
+            <span class="n">probFinal</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;Probabilities&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;ProbA&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbB&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbM1&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span>
+                                 <span class="s1">&#39;ProbM2&#39;</span><span class="p">:</span> <span class="n">probFinal</span><span class="p">[:,</span><span class="mi">3</span><span class="p">],</span>
+                                 <span class="s1">&#39;alphaGo&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;alphaNogo&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;alphaNogo&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;betaDiff&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">modelStore</span><span class="p">]),</span>
+                                 <span class="s1">&#39;rewardProb&#39;</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">expStore</span><span class="p">])})</span>
+
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;chooseA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbM1&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;avoidB&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbM1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ProbB&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;bias&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;chooseA&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;avoidB&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaNogo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;betaDiff&#39;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot.processTimeData"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot.processTimeData">[docs]</a>        <span class="k">def</span> <span class="nf">processTimeData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">expStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span>
+            <span class="n">modelStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span>
+            <span class="n">plotArgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span>
+
+            <span class="n">unGroupedData</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)))</span>
+
+            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">expStore</span><span class="p">,</span><span class="n">modelStore</span><span class="p">):</span>
+                <span class="n">unGroupedData</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardSize&#39;</span><span class="p">]][</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">]][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;Expectation&#39;</span><span class="p">])</span>
+                <span class="n">unGroupedData</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardSize&#39;</span><span class="p">]][</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">]][</span><span class="s1">&#39;G&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;Go&#39;</span><span class="p">])</span>
+                <span class="n">unGroupedData</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardSize&#39;</span><span class="p">]][</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">]][</span><span class="s1">&#39;N&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="s1">&#39;Nogo&#39;</span><span class="p">])</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">rS</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="n">rP</span><span class="p">:</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">rPv</span><span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                             <span class="nb">sum</span><span class="p">(</span><span class="n">rPv</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                             <span class="nb">sum</span><span class="p">(</span><span class="n">rPv</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                             <span class="nb">sum</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">rPv</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">])</span><span class="o">-</span><span class="n">array</span><span class="p">(</span><span class="n">rPv</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+                        <span class="k">for</span> <span class="n">rP</span><span class="p">,</span><span class="n">rPv</span> <span class="ow">in</span> <span class="n">rSv</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+                    <span class="k">for</span> <span class="n">rS</span><span class="p">,</span><span class="n">rSv</span> <span class="ow">in</span> <span class="n">unGroupedData</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">data</span></div>
+
+        <span class="k">def</span> <span class="nf">_plotEndSubset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sort</span><span class="p">):</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">sort</span><span class="p">)</span>
+
+            <span class="n">selectData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+                                <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">data</span><span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">z</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="n">y</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">z</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+
+            <span class="n">alphaGoSet</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+            <span class="n">alphaGoSet</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">selectData</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphaGoSet</span>
+            <span class="n">plotData</span> <span class="o">=</span> <span class="n">selectData</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">pandasPlot</span><span class="p">(</span><span class="n">plotData</span><span class="p">,</span> <span class="n">axisLabels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;xlabel&#39;</span><span class="p">:</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;ylabel&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">:</span><span class="n">y</span><span class="p">})</span>
+
+            <span class="k">return</span> <span class="n">fig</span>
+
+        <span class="k">def</span> <span class="nf">_plotTimeSubset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+            <span class="c1"># return fig</span>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot.biasVrewardAlpha"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot.biasVrewardAlpha">[docs]</a>        <span class="k">def</span> <span class="nf">biasVrewardAlpha</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;rewardProb&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot.biasVrewardBeta"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot.biasVrewardBeta">[docs]</a>        <span class="k">def</span> <span class="nf">biasVrewardBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plotEndSubset</span><span class="p">(</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">,</span> <span class="s1">&#39;bias&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;alphaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;betaGo&#39;</span><span class="p">,</span> <span class="s1">&#39;rewardProb&#39;</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="probSelect.experimentSetPlot.convergeEforP"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot.convergeEforP">[docs]</a>        <span class="k">def</span> <span class="nf">convergeEforP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,{})</span>
+
+            <span class="n">Y</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="s1">&#39;E&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()]</span>
+
+            <span class="n">x</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">lineplot</span><span class="p">()</span></div></div></div>
+
+
+<div class="viewcode-block" id="probSelectStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelectStimDirect">[docs]</a><span class="k">def</span> <span class="nf">probSelectStimDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the selection stimuli for models expecting just the event</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    deckStim : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
+<span class="sd">        last action. The event is an int and the action is {0,1}. The</span>
+<span class="sd">        function returns a list of length 2.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.OpAL</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from experiment.probSelect import probSelectStimDirect</span>
+<span class="sd">    &gt;&gt;&gt; stim = probSelectStimDirect()</span>
+<span class="sd">    &gt;&gt;&gt; stim(1,0)</span>
+<span class="sd">    (1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; stim(0,0)</span>
+<span class="sd">    (1, 0)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">probSelectStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">observation</span>
+
+    <span class="n">probSelectStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probSelectStimDirect&quot;</span>
+    <span class="n">probSelectStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">probSelectStim</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+    </div>
+  </body>
+</html>
