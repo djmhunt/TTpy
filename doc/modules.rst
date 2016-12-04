@@ -13,13 +13,8 @@ Code
    models
    outputting
    outputtingUtils
-   participantModelParamMatch
    participants
    plotting
-   pyan
-   setup
    simulation
-   test
    utils
-   utils_test
    vtkWriter
