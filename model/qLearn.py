@@ -8,13 +8,13 @@
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, ones, array
+from numpy import exp, ones, array, isnan, isinf, sum, sign
 
-from modelTemplate import model
+from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
@@ -199,7 +199,12 @@ class qLearn(model):
 
     def _newAct(self, delta, action, stimuliFilter):
 
-        self.expectations[action] += self.alpha*delta*stimuliFilter
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuliFilter
+
+        newExpectations = newExpectations * (newExpectations >=0)
+
+        self.expectations[action] = newExpectations
+
 
     def _prob(self, expectation):
         """
@@ -219,6 +224,17 @@ class qLearn(model):
         denominator = sum(numerator)
 
         probs = numerator / denominator
+
+#        inftest = isinf(numerator)
+#        if inftest.any():
+#            possprobs = inftest * 1
+#            probs = possprobs / sum(possprobs)
+#
+#            logger = logging.getLogger('qLearn')
+#            message = "Overflow in calculating the prob with expectation "
+#            message += str(expectation)
+#            message += " \n Returning the prob: " + str(probs)
+#            logger.warning(message)
 
         return probs
 
