@@ -8,7 +8,7 @@ from simulation import simulation
 
 from fitting.fit import fit
 
-def dataFitting(experiments, models, outputting, data = None, fitter = None):
+def dataFitting(experiments, models, outputting, data = None, fitter = None, partLabel = "Name"):
     """
     A framework for fitting models to data for experiments, along with
     recording the plots and data associated with the best fits.
@@ -25,6 +25,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
         Each dictionary should all contain the keys associated with the fitting
     fitter : fitting.fit.fit
         A fitting class instance
+    partLabel : basestring, optional
+        The key (label) used to identify each participant. Default ``Name``
 
     See Also
     --------
@@ -66,6 +68,10 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
 
         for participant in data:
 
+            partName = participant[partLabel]
+            if isinstance(partName, (list, tuple)):
+                partName = partName[0]
+
             # Find the best model values from those proposed
 
             message = "Beginning participant fit"
@@ -76,10 +82,11 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None):
             message = "Participant fitted"
             logger.debug(message)
 
-            desc = outputting.recordSimParams(exp.params(), modelFitted.params())
-            outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality)
+            outputting.recordSimParams(exp.params(), modelFitted.params(), simID=partName)
+            outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality, partName)
 
             outputting.recordParticipantFit(participant,
+                                            partName,
                                             exp.outputEvolution(),
                                             modelFitted.outputEvolution(),
                                             fitQuality,

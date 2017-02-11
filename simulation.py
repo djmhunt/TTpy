@@ -4,6 +4,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+
 def  simulation(experiments, models, outputting):
     """
     A framework for letting models interact with experiments and record the data
@@ -24,6 +25,8 @@ def  simulation(experiments, models, outputting):
 
     logger = outputting.getLogger('Overview')
 
+    simID = 0
+
     message = "Beginning the simulation set"
     logger.debug(message)
 
@@ -34,8 +37,9 @@ def  simulation(experiments, models, outputting):
             for model in modelSet:
 
                 exp = experiments.create(expNum)
+                model.setsimID(simID)
 
-                desc = outputting.recordSimParams(exp.params(),model.params())
+                desc = outputting.recordSimParams(exp.params(), model.params())
                 outputting.logSimParams(*desc)
 
                 message = "Beginning experiment"
@@ -52,10 +56,11 @@ def  simulation(experiments, models, outputting):
                 message = "Experiment completed"
                 logger.debug(message)
 
-
-                outputting.recordSim(exp.outputEvolution(),model.outputEvolution())
+                outputting.recordSim(exp.outputEvolution(), model.outputEvolution())
 
                 outputting.plotModel(model.plot())
+
+                simID += 1
 
             outputting.plotModelSet(model.plotSet())
 

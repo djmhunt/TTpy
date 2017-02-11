@@ -141,7 +141,8 @@ class model(object):
         # then the currentAction can be set to the rest value
         # Otherwise choose an action
         if type(validActions) is NoneType:
-            self.setNonAction(self.currAction)
+            # TODO implement the capacity to set what the defaultNonAction is
+            self.currAction = self.defaultNonAction
         else:
             self.currAction, self.decProbabilities = self.chooseAction(self.probabilities, self.currAction, events, validActions)
 
@@ -186,7 +187,7 @@ class model(object):
         # Find the reward expectation
         expectedReward, stimuli, stimuliFilter = self.rewardExpectation(observation, action, response)
 
-        self.recExpectedReward.append(expectedReward)
+        self.recExpectedReward.append(expectedReward.flatten())
 
         # If there was no reward, the the stimulus is the learnt 'reward'
         if type(response) is NoneType:
@@ -354,11 +355,12 @@ class model(object):
 
         results = self.parameters.copy()
 
+        results["simID"] = self.simID
         results["Actions"] = array(self.recAction)
         results["Stimuli"] = array(self.recStimuli).T
         results["Rewards"] = array(self.recReward)
         results["Expectations"] = array(self.recExpectations).T
-        results["ExpectedRewards"] = array(self.recExpectedReward)
+        results["ExpectedRewards"] = array(self.recExpectedReward).T
         results["ValidActions"] = array(self.recValidActions).T
         results["Decisions"] = array(self.recDecision)
         results["UpdatedProbs"] = array(self.recProbabilities).T
@@ -421,7 +423,6 @@ class model(object):
 
     def genStandardResultsStore(self):
         """Set up the dictionary that stores the standard variables used to track a model
-
         """
 
         self.recAction = []
@@ -434,6 +435,7 @@ class model(object):
         self.recProbabilities = []
         self.recActionProbs = []
         self.recActionProb = []
+        self.simID = None
 
     def params(self):
         """
@@ -445,6 +447,20 @@ class model(object):
         """
 
         return self.parameters
+
+    def setsimID(self, simID):
+        """
+
+        Parameters
+        ----------
+        simID : float
+
+        Returns
+        -------
+
+        """
+
+        self.simID = simID
 
     def plot(self):
         """
