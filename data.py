@@ -62,6 +62,8 @@ def data(folder, fileType, **kwargs):
     fileType : string
         The file extension found after the ".". Currently only mat and xlsx files are
         supported.
+    **kwargs : dict
+        The keyword arguments used by the
 
     Returns
     -------
@@ -81,7 +83,7 @@ def data(folder, fileType, **kwargs):
     fileType = fileType
     folder = folder
 
-    files = getFiles(folder, fileType)
+    files = getFiles(folder, fileType, **kwargs)
 
     if fileType == "mat":
 
@@ -101,7 +103,7 @@ def data(folder, fileType, **kwargs):
     return dataSet
 
 
-def getFiles(folder, fileType):
+def getFiles(folder, fileType, **kwargs):
     """
     Produces the list of valid input files
 
@@ -111,6 +113,8 @@ def getFiles(folder, fileType):
         The folder string should end in a "/"
     fileType : string
         The file extension found after the ".".
+    validFiles : list of strings or None, optional
+        A list of the names of numbered pickled files to be imported. Default None
 
     Returns
     -------
@@ -129,12 +133,22 @@ def getFiles(folder, fileType):
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
 
     """
+    validFiles = kwargs.pop('validFiles', None)
 
     files = listdir(folder)
 
     dataFiles = [f for f in files if f.endswith(fileType)]
 
-    sortedFiles = sortStrings(dataFiles, "." + fileType)
+    if type(validFiles) is NoneType:
+        validFileList = dataFiles
+    else:
+        validFileList = []
+        for f in dataFiles:
+            for v in validFiles:
+                if f.startswith(v):
+                    validFileList.append(f)
+
+    sortedFiles = sortStrings(validFileList, "." + fileType)
 
     return sortedFiles
 
@@ -179,6 +193,28 @@ def sortStrings(unorderedList, suffix):
         return sortedList
     else:
         return unorderedList
+
+# TODO work out how you want to integrate this into getFiles
+def sortbylastnum(dataFiles):
+
+    # sort by the last number on the filename
+    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in dataFiles]
+    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, dataFiles)]
+
+    # check if number part is a float or an int (assuming the same for all) and use the appropriate conversion
+    if "." in dataFiles[0][numsplit[0]:footSplit[0]]:
+        numRepr = float
+    else:
+        numRepr = int
+
+    fileNameSections = [(f[:n], numRepr(f[n:d]), f[d:]) for n, d, f in izip(numsplit, footSplit, dataFiles)]
+
+    # Sort the keys for groupFiles
+    sortedFileNames = sorted(fileNameSections, key=lambda fileGroup: fileGroup[1])
+
+    dataSortedFiles = [head + str(num) + foot for head, num, foot in sortedFileNames]
+
+    return dataSortedFiles
 
 
 def getUniquePrefix(unorderedList, suffixLen):
@@ -303,7 +339,8 @@ def getmatData(folder, files):
 
         mat = loadmat(folder + f)
 
-        dataD = {"fileName": f}
+        dataD = {"fileName": f,
+                 "folder": folder}
 
         for m, v in mat.iteritems():
             if m[0:2] != "__":
@@ -376,10 +413,12 @@ def getxlsxData(folder, files, **kwargs):
                 subDat = dat[(dat[splitBy] == p).all(axis=1)]
                 subDatDict = subDat.to_dict(orient='list')
                 subDatDict["fileName"] = f
+                subDatDict["folder"] = folder
                 dataSets.append(subDatDict)
         else:
             datDict = dat.to_dict(orient='list')
             datDict["fileName"] = f
+            datDict["folder"] = folder
             dataSets.append(datDict)
 
     return dataSets
@@ -395,8 +434,6 @@ def getpickleData(folder, files, **kwargs):
         The folder string should end in a "/"
     files : list of strings
         A list of filenames
-    validFiles : list of strings or None, optional
-        A list of the names of numbered pickled files to be imported. Default None
     groupbyNumber : bool, optional
         Defines if the different valid files should be put together by their number. Default ``False``
 
@@ -409,27 +446,18 @@ def getpickleData(folder, files, **kwargs):
     --------
 
     """
-    validFiles = kwargs.pop('validFiles', None)
+
     groupbyNumber = kwargs.pop('groupbyNumber', False)
 
-    if type(validFiles) is NoneType:
-        validFileList = files
-    else:
-        # Check which files are valid
-        validFileList = []
-        for f in files:
-            if sum(1 for v in validFiles if f.startswith(v)) > 0:
-                validFileList.append(f)
-
     if groupbyNumber:
-        dataSets = getpickledGroupedValidFiles(folder, validFileList)
+        dataSets = getpickledGroupedFiles(folder, files)
     else:
-        dataSets = getpickleValidFiles(folder, validFileList)
+        dataSets = getpickleFiles(folder, files)
 
     return dataSets
 
 
-def getpickleValidFiles(folder, validFileList):
+def getpickleFiles(folder, files):
     """
     Loads the data from valid python pickle files
 
@@ -437,7 +465,7 @@ def getpickleValidFiles(folder, validFileList):
     ----------
     folder : string
         The folder string should end in a "/"
-    validFileList : list of strings
+    files : list of strings
         A list of the names of numbered pickled files to be imported
 
     Returns
@@ -450,13 +478,13 @@ def getpickleValidFiles(folder, validFileList):
 
     """
     dataSets = []
-    for fileName in validFileList:
+    for fileName in files:
         dataSets.append(getpickledFileData(folder, fileName))
 
     return dataSets
 
 
-def getpickledGroupedValidFiles(folder, validFileList):
+def getpickledGroupedFiles(folder, files):
     """
     Loads the data from valid python pickle files and returns them grouped by number
 
@@ -464,7 +492,7 @@ def getpickledGroupedValidFiles(folder, validFileList):
     ----------
     folder : string
         The folder string should end in a "/"
-    validFileList : list of strings
+    files : list of strings
         A list of the names of numbered pickled files to be imported
 
     Returns
@@ -476,24 +504,48 @@ def getpickledGroupedValidFiles(folder, validFileList):
     --------
 
     """
-    dataSets = []
+    groupedData = []
 
     # group by the last number on the filename
-    groupedFiles = defaultdict(list)
-    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in validFileList]
-    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, validFileList)]
-    for n, d, f in izip(numsplit, footSplit, validFileList):
-        groupedFiles[f[n:d]].append((f[:n], f[d:]))
+    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in files]
+    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, files)]
+
+    if "." in files[0][numsplit[0]:footSplit[0]]:
+        numRepr = float
+    else:
+        numRepr = int
+
+    groupedHeaders = defaultdict(list)
+    groupedFooters = defaultdict(list)
+    for n, d, f in izip(numsplit, footSplit, files):
+        groupedHeaders[numRepr(f[n:d])].append(f[:n])
+        groupedFooters[numRepr(f[n:d])].append(f[d:])
 
     # Sort the keys for groupFiles
-    sortedGroups = sorted(groupedFiles.iterkeys())
+    sortedGroupNums = sorted(groupedHeaders.iterkeys())
 
-    for gn in sortedGroups:
-        fileGroup = groupedFiles[gn]
-        fileNames = [(wrap[0], wrap[0] + gn + wrap[1]) for wrap in fileGroup]
-        dataSets.update({getpickledFileData(folder, fileName, header=header) for header, fileName in fileNames})
+    for gn in sortedGroupNums:
+        groupData = {}
+        headers = groupedHeaders[gn]
+        footers = groupedFooters[gn]
+        fileNames = [head + str(gn) + foot for head, foot in izip(headers, footers)]
 
-    return dataSets
+        #find the unique part of the file headers
+        headerLen = len(headers[0])
+        for i in xrange(headerLen):
+            if len(set(h[i] for h in headers)) != 1:
+                labelStart = i-1
+                break
+            if i == headerLen-1:
+                labelStart = headerLen
+                break
+        labels = [h[labelStart:] for h in headers]
+
+        for header, fileName in izip(labels, fileNames):
+            groupData.update(getpickledFileData(folder, fileName, header=header))
+        groupedData.append(groupData)
+
+    return groupedData
 
 
 def getpickledFileData(folder, fileName, header=''):
@@ -521,6 +573,7 @@ def getpickledFileData(folder, fileName, header=''):
     with open(folder + fileName) as o:
         dat = pickle.load(o)
         dat["fileName"] = fileName
+        dat["folder"] = folder
 
         if isinstance(dat, dict):
             finalData = {header + k: v for k, v in dat.iteritems()}
