@@ -689,6 +689,7 @@ def unique(seq, idfun=None):
 
 
 def movingaverage(data, windowSize, edgeCorrection=False):
+    # type: (List[float], int, Optional[bool]) -> ndarray
     """
     Average over an array
 

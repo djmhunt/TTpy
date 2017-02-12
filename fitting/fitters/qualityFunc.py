@@ -99,7 +99,27 @@ def maxprob(modVals):
 
 def BIC2(**kwargs):
     # type : (int, float) -> Callable[[Union[ndarray, list]], float]
+    """
 
+    Parameters
+    ----------
+    numParams : int, optional
+        The number of parameters used by the model used for the fitting process. Default 2
+    qualityThreshold : float, optional
+        The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
+    numActions: int or list of ints the length of the number of trials being fitted, optional
+        The number of actions the participant can choose between for each timestep of the experiment. May need to be
+        specified for each trial if the number of action choices varies between trials. Default 2
+    randActProb: float or list of floats the length of the number of trials being fitted. Optional
+        The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+        of action choices varies between trials. Default ``1/numActions``
+
+    Returns
+    -------
+
+    """
+
+    # Set the values that will be fixed for the whole fitting process
     numParams = kwargs.pop("numParams", 2)
     qualityThreshold = kwargs.pop("qualityThreshold", 20)
     numActions = kwargs.pop("numActions", 2)

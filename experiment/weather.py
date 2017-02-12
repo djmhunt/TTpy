@@ -11,9 +11,9 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 from numpy import array, zeros, exp, size, ones, nan
 from numpy.random import rand
-from experimentTemplate import experiment
+from experiment.experimentTemplate import experiment
 # from plotting import dataVsEvents, paramDynamics
-from experimentPlot import experimentPlot
+from experiment.experimentPlot import experimentPlot
 
 # from utils import varyingParams
 
@@ -31,15 +31,15 @@ cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1],
                          [0, 1, 1, 1], [1, 0, 0, 0], [1, 1, 1, 0], [1, 0, 0, 1]]}
 defaultCues = cueSets["Pickering"]
 
-actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2, 
-                                1, 2, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 2, 
-                                2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 
-                                2, 1, 1, 1, 1, 2, 2, 2, nan, nan, nan, nan, nan, 
+actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2,
+                                1, 2, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 1, 2, 2,
+                                2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1,
+                                2, 1, 1, 1, 1, 2, 2, 2, nan, nan, nan, nan, nan,
                                 nan, nan, nan, nan, nan, nan, nan, nan, nan],
-                  "TestRew": [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 
+                  "TestRew": [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1,
                               0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1,
                               1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0,
-                              0, 0, 0, 1, 1, 1, nan, nan, nan, nan, nan, nan, 
+                              0, 0, 0, 1, 1, 1, nan, nan, nan, nan, nan, nan,
                               nan, nan, nan, nan, nan, nan, nan, nan]}
 defaultActualities = actualityLists["Pickering"]
 
@@ -295,7 +295,7 @@ def weatherStimAllAction(numActions):
 def weatherRewDiff():
     """
     Processes the weather reward for models expecting reward corrections
-    
+
     Parameters
     ----------
 
@@ -335,7 +335,7 @@ def weatherRewDualCorrection(epsilon):
     -------
     deckRew : function
         The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The reward that is a float and 
+        last action and the last stimuli. The reward that is a float and
         action is {0,1}. The function returns a list of length 2.
 
     Attributes
