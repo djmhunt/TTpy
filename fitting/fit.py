@@ -165,7 +165,7 @@ class fit(object):
 
         fittingData = {"testedParameters": testedParamDict,
                        "fitQualities": testedParams[1],
-                       "fitQuality":fitQuality,
+                       "fitQuality": fitQuality,
                        "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
 
         return model, fitQuality, fittingData
@@ -324,7 +324,10 @@ class fit(object):
             partDataLen = len(partData[self.partRewardParam])
             stimuliData = (None for i in xrange(partDataLen))
         else:
-            stimuliData = array([partData[s] for s in stimuli]).T
+            if len(stimuli) > 1:
+                stimuliData = array([partData[s] for s in stimuli]).T
+            else:
+                stimuliData = array(partData[stimuli[0]]).T
             partDataLen = stimuliData.shape[0]
 
         if type(validActions) is NoneType:

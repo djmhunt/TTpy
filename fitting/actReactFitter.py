@@ -47,6 +47,10 @@ class fitter(fit):
         If a floating point error occurs when running a fit the fit function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
+    fitSubset : ``float('Nan')``, ``None`` or list of int, optional
+        Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+        This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
+        feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
 
     Attributes
     ----------
@@ -89,11 +93,11 @@ class fitter(fit):
         except FloatingPointError:
             message = errorResp()
             logger = logging.getLogger('Fitter')
-            logger.warning(message + "\n. Abandoning fitting with parameters: " 
+            logger.warning(message + "\n. Abandoning fitting with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning fit value " + repr(self.fpRespVal))
-            return ones(array(self.partRewards).shape)*self.fpRespVal  
-            
+            return ones(array(self.partRewards).shape)*self.fpRespVal
+
         # Pull out the values to be compared
 
         modelData = modelInstance.outputEvolution()
@@ -103,15 +107,15 @@ class fitter(fit):
             modelPerformance = modelChoices[self.fitSubsetChosen]
         else:
             modelPerformance = modelChoices
-            
+
         if isnan(modelPerformance).any():
             logger = logging.getLogger('Fitter')
-            message = "model performance values contain NaN" 
-            logger.warning(message + ".\n Abandoning fitting with parameters: " 
+            message = "model performance values contain NaN"
+            logger.warning(message + ".\n Abandoning fitting with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning fit value " + repr(self.fpRespVal))
-            return ones(array(self.partRewards).shape)*self.fpRespVal 
-            
+            return ones(array(self.partRewards).shape)*self.fpRespVal
+
 
         return modelPerformance
 
