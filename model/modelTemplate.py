@@ -132,10 +132,15 @@ class model(object):
         # There may have been an action but feedback was NoneType
         # Since we have another observation it is time to learn from the previous one
         if type(lastEvents) is not NoneType:
-            self.processEvent(lastEvents, self.currAction)
+            self.processEvent(self.currAction)
             self.storeState()
 
         self.lastObservation = events
+
+        # Find the reward expectations
+        self.expectedRewards, self.stimuli, self.stimuliFilter = self.rewardExpectation(events)
+
+        expectedProbs = self.actorStimulusProbs()
 
         # If the model is not expected to act, even for a dummy action,
         # then the currentAction can be set to the rest value
@@ -144,7 +149,7 @@ class model(object):
             # TODO implement the capacity to set what the defaultNonAction is
             self.currAction = self.defaultNonAction
         else:
-            self.currAction, self.decProbabilities = self.chooseAction(self.probabilities, self.currAction, events, validActions)
+            self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, self.currAction, events, validActions)
 
     def feedback(self, response):
         """
@@ -159,11 +164,11 @@ class model(object):
 
         # If there is feedback
         if type(response) is not NoneType:
-            self.processEvent(self.lastObservation, self.currAction, response)
+            self.processEvent(self.currAction, response)
             self.lastObservation = None
             self.storeState()
 
-    def processEvent(self, observation, action=None, response=None):
+    def processEvent(self, action=None, response=None):
         """
         Integrates the information from a stimulus, action, response set, regardless
         of which of the three elements are present.
@@ -177,7 +182,6 @@ class model(object):
         response : float, optional
             The response from the experiment after an action. Default ``None``
         """
-        self.recStimuli.append(observation)
         self.recReward.append(response)
 
         # If there was a reward passed but it was empty, there is nothing to update
@@ -185,21 +189,20 @@ class model(object):
             return
 
         # Find the reward expectation
-        expectedReward, stimuli, stimuliFilter = self.rewardExpectation(observation, action, response)
-
-        self.recExpectedReward.append(expectedReward.flatten())
+        expectedReward = self.expectedRewards[action]
+        self.expectedReward = expectedReward
 
         # If there was no reward, the the stimulus is the learnt 'reward'
         if type(response) is NoneType:
-            response = stimuli
+            response = self.stimuli
 
         # Find the significance of the discrepancy between the response and the expected response
-        delta = self.delta(response, expectedReward, action, stimuli)
+        delta = self.delta(response, expectedReward, action, self.stimuli)
 
         # Use that discrepency to update the model
-        self.updateModel(delta, action, stimuliFilter)
+        self.updateModel(delta, action, self.stimuliFilter)
 
-    def rewardExpectation(self, observation, action, response):
+    def rewardExpectation(self, observation):
         """Calculate the reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -208,14 +211,11 @@ class model(object):
         ---------
         stimuli : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------
-        expectedReward : float
-            The expected reward
+        expectedRewards : float
+            The expected reward for each action
         stimuli : list of floats
             The processed observations
         activeStimuli : list of [0, 1] mapping to [False, True]
@@ -262,12 +262,46 @@ class model(object):
 
         stimuli : list, dict or float
             Whatever suits the model best
+        delta :
+            The difference between the reward and the expected reward
 
         """
 
         # There is no model here
 
-    def chooseAction(self, probabilities, currAction, events, validActions):
+    def calcProbabilities(self, actionValues):
+        """
+        Calculate the probabilities associated with the action
+
+        Parameters
+        ----------
+        actionValues : 1D ndArray of floats
+
+        Returns
+        -------
+        probArray : 1D ndArray of floats
+            The probabilities associated with the actionValues
+
+        """
+
+        # There is no model here
+
+        return 0
+
+    def actorStimulusProbs(self):
+        """
+        Calculates in the model-appropriate way the probability of each action.
+
+        Returns
+        -------
+        probabilities : 1D ndArray of floats
+            The probabilities associated with the action choices
+
+        """
+
+        return 0
+
+    def chooseAction(self, probabilities, lastAction, events, validActions):
         """
         Chooses the next action and returns the associated probabilities
 
@@ -275,7 +309,7 @@ class model(object):
         ----------
         probabilities : list of floats
             The probabilities associated with each combinations
-        currAction : int
+        lastAction : int
             The last chosen action
         events : list of floats
             The stimuli. If probActions is True then this will be unused as the probabilities will already be
@@ -290,7 +324,7 @@ class model(object):
 
         """
 
-        decision, decProbabilities = self.decisionFunc(probabilities, currAction, stimulus=events, validResponses=validActions)
+        decision, decProbabilities = self.decisionFunc(probabilities, lastAction, stimulus=events, validResponses=validActions)
         self.decision = decision
 
         return decision, decProbabilities
@@ -378,6 +412,9 @@ class model(object):
         self.recValidActions.append(self.validActions[:])
         self.recDecision.append(self.decision)
         self.recExpectations.append(self.expectations.flatten())
+        self.recExpectedRewards.append(self.expectedRewards.flatten())
+        self.recExpectedReward.append(self.expectedReward.flatten())
+        self.recStimuli.append(self.stimuli)
         self.recProbabilities.append(self.probabilities.flatten())
         self.recActionProbs.append(self.decProbabilities.copy())
         self.recActionProb.append(self.decProbabilities[self.currAction])
@@ -397,6 +434,9 @@ class model(object):
             defaultPrior = ones((self.numActions, self.numStimuli)) / self.numCritics
         self.prior = kwargs.pop('prior', defaultPrior)
 
+        self.stimuli = ones(self.numStimuli)
+        self.stimuliFilter = ones(self.numStimuli)
+
         self.currAction = None
         self.decision = None
         self.validActions = None
@@ -404,6 +444,8 @@ class model(object):
 
         self.probabilities = array(self.prior)
         self.decProbabilities = array(self.prior)
+        self.expectedRewards = ones(self.numActions)
+        self.expectedReward = 1
 
         return kwargs
 
@@ -430,6 +472,7 @@ class model(object):
         self.recReward = []
         self.recExpectations = []
         self.recExpectedReward = []
+        self.recExpectedRewards = []
         self.recValidActions = []
         self.recDecision = []
         self.recProbabilities = []

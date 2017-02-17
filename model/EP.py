@@ -121,7 +121,7 @@ class EP(model):
 
         self.storeStandardResults()
 
-    def rewardExpectation(self, observation, action, response):
+    def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -130,30 +130,27 @@ class EP(model):
         ---------
         observation : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------
-        expectedReward : array of floats
-            The expected rewards
+        actionExpectations : array of floats
+            The expected rewards for each action
         stimuli : list of floats
             The processed observations
         activeStimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation, action)
+        activeStimuli, stimuli = self.stimFunc(observation)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.numStimuli > 1:
-            actionActivity = self.actStimMerge(self.expectations, stimuli)
+            actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
-            actionActivity = self.expectations
+            actionExpectations = self.expectations
 
-        return actionActivity, stimuli, activeStimuli
+        return actionExpectations, stimuli, activeStimuli
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -190,38 +187,53 @@ class EP(model):
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
             actActivity = self.actStimMerge(self.expectations, stimuliFilter)
-            self.probabilities = self._prob(actActivity)
+            self.probabilities = self.calcProbabilities(actActivity)
         else:
-            self.probabilities = self._prob(self.expectations)
+            self.probabilities = self.calcProbabilities(self.expectations)
 
     def _newAct(self, delta):
 
         self.expectations += self.alpha * delta
 
-    def _prob(self, expectation):
-        """ Calculate the new probabilities of different actions
+    def calcProbabilities(self, actionValues):
+        """
+        Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        expectation : tuple of floats
-            The expectation values
+        actionValues : 1D ndArray of floats
 
         Returns
         -------
-        probs : list of floats
-            The calculated probabilities
+        probArray : 1D ndArray of floats
+            The probabilities associated with the actionValues
         """
-        numerator = exp(self.beta*expectation)
+        numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
-        probs = numerator / denominator
+        probArray = numerator / denominator
 
-        return probs
+        return probArray
 
-#        diff = 2*self.expectations - sum(self.expectations)
+#        diff = 2*actionValues - sum(actionValues)
 #        p = 1.0 / (1.0 + exp(-self.beta*diff))
 #
 #        self.probabilities = p
+
+    def actorStimulusProbs(self):
+        """
+        Calculates in the model-appropriate way the probability of each action.
+
+        Returns
+        -------
+        probabilities : 1D ndArray of floats
+            The probabilities associated with the action choices
+
+        """
+
+        probabilities = self.calcProbabilities(self.expectedRewards)
+
+        return probabilities
 
 def blankStim():
     """

@@ -137,7 +137,7 @@ class BPMS(model):
         self.recActionLoc.append(self.actionLoc.values())
         self.recPosteriorProb.append(self.posteriorProb.copy())
 
-    def rewardExpectation(self, observation, action, response):
+    def rewardExpectation(self, observation):
         """Calculate the reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -146,9 +146,6 @@ class BPMS(model):
         ---------
         observation : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------

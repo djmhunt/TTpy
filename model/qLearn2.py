@@ -145,7 +145,7 @@ class qLearn2(model):
 
         self.storeStandardResults()
 
-    def rewardExpectation(self, observation, action, response):
+    def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -154,21 +154,18 @@ class qLearn2(model):
         ---------
         observation : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------
-        expectedReward : float
-            The expected reward
+        actionExpectations : array of floats
+            The expected rewards for each action
         stimuli : list of floats
             The processed observations
         activeStimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation, action)
+        activeStimuli, stimuli = self.stimFunc(observation)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
@@ -177,9 +174,7 @@ class qLearn2(model):
         else:
             actionExpectations = self.expectations
 
-        expectedReward = actionExpectations[action]
-
-        return expectedReward, stimuli, activeStimuli
+        return actionExpectations, stimuli, activeStimuli
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -216,9 +211,9 @@ class qLearn2(model):
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
             actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
-            self.probabilities = self._prob(actExpectations)
+            self.probabilities = self.calcProbabilities(actExpectations)
         else:
-            self.probabilities = self._prob(self.expectations)
+            self.probabilities = self.calcProbabilities(self.expectations)
 
     def _newAct(self, delta, action, stimuliFilter):
 
@@ -227,28 +222,41 @@ class qLearn2(model):
         else:
             self.expectations[action] += self.alphaNeg*delta*stimuliFilter
 
-    def _prob(self, expectation):
+    def calcProbabilities(self, actionValues):
         """
-        Calculate the probabilities
+        Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        expectation : tuple of floats
-            The expectation values
+        actionValues : 1D ndArray of floats
 
         Returns
         -------
-        probs : list of floats
-            The calculated probabilities
+        probArray : 1D ndArray of floats
+            The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta*expectation)
+        numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
-        probs = numerator / denominator
+        probArray = numerator / denominator
 
-        return probs
+        return probArray
 
+    def actorStimulusProbs(self):
+        """
+        Calculates in the model-appropriate way the probability of each action.
+
+        Returns
+        -------
+        probabilities : 1D ndArray of floats
+            The probabilities associated with the action choices
+
+        """
+
+        probabilities = self.calcProbabilities(self.expectedRewards)
+
+        return probabilities
 
 def blankStim():
     """

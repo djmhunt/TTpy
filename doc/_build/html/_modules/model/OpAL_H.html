@@ -341,9 +341,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">probActions</span><span class="p">:</span>
             <span class="c1"># Then we need to combine the expectations before calculating the probabilities</span>
             <span class="n">actExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="n">actExpectations</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="n">actExpectations</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_critic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
 
@@ -362,7 +362,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">actionValues</span> <span class="o">=</span> <span class="n">actionValues</span>
 
-    <span class="k">def</span> <span class="nf">_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
 
         <span class="n">numerator</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">*</span><span class="n">actionValues</span><span class="p">)</span>
         <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
