@@ -61,6 +61,7 @@ class fitAlg(object):
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
                         'bounds': self.allBounds,
                         'numStartPoints': self.numStartPoints}
+        self.fitInfo.update(kwargs.copy())
 
         self.boundVals = None
         self.boundNames = None

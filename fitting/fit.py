@@ -73,12 +73,15 @@ class fit(object):
                         'participantRewardParam': partRewardParam,
                         'participantStimuliParams': self.partStimuliParams,
                         'participantActChoiceParams': self.partActChoiceParams,
-                        'modelParam': modelParam}
+                        'modelParam': modelParam,
+                        'fitSubset': self.fitSubset}
         try:
             self.fitInfo['scalarName'] = self.scalar.Name
             self.fitInfo['scalarEffect'] = self._scalarEffect()
         except AttributeError:
             self.fitInfo['scalarEffect'] = self._scalarEffect()
+
+        self.fitInfo.update(kwargs.copy())
 
     def fitness(self, *modelParameters):
         """
