@@ -171,7 +171,10 @@ class fit(object):
                        "fitQuality": fitQuality,
                        "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
 
-        return model, fitQuality, fittingData
+        try:
+            fittingData.update(testedParams[2])
+        finally:
+            return model, fitQuality, fittingData
 
     def participantMatchResult(self, exp, model, modelSetup, partData):
         """
