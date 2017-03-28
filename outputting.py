@@ -656,7 +656,7 @@ class outputting(object):
         fitQuality = fittingData["fitQuality"]
         finalParameters = fittingData["finalParameters"]
 
-        self._makeFittingDataSet(fittingData, extendedLabel, participant)
+        self._makeFittingDataSet(fittingData.copy(), extendedLabel, participant)
 
         if not self.saveFigures:
             return
@@ -1053,11 +1053,12 @@ class outputting(object):
         data.update(partData)
 
         paramFittingDict = copy(fittingData["testedParameters"])
-        paramFittingDict['partName'] = fittingData["Name"]
-        paramFittingDict['fitQuality'] = fittingData["fitQuality"]
-        paramFittingDict["fitQualities"] = fittingData["fitQualities"]
-        for k, v in fittingData["finalParameters"].iteritems():
+        paramFittingDict['partName'] = fittingData.pop("Name")
+        paramFittingDict['fitQuality'] = fittingData.pop("fitQuality")
+        paramFittingDict["fitQualities"] = fittingData.pop("fitQualities")
+        for k, v in fittingData.pop("finalParameters").iteritems():
             paramFittingDict[k + "final"] = v
+        paramFittingDict.update(fittingData)
         data.update(paramFittingDict)
         recordFittingKeys, recordFittingMaxListLen = listDictKeySet(data)
         recordData = newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
