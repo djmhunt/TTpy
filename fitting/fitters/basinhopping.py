@@ -120,23 +120,30 @@ class basinhopping(fitAlg):
         else:
             self.fitInfo['method'] = self.methodSet
 
-        self.count = 1
-
         self.boundVals = None
 
         self.testedParams = []
         self.testedParamQualities = []
+        self.iterbestParams = []
+        self.iterfuncValMin = []
+        self.iterparamAccept = []
 
         self.logger = logging.getLogger('Fitting.fitters.basinhopping')
 
-#    def callback(self,Xi):
-#        """
-#        Used for printing state after each stage of fitting
-#        """
-#
-#        print('{0:4d}: {1:s}'.format(self.count, Xi))
-#
-#        self.count += 1
+    def callback(self, x, f, accept):
+        """
+        Used for storing the state after each stage of fitting
+
+        Parameters
+        ----------
+        x : coordinates of the trial minimum
+        f : function value of the trial minimum
+        accept : whether or not that minimum was accepted
+        """
+
+        self.iterbestParams.append(x)
+        self.iterfuncValMin.append(f)
+        self.iterparamAccept.append(accept)
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -159,9 +166,10 @@ class basinhopping(fitAlg):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
-        testedParams : tuple of two lists
+        testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+            fit qualities of these parameters. The dictionary contains the coordinates of the trial minimum, the
+            function value of the trial minimum and whether or not that minimum was accepted. Each is stored in a list.
 
         See Also
         --------
@@ -171,6 +179,9 @@ class basinhopping(fitAlg):
         self.sim = sim
         self.testedParams = []
         self.testedParamQualities = []
+        self.iterbestParams = []
+        self.iterfuncValMin = []
+        self.iterparamAccept = []
 
         method = self.method
         methodSet = self.methodSet
@@ -221,7 +232,9 @@ class basinhopping(fitAlg):
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
 
-            return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
+            iterDetails = dict(bestParams=self.iterbestParams, funcVal=self.iterfuncValMin, paramAccept=self.iterparamAccept)
+
+            return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
 
     def _methodFit(self, method, initParamSets, bounds, boundFit=True, boundSensitivity=5):
 
@@ -233,10 +246,11 @@ class basinhopping(fitAlg):
 
             optimizeResult = optimize.basinhopping(self.fitQualFunc, i[:],
                                                    accept_test=boundFunc,
-                                                   minimizer_kwargs={'method': method,
-                                                                     'bounds': bounds})  # ,
-#                                                                     'callback': self.callback})
-            self.count = 1
+                                                   callback=self.callback
+ #                                                  minimizer_kwargs={'method': method,
+ #                                                                    'bounds': bounds}
+ #                                                                    }
+                                                  )
 
             resultSet.append(optimizeResult)
 

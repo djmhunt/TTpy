@@ -43,6 +43,14 @@ class evolutionary(fitAlg):
         If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``
         method is used to polish the best population member at the end, which
         can improve the minimization slightly.
+    popSize : int, optional
+        A multiplier for setting the total population size. The population has
+        popsize * len(x) individuals. Default 15
+    tolerance : float, optional
+        When the mean of the population energies, multiplied by tol, divided by
+        the standard deviation of the population energies is greater than 1 the
+        solving process terminates: convergence = mean(pop) * tol / stdev(pop) > 1
+        Default 0.01
 
     Attributes
     ----------
@@ -84,7 +92,9 @@ class evolutionary(fitAlg):
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.polish = kwargs.pop("polish", True)
+        self.polish = kwargs.pop("polish", False)
+        self.popsize = kwargs.pop("popSize", 15)
+        self.tolerence = kwargs.pop("tolerance", 0.01)
 
         self._setType(strategy)
 
@@ -92,7 +102,9 @@ class evolutionary(fitAlg):
                         'fitQualityFunction': fitQualFunc,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
                         'bounds': self.allBounds,
-                        'polish': self.polish
+                        'polish': self.polish,
+                        "popSize": self.popsize,
+                        "tolerance": self.tolerence
                         }
 
         if type(self.strategySet) is NoneType:
@@ -107,6 +119,8 @@ class evolutionary(fitAlg):
 
         self.testedParams = []
         self.testedParamQualities = []
+        self.iterbestParams = []
+        self.iterConvergence = []
 
         self.logger = logging.getLogger('Fitting.fitters.evolutionary')
 
@@ -131,9 +145,10 @@ class evolutionary(fitAlg):
             The best fitting parameters
         fitQuality : float
             The quality of the fit as defined by the quality function chosen.
-        testedParams : tuple of two lists
+        testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+            fit qualities of these parameters. The dictionary contains the parameters and convergence values from each
+            iteration, stored in two lists.
 
         See Also
         --------
@@ -144,6 +159,8 @@ class evolutionary(fitAlg):
         self.sim = sim
         self.testedParams = []
         self.testedParamQualities = []
+        self.iterbestParams = []
+        self.iterConvergence = []
 
         strategy = self.strategy
         strategySet = self.strategySet
@@ -180,7 +197,22 @@ class evolutionary(fitAlg):
                 fitParams = optimizeResult.x
                 fitVal = optimizeResult.fun
 
-        return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
+        iterDetails = dict(bestParams=array(self.iterbestParams), convergence=self.iterConvergence)
+
+        return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
+
+    def callback(self, xk, convergence):
+        """
+        Used for storing the state after each stage of fitting
+
+        Parameters
+        ----------
+        xk : coordinates of best fit
+        convergence : the proportion of the points from the iteration that have converged
+        """
+
+        self.iterbestParams.append(xk)
+        self.iterConvergence.append(convergence)
 
     def _strategyFit(self, strategy, bounds):
         """
@@ -204,7 +236,10 @@ class evolutionary(fitAlg):
         optimizeResult = optimize.differential_evolution(self.fitness,
                                                          bounds,
                                                          strategy=strategy,
+                                                         popsize=self.popsize,
+                                                         tol=self.tolerence,
                                                          polish=self.polish,
+                                                         callback=self.callback,
                                                          init='latinhypercube'  # 'random'
                                                          )
 
