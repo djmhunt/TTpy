@@ -60,6 +60,13 @@ class outputting(object):
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
     saveFigures : bool, optional
         Defines if figures are produced or not. Default is ``True``
+    saveOneFile : bool, optional
+        In the Output class where the data comes to rest. One File to store them all, One File to find them, 
+        One File to bring them all and in the darkness bind them. In the Output class where the data comes to rest.
+        Will actually produce a full file and an abridged summary, both in xlsx and csv formats. Beware of memory issues
+        as this is currently set up to keep everything in memory until it writes it all out at the end. Setting this as 
+        ``False`` will break the figure plotting. Default is ``False``
+
 
     See Also
     --------
@@ -82,20 +89,22 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel", logging.INFO)  # logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
+        self.saveOneFile = kwargs.pop("saveOneFile", False)
 
         # Initialise the stores of information
-
-        self.expStore = []
+        if self.saveOneFile:
+            self.expStore = []
+            self.modelStore = []
+            self.partStore = []
+            self.fitQualStore = []
         self.expParamStore = []
         self.expLabelStore = []
         self.expGroupNum = []
-        self.modelStore = []
         self.modelParamStore = []
         self.modelLabelStore = []
         self.modelGroupNum = []
-        self.partStore = []
+
         self.fitInfo = None
-        self.fitQualStore = []
         self.outputFileCounts = defaultdict(int)
 
         self.modelSetSize = 0
@@ -540,8 +549,9 @@ class outputting(object):
                 self.pickleLog(expData, "_expData" + label)
                 self.pickleLog(modelData, "_modelData" + label)
 
-        self.expStore.append(expData)
-        self.modelStore.append(modelData)
+        if self.saveOneFile:
+            self.expStore.append(expData)
+            self.modelStore.append(modelData)
 
         self.expGroupNum.append(self.expSetNum)
         self.modelGroupNum.append(self.modelSetNum)
@@ -576,21 +586,24 @@ class outputting(object):
         pickleLog : records the picked data
         """
 
-        message = "Recording participant " + str(partName) + " model fit"
+        partNameStr = str(partName)
+
+        message = "Recording participant " + partNameStr + " model fit"
         self.logger.info(message)
 
-        label = "_Model-" + str(self.modelSetNum) + "_Part-" + str(self.modelSetSize)
+        label = "_Model-" + str(self.modelSetNum) + "_" + str(self.modelSetSize) + "_Part-" + partNameStr
 
-        participantName = "Participant " + str(partName)
+        participantName = "Participant " + partNameStr
 
         participant.setdefault("Name", participantName)
         participant.setdefault("assignedName", participantName)
         fittingData.setdefault("Name", participantName)
 
-        self.expStore.append(expData)
-        self.modelStore.append(modelData)
-        self.partStore.append(participant)
-        self.fitQualStore.append(fitQuality)
+        if self.saveOneFile:
+            self.expStore.append(expData)
+            self.modelStore.append(modelData)
+            self.partStore.append(participant)
+            self.fitQualStore.append(fitQuality)
 
         self.expGroupNum.append(self.expSetNum)
         self.modelGroupNum.append(self.modelSetNum)
@@ -941,7 +954,7 @@ class outputting(object):
         with the estimated pertinent data
         """
 
-        if not self.save:
+        if not self.save or not self.saveOneFile:
             return
 
         self._abridgedLog()
