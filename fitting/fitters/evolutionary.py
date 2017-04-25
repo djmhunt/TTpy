@@ -197,7 +197,7 @@ class evolutionary(fitAlg):
                 fitParams = optimizeResult.x
                 fitVal = optimizeResult.fun
 
-        iterDetails = dict(bestParams=array(self.iterbestParams), convergence=self.iterConvergence)
+        iterDetails = dict(bestParams=array(self.iterbestParams).T, convergence=self.iterConvergence)
 
         return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
 
