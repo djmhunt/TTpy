@@ -5,7 +5,7 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 
-def  simulation(experiments, models, outputting):
+def simulation(experiments, models, outputting):
     """
     A framework for letting models interact with experiments and record the data
 
@@ -39,7 +39,8 @@ def  simulation(experiments, models, outputting):
                 exp = experiments.create(expNum)
                 model.setsimID(simID)
 
-                desc = outputting.recordSimParams(exp.params(), model.params())
+                desc = outputting.recordExperimentParams(exp.params())
+                desc.extend(outputting.recordModelParams(model.params()))
                 outputting.logSimParams(*desc)
 
                 message = "Beginning experiment"

@@ -373,15 +373,13 @@ class outputting(object):
             message += " output with the label '" + modelPltLabel + "'."
         self.loggerSim.info(message)
 
-    def logSimFittingParams(self, expParams, modelName, modelFitVars, modelOtherArgs):
+    def logSimFittingParams(self, modelName, modelFitVars, modelOtherArgs, expParams={}):
         """
         Logs the model and experiment parameters that used as initial fitting
         conditions
 
         Parameters
         ----------
-        expParams : dict
-            The experiment parameters
         modelName : string
             The name of the model
         modelFitVars : dict
@@ -389,6 +387,8 @@ class outputting(object):
         modelOtherArgs : dict
             The other parameters used in the model whose attributes have been
             modified by the user
+        expParams : dict, optional
+            The experiment parameters. Default ``dict()``
         """
         message = "The fit will use the model '" + modelName + "'"
 
@@ -400,10 +400,11 @@ class outputting(object):
         message += " and using the other user specified parameters " + ", ".join(modelParams)
         message += " and the functions " + ", ".join(modelFuncs)
 
-        message += ". This is based on the experiment '" + expParams['Name'] + "' "
+        if len(expParams) > 0:
+            message += ". This is based on the experiment '" + expParams['Name'] + "' "
 
-        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems() if k != 'Name']
-        message += "with the parameters " + ", ".join(expDescriptors) + "."
+            expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems() if k != 'Name']
+            message += "with the parameters " + ", ".join(expDescriptors) + "."
 
         self.loggerSim.info(message)
 
@@ -434,7 +435,7 @@ class outputting(object):
 
     ### Data collection
 
-    def recordSimParams(self, expParams, modelParams, simID=None):
+    def recordExperimentParams(self, expParams, simID=None):
         """
         Record the model and experiment parameters
 
@@ -442,8 +443,6 @@ class outputting(object):
         ----------
         expParams : dict
             The experiment parameters
-        modelParams : dict
-            The model parameters
         simID : int or string, optional
             The identifier for each simulation. Default ``None``
 
@@ -453,6 +452,34 @@ class outputting(object):
             The description to be logged of the experiment
         expPltLabel : string
             The label used for this experiment
+
+        See Also
+        --------
+        paramIdentifier, logSimParams
+        """
+
+        expDesc, expPltLabel, lastExpLabelID = self.paramIdentifier(expParams, self.lastExpLabelID, simID=simID)
+
+        self.lastExpLabelID = lastExpLabelID
+
+        self.expLabelStore.append(expPltLabel)
+        self.expParamStore.append(expParams)
+
+        return [expDesc, expPltLabel]
+
+    def recordModelParams(self, modelParams, simID=None):
+        """
+        Record the model and experiment parameters
+
+        Parameters
+        ----------
+        modelParams : dict
+            The model parameters
+        simID : int or string, optional
+            The identifier for each simulation. Default ``None``
+
+        Returns
+        -------
         modelDesc : string
             The description to be logged of the model
         modelPltLabel : string
@@ -463,18 +490,14 @@ class outputting(object):
         paramIdentifier, logSimParams
         """
 
-        expDesc, expPltLabel, lastExpLabelID = self.paramIdentifier(expParams, self.lastExpLabelID, simID=simID)
         modelDesc, modelPltLabel, lastModelLabelID = self.paramIdentifier(modelParams, self.lastModelLabelID, simID=simID)
 
-        self.lastExpLabelID = lastExpLabelID
         self.lastModelLabelID = lastModelLabelID
 
-        self.expLabelStore.append(expPltLabel)
-        self.expParamStore.append(expParams)
         self.modelLabelStore.append(modelPltLabel)
         self.modelParamStore.append(modelParams)
 
-        return expDesc, expPltLabel, modelDesc, modelPltLabel
+        return [modelDesc, modelPltLabel]
 
     def paramIdentifier(self, params, lastLabelID, simID=None):
         """
@@ -560,7 +583,7 @@ class outputting(object):
         self.modelsSize += 1
         self.modelSetSize += 1
 
-    def recordParticipantFit(self, participant, partName, expData, modelData, fitQuality=None, fittingData=None):
+    def recordParticipantFit(self, participant, partName, modelData, fitQuality=None, fittingData=None, expData=None):
         """
         Record the data relevant to the participant fitting
 
@@ -570,8 +593,6 @@ class outputting(object):
             The participant data
         partName : int or string
             The identifier for each participant
-        expData : dict
-            The data from the experiment
         modelData : dict
             The data from the model
         fitQuality : float, optional
@@ -580,6 +601,8 @@ class outputting(object):
         fittingData : dict, optional
             Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
             tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default ``None``
+        expData : dict, optional
+            The data from the experiment. Default ``None``
 
         See Also
         --------
@@ -621,7 +644,8 @@ class outputting(object):
                 self.recordFittingSequence(fittingData, label, participant)
 
             if self.pickleData:
-                self.pickleLog(expData, "_expData" + label)
+                if expData is not None:
+                    self.pickleLog(expData, "_expData" + label)
                 self.pickleLog(modelData, "_modelData" + label)
                 self.pickleLog(participant, "_partData" + label)
                 self.pickleLog(fittingData, "_fitData" + label)
@@ -1056,9 +1080,7 @@ class outputting(object):
     def _makeFittingDataSet(self, fittingData, extendedLabel, participant):
 
         data = OrderedDict()
-        data['exp_Label'] = self.expLabelStore[-1]
         data['model_Label'] = self.modelLabelStore[-1]
-        data['exp_Group_Num'] = self.expGroupNum[-1]
         data['model_Group_Num'] = self.modelGroupNum[-1]
         data['folder'] = self.outputFolder
         partFittingKeys, partFittingMaxListLen = listDictKeySet(participant)

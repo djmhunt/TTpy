@@ -8,18 +8,17 @@ from simulation import simulation
 
 from fitting.fit import fit
 
-def dataFitting(experiments, models, outputting, data = None, fitter = None, partLabel = "Name"):
+
+def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", experiments=None):
     """
     A framework for fitting models to data for experiments, along with
     recording the plots and data associated with the best fits.
 
     Parameters
     ----------
-    experiments : experiments.experiments
-        An experiment factory generating each of the different experiments being considered
     models : models.models
         A model factory generating each of the different models being considered
-    outputing : outputting.outputting
+    outputting : outputting.outputting
         An outputting class instance
     data : list of dictionaries
         Each dictionary should all contain the keys associated with the fitting
@@ -27,6 +26,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None, par
         A fitting class instance
     partLabel : basestring, optional
         The key (label) used to identify each participant. Default ``Name``
+    experiments : experiments.experiments, optional
+        An experiment factory generating each of the different experiments being considered. Default ``None``
 
     See Also
     --------
@@ -42,10 +43,8 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None, par
 
         logger = outputting.getLogger('dataFitting')
 
-        message = "Data or fitter missing. Starting a simple simulation"
+        message = "Data not recognised. "
         logger.warning(message)
-
-        simulation(experiments, models, outputting)
 
         return
 
@@ -62,9 +61,12 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None, par
         model = modelInfo[0]
         modelSetup = modelInfo[1:]
 
-        exp = experiments.create(0)
+        if experiments is not None:
+            exp = experiments.create(0)
+        else:
+            exp = None
 
-        outputting.logSimFittingParams(exp.params(), model.Name, modelSetup[0], modelSetup[1])
+        outputting.logSimFittingParams(model.Name, modelSetup[0], modelSetup[1])
 
         for participant in data:
 
@@ -74,29 +76,36 @@ def dataFitting(experiments, models, outputting, data = None, fitter = None, par
 
             # Find the best model values from those proposed
 
-            message = "Beginning participant fit"
+            message = "Beginning participant fit for participant %s"%(partName)
             logger.info(message)
 
-            modelFitted, fitQuality, fittingData = fitter.participant(exp, model, modelSetup, participant)
+            modelFitted, fitQuality, fittingData = fitter.participant(model, modelSetup, participant, exp=exp)
 
             message = "Participant fitted"
             logger.debug(message)
 
-            outputting.recordSimParams(exp.params(), modelFitted.params(), simID=partName)
+            if exp is not None:
+                outputting.recordExperimentParams(exp.params(), simID=partName)
+                outputEvolution = exp.outputEvolution()
+            else:
+                outputEvolution = None
+
+            outputting.recordModelParams(modelFitted.params(), simID=partName)
             outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality, partName)
 
             outputting.recordParticipantFit(participant,
                                             partName,
-                                            exp.outputEvolution(),
                                             modelFitted.outputEvolution(),
                                             fitQuality,
-                                            fittingData)
+                                            fittingData,
+                                            expData=outputEvolution)
 
             outputting.plotModel(modelFitted.plot())
 
         outputting.plotModelSet(modelFitted.plotSet())
 
-    outputting.plotExperiment(exp.plot())
+    if exp is not None:
+        outputting.plotExperiment(exp.plot())
 
     outputting.simLog()
 
