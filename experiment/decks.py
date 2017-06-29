@@ -210,7 +210,7 @@ def deckStimDirect():
     model.qLearn, model.qLearn2, model.decision.binary.decEta
     """
 
-    def deckStim(observation, action):
+    def deckStim(observation):
         return 1, observation
 
     deckStim.Name = "deckStimDirect"

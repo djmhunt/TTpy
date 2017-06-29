@@ -85,7 +85,7 @@ class Weather(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
-        if isinstance(cues, str):
+        if isinstance(cues, basestring):
             if cues in cueSets:
                 self.cues = cueSets[cues]
             else:
@@ -93,7 +93,7 @@ class Weather(experiment):
         else:
             self.cues = cues
 
-        if isinstance(actualities, str):
+        if isinstance(actualities, basestring):
             if actualities in actualityLists:
                 self.actualities = actualityLists[actualities]
             else:
@@ -211,7 +211,7 @@ def weatherStimDirect():
     model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta
     """
 
-    def weatherStim(observation, action):
+    def weatherStim(observation):
 
         return observation, observation
 
