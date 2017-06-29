@@ -45,12 +45,12 @@ class EP(model):
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numStimuli : integer, optional
+    numCues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
     numCritics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numStimuli
+        Default numActions*numCues
     probActions : bool, optional
         Defines if the probabilities calculated by the model are for each
         action-stimulus pair or for actions. That is, if the stimuli values for
@@ -58,11 +58,11 @@ class EP(model):
         Default ``True``
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numStimuli)) / numCritics)``
+        Default ``ones((numActions, numCues)) / numCritics)``
     expectations : array, optional
         The initialisation of the `activity` of the neurons.
         The values are between ``[0,1]`
-        Default ``ones((numActions, numStimuli)) / numCritics```
+        Default ``ones((numActions, numCues)) / numCritics```
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -84,7 +84,7 @@ class EP(model):
         self.eta = kwargRemains.pop('eta', 0.3)
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numStimuli)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -145,7 +145,7 @@ class EP(model):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numStimuli > 1:
+        if self.numCues > 1:
             actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
             actionExpectations = self.expectations

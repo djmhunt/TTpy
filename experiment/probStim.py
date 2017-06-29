@@ -138,7 +138,7 @@ class Probstim(experiment):
                            "Cues": array(self.cues),
                            "numTimesteps": self.T,
                            "numRewardless": rewardlessT,
-                           "numStimuli": numStim}
+                           "numCues": numStim}
 
 
         # Set draw count

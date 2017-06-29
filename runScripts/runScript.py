@@ -54,7 +54,7 @@ alpha = 0.5
 alphaBounds = (0,1)
 beta = 0.5
 betaBounds = (0,80)
-numStimuli = 2
+numCues = 2
 
 parameters = {  'alpha':sum(alphaBounds)/2,
                 'beta':sum(betaBounds)/2}

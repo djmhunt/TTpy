@@ -42,12 +42,12 @@ class BPMS(model):
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numStimuli : integer, optional
+    numCues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
     numCritics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numStimuli
+        Default numActions*numCues
     probActions : bool, optional
         Defines if the probabilities calculated by the model are for each
         action-stimulus pair or for actions. That is, if the stimuli values for
@@ -55,7 +55,7 @@ class BPMS(model):
         Default ``True``
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numStimuli)) / numCritics)``
+        Default ``ones((numActions, numCues)) / numCritics)``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -161,7 +161,7 @@ class BPMS(model):
 
         # # If there are multiple possible stimuli, filter by active stimuli and calculate
         # # calculate the expectations associated with each action.
-        # if self.numStimuli > 1:
+        # if self.numCues > 1:
         #     actionExpectations = self.actStimMerge(self.posteriorProb, stimuli)
         # else:
         #     actionExpectations = self.posteriorProb

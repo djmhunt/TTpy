@@ -75,12 +75,12 @@ class OpALS(model):
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numStimuli : integer, optional
+    numCues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
     numCritics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numStimuli
+        Default numActions*numCues
     probActions : bool, optional
         Defines if the probabilities calculated by the model are for each
         action-stimulus pair or for actions. That is, if the stimuli values for
@@ -88,13 +88,13 @@ class OpALS(model):
         Default ``True``
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numStimuli)) / numCritics)``
+        Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
         The initialisation of the the expected reward.
-        Default ``ones((numActions, numStimuli)) / numCritics``
+        Default ``ones((numActions, numCues)) / numCritics``
     expectGo : array of floats, optional
         The initialisation of the the expected go and nogo.
-        Default ``ones((numActions, numStimuli)) / numCritics``
+        Default ``ones((numActions, numCues)) / numCritics``
     saturateVal : float, optional
         The saturation value for the model. Default is 10
     stimFunc : function, optional
@@ -150,8 +150,8 @@ class OpALS(model):
         self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
         self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
         self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numStimuli)) / self.numCritics)
-        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numStimuli)))
+        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numCues)))
         self.saturateVal = kwargRemains.pop('saturateVal', 10)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -244,7 +244,7 @@ class OpALS(model):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numStimuli > 1:
+        if self.numCues > 1:
             actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
             actionExpectations = self.expectations
