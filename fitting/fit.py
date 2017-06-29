@@ -109,15 +109,12 @@ class fit(object):
 
         return [0]
 
-    def participant(self, exp, model, modelSetup, partData):
+    def participant(self, model, modelSetup, partData, exp=None):
         """
         Fit participant data to a model for a given experiment
 
         Parameters
         ----------
-        exp : experiment.experiment.experiment inherited class
-            The experiment being fitted. If you are fitting using
-            participant responses only it will not be used, so can be anything
         model : model.model.model inherited class
             The model you wish to try and fit values to
         modelSetup : (dict,dict)
@@ -125,6 +122,9 @@ class fit(object):
             are the other model parameters
         partData : dict
             The participant data
+        exp : experiment.experiment.experiment inherited class, optional
+            The experiment being fitted. If you are fitting using
+            participant responses only it will not be used. Default ``None``
 
         Returns
         -------
@@ -138,7 +138,10 @@ class fit(object):
         """
         fitSubset = self.fitSubset
 
-        self.exp = exp
+        if exp is not None:
+            self.exp = exp
+        else:
+            self.exp = None
         self.model = model
         self.mInitialParams = modelSetup[0].values()  # These are passed seperately to define at this point the order of the parameters
         self.mParamNames = modelSetup[0].keys()
