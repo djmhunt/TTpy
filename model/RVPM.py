@@ -182,7 +182,7 @@ class RVPM(model):
         for k in self.eventStore.iterkeys():
             self.eventStore[k] = []
 
-    def rewardExpectation(self, observation, action, response):
+    def rewardExpectation(self, observation):
         """Calculate the reward based on the action and stimuli
 
         This contains parts that are experiment dependent
@@ -191,9 +191,6 @@ class RVPM(model):
         ---------
         observation : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------
