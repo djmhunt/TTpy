@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,20 +17,20 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="experiments module" href="experiments.html" />
     <link rel="prev" title="dataFitting module" href="dataFitting.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -76,12 +76,16 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>fileType</strong> : string</p>
 <blockquote>
-<div><p>The file extension found after the &#8221;.&#8221;. Currently only mat and xlsx files are
+<div><p>The file extension found after the “.”. Currently only mat and xlsx files are
 supported.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong> : dict</p>
+<blockquote>
+<div><p>The keyword arguments used by the</p>
 </div></blockquote>
 </td>
 </tr>
@@ -111,11 +115,11 @@ supported.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folders</strong> : list of strings</p>
 <blockquote>
-<div><p>The folder strings should end in a &#8220;/&#8221;</p>
+<div><p>The folder strings should end in a “/”</p>
 </div></blockquote>
 <p><strong>fileTypes</strong> : list of strings</p>
 <blockquote>
-<div><p>The file extensions found after the &#8221;.&#8221;. Currently only mat and xlsx files are
+<div><p>The file extensions found after the “.”. Currently only mat and xlsx files are
 supported.</p>
 </div></blockquote>
 </td>
@@ -136,7 +140,7 @@ supported.</p>
 
 <dl class="function">
 <dt id="data.getFiles">
-<code class="descclassname">data.</code><code class="descname">getFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>fileType</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getFiles" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">data.</code><code class="descname">getFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>fileType</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getFiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the list of valid input files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -144,11 +148,15 @@ supported.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>fileType</strong> : string</p>
 <blockquote>
-<div><p>The file extension found after the &#8221;.&#8221;.</p>
+<div><p>The file extension found after the “.”.</p>
+</div></blockquote>
+<p><strong>validFiles</strong> : list of strings or None, optional</p>
+<blockquote>
+<div><p>A list of the names of numbered pickled files to be imported. Default None</p>
 </div></blockquote>
 </td>
 </tr>
@@ -223,7 +231,7 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>files</strong> : list of strings</p>
 <blockquote>
@@ -260,15 +268,11 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>files</strong> : list of strings</p>
 <blockquote>
 <div><p>A list of filenames</p>
-</div></blockquote>
-<p><strong>validFiles</strong> : list of strings or None, optional</p>
-<blockquote>
-<div><p>A list of the names of numbered pickled files to be imported. Default None</p>
 </div></blockquote>
 <p><strong>groupbyNumber</strong> : bool, optional</p>
 <blockquote>
@@ -287,8 +291,8 @@ the list</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="data.getpickleValidFiles">
-<code class="descclassname">data.</code><code class="descname">getpickleFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>validFileList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickleValidFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickleValidFiles" title="Permalink to this definition">¶</a></dt>
+<dt id="data.getpickleFiles">
+<code class="descclassname">data.</code><code class="descname">getpickleFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>files</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickleFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickleFiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the data from valid python pickle files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -296,9 +300,9 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
-<p><strong>validFileList</strong> : list of strings</p>
+<p><strong>files</strong> : list of strings</p>
 <blockquote>
 <div><p>A list of the names of numbered pickled files to be imported</p>
 </div></blockquote>
@@ -316,7 +320,7 @@ the list</p>
 
 <dl class="function">
 <dt id="data.getpickledFileData">
-<code class="descclassname">data.</code><code class="descname">getpickledFileData</code><span class="sig-paren">(</span><em>folder</em>, <em>fileName</em>, <em>header=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledFileData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledFileData" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">data.</code><code class="descname">getpickledFileData</code><span class="sig-paren">(</span><em>folder</em>, <em>fileName</em>, <em>header=u”</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledFileData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledFileData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the data from a python pickle file and returns it as a dictionary if it is not already one</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -324,7 +328,7 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>validFileList</strong> : list of strings</p>
 <blockquote>
@@ -347,8 +351,8 @@ the list</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="data.getpickledGroupedValidFiles">
-<code class="descclassname">data.</code><code class="descname">getpickledGroupedFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>validFileList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledGroupedValidFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledGroupedValidFiles" title="Permalink to this definition">¶</a></dt>
+<dt id="data.getpickledGroupedFiles">
+<code class="descclassname">data.</code><code class="descname">getpickledGroupedFiles</code><span class="sig-paren">(</span><em>folder</em>, <em>files</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#getpickledGroupedFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.getpickledGroupedFiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the data from valid python pickle files and returns them grouped by number</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -356,9 +360,9 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
-<p><strong>validFileList</strong> : list of strings</p>
+<p><strong>files</strong> : list of strings</p>
 <blockquote>
 <div><p>A list of the names of numbered pickled files to be imported</p>
 </div></blockquote>
@@ -384,7 +388,7 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>folder</strong> : string</p>
 <blockquote>
-<div><p>The folder string should end in a &#8220;/&#8221;</p>
+<div><p>The folder string should end in a “/”</p>
 </div></blockquote>
 <p><strong>files</strong> : list of strings</p>
 <blockquote>
@@ -508,6 +512,11 @@ sorts them. Returns the list sorted</p>
 </div>
 </dd></dl>
 
+<dl class="function">
+<dt id="data.sortbylastnum">
+<code class="descclassname">data.</code><code class="descname">sortbylastnum</code><span class="sig-paren">(</span><em>dataFiles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#sortbylastnum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.sortbylastnum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 
@@ -525,7 +534,7 @@ sorts them. Returns the list sorted</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/data.txt"
+      <li><a href="_sources/data.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -563,7 +572,7 @@ sorts them. Returns the list sorted</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

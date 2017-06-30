@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
-    <link rel="up" title="Module code" href="index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -114,6 +113,8 @@
 <span class="sd">    fileType : string</span>
 <span class="sd">        The file extension found after the &quot;.&quot;. Currently only mat and xlsx files are</span>
 <span class="sd">        supported.</span>
+<span class="sd">    **kwargs : dict</span>
+<span class="sd">        The keyword arguments used by the</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -133,7 +134,7 @@
     <span class="n">fileType</span> <span class="o">=</span> <span class="n">fileType</span>
     <span class="n">folder</span> <span class="o">=</span> <span class="n">folder</span>
 
-    <span class="n">files</span> <span class="o">=</span> <span class="n">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fileType</span> <span class="o">==</span> <span class="s2">&quot;mat&quot;</span><span class="p">:</span>
 
@@ -153,7 +154,7 @@
     <span class="k">return</span> <span class="n">dataSet</span></div>
 
 
-<div class="viewcode-block" id="getFiles"><a class="viewcode-back" href="../data.html#data.getFiles">[docs]</a><span class="k">def</span> <span class="nf">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">):</span>
+<div class="viewcode-block" id="getFiles"><a class="viewcode-back" href="../data.html#data.getFiles">[docs]</a><span class="k">def</span> <span class="nf">getFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Produces the list of valid input files</span>
 
@@ -163,6 +164,8 @@
 <span class="sd">        The folder string should end in a &quot;/&quot;</span>
 <span class="sd">    fileType : string</span>
 <span class="sd">        The file extension found after the &quot;.&quot;.</span>
+<span class="sd">    validFiles : list of strings or None, optional</span>
+<span class="sd">        A list of the names of numbered pickled files to be imported. Default None</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -181,12 +184,22 @@
 <span class="sd">    [&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">validFiles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;validFiles&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="n">files</span> <span class="o">=</span> <span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 
     <span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">fileType</span><span class="p">)]</span>
 
-    <span class="n">sortedFiles</span> <span class="o">=</span> <span class="n">sortStrings</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">fileType</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validFiles</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="n">validFileList</span> <span class="o">=</span> <span class="n">dataFiles</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">validFileList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">validFiles</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                    <span class="n">validFileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="n">sortedFiles</span> <span class="o">=</span> <span class="n">sortStrings</span><span class="p">(</span><span class="n">validFileList</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">fileType</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sortedFiles</span></div>
 
@@ -231,6 +244,28 @@
         <span class="k">return</span> <span class="n">sortedList</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">unorderedList</span></div>
+
+<span class="c1"># TODO work out how you want to integrate this into getFiles</span>
+<div class="viewcode-block" id="sortbylastnum"><a class="viewcode-back" href="../data.html#data.sortbylastnum">[docs]</a><span class="k">def</span> <span class="nf">sortbylastnum</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">):</span>
+
+    <span class="c1"># sort by the last number on the filename</span>
+    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">]</span>
+    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
+
+    <span class="c1"># check if number part is a float or an int (assuming the same for all) and use the appropriate conversion</span>
+    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">numsplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">footSplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+        <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">float</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">int</span>
+
+    <span class="n">fileNameSections</span> <span class="o">=</span> <span class="p">[(</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">]),</span> <span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:])</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
+
+    <span class="c1"># Sort the keys for groupFiles</span>
+    <span class="n">sortedFileNames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fileNameSections</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">fileGroup</span><span class="p">:</span> <span class="n">fileGroup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">dataSortedFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">head</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">+</span> <span class="n">foot</span> <span class="k">for</span> <span class="n">head</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="n">foot</span> <span class="ow">in</span> <span class="n">sortedFileNames</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dataSortedFiles</span></div>
 
 
 <div class="viewcode-block" id="getUniquePrefix"><a class="viewcode-back" href="../data.html#data.getUniquePrefix">[docs]</a><span class="k">def</span> <span class="nf">getUniquePrefix</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">,</span> <span class="n">suffixLen</span><span class="p">):</span>
@@ -355,7 +390,8 @@
 
         <span class="n">mat</span> <span class="o">=</span> <span class="n">loadmat</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">)</span>
 
-        <span class="n">dataD</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fileName&quot;</span><span class="p">:</span> <span class="n">f</span><span class="p">}</span>
+        <span class="n">dataD</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fileName&quot;</span><span class="p">:</span> <span class="n">f</span><span class="p">,</span>
+                 <span class="s2">&quot;folder&quot;</span><span class="p">:</span> <span class="n">folder</span><span class="p">}</span>
 
         <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mat</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;__&quot;</span><span class="p">:</span>
@@ -428,10 +464,12 @@
                 <span class="n">subDat</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[(</span><span class="n">dat</span><span class="p">[</span><span class="n">splitBy</span><span class="p">]</span> <span class="o">==</span> <span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
                 <span class="n">subDatDict</span> <span class="o">=</span> <span class="n">subDat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
                 <span class="n">subDatDict</span><span class="p">[</span><span class="s2">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+                <span class="n">subDatDict</span><span class="p">[</span><span class="s2">&quot;folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">folder</span>
                 <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subDatDict</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">datDict</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s1">&#39;list&#39;</span><span class="p">)</span>
             <span class="n">datDict</span><span class="p">[</span><span class="s2">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">datDict</span><span class="p">[</span><span class="s2">&quot;folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">folder</span>
             <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datDict</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dataSets</span></div>
@@ -447,8 +485,6 @@
 <span class="sd">        The folder string should end in a &quot;/&quot;</span>
 <span class="sd">    files : list of strings</span>
 <span class="sd">        A list of filenames</span>
-<span class="sd">    validFiles : list of strings or None, optional</span>
-<span class="sd">        A list of the names of numbered pickled files to be imported. Default None</span>
 <span class="sd">    groupbyNumber : bool, optional</span>
 <span class="sd">        Defines if the different valid files should be put together by their number. Default ``False``</span>
 
@@ -461,27 +497,18 @@
 <span class="sd">    --------</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">validFiles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;validFiles&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
     <span class="n">groupbyNumber</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;groupbyNumber&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validFiles</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
-        <span class="n">validFileList</span> <span class="o">=</span> <span class="n">files</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Check which files are valid</span>
-        <span class="n">validFileList</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">validFiles</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">validFileList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">groupbyNumber</span><span class="p">:</span>
-        <span class="n">dataSets</span> <span class="o">=</span> <span class="n">getpickledGroupedFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">)</span>
+        <span class="n">dataSets</span> <span class="o">=</span> <span class="n">getpickledGroupedFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataSets</span> <span class="o">=</span> <span class="n">getpickleFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">)</span>
+        <span class="n">dataSets</span> <span class="o">=</span> <span class="n">getpickleFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dataSets</span></div>
 
 
-<div class="viewcode-block" id="getpickleValidFiles"><a class="viewcode-back" href="../data.html#data.getpickleValidFiles">[docs]</a><span class="k">def</span> <span class="nf">getpickleFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">):</span>
+<div class="viewcode-block" id="getpickleFiles"><a class="viewcode-back" href="../data.html#data.getpickleFiles">[docs]</a><span class="k">def</span> <span class="nf">getpickleFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads the data from valid python pickle files</span>
 
@@ -489,7 +516,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    folder : string</span>
 <span class="sd">        The folder string should end in a &quot;/&quot;</span>
-<span class="sd">    validFileList : list of strings</span>
+<span class="sd">    files : list of strings</span>
 <span class="sd">        A list of the names of numbered pickled files to be imported</span>
 
 <span class="sd">    Returns</span>
@@ -502,13 +529,13 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">validFileList</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">dataSets</span></div>
 
 
-<div class="viewcode-block" id="getpickledGroupedValidFiles"><a class="viewcode-back" href="../data.html#data.getpickledGroupedValidFiles">[docs]</a><span class="k">def</span> <span class="nf">getpickledGroupedFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">):</span>
+<div class="viewcode-block" id="getpickledGroupedFiles"><a class="viewcode-back" href="../data.html#data.getpickledGroupedFiles">[docs]</a><span class="k">def</span> <span class="nf">getpickledGroupedFiles</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads the data from valid python pickle files and returns them grouped by number</span>
 
@@ -516,7 +543,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    folder : string</span>
 <span class="sd">        The folder string should end in a &quot;/&quot;</span>
-<span class="sd">    validFileList : list of strings</span>
+<span class="sd">    files : list of strings</span>
 <span class="sd">        A list of the names of numbered pickled files to be imported</span>
 
 <span class="sd">    Returns</span>
@@ -528,24 +555,48 @@
 <span class="sd">    --------</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">groupedData</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># group by the last number on the filename</span>
-    <span class="n">groupedFiles</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="s2">r&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">validFileList</span><span class="p">]</span>
-    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="s2">r&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">)]</span>
-    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">validFileList</span><span class="p">):</span>
-        <span class="n">groupedFiles</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:]))</span>
+    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">numsplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">footSplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+        <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">float</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">int</span>
+
+    <span class="n">groupedHeaders</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">groupedFooters</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+        <span class="n">groupedHeaders</span><span class="p">[</span><span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+        <span class="n">groupedFooters</span><span class="p">[</span><span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:])</span>
 
     <span class="c1"># Sort the keys for groupFiles</span>
-    <span class="n">sortedGroups</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">groupedFiles</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
+    <span class="n">sortedGroupNums</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">groupedHeaders</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">())</span>
 
-    <span class="k">for</span> <span class="n">gn</span> <span class="ow">in</span> <span class="n">sortedGroups</span><span class="p">:</span>
-        <span class="n">fileGroup</span> <span class="o">=</span> <span class="n">groupedFiles</span><span class="p">[</span><span class="n">gn</span><span class="p">]</span>
-        <span class="n">fileNames</span> <span class="o">=</span> <span class="p">[(</span><span class="n">wrap</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">gn</span> <span class="o">+</span> <span class="n">wrap</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">wrap</span> <span class="ow">in</span> <span class="n">fileGroup</span><span class="p">]</span>
-        <span class="n">dataSets</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span> <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">fileNames</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">gn</span> <span class="ow">in</span> <span class="n">sortedGroupNums</span><span class="p">:</span>
+        <span class="n">groupData</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">groupedHeaders</span><span class="p">[</span><span class="n">gn</span><span class="p">]</span>
+        <span class="n">footers</span> <span class="o">=</span> <span class="n">groupedFooters</span><span class="p">[</span><span class="n">gn</span><span class="p">]</span>
+        <span class="n">fileNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">head</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gn</span><span class="p">)</span> <span class="o">+</span> <span class="n">foot</span> <span class="k">for</span> <span class="n">head</span><span class="p">,</span> <span class="n">foot</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">footers</span><span class="p">)]</span>
 
-    <span class="k">return</span> <span class="n">dataSets</span></div>
+        <span class="c1">#find the unique part of the file headers</span>
+        <span class="n">headerLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">headerLen</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">h</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">labelStart</span> <span class="o">=</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">headerLen</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">labelStart</span> <span class="o">=</span> <span class="n">headerLen</span>
+                <span class="k">break</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="p">[</span><span class="n">labelStart</span><span class="p">:]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">fileNames</span><span class="p">):</span>
+            <span class="n">groupData</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">))</span>
+        <span class="n">groupedData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">groupData</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">groupedData</span></div>
 
 
 <div class="viewcode-block" id="getpickledFileData"><a class="viewcode-back" href="../data.html#data.getpickledFileData">[docs]</a><span class="k">def</span> <span class="nf">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
@@ -573,6 +624,7 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">fileName</span><span class="p">)</span> <span class="k">as</span> <span class="n">o</span><span class="p">:</span>
         <span class="n">dat</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
         <span class="n">dat</span><span class="p">[</span><span class="s2">&quot;fileName&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fileName</span>
+        <span class="n">dat</span><span class="p">[</span><span class="s2">&quot;folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">folder</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">finalData</span> <span class="o">=</span> <span class="p">{</span><span class="n">header</span> <span class="o">+</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dat</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
@@ -621,7 +673,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

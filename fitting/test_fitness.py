@@ -14,7 +14,7 @@ from numpy import array
 
 from models import models
 from model.qLearn import qLearn
-from fitting.fitness import fitter
+from fitting.fit import fit
 from fitting.fitters.minimize import minimize
 
 #def test_an_exception():
@@ -98,9 +98,9 @@ def fitting():
         
     fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds= {'alpha':(0,1),'theta':(0,40)})
 
-    fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
+    fitFunc = fit('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
-    return fit, fitAlg
+    return fitFunc, fitAlg
     
 
         
@@ -108,9 +108,9 @@ class TestClass:
     
     def test_complete(self, fitting, participant, modelSets):
         model, modelSetup = modelSets
-        fit, fitAlg = fitting
+        fitFunc, fitAlg = fitting
         
-        modelFitted, fitQuality = fit.participant(None, model, modelSetup, participant)
+        modelFitted, fitQuality = fitFunc.participant(None, model, modelSetup, participant)
         params = modelFitted.params()
         
         assert abs(params['alpha'] - 0.038898802) < 0.01	
@@ -118,16 +118,16 @@ class TestClass:
         
     def test_modelInputs(self,fitting, modelSets):
         
-        fit, fitAlg = fitting
+        fitFunc, fitAlg = fitting
         model, modelSetup = modelSets
         modelParams, modelOtherParams = modelSetup
         
         paramNames = ['alpha','theta']
         paramInputs = [modelParams[n] for n in paramNames]
         
-        fit.mParamNames = paramNames
-        fit.mOtherParams = modelOtherParams
-        inputs = fit._getModInput(*paramInputs)
+        fitFunc.mParamNames = paramNames
+        fitFunc.mOtherParams = modelOtherParams
+        inputs = fitFunc._getModInput(*paramInputs)
         
         answer = {'alpha': 0.2, 'prior': array([ 0.5,  0.5]), 'theta': 1.5}
         
@@ -136,20 +136,20 @@ class TestClass:
         
     def test_simSetup(self,fitting, participant, modelSets, probabilities):
         
-        fit, fitAlg = fitting
+        fitFunc, fitAlg = fitting
         model, modelSetup = modelSets
         modelParams, modelOtherParams = modelSetup
         
         paramNames = ['alpha','theta']
         paramInputs = [modelParams[n] for n in paramNames]
         
-        fit.model = model
-        fit.mParamNames = paramNames
-        fit.mOtherParams = modelOtherParams
-        fit.partChoices = fit.scaler(participant['subchoice'])
-        fit.partRewards = participant['subreward']
+        fitFunc.model = model
+        fitFunc.mParamNames = paramNames
+        fitFunc.mOtherParams = modelOtherParams
+        fitFunc.partChoices = fitFunc.scaler(participant['subchoice'])
+        fitFunc.partRewards = participant['subreward']
         
-        model = fit._simSetup(*paramInputs)
+        model = fitFunc._simSetup(*paramInputs)
         
         results = model.outputEvolution()
 

@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,20 +17,20 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="models module" href="models.html" />
     <link rel="prev" title="experiments module" href="experiments.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -60,8 +60,380 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="experiment-beads-module">
-<h2>experiment.beads module<a class="headerlink" href="#experiment-beads-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-experiment.beads">
+<span id="experiment-beads-module"></span><h2>experiment.beads module<a class="headerlink" href="#module-experiment.beads" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+<cite>Moore, S. C., &amp; Sellen, J. L. (2006)</cite>.
+Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9.
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/17458441">http://www.ncbi.nlm.nih.gov/pubmed/17458441</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="experiment.beads.Beads">
+<em class="property">class </em><code class="descclassname">experiment.beads.</code><code class="descname">Beads</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
+<p>Based on the Moore&amp;Sellen Beads task</p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>N</strong> : int, optional</p>
+<blockquote>
+<div><p>Number of beads that could potentially be shown</p>
+</div></blockquote>
+<p><strong>beadSequence</strong> : list or array of {0,1}, optional</p>
+<blockquote>
+<div><p>The sequence of beads to be shown. Bead sequences can also be embedded
+in the code and then referred to by name. The only current one is
+<cite>MooreSellen</cite>, the default sequence.</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dictionary, optional</p>
+<blockquote class="last">
+<div><p>Any arguments that will be later used by <code class="docutils literal"><span class="pre">experimentPlot</span></code>. Refer to
+its documentation for more details.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="experiment.beads.Beads.Name">
+<code class="descname">Name</code><em class="property"> = u’beads’</em><a class="headerlink" href="#experiment.beads.Beads.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="experiment.beads.Beads.experimentPlot">
+<em class="property">class </em><code class="descname">experimentPlot</code><span class="sig-paren">(</span><em>expSet</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSet</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.experimentPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.experimentPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentPlot.experimentPlot" title="experiment.experimentPlot.experimentPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentPlot.experimentPlot</span></code></a></p>
+<dl class="method">
+<dt id="experiment.beads.Beads.experimentPlot.plotProbJar1">
+<code class="descname">plotProbJar1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.experimentPlot.plotProbJar1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.experimentPlot.plotProbJar1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a set of lines for the probability of jar 1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.experimentPlot.varCategoryDynamics">
+<code class="descname">varCategoryDynamics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.experimentPlot.varCategoryDynamics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.experimentPlot.varCategoryDynamics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.experimentPlot.varDynamicPlot">
+<code class="descname">varDynamicPlot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.experimentPlot.varDynamicPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.experimentPlot.varDynamicPlot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next bead for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>bead</strong> : {0,1}</p>
+<p><strong>nextValidActions</strong> : Tuple of ints or <code class="docutils literal"><span class="pre">None</span></code></p>
+<blockquote>
+<div><p>The list of valid actions that the model can respond with. Set to (0,1), as they never vary.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>The dictionary contains a series of keys including Name,
+Observables and Actions.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.receiveAction">
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.receiveAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the next action from the participant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> : {1,2, None}</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new experiment instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.beads.Beads.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#Beads.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.Beads.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.beadRewDirect">
+<code class="descclassname">experiment.beads.</code><code class="descname">beadRewDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#beadRewDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadRewDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads reward for models expecting just the reward</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadRew</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the reward and the
+last action. The function returns the reward.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></code></a>, <a class="reference internal" href="model.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></code></a>, <a class="reference internal" href="model.decision.html#model.decision.binary.decEta" title="model.decision.binary.decEta"><code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decEta</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.beadStimDirect">
+<code class="descclassname">experiment.beads.</code><code class="descname">beadStimDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#beadStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads stimuli for models expecting just the event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and a decision of <code class="docutils literal"><span class="pre">{1,2,</span> <span class="pre">None}</span></code>
+and then return it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.beadStimDualDirect">
+<code class="descclassname">experiment.beads.</code><code class="descname">beadStimDualDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#beadStimDualDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDualDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads stimuli for models expecting a tuple of <code class="docutils literal"><span class="pre">[event,1-event]</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and a decision of {1,2, None}
+and then return <code class="docutils literal"><span class="pre">[event,1-event]</span></code>, where the event is expected to be
+<code class="docutils literal"><span class="pre">{1,0}</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.beadStimDualInfo">
+<code class="descclassname">experiment.beads.</code><code class="descname">beadStimDualInfo</code><span class="sig-paren">(</span><em>oneProb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#beadStimDualInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.beadStimDualInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the beads stimuli for models expecting the reward information
+from two possible actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>oneProb</strong> : float in <code class="docutils literal"><span class="pre">[0,1]</span></code></p>
+<blockquote>
+<div><p>The probability of a 1 from the first jar. This is also the probability
+of a 0 from the second jar. <code class="docutils literal"><span class="pre">event_info</span></code> is calculated as
+<code class="docutils literal"><span class="pre">oneProb*event</span> <span class="pre">+</span> <span class="pre">(1-oneProb)*(1-event)</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>beadStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed the event and a decision of {1,2, None}
+and then return <code class="docutils literal"><span class="pre">[event_info,1-event_info]</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a>, <a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.generateSequence">
+<code class="descclassname">experiment.beads.</code><code class="descname">generateSequence</code><span class="sig-paren">(</span><em>numBeads</em>, <em>oneProb</em>, <em>switchProb</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/beads.html#generateSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.beads.generateSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Designed to generate a sequence of beads with a probability of switching
+jar at any time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>sequence</strong> : list of <code class="docutils literal"><span class="pre">{0,1}</span></code></p>
+<blockquote class="last">
+<div><p>The generated sequence of beads</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.beads.rand">
+<code class="descclassname">experiment.beads.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>…</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.beads.rand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random values in a given shape.</p>
+<p>Create an array of the given shape and populate it with
+random samples from a uniform distribution
+over <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">1)</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, …, dn</strong> : int, optional</p>
+<blockquote>
+<div><p>The dimensions of the returned array, should all be positive.
+If no argument is given a single Python float is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray, shape <code class="docutils literal"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code></p>
+<blockquote class="last">
+<div><p>Random values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/2/library/random.html#module-random" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">random</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>This is a convenience function. If you want an interface that
+takes a shape-tuple as the first argument, refer to
+np.random.random_sample .</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[ 0.14022471,  0.96360618],  #random</span>
+<span class="go">       [ 0.37601032,  0.25528411],  #random</span>
+<span class="go">       [ 0.49313049,  0.94909878]]) #random</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-experiment.decks">
 <span id="experiment-decks-module"></span><h2>experiment.decks module<a class="headerlink" href="#module-experiment.decks" title="Permalink to this headline">¶</a></h2>
@@ -82,7 +454,7 @@ Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/p
 <dt id="experiment.decks.Decks">
 <em class="property">class </em><code class="descclassname">experiment.decks.</code><code class="descname">Decks</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/decks.html#Decks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.decks.Decks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
-<p>Based on the Worthy&amp;Maddox 2007 paper &#8220;Regulatory fit effects in a choice task.</p>
+<p>Based on the Worthy&amp;Maddox 2007 paper “Regulatory fit effects in a choice task.</p>
 <p>Many methods are inherited from the experiment.experiment.experiment class.
 Refer to its documentation for missing methods.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -124,7 +496,7 @@ its documentation for more details.</p>
 </table>
 <dl class="attribute">
 <dt id="experiment.decks.Decks.Name">
-<code class="descname">Name</code><em class="property"> = u'decks'</em><a class="headerlink" href="#experiment.decks.Decks.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’decks’</em><a class="headerlink" href="#experiment.decks.Decks.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -233,7 +605,7 @@ function returns a array of length (maxRewardVal-minRewardVal)*numActions.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decIntEtaReac</span></code></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decIntEtaReac</span></code></p>
 </div>
 <p class="rubric">Examples</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">experiment.decks</span> <span class="k">import</span> <span class="n">deckRewAllInfo</span>
@@ -355,7 +727,7 @@ function returns a list of length 2.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -392,7 +764,7 @@ function returns a list of length 2.</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a></p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a></p>
 </div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
@@ -445,7 +817,7 @@ last action. The function returns a tuple of <code class="docutils literal"><spa
 
 <dl class="function">
 <dt id="experiment.decks.rand">
-<code class="descclassname">experiment.decks.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>...</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.decks.rand" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">experiment.decks.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>…</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.decks.rand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Random values in a given shape.</p>
 <p>Create an array of the given shape and populate it with
 random samples from a uniform distribution
@@ -454,7 +826,7 @@ over <code class="docutils literal"><span class="pre">[0,</span> <span class="pr
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, ..., dn</strong> : int, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, …, dn</strong> : int, optional</p>
 <blockquote>
 <div><p>The dimensions of the returned array, should all be positive.
 If no argument is given a single Python float is returned.</p>
@@ -679,7 +1051,7 @@ np.random.random_sample .</p>
 </table>
 <dl class="attribute">
 <dt id="experiment.experimentTemplate.experiment.Name">
-<code class="descname">Name</code><em class="property"> = u'Empty'</em><a class="headerlink" href="#experiment.experimentTemplate.experiment.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’Empty’</em><a class="headerlink" href="#experiment.experimentTemplate.experiment.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
@@ -691,14 +1063,14 @@ np.random.random_sample .</p>
 
 <dl class="class">
 <dt id="experiment.experimentTemplate.experiment.experimentSetPlot">
-<em class="property">class </em><code class="descclassname">experiment.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentSetPlot.experimentSetPlot" title="experiment.experimentSetPlot.experimentSetPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentSetPlot.experimentSetPlot</span></code></a></p>
 <p>Abstract class for the creation of plots relevant to a set of experiments</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.feedback">
-<code class="descclassname">experiment.</code><code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.feedback" title="Permalink to this definition">¶</a></dt>
+<code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Responds to the action from the participant</p>
 <p>For this experiment there is no possible response</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -713,7 +1085,7 @@ np.random.random_sample .</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.next">
-<code class="descclassname">experiment.</code><code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.next" title="Permalink to this definition">¶</a></dt>
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the next stimulus for the iterator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -736,7 +1108,7 @@ np.random.random_sample .</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.outputEvolution">
-<code class="descclassname">experiment.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevent data for this experiment run</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -755,7 +1127,7 @@ Observables and Actions.</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.params">
-<code class="descclassname">experiment.</code><code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.params" title="Permalink to this definition">¶</a></dt>
+<code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the parameters of the experiment as a dictionary</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -773,7 +1145,7 @@ Observables and Actions.</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.plot">
-<code class="descclassname">experiment.</code><code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a plotting class relevant for this experiment</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -795,7 +1167,7 @@ Observables and Actions.</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.plotSet">
-<code class="descclassname">experiment.</code><code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plotSet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotSet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.plotSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.plotSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a plotting class relavent for this experiment set</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -817,19 +1189,19 @@ Observables and Actions.</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.procede">
-<code class="descclassname">experiment.</code><code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.procede" title="Permalink to this definition">¶</a></dt>
+<code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.procede" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the experiment before the next timestep</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.receiveAction">
-<code class="descclassname">experiment.</code><code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.receiveAction" title="Permalink to this definition">¶</a></dt>
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.reset">
-<code class="descclassname">experiment.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.reset" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -843,7 +1215,7 @@ Observables and Actions.</p>
 
 <dl class="method">
 <dt id="experiment.experimentTemplate.experiment.storeState">
-<code class="descclassname">experiment.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.storeState" title="Permalink to this definition">¶</a></dt>
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/experimentTemplate.html#experiment.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.experimentTemplate.experiment.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 output later</p>
 </dd></dl>
@@ -851,8 +1223,360 @@ output later</p>
 </dd></dl>
 
 </div>
-<div class="section" id="experiment-pavlov-module">
-<h2>experiment.pavlov module<a class="headerlink" href="#experiment-pavlov-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-experiment.pavlov">
+<span id="experiment-pavlov-module"></span><h2>experiment.pavlov module<a class="headerlink" href="#module-experiment.pavlov" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Value and prediction error in medial frontal cortex: integrating the single-unit and systems levels of analysis.
+<cite>Silvetti, M., Seurinck, R., &amp; Verguts, T. (2011)</cite>.
+Frontiers in Human Neuroscience, 5(August), 75.
+doi:10.3389/fnhum.2011.00075</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="experiment.pavlov.Pavlov">
+<em class="property">class </em><code class="descclassname">experiment.pavlov.</code><code class="descname">Pavlov</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
+<p>Based on the Silvetti et al 2011 paper <cite>“Value and prediction error in
+medial frontal cortex: integrating the single-unit and systems levels of
+analysis.”</cite></p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>rewMag</strong> : float, optional</p>
+<blockquote>
+<div><p>The size of the stimulus. Default 4</p>
+</div></blockquote>
+<p><strong>rewProb</strong> : array of floats, optional</p>
+<blockquote>
+<div><p>The probabilities of each stimulus producing a reward.
+Default [0.85,0.33]</p>
+</div></blockquote>
+<p><strong>stimMag</strong> : float, optional</p>
+<blockquote>
+<div><p>The size of the stimulus. Default 1</p>
+</div></blockquote>
+<p><strong>stimDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that the stimulus is produced for. This
+should be longer than rewDur since rewDur is set to end when stimDur
+ends. Default 200</p>
+</div></blockquote>
+<p><strong>rewDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that the reward is produced for.
+Default 40</p>
+</div></blockquote>
+<p><strong>simDur</strong> : int, optional</p>
+<blockquote>
+<div><p>The duration, in tens of ms, that each stimulus event is run for.
+Default 300</p>
+</div></blockquote>
+<p><strong>stimRepeats</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of times a stimulus is introduced. Default 72</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="experiment.pavlov.Pavlov.Name">
+<code class="descname">Name</code><em class="property"> = u’pavlov’</em><a class="headerlink" href="#experiment.pavlov.Pavlov.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.Pavlov.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next stimulus for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>nextStim</strong> : tuple of c, rewSig and stimDur, described below</p>
+<p><strong>c</strong> : list of floats</p>
+<blockquote>
+<div><p>Contains the inputs for each of the stimuli</p>
+</div></blockquote>
+<p><strong>rewSig</strong> : list of lists of floats</p>
+<blockquote>
+<div><p>Each list contains the rewards at each time</p>
+</div></blockquote>
+<p><strong>stimDur</strong> : int</p>
+<p><strong>nextValidActions</strong> : Tuple of ints</p>
+<blockquote>
+<div><p>The list of valid actions that the model can respond with. Set to
+<code class="docutils literal"><span class="pre">None</span></code>, as there are no actions.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.Pavlov.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots and saves files containing all the relevant data for this
+experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>Contains the class parameters as well as the other useful data</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.Pavlov.receiveAction">
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov.receiveAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the next action from the participant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>action</strong> : ignored</p>
+<blockquote class="last">
+<div><p>The action is only stored, not used.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.Pavlov.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new experiment instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.pavlov.Pavlov.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#Pavlov.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.Pavlov.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.pavlov.choice">
+<code class="descclassname">experiment.pavlov.</code><code class="descname">choice</code><span class="sig-paren">(</span><em>a</em>, <em>size=None</em>, <em>replace=True</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.pavlov.choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a random sample from a given 1-D array</p>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a</strong> : 1-D array-like or int</p>
+<blockquote>
+<div><p>If an ndarray, a random sample is generated from its elements.
+If an int, the random sample is generated as if a was np.arange(n)</p>
+</div></blockquote>
+<p><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
+</div></blockquote>
+<p><strong>replace</strong> : boolean, optional</p>
+<blockquote>
+<div><p>Whether the sample is with or without replacement</p>
+</div></blockquote>
+<p><strong>p</strong> : 1-D array-like, optional</p>
+<blockquote>
+<div><p>The probabilities associated with each entry in a.
+If not given the sample assumes a uniform distribution over all
+entries in a.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>samples</strong> : 1-D ndarray, shape (size,)</p>
+<blockquote>
+<div><p>The generated random samples</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If a is an int and less than zero, if a or p are not 1-dimensional,
+if a is an array-like of size 0, if p is not a vector of
+probabilities, if a and p have different lengths, or if
+replace=False and the sample size is greater than the population
+size</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">randint</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">shuffle</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">permutation</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Generate a uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.randint(0,5,3)</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([3, 3, 0])</span>
+</pre></div>
+</div>
+<p>Generate a uniform random sample from np.arange(5) of size 3 without
+replacement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([3,1,0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size
+3 without replacement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([2, 3, 0])</span>
+</pre></div>
+</div>
+<p>Any of the above can be repeated with an arbitrary array-like
+instead of just integers. For instance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;],</span>
+<span class="go">      dtype=&#39;|S11&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.pavlov.pavlovStimTemporal">
+<code class="descclassname">experiment.pavlov.</code><code class="descname">pavlovStimTemporal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/pavlov.html#pavlovStimTemporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.pavlov.pavlovStimTemporal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Passes the pavlov stimuli to models that cope with stimuli and rewards
+that have a duration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pavlovStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed an event with three components:
+<code class="docutils literal"><span class="pre">(stim,rew,stimDur)``and</span> <span class="pre">an</span> <span class="pre">action</span> <span class="pre">(unused)</span> <span class="pre">and</span> <span class="pre">yield</span> <span class="pre">a</span> <span class="pre">series</span> <span class="pre">of</span>
+<span class="pre">events</span> <span class="pre">``t,c,r`</span></code>.
+<code class="docutils literal"><span class="pre">stim</span></code> is the value of the stimulus. It is expected to be a list-like
+object. <code class="docutils literal"><span class="pre">rew</span></code> is a list containing the reward for each timestep.
+The reward is expected to be a float. <code class="docutils literal"><span class="pre">stimDur</span></code> is the duration of
+the stimulus, an <code class="docutils literal"><span class="pre">int</span></code>. This should be less than the length of <code class="docutils literal"><span class="pre">rew</span></code>.
+<code class="docutils literal"><span class="pre">c</span></code> the stimulus. <code class="docutils literal"><span class="pre">r</span></code> the reward. <code class="docutils literal"><span class="pre">t</span></code> is the time</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.pavlov.random">
+<code class="descclassname">experiment.pavlov.</code><code class="descname">random</code><span class="sig-paren">(</span><em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.pavlov.random" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return random floats in the half-open interval [0.0, 1.0).</p>
+<p>Results are from the “continuous uniform” distribution over the
+stated interval.  To sample <img src="_images/mathmpl/math-7722c2a0ee.png" style="position: relative; bottom: -8px"/> multiply
+the output of <cite>random_sample</cite> by <cite>(b-a)</cite> and add <cite>a</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">random_sample</span><span class="p">()</span> <span class="o">+</span> <span class="n">a</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : float or ndarray of floats</p>
+<blockquote class="last">
+<div><p>Array of random floats of shape <cite>size</cite> (unless <code class="docutils literal"><span class="pre">size=None</span></code>, in which
+case a single float is returned).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">()</span>
+<span class="go">0.47108547995356098</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">())</span>
+<span class="go">&lt;type &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">((</span><span class="mi">5</span><span class="p">,))</span>
+<span class="go">array([ 0.30220482,  0.86820401,  0.1654503 ,  0.11659149,  0.54323428])</span>
+</pre></div>
+</div>
+<p>Three-by-two array of random numbers from [-5, 0):</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random_sample</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">5</span>
+<span class="go">array([[-3.99149989, -0.52338984],</span>
+<span class="go">       [-2.99091858, -0.79479508],</span>
+<span class="go">       [-1.23204345, -1.75224494]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-experiment.probSelect">
 <span id="experiment-probselect-module"></span><h2>experiment.probSelect module<a class="headerlink" href="#module-experiment.probSelect" title="Permalink to this headline">¶</a></h2>
@@ -1035,7 +1759,7 @@ expected to be implemented as if there is a transfer phase.</p>
 </table>
 <dl class="attribute">
 <dt id="experiment.probSelect.probSelect.Name">
-<code class="descname">Name</code><em class="property"> = u'probSelect'</em><a class="headerlink" href="#experiment.probSelect.probSelect.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’probSelect’</em><a class="headerlink" href="#experiment.probSelect.probSelect.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="class">
@@ -1093,7 +1817,7 @@ Bias = choose(A) - avoid(B),</p>
 
 <dl class="class">
 <dt id="experiment.probSelect.probSelect.experimentSetPlot">
-<em class="property">class </em><code class="descclassname">probSelect.</code><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descname">experimentSetPlot</code><span class="sig-paren">(</span><em>expSets</em>, <em>expParams</em>, <em>expLabels</em>, <em>modelSets</em>, <em>modelParams</em>, <em>modelLabels</em>, <em>plotArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.experimentSetPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.experimentSetPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#experiment.experimentSetPlot.experimentSetPlot" title="experiment.experimentSetPlot.experimentSetPlot"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentSetPlot.experimentSetPlot</span></code></a></p>
 <dl class="docutils">
 <dt>Desired plots:</dt>
@@ -1138,13 +1862,13 @@ with varying <img src="_images/mathmpl/math-ec960348c4.png" style="position: rel
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.feedback">
-<code class="descclassname">probSelect.</code><code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.feedback" title="Permalink to this definition">¶</a></dt>
+<code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Responds to the action from the participant</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.next">
-<code class="descclassname">probSelect.</code><code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.next" title="Permalink to this definition">¶</a></dt>
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the next stimulus for the iterator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1166,26 +1890,26 @@ with varying <img src="_images/mathmpl/math-ec960348c4.png" style="position: rel
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.outputEvolution">
-<code class="descclassname">probSelect.</code><code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.outputEvolution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots and saves files containing all the relavant data for this
 experiment run</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.procede">
-<code class="descclassname">probSelect.</code><code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.procede" title="Permalink to this definition">¶</a></dt>
+<code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.procede" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the experiment after feedback</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.receiveAction">
-<code class="descclassname">probSelect.</code><code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.receiveAction" title="Permalink to this definition">¶</a></dt>
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.reset">
-<code class="descclassname">probSelect.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.reset" title="Permalink to this definition">¶</a></dt>
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a new experiment instance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1199,7 +1923,7 @@ experiment run</p>
 
 <dl class="method">
 <dt id="experiment.probSelect.probSelect.storeState">
-<code class="descclassname">probSelect.</code><code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.storeState" title="Permalink to this definition">¶</a></dt>
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 output later</p>
 </dd></dl>
@@ -1253,7 +1977,7 @@ function returns a list of length 2.</p>
 
 <dl class="function">
 <dt id="experiment.probSelect.rand">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>...</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.probSelect.rand" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">experiment.probSelect.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>…</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.probSelect.rand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Random values in a given shape.</p>
 <p>Create an array of the given shape and populate it with
 random samples from a uniform distribution
@@ -1262,7 +1986,7 @@ over <code class="docutils literal"><span class="pre">[0,</span> <span class="pr
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, ..., dn</strong> : int, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, …, dn</strong> : int, optional</p>
 <blockquote>
 <div><p>The dimensions of the returned array, should all be positive.
 If no argument is given a single Python float is returned.</p>
@@ -1295,8 +2019,354 @@ np.random.random_sample .</p>
 </dd></dl>
 
 </div>
-<div class="section" id="experiment-weather-module">
-<h2>experiment.weather module<a class="headerlink" href="#experiment-weather-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-experiment.weather">
+<span id="experiment-weather-module"></span><h2>experiment.weather module<a class="headerlink" href="#module-experiment.weather" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Probabilistic classification learning in amnesia.
+Knowlton, B. J., Squire, L. R., &amp; Gluck, M. a. (1994).
+Learning &amp; Memory(Cold Spring Harbor, N.Y.), 1(2), 106–120.
+<a class="reference external" href="http://doi.org/10.1101/lm.1.2.106">http://doi.org/10.1101/lm.1.2.106</a></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="experiment.weather.Weather">
+<em class="property">class </em><code class="descclassname">experiment.weather.</code><code class="descname">Weather</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
+<p>Based on the 1994 paper “Probabilistic classification learning in amnesia.”</p>
+<p>Many methods are inherited from the experiment.experiment.experiment class.
+Refer to its documentation for missing methods.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>actualities: int, optional</strong></p>
+<blockquote>
+<div><p>The actual reality the cues pointed to; the correct response the participant is trying to get correct</p>
+</div></blockquote>
+<p><strong>cues: array of floats, optional</strong></p>
+<blockquote>
+<div><p>The cues used to guess the actualities</p>
+</div></blockquote>
+<p><strong>plotArgs</strong> : dictionary, optional</p>
+<blockquote class="last">
+<div><p>Any arguments that will be later used by <code class="docutils literal"><span class="pre">experimentPlot</span></code>. Refer to
+its documentation for more details.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the class used when recording what has been used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="experiment.weather.Weather.Name">
+<code class="descname">Name</code><em class="property"> = u’weather’</em><a class="headerlink" href="#experiment.weather.Weather.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.feedback">
+<code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feedback to the action from the participant</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces the next stimulus for the iterator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>stimulus</strong> : Tuple</p>
+<blockquote>
+<div><p>The current cues</p>
+</div></blockquote>
+<p><strong>nextValidActions</strong> : Tuple of ints or <code class="docutils literal"><span class="pre">None</span></code></p>
+<blockquote>
+<div><p>The list of valid actions that the model can respond with. Set to (0,1), as they never vary.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>StopIteration</strong></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots and saves files containing all the relavent data for this
+experiment run</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.procede">
+<code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.procede" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the experiment after feedback</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.receiveAction">
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.receiveAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the next action from the participant</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>action</strong> : int</p>
+<blockquote class="last">
+<div><p>The action taken by the model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new experiment instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong> : The cleaned up object instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.weather.Weather.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#Weather.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.Weather.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+output later</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.weather.rand">
+<code class="descclassname">experiment.weather.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>…</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.weather.rand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random values in a given shape.</p>
+<p>Create an array of the given shape and populate it with
+random samples from a uniform distribution
+over <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">1)</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>d0, d1, …, dn</strong> : int, optional</p>
+<blockquote>
+<div><p>The dimensions of the returned array, should all be positive.
+If no argument is given a single Python float is returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : ndarray, shape <code class="docutils literal"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code></p>
+<blockquote class="last">
+<div><p>Random values.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://docs.python.org/2/library/random.html#module-random" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">random</span></code></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>This is a convenience function. If you want an interface that
+takes a shape-tuple as the first argument, refer to
+np.random.random_sample .</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[ 0.14022471,  0.96360618],  #random</span>
+<span class="go">       [ 0.37601032,  0.25528411],  #random</span>
+<span class="go">       [ 0.49313049,  0.94909878]]) #random</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.weather.weatherRewDiff">
+<code class="descclassname">experiment.weather.</code><code class="descname">weatherRewDiff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#weatherRewDiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.weatherRewDiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the weather reward for models expecting reward corrections</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weatherRew</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the reward the
+last action and the last stimuli. The function returns the reward.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></code></a>, <a class="reference internal" href="model.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></code></a>, <a class="reference internal" href="model.decision.html#model.decision.binary.decEta" title="model.decision.binary.decEta"><code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decEta</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.weather.weatherRewDualCorrection">
+<code class="descclassname">experiment.weather.</code><code class="descname">weatherRewDualCorrection</code><span class="sig-paren">(</span><em>epsilon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#weatherRewDualCorrection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.weatherRewDualCorrection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the decks reward for models expecting the reward correction
+from two possible actions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deckRew</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the reward the
+last action and the last stimuli. The reward that is a float and
+action is {0,1}. The function returns a list of length 2.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS" title="model.MS"><code class="xref py py-obj docutils literal"><span class="pre">model.MS</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.weather.weatherStimAllAction">
+<code class="descclassname">experiment.weather.</code><code class="descname">weatherStimAllAction</code><span class="sig-paren">(</span><em>numActions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#weatherStimAllAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.weatherStimAllAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the weather stimuli for models expecting feedback from all
+possible actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>numActions</strong> : int</p>
+<blockquote>
+<div><p>The number of actions the participant can perform. Assumes the lowest
+valued action can be represented as 0</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weatherStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last action. The event that is a list of {0,1} and action is {0,1}. The
+function returns a array of length (len(event))*numActions.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.BP" title="model.BP"><code class="xref py py-obj docutils literal"><span class="pre">model.BP</span></code></a>, <a class="reference internal" href="model.html#module-model.EP" title="model.EP"><code class="xref py py-obj docutils literal"><span class="pre">model.EP</span></code></a>, <a class="reference internal" href="model.html#module-model.MS_rev" title="model.MS_rev"><code class="xref py py-obj docutils literal"><span class="pre">model.MS_rev</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decEtaSet</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">experiment.weather</span> <span class="k">import</span> <span class="n">weatherStimAllAction</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span> <span class="o">=</span> <span class="n">weatherStimAllAction</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([1, 0, 0, 1, 0, 0, 0, 0]), array([ 1, 0, 0, 1, 1, 1, 1, 1]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([0, 0, 0, 0, 1, 0, 0, 1]), array([ 1, 1, 1, 1, 1, 0, 0, 1]))</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="experiment.weather.weatherStimDirect">
+<code class="descclassname">experiment.weather.</code><code class="descname">weatherStimDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/weather.html#weatherStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.weather.weatherStimDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the weather stimuli for models expecting just the event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>weatherStim</strong> : function</p>
+<blockquote class="last">
+<div><p>The function expects to be passed a tuple containing the event and the
+last action. The function returns the event</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="model.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn</span></code></a>, <a class="reference internal" href="model.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-obj docutils literal"><span class="pre">model.qLearn2</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">model.opal</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">model.opals</span></code>, <a class="reference internal" href="model.decision.html#model.decision.binary.decEta" title="model.decision.binary.decEta"><code class="xref py py-obj docutils literal"><span class="pre">model.decision.binary.decEta</span></code></a></p>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The identifier of the function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-experiment">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-experiment" title="Permalink to this headline">¶</a></h2>
@@ -1313,14 +2383,14 @@ np.random.random_sample .</p>
   <ul>
 <li><a class="reference internal" href="#">experiment package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#experiment-beads-module">experiment.beads module</a></li>
+<li><a class="reference internal" href="#module-experiment.beads">experiment.beads module</a></li>
 <li><a class="reference internal" href="#module-experiment.decks">experiment.decks module</a></li>
 <li><a class="reference internal" href="#module-experiment.experimentPlot">experiment.experimentPlot module</a></li>
 <li><a class="reference internal" href="#module-experiment.experimentSetPlot">experiment.experimentSetPlot module</a></li>
 <li><a class="reference internal" href="#module-experiment.experimentTemplate">experiment.experimentTemplate module</a></li>
-<li><a class="reference internal" href="#experiment-pavlov-module">experiment.pavlov module</a></li>
+<li><a class="reference internal" href="#module-experiment.pavlov">experiment.pavlov module</a></li>
 <li><a class="reference internal" href="#module-experiment.probSelect">experiment.probSelect module</a></li>
-<li><a class="reference internal" href="#experiment-weather-module">experiment.weather module</a></li>
+<li><a class="reference internal" href="#module-experiment.weather">experiment.weather module</a></li>
 <li><a class="reference internal" href="#module-experiment">Module contents</a></li>
 </ul>
 </li>
@@ -1335,7 +2405,7 @@ np.random.random_sample .</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/experiment.txt"
+      <li><a href="_sources/experiment.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -1373,7 +2443,7 @@ np.random.random_sample .</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

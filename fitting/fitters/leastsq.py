@@ -13,6 +13,7 @@ from numpy import log
 
 from utils import callableDetailsString
 from fitting.fitters.qualityFunc import qualFuncIdent
+from fitting.fitters.boundFunc import scalarBound
 
 
 class leastsq(fitAlg):

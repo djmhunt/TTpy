@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,20 +17,20 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="data module" href="data.html" />
     <link rel="prev" title="simulation module" href="simulation.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -67,22 +67,18 @@
 </table>
 <dl class="function">
 <dt id="dataFitting.dataFitting">
-<code class="descclassname">dataFitting.</code><code class="descname">dataFitting</code><span class="sig-paren">(</span><em>experiments</em>, <em>models</em>, <em>outputting</em>, <em>data=None</em>, <em>fitter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataFitting.html#dataFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataFitting.dataFitting" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dataFitting.</code><code class="descname">dataFitting</code><span class="sig-paren">(</span><em>models</em>, <em>outputting</em>, <em>data=None</em>, <em>fitter=None</em>, <em>partLabel=u’Name’</em>, <em>experiments=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataFitting.html#dataFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataFitting.dataFitting" title="Permalink to this definition">¶</a></dt>
 <dd><p>A framework for fitting models to data for experiments, along with
 recording the plots and data associated with the best fits.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>experiments</strong> : experiments.experiments</p>
-<blockquote>
-<div><p>An experiment factory generating each of the different experiments being considered</p>
-</div></blockquote>
-<p><strong>models</strong> : models.models</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>models</strong> : models.models</p>
 <blockquote>
 <div><p>A model factory generating each of the different models being considered</p>
 </div></blockquote>
-<p><strong>outputing</strong> : outputting.outputting</p>
+<p><strong>outputting</strong> : outputting.outputting</p>
 <blockquote>
 <div><p>An outputting class instance</p>
 </div></blockquote>
@@ -91,8 +87,16 @@ recording the plots and data associated with the best fits.</p>
 <div><p>Each dictionary should all contain the keys associated with the fitting</p>
 </div></blockquote>
 <p><strong>fitter</strong> : fitting.fit.fit</p>
-<blockquote class="last">
+<blockquote>
 <div><p>A fitting class instance</p>
+</div></blockquote>
+<p><strong>partLabel</strong> : basestring, optional</p>
+<blockquote>
+<div><p>The key (label) used to identify each participant. Default <code class="docutils literal"><span class="pre">Name</span></code></p>
+</div></blockquote>
+<p><strong>experiments</strong> : experiments.experiments, optional</p>
+<blockquote class="last">
+<div><p>An experiment factory generating each of the different experiments being considered. Default <code class="docutils literal"><span class="pre">None</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -132,7 +136,7 @@ recording the plots and data associated with the best fits.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/dataFitting.txt"
+      <li><a href="_sources/dataFitting.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -170,7 +174,7 @@ recording the plots and data associated with the best fits.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

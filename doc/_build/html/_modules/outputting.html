@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
-    <link rel="up" title="Module code" href="index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -112,6 +111,13 @@
 <span class="sd">        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``</span>
 <span class="sd">    saveFigures : bool, optional</span>
 <span class="sd">        Defines if figures are produced or not. Default is ``True``</span>
+<span class="sd">    saveOneFile : bool, optional</span>
+<span class="sd">        In the Output class where the data comes to rest. One File to store them all, One File to find them, </span>
+<span class="sd">        One File to bring them all and in the darkness bind them. In the Output class where the data comes to rest.</span>
+<span class="sd">        Will actually produce a full file and an abridged summary, both in xlsx and csv formats. Beware of memory issues</span>
+<span class="sd">        as this is currently set up to keep everything in memory until it writes it all out at the end. Setting this as </span>
+<span class="sd">        ``False`` will break the figure plotting. Default is ``False``</span>
+
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -131,23 +137,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">saveFittingProgress</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saveFittingProgress&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">saveFigures</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saveFigures&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;simLabel&quot;</span><span class="p">,</span> <span class="s2">&quot;Untitled&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;logLevel&quot;</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span><span class="c1"># logging.DEBUG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logLevel</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;logLevel&quot;</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>  <span class="c1"># logging.DEBUG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;maxLabelLength&quot;</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">npErrResp</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;npErrResp&quot;</span><span class="p">,</span> <span class="s1">&#39;log&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveOneFile</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saveOneFile&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Initialise the stores of information</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveOneFile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">partStore</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partStore</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outputFileCounts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">=</span> <span class="mi">0</span>
@@ -416,15 +424,13 @@
             <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; output with the label &#39;&quot;</span> <span class="o">+</span> <span class="n">modelPltLabel</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="outputting.logSimFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.logSimFittingParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logSimFittingParams">[docs]</a>    <span class="k">def</span> <span class="nf">logSimFittingParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">,</span> <span class="n">expParams</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
 <span class="sd">        conditions</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        expParams : dict</span>
-<span class="sd">            The experiment parameters</span>
 <span class="sd">        modelName : string</span>
 <span class="sd">            The name of the model</span>
 <span class="sd">        modelFitVars : dict</span>
@@ -432,6 +438,8 @@
 <span class="sd">        modelOtherArgs : dict</span>
 <span class="sd">            The other parameters used in the model whose attributes have been</span>
 <span class="sd">            modified by the user</span>
+<span class="sd">        expParams : dict, optional</span>
+<span class="sd">            The experiment parameters. Default ``dict()``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fit will use the model &#39;&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
 
@@ -443,14 +451,15 @@
         <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
 
-        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span>
 
-        <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
-        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+            <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="outputting.logModFittedParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logModFittedParams">[docs]</a>    <span class="k">def</span> <span class="nf">logModFittedParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.logModFittedParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.logModFittedParams">[docs]</a>    <span class="k">def</span> <span class="nf">logModFittedParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partName</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Logs the model and experiment parameters that used as initial fitting</span>
 <span class="sd">        conditions</span>
@@ -463,11 +472,13 @@
 <span class="sd">            The model parameters for the fitted model</span>
 <span class="sd">        fitQuality : float</span>
 <span class="sd">            The value of goodness of fit</span>
+<span class="sd">        partName : int or string</span>
+<span class="sd">            The identifier for each participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
         <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fitted values are &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fitted values for participant &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">partName</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; are &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
 
         <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
@@ -475,7 +486,7 @@
 
     <span class="c1">### Data collection</span>
 
-<div class="viewcode-block" id="outputting.recordSimParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordSimParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordSimParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.recordExperimentParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordExperimentParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordExperimentParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expParams</span><span class="p">,</span> <span class="n">simID</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the model and experiment parameters</span>
 
@@ -483,8 +494,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        expParams : dict</span>
 <span class="sd">            The experiment parameters</span>
-<span class="sd">        modelParams : dict</span>
-<span class="sd">            The model parameters</span>
+<span class="sd">        simID : int or string, optional</span>
+<span class="sd">            The identifier for each simulation. Default ``None``</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -492,6 +503,34 @@
 <span class="sd">            The description to be logged of the experiment</span>
 <span class="sd">        expPltLabel : string</span>
 <span class="sd">            The label used for this experiment</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        paramIdentifier, logSimParams</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramIdentifier</span><span class="p">(</span><span class="n">expParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span><span class="p">,</span> <span class="n">simID</span><span class="o">=</span><span class="n">simID</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="n">lastExpLabelID</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expPltLabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="outputting.recordModelParams"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordModelParams">[docs]</a>    <span class="k">def</span> <span class="nf">recordModelParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">simID</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record the model and experiment parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        modelParams : dict</span>
+<span class="sd">            The model parameters</span>
+<span class="sd">        simID : int or string, optional</span>
+<span class="sd">            The identifier for each simulation. Default ``None``</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
 <span class="sd">        modelDesc : string</span>
 <span class="sd">            The description to be logged of the model</span>
 <span class="sd">        modelPltLabel : string</span>
@@ -502,20 +541,16 @@
 <span class="sd">        paramIdentifier, logSimParams</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramIdentifier</span><span class="p">(</span><span class="n">expParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span><span class="p">)</span>
-        <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">,</span> <span class="n">lastModelLabelID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramIdentifier</span><span class="p">(</span><span class="n">modelParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span><span class="p">)</span>
+        <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">,</span> <span class="n">lastModelLabelID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramIdentifier</span><span class="p">(</span><span class="n">modelParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span><span class="p">,</span> <span class="n">simID</span><span class="o">=</span><span class="n">simID</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">lastExpLabelID</span> <span class="o">=</span> <span class="n">lastExpLabelID</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastModelLabelID</span> <span class="o">=</span> <span class="n">lastModelLabelID</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expPltLabel</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelPltLabel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelParamStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">expDesc</span><span class="p">,</span> <span class="n">expPltLabel</span><span class="p">,</span> <span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">modelDesc</span><span class="p">,</span> <span class="n">modelPltLabel</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="outputting.paramIdentifier"><a class="viewcode-back" href="../outputting.html#outputting.outputting.paramIdentifier">[docs]</a>    <span class="k">def</span> <span class="nf">paramIdentifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lastLabelID</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.paramIdentifier"><a class="viewcode-back" href="../outputting.html#outputting.outputting.paramIdentifier">[docs]</a>    <span class="k">def</span> <span class="nf">paramIdentifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lastLabelID</span><span class="p">,</span> <span class="n">simID</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the parameters of an experiment or model</span>
 
@@ -527,6 +562,8 @@
 <span class="sd">            The parameters of the experiment or model. One is expected to be ``Name``</span>
 <span class="sd">        lastLabelID: int</span>
 <span class="sd">            The last ID number used</span>
+<span class="sd">        simID : int or string, optional</span>
+<span class="sd">            The identifier for each simulation. Default ``None``</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -543,7 +580,9 @@
         <span class="n">descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
         <span class="n">descriptor</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">descriptors</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">simID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plotLabel</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptor</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxLabelLength</span><span class="p">:</span>
             <span class="n">plotLabel</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;Run &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lastLabelID</span><span class="p">)</span>
             <span class="n">lastLabelID</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
@@ -584,8 +623,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expData</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveOneFile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expData</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
@@ -594,7 +634,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="outputting.recordParticipantFit"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordParticipantFit">[docs]</a>    <span class="k">def</span> <span class="nf">recordParticipantFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">expData</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">fitQuality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fittingData</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="outputting.recordParticipantFit"><a class="viewcode-back" href="../outputting.html#outputting.outputting.recordParticipantFit">[docs]</a>    <span class="k">def</span> <span class="nf">recordParticipantFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">partName</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">fitQuality</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fittingData</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expData</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Record the data relevant to the participant fitting</span>
 
@@ -602,8 +642,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        participant : dict</span>
 <span class="sd">            The participant data</span>
-<span class="sd">        expData : dict</span>
-<span class="sd">            The data from the experiment</span>
+<span class="sd">        partName : int or string</span>
+<span class="sd">            The identifier for each participant</span>
 <span class="sd">        modelData : dict</span>
 <span class="sd">            The data from the model</span>
 <span class="sd">        fitQuality : float, optional</span>
@@ -612,24 +652,39 @@
 <span class="sd">        fittingData : dict, optional</span>
 <span class="sd">            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values</span>
 <span class="sd">            tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default ``None``</span>
+<span class="sd">        expData : dict, optional</span>
+<span class="sd">            The data from the experiment. Default ``None``</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
 <span class="sd">        pickleLog : records the picked data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Recording participant model fit&quot;</span>
+        <span class="n">partNameStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">partName</span><span class="p">)</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Recording participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span> <span class="o">+</span> <span class="s2">&quot; model fit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_Part-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_Part-&quot;</span> <span class="o">+</span> <span class="n">partNameStr</span>
 
-        <span class="n">participantName</span> <span class="o">=</span> <span class="s2">&quot;Participant &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
+        <span class="n">participantName</span> <span class="o">=</span> <span class="s2">&quot;Participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span>
 
         <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+        <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;assignedName&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+        <span class="n">fittingData</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveOneFile</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expData</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span><span class="p">:</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for participant &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetSize</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for &quot;</span> <span class="o">+</span> <span class="n">participantName</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveFigures</span><span class="p">:</span>
@@ -640,18 +695,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">recordFittingSequence</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pickleData</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">expData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="s2">&quot;_partData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="s2">&quot;_fitData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">expStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expData</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitQualStore</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expSetNum</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelSetNum</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expSetSize</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelsSize</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -696,7 +744,7 @@
         <span class="n">fitQuality</span> <span class="o">=</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;fitQuality&quot;</span><span class="p">]</span>
         <span class="n">finalParameters</span> <span class="o">=</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_makeFittingDataSet</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_makeFittingDataSet</span><span class="p">(</span><span class="n">fittingData</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveFigures</span><span class="p">:</span>
             <span class="k">return</span>
@@ -714,13 +762,13 @@
             <span class="n">results</span> <span class="o">=</span> <span class="n">fitQualities</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paramSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">r&#39;log_</span><span class="si">{10}</span><span class="s1">(Fit quality)&#39;</span>
+            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;log_</span><span class="si">{10}</span><span class="s1">(Fit quality)&#39;</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">paramDynamics</span><span class="p">(</span><span class="n">paramSet</span><span class="p">,</span>
                                 <span class="n">results</span><span class="p">,</span>
                                 <span class="n">axisLabels</span><span class="p">)</span>
             <span class="n">addPoint</span><span class="p">([</span><span class="n">finalParameters</span><span class="p">[</span><span class="n">paramLabels</span><span class="p">[</span><span class="mi">0</span><span class="p">]]],</span> <span class="p">[</span><span class="n">fitQuality</span><span class="p">],</span> <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">paramSet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;cbLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">r&#39;log_</span><span class="si">{10}</span><span class="s1">(Fit quality)&#39;</span>
+            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;cbLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;log_</span><span class="si">{10}</span><span class="s1">(Fit quality)&#39;</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">paramDynamics</span><span class="p">(</span><span class="n">paramSet</span><span class="p">,</span>
                                 <span class="n">results</span><span class="p">,</span>
                                 <span class="n">axisLabels</span><span class="p">,</span>
@@ -981,7 +1029,7 @@
 <span class="sd">        with the estimated pertinent data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">saveOneFile</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_abridgedLog</span><span class="p">()</span>
@@ -1083,20 +1131,20 @@
     <span class="k">def</span> <span class="nf">_makeFittingDataSet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fittingData</span><span class="p">,</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">):</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;exp_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expGroupNum</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelLabelStore</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;model_Group_Num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelGroupNum</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputFolder</span>
         <span class="n">partFittingKeys</span><span class="p">,</span> <span class="n">partFittingMaxListLen</span> <span class="o">=</span> <span class="n">listDictKeySet</span><span class="p">(</span><span class="n">participant</span><span class="p">)</span>
         <span class="n">partData</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">partFittingKeys</span><span class="p">,</span> <span class="n">partFittingMaxListLen</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="s1">&#39;part&#39;</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">partData</span><span class="p">)</span>
 
         <span class="n">paramFittingDict</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;testedParameters&quot;</span><span class="p">])</span>
-        <span class="n">paramFittingDict</span><span class="p">[</span><span class="s1">&#39;fitQuality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;fitQuality&quot;</span><span class="p">]</span>
-        <span class="n">paramFittingDict</span><span class="p">[</span><span class="s2">&quot;fitQualities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;fitQualities&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">paramFittingDict</span><span class="p">[</span><span class="s1">&#39;partName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span>
+        <span class="n">paramFittingDict</span><span class="p">[</span><span class="s1">&#39;fitQuality&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fitQuality&quot;</span><span class="p">)</span>
+        <span class="n">paramFittingDict</span><span class="p">[</span><span class="s2">&quot;fitQualities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fitQualities&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="n">paramFittingDict</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;final&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">paramFittingDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fittingData</span><span class="p">)</span>
         <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">paramFittingDict</span><span class="p">)</span>
         <span class="n">recordFittingKeys</span><span class="p">,</span> <span class="n">recordFittingMaxListLen</span> <span class="o">=</span> <span class="n">listDictKeySet</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">recordData</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">recordFittingKeys</span><span class="p">,</span> <span class="n">recordFittingMaxListLen</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -1738,7 +1786,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

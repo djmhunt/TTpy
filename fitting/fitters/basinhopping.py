@@ -6,7 +6,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitAlg import fitAlg
+from fitting.fitters.fitAlg import fitAlg
 
 from numpy import array, around, all
 from scipy import optimize

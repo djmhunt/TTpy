@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,21 +17,20 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
-    <link rel="up" title="fitting package" href="fitting.html" />
     <link rel="next" title="outputting module" href="outputting.html" />
     <link rel="prev" title="fitting package" href="fitting.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -62,8 +61,195 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="fitting-fitters-basinhopping-module">
-<h2>fitting.fitters.basinhopping module<a class="headerlink" href="#fitting-fitters-basinhopping-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.basinhopping">
+<span id="fitting-fitters-basinhopping-module"></span><h2>fitting.fitters.basinhopping module<a class="headerlink" href="#module-fitting.fitters.basinhopping" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="fitting.fitters.basinhopping.basinhopping">
+<em class="property">class </em><code class="descclassname">fitting.fitters.basinhopping.</code><code class="descname">basinhopping</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<p>The class for fitting data using scipy.optimise.basinhopping</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : string, optional</p>
+<blockquote>
+<div><p>The name of the function used to calculate the quality of the fit.
+The value it returns proivides the fitter with its fitting guide.
+Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></p>
+</div></blockquote>
+<p><strong>method</strong> : string or list of strings, optional</p>
+<blockquote>
+<div><p>The name of the fitting method or list of names of fitting method or
+name of list of fitting methods. Valid names found in the notes.
+Default <code class="docutils literal"><span class="pre">unconstrained</span></code></p>
+</div></blockquote>
+<p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
+<blockquote>
+<div><p>The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</p>
+</div></blockquote>
+<p><strong>boundCostFunc</strong> : function, optional</p>
+<blockquote>
+<div><p>A function used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></p>
+</div></blockquote>
+<p><strong>numStartPoints</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of starting points generated for each parameter.
+Default 4</p>
+</div></blockquote>
+<p><strong>boundFit</strong> : bool, optional</p>
+<blockquote>
+<div><p>Defines if fits that reach a boundary should be considered the same way
+as those that do not. Default is True</p>
+</div></blockquote>
+<p><strong>boundSensitivity</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>Defines the smallest number of decimal places difference (so the
+minimal difference) between a fit value and its related boundaries
+before a fit value is considered different from a boundary. The default
+is <cite>5</cite>. This is only valid if <code class="docutils literal"><span class="pre">boundFit</span></code> is <code class="docutils literal"><span class="pre">False</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dd>The general fitting method class, from which this one inherits</dd>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dd>The general fitting framework class</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.basinhopping</span></code></dt>
+<dd>The fitting class this wraps around</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.minimize</span></code></dt>
+<dd>The fitting class basinhopping wraps around</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>unconstrained = [‘Nelder-Mead’,’Powell’,’CG’,’BFGS’]
+constrained = [‘L-BFGS-B’,’TNC’,’SLSQP’]
+Custom fitting algorithms are also allowed in theory, but it has yet to be
+implemented.</p>
+<p>For each fitting function a set of different starting parameters will be
+tried. These are the combinations of all the values of the different
+parameters. For each starting parameter provided a set of numStartPoints
+starting points will be chosen, surrounding the starting point provided. If
+the starting point provided is less than one it will be assumed that the
+values cannot exceed 1, otherwise, unless otherwise told, it will be
+assumed that they can take any value and will be chosen to be eavenly
+spaced around the provided value.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the fitting method</td>
+</tr>
+<tr class="row-even"><td>unconstrained</td>
+<td>(list) The list of valid unconstrained fitting methods</td>
+</tr>
+<tr class="row-odd"><td>constrained</td>
+<td>(list) The list of valid constrained fitting methods</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.Name">
+<code class="descname">Name</code><em class="property"> = u’basinhopping’</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.basinhopping.basinhopping.callback">
+<code class="descname">callback</code><span class="sig-paren">(</span><em>x</em>, <em>f</em>, <em>accept</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for storing the state after each stage of fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : coordinates of the trial minimum</p>
+<p><strong>f</strong> : function value of the trial minimum</p>
+<p class="last"><strong>accept</strong> : whether or not that minimum was accepted</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.constrained">
+<code class="descname">constrained</code><em class="property"> = [u’L-BFGS-B’, u’TNC’, u’SLSQP’]</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.constrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.basinhopping.basinhopping.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the model through the fitting algorithms and starting parameters
+and returns the best one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is fit.fitness</p>
+</div></blockquote>
+<p><strong>mParamNames</strong> : list of strings</p>
+<blockquote>
+<div><p>The list of initial parameter names</p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the intial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote>
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+<p><strong>testedParams</strong> : tuple of two lists and a dictionary</p>
+<blockquote class="last">
+<div><p>The two lists are a list containing the parameter values tested, in the order they were tested, and the
+fit qualities of these parameters. The dictionary contains the coordinates of the trial minimum, the
+function value of the trial minimum and whether or not that minimum was accepted. Each is stored in a list.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="fitting.fitters.basinhopping.basinhopping.unconstrained">
+<code class="descname">unconstrained</code><em class="property"> = [u’Nelder-Mead’, u’Powell’, u’CG’, u’BFGS’]</em><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping.unconstrained" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-fitting.fitters.boundFunc">
 <span id="fitting-fitters-boundfunc-module"></span><h2>fitting.fitters.boundFunc module<a class="headerlink" href="#module-fitting.fitters.boundFunc" title="Permalink to this headline">¶</a></h2>
@@ -167,7 +353,7 @@ the boundaries, and returns the cost.</p>
 </table>
 <dl class="class">
 <dt id="fitting.fitters.evolutionary.evolutionary">
-<em class="property">class </em><code class="descclassname">fitting.fitters.evolutionary.</code><code class="descname">evolutionary</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost at 0x000000000AFFE978&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fitters.evolutionary.</code><code class="descname">evolutionary</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.differential_evolution</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -189,7 +375,7 @@ Default <code class="docutils literal"><span class="pre">best1bin</span></code><
 <p><strong>bounds</strong> : dictionary of tuples of length two with floats, optional</p>
 <blockquote>
 <div><p>The boundaries for fitting. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</p>
 </div></blockquote>
 <p><strong>boundCostFunc</strong> : function, optional</p>
 <blockquote>
@@ -197,10 +383,22 @@ translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
 Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></p>
 </div></blockquote>
 <p><strong>polish</strong> : bool, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>If True (default), then scipy.optimize.minimize with the <code class="docutils literal"><span class="pre">L-BFGS-B</span></code>
 method is used to polish the best population member at the end, which
 can improve the minimization slightly.</p>
+</div></blockquote>
+<p><strong>popSize</strong> : int, optional</p>
+<blockquote>
+<div><p>A multiplier for setting the total population size. The population has
+popsize * len(x) individuals. Default 15</p>
+</div></blockquote>
+<p><strong>tolerance</strong> : float, optional</p>
+<blockquote class="last">
+<div><p>When the mean of the population energies, multiplied by tol, divided by
+the standard deviation of the population energies is greater than 1 the
+solving process terminates: convergence = mean(pop) * tol / stdev(pop) &gt; 1
+Default 0.01</p>
 </div></blockquote>
 </td>
 </tr>
@@ -228,14 +426,30 @@ can improve the minimization slightly.</p>
 <td>(string) The name of the fitting strategies</td>
 </tr>
 <tr class="row-even"><td>strategySet</td>
-<td>(list) The list of valid fitting strategies. Currently these are: &#8216;best1bin&#8217;, &#8216;best1exp&#8217;, &#8216;rand1exp&#8217;, &#8216;randtobest1exp&#8217;, &#8216;best2exp&#8217;, &#8216;rand2exp&#8217;, &#8216;randtobest1bin&#8217;, &#8216;best2bin&#8217;, &#8216;rand2bin&#8217;, &#8216;rand1bin&#8217; For all strategies, use &#8216;all&#8217;</td>
+<td>(list) The list of valid fitting strategies. Currently these are: ‘best1bin’, ‘best1exp’, ‘rand1exp’, ‘randtobest1exp’, ‘best2exp’, ‘rand2exp’, ‘randtobest1bin’, ‘best2bin’, ‘rand2bin’, ‘rand1bin’ For all strategies, use ‘all’</td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
 <dt id="fitting.fitters.evolutionary.evolutionary.Name">
-<code class="descname">Name</code><em class="property"> = u'evolutionary'</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’evolutionary’</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.evolutionary.evolutionary.callback">
+<code class="descname">callback</code><span class="sig-paren">(</span><em>xk</em>, <em>convergence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for storing the state after each stage of fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>xk</strong> : coordinates of best fit</p>
+<p class="last"><strong>convergence</strong> : the proportion of the points from the iteration that have converged</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="fitting.fitters.evolutionary.evolutionary.fit">
@@ -269,10 +483,11 @@ given model parameters. One example is fit.fitness</p>
 <blockquote>
 <div><p>The quality of the fit as defined by the quality function chosen.</p>
 </div></blockquote>
-<p><strong>testedParams</strong> : tuple of two lists</p>
+<p><strong>testedParams</strong> : tuple of two lists and a dictionary</p>
 <blockquote class="last">
 <div><p>The two lists are a list containing the parameter values tested, in the order they were tested, and the
-fit qualities of these parameters.</p>
+fit qualities of these parameters. The dictionary contains the parameters and convergence values from each
+iteration, stored in two lists.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -286,7 +501,7 @@ fit qualities of these parameters.</p>
 
 <dl class="attribute">
 <dt id="fitting.fitters.evolutionary.evolutionary.validStrategySet">
-<code class="descname">validStrategySet</code><em class="property"> = [u'best1bin', u'best1exp', u'rand1exp', u'randtobest1exp', u'best2exp', u'rand2exp', u'randtobest1bin', u'best2bin', u'rand2bin', u'rand1bin']</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.validStrategySet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">validStrategySet</code><em class="property"> = [u’best1bin’, u’best1exp’, u’rand1exp’, u’randtobest1exp’, u’best2exp’, u’rand2exp’, u’randtobest1bin’, u’best2bin’, u’rand2bin’, u’rand1bin’]</em><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary.validStrategySet" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -304,7 +519,7 @@ fit qualities of these parameters.</p>
 </table>
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
-<em class="property">class </em><code class="descclassname">fitting.fitters.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost at 0x000000000B4B8438&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fitters.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>The abstract class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -321,7 +536,7 @@ Default <code class="docutils literal"><span class="pre">fitAlg.null</span></cod
 <blockquote>
 <div><p>The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</p>
 </div></blockquote>
 <p><strong>boundCostFunc</strong> : function, optional</p>
 <blockquote>
@@ -358,7 +573,7 @@ Default 4</p>
 </table>
 <dl class="attribute">
 <dt id="fitting.fitters.fitAlg.fitAlg.Name">
-<code class="descname">Name</code><em class="property"> = u'none'</em><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’none’</em><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -640,7 +855,7 @@ over</p>
 <blockquote>
 <div><p>The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</p>
 </div></blockquote>
 <p><strong>numPoints</strong> : int</p>
 <blockquote>
@@ -678,8 +893,118 @@ each inital point</p>
 </dd></dl>
 
 </div>
-<div class="section" id="fitting-fitters-leastsq-module">
-<h2>fitting.fitters.leastsq module<a class="headerlink" href="#fitting-fitters-leastsq-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.leastsq">
+<span id="fitting-fitters-leastsq-module"></span><h2>fitting.fitters.leastsq module<a class="headerlink" href="#module-fitting.fitters.leastsq" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="fitting.fitters.leastsq.leastsq">
+<em class="property">class </em><code class="descclassname">fitting.fitters.leastsq.</code><code class="descname">leastsq</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<p>Fits data based on the least squared optimizer</p>
+<p>Not properly developed and will not be documented until upgrade</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fitQualFunc</strong> : string, optional</p>
+<blockquote>
+<div><p>The name of the function used to calculate the quality of the fit.
+The value it returns proivides the fitter with its fitting guide.
+Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></p>
+</div></blockquote>
+<p><strong>numStartPoints</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of starting points generated for each parameter.
+Default 4</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dd>The general fitting method class, from which this one inherits</dd>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dd>The general fitting framework class</dd>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">scipy.optimise.leastsq</span></code></dt>
+<dd>The fitting class this wraps around</dd>
+</dl>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Name</td>
+<td>(string) The name of the fitting method</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitting.fitters.leastsq.leastsq.Name">
+<code class="descname">Name</code><em class="property"> = u’leastsq’</em><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.Name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.leastsq.leastsq.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the model through the fitting algorithms and starting parameters
+and returns the best one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sim</strong> : function</p>
+<blockquote>
+<div><p>The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is fit.fitness</p>
+</div></blockquote>
+<p><strong>mParamNames</strong> : list of strings</p>
+<blockquote>
+<div><p>The list of initial parameter names</p>
+</div></blockquote>
+<p><strong>mInitialParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The list of the initial parameters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fitParams</strong> : list of floats</p>
+<blockquote>
+<div><p>The best fitting parameters</p>
+</div></blockquote>
+<p><strong>fitQuality</strong> : float</p>
+<blockquote>
+<div><p>The quality of the fit as defined by the quality function chosen.</p>
+</div></blockquote>
+<p><strong>testedParams</strong> : tuple of two lists</p>
+<blockquote class="last">
+<div><p>The two lists are a list containing the parameter values tested, in the order they were tested, and the
+fit qualities of these parameters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">fit.fitness</span></code></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-fitting.fitters.minimize">
 <span id="fitting-fitters-minimize-module"></span><h2>fitting.fitters.minimize module<a class="headerlink" href="#module-fitting.fitters.minimize" title="Permalink to this headline">¶</a></h2>
@@ -693,7 +1018,7 @@ each inital point</p>
 </table>
 <dl class="class">
 <dt id="fitting.fitters.minimize.minimize">
-<em class="property">class </em><code class="descclassname">fitting.fitters.minimize.</code><code class="descname">minimize</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost at 0x000000000B4B8828&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitting.fitters.minimize.</code><code class="descname">minimize</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -716,7 +1041,7 @@ Default <code class="docutils literal"><span class="pre">unconstrained</span></c
 <blockquote>
 <div><p>The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(&#8216;Inf&#8217;)) for each parameter.</p>
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</p>
 </div></blockquote>
 <p><strong>boundCostFunc</strong> : function, optional</p>
 <blockquote>
@@ -756,8 +1081,8 @@ is <cite>5</cite>. This is only valid if <code class="docutils literal"><span cl
 </dl>
 </div>
 <p class="rubric">Notes</p>
-<p>unconstrained = [&#8216;Nelder-Mead&#8217;,&#8217;Powell&#8217;,&#8217;CG&#8217;,&#8217;BFGS&#8217;]
-constrained = [&#8216;L-BFGS-B&#8217;,&#8217;TNC&#8217;,&#8217;SLSQP&#8217;]
+<p>unconstrained = [‘Nelder-Mead’,’Powell’,’CG’,’BFGS’]
+constrained = [‘L-BFGS-B’,’TNC’,’SLSQP’]
 Custom fitting algorithms are also allowed in theory, but it has yet to be
 implemented.</p>
 <p>For each fitting function a set of different starting parameters will be
@@ -788,12 +1113,12 @@ spaced around the provided value.</p>
 </table>
 <dl class="attribute">
 <dt id="fitting.fitters.minimize.minimize.Name">
-<code class="descname">Name</code><em class="property"> = u'minimise'</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.Name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">Name</code><em class="property"> = u’minimise’</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.Name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="fitting.fitters.minimize.minimize.constrained">
-<code class="descname">constrained</code><em class="property"> = [u'L-BFGS-B', u'TNC', u'SLSQP']</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.constrained" title="Permalink to this definition">¶</a></dt>
+<code class="descname">constrained</code><em class="property"> = [u’L-BFGS-B’, u’TNC’, u’SLSQP’]</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.constrained" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -845,7 +1170,7 @@ fit qualities of these parameters.</p>
 
 <dl class="attribute">
 <dt id="fitting.fitters.minimize.minimize.unconstrained">
-<code class="descname">unconstrained</code><em class="property"> = [u'Nelder-Mead', u'Powell', u'CG', u'BFGS']</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.unconstrained" title="Permalink to this definition">¶</a></dt>
+<code class="descname">unconstrained</code><em class="property"> = [u’Nelder-Mead’, u’Powell’, u’CG’, u’BFGS’]</em><a class="headerlink" href="#fitting.fitters.minimize.minimize.unconstrained" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -862,9 +1187,167 @@ fit qualities of these parameters.</p>
 </tbody>
 </table>
 <dl class="function">
-<dt id="fitting.fitters.qualityFunc.BIC">
-<code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">BIC</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#BIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.BIC" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="fitting.fitters.qualityFunc.BIC2">
+<code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">BIC2</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#BIC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.BIC2" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>numParams</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of parameters used by the model used for the fitting process. Default 2</p>
+</div></blockquote>
+<p><strong>qualityThreshold</strong> : float, optional</p>
+<blockquote>
+<div><p>The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</p>
+</div></blockquote>
+<p><strong>numActions: int or list of ints the length of the number of trials being fitted, optional</strong></p>
+<blockquote>
+<div><p>The number of actions the participant can choose between for each timestep of the experiment. May need to be
+specified for each trial if the number of action choices varies between trials. Default 2</p>
+</div></blockquote>
+<p><strong>randActProb: float or list of floats the length of the number of trials being fitted. Optional</strong></p>
+<blockquote class="last">
+<div><p>The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal"><span class="pre">1/numActions</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.qualityFunc.BIC2Boot">
+<code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">BIC2Boot</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#BIC2Boot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.BIC2Boot" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>numParams</strong> : int, optional</p>
+<blockquote>
+<div><p>The number of parameters used by the model used for the fitting process. Default 2</p>
+</div></blockquote>
+<p><strong>qualityThreshold</strong> : float, optional</p>
+<blockquote>
+<div><p>The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</p>
+</div></blockquote>
+<p><strong>numActions: int or list of ints the length of the number of trials being fitted, optional</strong></p>
+<blockquote>
+<div><p>The number of actions the participant can choose between for each timestep of the experiment. May need to be
+specified for each trial if the number of action choices varies between trials. Default 2</p>
+</div></blockquote>
+<p><strong>randActProb: float or list of floats the length of the number of trials being fitted. Optional</strong></p>
+<blockquote>
+<div><p>The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal"><span class="pre">1/numActions</span></code></p>
+</div></blockquote>
+<p><strong>numSamples: int, optional</strong></p>
+<blockquote>
+<div><p>The number of samples that will be randomly resampled from <code class="docutils literal"><span class="pre">modVals</span></code>. Default 100</p>
+</div></blockquote>
+<p><strong>sampleLen: int, optional</strong></p>
+<blockquote class="last">
+<div><p>The length of the random sample. Default 1</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.qualityFunc.choice">
+<code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">choice</code><span class="sig-paren">(</span><em>a</em>, <em>size=None</em>, <em>replace=True</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fitting.fitters.qualityFunc.choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a random sample from a given 1-D array</p>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a</strong> : 1-D array-like or int</p>
+<blockquote>
+<div><p>If an ndarray, a random sample is generated from its elements.
+If an int, the random sample is generated as if a was np.arange(n)</p>
+</div></blockquote>
+<p><strong>size</strong> : int or tuple of ints, optional</p>
+<blockquote>
+<div><p>Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+single value is returned.</p>
+</div></blockquote>
+<p><strong>replace</strong> : boolean, optional</p>
+<blockquote>
+<div><p>Whether the sample is with or without replacement</p>
+</div></blockquote>
+<p><strong>p</strong> : 1-D array-like, optional</p>
+<blockquote>
+<div><p>The probabilities associated with each entry in a.
+If not given the sample assumes a uniform distribution over all
+entries in a.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>samples</strong> : 1-D ndarray, shape (size,)</p>
+<blockquote>
+<div><p>The generated random samples</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If a is an int and less than zero, if a or p are not 1-dimensional,
+if a is an array-like of size 0, if p is not a vector of
+probabilities, if a and p have different lengths, or if
+replace=False and the sample size is greater than the population
+size</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">randint</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">shuffle</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">permutation</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<p>Generate a uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0, 3, 4])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.randint(0,5,3)</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([3, 3, 0])</span>
+</pre></div>
+</div>
+<p>Generate a uniform random sample from np.arange(5) of size 3 without
+replacement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([3,1,0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size
+3 without replacement:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([2, 3, 0])</span>
+</pre></div>
+</div>
+<p>Any of the above can be repeated with an arbitrary array-like
+instead of just integers. For instance:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;],</span>
+<span class="go">      dtype=&#39;|S11&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="fitting.fitters.qualityFunc.logAverageProb">
@@ -944,8 +1427,56 @@ fit qualities of these parameters.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="fitting-fitters-test-minimize-module">
-<h2>fitting.fitters.test_minimize module<a class="headerlink" href="#fitting-fitters-test-minimize-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-fitting.fitters.test_minimize">
+<span id="fitting-fitters-test-minimize-module"></span><h2>fitting.fitters.test_minimize module<a class="headerlink" href="#module-fitting.fitters.test_minimize" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="fitting.fitters.test_minimize.TestClass">
+<em class="property">class </em><code class="descclassname">fitting.fitters.test_minimize.</code><code class="descname">TestClass</code><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_logprob">
+<code class="descname">test_logprob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_logprob" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_methodFit">
+<code class="descname">test_methodFit</code><span class="sig-paren">(</span><em>fitting</em>, <em>participant</em>, <em>modelSets</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_methodFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_methodFit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_startParamVals">
+<code class="descname">test_startParamVals</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParamVals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitting.fitters.test_minimize.TestClass.test_startParams">
+<code class="descname">test_startParams</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#TestClass.test_startParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.TestClass.test_startParams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.fitting">
+<code class="descclassname">fitting.fitters.test_minimize.</code><code class="descname">fitting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#fitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.fitting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.modelSets">
+<code class="descclassname">fitting.fitters.test_minimize.</code><code class="descname">modelSets</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#modelSets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.modelSets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="fitting.fitters.test_minimize.participant">
+<code class="descclassname">fitting.fitters.test_minimize.</code><code class="descname">participant</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/test_minimize.html#participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.test_minimize.participant" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-fitting.fitters">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-fitting.fitters" title="Permalink to this headline">¶</a></h2>
@@ -962,14 +1493,14 @@ fit qualities of these parameters.</p>
   <ul>
 <li><a class="reference internal" href="#">fitting.fitters package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#fitting-fitters-basinhopping-module">fitting.fitters.basinhopping module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.basinhopping">fitting.fitters.basinhopping module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.boundFunc">fitting.fitters.boundFunc module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.evolutionary">fitting.fitters.evolutionary module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.fitAlg">fitting.fitters.fitAlg module</a></li>
-<li><a class="reference internal" href="#fitting-fitters-leastsq-module">fitting.fitters.leastsq module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.leastsq">fitting.fitters.leastsq module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.minimize">fitting.fitters.minimize module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters.qualityFunc">fitting.fitters.qualityFunc module</a></li>
-<li><a class="reference internal" href="#fitting-fitters-test-minimize-module">fitting.fitters.test_minimize module</a></li>
+<li><a class="reference internal" href="#module-fitting.fitters.test_minimize">fitting.fitters.test_minimize module</a></li>
 <li><a class="reference internal" href="#module-fitting.fitters">Module contents</a></li>
 </ul>
 </li>
@@ -984,7 +1515,7 @@ fit qualities of these parameters.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/fitting.fitters.txt"
+      <li><a href="_sources/fitting.fitters.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -1023,7 +1554,7 @@ fit qualities of these parameters.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

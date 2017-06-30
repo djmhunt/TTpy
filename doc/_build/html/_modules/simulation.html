@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../index.html" />
-    <link rel="up" title="Module code" href="index.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -56,7 +55,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span>  <span class="nf">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">):</span>
+
+<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A framework for letting models interact with experiments and record the data</span>
 
@@ -76,6 +76,8 @@
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
+    <span class="n">simID</span> <span class="o">=</span> <span class="mi">0</span>
+
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the simulation set&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
@@ -86,8 +88,10 @@
             <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">modelSet</span><span class="p">:</span>
 
                 <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">expNum</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="n">simID</span><span class="p">)</span>
 
-                <span class="n">desc</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">recordSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
+                <span class="n">desc</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">recordExperimentParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">())</span>
+                <span class="n">desc</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">outputting</span><span class="o">.</span><span class="n">recordModelParams</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">()))</span>
                 <span class="n">outputting</span><span class="o">.</span><span class="n">logSimParams</span><span class="p">(</span><span class="o">*</span><span class="n">desc</span><span class="p">)</span>
 
                 <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment&quot;</span>
@@ -104,10 +108,11 @@
                 <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed&quot;</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-
-                <span class="n">outputting</span><span class="o">.</span><span class="n">recordSim</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span><span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">())</span>
+                <span class="n">outputting</span><span class="o">.</span><span class="n">recordSim</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">())</span>
 
                 <span class="n">outputting</span><span class="o">.</span><span class="n">plotModel</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">plot</span><span class="p">())</span>
+
+                <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="n">outputting</span><span class="o">.</span><span class="n">plotModelSet</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">plotSet</span><span class="p">())</span>
 
@@ -154,7 +159,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

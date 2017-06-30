@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -106,12 +105,12 @@
 <span class="sd">    numActions : integer, optional</span>
 <span class="sd">        The maximum number of valid actions the model can expect to receive.</span>
 <span class="sd">        Default 2.</span>
-<span class="sd">    numStimuli : integer, optional</span>
+<span class="sd">    numCues : integer, optional</span>
 <span class="sd">        The initial maximum number of stimuli the model can expect to receive.</span>
 <span class="sd">         Default 1.</span>
 <span class="sd">    numCritics : integer, optional</span>
 <span class="sd">        The number of different reaction learning sets.</span>
-<span class="sd">        Default numActions*numStimuli</span>
+<span class="sd">        Default numActions*numCues</span>
 <span class="sd">    probActions : bool, optional</span>
 <span class="sd">        Defines if the probabilities calculated by the model are for each</span>
 <span class="sd">        action-stimulus pair or for actions. That is, if the stimuli values for</span>
@@ -119,7 +118,7 @@
 <span class="sd">        Default ``True``</span>
 <span class="sd">    prior : array of floats in ``[0, 1]``, optional</span>
 <span class="sd">        The prior probability of of the states being the correct one.</span>
-<span class="sd">        Default ``ones((numActions, numStimuli)) / numCritics)``</span>
+<span class="sd">        Default ``ones((numActions, numCues)) / numCritics)``</span>
 <span class="sd">    stimFunc : function, optional</span>
 <span class="sd">        The function that transforms the stimulus into a form the model can</span>
 <span class="sd">        understand and a string to identify it later. Default is blankStim</span>
@@ -234,18 +233,15 @@
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="RVPM.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.RVPM.RVPM.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<div class="viewcode-block" id="RVPM.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.RVPM.RVPM.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the reward based on the action and stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
+<span class="sd">        ----------</span>
 <span class="sd">        observation : {int | float | tuple}</span>
 <span class="sd">            The set of stimuli</span>
-<span class="sd">        action : int or NoneType</span>
-<span class="sd">            The chosen action</span>
-<span class="sd">        response : float or NoneType</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -261,7 +257,7 @@
 
         <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
         <span class="c1"># calculate the expectations associated with each action.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectation</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectation</span>
@@ -421,7 +417,7 @@
             <span class="n">plotData</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">listMerge</span><span class="p">(</span><span class="n">dataKeys</span><span class="p">,</span> <span class="n">dataStim</span><span class="p">)]</span>
 
             <span class="n">axisLabels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Untitled&quot;</span><span class="p">}</span>
-            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;xLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">r&quot;$t/10 \textrm</span><span class="si">{ms}</span><span class="s2">$&quot;</span>
+            <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;xLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$t/10 \textrm</span><span class="si">{ms}</span><span class="s2">$&quot;</span>
             <span class="n">axisLabels</span><span class="p">[</span><span class="s2">&quot;yLabel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
 <span class="c1">#            axisLabels[&quot;yMax&quot;] = 0</span>
 <span class="c1">#            axisLabels[&quot;yMin&quot;] = -0.5</span>
@@ -538,7 +534,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

@@ -208,7 +208,7 @@ class model(object):
         This contains parts that are experiment dependent
 
         Parameters
-        ---------
+        ----------
         stimuli : {int | float | tuple}
             The set of stimuli
 

@@ -16,9 +16,9 @@ import pandas as pd
 
 from numpy import array, zeros
 from numpy.random import rand
-from experimentTemplate import experiment
+from experiment.experimentTemplate import experiment
 from plotting import dataVsEvents, paramDynamics
-from experimentPlot import experimentPlot
+from experiment.experimentPlot import experimentPlot
 from utils import varyingParams
 
 

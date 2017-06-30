@@ -14,7 +14,7 @@ from numpy import array
 
 from models import models
 from model.qLearn import qLearn
-from fitting.fitness import fitter
+from fitting.fit import fit
 from fitting.fitters.minimize import minimize
 
 #def test_an_exception():
@@ -88,9 +88,9 @@ def fitting():
         
     fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds={'alpha':(0,1),'theta':(0,5)})
 
-    fit = fitter('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
+    fitFunc = fit('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
-    return fit, fitAlg
+    return fitFunc, fitAlg
     
 
         
@@ -157,18 +157,18 @@ class TestClass:
     def test_methodFit(self, fitting, participant, modelSets):
         
         model, modelSetup = modelSets
-        fit, fitAlg = fitting
+        fitFunc, fitAlg = fitting
         
-        fit.model = model
-        fit.mInitialParams = modelSetup[0].values()
-        fit.mParamNames = modelSetup[0].keys()
-        fit.mOtherParams = modelSetup[1]
+        fitFunc.model = model
+        fitFunc.mInitialParams = modelSetup[0].values()
+        fitFunc.mParamNames = modelSetup[0].keys()
+        fitFunc.mOtherParams = modelSetup[1]
 
-        fit.partChoices = fit.scaler(participant[fit.partChoiceParam])
+        fitFunc.partChoices = fitFunc.scaler(participant[fitFunc.partChoiceParam])
 
-        fit.partRewards = participant[fit.partRewardParam]
+        fitFunc.partRewards = participant[fitFunc.partRewardParam]
         
-        fitAlg.sim = fit.fitness
+        fitAlg.sim = fitFunc.fitness
         
         initParamSets = fitAlg.startParams([0.5,0.5], numPoints = 30)
         

@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -84,12 +83,12 @@
 <span class="sd">    numActions : integer, optional</span>
 <span class="sd">        The maximum number of valid actions the model can expect to receive.</span>
 <span class="sd">        Default 2.</span>
-<span class="sd">    numStimuli : integer, optional</span>
+<span class="sd">    numCues : integer, optional</span>
 <span class="sd">        The initial maximum number of stimuli the model can expect to receive.</span>
 <span class="sd">         Default 1.</span>
 <span class="sd">    numCritics : integer, optional</span>
 <span class="sd">        The number of different reaction learning sets.</span>
-<span class="sd">        Default numActions*numStimuli</span>
+<span class="sd">        Default numActions*numCues</span>
 <span class="sd">    probActions : bool, optional</span>
 <span class="sd">        Defines if the probabilities calculated by the model are for each</span>
 <span class="sd">        action-stimulus pair or for actions. That is, if the stimuli values for</span>
@@ -97,7 +96,7 @@
 <span class="sd">        Default ``True``</span>
 <span class="sd">    prior : array of floats in ``[0,1]``, optional</span>
 <span class="sd">        The prior probability of of the states being the correct one.</span>
-<span class="sd">        Default ``ones((self.numActions, self.numStimuli)) / self.numCritics)``</span>
+<span class="sd">        Default ``ones((self.numActions, self.numCues)) / self.numCritics)``</span>
 <span class="sd">    stimFunc : function, optional</span>
 <span class="sd">        The function that transforms the stimulus into a form the model can</span>
 <span class="sd">        understand and a string to identify it later. Default is blankStim</span>
@@ -184,18 +183,24 @@
         <span class="c1"># There may have been an action but feedback was NoneType</span>
         <span class="c1"># Since we have another observation it is time to learn from the previous one</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lastEvents</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="n">lastEvents</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lastObservation</span> <span class="o">=</span> <span class="n">events</span>
+
+        <span class="c1"># Find the reward expectations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuliFilter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardExpectation</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+        <span class="n">expectedProbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorStimulusProbs</span><span class="p">()</span>
 
         <span class="c1"># If the model is not expected to act, even for a dummy action,</span>
         <span class="c1"># then the currentAction can be set to the rest value</span>
         <span class="c1"># Otherwise choose an action</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setNonAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
+            <span class="c1"># TODO implement the capacity to set what the defaultNonAction is</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseAction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseAction</span><span class="p">(</span><span class="n">expectedProbs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="model.feedback"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -210,11 +215,11 @@
 
         <span class="c1"># If there is feedback</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lastObservation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lastObservation</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.processEvent"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.processEvent">[docs]</a>    <span class="k">def</span> <span class="nf">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="model.processEvent"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.processEvent">[docs]</a>    <span class="k">def</span> <span class="nf">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Integrates the information from a stimulus, action, response set, regardless</span>
 <span class="sd">        of which of the three elements are present.</span>
@@ -228,7 +233,6 @@
 <span class="sd">        response : float, optional</span>
 <span class="sd">            The response from the experiment after an action. Default ``None``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recStimuli</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recReward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
         <span class="c1"># If there was a reward passed but it was empty, there is nothing to update</span>
@@ -236,37 +240,33 @@
             <span class="k">return</span>
 
         <span class="c1"># Find the reward expectation</span>
-        <span class="n">expectedReward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardExpectation</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expectedReward</span><span class="p">)</span>
+        <span class="n">expectedReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span> <span class="o">=</span> <span class="n">expectedReward</span>
 
         <span class="c1"># If there was no reward, the the stimulus is the learnt &#39;reward&#39;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">stimuli</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span>
 
         <span class="c1"># Find the significance of the discrepancy between the response and the expected response</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">expectedReward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">expectedReward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span><span class="p">)</span>
 
         <span class="c1"># Use that discrepency to update the model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">updateModel</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateModel</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuliFilter</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="model.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<div class="viewcode-block" id="model.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the reward based on the action and stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
 
 <span class="sd">        Parameters</span>
-<span class="sd">        ---------</span>
+<span class="sd">        ----------</span>
 <span class="sd">        stimuli : {int | float | tuple}</span>
 <span class="sd">            The set of stimuli</span>
-<span class="sd">        action : int or NoneType</span>
-<span class="sd">            The chosen action</span>
-<span class="sd">        response : float or NoneType</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        expectedReward : float</span>
-<span class="sd">            The expected reward</span>
+<span class="sd">        expectedRewards : float</span>
+<span class="sd">            The expected reward for each action</span>
 <span class="sd">        stimuli : list of floats</span>
 <span class="sd">            The processed observations</span>
 <span class="sd">        activeStimuli : list of [0, 1] mapping to [False, True]</span>
@@ -313,12 +313,46 @@
 
 <span class="sd">        stimuli : list, dict or float</span>
 <span class="sd">            Whatever suits the model best</span>
+<span class="sd">        delta :</span>
+<span class="sd">            The difference between the reward and the expected reward</span>
 
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
         <span class="c1"># There is no model here</span>
 
-<div class="viewcode-block" id="model.chooseAction"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.chooseAction">[docs]</a>    <span class="k">def</span> <span class="nf">chooseAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">currAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
+<div class="viewcode-block" id="model.calcProbabilities"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the probabilities associated with the action</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        actionValues : 1D ndArray of floats</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        probArray : 1D ndArray of floats</span>
+<span class="sd">            The probabilities associated with the actionValues</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># There is no model here</span>
+
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="model.actorStimulusProbs"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates in the model-appropriate way the probability of each action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        probabilities : 1D ndArray of floats</span>
+<span class="sd">            The probabilities associated with the action choices</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="model.chooseAction"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.chooseAction">[docs]</a>    <span class="k">def</span> <span class="nf">chooseAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Chooses the next action and returns the associated probabilities</span>
 
@@ -326,7 +360,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        probabilities : list of floats</span>
 <span class="sd">            The probabilities associated with each combinations</span>
-<span class="sd">        currAction : int</span>
+<span class="sd">        lastAction : int</span>
 <span class="sd">            The last chosen action</span>
 <span class="sd">        events : list of floats</span>
 <span class="sd">            The stimuli. If probActions is True then this will be unused as the probabilities will already be</span>
@@ -341,7 +375,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">decision</span><span class="p">,</span> <span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">currAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="n">events</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="n">validActions</span><span class="p">)</span>
+        <span class="n">decision</span><span class="p">,</span> <span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="n">events</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="n">validActions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="n">decision</span>
 
         <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">decProbabilities</span></div>
@@ -366,7 +400,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">actionParamSets</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">actStimuliParam</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">))</span>
+        <span class="n">actionParamSets</span> <span class="o">=</span> <span class="n">reshape</span><span class="p">(</span><span class="n">actStimuliParam</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span>
         <span class="n">actionParamSets</span> <span class="o">=</span> <span class="n">actionParamSets</span> <span class="o">*</span> <span class="n">stimFilter</span>
         <span class="n">actionParams</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">actionParamSets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -406,11 +440,12 @@
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;simID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simID</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Stimuli&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recStimuli</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Rewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recReward</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Expectations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectations</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ExpectedRewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ExpectedRewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ValidActions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recValidActions</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Decisions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;UpdatedProbs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -428,6 +463,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recValidActions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validActions</span><span class="p">[:])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recExpectations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectedRewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recStimuli</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">])</span></div>
@@ -438,14 +476,17 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">probActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;probActions&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numActions&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numStimuli&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numCritics&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numCues&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numCritics&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">probActions</span><span class="p">:</span>
             <span class="n">defaultPrior</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">defaultPrior</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span>
+            <span class="n">defaultPrior</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prior&#39;</span><span class="p">,</span> <span class="n">defaultPrior</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimuliFilter</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="kc">None</span>
@@ -454,6 +495,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
@@ -464,7 +507,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span>
-                           <span class="s2">&quot;numStimuli&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numStimuli</span><span class="p">,</span>
+                           <span class="s2">&quot;numCues&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">,</span>
                            <span class="s2">&quot;numCritics&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span><span class="p">,</span>
                            <span class="s2">&quot;probActions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">probActions</span><span class="p">,</span>
                            <span class="s2">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
@@ -473,7 +516,6 @@
 
 <div class="viewcode-block" id="model.genStandardResultsStore"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.genStandardResultsStore">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardResultsStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up the dictionary that stores the standard variables used to track a model</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
@@ -481,11 +523,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recReward</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recExpectations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recExpectedRewards</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recValidActions</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProbs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="model.params"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -497,6 +541,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span></div>
+
+<div class="viewcode-block" id="model.setsimID"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.setsimID">[docs]</a>    <span class="k">def</span> <span class="nf">setsimID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        simID : float</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div>
 
 <div class="viewcode-block" id="model.plot"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -614,7 +672,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

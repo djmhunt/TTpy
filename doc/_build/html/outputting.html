@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,20 +17,20 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="index.html" />
     <link rel="next" title="utils module" href="utils.html" />
     <link rel="prev" title="fitting.fitters package" href="fitting.fitters.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -68,13 +68,13 @@
 <dl class="function">
 <dt id="outputting.date">
 <code class="descclassname">outputting.</code><code class="descname">date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate today&#8217;s date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
+<dd><p>Calculate today’s date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
 and returns it</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="outputting.dictData2Lists">
-<code class="descclassname">outputting.</code><code class="descname">dictData2Lists</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#dictData2Lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.dictData2Lists" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">outputting.</code><code class="descname">dictData2Lists</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u”</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#dictData2Lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.dictData2Lists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a dictionary of arrays, values and lists and turn it into a dictionary of lists</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -87,7 +87,7 @@ and returns it</p>
 <p><strong>storeLabel</strong> : string, optional</p>
 <blockquote>
 <div><p>An identifier to be added to the beginning of each key string.
-Default is &#8216;&#8217;.</p>
+Default is ”.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -381,7 +381,7 @@ this should stay <code class="docutils literal"><span class="pre">None</span></c
 <dt id="outputting.newFlatDict">
 <code class="descclassname">outputting.</code><code class="descname">newFlatDict</code><span class="sig-paren">(</span><em>keySet</em>, <em>store</em>, <em>labelPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#newFlatDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.newFlatDict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a list of dictionaries and returns a dictionary of 1D lists.</p>
-<p>If a dictionary did not have that key or list element, then &#8216;None&#8217; is
+<p>If a dictionary did not have that key or list element, then ‘None’ is
 put in its place</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -406,7 +406,7 @@ into multiple numbered keys</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> : dict</p>
 <blockquote class="last">
 <div><p>The new dictionary with the keys from the keySet and the values as
-1D lists with &#8216;None&#8217; if the keys, value pair was not found in the
+1D lists with ‘None’ if the keys, value pair was not found in the
 store.</p>
 </div></blockquote>
 </td>
@@ -539,7 +539,7 @@ Default is <code class="docutils literal"><span class="pre">False</span></code><
 <div><p>The maximum length of a label to be used as a reference for an
 individual model-experiment combination. Default 18</p>
 </div></blockquote>
-<p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
+<p><strong>npErrResp</strong> : {‘log’, ‘raise’}</p>
 <blockquote>
 <div><p>Defines the response to numpy errors. Default <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
 </div></blockquote>
@@ -548,8 +548,16 @@ individual model-experiment combination. Default 18</p>
 <div><p>Specifies if the results from each iteration of the fitting process should be returned. Default <code class="docutils literal"><span class="pre">False</span></code></p>
 </div></blockquote>
 <p><strong>saveFigures</strong> : bool, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Defines if figures are produced or not. Default is <code class="docutils literal"><span class="pre">True</span></code></p>
+</div></blockquote>
+<p><strong>saveOneFile</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>In the Output class where the data comes to rest. One File to store them all, One File to find them, 
+One File to bring them all and in the darkness bind them. In the Output class where the data comes to rest.
+Will actually produce a full file and an abridged summary, both in xlsx and csv formats. Beware of memory issues
+as this is currently set up to keep everything in memory until it writes it all out at the end. Setting this as 
+<code class="docutils literal"><span class="pre">False</span></code> will break the figure plotting. Default is <code class="docutils literal"><span class="pre">False</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -577,7 +585,7 @@ silent.</p>
 
 <dl class="method">
 <dt id="outputting.outputting.fancyLogger">
-<code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logFile=u'./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logFile=u’./log.txt’</em>, <em>logLevel=20</em>, <em>npErrResp=u’log’</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the style of logging for all the simulations</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -585,13 +593,13 @@ silent.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>logFile</strong> : string, optional</p>
 <blockquote>
-<div><p>Provides the path the log will be written to. Default &#8221;./log.txt&#8221;</p>
+<div><p>Provides the path the log will be written to. Default “./log.txt”</p>
 </div></blockquote>
 <p><strong>logLevel</strong> : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</p>
 <blockquote>
 <div><p>Defines the level of the log. Default logging.INFO</p>
 </div></blockquote>
-<p><strong>npErrResp</strong> : {&#8216;log&#8217;, &#8216;raise&#8217;}</p>
+<p><strong>npErrResp</strong> : {‘log’, ‘raise’}</p>
 <blockquote class="last">
 <div><p>Defines the response to numpy errors. Default <code class="docutils literal"><span class="pre">log</span></code>. See numpy.seterr</p>
 </div></blockquote>
@@ -614,9 +622,9 @@ silent.</p>
 <dt id="outputting.outputting.folderSetup">
 <code class="descname">folderSetup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.folderSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.folderSetup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies and creates the folder the data will be stored in</p>
-<p>Folder will be created as &#8221;./Outputs/&lt;simLabel&gt;_&lt;date&gt;/&#8221;. If that had
+<p>Folder will be created as “./Outputs/&lt;simLabel&gt;_&lt;date&gt;/”. If that had
 previously been created then it is created as
-&#8221;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&#8221;, where &#8220;&lt;#&gt;&#8221; is the first
+“./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/”, where “&lt;#&gt;” is the first
 available integer.</p>
 <p>A subfolder is also created with the name <code class="docutils literal"><span class="pre">Pickle</span></code> if  pickleData is
 true.</p>
@@ -657,7 +665,7 @@ true.</p>
 
 <dl class="method">
 <dt id="outputting.outputting.logModFittedParams">
-<code class="descname">logModFittedParams</code><span class="sig-paren">(</span><em>modelFitVars</em>, <em>modelParams</em>, <em>fitQuality</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logModFittedParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logModFittedParams" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logModFittedParams</code><span class="sig-paren">(</span><em>modelFitVars</em>, <em>modelParams</em>, <em>fitQuality</em>, <em>partName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logModFittedParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logModFittedParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs the model and experiment parameters that used as initial fitting
 conditions</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -673,8 +681,12 @@ conditions</p>
 <div><p>The model parameters for the fitted model</p>
 </div></blockquote>
 <p><strong>fitQuality</strong> : float</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The value of goodness of fit</p>
+</div></blockquote>
+<p><strong>partName</strong> : int or string</p>
+<blockquote class="last">
+<div><p>The identifier for each participant</p>
 </div></blockquote>
 </td>
 </tr>
@@ -684,18 +696,14 @@ conditions</p>
 
 <dl class="method">
 <dt id="outputting.outputting.logSimFittingParams">
-<code class="descname">logSimFittingParams</code><span class="sig-paren">(</span><em>expParams</em>, <em>modelName</em>, <em>modelFitVars</em>, <em>modelOtherArgs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logSimFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimFittingParams" title="Permalink to this definition">¶</a></dt>
+<code class="descname">logSimFittingParams</code><span class="sig-paren">(</span><em>modelName</em>, <em>modelFitVars</em>, <em>modelOtherArgs</em>, <em>expParams={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logSimFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimFittingParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs the model and experiment parameters that used as initial fitting
 conditions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
-<blockquote>
-<div><p>The experiment parameters</p>
-</div></blockquote>
-<p><strong>modelName</strong> : string</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelName</strong> : string</p>
 <blockquote>
 <div><p>The name of the model</p>
 </div></blockquote>
@@ -704,9 +712,13 @@ conditions</p>
 <div><p>The model parameters that will be fitted over and varied.</p>
 </div></blockquote>
 <p><strong>modelOtherArgs</strong> : dict</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The other parameters used in the model whose attributes have been
 modified by the user</p>
+</div></blockquote>
+<p><strong>expParams</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>The experiment parameters. Default <code class="docutils literal"><span class="pre">dict()</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -745,7 +757,7 @@ modified by the user</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.recordSimParams" title="outputting.outputting.recordSimParams"><code class="xref py py-obj docutils literal"><span class="pre">recordSimParams</span></code></a></dt>
+<dt><code class="xref py py-obj docutils literal"><span class="pre">recordSimParams</span></code></dt>
 <dd>Records these parameters for later use</dd>
 </dl>
 </div>
@@ -803,7 +815,7 @@ modified by the user</p>
 
 <dl class="method">
 <dt id="outputting.outputting.paramIdentifier">
-<code class="descname">paramIdentifier</code><span class="sig-paren">(</span><em>params</em>, <em>lastLabelID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.paramIdentifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.paramIdentifier" title="Permalink to this definition">¶</a></dt>
+<code class="descname">paramIdentifier</code><span class="sig-paren">(</span><em>params</em>, <em>lastLabelID</em>, <em>simID=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.paramIdentifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.paramIdentifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the parameters of an experiment or model</p>
 <p>If the description is too long to make a plot label then an ID is generated</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -817,6 +829,10 @@ modified by the user</p>
 <p><strong>lastLabelID: int</strong></p>
 <blockquote>
 <div><p>The last ID number used</p>
+</div></blockquote>
+<p><strong>simID</strong> : int or string, optional</p>
+<blockquote>
+<div><p>The identifier for each simulation. Default <code class="docutils literal"><span class="pre">None</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -840,7 +856,7 @@ modified by the user</p>
 
 <dl class="method">
 <dt id="outputting.outputting.pickleLog">
-<code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>label=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
+<code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>label=u”</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the data in the appropriate pickle file in a Pickle subfolder
 of the outputting folder</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -893,7 +909,7 @@ of the outputting folder</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expInput</strong> : (experiment.experimentPlot, dict)</p>
 <blockquote class="last">
-<div><p>The experiment&#8217;s experimentPlot class and a dictionary of plot
+<div><p>The experiment’s experimentPlot class and a dictionary of plot
 attributes</p>
 </div></blockquote>
 </td>
@@ -921,7 +937,7 @@ attributes</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expInput</strong> : (experiment.experimentSetPlot, dict)</p>
 <blockquote class="last">
-<div><p>The experiment&#8217;s experimentSetPlot class and a dictionary of plot
+<div><p>The experiment’s experimentSetPlot class and a dictionary of plot
 attributes</p>
 </div></blockquote>
 </td>
@@ -949,7 +965,7 @@ attributes</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelPlot</strong> : model.modelPlot</p>
 <blockquote class="last">
-<div><p>The model&#8217;s modelPlot class</p>
+<div><p>The model’s modelPlot class</p>
 </div></blockquote>
 </td>
 </tr>
@@ -976,7 +992,7 @@ attributes</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelSetPlot</strong> : model.modelSetPlot</p>
 <blockquote class="last">
-<div><p>The model&#8217;s modelSetPlot class</p>
+<div><p>The model’s modelSetPlot class</p>
 </div></blockquote>
 </td>
 </tr>
@@ -990,6 +1006,42 @@ attributes</p>
 <dt><a class="reference internal" href="#outputting.outputting.savePlots" title="outputting.outputting.savePlots"><code class="xref py py-obj docutils literal"><span class="pre">savePlots</span></code></a></dt>
 <dd>Saves the plots created by modelSetPlot</dd>
 </dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="outputting.outputting.recordExperimentParams">
+<code class="descname">recordExperimentParams</code><span class="sig-paren">(</span><em>expParams</em>, <em>simID=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordExperimentParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordExperimentParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the model and experiment parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
+<blockquote>
+<div><p>The experiment parameters</p>
+</div></blockquote>
+<p><strong>simID</strong> : int or string, optional</p>
+<blockquote>
+<div><p>The identifier for each simulation. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>expDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the experiment</p>
+</div></blockquote>
+<p><strong>expPltLabel</strong> : string</p>
+<blockquote class="last">
+<div><p>The label used for this experiment</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.paramIdentifier" title="outputting.outputting.paramIdentifier"><code class="xref py py-obj docutils literal"><span class="pre">paramIdentifier</span></code></a>, <a class="reference internal" href="#outputting.outputting.logSimParams" title="outputting.outputting.logSimParams"><code class="xref py py-obj docutils literal"><span class="pre">logSimParams</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -1017,8 +1069,44 @@ attributes</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="outputting.outputting.recordModelParams">
+<code class="descname">recordModelParams</code><span class="sig-paren">(</span><em>modelParams</em>, <em>simID=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordModelParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordModelParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the model and experiment parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>modelParams</strong> : dict</p>
+<blockquote>
+<div><p>The model parameters</p>
+</div></blockquote>
+<p><strong>simID</strong> : int or string, optional</p>
+<blockquote>
+<div><p>The identifier for each simulation. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>modelDesc</strong> : string</p>
+<blockquote>
+<div><p>The description to be logged of the model</p>
+</div></blockquote>
+<p><strong>modelPltLabel</strong> : string</p>
+<blockquote class="last">
+<div><p>The label used for this model</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#outputting.outputting.paramIdentifier" title="outputting.outputting.paramIdentifier"><code class="xref py py-obj docutils literal"><span class="pre">paramIdentifier</span></code></a>, <a class="reference internal" href="#outputting.outputting.logSimParams" title="outputting.outputting.logSimParams"><code class="xref py py-obj docutils literal"><span class="pre">logSimParams</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="outputting.outputting.recordParticipantFit">
-<code class="descname">recordParticipantFit</code><span class="sig-paren">(</span><em>participant</em>, <em>expData</em>, <em>modelData</em>, <em>fitQuality=None</em>, <em>fittingData=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">recordParticipantFit</code><span class="sig-paren">(</span><em>participant</em>, <em>partName</em>, <em>modelData</em>, <em>fitQuality=None</em>, <em>fittingData=None</em>, <em>expData=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record the data relevant to the participant fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1028,9 +1116,9 @@ attributes</p>
 <blockquote>
 <div><p>The participant data</p>
 </div></blockquote>
-<p><strong>expData</strong> : dict</p>
+<p><strong>partName</strong> : int or string</p>
 <blockquote>
-<div><p>The data from the experiment</p>
+<div><p>The identifier for each participant</p>
 </div></blockquote>
 <p><strong>modelData</strong> : dict</p>
 <blockquote>
@@ -1042,9 +1130,13 @@ attributes</p>
 Default is None</p>
 </div></blockquote>
 <p><strong>fittingData</strong> : dict, optional</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
 tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default <code class="docutils literal"><span class="pre">None</span></code></p>
+</div></blockquote>
+<p><strong>expData</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>The data from the experiment. Default <code class="docutils literal"><span class="pre">None</span></code></p>
 </div></blockquote>
 </td>
 </tr>
@@ -1085,50 +1177,6 @@ tested, in the order they were tested, and a list of the fit qualities of these 
 <dt><a class="reference internal" href="#outputting.outputting.pickleLog" title="outputting.outputting.pickleLog"><code class="xref py py-obj docutils literal"><span class="pre">pickleLog</span></code></a></dt>
 <dd>records the picked data</dd>
 </dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.recordSimParams">
-<code class="descname">recordSimParams</code><span class="sig-paren">(</span><em>expParams</em>, <em>modelParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSimParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the model and experiment parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>expParams</strong> : dict</p>
-<blockquote>
-<div><p>The experiment parameters</p>
-</div></blockquote>
-<p><strong>modelParams</strong> : dict</p>
-<blockquote>
-<div><p>The model parameters</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>expDesc</strong> : string</p>
-<blockquote>
-<div><p>The description to be logged of the experiment</p>
-</div></blockquote>
-<p><strong>expPltLabel</strong> : string</p>
-<blockquote>
-<div><p>The label used for this experiment</p>
-</div></blockquote>
-<p><strong>modelDesc</strong> : string</p>
-<blockquote>
-<div><p>The description to be logged of the model</p>
-</div></blockquote>
-<p><strong>modelPltLabel</strong> : string</p>
-<blockquote class="last">
-<div><p>The label used for this model</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.outputting.paramIdentifier" title="outputting.outputting.paramIdentifier"><code class="xref py py-obj docutils literal"><span class="pre">paramIdentifier</span></code></a>, <a class="reference internal" href="#outputting.outputting.logSimParams" title="outputting.outputting.logSimParams"><code class="xref py py-obj docutils literal"><span class="pre">logSimParams</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -1186,7 +1234,7 @@ with the estimated pertinent data</p>
 
 <dl class="function">
 <dt id="outputting.reframeListDicts">
-<code class="descclassname">outputting.</code><code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">outputting.</code><code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u”</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1199,7 +1247,7 @@ with the estimated pertinent data</p>
 <p><strong>storeLabel</strong> : string, optional</p>
 <blockquote>
 <div><p>An identifier to be added to the beginning of each key string.
-Default is &#8216;&#8217;.</p>
+Default is ”.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1220,7 +1268,7 @@ into multiple numbered keys</p>
 
 <dl class="function">
 <dt id="outputting.reframeSelectListDicts">
-<code class="descclassname">outputting.</code><code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">outputting.</code><code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=u”</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a list of dictionaries and turn it into a dictionary of lists
 containing only the useful keys</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1238,7 +1286,7 @@ containing only the useful keys</p>
 <p><strong>storeLabel</strong> : string, optional</p>
 <blockquote>
 <div><p>An identifier to be added to the beginning of each key string.
-Default is &#8216;&#8217;.</p>
+Default is ”.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -1274,7 +1322,7 @@ into multiple numbered keys</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/outputting.txt"
+      <li><a href="_sources/outputting.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -1312,7 +1360,7 @@ into multiple numbered keys</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

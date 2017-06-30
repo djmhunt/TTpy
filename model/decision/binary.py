@@ -106,6 +106,7 @@ def decEta(expResponses=(0, 1), eta=0):
         The action to be taken by the model
     probabilities : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
+
     See Also
     --------
     models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
@@ -169,6 +170,7 @@ def decRandom(expResponses=(0, 1)):
         The action to be taken by the model
     probabilities : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
+
     See Also
     --------
     models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL

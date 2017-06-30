@@ -4,7 +4,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from fit import fit
+from fitting.fit import fit
 
 from itertools import izip
 from types import NoneType

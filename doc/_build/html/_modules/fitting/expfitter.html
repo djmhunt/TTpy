@@ -1,0 +1,239 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fitting.expfitter &#8212; PyDM 0.9 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for fitting.expfitter</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">fitting.fit</span> <span class="k">import</span> <span class="n">fit</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+
+<div class="viewcode-block" id="fitter"><a class="viewcode-back" href="../../fitting.html#fitting.expfitter.fitter">[docs]</a><span class="k">class</span> <span class="nc">fitter</span><span class="p">(</span><span class="n">fit</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A class for fitting data by running through an experiment</span>
+
+<span class="sd">    To be fixed later</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">        </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    partChoiceParam : string</span>
+<span class="sd">        The key to be compared in the participant data</span>
+<span class="sd">    partRewardParam : string</span>
+<span class="sd">        The key containing the participant reward data</span>
+<span class="sd">    modelParam : string</span>
+<span class="sd">        The key to be compared in the model data</span>
+<span class="sd">    fitAlg : fitting.fitters.fitAlg instance</span>
+<span class="sd">        An instance of one of the fitting algorithms</span>
+<span class="sd">    scalar : function</span>
+<span class="sd">        Transforms the participant action form to match that of the model</span>
+<span class="sd">        </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the fitting type</span>
+<span class="sd">        </span>
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    fitting.fit.fit : The class this inherits many functions from</span>
+<span class="sd">    fitting.fitters.fitAlg.fitAlg : The general fitting class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;experimentFitter&quot;</span>
+
+<div class="viewcode-block" id="fitter.fitness"><a class="viewcode-back" href="../../fitting.html#fitting.expfitter.fitter.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used by a fitter to generate the list of values characterising how well given model parameters perform</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        modelParameters : list of floats</span>
+<span class="sd">            A list of the parameters used by the model in the order previously defined</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelPerformance : list of floats</span>
+<span class="sd">            The performance metric for the model that will be used to characterise the quality of the fit.</span>
+<span class="sd">            </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        fitting.fit.fit.participant : Fits participant data</span>
+<span class="sd">        fitting.fitters.fitAlg.fitAlg : The general fitting class</span>
+<span class="sd">        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Run model with given parameters</span>
+        <span class="n">exp</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fittedModel</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
+
+        <span class="c1"># Pull out the values to be compared</span>
+
+        <span class="n">modelData</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
+        <span class="n">modelChoices</span> <span class="o">=</span> <span class="n">modelData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">modelparam</span><span class="p">]</span>
+        <span class="n">partChoices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partChoices</span>
+
+        <span class="c1"># Check lengths</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partChoices</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelChoices</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The length of the model and participatiant data are different. </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partChoiceParam</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">partChoices</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelparam</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelChoices</span><span class="p">)))</span>
+
+        <span class="c1"># Find the difference</span>
+
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">modelChoices</span> <span class="o">-</span> <span class="n">partChoices</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">diff</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">diff</span>
+
+        <span class="k">return</span> <span class="n">modelPerformance</span></div>
+
+<div class="viewcode-block" id="fitter.fittedModel"><a class="viewcode-back" href="../../fitting.html#fitting.expfitter.fitter.fittedModel">[docs]</a>    <span class="k">def</span> <span class="nf">fittedModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the model run of the model with specific parameter values</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *modelParameters : floats</span>
+<span class="sd">            The model parameters provided in the order defined in the model setup</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelInstance : model class instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">exp</span><span class="p">,</span> <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simExpSetup</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">exp</span><span class="p">,</span> <span class="n">modelInstance</span></div>
+
+    <span class="k">def</span> <span class="nf">_simExpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialises the model for the running of the &#39;simulation&#39;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *modelParameters : floats</span>
+<span class="sd">            The model parameters provided in the order defined in the model setup</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        exp : experiment.experimentTemplate.experimentTemplate class instance</span>
+<span class="sd">        modelInstance : model.modelTemplate.modelTemplate class instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getModInput</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
+
+        <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">exp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_simExpRun</span><span class="p">(</span><span class="n">exp</span><span class="p">,</span> <span class="n">modelInstance</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">exp</span><span class="p">,</span> <span class="n">modelInstance</span>
+
+    <span class="k">def</span> <span class="nf">_simExpRun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulates the events of a simulation from the perspective of a model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">act</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
+            <span class="n">exp</span><span class="o">.</span><span class="n">receiveAction</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">feedback</span><span class="p">()</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            <span class="n">exp</span><span class="o">.</span><span class="n">procede</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2015, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

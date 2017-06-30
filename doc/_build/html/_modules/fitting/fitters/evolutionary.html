@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -17,19 +17,18 @@
         VERSION:     '0.9',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="top" title="PyDM 0.9 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -95,6 +94,14 @@
 <span class="sd">        If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``</span>
 <span class="sd">        method is used to polish the best population member at the end, which</span>
 <span class="sd">        can improve the minimization slightly.</span>
+<span class="sd">    popSize : int, optional</span>
+<span class="sd">        A multiplier for setting the total population size. The population has</span>
+<span class="sd">        popsize * len(x) individuals. Default 15</span>
+<span class="sd">    tolerance : float, optional</span>
+<span class="sd">        When the mean of the population energies, multiplied by tol, divided by</span>
+<span class="sd">        the standard deviation of the population energies is greater than 1 the</span>
+<span class="sd">        solving process terminates: convergence = mean(pop) * tol / stdev(pop) &gt; 1</span>
+<span class="sd">        Default 0.01</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -136,7 +143,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">boundCostFunc</span> <span class="o">=</span> <span class="n">boundCostFunc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fitQualFunc</span> <span class="o">=</span> <span class="n">qualFuncIdent</span><span class="p">(</span><span class="n">fitQualFunc</span><span class="p">,</span> <span class="o">**</span><span class="n">qualFuncArgs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">polish</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;polish&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polish</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;polish&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popsize</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;popSize&quot;</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerence</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tolerance&quot;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_setType</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
 
@@ -144,7 +153,9 @@
                         <span class="s1">&#39;fitQualityFunction&#39;</span><span class="p">:</span> <span class="n">fitQualFunc</span><span class="p">,</span>
                         <span class="s1">&#39;boundaryCostFunction&#39;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">boundCostFunc</span><span class="p">),</span>
                         <span class="s1">&#39;bounds&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">allBounds</span><span class="p">,</span>
-                        <span class="s1">&#39;polish&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">polish</span>
+                        <span class="s1">&#39;polish&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
+                        <span class="s2">&quot;popSize&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">popsize</span><span class="p">,</span>
+                        <span class="s2">&quot;tolerance&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerence</span>
                         <span class="p">}</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
@@ -159,6 +170,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">testedParams</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">testedParamQualities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterbestParams</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterConvergence</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitting.fitters.evolutionary&#39;</span><span class="p">)</span>
 
@@ -183,9 +196,10 @@
 <span class="sd">            The best fitting parameters</span>
 <span class="sd">        fitQuality : float</span>
 <span class="sd">            The quality of the fit as defined by the quality function chosen.</span>
-<span class="sd">        testedParams : tuple of two lists</span>
+<span class="sd">        testedParams : tuple of two lists and a dictionary</span>
 <span class="sd">            The two lists are a list containing the parameter values tested, in the order they were tested, and the</span>
-<span class="sd">            fit qualities of these parameters.</span>
+<span class="sd">            fit qualities of these parameters. The dictionary contains the parameters and convergence values from each</span>
+<span class="sd">            iteration, stored in two lists.</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -196,6 +210,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">sim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">testedParams</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">testedParamQualities</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterbestParams</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterConvergence</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span>
         <span class="n">strategySet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span>
@@ -232,7 +248,22 @@
                 <span class="n">fitParams</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">x</span>
                 <span class="n">fitVal</span> <span class="o">=</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">fun</span>
 
-        <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testedParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">testedParamQualities</span><span class="p">)</span></div>
+        <span class="n">iterDetails</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">bestParams</span><span class="o">=</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterbestParams</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">convergence</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iterConvergence</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fitParams</span><span class="p">,</span> <span class="n">fitVal</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">testedParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">testedParamQualities</span><span class="p">,</span> <span class="n">iterDetails</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="evolutionary.callback"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.evolutionary.evolutionary.callback">[docs]</a>    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xk</span><span class="p">,</span> <span class="n">convergence</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used for storing the state after each stage of fitting</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xk : coordinates of best fit</span>
+<span class="sd">        convergence : the proportion of the points from the iteration that have converged</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterbestParams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterConvergence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">convergence</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_strategyFit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">,</span> <span class="n">bounds</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -256,7 +287,10 @@
         <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">differential_evolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span>
                                                          <span class="n">bounds</span><span class="p">,</span>
                                                          <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+                                                         <span class="n">popsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popsize</span><span class="p">,</span>
+                                                         <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerence</span><span class="p">,</span>
                                                          <span class="n">polish</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
+                                                         <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
                                                          <span class="n">init</span><span class="o">=</span><span class="s1">&#39;latinhypercube&#39;</span>  <span class="c1"># &#39;random&#39;</span>
                                                          <span class="p">)</span>
 
@@ -345,7 +379,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
     </div>
   </body>
 </html>

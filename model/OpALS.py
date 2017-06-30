@@ -226,7 +226,7 @@ class OpALS(model):
         This contains parts that are experiment dependent
 
         Parameters
-        ---------
+        ----------
         observation : {int | float | tuple}
             The set of stimuli
 
