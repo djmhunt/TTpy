@@ -740,6 +740,80 @@ def movingaverage(data, windowSize, edgeCorrection=False):
 
     return convolution
 
+def runningMean(oldMean, newValue, numValues):
+    # type: (float, float, int) -> float
+    """
+
+    Parameters
+    ----------
+    oldMean : float
+        The old running average mean
+    newValue : float
+        The new value to be added to the mean
+    numValues : int
+        The number of values in the new running mean once this value is included
+
+    Returns
+    -------
+    newMean : float
+        The new running average mean
+
+    Notes
+    -----
+    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from
+    https://www.johndcook.com/blog/standard_deviation/
+
+    Examples
+    --------
+    >>> runningMean(1, 2, 2)
+    1.5
+    >>> runningMean(1.5, 3, 3)
+    2.0
+    """
+
+    newMean = oldMean + (newValue - oldMean) / numValues
+
+    return newMean
+
+
+def runningSTD(oldSTD, oldMean, newMean, newValue):
+    # type: (float, float, float, float) -> float
+    """
+
+    Parameters
+    ----------
+    oldSTD : float
+        The old running average standard deviation
+    oldMean : float
+        The old running average mean
+    newMean : float
+        The new running average mean
+    newValue : float
+        The new value to be added to the mean
+
+    Returns
+    -------
+    newSTD : float
+        The new running average standard deviation
+
+    Notes
+    -----
+    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from
+    https://www.johndcook.com/blog/standard_deviation/
+
+    Examples
+    --------
+    >>> runningSTD(0, 1, 1.5, 2)
+    0.5
+
+    >>> runningSTD(0.5, 1.5, 2.0, 3)
+    2.0
+    """
+
+    newSTD = oldSTD + (newValue - oldMean)*(newValue - newMean)
+
+    return newSTD
+
 #if __name__ == '__main__':
 #    from timeit import timeit
 #    from numpy import fromfunction
