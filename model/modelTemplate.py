@@ -145,11 +145,12 @@ class model(object):
         # If the model is not expected to act, even for a dummy action,
         # then the currentAction can be set to the rest value
         # Otherwise choose an action
+        lastAction = self.currAction
         if type(validActions) is NoneType:
             # TODO implement the capacity to set what the defaultNonAction is
             self.currAction = self.defaultNonAction
         else:
-            self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, self.currAction, events, validActions)
+            self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, lastAction, events, validActions)
 
     def feedback(self, response):
         """
@@ -184,6 +185,10 @@ class model(object):
         """
         self.recReward.append(response)
 
+        # If there were any last reflections to do on the action chosen before processing the new event, now is the last
+        # chance to do it
+        self.choiceReflection()
+
         # If there was a reward passed but it was empty, there is nothing to update
         if type(response) is not NoneType and (size(response) == 0 or isnan(response)):
             return
@@ -199,11 +204,11 @@ class model(object):
         # Find the significance of the discrepancy between the response and the expected response
         delta = self.delta(response, expectedReward, action, self.stimuli)
 
-        # Use that discrepency to update the model
+        # Use that discrepancy to update the model
         self.updateModel(delta, action, self.stimuliFilter)
 
     def rewardExpectation(self, observation):
-        """Calculate the reward based on the action and stimuli
+        """Calculate the expected reward for each action based on the stimuli
 
         This contains parts that are experiment dependent
 
@@ -229,7 +234,7 @@ class model(object):
         # Return the value
 
         # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
-        return 0, 0, 0
+        return 0, observation, 0
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -328,6 +333,24 @@ class model(object):
         self.decision = decision
 
         return decision, decProbabilities
+
+    def overrideActionChoice(self, action):
+        """
+        Provides a method for overriding the model action choice. This is used when fitting models to participant actions.
+
+        Parameters
+        ----------
+        action : int
+            Action chosen by external source to same situation
+        """
+
+        self.currAction = action
+
+    def choiceReflection(self):
+        """
+        Allows the model to update its state once an action has been chosen.
+
+        """
 
     def actStimMerge(self, actStimuliParam, stimFilter=1):
         """

@@ -187,5 +187,5 @@ class fitter(fit):
         for action, reward, observation in izip(partAct, partReward, partObs):
 
             modelInstance.observe(observation)
-            modelInstance.currAction = action
+            modelInstance.overrideActionChoice(action)
             modelInstance.feedback(reward)
