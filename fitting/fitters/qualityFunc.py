@@ -5,7 +5,7 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import log2, sum, ones, exp, shape, amax, array, linspace, concatenate
+from numpy import log2, sum, ones, exp, shape, amax, array, linspace, concatenate, prod
 from numpy.random import choice
 from collections import Callable
 
@@ -20,6 +20,8 @@ def qualFuncIdent(value, **kwargs):
         fitness = BIC2(**kwargs)
     elif value == "BIC2Boot":
         fitness = BIC2Boot(**kwargs)
+    elif value == "WBIC2":
+        fitness = WBIC2(**kwargs)
     elif value == "-2log":
         fitness = logprob
     elif value == "-2AvLog":
@@ -166,6 +168,8 @@ def BIC2(**kwargs):
 def BIC2Boot(**kwargs):
     # type : (int, float) -> Callable[[Union[ndarray, list]], float]
     """
+    An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the
+    difference between different sample distributions would become more pronounced. This was not found to be true.
 
     Parameters
     ----------
@@ -243,3 +247,41 @@ def BIC2Boot(**kwargs):
                       "numSamples": numSamples,
                       "sampleLen": sampleLen}
     return BICfunc
+
+def WBIC2(**kwargs):
+    # type : (int, float) -> Callable[[Union[ndarray, list]], float]
+    """
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+
+    """
+
+    def WBICfunc(modVals):
+        # type: (Union[ndarray, list]) -> float
+        """
+        Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
+        The function is a modified version of the Bayesian Informaiton Criterion
+
+        It provides a fit such that when a value is less than one it is a valid fit
+
+        Returns
+        -------
+        fit : float
+            The sum of the model valaues returned
+        """
+
+        numSamples = shape(modVals)
+
+        temp = 1 / (log2(amax(numSamples)))
+        fit = 1 + logprob(modVals) / prod(modVals**temp)
+
+        return fit
+
+    WBICfunc.Name = "WBIC2"
+    WBICfunc.Params = {}
+    return WBICfunc
