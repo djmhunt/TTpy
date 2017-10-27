@@ -9,7 +9,7 @@ from simulation import simulation
 from fitting.fit import fit
 
 
-def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", experiments=None):
+def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", partModelVars={}, experiments=None):
     """
     A framework for fitting models to data for experiments, along with
     recording the plots and data associated with the best fits.
@@ -26,6 +26,10 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", ex
         A fitting class instance
     partLabel : basestring, optional
         The key (label) used to identify each participant. Default ``Name``
+    partModelVars : dict, optional
+        A dictionary of model settings whose values should vary from participant to participant based on the
+        values found in the imported participant data files. The key is the label given in the participant data file,
+        as a string, and the value is the associated label in the model, also as a string. Default ``{}``
     experiments : experiments.experiments, optional
         An experiment factory generating each of the different experiments being considered. Default ``None``
 
@@ -48,7 +52,6 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", ex
 
         return
 
-
     logger = outputting.getLogger('Overview')
 
     outputting.recordFittingParams(fitter.info())
@@ -59,14 +62,18 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", ex
     for modelInfo in models.iterFitting():
 
         model = modelInfo[0]
-        modelSetup = modelInfo[1:]
+        modelInitParamVars = modelInfo[1]
+        modelOtherArgs = modelInfo[2]
 
         if experiments is not None:
             exp = experiments.create(0)
         else:
             exp = None
 
-        outputting.logSimFittingParams(model.Name, modelSetup[0], modelSetup[1])
+        for v in partModelVars.itervalues():
+            modelOtherArgs[v] = "<Varies on participant>"
+
+        outputting.logSimFittingParams(model.Name, modelInitParamVars, modelOtherArgs)
 
         for participant in data:
 
@@ -74,12 +81,16 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", ex
             if isinstance(partName, (list, tuple)):
                 partName = partName[0]
 
+            for k, v in partModelVars.iteritems():
+                val = participant[k]
+                modelOtherArgs[v] = val
+
             # Find the best model values from those proposed
 
             message = "Beginning participant fit for participant %s"%(partName)
             logger.info(message)
 
-            modelFitted, fitQuality, fittingData = fitter.participant(model, modelSetup, participant, exp=exp)
+            modelFitted, fitQuality, fittingData = fitter.participant(model, (modelInitParamVars, modelOtherArgs), participant, exp=exp)
 
             message = "Participant fitted"
             logger.debug(message)
@@ -91,7 +102,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", ex
                 outputEvolution = None
 
             outputting.recordModelParams(modelFitted.params(), simID=partName)
-            outputting.logModFittedParams(modelSetup[0], modelFitted.params(), fitQuality, partName)
+            outputting.logModFittedParams(modelInitParamVars, modelFitted.params(), fitQuality, partName)
 
             outputting.recordParticipantFit(participant,
                                             partName,
