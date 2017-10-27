@@ -41,9 +41,8 @@ extensions = [
 	'sphinx.ext.graphviz',
 	'sphinx.ext.inheritance_diagram',
 	'sphinx.ext.autosummary',
-#	'sphinx.ext.napoleon',
-    'numpydoc',
-    'matplotlib.sphinxext.mathmpl'
+	'sphinx.ext.napoleon',
+#    'numpydoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

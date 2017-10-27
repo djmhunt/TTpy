@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.weather &#8212; PyDM 0.9 documentation</title>
+    <title>experiment.probStim &#8212; PyDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -45,20 +45,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for experiment.weather</h1><div class="highlight"><pre>
+  <h1>Source code for experiment.probStim</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 
-<span class="sd">:Reference: Probabilistic classification learning in amnesia.</span>
-<span class="sd">            Knowlton, B. J., Squire, L. R., &amp; Gluck, M. a. (1994).</span>
-<span class="sd">            Learning &amp; Memory(Cold Spring Harbor, N.Y.), 1(2), 106–120.</span>
-<span class="sd">            http://doi.org/10.1101/lm.1.2.106</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">nan</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="nb">sum</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">float</span> <span class="k">as</span> <span class="n">npfloat</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+
 <span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
 <span class="c1"># from plotting import dataVsEvents, paramDynamics</span>
 <span class="kn">from</span> <span class="nn">experiment.experimentPlot</span> <span class="k">import</span> <span class="n">experimentPlot</span>
@@ -89,12 +88,11 @@
                               <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
                               <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span>
                               <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">nan</span><span class="p">]}</span>
-<span class="n">defaultActualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="s2">&quot;Pickering&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim">[docs]</a><span class="k">class</span> <span class="nc">Probstim</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Based on the 1994 paper &quot;Probabilistic classification learning in amnesia.&quot;</span>
+<span class="sd">    Basic probabilistic</span>
 
 <span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
@@ -107,17 +105,30 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    actualities: int, optional</span>
-<span class="sd">        The actual reality the cues pointed to; the correct response the participant is trying to get correct</span>
+<span class="sd">        The actual reality the cues pointed to. The correct response the participant is trying to get correct</span>
 <span class="sd">    cues: array of floats, optional</span>
 <span class="sd">        The cues used to guess the actualities</span>
+<span class="sd">    timeSteps: int, optional</span>
+<span class="sd">        If no provided cues, it is the number of timesteps for the generated set of cues. Default ``100``</span>
+<span class="sd">    numStim: int, optional</span>
+<span class="sd">        If no provided cues, it is the number of distinct stimuli for the generated set of cues. Default ``4``</span>
+<span class="sd">    correctProb: float in [0,1], optional</span>
+<span class="sd">        If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0.</span>
+<span class="sd">        The default is ``0.8``</span>
+<span class="sd">    correctProbs: list or array of floats in [0,1], optional</span>
+<span class="sd">        If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0 for</span>
+<span class="sd">        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStim//2) + [corrProb] * (numStim%2)``</span>
+<span class="sd">    rewardlessT: int, optional</span>
+<span class="sd">        If no actualities provided, it is the number of actualities at the end of the experiment that will have a</span>
+<span class="sd">        ``None`` reward. Default ``2*numStim``</span>
 <span class="sd">    plotArgs : dictionary, optional</span>
 <span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
 <span class="sd">        its documentation for more details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weather&quot;</span>
+    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probStim&quot;</span>
 
-<div class="viewcode-block" id="Weather.reset"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.reset"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new experiment instance</span>
 
@@ -128,32 +139,55 @@
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="n">defaultCues</span><span class="p">)</span>
-        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="n">defaultActualities</span><span class="p">)</span>
+        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,</span> <span class="p">{})</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cues</span> <span class="ow">in</span> <span class="n">cueSets</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cueSets</span><span class="p">[</span><span class="n">cues</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
+                <span class="n">numStim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="s2">&quot;Unknown cue sets&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cues</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
+            <span class="n">numStim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;timeSteps&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+            <span class="n">numStim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numStim&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">stim</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">numStim</span><span class="p">))</span>
+            <span class="n">stim</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">randint</span><span class="p">(</span><span class="n">numStim</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">stim</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">actualities</span> <span class="ow">in</span> <span class="n">actualityLists</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="n">actualities</span><span class="p">]</span>
+                <span class="n">rewardlessT</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="s2">&quot;Unknown actualities list&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualities</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
+            <span class="n">rewardlessT</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">corrProbBasis</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correctProb&quot;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+            <span class="n">corrProbDefault</span> <span class="o">=</span> <span class="p">[</span><span class="n">corrProbBasis</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">corrProbBasis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStim</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">corrProbBasis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStim</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">correctProbs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correctProbs&quot;</span><span class="p">,</span> <span class="n">corrProbDefault</span><span class="p">)</span>
+            <span class="n">rewardlessT</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rewardlessT&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">numStim</span><span class="p">)</span>
+            <span class="n">corrChoiceProb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">*</span> <span class="n">correctProbs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">correctChoice</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">corrChoiceProb</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">correctChoice</span><span class="p">[</span><span class="o">-</span><span class="n">rewardlessT</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">rewardlessT</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">correctChoice</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s2">&quot;Actualities&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">),</span>
-                           <span class="s2">&quot;Cues&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)}</span>
+                           <span class="s2">&quot;Cues&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">),</span>
+                           <span class="s2">&quot;numTimesteps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                           <span class="s2">&quot;numRewardless&quot;</span><span class="p">:</span> <span class="n">rewardlessT</span><span class="p">,</span>
+                           <span class="s2">&quot;numCues&quot;</span><span class="p">:</span> <span class="n">numStim</span><span class="p">}</span>
+
 
         <span class="c1"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -164,7 +198,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.next"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -190,7 +224,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="Weather.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -202,7 +236,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="Weather.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feedback to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -213,16 +247,16 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Weather.procede"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.procede"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Weather.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots and saves files containing all the relavent data for this</span>
+<span class="sd">        Plots and saves files containing all the relevant data for this</span>
 <span class="sd">        experiment run</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -232,20 +266,20 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Weather.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.Probstim.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
 
-<div class="viewcode-block" id="weatherStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherStimDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherStimDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="probstimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.probstimDirect">[docs]</a><span class="k">def</span> <span class="nf">probstimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the weather stimuli for models expecting just the event</span>
+<span class="sd">    Processes the stimuli for models expecting just the event</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    weatherStim : function</span>
+<span class="sd">    probstim : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the event and the</span>
 <span class="sd">        last action. The function returns the event</span>
 
@@ -259,97 +293,24 @@
 <span class="sd">    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">probstim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">observation</span>
 
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherStimDirect&quot;</span>
-    <span class="k">return</span> <span class="n">weatherStim</span></div>
+    <span class="n">probstim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probstimDirect&quot;</span>
+    <span class="k">return</span> <span class="n">probstim</span></div>
 
 
-<div class="viewcode-block" id="weatherStimAllAction"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherStimAllAction">[docs]</a><span class="k">def</span> <span class="nf">weatherStimAllAction</span><span class="p">(</span><span class="n">numActions</span><span class="p">):</span>
+<div class="viewcode-block" id="probrewDiff"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.probrewDiff">[docs]</a><span class="k">def</span> <span class="nf">probrewDiff</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the weather stimuli for models expecting feedback from all</span>
-<span class="sd">    possible actions</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    numActions : int</span>
-<span class="sd">        The number of actions the participant can perform. Assumes the lowest</span>
-<span class="sd">        valued action can be represented as 0</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    weatherStim : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last action. The event that is a list of {0,1} and action is {0,1}. The</span>
-<span class="sd">        function returns a array of length (len(event))*numActions.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decEtaSet</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from experiment.weather import weatherStimAllAction</span>
-<span class="sd">    &gt;&gt;&gt; stim = weatherStimAllAction(2)</span>
-<span class="sd">    &gt;&gt;&gt; stim(array([1, 0, 0, 1]), 0)</span>
-<span class="sd">    (array([1, 0, 0, 1, 0, 0, 0, 0]), array([ 1, 0, 0, 1, 1, 1, 1, 1]))</span>
-<span class="sd">    &gt;&gt;&gt; stim(array([1, 0, 0, 1]), 1)</span>
-<span class="sd">    (array([0, 0, 0, 0, 1, 0, 0, 1]), array([ 1, 1, 1, 1, 1, 0, 0, 1]))</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        For stimuli processing</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        observation :  None or list of ints or floats</span>
-<span class="sd">            The last observation that was recorded</span>
-<span class="sd">        action : int</span>
-<span class="sd">            The action chosen by the participant</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        activeStimuli : tuple of {0,1}</span>
-<span class="sd">        stimulus : tuple of floats</span>
-<span class="sd">            The events processed into a form to be used for updating the expectations</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">obsSize</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-
-        <span class="n">s</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
-
-        <span class="n">s</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
-        <span class="n">a</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
-
-        <span class="n">stimulus</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-        <span class="n">activeStimuli</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-
-        <span class="k">return</span> <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimulus</span>
-
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherStimAllAction&quot;</span>
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">weatherStim</span></div>
-
-
-<div class="viewcode-block" id="weatherRewDiff"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherRewDiff">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDiff</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the weather reward for models expecting reward corrections</span>
+<span class="sd">    Processes the reward for models expecting reward corrections</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    weatherRew : function</span>
+<span class="sd">    probrew : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the reward the</span>
 <span class="sd">        last action and the last stimuli. The function returns the reward.</span>
 
@@ -363,20 +324,20 @@
 <span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">probrew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">reward</span> <span class="o">==</span> <span class="n">action</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
 
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherRewDiff&quot;</span>
-    <span class="k">return</span> <span class="n">weatherRew</span></div>
+    <span class="n">probrew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probrewDiff&quot;</span>
+    <span class="k">return</span> <span class="n">probrew</span></div>
 
 
-<div class="viewcode-block" id="weatherRewDualCorrection"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherRewDualCorrection">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDualCorrection</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
+<div class="viewcode-block" id="probrewDualCorrection"><a class="viewcode-back" href="../../experiment.html#experiment.probStim.probrewDualCorrection">[docs]</a><span class="k">def</span> <span class="nf">probrewDualCorrection</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the decks reward for models expecting the reward correction</span>
+<span class="sd">    Processes the reward for models expecting the reward correction</span>
 <span class="sd">    from two possible actions.</span>
 
 <span class="sd">    Returns</span>
@@ -396,14 +357,14 @@
 <span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">probrew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
         <span class="n">rewardProc</span><span class="p">[</span><span class="n">reward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
 
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;deckRewDualInfo&quot;</span>
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">weatherRew</span></div>
+    <span class="n">probrew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probstimDualCorrection&quot;</span>
+    <span class="n">probrew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">probrew</span></div>
 </pre></div>
 
           </div>

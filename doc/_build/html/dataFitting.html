@@ -5,12 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>dataFitting module &#8212; PyDM 0.9 documentation</title>
-    
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,7 +21,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="data module" href="data.html" />
@@ -67,37 +64,24 @@
 </table>
 <dl class="function">
 <dt id="dataFitting.dataFitting">
-<code class="descclassname">dataFitting.</code><code class="descname">dataFitting</code><span class="sig-paren">(</span><em>models</em>, <em>outputting</em>, <em>data=None</em>, <em>fitter=None</em>, <em>partLabel=u’Name’</em>, <em>experiments=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataFitting.html#dataFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataFitting.dataFitting" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">dataFitting.</code><code class="descname">dataFitting</code><span class="sig-paren">(</span><em>models</em>, <em>outputting</em>, <em>data=None</em>, <em>fitter=None</em>, <em>partLabel=u'Name'</em>, <em>partModelVars={}</em>, <em>experiments=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dataFitting.html#dataFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataFitting.dataFitting" title="Permalink to this definition">¶</a></dt>
 <dd><p>A framework for fitting models to data for experiments, along with
 recording the plots and data associated with the best fits.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>models</strong> : models.models</p>
-<blockquote>
-<div><p>A model factory generating each of the different models being considered</p>
-</div></blockquote>
-<p><strong>outputting</strong> : outputting.outputting</p>
-<blockquote>
-<div><p>An outputting class instance</p>
-</div></blockquote>
-<p><strong>data</strong> : list of dictionaries</p>
-<blockquote>
-<div><p>Each dictionary should all contain the keys associated with the fitting</p>
-</div></blockquote>
-<p><strong>fitter</strong> : fitting.fit.fit</p>
-<blockquote>
-<div><p>A fitting class instance</p>
-</div></blockquote>
-<p><strong>partLabel</strong> : basestring, optional</p>
-<blockquote>
-<div><p>The key (label) used to identify each participant. Default <code class="docutils literal"><span class="pre">Name</span></code></p>
-</div></blockquote>
-<p><strong>experiments</strong> : experiments.experiments, optional</p>
-<blockquote class="last">
-<div><p>An experiment factory generating each of the different experiments being considered. Default <code class="docutils literal"><span class="pre">None</span></code></p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>models</strong> (<a class="reference internal" href="models.html#models.models" title="models.models"><em>models.models</em></a>) – A model factory generating each of the different models being considered</li>
+<li><strong>outputting</strong> (<a class="reference internal" href="outputting.html#outputting.outputting" title="outputting.outputting"><em>outputting.outputting</em></a>) – An outputting class instance</li>
+<li><strong>data</strong> (<em>list of dictionaries</em>) – Each dictionary should all contain the keys associated with the fitting</li>
+<li><strong>fitter</strong> (<a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><em>fitting.fit.fit</em></a>) – A fitting class instance</li>
+<li><strong>partLabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#basestring" title="(in Python v2.7)"><em>basestring</em></a><em>, </em><em>optional</em>) – The key (label) used to identify each participant. Default <code class="docutils literal"><span class="pre">Name</span></code></li>
+<li><strong>partModelVars</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary of model settings whose values should vary from participant to participant based on the
+values found in the imported participant data files. The key is the label given in the participant data file,
+as a string, and the value is the associated label in the model, also as a string. Default <code class="docutils literal"><span class="pre">{}</span></code></li>
+<li><strong>experiments</strong> (<a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><em>experiments.experiments</em></a><em>, </em><em>optional</em>) – An experiment factory generating each of the different experiments being considered. Default <code class="docutils literal"><span class="pre">None</span></code></li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -105,15 +89,15 @@ recording the plots and data associated with the best fits.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><code class="xref py py-obj docutils literal"><span class="pre">experiments.experiments</span></code></a></dt>
+<dt><a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><code class="xref py py-func docutils literal"><span class="pre">experiments.experiments()</span></code></a></dt>
 <dd>The experiments factory</dd>
-<dt><a class="reference internal" href="models.html#models.models" title="models.models"><code class="xref py py-obj docutils literal"><span class="pre">models.models</span></code></a></dt>
+<dt><a class="reference internal" href="models.html#models.models" title="models.models"><code class="xref py py-func docutils literal"><span class="pre">models.models()</span></code></a></dt>
 <dd>The model factory</dd>
-<dt><a class="reference internal" href="outputting.html#outputting.outputting" title="outputting.outputting"><code class="xref py py-obj docutils literal"><span class="pre">outputting.outputting</span></code></a></dt>
+<dt><a class="reference internal" href="outputting.html#outputting.outputting" title="outputting.outputting"><code class="xref py py-func docutils literal"><span class="pre">outputting.outputting()</span></code></a></dt>
 <dd>The outputting class</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-obj docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-func docutils literal"><span class="pre">fitting.fit.fit()</span></code></a></dt>
 <dd>Abstract class for fitting data</dd>
-<dt><a class="reference internal" href="data.html#data.data" title="data.data"><code class="xref py py-obj docutils literal"><span class="pre">data.data</span></code></a></dt>
+<dt><a class="reference internal" href="data.html#data.data" title="data.data"><code class="xref py py-func docutils literal"><span class="pre">data.data()</span></code></a></dt>
 <dd>Data import function</dd>
 </dl>
 </div>
@@ -174,7 +158,7 @@ recording the plots and data associated with the best fits.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

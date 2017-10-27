@@ -5,12 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>models module &#8212; PyDM 0.9 documentation</title>
-    
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -24,7 +21,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="model package" href="model.html" />
@@ -74,25 +71,18 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : a list of tuples of the form (model, parameters, modifiers)</p>
-<blockquote>
-<div><p>Each tuple is a model package, describing a model and
-the different parameter combinations that will be tried.</p>
-</div></blockquote>
-<p><strong>args tuples components</strong></p>
-<p><strong>model</strong> :  model.model.model</p>
-<p><strong>parameters</strong> : dictionary containing floats or lists of floats</p>
-<blockquote>
-<div><p>Parameters are the variables that you are or are likely to change across 
-model instances. When a parameter contains a list, an instance of the 
-model will be created for every combination of this parameter with 
-all the others.</p>
-</div></blockquote>
-<p><strong>modifiers</strong> : dictionary of float, string or binary valued elements</p>
-<blockquote class="last">
-<div><p>These contain all the the model modifiers that define the version 
-of the model being studied.</p>
-</div></blockquote>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<em>a list of tuples of the form</em><em> (</em><a class="reference internal" href="model.html#module-model" title="model"><em>model</em></a><em>, </em><em>parameters</em><em>, </em><em>modifiers</em><em>)</em>) – Each tuple is a model package, describing a model and
+the different parameter combinations that will be tried.</li>
+<li><strong>tuples components</strong> (<em>args</em>) – </li>
+<li><strong>model</strong> (<em>model.model.model</em>) – </li>
+<li><strong>parameters</strong> (<em>dictionary containing floats</em><em> or </em><em>lists of floats</em>) – Parameters are the variables that you are or are likely to change across
+model instances. When a parameter contains a list, an instance of the
+model will be created for every combination of this parameter with
+all the others.</li>
+<li><strong>modifiers</strong> (<em>dictionary of float</em><em>, </em><a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em> or </em><em>binary valued elements</em>) – These contain all the the model modifiers that define the version
+of the model being studied.</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -101,7 +91,7 @@ of the model being studied.</p>
 <dt id="models.models.iterFitting">
 <code class="descname">iterFitting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#models.iterFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models.iterFitting" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields a list containing a model object and parameters to initialise them
-If a model variable was introduced with multiple values a value will 
+If a model variable was introduced with multiple values a value will
 be taken half way between the max and min.</p>
 <p>This is expected to be used only for introducing models to the fitting
 functions in dataFitting.</p>
@@ -109,15 +99,11 @@ functions in dataFitting.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> : model.model.model</p>
-<blockquote>
-<div><p>The model to be initialised</p>
-</div></blockquote>
-<p><strong>initialVars</strong> : ordered dictionary of floats</p>
-<blockquote>
-<div><p>The model instance parameters</p>
-</div></blockquote>
-<p class="last"><strong>otherArgs</strong> : dictionary of floats, strings and binary values</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>model</strong> (<em>model.model.model</em>) – The model to be initialised</li>
+<li><strong>initialVars</strong> (<em>ordered dictionary of floats</em>) – The model instance parameters</li>
+<li><strong>otherArgs</strong> (<em>dictionary of floats, strings and binary values</em>)</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -132,7 +118,9 @@ functions in dataFitting.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>models</strong> : list of model.model.model instances</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>models</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of model.model.model instances</td>
 </tr>
 </tbody>
 </table>
@@ -142,7 +130,7 @@ functions in dataFitting.</p>
 <dt id="models.models.reset">
 <code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/models.html#models.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#models.models.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the generator of models</p>
-<p>Once this is reset the iterator will produce model instances from the 
+<p>Once this is reset the iterator will produce model instances from the
 beginning again</p>
 </dd></dl>
 
@@ -203,7 +191,7 @@ beginning again</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>

@@ -5,12 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>utils &#8212; PyDM 0.9 documentation</title>
-    
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -24,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head>
@@ -791,6 +788,80 @@
 
     <span class="k">return</span> <span class="n">convolution</span></div>
 
+<div class="viewcode-block" id="runningMean"><a class="viewcode-back" href="../utils.html#utils.runningMean">[docs]</a><span class="k">def</span> <span class="nf">runningMean</span><span class="p">(</span><span class="n">oldMean</span><span class="p">,</span> <span class="n">newValue</span><span class="p">,</span> <span class="n">numValues</span><span class="p">):</span>
+    <span class="c1"># type: (float, float, int) -&gt; float</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    oldMean : float</span>
+<span class="sd">        The old running average mean</span>
+<span class="sd">    newValue : float</span>
+<span class="sd">        The new value to be added to the mean</span>
+<span class="sd">    numValues : int</span>
+<span class="sd">        The number of values in the new running mean once this value is included</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newMean : float</span>
+<span class="sd">        The new running average mean</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from</span>
+<span class="sd">    https://www.johndcook.com/blog/standard_deviation/</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; runningMean(1, 2, 2)</span>
+<span class="sd">    1.5</span>
+<span class="sd">    &gt;&gt;&gt; runningMean(1.5, 3, 3)</span>
+<span class="sd">    2.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">newMean</span> <span class="o">=</span> <span class="n">oldMean</span> <span class="o">+</span> <span class="p">(</span><span class="n">newValue</span> <span class="o">-</span> <span class="n">oldMean</span><span class="p">)</span> <span class="o">/</span> <span class="n">numValues</span>
+
+    <span class="k">return</span> <span class="n">newMean</span></div>
+
+
+<div class="viewcode-block" id="runningSTD"><a class="viewcode-back" href="../utils.html#utils.runningSTD">[docs]</a><span class="k">def</span> <span class="nf">runningSTD</span><span class="p">(</span><span class="n">oldSTD</span><span class="p">,</span> <span class="n">oldMean</span><span class="p">,</span> <span class="n">newMean</span><span class="p">,</span> <span class="n">newValue</span><span class="p">):</span>
+    <span class="c1"># type: (float, float, float, float) -&gt; float</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    oldSTD : float</span>
+<span class="sd">        The old running average standard deviation</span>
+<span class="sd">    oldMean : float</span>
+<span class="sd">        The old running average mean</span>
+<span class="sd">    newMean : float</span>
+<span class="sd">        The new running average mean</span>
+<span class="sd">    newValue : float</span>
+<span class="sd">        The new value to be added to the mean</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    newSTD : float</span>
+<span class="sd">        The new running average standard deviation</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from</span>
+<span class="sd">    https://www.johndcook.com/blog/standard_deviation/</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; runningSTD(0, 1, 1.5, 2)</span>
+<span class="sd">    0.5</span>
+
+<span class="sd">    &gt;&gt;&gt; runningSTD(0.5, 1.5, 2.0, 3)</span>
+<span class="sd">    2.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">newSTD</span> <span class="o">=</span> <span class="n">oldSTD</span> <span class="o">+</span> <span class="p">(</span><span class="n">newValue</span> <span class="o">-</span> <span class="n">oldMean</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">newValue</span> <span class="o">-</span> <span class="n">newMean</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">newSTD</span></div>
+
 <span class="c1">#if __name__ == &#39;__main__&#39;:</span>
 <span class="c1">#    from timeit import timeit</span>
 <span class="c1">#    from numpy import fromfunction</span>
@@ -841,7 +912,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
     </div>
   </body>
 </html>
