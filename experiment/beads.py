@@ -243,7 +243,7 @@ def generateSequence(numBeads, oneProb, switchProb):
     Designed to generate a sequence of beads with a probability of switching
     jar at any time.
 
-    Properties
+    Parameters
     ----------
     numBeads : int
         The number of beads in the sequence

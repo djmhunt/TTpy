@@ -37,7 +37,6 @@ def simulation(experiments, models, outputting):
             for model in modelSet:
 
                 exp = experiments.create(expNum)
-                model.setsimID(simID)
 
                 desc = outputting.recordExperimentParams(exp.params())
                 desc.extend(outputting.recordModelParams(model.params()))
@@ -54,21 +53,21 @@ def simulation(experiments, models, outputting):
                     model.feedback(response)
                     exp.procede()
 
+                model.setsimID(simID)
+
                 message = "Experiment completed"
                 logger.debug(message)
 
                 outputting.recordSim(exp.outputEvolution(), model.outputEvolution())
 
-                outputting.plotModel(model.plot())
+                #outputting.plotModel(model.plot())
 
                 simID += 1
 
-            outputting.plotModelSet(model.plotSet())
+            #outputting.plotModelSet(model.plotSet())
 
-        outputting.plotExperiment(exp.plot())
+        #outputting.plotExperiment(exp.plot())
 
-    outputting.plotExperimentSet(exp.plotSet())
-
-    outputting.simLog()
+    #outputting.plotExperimentSet(exp.plotSet())
 
     outputting.end()

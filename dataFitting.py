@@ -111,14 +111,12 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
                                             fittingData,
                                             expData=outputEvolution)
 
-            outputting.plotModel(modelFitted.plot())
+            #outputting.plotModel(modelFitted.plot())
 
-        outputting.plotModelSet(modelFitted.plotSet())
+        #outputting.plotModelSet(modelFitted.plotSet())
 
-    if exp is not None:
-        outputting.plotExperiment(exp.plot())
-
-    outputting.simLog()
+    #if exp is not None:
+        #outputting.plotExperiment(exp.plot())
 
     outputting.end()
 

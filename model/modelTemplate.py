@@ -349,7 +349,6 @@ class model(object):
     def choiceReflection(self):
         """
         Allows the model to update its state once an action has been chosen.
-
         """
 
     def actStimMerge(self, actStimuliParam, stimFilter=1):
