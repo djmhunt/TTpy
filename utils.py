@@ -10,7 +10,7 @@ import logging
 import sys
 import collections
 
-from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange
+from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray
 #from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
@@ -740,6 +740,7 @@ def movingaverage(data, windowSize, edgeCorrection=False):
 
     return convolution
 
+
 def runningMean(oldMean, newValue, numValues):
     # type: (float, float, int) -> float
     """
@@ -775,6 +776,75 @@ def runningMean(oldMean, newValue, numValues):
 
     return newMean
 
+
+def runningAverage(data):
+    # type: (list) -> ndarray
+    """
+    An accumulating mean
+
+    Parameters
+    ----------
+    data : list or 1-D array of floats
+        The set of values to be averaged
+
+    Returns
+    -------
+    results : ndArray of length data
+        The values from the moving average
+
+    Examples
+    --------
+    >>> runningAverage([1,2,3,4])
+    array([ 1. ,  1.5,  2. ,  2.5])
+    """
+
+    count = 2
+    results = ones(len(data))
+    i = data[0]
+    results[0] = i
+    for n in data[1:]:
+        i = runningMean(i, n, count)
+        results[count-1] = i
+        count += 1
+
+    return results
+
+
+def discountAverage(data, discount):
+    # type: (list, float) -> ndarray
+    """
+    An accumulating mean
+
+    Parameters
+    ----------
+    data : list or 1-D array of floats
+        The set of values to be averaged
+    discount : float
+        The value by which each previous value is discounted
+
+    Returns
+    -------
+    results : ndArray of length data
+        The values from the moving average
+
+    Examples
+    --------
+    >>> discountAverage([1, 2, 3, 4], 1)
+    array([ 1,  1.5,  2,  2.5])
+
+    >>> discountAverage([1, 2, 3, 4], 0.25)
+    array([ 1,  1.8,  2.71428571,  3.68235294])
+
+    """
+    counter = arange(0, len(data), 1)
+    weights = discount ** counter
+    results = ones(len(data))
+    for c in counter:
+        chosenWeights = weights[c::-1]
+        weighted = data[:c+1] * chosenWeights
+        results[c] = sum(weighted) / sum(chosenWeights)
+
+    return results
 
 def runningSTD(oldSTD, oldMean, newMean, newValue):
     # type: (float, float, float, float) -> float
