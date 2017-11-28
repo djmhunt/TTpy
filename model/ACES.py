@@ -2,49 +2,37 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the qLearn model and the choice autocorrelation equation in the paper
-                Trial-by-trial data analysis using computational models.
-                Daw, N. D. (2011).
-                Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–38).
-                http://doi.org/10.1093/acprof:oso/9780199600434.003.0001
+:Reference: Based on ideas we had.
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
+from numpy import ones, array, sum, shape, ndarray, max
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.discrete import decProbThresh
+from model.decision.binary import decRandom
 from utils import callableDetailsString
 
 
-class qLearnCorr(model):
+class ACES(model):
 
-    """The q-Learning algorithm
+    """A basic, complete actor-critic model with decision making based on qLearnE
 
     Attributes
     ----------
     Name : string
         The name of the class used when recording what has been used.
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
 
     Parameters
     ----------
     alpha : float, optional
         Learning rate parameter
-    beta : float, optional
-        Sensitivity parameter for probabilities
-    kappa : float, optional
-        The autocorelation parameter for which positive values promote sticking and negative values promote alternation
-    invBeta : float, optional
-        Inverse of sensitivity parameter.
-        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
+    epsilon : float, optional
+        Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -76,7 +64,7 @@ class qLearnCorr(model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
-    Name = "qLearnCorr"
+    Name = "ACES"
 
     def __init__(self, **kwargs):
 
@@ -84,24 +72,24 @@ class qLearnCorr(model):
 
         # A record of the kwarg keys, the variable they create and their default value
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.kappa = kwargRemains.pop('kappa', 0.2)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.epsilon = kwargRemains.pop('epsilon', 0.1)
+        self.expectations = kwargRemains.pop('expect', 1)
+        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decProbThresh(kwargRemains.pop('expResp', (0,1)), eta=kwargRemains.pop('eta', 0.8)))
+        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
-        self.parameters["kappa"] = self.kappa
-        self.parameters["expectation"] = self.expectations.copy()
+        self.parameters["epsilon"] = self.epsilon
+        self.parameters["expectation"] = self.expectations#.copy()
+        self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
+        self.recActorExpectations = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -114,6 +102,7 @@ class qLearnCorr(model):
         """
 
         results = self.standardResultOutput()
+        results["ActorExpectations"] = array(self.recActorExpectations).T
 
         return results
 
@@ -124,6 +113,7 @@ class qLearnCorr(model):
         """
 
         self.storeStandardResults()
+        self.recActorExpectations.append(self.actorExpectations.flatten())
 
     def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -147,12 +137,8 @@ class qLearnCorr(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        # I concede that round the way the
+        actionExpectations = array([self.expectations] * self.numActions)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -190,20 +176,21 @@ class qLearnCorr(model):
         # Calculate the new probabilities
         if self.probActions:
             # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
-            self.probabilities = self.calcProbabilities(actExpectations, action)
+            actExpectations = self.actStimMerge(self.actorExpectations, stimuliFilter)
+            self.probabilities = self.calcProbabilities(actExpectations)
         else:
-            self.probabilities = self.calcProbabilities(self.expectations, action)
+            self.probabilities = self.calcProbabilities(self.actorExpectations)
 
     def _newExpect(self, delta, action, stimuliFilter):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuliFilter
+        self.expectations = self.expectations + self.alpha*delta
 
-        newExpectations = newExpectations * (newExpectations >=0)
+        newActorExpectations = self.actorExpectations[action] + delta * stimuliFilter
+        newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
+        self.actorExpectations[action] = newActorExpectations
 
-        self.expectations[action] = newExpectations
-
-    def calcProbabilities(self, actionValues, action):
+    def calcProbabilities(self, actionValues):
+        # type: (Iterable) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -216,24 +203,20 @@ class qLearnCorr(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        lastAction = zeros(shape(actionValues))
-        lastAction[action] = 1
 
-        numerator = exp(self.beta * (actionValues + self.kappa * lastAction))
-        denominator = sum(numerator)
+        #lastAction = -ones(shape(actionValues))
+        #lastAction[self.lastAction] = 1
 
-        probArray = numerator / denominator
+        cbest = actionValues == max(actionValues)
+        deltaEpsilon = self.epsilon * (1 / self.numActions)
+        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
-#        inftest = isinf(numerator)
-#        if inftest.any():
-#            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
-#
-#            logger = logging.getLogger('qLearn')
-#            message = "Overflow in calculating the prob with expectation "
-#            message += str(expectation)
-#            message += " \n Returning the prob: " + str(probs)
-#            logger.warning(message)
+        probArray = p
+
+        #change = self.kappa * lastAction
+        #probArray = p + (1 - p) * change * (change > 0) + p * change * (change < 0)
+        # probArray = p + p * (1 - p) * change
 
         return probArray
 
@@ -248,7 +231,7 @@ class qLearnCorr(model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards, self.currAction)
+        probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
 

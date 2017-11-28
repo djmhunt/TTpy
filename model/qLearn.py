@@ -184,7 +184,7 @@ class qLearn(model):
     def updateModel(self, delta, action, stimuliFilter):
 
         # Find the new activities
-        self._newAct(delta, action, stimuliFilter)
+        self._newExpect(delta, action, stimuliFilter)
 
         # Calculate the new probabilities
         if self.probActions:
@@ -194,11 +194,11 @@ class qLearn(model):
         else:
             self.probabilities = self.calcProbabilities(self.expectations)
 
-    def _newAct(self, delta, action, stimuliFilter):
+    def _newExpect(self, delta, action, stimuliFilter):
 
         newExpectations = self.expectations[action] + self.alpha*delta*stimuliFilter
 
-        newExpectations = newExpectations * (newExpectations >=0)
+        newExpectations = newExpectations * (newExpectations >= 0)
 
         self.expectations[action] = newExpectations
 
