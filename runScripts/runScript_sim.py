@@ -5,15 +5,14 @@
 Notes
 -----
 This is a script with all the components for running an investigation. I would
-recommend making a copy of this for each sucessful investigation and storing it
+recommend making a copy of this for each successful investigation and storing it
  with the data.
 """
 ### Import useful functions
-# Make devision floating point by default
-from __future__ import division
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-sys.path.append("../") #So code can be found from the main folder
+sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
 from numpy import array, concatenate, arange
@@ -22,49 +21,55 @@ from numpy import array, concatenate, arange
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckStimDualInfo, deckStimDirect
-from experiment.beads import Beads, beadStimDirect, beadStimDualDirect, beadStimDualInfo
-from experiment.pavlov import Pavlov, pavlovStimTemporal
-from experiment.probSelect import probSelect, probSelectStimDirect
+from experiment.decks import Decks, deckRewDirect, deckStimDirect
 
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta
-#The models
-from model.BP import BP
-from model.EP import EP
-from model.MS import MS
-from model.MS_rev import MS_rev
+from model.decision.binary import decEta, decEtaSets, decSingle, decRandom
+from model.decision.discrete import decMaxProb, decProbThresh
+# The model
 from model.qLearn import qLearn
-from model.qLearn2 import qLearn2
-from model.OpAL import OpAL
-from model.RVPM import RVPM
 
 from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
 expParams = {}
-expExtraParams = {}
-expSets = experiments((Decks,expParams,expExtraParams))
+expExtraParams = {'discard': False}
+expSets = experiments((Decks, expParams, expExtraParams))
 
-eta = 0.0
-alphaSet = arange(0.1,0.5,0.1)
-betaSet = arange(0.2,5,0.2)
 
-parameters = {  'alpha':alphaSet,
-                'beta':betaSet}
-paramExtras = {'eta':eta,
-               'stimFunc':deckStimDirect(),
-               'decFunc':decEta(eta = eta)} #For qLearn decks
-modelSet = models((qLearn,parameters,paramExtras))
+numActions = 2
+numCues = 1
+probActions = False
 
-outputOptions = {'simLabel': 'qLearn_decksSim',
+repetitions = 30
+alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
+betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+
+parameters = {'alpha': alphaSet,
+              'beta': betaSet}
+paramExtras = {'numActions': numActions,
+               'numCues': numCues,
+               'probActions': probActions,
+               'expect': ones((numActions, numCues)) * 5,
+               'prior': ones(numActions) / numActions,
+               'stimFunc': deckStimDirect(),
+               'rewFunc': deckRewDirect(),
+               'decFunc': decRandom()}
+
+modelSet = models((qLearn, parameters, paramExtras))
+
+outputOptions = {'simLabel': 'qLearn_decksSimSet',
                  'save': True,
                  'saveScript': True,
-                 'pickleData': False,
-                 'silent': False,
-                 'npErrResp' : 'log'}#'raise','log'
+                 'pickleData': True,
+                 'simRun': True,
+                 'saveFittingProgress': False,
+                 'saveFigures': False,
+                 'saveOneFile': False,
+                 'silent': True,
+                 'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
 ### For simulating experiments
@@ -72,3 +77,4 @@ output = outputting(**outputOptions)
 from simulation import simulation
 
 simulation(expSets, modelSet, output)
+
