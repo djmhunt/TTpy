@@ -38,9 +38,7 @@ def simulation(experiments, models, outputting):
 
                 exp = experiments.create(expNum)
 
-                desc = outputting.recordExperimentParams(exp.params())
-                desc.extend(outputting.recordModelParams(model.params()))
-                outputting.logSimParams(*desc)
+                outputting.logSimParams(exp.params(), model.params(), simID=simID)
 
                 message = "Beginning experiment"
                 logger.debug(message)

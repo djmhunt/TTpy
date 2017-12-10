@@ -26,7 +26,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
         A fitting class instance
     partLabel : basestring, optional
         The key (label) used to identify each participant. Default ``Name``
-    partModelVars : dict, optional
+    partModelVars : dict of string, optional
         A dictionary of model settings whose values should vary from participant to participant based on the
         values found in the imported participant data files. The key is the label given in the participant data file,
         as a string, and the value is the associated label in the model, also as a string. Default ``{}``
@@ -46,18 +46,19 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
     if not (isinstance(data, list)): #and isinstance(fitter, fit)):
 
         logger = outputting.getLogger('dataFitting')
-
         message = "Data not recognised. "
         logger.warning(message)
-
         return
 
-    logger = outputting.getLogger('Overview')
+    else:
+        logger = outputting.getLogger('Overview')
 
-    outputting.recordFittingParams(fitter.info())
+    outputting.logFittingParams(fitter.info())
 
     message = "Beginning the data fitting"
     logger.info(message)
+
+    modelID = 0
 
     for modelInfo in models.iterFitting():
 
@@ -82,8 +83,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
                 partName = partName[0]
 
             for k, v in partModelVars.iteritems():
-                val = participant[k]
-                modelOtherArgs[v] = val
+                modelOtherArgs[v] = participant[k]
 
             # Find the best model values from those proposed
 
@@ -96,23 +96,25 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
             logger.debug(message)
 
             if exp is not None:
-                outputting.recordExperimentParams(exp.params(), simID=partName)
-                outputEvolution = exp.outputEvolution()
+                expEvolution = exp.outputEvolution()
             else:
-                outputEvolution = None
+                expEvolution = None
 
-            outputting.recordModelParams(modelFitted.params(), simID=partName)
             outputting.logModFittedParams(modelInitParamVars, modelFitted.params(), fitQuality, partName)
 
             outputting.recordParticipantFit(participant,
                                             partName,
                                             modelFitted.outputEvolution(),
+                                            str(modelID),
                                             fitQuality,
                                             fittingData,
-                                            expData=outputEvolution)
+                                            partModelVars,
+                                            expData=expEvolution)
+
 
             #outputting.plotModel(modelFitted.plot())
 
+        modelID += 1
         #outputting.plotModelSet(modelFitted.plotSet())
 
     #if exp is not None:

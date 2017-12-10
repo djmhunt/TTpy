@@ -60,17 +60,11 @@ class outputting(object):
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
     saveFigures : bool, optional
         Defines if figures are produced or not. Default is ``True``
-    saveOneFile : bool, optional
-        In the Output class where the data comes to rest. One File to store them all, One File to find them, 
-        One File to bring them all and in the darkness bind them. In the Output class where the data comes to rest.
-        Will actually produce a full file and an abridged summary, both in xlsx and csv formats. Beware of memory issues
-        as this is currently set up to keep everything in memory until it writes it all out at the end. Setting this as 
-        ``False`` will break the figure plotting. Default is ``False``
 
 
     See Also
     --------
-    date : Identifies todays date
+    date : Identifies today's date
     saving : Sets up the log file and folder to save results
     fancyLogger : Log creator
     numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
@@ -89,30 +83,12 @@ class outputting(object):
         self.logLevel = kwargs.pop("logLevel", logging.INFO)  # logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
         self.npErrResp = kwargs.pop("npErrResp", 'log')
-        self.saveOneFile = kwargs.pop("saveOneFile", False)
 
         # Initialise the stores of information
-        if self.saveOneFile:
-            self.expStore = []
-            self.modelStore = []
-            self.partStore = []
-            self.fitQualStore = []
-        self.expParamStore = []
-        self.expLabelStore = []
-        self.expGroupNum = []
-        self.modelParamStore = []
-        self.modelLabelStore = []
-        self.modelGroupNum = []
+        self.participantFit = defaultdict(list)
 
         self.fitInfo = None
         self.outputFileCounts = defaultdict(int)
-
-        self.modelSetSize = 0
-        self.modelsSize = 0
-        self.expSetSize = 0
-        self.modelSetNum = 0
-        self.modelSetsNum = 0
-        self.expSetNum = 0
 
         self.lastExpLabelID = 0
         self.lastModelLabelID = 0
@@ -134,6 +110,11 @@ class outputting(object):
         To run once everything has been completed. Displays the figures if not
         silent.
         """
+
+        if len(self.participantFit) > 0:
+            participantFit = pd.DataFrame.from_dict(self.participantFit)
+            outputFile = self.newFile("participantFits", 'csv')
+            participantFit.to_csv(outputFile)
 
         if not self.silent:
             plt.show()
@@ -340,37 +321,34 @@ class outputting(object):
         if logFile:
             logging.info("The log you are reading was written to " + str(logFile))
 
-    def logSimParams(self, expDesc, expPltLabel, modelDesc, modelPltLabel):
+    def logSimParams(self, expParams, modelParams, simID):
         """
         Writes to the log the description and the label of the experiment and model
 
         Parameters
         ----------
-        expDesc : string
-            The description to be logged of the experiment
-        expPltLabel : string
-            The label used for this experiment
-        modelDesc : string
-            The description to be logged of the model
-        modelPltLabel : string
-            The label used for this model
+        expParams : dict
+            The experiment parameters
+        modelParams : dict
+            The model parameters
+        simID : string
+            The identifier for each simulation.
 
         See Also
         --------
         recordSimParams : Records these parameters for later use
         """
 
-        message = "Simulation contains the experiment '" + expDesc + "'"
-        if expDesc == expPltLabel:
-            message += ". "
-        else:
-            message += " output with the label '" + expPltLabel + "'. "
+        expDesc = expParams.pop('Name') + ": "
+        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems()]
+        expDesc += ", ".join(expDescriptors)
 
-        message += "The model used is '" + modelDesc + "'"
-        if modelDesc == modelPltLabel:
-            message += "."
-        else:
-            message += " output with the label '" + modelPltLabel + "'."
+        modelDesc = modelParams.pop('Name') + ": "
+        modelDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in modelParams.iteritems()]
+        modelDesc += ", ".join(modelDescriptors)
+
+        message = "Simulation " + simID + " contains the experiment '" + expDesc + "'."
+        message += "The model used is '" + modelDesc + "'."
         self.loggerSim.info(message)
 
     def logSimFittingParams(self, modelName, modelFitVars, modelOtherArgs, expParams={}):
@@ -433,228 +411,7 @@ class outputting(object):
 
         self.loggerSim.info(message)
 
-    ### Data collection
-
-    def recordExperimentParams(self, expParams, simID=None):
-        """
-        Record the model and experiment parameters
-
-        Parameters
-        ----------
-        expParams : dict
-            The experiment parameters
-        simID : int or string, optional
-            The identifier for each simulation. Default ``None``
-
-        Returns
-        -------
-        expDesc : string
-            The description to be logged of the experiment
-        expPltLabel : string
-            The label used for this experiment
-
-        See Also
-        --------
-        paramIdentifier, logSimParams
-        """
-
-        expDesc, expPltLabel, lastExpLabelID = self.paramIdentifier(expParams, self.lastExpLabelID, simID=simID)
-
-        self.lastExpLabelID = lastExpLabelID
-
-        self.expLabelStore.append(expPltLabel)
-        self.expParamStore.append(expParams)
-
-        return [expDesc, expPltLabel]
-
-    def recordModelParams(self, modelParams, simID=None):
-        """
-        Record the model and experiment parameters
-
-        Parameters
-        ----------
-        modelParams : dict
-            The model parameters
-        simID : int or string, optional
-            The identifier for each simulation. Default ``None``
-
-        Returns
-        -------
-        modelDesc : string
-            The description to be logged of the model
-        modelPltLabel : string
-            The label used for this model
-
-        See Also
-        --------
-        paramIdentifier, logSimParams
-        """
-
-        modelDesc, modelPltLabel, lastModelLabelID = self.paramIdentifier(modelParams, self.lastModelLabelID, simID=simID)
-
-        self.lastModelLabelID = lastModelLabelID
-
-        self.modelLabelStore.append(modelPltLabel)
-        self.modelParamStore.append(modelParams)
-
-        return [modelDesc, modelPltLabel]
-
-    def paramIdentifier(self, params, lastLabelID, simID=None):
-        """
-        Processes the parameters of an experiment or model
-
-        If the description is too long to make a plot label then an ID is generated
-
-        Parameters
-        ----------
-        params : dict
-            The parameters of the experiment or model. One is expected to be ``Name``
-        lastLabelID: int
-            The last ID number used
-        simID : int or string, optional
-            The identifier for each simulation. Default ``None``
-
-        Returns
-        -------
-        descriptor : string
-            The generated description of the model or experiment
-        plotLabel : string
-            The label to be used for this in plots
-        lastLabelID : int
-            The last label ID used
-        """
-
-        name = params['Name'] + ": "
-
-        descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in params.iteritems() if k != 'Name']
-        descriptor = name + ", ".join(descriptors)
-
-        if simID is not None:
-            plotLabel = str(simID)
-        elif len(descriptor) > self.maxLabelLength:
-            plotLabel = name + "Run " + str(lastLabelID)
-            lastLabelID += 1
-        else:
-            plotLabel = descriptor
-
-        return descriptor, plotLabel, lastLabelID
-
-    def recordSim(self, expData, modelData):
-        """
-        Records the data from an experiment-model run. Creates a pickled version
-
-        Parameters
-        ----------
-        expData : dict
-            The data from the experiment
-        modelData : dict
-            The data from the model
-
-        See Also
-        --------
-        pickleLog : records the picked data
-        """
-
-        message = "Beginning simulation output processing"
-        self.logger.info(message)
-
-        label = "_Exp-" + str(self.expSetNum) + "_Model-" + str(self.modelSetNum) + "'" + str(self.modelSetSize)
-
-        if self.outputFolder:
-
-            message = "Store data for simulation " + str(self.modelSetSize)
-            self.logger.info(message)
-
-            if self.simRun:
-                self._simModelLog(modelData)
-
-            if self.pickleData:
-                self.pickleLog(expData, "_expData" + label)
-                self.pickleLog(modelData, "_modelData" + label)
-
-        if self.saveOneFile:
-            self.expStore.append(expData)
-            self.modelStore.append(modelData)
-
-        self.expGroupNum.append(self.expSetNum)
-        self.modelGroupNum.append(self.modelSetNum)
-
-        self.expSetSize += 1
-        self.modelsSize += 1
-        self.modelSetSize += 1
-
-    def recordParticipantFit(self, participant, partName, modelData, fitQuality=None, fittingData=None, expData=None):
-        """
-        Record the data relevant to the participant fitting
-
-        Parameters
-        ----------
-        participant : dict
-            The participant data
-        partName : int or string
-            The identifier for each participant
-        modelData : dict
-            The data from the model
-        fitQuality : float, optional
-            The quality of the fit as provided by the fitting function
-            Default is None
-        fittingData : dict, optional
-            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
-            tested, in the order they were tested, and a list of the fit qualities of these parameters.. Default ``None``
-        expData : dict, optional
-            The data from the experiment. Default ``None``
-
-        See Also
-        --------
-        pickleLog : records the picked data
-        """
-
-        partNameStr = str(partName)
-
-        message = "Recording participant " + partNameStr + " model fit"
-        self.logger.info(message)
-
-        label = "_Model-" + str(self.modelSetNum) + "_" + str(self.modelSetSize) + "_Part-" + partNameStr
-
-        participantName = "Participant " + partNameStr
-
-        participant.setdefault("Name", participantName)
-        participant.setdefault("assignedName", participantName)
-        fittingData.setdefault("Name", participantName)
-
-        if self.saveOneFile:
-            self.expStore.append(expData)
-            self.modelStore.append(modelData)
-            self.partStore.append(participant)
-            self.fitQualStore.append(fitQuality)
-
-        self.expGroupNum.append(self.expSetNum)
-        self.modelGroupNum.append(self.modelSetNum)
-
-        if self.outputFolder:
-
-            message = "Store data for " + participantName
-            self.logger.info(message)
-
-            if self.saveFigures:
-                ep = plotFitting(participant, modelData, fitQuality)
-                self.savePlots(ep)
-
-            if self.saveFittingProgress:
-                self.recordFittingSequence(fittingData, label, participant)
-
-            if self.pickleData:
-                if expData is not None:
-                    self.pickleLog(expData, "_expData" + label)
-                self.pickleLog(modelData, "_modelData" + label)
-                self.pickleLog(participant, "_partData" + label)
-                self.pickleLog(fittingData, "_fitData" + label)
-
-        self.expSetSize += 1
-        self.modelsSize += 1
-        self.modelSetSize += 1
-
-    def recordFittingParams(self, fitInfo):
+    def logFittingParams(self, fitInfo):
         """
         Records and outputs to the log the parameters associated with the fitting algorithms
 
@@ -682,253 +439,143 @@ class outputting(object):
                 message = k + ": " + repr(v)
                 log.info(message)
 
-    ### Ploting
-    def recordFittingSequence(self, fittingData, label, participant):
+    ### Data collection
+    def recordSim(self, expData, modelData, simID):
+        """
+        Records the data from an experiment-model run. Creates a pickled version
 
+        Parameters
+        ----------
+        expData : dict
+            The data from the experiment
+        modelData : dict
+            The data from the model
+        simID : basestring
+            The label identifying the simulation
+
+        See Also
+        --------
+        pickleLog : records the picked data
+        """
+
+        message = "Beginning simulation output processing"
+        self.logger.info(message)
+
+        label = "_sim-" + simID
+
+        if self.outputFolder:
+
+            message = "Store data for simulation " + simID
+            self.logger.info(message)
+
+            if self.simRun:
+                self._simModelLog(modelData, simID)
+
+            if self.pickleData:
+                self.pickleLog(expData, "_expData" + label)
+                self.pickleLog(modelData, "_modelData" + label)
+
+    def recordParticipantFit(self, participant, partName, modelData, modelName, fitQuality, fittingData, partModelVars, expData=None):
+        """
+        Record the data relevant to the participant fitting
+
+        Parameters
+        ----------
+        participant : dict
+            The participant data
+        partName : int or string
+            The identifier for each participant
+        modelData : dict
+            The data from the model
+        modelName : basestring
+            The label given to the model
+        fitQuality : float
+            The quality of the fit as provided by the fitting function
+        fittingData : dict
+            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
+            tested, in the order they were tested, and a list of the fit qualities of these parameters
+        partModelVars : dict of string
+            A dictionary of model settings whose values should vary from participant to participant based on the
+            values found in the imported participant data files. The key is the label given in the participant data file,
+            as a string, and the value is the associated label in the model, also as a string.
+        expData : dict, optional
+            The data from the experiment. Default ``None``
+
+        See Also
+        --------
+        pickleLog : records the picked data
+        """
+
+        partNameStr = str(partName)
+
+        message = "Recording participant " + partNameStr + " model fit"
+        self.logger.info(message)
+
+        label = "_Model-" + modelName + "_Part-" + partNameStr
+
+        participantName = "Participant " + partNameStr
+
+        participant.setdefault("Name", participantName)
+        participant.setdefault("assignedName", participantName)
+        fittingData.setdefault("Name", participantName)
+
+        if self.outputFolder:
+
+            message = "Store data for " + participantName
+            self.logger.info(message)
+
+            #if self.saveFigures:
+            #    ep = plotFitting(participant, modelData, fitQuality)
+            #    self.savePlots(ep)
+
+            self.recordFitting(fittingData, label, participant, partModelVars)
+
+            if self.pickleData:
+                if expData is not None:
+                    self.pickleLog(expData, "_expData" + label)
+                self.pickleLog(modelData, "_modelData" + label)
+                self.pickleLog(participant, "_partData" + label)
+                self.pickleLog(fittingData, "_fitData" + label)
+
+    ### Ploting
+    def recordFitting(self, fittingData, label, participant, partModelVars):
+        """
+        Records formatted versions of the fitting data
+
+        Parameters
+        ----------
+        fittingData : dict, optional
+            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
+            tested, in the order they were tested, and a list of the fit qualities of these parameters.
+        label : basestring
+            The label used to identify the fit in the file names
+        participant : dict
+            The participant data
+        partModelVars : dict of string
+            A dictionary of model settings whose values should vary from participant to participant based on the
+            values found in the imported participant data files. The key is the label given in the participant data file,
+            as a string, and the value is the associated label in the model, also as a string.
+
+        Returns
+        -------
+
+        """
         extendedLabel = "ParameterFits" + label
 
-        paramSet = fittingData["testedParameters"]
-        paramLabels = paramSet.keys()
-        fitQualities = fittingData["fitQualities"]
-        fitQuality = fittingData["fitQuality"]
-        finalParameters = fittingData["finalParameters"]
+        self.participantFit["Name"].append(participant["Name"])
+        self.participantFit["assignedName"].append(participant["assignedName"])
+        self.participantFit["fitQuality"].append(fittingData["fitQuality"])
+        for k, v in fittingData["finalParameters"].iteritems():
+            self.participantFit[k].append(v)
+        for k, v in partModelVars.iteritems():
+            self.participantFit[v] = participant[k]
 
-        self._makeFittingDataSet(fittingData.copy(), extendedLabel, participant)
+        if self.saveFittingProgress:
+            self._makeFittingDataSet(fittingData.copy(), extendedLabel, participant)
 
-        if not self.saveFigures:
-            return
-
-        axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
-
-        fitQualityMax = amax(fitQualities)
-        fitQualityMin = amin(fitQualities)
-        if fitQualityMin <= 0:
-            fitQualityMin = 1
-
-        if (log10(fitQualityMax) - log10(fitQualityMin)) > 2 and log10(fitQualityMin) >= 0:
-            results = log10(fitQualities)
-        else:
-            results = fitQualities
-
-        if len(paramSet) == 1:
-            axisLabels["yLabel"] = r'log_{10}(Fit quality)'
-            fig = paramDynamics(paramSet,
-                                results,
-                                axisLabels)
-            addPoint([finalParameters[paramLabels[0]]], [fitQuality], fig.axes[0])
-        elif len(paramSet) == 2:
-            axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
-            fig = paramDynamics(paramSet,
-                                results,
-                                axisLabels,
-                                contour=True,
-                                heatmap=False,
-                                scatter=True,
-                                cmap="viridis")
-            addPoint([finalParameters[paramLabels[0]]], [finalParameters[paramLabels[1]]], fig.axes[0])
-        else:
-            fig = paramDynamics(paramSet,
-                                results,
-                                axisLabels)
-
-        self.savePlots([(extendedLabel, fig)])
-
-    def plotModel(self, modelPlot):
-        """
-        Feeds the model data into the relevant plotting functions for the class
-
-        Parameters
-        ----------
-        modelPlot : model.modelPlot
-            The model's modelPlot class
-
-        See Also
-        --------
-        model.modelPlot : The template for modelPlot class for each model
-        savePlots : Saves the plots created by modelPlot
-        """
-
-        if not self.saveFigures:
-            return
-
-        mp = modelPlot(self.modelStore[-1], self.modelParamStore[-1], self.modelLabelStore[-1])
-
-        message = "Produce plots for the model " + self.modelLabelStore[-1]
-        self.logger.info(message)
-
-        self.savePlots(mp)
-
-    def plotModelSet(self, modelSetPlot):
-        """
-        Feeds the model set data into the relevant plotting functions for the class
-
-        Parameters
-        ----------
-        modelSetPlot : model.modelSetPlot
-            The model's modelSetPlot class
-
-        See Also
-        --------
-        model.modelSetPlot : The template for modelSetPlot class for each model
-        savePlots : Saves the plots created by modelSetPlot
-        """
-
-        if not self.saveFigures:
-            return
-
-        modelSet = self.modelStore[-self.modelSetSize:]
-        modelParams = self.modelParamStore[-self.modelSetSize:]
-        modelLabels = self.modelLabelStore[-self.modelSetSize:]
-
-        mp = modelSetPlot(modelSet, modelParams, modelLabels)
-
-        message = "Produce plots for model set " + str(self.modelSetNum)
-        self.logger.info(message)
-
-        self.savePlots(mp)
-
-        self.modelSetSize = 0
-        self.modelSetNum += 1
-
-    def plotExperiment(self, expInput):
-        """
-        Feeds the experiment data into the relevant plotting functions for the class
-
-        Parameters
-        ----------
-        expInput : (experiment.experimentPlot, dict)
-            The experiment's experimentPlot class and a dictionary of plot
-            attributes
-
-        See Also
-        --------
-        experiment.experimentPlot : The template for experimentPlot class for each experiment
-        savePlots : Saves the plots created by experimentPlot
-        """
-
-        if not self.saveFigures:
-            return
-
-        expPlot, plotArgs = expInput
-
-        expSet = self.expStore[-self.modelsSize:]
-        expParams = self.expParamStore[-self.modelsSize:]
-        expLabels = self.expLabelStore[-self.modelsSize:]
-        modelSet = self.modelStore[-self.modelsSize:]
-        modelParams = self.modelParamStore[-self.modelsSize:]
-        modelLabels = self.modelLabelStore[-self.modelsSize:]
-
-        # Initialise the class
-        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
-
-        message = "Produce plots for experiment set " + str(self.modelSetsNum)
-        self.logger.info(message)
-
-        self.savePlots(ep)
-
-        self.modelsSize = 0
-        self.modelSetsNum += 1
-
-    def plotExperimentSet(self, expInput):
-        """
-        Feeds the experiment set data into the relevant plotting functions for the class
-
-        Parameters
-        ----------
-        expInput : (experiment.experimentSetPlot, dict)
-            The experiment's experimentSetPlot class and a dictionary of plot
-            attributes
-
-        See Also
-        --------
-        experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment
-        savePlots : Saves the plots created by experimentPlot
-        """
-        if not self.saveFigures:
-            return
-
-        expPlot, plotArgs = expInput
-
-        expSet = self.expStore[-self.expSetSize:]
-        expParams = self.expParamStore[-self.expSetSize:]
-        expLabels = self.expLabelStore[-self.expSetSize:]
-        modelSet = self.modelStore[-self.expSetSize:]
-        modelParams = self.modelParamStore[-self.expSetSize:]
-        modelLabels = self.modelLabelStore[-self.expSetSize:]
-
-        # Initialise the class
-        ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
-
-        message = "Produce plots for experiment set " + str(self.expSetNum)
-        self.logger.info(message)
-
-        self.savePlots(ep)
-
-        self.expSetSize = 0
-        self.expSetNum += 1
-
-    def savePlots(self, plots):
-        """
-        Saves a list of plots in the appropriate way
-
-        Parameters
-        ----------
-        plots : list of (string, savable object)
-            The currently accepted objects are matplotlib.pyplot.figure,
-            pandas.DataFrame and xml.etree.ElementTree.ElementTree
-            The string is the handle of the figure
-
-        See Also
-        --------
-        vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame,
-        pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree,
-        xml.etree.ElementTree.ElementTree.outputTrees
-
-        """
-
-        for handle, plot in plots:
-            if hasattr(plot, "savefig") and callable(getattr(plot, "savefig")):
-
-                fileName = self.newFile(handle, 'png')
-
-                self.outputFig(plot, fileName)
-
-            elif hasattr(plot, "outputTrees") and callable(getattr(plot, "outputTrees")):
-
-                if self.save:
-                    fileName = self.newFile(handle, '')
-
-                    plot.outputTrees(fileName)
-
-            elif hasattr(plot, "to_excel") and callable(getattr(plot, "to_excel")):
-                outputFile = self.newFile(handle, 'xlsx')
-
-                if self.save:
-                    plot.to_excel(outputFile, sheet_name=handle)
-
-    def outputFig(self, fig, fileName):
-        """Saves the figure to a .png file and/or displays it on the screen.
-
-        Parameters
-        ----------
-        fig : MatPlotLib figure object
-            The figure to be output
-        fileName : string
-            The file to be saved to
-
-        """
-
-#        plt.figure(fig.number)
-
-        if self.save:
-            ndpi = fig.get_dpi()
-            fig.savefig(fileName, dpi=ndpi)
-
-        if not self.silent:
-            plt.figure(fig.number)
-            plt.draw()
-        else:
-            plt.close(fig)
+        if self.saveFigures:
+            paramSet = fittingData["testedParameters"]
+            plotFitting(paramSet, fittingData, extendedLabel)
 
     ### Pickle
     def pickleRec(self, data, handle):
@@ -972,125 +619,30 @@ class outputting(object):
         self.pickleRec(results, handle)
 
     ### Excel
-    def simLog(self):
-        """
-        Outputs relevant data to an excel file with all the data and a csv file
-        with the estimated pertinent data
-        """
-
-        if not self.save or not self.saveOneFile:
-            return
-
-        self._abridgedLog()
-        self._totalLog()
-
-    def _totalLog(self):
-
-        message = "Produce log of all experiments"
-        self.logger.info(message)
-
-        data = self._makeDataSet()
-        record = pd.DataFrame(data)
-        outputFile = self.newFile('simRecord', 'csv')
-        record.to_csv(outputFile)
-        outputFile = self.newFile('simRecord', 'xlsx')
-        xlsxT = pd.ExcelWriter(outputFile)
-        record.to_excel(xlsxT, sheet_name='simRecord')
-        xlsxT.save()
-
-    def _abridgedLog(self):
-
-        message = "Produce an abridged log of all experiments"
-        self.logger.info(message)
-
-        pertinantData = self._makePertinantDataSet()
-        pertRecord = pd.DataFrame(pertinantData)
-        outputFile = self.newFile('abridgedRecord', 'csv')
-        pertRecord.to_csv(outputFile)
-        outputFile = self.newFile('simAbridgedRecord', 'xlsx')
-        xlsxA = pd.ExcelWriter(outputFile)
-        pertRecord.to_excel(xlsxA, sheet_name='abridgedRecord')
-        xlsxA.save()
-
-    def _simModelLog(self, modelData):
+    def _simModelLog(self, modelData, simID):
 
         data = dictData2Lists(modelData)
         record = pd.DataFrame(data)
-        name = "data/modelSim_" + str(self.modelSetSize)
+        name = "data/modelSim_" + simID
         outputFile = self.newFile(name, 'csv')
         record.to_csv(outputFile)
-        outputFile = self.newFile(name, 'xlsx')
-        xlsxT = pd.ExcelWriter(outputFile)
-        record.to_excel(xlsxT, sheet_name='modelLog')
-        xlsxT.save()
-
-    def _makeDataSet(self):
-
-        data = OrderedDict()
-        data['exp_Label'] = self.expLabelStore
-        data['model_Label'] = self.modelLabelStore
-        data['exp_Group_Num'] = self.expGroupNum
-        data['model_Group_Num'] = self.modelGroupNum
-        data['folder'] = self.outputFolder
-
-        expData = reframeListDicts(self.expStore, 'exp')
-        modelData = reframeListDicts(self.modelStore, 'model')
-        if type(self.fitInfo) is not NoneType:
-            partData = reframeListDicts(self.partStore, 'part')
-            partData['fit_quality'] = self.fitQualStore
-            data.update(partData)
-
-        data.update(modelData)
-        data.update(expData)
-
-        return data
-
-    def _makePertinantDataSet(self):
-
-        data = OrderedDict()
-        data['exp_Label'] = self.expLabelStore
-        data['model_Label'] = self.modelLabelStore
-        data['exp_Group_Num'] = self.expGroupNum
-        data['model_Group_Num'] = self.modelGroupNum
-
-        # Get parameters and fitting data
-        modelParams = reframeListDicts(self.modelParamStore)
-        modelUsefulParams = OrderedDict((('model_' + k, v) for k, v in modelParams.iteritems() if v.count(v[0]) != len(v)))
-        data.update(modelUsefulParams)
-
-        ### Must do this for experiment parameters as well
-#        data.update(expData)
-        fitInfo = self.fitInfo
-        if type(fitInfo) is not NoneType:
-
-            usefulKeys = []
-            for fitSet in fitInfo:
-                for k, v in fitSet.iteritems():
-                    if "Param" in k and "model" or "participant" in k:
-                        usefulKeys.append(v)
-
-            modelData = reframeSelectListDicts(self.modelStore, usefulKeys, 'model')
-            partData = reframeSelectListDicts(self.partStore, usefulKeys, 'part')
-            partData['fit_quality'] = self.fitQualStore
-            data.update(modelData)
-            data.update(partData)
-
-        return data
+        #outputFile = self.newFile(name, 'xlsx')
+        #xlsxT = pd.ExcelWriter(outputFile)
+        #record.to_excel(xlsxT, sheet_name='modelLog')
+        #xlsxT.save()
 
     def _makeFittingDataSet(self, fittingData, extendedLabel, participant):
 
         data = OrderedDict()
-        data['model_Label'] = self.modelLabelStore[-1]
-        data['model_Group_Num'] = self.modelGroupNum[-1]
         data['folder'] = self.outputFolder
         partFittingKeys, partFittingMaxListLen = listDictKeySet(participant)
         partData = newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
         data.update(partData)
 
         paramFittingDict = copy(fittingData["testedParameters"])
-        paramFittingDict['partName'] = fittingData.pop("Name")
-        paramFittingDict['fitQuality'] = fittingData.pop("fitQuality")
-        paramFittingDict["fitQualities"] = fittingData.pop("fitQualities")
+        paramFittingDict['partFitName'] = fittingData.pop("Name")
+        #paramFittingDict['fitQuality'] = fittingData.pop("fitQuality")
+        #paramFittingDict["fitQualities"] = fittingData.pop("fitQualities")
         for k, v in fittingData.pop("finalParameters").iteritems():
             paramFittingDict[k + "final"] = v
         paramFittingDict.update(fittingData)
@@ -1105,14 +657,227 @@ class outputting(object):
         record.to_excel(xlsxT, sheet_name='ParameterFits')
         xlsxT.save()
 
-    # def _makeSingleModelDataSet(self):
-    #
-    #     data = OrderedDict()
-    #     modelData = dictArray2Lists(self.modelStore, '')
-    #
-    #     data.update(modelData)
-    #
-    #     return data
+### Plotting functions
+def plotModel(modelPlot, saveFigures=True):
+    """
+    Feeds the model data into the relevant plotting functions for the class
+
+    Parameters
+    ----------
+    modelPlot : model.modelPlot
+        The model's modelPlot class
+
+    See Also
+    --------
+    model.modelPlot : The template for modelPlot class for each model
+    savePlots : Saves the plots created by modelPlot
+    """
+
+    if not saveFigures:
+        return
+
+    mp = modelPlot(modelStore[-1], modelParamStore[-1], modelLabelStore[-1])
+
+    message = "Produce plots for the model " + modelLabelStore[-1]
+    logger.info(message)
+
+    savePlots(mp)
+
+def plotModelSet(modelSetPlot):
+    """
+    Feeds the model set data into the relevant plotting functions for the class
+
+    Parameters
+    ----------
+    modelSetPlot : model.modelSetPlot
+        The model's modelSetPlot class
+
+    See Also
+    --------
+    model.modelSetPlot : The template for modelSetPlot class for each model
+    savePlots : Saves the plots created by modelSetPlot
+    """
+
+    modelSet = modelStores
+    modelParams = modelParams
+    modelLabels = modelLabelStore
+    mp = modelSetPlot(modelSet, modelParams, modelLabels)
+
+    savePlots(mp)
+
+def plotExperiment(expInput):
+    """
+    Feeds the experiment data into the relevant plotting functions for the class
+
+    Parameters
+    ----------
+    expInput : (experiment.experimentPlot, dict)
+        The experiment's experimentPlot class and a dictionary of plot
+        attributes
+
+    See Also
+    --------
+    experiment.experimentPlot : The template for experimentPlot class for each experiment
+    savePlots : Saves the plots created by experimentPlot
+    """
+
+    if not self.saveFigures:
+        return
+
+    expPlot, plotArgs = expInput
+
+    expSet = expStore
+    expParams = expParamStore
+    expLabels = expLabelStore
+    modelSet = modelStore
+    modelParams = modelParamStore
+    modelLabels = modelLabelStore
+
+    # Initialise the class
+    ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
+
+    savePlots(ep)
+
+
+def plotExperimentSet(expInput):
+    """
+    Feeds the experiment set data into the relevant plotting functions for the class
+
+    Parameters
+    ----------
+    expInput : (experiment.experimentSetPlot, dict)
+        The experiment's experimentSetPlot class and a dictionary of plot
+        attributes
+
+    See Also
+    --------
+    experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment
+    savePlots : Saves the plots created by experimentPlot
+    """
+    if not self.saveFigures:
+        return
+
+    expPlot, plotArgs = expInput
+
+    expSet = expStore
+    expParams = expParamStore
+    expLabels = expLabelStore
+    modelSet = modelStore
+    modelParams = modelParamStore
+    modelLabels = modelLabelStore
+
+    # Initialise the class
+    ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
+
+    savePlots(ep)
+
+
+def plotFitting(paramSet, fittingData, label):
+
+    paramLabels = paramSet.keys()
+    fitQualities = fittingData["fitQualities"]
+    fitQuality = fittingData["fitQuality"]
+    finalParameters = fittingData["finalParameters"]
+
+    axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
+
+    fitQualityMax = amax(fitQualities)
+    fitQualityMin = amin(fitQualities)
+    if fitQualityMin <= 0:
+        fitQualityMin = 1
+
+    if (log10(fitQualityMax) - log10(fitQualityMin)) > 2 and log10(fitQualityMin) >= 0:
+        results = log10(fitQualities)
+    else:
+        results = fitQualities
+
+    if len(paramSet) == 1:
+        axisLabels["yLabel"] = r'log_{10}(Fit quality)'
+        fig = paramDynamics(paramSet,
+                            results,
+                            axisLabels)
+        addPoint([finalParameters[paramLabels[0]]], [fitQuality], fig.axes[0])
+    elif len(paramSet) == 2:
+        axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
+        fig = paramDynamics(paramSet,
+                            results,
+                            axisLabels,
+                            contour=True,
+                            heatmap=False,
+                            scatter=True,
+                            cmap="viridis")
+        addPoint([finalParameters[paramLabels[0]]], [finalParameters[paramLabels[1]]], fig.axes[0])
+    else:
+        fig = paramDynamics(paramSet,
+                            results,
+                            axisLabels)
+
+    savePlots([(label, fig)])
+
+
+def savePlots(plots, save=True):
+    """
+    Saves a list of plots in the appropriate way
+
+    Parameters
+    ----------
+    plots : list of (string, savable object)
+        The currently accepted objects are matplotlib.pyplot.figure,
+        pandas.DataFrame and xml.etree.ElementTree.ElementTree
+        The string is the handle of the figure
+
+    See Also
+    --------
+    vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame,
+    pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree,
+    xml.etree.ElementTree.ElementTree.outputTrees
+
+    """
+
+    for handle, plot in plots:
+        if hasattr(plot, "savefig") and callable(getattr(plot, "savefig")):
+
+            fileName = self.newFile(handle, 'png')
+
+            self.outputFig(plot, fileName)
+
+        elif hasattr(plot, "outputTrees") and callable(getattr(plot, "outputTrees")):
+
+            if save:
+                fileName = self.newFile(handle, '')
+
+                plot.outputTrees(fileName)
+
+        elif hasattr(plot, "to_excel") and callable(getattr(plot, "to_excel")):
+            outputFile = self.newFile(handle, 'xlsx')
+
+            if save:
+                plot.to_excel(outputFile, sheet_name=handle)
+
+
+def outputFig(fig, fileName, save=True, silent=False):
+    """Saves the figure to a .png file and/or displays it on the screen.
+
+    Parameters
+    ----------
+    fig : MatPlotLib figure object
+        The figure to be output
+    fileName : string
+        The file to be saved to
+
+    """
+
+#        plt.figure(fig.number)
+
+    if save:
+        ndpi = fig.get_dpi()
+        fig.savefig(fileName, dpi=ndpi)
+
+    if not silent:
+        plt.figure(fig.number)
+        plt.draw()
+    else:
+        plt.close(fig)
 
 
 ### Utils
@@ -1695,7 +1460,3 @@ def date():
     todayDate = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
     return todayDate
-
-
-
-
