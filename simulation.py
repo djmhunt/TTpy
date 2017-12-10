@@ -58,7 +58,7 @@ def simulation(experiments, models, outputting):
                 message = "Experiment completed"
                 logger.debug(message)
 
-                outputting.recordSim(exp.outputEvolution(), model.outputEvolution())
+                outputting.recordSim(exp.outputEvolution(), model.outputEvolution(), str(simID))
 
                 #outputting.plotModel(model.plot())
 
