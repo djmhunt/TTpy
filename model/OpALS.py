@@ -70,7 +70,7 @@ class OpALS(model):
     invBeta : float, optional
         Inverse of sensitivity parameter for the probabilities.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    betaDiff : float, optional
+    rho : float, optional
         The asymmetry between the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
@@ -140,7 +140,7 @@ class OpALS(model):
 
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.betaDiff = kwargRemains.pop('betaDiff', 0)
+        self.rho = kwargRemains.pop('rho', 0)
         self.betaGo = kwargRemains.pop('betaGo', None)
         self.betaNogo = kwargRemains.pop('betaNogo', None)
         self.alpha = kwargRemains.pop('alpha', 0.1)
@@ -167,7 +167,7 @@ class OpALS(model):
 
         if self.betaGo and self.betaNogo:
             self.beta = (self.betaGo + self.betaNogo)/2
-            self.betaDiff = (self.betaGo - self.betaNogo) / (2 * self.beta)
+            self.rho = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
         self.expectations = array(self.expect)
         self.go = array(self.expectGo)
@@ -181,7 +181,7 @@ class OpALS(model):
         self.parameters["beta"] = self.beta
         self.parameters["betaGo"] = self.betaGo
         self.parameters["betaNogo"] = self.betaNogo
-        self.parameters["betaDiff"] = self.betaDiff
+        self.parameters["rho"] = self.rho
         self.parameters["expectation"] = self.expect
         self.parameters["expectationGo"] = self.expectGo
         self.parameters["saturateVal"] = self.saturateVal
@@ -308,9 +308,9 @@ class OpALS(model):
 
     def _actionValues(self, go, nogo):
 
-        bd = self.betaDiff
+        rho = self.rho
 
-        actionValues = (1 + bd) * go - (1 - bd) * nogo
+        actionValues = (1 + rho) * go - (1 - rho) * nogo
 
         self.actionValues = actionValues
 
