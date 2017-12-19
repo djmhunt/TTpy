@@ -390,7 +390,7 @@ def getxlsxData(folder, files, **kwargs):
     """
 
     splitBy = kwargs.pop('splitBy', [])
-    if isinstance(splitBy, str):
+    if isinstance(splitBy, basestring):
         splitBy = [splitBy]
 
     dataSets = []
@@ -414,6 +414,7 @@ def getxlsxData(folder, files, **kwargs):
                 subDatDict = subDat.to_dict(orient='list')
                 subDatDict["fileName"] = f
                 subDatDict["folder"] = folder
+                subDatDict["Name"] = "-".join(p)
                 dataSets.append(subDatDict)
         else:
             datDict = dat.to_dict(orient='list')
