@@ -10,9 +10,10 @@ import cPickle as pickle
 
 from os import listdir
 from scipy.io import loadmat
+from scipy.io.matlab.mio5_params import mat_struct
 from numpy import array, shape
 from itertools import izip, chain
-from pandas import read_excel
+from pandas import read_excel, read_csv
 from types import NoneType
 from collections import Iterable, defaultdict, deque
 from re import search, finditer
@@ -80,25 +81,34 @@ def data(folder, fileType, **kwargs):
 
     """
 
+    groupby = kwargs.pop('groupby', None)
+
     fileType = fileType
     folder = folder
 
-    files = getFiles(folder, fileType, **kwargs)
+    files, fileIDs = getFiles(folder, fileType, **kwargs)
 
     if fileType == "mat":
 
-        dataSet = getmatData(folder, files)
+        dataSet = getmatData(folder, files, fileIDs)
+
+    elif fileType == "csv":
+
+        dataSet = getcsvData(folder, files, fileIDs, **kwargs)
 
     elif fileType == "xlsx":
 
-        dataSet = getxlsxData(folder, files, **kwargs)
+        dataSet = getxlsxData(folder, files, fileIDs, **kwargs)
 
     elif fileType == "pkl":
 
-        dataSet = getpickleData(folder, files, **kwargs)
+        dataSet = getpickleData(folder, files, fileIDs, **kwargs)
 
     else:
         dataSet = []
+
+    if callable(groupby):
+        dataSet = groupby(dataSet)
 
     return dataSet
 
@@ -110,16 +120,20 @@ def getFiles(folder, fileType, **kwargs):
     Parameters
     ----------
     folder : string
-        The folder string should end in a "/"
+        The folder string should end in a ``/``
     fileType : string
-        The file extension found after the ".".
+        The file extension found after the ``.``.
     validFiles : list of strings or None, optional
         A list of the names of numbered pickled files to be imported. Default None
+    terminalID : bool, optional
+        Is there an ID number at the end of the filename? If not then a more general search will be performed. Default ``True``
 
     Returns
     -------
     dataFiles : list
         A sorted list of the the files
+    fileIDs : list of strings
+        A list of unique parts of the filenames, in the order of dataFiles
 
     See Also
     --------
@@ -141,19 +155,25 @@ def getFiles(folder, fileType, **kwargs):
 
     if type(validFiles) is NoneType:
         validFileList = dataFiles
+    elif callable(validFiles):
+        validFileList = validFiles(dataFiles)
     else:
+        # TODO This should be broken out of this and turned into something that can be passed in as a function
         validFileList = []
         for f in dataFiles:
             for v in validFiles:
                 if f.startswith(v):
                     validFileList.append(f)
 
-    sortedFiles = sortStrings(validFileList, "." + fileType)
-
-    return sortedFiles
 
 
-def sortStrings(unorderedList, suffix):
+    # TODO This should be broken out of this and turned into something that can be passed in as a function
+    sortedFiles, fileIDs = sortStrings(validFileList, "." + fileType, **kwargs)
+
+    return sortedFiles, fileIDs
+
+
+def sortStrings(unorderedList, suffix, terminalID=True):
     """
     Takes an unordered list of strings and sorts them if possible and necessary
 
@@ -163,11 +183,15 @@ def sortStrings(unorderedList, suffix):
         A list of valid strings
     suffix : string
         A known suffix for the string
+    terminalID : bool, optional
+        Is there an ID number at the end of the filename? If not then a more general search will be performed. Default ``True``
 
     Returns
     -------
-    sorted list : list of strings
+    sortedList : list of strings
         A sorted list of the the strings
+    fileIDs : list of strings
+        A list of unique parts of the filenames, in the order of dataFiles
 
     See Also
     --------
@@ -185,14 +209,18 @@ def sortStrings(unorderedList, suffix):
         return unorderedList
 
     suffixLen = len(suffix)
+    if not terminalID:
+        suffix = getUniqueSuffix(unorderedList, suffixLen)
+        suffixLen = len(suffix)
 
     prefix = getUniquePrefix(unorderedList, suffixLen)
 
-    sortedList = intCore(unorderedList, prefix, suffix)
-    if sortedList:
-        return sortedList
-    else:
-        return unorderedList
+    sortedList, fileIDs = intCore(unorderedList, prefix, suffix)
+    if not sortedList:
+        sortedList, fileIDs = strCore(unorderedList, len(prefix), suffixLen)
+
+    return sortedList, fileIDs
+
 
 # TODO work out how you want to integrate this into getFiles
 def sortbylastnum(dataFiles):
@@ -215,6 +243,33 @@ def sortbylastnum(dataFiles):
     dataSortedFiles = [head + str(num) + foot for head, num, foot in sortedFileNames]
 
     return dataSortedFiles
+
+
+def getUniqueSuffix(unorderedList, knownSuffixLen):
+    """
+
+    Parameters
+    ----------
+    unorderedList : list of strings
+        A list of strings to be ordered
+    knownSuffixLen : int
+        The length of the suffix identified so far
+
+    Returns
+    -------
+    suffixLen : int
+        The length of the discovered suffix
+
+    """
+
+    for i in xrange(knownSuffixLen, len(unorderedList[0])):  # Starting with the known string-suffix
+        sec = unorderedList[0][-i:]
+        if all((sec == d[-i:] for d in unorderedList)):
+            continue
+        else:
+            break
+
+    return unorderedList[0][-i + 1:]
 
 
 def getUniquePrefix(unorderedList, suffixLen):
@@ -244,13 +299,42 @@ def getUniquePrefix(unorderedList, suffixLen):
 
     """
 
-    for i in xrange(1, len(unorderedList[0])-suffixLen+2): # Assuming the prefix might be the string-suffix
+    for i in xrange(1, len(unorderedList[0])-suffixLen+2):  # Assuming the prefix might be the string-suffix
         sec = unorderedList[0][:i]
         if all((sec == d[:i] for d in unorderedList)):
             continue
         else:
             break
     return unorderedList[0][:i-1]
+
+
+def strCore(unorderedList, prefixLen, suffixLen):
+    """
+    Takes the *core* part of a string and, assuming it is a string,
+    sorts them. Returns the list sorted
+
+    Parameters
+    ----------
+    unorderedList : list of strings
+        The list of strings to be sorted
+    prefixLen : int
+        The length of the unchanging start of each filename
+    suffixLen : int
+        The length of the unchanging end of each filename
+
+    Returns
+    -------
+    orderedList : list of strings
+        The strings now sorted
+
+    """
+
+    sortingList = ((f, f[prefixLen:-suffixLen]) for f in unorderedList)
+    sortedList = sorted(sortingList, key=lambda s: s[1])
+    orderedList = [s[0] for s in sortedList]
+    fileIDs = [s[1] for s in sortedList]
+
+    return orderedList, fileIDs
 
 
 def intCore(unorderedList, prefix, suffix):
@@ -289,23 +373,25 @@ def intCore(unorderedList, prefix, suffix):
     """
 
     try:
-        if suffix:
-            core = [(d[len(prefix):-(len(suffix))], i) for i, d in enumerate(unorderedList)]
-        else:
-            core = [(d[len(prefix):], i) for i, d in enumerate(unorderedList)]
-        coreInt = [(int(c), i) for c, i in core]
-    except:
-        return []
+        testItem = int(unorderedList[0][len(prefix):-len(suffix)])
+    except ValueError:
+        return [], []
+
+    if suffix:
+        core = [(d[len(prefix):-(len(suffix))], i) for i, d in enumerate(unorderedList)]
+    else:
+        core = [(d[len(prefix):], i) for i, d in enumerate(unorderedList)]
+    coreInt = [(int(c), i) for c, i in core]
 
     coreSorted = sorted(coreInt)
     coreStr = [(str(c), i) for c, i in coreSorted]
 
     sortedStrings = [''.join([prefix, '0'*(len(core[i][0])-len(s)), s, suffix]) for s, i in coreStr]
 
-    return sortedStrings
+    return sortedStrings, [c for c, i in core]
 
 
-def getmatData(folder, files):
+def getmatData(folder, files, fileIDs):
     """
     Loads the data from MATLAB files
 
@@ -315,6 +401,8 @@ def getmatData(folder, files):
         The folder string should end in a "/"
     files : list of strings
         A list of filenames
+    fileIDs : list of strings
+        A list of the changing parts of filenames
 
     Returns
     -------
@@ -335,29 +423,29 @@ def getmatData(folder, files):
 
     dataSets = []
 
-    for f in files:
+    for f, i in izip(files, fileIDs):
 
-        mat = loadmat(folder + f)
+        mat = loadmat(folder + f, struct_as_record=False, squeeze_me=True)
 
         dataD = {"fileName": f,
+                 "fileID": i,
                  "folder": folder}
 
         for m, v in mat.iteritems():
-            if m[0:2] != "__":
-                d = array(v)
-                if len(shape(d)) != 1:
-                    d = d.T[0]
-                if len(d) == 1:
-                    dataD[m] = d[0]
-                else:
-                    dataD[m] = d
+            if m[0:2] == "__":
+                continue
+            elif type(v) == mat_struct:
+                matstructData = {sk: getattr(v, sk) for sk in v._fieldnames}
+                dataD.update(matstructData)
+            else:
+                dataD[m] = v
 
         dataSets.append(dataD)
 
     return dataSets
 
 
-def getxlsxData(folder, files, **kwargs):
+def getxlsxData(folder, files, fileIDs, **kwargs):
     """
     Loads the data from xlsx files
 
@@ -367,6 +455,8 @@ def getxlsxData(folder, files, **kwargs):
         The folder string should end in a "/"
     files : list of strings
         A list of filenames
+    fileIDs : list of strings
+        A list of the changing parts of filenames
     splitBy : string or list, optional
         If multiple participants datasets are in one file sheet, this specifies
         the column or columns that can distinguish and identify the rows for
@@ -395,7 +485,7 @@ def getxlsxData(folder, files, **kwargs):
 
     dataSets = []
 
-    for f in files:
+    for f, i in izip(files, fileIDs):
 
         # In case the file is open, this will in fact be a temporary file and not a valid file.
         if f.startswith('~$'):
@@ -413,19 +503,89 @@ def getxlsxData(folder, files, **kwargs):
                 subDat = dat[(dat[splitBy] == p).all(axis=1)]
                 subDatDict = subDat.to_dict(orient='list')
                 subDatDict["fileName"] = f
+                subDatDict["fileID"] = i
                 subDatDict["folder"] = folder
                 subDatDict["Name"] = "-".join(p)
                 dataSets.append(subDatDict)
         else:
             datDict = dat.to_dict(orient='list')
             datDict["fileName"] = f
+            datDict["fileID"] = i
             datDict["folder"] = folder
             dataSets.append(datDict)
 
     return dataSets
 
 
-def getpickleData(folder, files, **kwargs):
+def getcsvData(folder, files, fileIDs, **kwargs):
+    """
+    Loads the data from csv files
+
+    Parameters
+    ----------
+    folder : string
+        The folder string should end in a "/"
+    files : list of strings
+        A list of filenames
+    fileIDs : list of strings
+        A list of the changing parts of filenames
+    splitBy : string or list, optional
+        If multiple participants datasets are in one file sheet, this specifies
+        the column or columns that can distinguish and identify the rows for
+        each participant. Default ``[]``
+    **kwargs : dict, optional
+        The keyword arguments for pandas.read_excel
+
+
+    Returns
+    -------
+    dataSet : list of dictionaries
+        Each dictionary should represent the data of one participant
+
+    Examples
+    --------
+
+    See Also
+    --------
+    pandas.read_csv
+
+    """
+
+    splitBy = kwargs.pop('splitBy', [])
+    if isinstance(splitBy, basestring):
+        splitBy = [splitBy]
+
+    dataSets = []
+
+    for f, i in izip(files, fileIDs):
+
+        dat = read_csv(folder + f, **kwargs)
+
+        if len(splitBy) > 0:
+            # The data must be split
+            classifierList = (sortStrings(list(set(dat[s])), '') for s in splitBy)
+            participants = listMerge(*classifierList)
+
+            for p in participants:
+
+                subDat = dat[(dat[splitBy] == p).all(axis=1)]
+                subDatDict = subDat.to_dict(orient='list')
+                subDatDict["fileName"] = f
+                subDatDict["fileID"] = i
+                subDatDict["folder"] = folder
+                subDatDict["Name"] = "-".join(p)
+                dataSets.append(subDatDict)
+        else:
+            datDict = dat.to_dict(orient='list')
+            datDict["fileName"] = f
+            datDict["fileID"] = i
+            datDict["folder"] = folder
+            dataSets.append(datDict)
+
+    return dataSets
+
+
+def getpickleData(folder, files, fileIDs, **kwargs):
     """
     Loads the data from python pickle files
 
@@ -435,6 +595,8 @@ def getpickleData(folder, files, **kwargs):
         The folder string should end in a "/"
     files : list of strings
         A list of filenames
+    fileIDs : list of strings
+        A list of the changing parts of filenames
     groupbyNumber : bool, optional
         Defines if the different valid files should be put together by their number. Default ``False``
 
@@ -451,14 +613,14 @@ def getpickleData(folder, files, **kwargs):
     groupbyNumber = kwargs.pop('groupbyNumber', False)
 
     if groupbyNumber:
-        dataSets = getpickledGroupedFiles(folder, files)
+        dataSets = getpickledGroupedFiles(folder, files, fileIDs)
     else:
-        dataSets = getpickleFiles(folder, files)
+        dataSets = getpickleFiles(folder, files, fileIDs)
 
     return dataSets
 
 
-def getpickleFiles(folder, files):
+def getpickleFiles(folder, files, fileIDs):
     """
     Loads the data from valid python pickle files
 
@@ -468,6 +630,8 @@ def getpickleFiles(folder, files):
         The folder string should end in a "/"
     files : list of strings
         A list of the names of numbered pickled files to be imported
+    fileIDs : list of strings
+        A list of the changing parts of filenames
 
     Returns
     -------
@@ -479,13 +643,15 @@ def getpickleFiles(folder, files):
 
     """
     dataSets = []
-    for fileName in files:
-        dataSets.append(getpickledFileData(folder, fileName))
+    for fileName, ID in izip(files, fileIDs):
+        fileData = getpickledFileData(folder, fileName)
+        fileData["fileID"] = ID
+        dataSets.append(fileData)
 
     return dataSets
 
 
-def getpickledGroupedFiles(folder, files):
+def getpickledGroupedFiles(folder, files, fileIDs):
     """
     Loads the data from valid python pickle files and returns them grouped by number
 
@@ -505,8 +671,7 @@ def getpickledGroupedFiles(folder, files):
     --------
 
     """
-    groupedData = []
-
+    # TODO: See how this can be shifted to have more flexible sorting
     # group by the last number on the filename
     footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in files]
     numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, files)]
@@ -525,6 +690,7 @@ def getpickledGroupedFiles(folder, files):
     # Sort the keys for groupFiles
     sortedGroupNums = sorted(groupedHeaders.iterkeys())
 
+    groupedData = []
     for gn in sortedGroupNums:
         groupData = {}
         headers = groupedHeaders[gn]
