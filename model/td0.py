@@ -50,11 +50,10 @@ class td0(model):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
@@ -182,24 +181,34 @@ class td0(model):
 
         return delta
 
-    def updateModel(self, delta, action, stimuliFilter):
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
+        """
+        Parameters
+        ----------
+        delta : float
+            The difference between the reward and the expected reward
+        action : int
+            The action chosen by the model in this timestep
+        stimuli : list of float
+            The weights of the different stimuli in this timestep
+        stimuliFilter : list of bool
+            A list describing if a stimulus cue is present in this timestep
+
+        """
 
         # TD0 updates the model in two parts: once the reward is received and a future discount once the next action
         # has been chosen
 
         # Find the new activities
-        change = self.alpha*delta*stimuliFilter
+        change = self.alpha*delta*stimuli/sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
-        if self.probActions:
-            # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
-            self.probabilities = self.calcProbabilities(actExpectations)
-        else:
-            self.probabilities = self.calcProbabilities(self.expectations)
+        # We need to combine the expectations before calculating the probabilities
+        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        self.probabilities = self.calcProbabilities(actExpectations)
 
-        self.lastStimuliFilter = stimuliFilter
+        self.lastStimuli = stimuli
         self.lastAction = action
 
     def _newExpect(self, action, change):
@@ -241,12 +250,14 @@ class td0(model):
 
         return probArray
 
-    def choiceReflection(self):
+    def lastChoiceReinforcement(self):
         """
-        Allows the model to update its state once an action has been chosen.
+        Allows the model to update its expectations once the action has been chosen.
         """
 
-        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * self.lastStimuliFilter
+        lastStimuli = self.lastStimuli
+
+        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * lastStimuli/sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):

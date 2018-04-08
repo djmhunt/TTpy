@@ -81,11 +81,10 @@ class OpALS(model):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
@@ -277,31 +276,43 @@ class OpALS(model):
 
         return delta
 
-    def updateModel(self, delta, action, stimuliFilter):
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
+        """
+        Parameters
+        ----------
+        delta : float
+            The difference between the reward and the expected reward
+        action : int
+            The action chosen by the model in this timestep
+        stimuli : list of float
+            The weights of the different stimuli in this timestep
+        stimuliFilter : list of bool
+            A list describing if a stimulus cue is present in this timestep
+
+        """
 
         # Find the new activities
-        self._critic(delta, action, stimuliFilter)
+        self._critic(delta, action, stimuli)
 
-        self._actor(delta, action, stimuliFilter)
+        self._actor(delta, action, stimuli)
 
         self._actionValues(self.go, self.nogo)
 
         # Calculate the new probabilities
-        if self.probActions:
-            # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.actionValues, stimuliFilter)
-            self.probabilities = self.calcProbabilities(actExpectations)
-        else:
-            self.probabilities = self.calcProbabilities(self.actionValues)
+        # We need to combine the expectations before calculating the probabilities
+        actExpectations = self.actStimMerge(self.actionValues, stimuli)
+        self.probabilities = self.calcProbabilities(actExpectations)
 
-    def _critic(self, delta, action, stimuliFilter):
+    def _critic(self, delta, action, stimuli):
 
-        self.expectations[action] += self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuliFilter
+        newExpectations = self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
 
-    def _actor(self, delta, action, stimuliFilter):
+        self.expectations[action] += newExpectations
 
-        chosenGo = self.go[action] * stimuliFilter
-        chosenNogo = self.nogo[action] * stimuliFilter
+    def _actor(self, delta, action, stimuli):
+
+        chosenGo = self.go[action] * stimuli/sum(stimuli)
+        chosenNogo = self.nogo[action] * stimuli/sum(stimuli)
 
         self.go[action] += self.alphaGo * chosenGo * delta * (1-chosenGo/self.saturateVal)
         self.nogo[action] -= self.alphaNogo * chosenNogo * delta * (1-chosenNogo/self.saturateVal)

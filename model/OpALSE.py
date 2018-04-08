@@ -21,12 +21,15 @@ from modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decMaxProb
-from utils import callableDetailsString
+from utils import callableDetailsString, errorResp
+from outputtingUtils import exportClassData
 
 
-class OpAL(model):
+class OpALSE(model):
 
-    """The Opponent actor learning model
+    """The Opponent actor learning model modified to have saturation values
+    
+    The saturation values are the same for the actor and critic learners
 
     Attributes
     ----------
@@ -50,7 +53,7 @@ class OpAL(model):
         Learning rate parameter for Go, the positive part of the actor learning
         Default is ``alpha``
     alphaNogo : float, optional
-        Learning rate parameter for Nogo, the negative part of the actor learning
+        Learning rate aprameter for Nogo, the negative part of the actor learning
         Default is ``alpha``
     alphaGoDiff : float, optional
         The difference between ``alphaCrit`` and ``alphaGo``. The default is ``None``
@@ -61,15 +64,12 @@ class OpAL(model):
         The difference between ``alphaCrit`` and ``alphaNogo``. The default is ``None``
         If not ``None``  and ``alphaGoDiff`` is also not ``None``, it will 
         overwrite the ``alphaNogo`` parameter
-        :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN` 
-    beta : float, optional
+        :math:`\\alpha_N = \\alpha_C + \\alpha_\\deltaN`
+    epsilon : float, optional
         Sensitivity parameter for probabilities. Also known as an exploration-
-        exploitation parameter. Defined as :math:`\\beta` in the paper
-    invBeta : float, optional
-        Inverse of sensitivity parameter for the probabilities.
-        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
+        exploitation parameter. Defined as :math:`\\epsilon` in the paper
     rho : float, optional
-        The asymmetry between the actor weights. :math:`\\rho = \\beta_G - \\beta = \\beta_N + \\beta`
+        The asymmetry between the actor weights. :math:`\\rho = \\epsilon_G - \\epsilon = \\epsilon_N + \\epsilon`
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -92,6 +92,8 @@ class OpAL(model):
     expectGo : array of floats, optional
         The initialisation of the the expected go and nogo.
         Default ``ones((numActions, numCues)) / numCritics``
+    saturateVal : float, optional
+        The saturation value for the model. Default is 10
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -110,34 +112,31 @@ class OpAL(model):
 
         \\delta_{d,t} = r_t-E_{d,t}
 
-        E_{d,t+1} = E_{d,t} + \\alpha_E \\delta_{d,t}
+        E_{d,t+1} = E_{d,t} + \\alpha_E \\delta_{d,t} (1-\\frac{E_{d,t}}{S})
 
     Critic: The chosen action is updated with
 
     .. math::
-        G_{d,t+1} = G_{d,t} + \\alpha_G G_{d,t} \\delta_{d,t}
+        G_{d,t+1} = G_{d,t} + \\alpha_G G_{d,t} \\delta_{d,t} (1-\\frac{G_{d,t}}{S})
 
-        N_{d,t+1} = N_{d,t} - \\alpha_N N_{d,t} \\delta_{d,t}
+        N_{d,t+1} = N_{d,t} - \\alpha_N N_{d,t} \\delta_{d,t} (1-\\frac{N_{d,t}}{S})
 
     Probabilities: The probabilities for all actions are calculated using
 
     .. math::
         A_{d,t} = (1+\\rho) G_{d,t}-(1-\\rho) N_{d,t}
 
-        P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}
+        P_{d,t} = \\frac{ e^{\\epsilon A_{d,t} }}{\\sum_{d \\in D}e^{\\epsilon A_{d,t}}}
     """
 
-    Name = "OpAL"
+    Name = "OpALS"
 
-    def __init__(self, **kwargs):
+    def __init__(self,**kwargs):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
+        self.epsilon = kwargRemains.pop('epsilon', 0.3)
         self.rho = kwargRemains.pop('rho', 0)
-        self.betaGo = kwargRemains.pop('betaGo', None)
-        self.betaNogo = kwargRemains.pop('betaNogo', None)
         self.alpha = kwargRemains.pop('alpha', 0.1)
         self.alphaGoNogoDiff = kwargRemains.pop('alphaGoNogoDiff', None)
         self.alphaCrit = kwargRemains.pop('alphaCrit', self.alpha)
@@ -147,6 +146,7 @@ class OpAL(model):
         self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
         self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCritics)
         self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numCues)))
+        self.saturateVal = kwargRemains.pop('saturateVal', 10)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -159,9 +159,6 @@ class OpAL(model):
             self.alphaGo = self.alpha + self.alphaGoDiff
             self.alphaNogo = self.alpha + self.alphaNogoDiff
 
-        if self.betaGo and self.betaNogo:
-            self.beta = (self.betaGo + self.betaNogo)/2
-            self.rho = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
         self.expectations = array(self.expect)
         self.go = array(self.expectGo)
@@ -172,12 +169,11 @@ class OpAL(model):
         self.parameters["alphaCrit"] = self.alphaCrit
         self.parameters["alphaGo"] = self.alphaGo
         self.parameters["alphaNogo"] = self.alphaNogo
-        self.parameters["beta"] = self.beta
-        self.parameters["betaGo"] = self.betaGo
-        self.parameters["betaNogo"] = self.betaNogo
+        self.parameters["epsilon"] = self.epsilon
         self.parameters["rho"] = self.rho
         self.parameters["expectation"] = self.expect
         self.parameters["expectationGo"] = self.expectGo
+        self.parameters["saturateVal"] = self.saturateVal
 
         # Recorded information
         self.genStandardResultsStore()
@@ -299,15 +295,17 @@ class OpAL(model):
 
     def _critic(self, delta, action, stimuli):
 
-        self.expectations[action] += self.alphaCrit * delta * stimuli/sum(stimuli)
+        newExpectations = self.alphaCrit*delta * (1 - self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
+
+        self.expectations[action] += newExpectations
 
     def _actor(self, delta, action, stimuli):
 
         chosenGo = self.go[action] * stimuli/sum(stimuli)
         chosenNogo = self.nogo[action] * stimuli/sum(stimuli)
 
-        self.go[action] += self.alphaGo * chosenGo * delta
-        self.nogo[action] -= self.alphaNogo * chosenNogo * delta
+        self.go[action] += self.alphaGo * chosenGo * delta * (1-chosenGo/self.saturateVal)
+        self.nogo[action] -= self.alphaNogo * chosenNogo * delta * (1-chosenNogo/self.saturateVal)
 
     def _actionValues(self, go, nogo):
 
@@ -331,10 +329,10 @@ class OpAL(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta*actionValues)
-        denominator = sum(numerator)
-
-        probArray = numerator / denominator
+        cbest = actionValues == max(actionValues)
+        deltaEpsilon = self.epsilon * (1 / self.numActions)
+        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
@@ -357,7 +355,6 @@ class OpAL(model):
             probabilities = self.calcProbabilities(self.actionValues)
 
         return probabilities
-
 
 def blankStim():
     """

@@ -38,11 +38,10 @@ class model(object):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
     prior : array of floats in ``[0,1]``, optional
         The prior probability of of the states being the correct one.
         Default ``ones((self.numActions, self.numCues)) / self.numCritics)``
@@ -100,7 +99,7 @@ class model(object):
         action : integer or None
         """
 
-        return self.currAction
+        return self.currActionSymbol
 
     def observe(self, state):
         """
@@ -151,6 +150,9 @@ class model(object):
             self.currAction = self.defaultNonAction
         else:
             self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, lastAction, events, validActions)
+
+        # Now that the action has been chosen, add any reinforcement of the previous choice in the expectations
+        self.lastChoiceReinforcement()
 
     def feedback(self, response):
         """
@@ -205,9 +207,9 @@ class model(object):
         delta = self.delta(response, expectedReward, action, self.stimuli)
 
         # Use that discrepancy to update the model
-        self.updateModel(delta, action, self.stimuliFilter)
+        self.updateModel(delta, action, self.stimuli, self.stimuliFilter)
 
-    def rewardExpectation(self, observation):
+    def rewardExpectation(self, stimuli):
         """Calculate the expected reward for each action based on the stimuli
 
         This contains parts that are experiment dependent
@@ -234,7 +236,7 @@ class model(object):
         # Return the value
 
         # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
-        return 0, observation, 0
+        return 0, stimuli, 0
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -260,15 +262,18 @@ class model(object):
 
         return 0
 
-    def updateModel(self, delta, action, stimuliFilter):
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
         """
         Parameters
         ----------
-
-        stimuli : list, dict or float
-            Whatever suits the model best
-        delta :
+        delta : float
             The difference between the reward and the expected reward
+        action : int
+            The action chosen by the model in this timestep
+        stimuli : list of float
+            The weights of the different stimuli in this timestep
+        stimuliFilter : list of bool
+            A list describing if a stimulus cue is present in this timestep
 
         """
 
@@ -331,8 +336,10 @@ class model(object):
 
         decision, decProbabilities = self.decisionFunc(probabilities, lastAction, stimulus=events, validResponses=validActions)
         self.decision = decision
+        self.currActionSymbol = decision
+        decisionCode = self.actionCode[decision]
 
-        return decision, decProbabilities
+        return decisionCode, decProbabilities
 
     def overrideActionChoice(self, action):
         """
@@ -344,16 +351,26 @@ class model(object):
             Action chosen by external source to same situation
         """
 
-        self.currAction = action
+        self.currActionSymbol = action
+        self.currAction = self.actionCode[action]
 
     def choiceReflection(self):
         """
         Allows the model to update its state once an action has been chosen.
         """
 
+    def lastChoiceReinforcement(self):
+        """
+        Allows the model to update the reward expectation for the previous timestep given the choice made in this timestep
+
+        Returns
+        -------
+
+        """
+
     def actStimMerge(self, actStimuliParam, stimFilter=1):
         """
-        Takes the parameter to be merged by stimulli and filters it by the stimuli values
+        Takes the parameter to be merged by stimuli and filters it by the stimuli values
 
         Parameters
         ----------
@@ -431,6 +448,7 @@ class model(object):
         """
 
         self.recAction.append(self.currAction)
+        self.recActionSymbol.append(self.currActionSymbol)
         self.recValidActions.append(self.validActions[:])
         self.recDecision.append(self.decision)
         self.recExpectations.append(self.expectations.flatten())
@@ -439,21 +457,19 @@ class model(object):
         self.recStimuli.append(self.stimuli)
         self.recProbabilities.append(self.probabilities.flatten())
         self.recActionProbs.append(self.decProbabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currAction])
+        self.recActionProb.append(self.decProbabilities[self.currActionSymbol])
 
     def genStandardParameters(self, kwargs):
         """Initialises the standard parameters and variables for a model
         """
 
-        self.probActions = kwargs.pop('probActions', True)
         self.numActions = kwargs.pop('numActions', 2)
         self.numCues = kwargs.pop('numCues', 1)
         self.numCritics = kwargs.pop('numCritics', self.numActions * self.numCues)
 
-        if self.probActions:
-            defaultPrior = ones(self.numActions) / self.numActions
-        else:
-            defaultPrior = ones((self.numActions, self.numCues)) / self.numCritics
+        self.actionCode = kwargs.pop('actionCodes', {k: k for k in xrange(self.numActions)})
+
+        defaultPrior = ones(self.numActions) / self.numActions
         self.prior = kwargs.pop('prior', defaultPrior)
 
         self.stimuli = ones(self.numCues)
@@ -469,6 +485,8 @@ class model(object):
         self.expectedRewards = ones(self.numActions)
         self.expectedReward = 1
 
+
+
         return kwargs
 
     def genStandardParameterDetails(self):
@@ -480,8 +498,8 @@ class model(object):
                            "numActions": self.numActions,
                            "numCues": self.numCues,
                            "numCritics": self.numCritics,
-                           "probActions": self.probActions,
                            "prior": self.prior.copy(),
+                           "actionCode": self.actionCode.copy(),
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}
 
@@ -490,6 +508,7 @@ class model(object):
         """
 
         self.recAction = []
+        self.recActionSymbol = []
         self.recStimuli = []
         self.recReward = []
         self.recExpectations = []
