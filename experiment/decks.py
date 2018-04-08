@@ -197,8 +197,7 @@ def deckStimDirect():
     Returns
     -------
     deckStim : function
-        The function expects to be passed a tuple containing the observation and the
-        last action. The function returns a tuple of ``1`` and the observation.
+        The function returns a tuple of ``1`` and the observation.
 
     Attributes
     ----------

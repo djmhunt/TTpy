@@ -198,8 +198,7 @@ def weatherStimDirect():
     Returns
     -------
     weatherStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The function returns the event
+        The function returns the event
 
     Attributes
     ----------

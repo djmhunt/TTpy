@@ -57,8 +57,8 @@ class probSelect(experiment):
         The number of actions that can be chosen at any given time, chosen at
         random from actRewardProb. Default 2
     learningLen : int, optional
-        The number of trials in the learning phase. As there is no feeback in
-        the trasfer phase there is no transfer phase. Default is 100
+        The number of trials in the learning phase. As there is no feedback in
+        the transfer phase there is no transfer phase. Default is 100
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -88,18 +88,16 @@ class probSelect(experiment):
 
         kwargs = self.kwargs.copy()
 
-        rewardProb = kwargs.pop('rewardProb',0.7)
-        actRewardProb = kwargs.pop('actRewardProb',{0: rewardProb,
-                                                    1: 1-rewardProb,
-                                                    2: 0.5,
-                                                    3: 0.5})
+        rewardProb = kwargs.pop('rewardProb', 0.7)
+        actRewardProb = kwargs.pop('actRewardProb', {0: rewardProb,
+                                                     1: 1-rewardProb,
+                                                     2: 0.5,
+                                                     3: 0.5})
         learningLen = kwargs.pop("learningLen", 100)
         numActions = kwargs.pop("numActions", 2)
         rewardSize = kwargs.pop("rewardSize", 1)
 
-
-
-        self.plotArgs = kwargs.pop('plotArgs',{})
+        self.plotArgs = kwargs.pop('plotArgs', {})
 
         self.parameters = {"Name": self.Name,
                            "rewardProb": rewardProb,
@@ -484,15 +482,42 @@ def probSelectStimDirect():
     --------
     >>> from experiment.probSelect import probSelectStimDirect
     >>> stim = probSelectStimDirect()
-    >>> stim(1,0)
+    >>> stim(1)
     (1, 1)
-    >>> stim(0,0)
-    (1, 0)
+    >>> stim(0)
+    (1, 1)
     """
 
-    def probSelectStim(observation, action):
-        return 1, observation
+    def probSelectStim(observation):
+        return 1, 1
 
     probSelectStim.Name = "probSelectStimDirect"
     probSelectStim.Params = {}
     return probSelectStim
+
+
+def probSelectRewDirect():
+    """
+    Processes the probabilistic selection reward for models expecting just the reward
+
+    Returns
+    -------
+    probSelectRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.qLearn, model.qLearn2
+    """
+
+    def probSelectRew(reward, action, stimuli):
+        return reward
+
+    probSelectRew.Name = "probSelectRewDirect"
+    return probSelectRew
