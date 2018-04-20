@@ -58,8 +58,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'PyDM'
-copyright = u'2015, Dominic Hunt'
+project = u'pyHPDM'
+copyright = u'2018, Dominic Hunt'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -82,7 +82,7 @@ release = '0.9'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', 'pyan', 'Backups', 'testData', 'test', 'setup']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -201,7 +201,7 @@ htmlhelp_basename = 'PyDMdoc'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
 #'pointsize': '10pt',
@@ -214,7 +214,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'PyDM.tex', u'PyDM Documentation',
+  ('index', 'pyHPDM.tex', u'pyHPDM Documentation',
    u'Dominic Hunt', 'manual'),
 ]
 
@@ -244,7 +244,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pydm', u'PyDM Documentation',
+    ('index', 'pyHPDM', u'pyHPDM Documentation',
      [u'Dominic Hunt'], 1)
 ]
 
@@ -258,8 +258,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'PyDM', u'PyDM Documentation',
-   u'Dominic Hunt', 'PyDM', 'One line description of project.',
+  ('index', 'pyHPDM', u'PyDM Documentation',
+   u'Dominic Hunt', 'pyHPDM', 'python Human Probabilistic Decision-Modelling is a framework for modelling and fitting the responses of people to probabilistic decison making tasks.',
    'Miscellaneous'),
 ]
 

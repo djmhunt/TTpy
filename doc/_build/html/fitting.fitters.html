@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>fitting.fitters package &#8212; PyDM 0.9 documentation</title>
+    <title>fitting.fitters package &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '0.9',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -26,8 +18,7 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="outputting module" href="outputting.html" />
     <link rel="prev" title="fitting package" href="fitting.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -43,7 +34,7 @@
         <li class="right" >
           <a href="fitting.html" title="fitting package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitting.html" accesskey="U">fitting package</a> &#187;</li> 
       </ul>
     </div>  
@@ -71,32 +62,32 @@
 <dl class="class">
 <dt id="fitting.fitters.basinhopping.basinhopping">
 <em class="property">class </em><code class="descclassname">fitting.fitters.basinhopping.</code><code class="descname">basinhopping</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/basinhopping.html#basinhopping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.basinhopping.basinhopping" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.basinhopping</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting method or list of names of fitting method or
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
+<li><strong>method</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting method or list of names of fitting method or
 name of list of fitting methods. Valid names found in the notes.
-Default <code class="docutils literal"><span class="pre">unconstrained</span></code></li>
+Default <code class="docutils literal notranslate"><span class="pre">unconstrained</span></code></li>
 <li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
+<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
 Default 4</li>
-<li><strong>boundFit</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
+<li><strong>boundFit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
 as those that do not. Default is True</li>
-<li><strong>boundSensitivity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
+<li><strong>boundSensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
 minimal difference) between a fit value and its related boundaries
 before a fit value is considered different from a boundary. The default
-is <cite>5</cite>. This is only valid if <code class="docutils literal"><span class="pre">boundFit</span></code> is <code class="docutils literal"><span class="pre">False</span></code></li>
+is <cite>5</cite>. This is only valid if <code class="docutils literal notranslate"><span class="pre">boundFit</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -136,13 +127,13 @@ spaced around the provided value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting method class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fit.fit</span></code></a></dt>
 <dd>The general fitting framework class</dd>
-<dt><code class="xref py py-class docutils literal"><span class="pre">scipy.optimise.basinhopping</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.basinhopping</span></code></dt>
 <dd>The fitting class this wraps around</dd>
-<dt><code class="xref py py-class docutils literal"><span class="pre">scipy.optimise.minimize</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.minimize</span></code></dt>
 <dd>The fitting class basinhopping wraps around</dd>
 </dl>
 </div>
@@ -206,7 +197,7 @@ function value of the trial minimum and whether or not that minimum was accepted
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fit.fitness()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit.fitness()</span></code></p>
 </div>
 </dd></dl>
 
@@ -231,12 +222,12 @@ function value of the trial minimum and whether or not that minimum was accepted
 <dl class="function">
 <dt id="fitting.fitters.boundFunc.infBound">
 <code class="descclassname">fitting.fitters.boundFunc.</code><code class="descname">infBound</code><span class="sig-paren">(</span><em>base=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/boundFunc.html#infBound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.boundFunc.infBound" title="Permalink to this definition">¶</a></dt>
-<dd><p>Boundary excess of <code class="docutils literal"><span class="pre">inf</span></code> when over bounds</p>
+<dd><p>Boundary excess of <code class="docutils literal notranslate"><span class="pre">inf</span></code> when over bounds</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The cost at the bounday. Default 0</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The cost at the bounday. Default 0</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>cost</strong> – Calculates the cost of exceeding the bounday using the parameters and
 the boundaries, and returns the cost.</td>
@@ -246,7 +237,7 @@ the boundaries, and returns the cost.</td>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">infBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">infBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
 <span class="go">160</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
@@ -270,7 +261,7 @@ bounds</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The cost at the bounday. Default 0</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The cost at the bounday. Default 0</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>cost</strong> – Calculates the cost of exceeding the bounday using the parameters and
 the boundaries, and returns the cost.</td>
@@ -280,7 +271,7 @@ the boundaries, and returns the cost.</td>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span> <span class="o">=</span> <span class="n">scalarBound</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="mi">160</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
 <span class="go">160</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cst</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">)])</span>
@@ -309,29 +300,29 @@ the boundaries, and returns the cost.</td>
 <dl class="class">
 <dt id="fitting.fitters.evolutionary.evolutionary">
 <em class="property">class </em><code class="descclassname">fitting.fitters.evolutionary.</code><code class="descname">evolutionary</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/evolutionary.html#evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.evolutionary.evolutionary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.differential_evolution</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>strategy</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting strategy or list of names of fitting strategy or
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
+<li><strong>strategy</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting strategy or list of names of fitting strategy or
 name of list of fitting strategies. Valid names found in the notes.
-Default <code class="docutils literal"><span class="pre">best1bin</span></code></li>
-<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for fitting. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+Default <code class="docutils literal notranslate"><span class="pre">best1bin</span></code></li>
+<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>polish</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – If True (default), then scipy.optimize.minimize with the <code class="docutils literal"><span class="pre">L-BFGS-B</span></code>
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
+<li><strong>polish</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If True (default), then scipy.optimize.minimize with the <code class="docutils literal notranslate"><span class="pre">L-BFGS-B</span></code>
 method is used to polish the best population member at the end, which
 can improve the minimization slightly.</li>
-<li><strong>popSize</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – A multiplier for setting the total population size. The population has
+<li><strong>popSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – A multiplier for setting the total population size. The population has
 popsize * len(x) individuals. Default 15</li>
-<li><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – When the mean of the population energies, multiplied by tol, divided by
+<li><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – When the mean of the population energies, multiplied by tol, divided by
 the standard deviation of the population energies is greater than 1 the
 solving process terminates: convergence = mean(pop) * tol / stdev(pop) &gt; 1
 Default 0.01</li>
@@ -359,11 +350,11 @@ For all strategies, use ‘all’</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting strategy class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fit.fit</span></code></a></dt>
 <dd>The general fitting framework class</dd>
-<dt><code class="xref py py-class docutils literal"><span class="pre">scipy.optimise.differential_evolution</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.differential_evolution</span></code></dt>
 <dd>The fitting class this wraps around</dd>
 </dl>
 </div>
@@ -421,7 +412,7 @@ iteration, stored in two lists.</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fit.fitness()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit.fitness()</span></code></p>
 </div>
 </dd></dl>
 
@@ -446,22 +437,22 @@ iteration, stored in two lists.</li>
 <dl class="class">
 <dt id="fitting.fitters.fitAlg.fitAlg">
 <em class="property">class </em><code class="descclassname">fitting.fitters.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The abstract class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></li>
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
 <li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter. Only used with some fitting algorithms
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
+<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter. Only used with some fitting algorithms
 Default 4</li>
 </ul>
 </td>
@@ -477,7 +468,7 @@ Default 4</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fit.fit</span></code></a></dt>
 <dd>The general fitting framework class</dd>
 </dl>
 </div>
@@ -491,14 +482,14 @@ Default 4</li>
 <code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters
 and returns the best one. This is the abstract version that always
-returns <code class="docutils literal"><span class="pre">(0,0)</span></code></p>
+returns <code class="docutils literal notranslate"><span class="pre">(0,0)</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>sim</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
-given model parameters. One example is <code class="docutils literal"><span class="pre">fit.fitness</span></code></li>
+given model parameters. One example is <code class="docutils literal notranslate"><span class="pre">fit.fitness</span></code></li>
 <li><strong>mParamNames</strong> (<em>list of strings</em>) – The list of initial parameter names</li>
 <li><strong>mInitialParams</strong> (<em>list of floats</em>) – The list of the initial parameters</li>
 </ul>
@@ -517,7 +508,7 @@ fit qualities of these parameters.</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fit.fitness()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit.fitness()</span></code></p>
 </div>
 </dd></dl>
 
@@ -533,18 +524,18 @@ fit qualities of these parameters.</li>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fitQuality</strong> – The fit quality value calculated using the fitQualFunc function</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#module-fitting.fitters.qualityFunc" title="fitting.fitters.qualityFunc"><code class="xref py py-meth docutils literal"><span class="pre">fitting.fitters.qualityFunc()</span></code></a></dt>
+<dt><a class="reference internal" href="#module-fitting.fitters.qualityFunc" title="fitting.fitters.qualityFunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitting.fitters.qualityFunc()</span></code></a></dt>
 <dd>the module of fitQualFunc functions</dd>
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg.invalidParams" title="fitting.fitters.fitAlg.fitAlg.invalidParams"><code class="xref py py-meth docutils literal"><span class="pre">fitAlg.invalidParams()</span></code></a></dt>
-<dd>Checks if the parameters are valid and if not returns <code class="docutils literal"><span class="pre">inf</span></code></dd>
-<dt><code class="xref py py-meth docutils literal"><span class="pre">fitting.fit.fitness()</span></code></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg.invalidParams" title="fitting.fitters.fitAlg.fitAlg.invalidParams"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.invalidParams()</span></code></a></dt>
+<dd>Checks if the parameters are valid and if not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></dd>
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitting.fit.fitness()</span></code></dt>
 <dd>Runs the model simulation and returns the values used to calculate the fitQuality</dd>
 </dl>
 </div>
@@ -560,7 +551,7 @@ fit qualities of these parameters.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fitInfo</strong> – The dictionary of fitting class information</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)">dict</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></td>
 </tr>
 </tbody>
 </table>
@@ -570,7 +561,7 @@ fit qualities of these parameters.</li>
 <dt id="fitting.fitters.fitAlg.fitAlg.invalidParams">
 <code class="descname">invalidParams</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/fitAlg.html#fitAlg.invalidParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.fitAlg.fitAlg.invalidParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies if the parameters passed are within the bounds provided</p>
-<p>If they are not returns <code class="docutils literal"><span class="pre">inf</span></code></p>
+<p>If they are not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -586,7 +577,7 @@ fit qualities of these parameters.</li>
 <p class="rubric">Notes</p>
 <p>No note</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">False</span>
@@ -613,7 +604,7 @@ fit qualities of these parameters.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;two&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
@@ -624,7 +615,7 @@ fit qualities of these parameters.</li>
 <span class="go">￼[(0, inf), (0, inf)]</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
 <span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
@@ -651,10 +642,10 @@ fit qualities of these parameters.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>initial</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) – The inital starting value proposed</li>
-<li><strong>bMin</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The minimum value of the parameter. Default is <code class="docutils literal"><span class="pre">float('-Inf')</span></code></li>
-<li><strong>bMax</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum value of the parameter. Default is <code class="docutils literal"><span class="pre">float('Inf')</span></code></li>
-<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of starting parameter values to be calculated around the inital
+<li><strong>initial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The inital starting value proposed</li>
+<li><strong>bMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The minimum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('-Inf')</span></code></li>
+<li><strong>bMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('Inf')</span></code></li>
+<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The number of starting parameter values to be calculated around the inital
 point</li>
 </ul>
 </td>
@@ -676,32 +667,32 @@ unless otherwise told, it will be assumed that they can take any
 positive value and will be chosen to be eavenly spaced around the
 provided value.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="go">array([ 0.25,  0.5 ,  0.75])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">array([ 2.5,  5. ,  7.5])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">array([ 2.5,  5. ,  7.5])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
 <span class="go">array([ 4.,  5.,  6.])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
 <span class="go">array([ 1.,  5.,  9.])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
 <span class="go">array([ 2.5,  5. ,  7.5])</span>
 </pre></div>
 </div>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
 <span class="go">array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
 </pre></div>
 </div>
@@ -719,9 +710,9 @@ over</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>initialParams</strong> (<em>list of floats</em>) – The inital starting values proposed</li>
 <li><strong>bounds</strong> (<em>list of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
-<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – The number of starting parameter values to be calculated around
+<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The number of starting parameter values to be calculated around
 each inital point</li>
 </ul>
 </td>
@@ -737,12 +728,12 @@ each inital point</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg.startParamVals" title="fitting.fitters.fitAlg.fitAlg.startParamVals"><code class="xref py py-meth docutils literal"><span class="pre">fitAlg.startParamVals()</span></code></a></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg.startParamVals" title="fitting.fitters.fitAlg.fitAlg.startParamVals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.startParamVals()</span></code></a></dt>
 <dd>Used in this function</dd>
 </dl>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">array([[ 0.33333333,  0.33333333],</span>
 <span class="go">       [ 0.66666667,  0.33333333],</span>
@@ -768,7 +759,7 @@ each inital point</li>
 <dl class="class">
 <dt id="fitting.fitters.leastsq.leastsq">
 <em class="property">class </em><code class="descclassname">fitting.fitters.leastsq.</code><code class="descname">leastsq</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>Fits data based on the least squared optimizer</p>
 <p>Not properly developed and will not be documented until upgrade</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -776,10 +767,10 @@ each inital point</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
+<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
 Default 4</li>
 </ul>
 </td>
@@ -795,11 +786,11 @@ Default 4</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting method class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fit.fit</span></code></a></dt>
 <dd>The general fitting framework class</dd>
-<dt><code class="xref py py-class docutils literal"><span class="pre">scipy.optimise.leastsq</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.leastsq</span></code></dt>
 <dd>The fitting class this wraps around</dd>
 </dl>
 </div>
@@ -838,7 +829,7 @@ fit qualities of these parameters.</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fit.fitness()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit.fitness()</span></code></p>
 </div>
 </dd></dl>
 
@@ -858,32 +849,32 @@ fit qualities of these parameters.</li>
 <dl class="class">
 <dt id="fitting.fitters.minimize.minimize">
 <em class="property">class </em><code class="descclassname">fitting.fitters.minimize.</code><code class="descname">minimize</code><span class="sig-paren">(</span><em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/minimize.html#minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.minimize.minimize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns proivides the fitter with its fitting guide.
-Default <code class="docutils literal"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>method</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting method or list of names of fitting method or
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
+<li><strong>method</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting method or list of names of fitting method or
 name of list of fitting methods. Valid names found in the notes.
-Default <code class="docutils literal"><span class="pre">unconstrained</span></code></li>
+Default <code class="docutils literal notranslate"><span class="pre">unconstrained</span></code></li>
 <li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal"><span class="pre">None</span></code>, which
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
+<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
 Default 4</li>
-<li><strong>boundFit</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
+<li><strong>boundFit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
 as those that do not. Default is True</li>
-<li><strong>boundSensitivity</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
+<li><strong>boundSensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
 minimal difference) between a fit value and its related boundaries
 before a fit value is considered different from a boundary. The default
-is <cite>5</cite>. This is only valid if <code class="docutils literal"><span class="pre">boundFit</span></code> is <code class="docutils literal"><span class="pre">False</span></code></li>
+is <cite>5</cite>. This is only valid if <code class="docutils literal notranslate"><span class="pre">boundFit</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -923,11 +914,11 @@ spaced around the provided value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
+<dt><a class="reference internal" href="#fitting.fitters.fitAlg.fitAlg" title="fitting.fitters.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fitters.fitAlg.fitAlg</span></code></a></dt>
 <dd>The general fitting method class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal"><span class="pre">fitting.fit.fit</span></code></a></dt>
+<dt><a class="reference internal" href="fitting.html#fitting.fit.fit" title="fitting.fit.fit"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitting.fit.fit</span></code></a></dt>
 <dd>The general fitting framework class</dd>
-<dt><code class="xref py py-class docutils literal"><span class="pre">scipy.optimise.minimize</span></code></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.minimize</span></code></dt>
 <dd>The fitting class this wraps around</dd>
 </dl>
 </div>
@@ -971,7 +962,7 @@ fit qualities of these parameters.</li>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">fit.fitness()</span></code></p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fit.fitness()</span></code></p>
 </div>
 </dd></dl>
 
@@ -1001,12 +992,12 @@ fit qualities of these parameters.</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitting process. Default 2</li>
-<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
-<li><strong>numActions</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each timestep of the experiment. May need to be
+<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitting process. Default 2</li>
+<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
+<li><strong>numActions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each timestep of the experiment. May need to be
 specified for each trial if the number of action choices varies between trials. Default 2</li>
-<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-of action choices varies between trials. Default <code class="docutils literal"><span class="pre">1/numActions</span></code></li>
+<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/numActions</span></code></li>
 </ul>
 </td>
 </tr>
@@ -1024,14 +1015,14 @@ difference between different sample distributions would become more pronounced. 
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitting process. Default 2</li>
-<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
-<li><strong>numActions</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each timestep of the experiment. May need to be
+<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitting process. Default 2</li>
+<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
+<li><strong>numActions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each timestep of the experiment. May need to be
 specified for each trial if the number of action choices varies between trials. Default 2</li>
-<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-of action choices varies between trials. Default <code class="docutils literal"><span class="pre">1/numActions</span></code></li>
-<li><strong>numSamples</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples that will be randomly resampled from <code class="docutils literal"><span class="pre">modVals</span></code>. Default 100</li>
-<li><strong>sampleLen</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em>, </em><em>optional</em>) – The length of the random sample. Default 1</li>
+<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/numActions</span></code></li>
+<li><strong>numSamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples that will be randomly resampled from <code class="docutils literal notranslate"><span class="pre">modVals</span></code>. Default 100</li>
+<li><strong>sampleLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The length of the random sample. Default 1</li>
 </ul>
 </td>
 </tr>
@@ -1058,10 +1049,10 @@ of action choices varies between trials. Default <code class="docutils literal">
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>1-D array-like</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – If an ndarray, a random sample is generated from its elements.
+<li><strong>a</strong> (<em>1-D array-like</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – If an ndarray, a random sample is generated from its elements.
 If an int, the random sample is generated as if a were np.arange(a)</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
-<code class="docutils literal"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
 single value is returned.</li>
 <li><strong>replace</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether the sample is with or without replacement</li>
 <li><strong>p</strong> (<em>1-D array-like</em><em>, </em><em>optional</em>) – The probabilities associated with each entry in a.
@@ -1076,7 +1067,7 @@ entries in a.</li>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">single item or ndarray</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> – If a is an int and less than zero, if a or p are not 1-dimensional,
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If a is an int and less than zero, if a or p are not 1-dimensional,
 if a is an array-like of size 0, if p is not a vector of
 probabilities, if a and p have different lengths, or if
 replace=False and the sample size is greater than the population
@@ -1087,36 +1078,36 @@ size</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal"><span class="pre">randint()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">shuffle()</span></code>, <code class="xref py py-func docutils literal"><span class="pre">permutation()</span></code></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">shuffle()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">permutation()</span></code></p>
 </div>
 <p class="rubric">Examples</p>
 <p>Generate a uniform random sample from np.arange(5) of size 3:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">array([0, 3, 4])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.randint(0,5,3)</span>
 </pre></div>
 </div>
 <p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="go">array([3, 3, 0])</span>
 </pre></div>
 </div>
 <p>Generate a uniform random sample from np.arange(5) of size 3 without
 replacement:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">array([3,1,0])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
 </pre></div>
 </div>
 <p>Generate a non-uniform random sample from np.arange(5) of size
 3 without replacement:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="go">array([2, 3, 0])</span>
 </pre></div>
 </div>
 <p>Any of the above can be repeated with an arbitrary array-like
 instead of just integers. For instance:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
 <span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;],</span>
 <span class="go">      dtype=&#39;|S11&#39;)</span>
@@ -1127,14 +1118,14 @@ instead of just integers. For instance:</p>
 <dl class="function">
 <dt id="fitting.fitters.qualityFunc.logAverageProb">
 <code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">logAverageProb</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#logAverageProb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.logAverageProb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math">\(\sum -2\mathrm{log}_2(\vec x)\)</span></p>
+<dd><p>Generates a fit quality value based on <span class="math notranslate">\(\sum -2\mathrm{log}_2(\vec x)\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -1143,14 +1134,14 @@ instead of just integers. For instance:</p>
 <dl class="function">
 <dt id="fitting.fitters.qualityFunc.logprob">
 <code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">logprob</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.logprob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math">\(\sum -2\mathrm{log}_2(\vec x)\)</span></p>
+<dd><p>Generates a fit quality value based on <span class="math notranslate">\(\sum -2\mathrm{log}_2(\vec x)\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -1159,14 +1150,14 @@ instead of just integers. For instance:</p>
 <dl class="function">
 <dt id="fitting.fitters.qualityFunc.maxprob">
 <code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">maxprob</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.maxprob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math">\(\sum 1-{\vec x}\)</span></p>
+<dd><p>Generates a fit quality value based on <span class="math notranslate">\(\sum 1-{\vec x}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model valaues returned</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -1180,14 +1171,14 @@ instead of just integers. For instance:</p>
 <dl class="function">
 <dt id="fitting.fitters.qualityFunc.simpleSum">
 <code class="descclassname">fitting.fitters.qualityFunc.</code><code class="descname">simpleSum</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitting/fitters/qualityFunc.html#simpleSum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitting.fitters.qualityFunc.simpleSum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math">\(\sum {\vec x}\)</span></p>
+<dd><p>Generates a fit quality value based on <span class="math notranslate">\(\sum {\vec x}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)">float</a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></td>
 </tr>
 </tbody>
 </table>
@@ -1288,12 +1279,14 @@ instead of just integers. For instance:</p>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1315,13 +1308,13 @@ instead of just integers. For instance:</p>
         <li class="right" >
           <a href="fitting.html" title="fitting package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitting.html" >fitting package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
   </body>
 </html>

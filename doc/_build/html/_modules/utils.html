@@ -4,28 +4,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>utils &#8212; PyDM 0.9 documentation</title>
+    <title>utils &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.9',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -35,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -58,7 +49,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">seterr</span><span class="p">,</span> <span class="n">seterrcall</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">amax</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">convolve</span><span class="p">,</span> <span class="n">arange</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">seterr</span><span class="p">,</span> <span class="n">seterrcall</span><span class="p">,</span> <span class="n">meshgrid</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">amax</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">convolve</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">ndarray</span>
 <span class="c1">#from itertools import izip, chain</span>
 <span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
 <span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span>
@@ -788,6 +779,7 @@
 
     <span class="k">return</span> <span class="n">convolution</span></div>
 
+
 <div class="viewcode-block" id="runningMean"><a class="viewcode-back" href="../utils.html#utils.runningMean">[docs]</a><span class="k">def</span> <span class="nf">runningMean</span><span class="p">(</span><span class="n">oldMean</span><span class="p">,</span> <span class="n">newValue</span><span class="p">,</span> <span class="n">numValues</span><span class="p">):</span>
     <span class="c1"># type: (float, float, int) -&gt; float</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -824,6 +816,75 @@
     <span class="k">return</span> <span class="n">newMean</span></div>
 
 
+<div class="viewcode-block" id="runningAverage"><a class="viewcode-back" href="../utils.html#utils.runningAverage">[docs]</a><span class="k">def</span> <span class="nf">runningAverage</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># type: (list) -&gt; ndarray</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An accumulating mean</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list or 1-D array of floats</span>
+<span class="sd">        The set of values to be averaged</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : ndArray of length data</span>
+<span class="sd">        The values from the moving average</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; runningAverage([1,2,3,4])</span>
+<span class="sd">    array([ 1. ,  1.5,  2. ,  2.5])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">runningMean</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">count</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="discountAverage"><a class="viewcode-back" href="../utils.html#utils.discountAverage">[docs]</a><span class="k">def</span> <span class="nf">discountAverage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">discount</span><span class="p">):</span>
+    <span class="c1"># type: (list, float) -&gt; ndarray</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An accumulating mean</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : list or 1-D array of floats</span>
+<span class="sd">        The set of values to be averaged</span>
+<span class="sd">    discount : float</span>
+<span class="sd">        The value by which each previous value is discounted</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : ndArray of length data</span>
+<span class="sd">        The values from the moving average</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; discountAverage([1, 2, 3, 4], 1)</span>
+<span class="sd">    array([ 1,  1.5,  2,  2.5])</span>
+
+<span class="sd">    &gt;&gt;&gt; discountAverage([1, 2, 3, 4], 0.25)</span>
+<span class="sd">    array([ 1,  1.8,  2.71428571,  3.68235294])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">discount</span> <span class="o">**</span> <span class="n">counter</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">counter</span><span class="p">:</span>
+        <span class="n">chosenWeights</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">c</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">weighted</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="n">c</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">chosenWeights</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighted</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">chosenWeights</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+
 <div class="viewcode-block" id="runningSTD"><a class="viewcode-back" href="../utils.html#utils.runningSTD">[docs]</a><span class="k">def</span> <span class="nf">runningSTD</span><span class="p">(</span><span class="n">oldSTD</span><span class="p">,</span> <span class="n">oldMean</span><span class="p">,</span> <span class="n">newMean</span><span class="p">,</span> <span class="n">newValue</span><span class="p">):</span>
     <span class="c1"># type: (float, float, float, float) -&gt; float</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -846,8 +907,10 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from</span>
-<span class="sd">    https://www.johndcook.com/blog/standard_deviation/</span>
+<span class="sd">    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition (which is based on</span>
+<span class="sd">    B. P. Welford (2012) Note on a Method for Calculating Corrected Sums of Squares and Products, Technometrics,</span>
+<span class="sd">    4:3, 419-420, DOI: 10.1080/00401706.1962.10490022</span>
+<span class="sd">    This version is taken from https://www.johndcook.com/blog/standard_deviation/</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -885,12 +948,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -906,13 +971,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
   </body>
 </html>

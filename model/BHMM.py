@@ -97,24 +97,24 @@ class BHMM(model):
     :math:`\\vec{P}_\\mathrm{Post}(\\vec{X}_{t-1})`. If the participant has not
     switched then
 
-    .. math::
+    math::
         \\vec{P}_\\mathrm{Prior}\\left(\\vec{X}_{t}\\right) = \\left(\\stackrel{1-\\delta}{\\delta} \\stackrel {\\delta}{1-\\delta} \\right) \\bullet \\vec{P}_\\mathrm{Post}\\left(\\vec{X}_{t-1}\\right)
 
     If the participant has switched, then the probabilities become
 
-    .. math::
+    math::
         \\vec{P}_\\mathrm{Prior}\\left(\\vec{X}_{t}\\right) = \\left(\\stackrel{\\delta}{1-\\delta} \\stackrel {1-\\delta}{\\delta} \\right)  \\bullet \\vec{P}_\\mathrm{Post}\\left(\\vec{X}_{t-1}\\right)
 
     The posterior probabilities
     :math:`\\vec{P}_\\mathrm{Post}\\left(\\vec{X}_{t}\\right)` is defined for
     the action :math:`A_t` providing the payoff :math:`Y_{t}` as
 
-    .. math::
+    math::
         P_\\mathrm{Post}\\left(X_{t} = A_{t}\\right) = \\frac{Y_{t}\\cdot P_\\mathrm{Prior}\\left(X_{t} = A_{t}\\right) }{\\sum_{i \\in \\vec{X_{t}}} P\\left(Y_{t} | X_{t}=i\\right)\\cdot P_\\mathrm{Prior}\\left(X_{t} = i\\right) }
 
     and for all other actions as
 
-    .. math::
+    math::
         \\vec{P}_\\mathrm{Post}\\left(\\vec{X}_{t} \\neq A_{t}\\right) = \\vec{P}_\\mathrm{Prior}\\left(\\vec{X}_{t} \\neq A_{t}\\right)
 
     The :math:`P\\left(Y_{t} | X_{t}=i\\right)` is the probability at time
@@ -122,14 +122,14 @@ class BHMM(model):
     chosen action was the correct or incorrect. It is calculated from a normal
     distribution where the probability distribution of payoffs are
 
-    .. math::
+    math::
         \\vec{\\mu} = \\left(\\stackrel{\\mu_\\mathrm{Correct}}{\\mu_{Incorrect}}\\right) = \\left(\\stackrel{10}{-5}\\right)
 
     and a variance of :math:`\\sigma = 1`
 
     The probability that the subject switches their choice of action is
 
-    .. math::
+    math::
         P_\\mathrm{Switch}\\left(X_{t},A_{t}\\right) = \\frac{1}{1 - \\exp^{ \\beta \\left(\\mathbf{1}-P_\\mathrm{Post}\\left(X_{t}\\left(A_{t}\\right) = \\mathrm{Incorrect}\\right) - \\alpha\\right)}}
 
     where :math:`\\alpha` is the indecision point (when it is equiprobable to

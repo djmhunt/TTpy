@@ -11,154 +11,194 @@ Subpackages
 Submodules
 ----------
 
-model\.BHMM module
-------------------
+model.ACBasic module
+--------------------
+
+.. automodule:: model.ACBasic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.ACE module
+----------------
+
+.. automodule:: model.ACE
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.ACES module
+-----------------
+
+.. automodule:: model.ACES
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.BHMM module
+-----------------
 
 .. automodule:: model.BHMM
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.BP module
-----------------
+model.BP module
+---------------
 
 .. automodule:: model.BP
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.BPMS module
-------------------
+model.BPMS module
+-----------------
 
 .. automodule:: model.BPMS
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.EP module
-----------------
+model.EP module
+---------------
 
 .. automodule:: model.EP
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.MS module
-----------------
+model.MS module
+---------------
 
 .. automodule:: model.MS
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.MS\_rev module
----------------------
+model.MS\_rev module
+--------------------
 
 .. automodule:: model.MS_rev
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.OpAL module
-------------------
+model.OpAL module
+-----------------
 
 .. automodule:: model.OpAL
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.OpALS module
--------------------
+model.OpALS module
+------------------
 
 .. automodule:: model.OpALS
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.OpAL\_H module
----------------------
+model.OpALSE module
+-------------------
+
+.. automodule:: model.OpALSE
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.OpAL\_H module
+--------------------
 
 .. automodule:: model.OpAL_H
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.RVPM module
-------------------
+model.RVPM module
+-----------------
 
 .. automodule:: model.RVPM
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.modelPlot module
------------------------
+model.modelPlot module
+----------------------
 
 .. automodule:: model.modelPlot
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.modelSetPlot module
---------------------------
+model.modelSetPlot module
+-------------------------
 
 .. automodule:: model.modelSetPlot
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.modelTemplate module
----------------------------
+model.modelTemplate module
+--------------------------
 
 .. automodule:: model.modelTemplate
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.qLearn module
---------------------
+model.qLearn module
+-------------------
 
 .. automodule:: model.qLearn
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.qLearn2 module
----------------------
+model.qLearn2 module
+--------------------
 
 .. automodule:: model.qLearn2
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.qLearnCorr module
-------------------------
+model.qLearnCorr module
+-----------------------
 
 .. automodule:: model.qLearnCorr
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.qLearnE module
----------------------
+model.qLearnE module
+--------------------
 
 .. automodule:: model.qLearnE
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.qLearnMeta module
-------------------------
+model.qLearnMeta module
+-----------------------
 
 .. automodule:: model.qLearnMeta
     :members:
     :undoc-members:
     :show-inheritance:
 
-model\.td0 module
------------------
+model.td0 module
+----------------
 
 .. automodule:: model.td0
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+model.tdE module
+----------------
+
+.. automodule:: model.tdE
     :members:
     :undoc-members:
     :show-inheritance:

@@ -4,28 +4,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.probSelect &#8212; PyDM 0.9 documentation</title>
+    <title>experiment.probSelect &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../../',
-        VERSION:     '0.9',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -35,7 +26,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -99,14 +90,17 @@
 <span class="sd">        A dictionary of the potential actions that can be taken and the</span>
 <span class="sd">        probability of a reward.</span>
 <span class="sd">        Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}</span>
+<span class="sd">    learnActPairs : list of tuples, optional</span>
+<span class="sd">        The pairs of actions shown together in the learning phase.</span>
+<span class="sd">    learningLen : int, optional</span>
+<span class="sd">        The number of trials in the learning phase. Default is 240</span>
+<span class="sd">    testLen : int, optional</span>
+<span class="sd">        The number of trials in the test phase. Default is 60</span>
 <span class="sd">    rewardSize : float, optional</span>
 <span class="sd">        The size of reward given if successful. Default 1</span>
 <span class="sd">    numActions : int, optional</span>
 <span class="sd">        The number of actions that can be chosen at any given time, chosen at</span>
-<span class="sd">        random from actRewardProb. Default 2</span>
-<span class="sd">    learningLen : int, optional</span>
-<span class="sd">        The number of trials in the learning phase. As there is no feeback in</span>
-<span class="sd">        the trasfer phase there is no transfer phase. Default is 100</span>
+<span class="sd">        random from actRewardProb. Default 4</span>
 <span class="sd">    plotArgs : dictionary, optional</span>
 <span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
 <span class="sd">        its documentation for more details.</span>
@@ -136,41 +130,47 @@
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">rewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">,</span><span class="mf">0.7</span><span class="p">)</span>
-        <span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;actRewardProb&#39;</span><span class="p">,{</span><span class="mi">0</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
-                                                    <span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">rewardProb</span><span class="p">,</span>
-                                                    <span class="mi">2</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-                                                    <span class="mi">3</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
-        <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numActions&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">rewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewardProb&#39;</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+        <span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;actRewardProb&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
+                                                     <span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">rewardProb</span><span class="p">,</span>
+                                                     <span class="mi">2</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                                                     <span class="mi">3</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+        <span class="n">learningActPairs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learnActPairs&quot;</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+        <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>
+        <span class="n">testLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;testLen&quot;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="n">numActions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numActions&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">))</span>
         <span class="n">rewardSize</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rewardSize&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s2">&quot;rewardProb&quot;</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
                            <span class="s2">&quot;actRewardProb&quot;</span><span class="p">:</span> <span class="n">actRewardProb</span><span class="p">,</span>
+                           <span class="s2">&quot;learningActPairs&quot;</span><span class="p">:</span> <span class="n">learningActPairs</span><span class="p">,</span>
                            <span class="s2">&quot;learningLen&quot;</span><span class="p">:</span> <span class="n">learningLen</span><span class="p">,</span>
+                           <span class="s2">&quot;testLen&quot;</span><span class="p">:</span> <span class="n">testLen</span><span class="p">,</span>
                            <span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">,</span>
                            <span class="s2">&quot;rewardSize&quot;</span><span class="p">:</span> <span class="n">rewardSize</span><span class="p">}</span>
 
-        <span class="c1"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewardProb</span> <span class="o">=</span> <span class="n">rewardProb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">actRewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learningActPairs</span> <span class="o">=</span> <span class="n">learningActPairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learningLen</span> <span class="o">=</span> <span class="n">learningLen</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span> <span class="o">=</span> <span class="n">rewardSize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">learningLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">learningLen</span> <span class="o">+</span> <span class="n">testLen</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">=</span> <span class="n">numActions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">actRewardProb</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">actT</span> <span class="o">=</span> <span class="n">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">)</span>
+
         <span class="c1"># Recording variables</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">learningLen</span><span class="p">)</span><span class="o">*-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">learningLen</span><span class="p">)</span><span class="o">*-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -195,7 +195,7 @@
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
         <span class="n">nextStim</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actT</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
@@ -210,15 +210,19 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2</span>
-        <span class="n">actRewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">]</span>
+        <span class="c1"># The probability of success varies depending on if it is choice</span>
 
-        <span class="k">if</span> <span class="n">actRewProb</span> <span class="o">&gt;=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">learningLen</span><span class="p">:</span>
+            <span class="n">actRewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">actRewProb</span> <span class="o">&gt;=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">reward</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Nan&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span> <span class="o">=</span> <span class="n">reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span> <span class="o">=</span> <span class="n">reward</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
@@ -233,15 +237,15 @@
 
 <div class="viewcode-block" id="probSelect.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots and saves files containing all the relavant data for this</span>
+<span class="sd">        Plots and saves files containing all the relevant data for this</span>
 <span class="sd">        experiment run</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;stimVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
-
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;validAct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actT</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -250,7 +254,7 @@
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">recStimVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimVal</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span></div>
 
 <div class="viewcode-block" id="probSelect.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -372,17 +376,17 @@
 <div class="viewcode-block" id="probSelect.experimentSetPlot"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelect.experimentSetPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentSetPlot</span><span class="p">(</span><span class="n">experimentSetPlot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Desired plots:</span>
-<span class="sd">            :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`</span>
-<span class="sd">            :math:`\\beta_N = 1, \\beta_G in ]0,2[`</span>
+<span class="sd">        :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`</span>
+<span class="sd">        :math:`\\beta_N = 1, \\beta_G in ]0,2[`</span>
 
-<span class="sd">            Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`</span>
-<span class="sd">            with:</span>
-<span class="sd">                :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`</span>
-<span class="sd">                :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`</span>
+<span class="sd">        Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`</span>
+<span class="sd">        with:</span>
+<span class="sd">        :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`</span>
+<span class="sd">        :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`</span>
 
-<span class="sd">            Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`</span>
-<span class="sd">            with varying :math:`prob(R|A) \in ]0,1[` and constant</span>
-<span class="sd">            :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`</span>
+<span class="sd">        Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`</span>
+<span class="sd">        with varying :math:`prob(R|A) \in ]0,1[` and constant</span>
+<span class="sd">        :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">_figSets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -508,6 +512,24 @@
             <span class="n">fig</span> <span class="o">=</span> <span class="n">lineplot</span><span class="p">()</span></div></div></div>
 
 
+<div class="viewcode-block" id="genActSequence"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.genActSequence">[docs]</a><span class="k">def</span> <span class="nf">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
+
+    <span class="n">pairNums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">))</span>
+    <span class="n">actPairs</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">)</span>
+
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">pairNums</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">learningLen</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">actSeq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">actPairs</span><span class="p">[</span><span class="n">pairs</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">testLen</span><span class="p">):</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">pairNums</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">actPairs</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+        <span class="n">actSeq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">actSeq</span></div>
+
+
 <div class="viewcode-block" id="probSelectStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelectStimDirect">[docs]</a><span class="k">def</span> <span class="nf">probSelectStimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the selection stimuli for models expecting just the event</span>
@@ -532,18 +554,45 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from experiment.probSelect import probSelectStimDirect</span>
 <span class="sd">    &gt;&gt;&gt; stim = probSelectStimDirect()</span>
-<span class="sd">    &gt;&gt;&gt; stim(1,0)</span>
+<span class="sd">    &gt;&gt;&gt; stim(1)</span>
 <span class="sd">    (1, 1)</span>
-<span class="sd">    &gt;&gt;&gt; stim(0,0)</span>
-<span class="sd">    (1, 0)</span>
+<span class="sd">    &gt;&gt;&gt; stim(0)</span>
+<span class="sd">    (1, 1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">probSelectStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">observation</span>
+    <span class="k">def</span> <span class="nf">probSelectStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
 
     <span class="n">probSelectStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probSelectStimDirect&quot;</span>
     <span class="n">probSelectStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">return</span> <span class="n">probSelectStim</span></div>
+
+
+<div class="viewcode-block" id="probSelectRewDirect"><a class="viewcode-back" href="../../experiment.html#experiment.probSelect.probSelectRewDirect">[docs]</a><span class="k">def</span> <span class="nf">probSelectRewDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the probabilistic selection reward for models expecting just the reward</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    probSelectRew : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the reward and the</span>
+<span class="sd">        last action. The function returns the reward.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    model.qLearn, model.qLearn2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">probSelectRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reward</span>
+
+    <span class="n">probSelectRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probSelectRewDirect&quot;</span>
+    <span class="k">return</span> <span class="n">probSelectRew</span></div>
 </pre></div>
 
           </div>
@@ -553,12 +602,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -574,13 +625,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
   </body>
 </html>

@@ -48,18 +48,19 @@ class VTK_XML_Serial_General:
 
     def snapshot(self, X,Y,Z, **kwargs):
         """
-        ARGUMENTS:
-        x               array of x coordinates of particle centers
-        y               array of y coordinates of particle centers
-        z               array of z coordinates of particle centers
-        x_jump          optional array of x components of particle jump vectors
-        y_jump          optional array of y components of particle jump vectors
-        z_jump          optional array of z components of particle jump vectors
-        x_force         optional array of x components of force vectors
-        y_force         optional array of y components of force vectors
-        z_force         optional array of z components of force vectors
-        radii           optional array of particle radii
-        colors          optional array of scalars to use to set particle colors
+        Parameters
+        ----------
+        x  :             array of x coordinates of particle centers
+        y  :             array of y coordinates of particle centers
+        z  :             array of z coordinates of particle centers
+        x_jump:          optional array of x components of particle jump vectors
+        y_jump :         optional array of y components of particle jump vectors
+        z_jump :         optional array of z components of particle jump vectors
+        x_force :        optional array of x components of force vectors
+        y_force :        optional array of y components of force vectors
+        z_force :        optional array of z components of force vectors
+        radii   :        optional array of particle radii
+        colors  :        optional array of scalars to use to set particle colors
                         The exact colors will depend on the color map you set up in Paraview.
         """
 
@@ -73,8 +74,9 @@ class VTK_XML_Serial_General:
 
     def outputTrees(self, fileName):
         """
-        ARGUMENTS
-        fileName        file name and/or path/filename
+        Parameters
+        ----------
+        fileName  :      file name and/or path/filename
         """
         self.fileNames.append(fileName)
         self.mainTree.write(fileName + ".vt" + self.type)

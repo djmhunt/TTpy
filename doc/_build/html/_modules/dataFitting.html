@@ -4,28 +4,19 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>dataFitting &#8212; PyDM 0.9 documentation</title>
+    <title>dataFitting &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.9',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -35,7 +26,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -74,7 +65,7 @@
 <span class="sd">        A fitting class instance</span>
 <span class="sd">    partLabel : basestring, optional</span>
 <span class="sd">        The key (label) used to identify each participant. Default ``Name``</span>
-<span class="sd">    partModelVars : dict, optional</span>
+<span class="sd">    partModelVars : dict of string, optional</span>
 <span class="sd">        A dictionary of model settings whose values should vary from participant to participant based on the</span>
 <span class="sd">        values found in the imported participant data files. The key is the label given in the participant data file,</span>
 <span class="sd">        as a string, and the value is the associated label in the model, also as a string. Default ``{}``</span>
@@ -94,18 +85,19 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span> <span class="c1">#and isinstance(fitter, fit)):</span>
 
         <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;dataFitting&#39;</span><span class="p">)</span>
-
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Data not recognised. &quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
         <span class="k">return</span>
 
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">recordFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+    <span class="n">outputting</span><span class="o">.</span><span class="n">logFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the data fitting&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">modelID</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">for</span> <span class="n">modelInfo</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">():</span>
 
@@ -130,8 +122,7 @@
                 <span class="n">partName</span> <span class="o">=</span> <span class="n">partName</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partModelVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                <span class="n">modelOtherArgs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="n">modelOtherArgs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
             <span class="c1"># Find the best model values from those proposed</span>
 
@@ -144,29 +135,29 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">outputting</span><span class="o">.</span><span class="n">recordExperimentParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="n">partName</span><span class="p">)</span>
-                <span class="n">outputEvolution</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
+                <span class="n">expEvolution</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">outputEvolution</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">expEvolution</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="n">outputting</span><span class="o">.</span><span class="n">recordModelParams</span><span class="p">(</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="n">partName</span><span class="p">)</span>
             <span class="n">outputting</span><span class="o">.</span><span class="n">logModFittedParams</span><span class="p">(</span><span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partName</span><span class="p">)</span>
 
             <span class="n">outputting</span><span class="o">.</span><span class="n">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span>
                                             <span class="n">partName</span><span class="p">,</span>
                                             <span class="n">modelFitted</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span>
+                                            <span class="nb">str</span><span class="p">(</span><span class="n">modelID</span><span class="p">),</span>
                                             <span class="n">fitQuality</span><span class="p">,</span>
                                             <span class="n">fittingData</span><span class="p">,</span>
-                                            <span class="n">expData</span><span class="o">=</span><span class="n">outputEvolution</span><span class="p">)</span>
+                                            <span class="n">partModelVars</span><span class="p">,</span>
+                                            <span class="n">expData</span><span class="o">=</span><span class="n">expEvolution</span><span class="p">)</span>
 
-            <span class="n">outputting</span><span class="o">.</span><span class="n">plotModel</span><span class="p">(</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">plot</span><span class="p">())</span>
 
-        <span class="n">outputting</span><span class="o">.</span><span class="n">plotModelSet</span><span class="p">(</span><span class="n">modelFitted</span><span class="o">.</span><span class="n">plotSet</span><span class="p">())</span>
+            <span class="c1">#outputting.plotModel(modelFitted.plot())</span>
 
-    <span class="k">if</span> <span class="n">exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">outputting</span><span class="o">.</span><span class="n">plotExperiment</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">plot</span><span class="p">())</span>
+        <span class="n">modelID</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1">#outputting.plotModelSet(modelFitted.plotSet())</span>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">simLog</span><span class="p">()</span>
+    <span class="c1">#if exp is not None:</span>
+        <span class="c1">#outputting.plotExperiment(exp.plot())</span>
 
     <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
@@ -179,12 +170,14 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -200,13 +193,13 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">PyDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.3.
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
   </body>
 </html>

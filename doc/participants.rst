@@ -4,8 +4,8 @@ participants package
 Submodules
 ----------
 
-participants\.fitResults module
--------------------------------
+participants.fitResults module
+------------------------------
 
 .. automodule:: participants.fitResults
     :members:
