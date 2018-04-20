@@ -19,18 +19,18 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 setup(
-    name='pyMTS',
+    name='pyHPDM',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     version='1.1.0',
 
-    description='A neurological learning model fitting and simulation package',
+    description='python Human Probabilistic Decision-Modelling is a framework for modelling and fitting the responses of people to probabilistic decison making tasks. ',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/djhunt/model-sims',
+    url='https://bitbucket.org/djhunt/pyHPDM',
 
     # Author details
     author='Dominic Hunt',

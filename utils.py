@@ -868,8 +868,10 @@ def runningSTD(oldSTD, oldMean, newMean, newValue):
 
     Notes
     -----
-    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition and taken from
-    https://www.johndcook.com/blog/standard_deviation/
+    Based on Donald Knuth’s Art of Computer Programming, Vol 2, page 232, 3rd edition (which is based on
+    B. P. Welford (2012) Note on a Method for Calculating Corrected Sums of Squares and Products, Technometrics,
+    4:3, 419-420, DOI: 10.1080/00401706.1962.10490022
+    This version is taken from https://www.johndcook.com/blog/standard_deviation/
 
     Examples
     --------

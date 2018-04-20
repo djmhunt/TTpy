@@ -169,7 +169,7 @@ class experiment(object):
             The parameters of the experiment
         """
 
-        return self.parameters
+        return self.parameters.copy()
 
     def plot(self):
         """

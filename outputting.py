@@ -657,6 +657,7 @@ class outputting(object):
         record.to_excel(xlsxT, sheet_name='ParameterFits')
         xlsxT.save()
 
+
 ### Plotting functions
 def plotModel(modelPlot, saveFigures=True):
     """
@@ -676,9 +677,9 @@ def plotModel(modelPlot, saveFigures=True):
     if not saveFigures:
         return
 
-    mp = modelPlot(modelStore[-1], modelParamStore[-1], modelLabelStore[-1])
+    mp = modelPlot(modelData, modelParams, modelLabels)
 
-    message = "Produce plots for the model " + modelLabelStore[-1]
+    message = "Produce plots for the model " + modelLabels
     logger.info(message)
 
     savePlots(mp)

@@ -61,7 +61,7 @@ def data(folder, fileType, **kwargs):
     folder : string
         The folder string should end in a "/"
     fileType : string
-        The file extension found after the ".". Currently only mat and xlsx files are
+        The file extension found after the ".". Currently only mat, csv, pkl and xlsx files are
         supported.
     **kwargs : dict
         The keyword arguments used by the
@@ -148,6 +148,7 @@ def getFiles(folder, fileType, **kwargs):
 
     """
     validFiles = kwargs.pop('validFiles', None)
+    terminalID = kwargs.pop('terminalID', True)
 
     files = listdir(folder)
 
@@ -165,10 +166,8 @@ def getFiles(folder, fileType, **kwargs):
                 if f.startswith(v):
                     validFileList.append(f)
 
-
-
     # TODO This should be broken out of this and turned into something that can be passed in as a function
-    sortedFiles, fileIDs = sortStrings(validFileList, "." + fileType, **kwargs)
+    sortedFiles, fileIDs = sortStrings(validFileList, "." + fileType, terminalID=terminalID)
 
     return sortedFiles, fileIDs
 
@@ -206,7 +205,7 @@ def sortStrings(unorderedList, suffix, terminalID=True):
     ['subj1.mat', 'subj2.mat', 'subj11.mat']
     """
     if len(unorderedList) <= 1:
-        return unorderedList
+        return unorderedList, ["all"]
 
     suffixLen = len(suffix)
     if not terminalID:
@@ -495,7 +494,7 @@ def getxlsxData(folder, files, fileIDs, **kwargs):
 
         if len(splitBy) > 0:
             # The data must be split
-            classifierList = (sortStrings(list(set(dat[s])), '') for s in splitBy)
+            classifierList = (sortStrings(list(set(dat[s])), '')[0] for s in splitBy)
             participants = listMerge(*classifierList)
 
             for p in participants:

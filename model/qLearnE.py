@@ -200,7 +200,7 @@ class qLearnE(model):
 
         self.lastAction = action
 
-    def _newExpect(self, delta, action, stimuli):
+    def _newExpect(self, action, delta, stimuli):
 
         newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
 

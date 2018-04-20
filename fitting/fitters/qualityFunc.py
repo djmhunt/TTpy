@@ -141,7 +141,7 @@ def BIC2(**kwargs):
         Returns
         -------
         fit : float
-            The sum of the model valaues returned
+            The sum of the model values returned
         """
 
         numSamples = shape(modVals)

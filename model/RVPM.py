@@ -60,11 +60,10 @@ class RVPM(model):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``

@@ -405,7 +405,7 @@ class model(object):
 
         results = self.standardResultOutput()
 
-        return results
+        return results.copy()
 
     def storeState(self):
         """
@@ -530,7 +530,7 @@ class model(object):
         parameters : dictionary
         """
 
-        return self.parameters
+        return self.parameters.copy()
 
     def setsimID(self, simID):
         """

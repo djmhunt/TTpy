@@ -88,15 +88,17 @@ class fitter(fit):
         """
 
         # Run model with given parameters
-        try:
-            modelInstance = self.fittedModel(*modelParameters)
-        except FloatingPointError:
-            message = errorResp()
-            logger = logging.getLogger('Fitter')
-            logger.warning(message + "\n. Abandoning fitting with parameters: "
-                                   + repr(self.getModParams(*modelParameters))
-                                   + " Returning fit value " + repr(self.fpRespVal))
-            return ones(array(self.partRewards).shape)*self.fpRespVal
+        modelInstance = self.fittedModel(*modelParameters)
+        # TODO: work out why I can't use the next few lines of code
+        #try:
+        #    modelInstance = self.fittedModel(*modelParameters)
+        #except FloatingPointError:
+        #    message = errorResp()
+        #    logger = logging.getLogger('Fitter')
+        #    logger.warning(message + "\n. Abandoning fitting with parameters: "
+        #                           + repr(self.getModParams(*modelParameters))
+        #                           + " Returning fit value " + repr(self.fpRespVal))
+        #    return ones(array(self.partRewards).shape)*self.fpRespVal
 
         # Pull out the values to be compared
 
