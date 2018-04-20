@@ -1,3 +1,5 @@
+python Human Probabilistic Decision-Modelling(pyHPDM) is a framework for modelling and fitting the responses of people to probabilistic decision making tasks.
+
 This code has been tested using ``Python 2.7``. Apart from the standard Python libraries it also depends on the [SciPy](http://www.scipy.org/) libraries. For those installing Python for the first time I would recommend the [Anaconda Python distribution](https://store.continuum.io/cshop/anaconda/).
 
 The framework has until now either been run with a run script or live in a command-line (or [jupyter notebook](http://jupyter.org/)).
