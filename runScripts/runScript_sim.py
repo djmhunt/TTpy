@@ -12,22 +12,24 @@ recommend making a copy of this for each successful investigation and storing it
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
+
 sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
-from numpy import array, concatenate, arange
+from numpy import array, ones, repeat
+from collections import OrderedDict
 
 ### Import all experiments, models, outputting and interface functions
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
-from experiment.decks import Decks, deckRewDirect, deckStimDirect
+from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
 
 # The model factory
 from models import models
 # The decision methods
 from model.decision.binary import decEta, decEtaSets, decSingle, decRandom
-from model.decision.discrete import decMaxProb, decProbThresh
+from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
 
@@ -35,14 +37,21 @@ from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
 expParams = {}
-expExtraParams = {'discard': False}
-expSets = experiments((Decks, expParams, expExtraParams))
+expExtraParams = {'numActions': 6,
+                  'learningLen': 200,
+                  'testLen': 100,
+                  'rewardSize': 1,
+                  'actRewardProb': OrderedDict([("A", 0.80),
+                                                ("B", 0.20),
+                                                ("C", 0.70),
+                                                ("D", 0.30),
+                                                ("E", 0.60),
+                                                ("F", 0.40)]),
+                  'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
+expSets = experiments((probSelect, expParams, expExtraParams))
 
-
-numActions = 2
+numActions = 6
 numCues = 1
-probActions = False
-
 repetitions = 30
 alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
 betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
@@ -51,16 +60,15 @@ parameters = {'alpha': alphaSet,
               'beta': betaSet}
 paramExtras = {'numActions': numActions,
                'numCues': numCues,
-               'probActions': probActions,
-               'expect': ones((numActions, numCues)) * 5,
-               'prior': ones(numActions) / numActions,
-               'stimFunc': deckStimDirect(),
-               'rewFunc': deckRewDirect(),
-               'decFunc': decRandom()}
+               'actionCodes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
+               'expect': ones((numActions, numCues)) / 2,
+               'stimFunc': probSelectStimDirect(),
+               'rewFunc': probSelectRewDirect(),
+               'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
 modelSet = models((qLearn, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'qLearn_decksSimSet',
+outputOptions = {'simLabel': 'qLearn_probSelectSimSet',
                  'save': True,
                  'saveScript': True,
                  'pickleData': True,
@@ -77,4 +85,3 @@ output = outputting(**outputOptions)
 from simulation import simulation
 
 simulation(expSets, modelSet, output)
-
