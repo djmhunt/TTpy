@@ -51,14 +51,17 @@ class probSelect(experiment):
         A dictionary of the potential actions that can be taken and the
         probability of a reward.
         Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}
+    learnActPairs : list of tuples, optional
+        The pairs of actions shown together in the learning phase.
+    learningLen : int, optional
+        The number of trials in the learning phase. Default is 240
+    testLen : int, optional
+        The number of trials in the test phase. Default is 60
     rewardSize : float, optional
         The size of reward given if successful. Default 1
     numActions : int, optional
         The number of actions that can be chosen at any given time, chosen at
-        random from actRewardProb. Default 2
-    learningLen : int, optional
-        The number of trials in the learning phase. As there is no feedback in
-        the transfer phase there is no transfer phase. Default is 100
+        random from actRewardProb. Default 4
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -93,34 +96,42 @@ class probSelect(experiment):
                                                      1: 1-rewardProb,
                                                      2: 0.5,
                                                      3: 0.5})
-        learningLen = kwargs.pop("learningLen", 100)
-        numActions = kwargs.pop("numActions", 2)
+        learningActPairs = kwargs.pop("learnActPairs", [(0, 1), (2, 3)])
+        learningLen = kwargs.pop("learningLen", 240)
+        testLen = kwargs.pop("testLen", 60)
+        numActions = kwargs.pop("numActions", len(actRewardProb))
         rewardSize = kwargs.pop("rewardSize", 1)
+
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
         self.parameters = {"Name": self.Name,
                            "rewardProb": rewardProb,
                            "actRewardProb": actRewardProb,
+                           "learningActPairs": learningActPairs,
                            "learningLen": learningLen,
+                           "testLen": testLen,
                            "numActions": numActions,
                            "rewardSize": rewardSize}
 
-        # Set draw count
         self.t = -1
         self.rewardProb = rewardProb
         self.actRewardProb = actRewardProb
+        self.learningActPairs = learningActPairs
+        self.learningLen = learningLen
         self.rewardSize = rewardSize
-        self.T = learningLen
+        self.T = learningLen + testLen
         self.action = None
-        self.stimVal = -1
+        self.rewVal = -1
         self.numActions = numActions
         self.choices = actRewardProb.keys()
 
+        self.actT = genActSequence(actRewardProb, learningActPairs, learningLen, testLen)
+
         # Recording variables
 
-        self.recStimVal = ones(learningLen)*-1
-        self.recAction = ones(learningLen)*-1
+        self.recRewVal = [-1] * self.T
+        self.recAction = [-1] * self.T
 
         return self
 
@@ -145,7 +156,7 @@ class probSelect(experiment):
             raise StopIteration
 
         nextStim = None
-        nextValidActions = choice(self.choices, size=self.numActions, replace=False)
+        nextValidActions = self.actT[self.t]
 
         return nextStim, nextValidActions
 
@@ -160,15 +171,19 @@ class probSelect(experiment):
         """
         Responds to the action from the participant
         """
-        # The probabilitiy of sucsess varies depending on if it is choice A, B,M1 or M2
-        actRewProb = self.actRewardProb[self.action]
+        # The probability of success varies depending on if it is choice
 
-        if actRewProb >= rand(1):
-            reward = self.rewardSize
+        if self.t < self.learningLen:
+            actRewProb = self.actRewardProb[self.action]
+
+            if actRewProb >= rand(1):
+                reward = self.rewardSize
+            else:
+                reward = 0
         else:
-            reward = 0
+            reward = float('Nan')
 
-        self.stimVal = reward
+        self.rewVal = reward
 
         self.storeState()
 
@@ -183,15 +198,15 @@ class probSelect(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavant data for this
+        Plots and saves files containing all the relevant data for this
         experiment run
         """
 
-        results = self.parameters
+        results = self.parameters.copy()
 
-        results["stimVals"] = array(self.recStimVal)
+        results["rewVals"] = array(self.recRewVal)
         results["actions"] = array(self.recAction)
-
+        results["validAct"] = array(self.actT)
 
         return results
 
@@ -200,7 +215,7 @@ class probSelect(experiment):
         output later """
 
         self.recAction[self.t] = self.action
-        self.recStimVal[self.t] = self.stimVal
+        self.recRewVal[self.t] = self.rewVal
 
     class experimentPlot(experimentPlot):
         """
@@ -322,17 +337,17 @@ class probSelect(experiment):
     class experimentSetPlot(experimentSetPlot):
         """
         Desired plots:
-            :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`
-            :math:`\\beta_N = 1, \\beta_G in ]0,2[`
+        :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`
+        :math:`\\beta_N = 1, \\beta_G in ]0,2[`
 
-            Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`
-            with:
-                :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`
-                :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`
+        Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`
+        with:
+        :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`
+        :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`
 
-            Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`
-            with varying :math:`prob(R|A) \in ]0,1[` and constant
-            :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`
+        Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`
+        with varying :math:`prob(R|A) \in ]0,1[` and constant
+        :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`
         """
 
         def _figSets(self):
@@ -456,6 +471,24 @@ class probSelect(experiment):
             x = arange(len)
 
             fig = lineplot()
+
+
+def genActSequence(actRewardProb, learningActPairs, learningLen, testLen):
+
+    pairNums = range(len(learningActPairs))
+    actPairs = array(learningActPairs)
+
+    pairs = choice(pairNums, size=learningLen, replace=True)
+    actSeq = list(actPairs[pairs])
+
+    for t in xrange(testLen):
+        pairs = choice(pairNums, size=2, replace=False)
+        elements = choice([0, 1], size=2, replace=True)
+
+        pair = [actPairs[p, e] for p, e in izip(pairs, elements)]
+        actSeq.append(pair)
+
+    return actSeq
 
 
 def probSelectStimDirect():
