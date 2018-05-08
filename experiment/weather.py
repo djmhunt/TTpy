@@ -9,8 +9,8 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, exp, size, ones, nan
-from numpy.random import rand
+from numpy import array, zeros, exp, size, ones, nan, sum
+from numpy.random import rand, choice
 from experiment.experimentTemplate import experiment
 # from plotting import dataVsEvents, paramDynamics
 from experiment.experimentPlot import experimentPlot
@@ -58,10 +58,17 @@ class Weather(experiment):
 
     Parameters
     ----------
-    actualities: int, optional
+    cueProbs : array of int, optional
+        If generating data, the likelihood of each cue being associated with each actuality. Each row of the array
+        describes one actuality, with each column representing one cue. Each column is assumed sum to 1
+    learningLen : int, optional
+        The number of trials in the learning phase. Default is 200
+    testLen : int, optional
+        The number of trials in the test phase. Default is 100
+    actualities : array of int, optional
         The actual reality the cues pointed to; the correct response the participant is trying to get correct
-    cues: array of floats, optional
-        The cues used to guess the actualities
+    cues : array of floats, optional
+        The stimulus cues used to guess the actualities
     plotArgs : dictionary, optional
         Any arguments that will be later used by ``experimentPlot``. Refer to
         its documentation for more details.
@@ -80,8 +87,11 @@ class Weather(experiment):
 
         kwargs = self.kwargs.copy()
 
-        cues = kwargs.pop("cues", defaultCues)
-        actualities = kwargs.pop("actualities", defaultActualities)
+        cueProbs = kwargs.pop("cueProbs", [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]])
+        learningLen = kwargs.pop("learningLen", 200)
+        testLen = kwargs.pop("testLen", 100)
+        cues = kwargs.pop("cues", genCues(cueProbs, learningLen+testLen))
+        actualities = kwargs.pop("actualities", genActualities(cueProbs, cues, learningLen, testLen))
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
@@ -89,7 +99,7 @@ class Weather(experiment):
             if cues in cueSets:
                 self.cues = cueSets[cues]
             else:
-                raise "Unknown cue sets"
+                raise Exception("Unknown cue sets")
         else:
             self.cues = cues
 
@@ -97,7 +107,7 @@ class Weather(experiment):
             if actualities in actualityLists:
                 self.actualities = actualityLists[actualities]
             else:
-                raise "Unknown actualities list"
+                raise Exception("Unknown actualities list")
         else:
             self.actualities = actualities
 
@@ -190,6 +200,52 @@ class Weather(experiment):
 
         self.recAction[self.t] = self.action
 
+def genCues(cueProbs, taskLen):
+    """
+
+    Parameters
+    ----------
+    cueProbs
+    taskLen
+
+    Returns
+    -------
+    cues
+    """
+
+    cues = []
+    for t in xrange(taskLen):
+        c = []
+        while sum(c) == 0:
+            c = (rand(len(cueProbs[0])) > 0.5) * 1
+        cues.append(c)
+
+    return array(cues)
+
+def genActualities(cueProbs, cues, learningLen, testLen):
+    """
+
+    Parameters
+    ----------
+    cueProbs
+    cues
+    learningLen
+    testLen
+
+    Returns
+    -------
+    actions
+    """
+    actions = []
+    for t in xrange(learningLen):
+        visibleCueProbs = cues[t] * cueProbs
+        actProb = sum(visibleCueProbs, 1)
+        action = choice([0, 1], p=actProb / sum(actProb))
+        actions.append(action)
+
+    actions.extend([float("Nan")] * testLen)
+
+    return array(actions)
 
 def weatherStimDirect():
     """
