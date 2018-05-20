@@ -372,7 +372,10 @@ def intCore(unorderedList, prefix, suffix):
     """
 
     try:
-        testItem = int(unorderedList[0][len(prefix):-len(suffix)])
+        if suffix:
+            testItem = int(unorderedList[0][len(prefix):-len(suffix)])
+        else:
+            testItem = int(unorderedList[0][len(prefix):])
     except ValueError:
         return [], []
 
