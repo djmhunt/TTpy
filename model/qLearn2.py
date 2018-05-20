@@ -15,16 +15,16 @@
         meant that the variable nu is no longer possible to use.
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
 from numpy import exp, ones, array
 
-from modelTemplate import model
+from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
+from model.decision.binary import decRandom
 from utils import callableDetailsString
 
 
@@ -57,8 +57,7 @@ class qLearn2(model):
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    eta : float, optional
-        Decision threshold parameter
+
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -104,19 +103,19 @@ class qLearn2(model):
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
-        self.eta = kwargRemains.pop('eta', 0.3)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+
+        self.lastAction = kwargRemains.pop('firstAction', 1)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
+        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["alphaPos"] = self.alphaPos
         self.parameters["alphaNeg"] = self.alphaNeg
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
@@ -217,14 +216,16 @@ class qLearn2(model):
         """
 
         # Find the new activities
-        self._newAct(action, delta, stimuli)
+        self._newExpect(delta, action, stimuli)
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         actExpectations = self.actStimMerge(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
-    def _newAct(self, delta, action, stimuli):
+        self.lastAction = action
+
+    def _newExpect(self, delta, action, stimuli):
 
         if delta > 0:
             self.expectations[action] += self.alphaPos*delta*stimuli/sum(stimuli)
@@ -266,6 +267,7 @@ class qLearn2(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
+
 
 def blankStim():
     """

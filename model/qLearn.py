@@ -17,7 +17,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
+from model.decision.binary import decRandom
 from utils import callableDetailsString
 
 
@@ -42,8 +42,6 @@ class qLearn(model):
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    eta : float, optional
-        Decision threshold parameter
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -71,7 +69,7 @@ class qLearn(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.binary.decRandom
     """
 
     Name = "qLearn"
@@ -85,17 +83,15 @@ class qLearn(model):
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.eta = kwargRemains.pop('eta', 0.3)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
+        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
