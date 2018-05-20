@@ -2,14 +2,24 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the Epsilon-greedy method along with a past choice autocorrelation inspired by ``qLearnCorr``
+:Reference: Modified version of that found in the paper The role of the
+                ventromedial prefrontal cortex in abstract state-based inference
+                during decision making in humans.
+                Hampton, A. N., Bossaerts, P., & O’Doherty, J. P. (2006).
+                The Journal of Neuroscience : The Official Journal of the
+                Society for Neuroscience, 26(32), 8360–7.
+                doi:10.1523/JNEUROSCI.1010-06.2006
+
+:Notes: In the original paper this model used the Luce choice algorithm,
+        rather than the logistic algorithm used here. This generalisation has
+        meant that the variable nu is no longer possible to use.
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, max, shape
+from numpy import exp, ones, array, shape
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
@@ -18,9 +28,11 @@ from model.decision.binary import decRandom
 from utils import callableDetailsString
 
 
-class qLearnE(model):
+class qLearn2E(model):
 
-    """The q-Learning algorithm
+    """The q-Learning algorithm modified to have different positive and
+    negative reward prediction errors and use the Epsylon greedy method 
+    for claculating probabilities
 
     Attributes
     ----------
@@ -33,9 +45,14 @@ class qLearnE(model):
     Parameters
     ----------
     alpha : float, optional
-        Learning rate parameter
-    kappa : float, optional
-        The autocorelation parameter for which positive values promote sticking and negative values promote alternation
+        Learning rate parameter. For this model only used when setting alphaPos
+        and alphaNeg to the same value. Default 0.3
+    alphaPos : float, optional
+        The positive learning rate parameter. Used when RPE is positive.
+        Default is alpha
+    alphaNeg : float, optional
+        The negative learning rate parameter. Used when RPE is negative.
+        Default is alpha
     epsilon : float, optional
         Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
@@ -72,16 +89,15 @@ class qLearnE(model):
     model.qLearn : This model is heavily based on that one
     """
 
-    Name = "qLearnE"
+    Name = "qLearn2E"
 
     def __init__(self, **kwargs):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        # A record of the kwarg keys, the variable they create and their default value
-
-        self.kappa = kwargRemains.pop('kappa', 0)
         self.alpha = kwargRemains.pop('alpha', 0.3)
+        self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
+        self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
@@ -93,7 +109,8 @@ class qLearnE(model):
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
-        self.parameters["kappa"] = self.kappa
+        self.parameters["alphaPos"] = self.alphaPos
+        self.parameters["alphaNeg"] = self.alphaNeg
         self.parameters["epsilon"] = self.epsilon
         self.parameters["expectation"] = self.expectations.copy()
 
@@ -195,7 +212,7 @@ class qLearnE(model):
         """
 
         # Find the new activities
-        self._newExpect(action, delta, stimuli)
+        self._newExpect(delta, action, stimuli)
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
@@ -204,13 +221,12 @@ class qLearnE(model):
 
         self.lastAction = action
 
-    def _newExpect(self, action, delta, stimuli):
+    def _newExpect(self, delta, action, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
-
-        newExpectations = newExpectations * (newExpectations >= 0)
-
-        self.expectations[action] = newExpectations
+        if delta > 0:
+            self.expectations[action] += self.alphaPos*delta*stimuli/sum(stimuli)
+        else:
+            self.expectations[action] += self.alphaNeg*delta*stimuli/sum(stimuli)
 
     def calcProbabilities(self, actionValues):
         """
@@ -226,17 +242,10 @@ class qLearnE(model):
             The probabilities associated with the actionValues
         """
 
-        lastAction = -ones(shape(actionValues))
-        lastAction[self.lastAction] = 1
-
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
         bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
-        p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
-
-        change = self.kappa * lastAction
-        probArray = p + (1 - p) * change * (change > 0) + p * change * (change < 0)
-        #probArray = p + p * (1 - p) * change
+        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
