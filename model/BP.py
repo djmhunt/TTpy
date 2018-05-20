@@ -3,16 +3,19 @@
 :Author: Dominic Hunt
 
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, array, ones
+from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray
+from scipy.stats import dirichlet #, beta
+from collections import OrderedDict
+from itertools import izip
 
-from modelTemplate import model
+from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
+from model.decision.binary import decRandom
 from utils import callableDetailsString
 
 
@@ -27,30 +30,33 @@ class BP(model):
 
     Parameters
     ----------
+    alpha : float, optional
+        Learning rate parameter
     beta : float, optional
         Sensitivity parameter for probabilities. Default ``4``
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    eta : float, optional
-        Decision threshold parameter. Default ``0.3``
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numStimuli : integer, optional
+    numCues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
     numCritics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numStimuli
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+        Default numActions*numCues
+    validRewards : list, ndarray, optional
+        The different reward values that can occur in the task. Default ``array([0, 1])``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
+    betaInit : float, optional
+        The initial values for the alpha and beta values of the beta distribution.
+        Normally 0, 1/2 or 1. Default 1
     prior : array of floats in ``[0, 1]``, optional
-        The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numStimuli)) / numCritics)``
+        Ignored in this case
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -59,7 +65,7 @@ class BP(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.binary.decRandom
     """
 
     Name = "BP"
@@ -70,21 +76,26 @@ class BP(model):
 
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.eta = kwargRemains.pop('eta', 0.3)
+        self.alpha = kwargRemains.pop('alpha', 0.3)
+        betaInit = kwargRemains.pop('betaInit', 1)
+        self.validRew = kwargRemains.pop('validRewards', array([0, 1]))
+        self.rewLoc = OrderedDict((k, v for k, v in izip(self.validRew, range(len(self.validRew)))))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=tuple(range(1, self.numCritics + 1)), eta=self.eta))
+        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
 
-        self.posteriorProb = ones(self.numActions) / self.numActions
+        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * betaInit
+        self.expectations = self.updateExpectations(self.dirichletVals)
 
         self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
+        self.parameters["alpha"] = self.alpha
+        self.parameters["betaInit"] = betaInit
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recPosteriorProb = []
+        self.recDirichletVals = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -97,7 +108,7 @@ class BP(model):
         """
 
         results = self.standardResultOutput()
-        results["PosteriorProb"] = array(self.recPosteriorProb)
+        results["dirichletVals"] = array(self.recDirichletVals)
 
         return results
 
@@ -108,43 +119,38 @@ class BP(model):
         """
 
         self.storeStandardResults()
-        self.recPosteriorProb.append(self.posteriorProb.copy())
+        self.recDirichletVals.append(self.dirichletVals.copy())
 
-    def rewardExpectation(self, observation, action, response):
-        """Calculate the reward based on the action and stimuli
+    def rewardExpectation(self, observation):
+        """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
 
         Parameters
-        ---------
+        ----------
         observation : {int | float | tuple}
             The set of stimuli
-        action : int or NoneType
-            The chosen action
-        response : float or NoneType
 
         Returns
         -------
-        expectedReward : float
-            The expected reward
+        actionExpectations : array of floats
+            The expected rewards for each action
         stimuli : list of floats
             The processed observations
         activeStimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation, action)
+        activeStimuli, stimuli = self.stimFunc(observation)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numStimuli > 1:
-            actionExpectations = self.actStimMerge(self.posteriorProb, stimuli)
+        if self.numCues > 1:
+            actionExpectations = self.calcActExpectations(self.actStimMerge(self.dirichletVals, stimuli))
         else:
-            actionExpectations = self.posteriorProb
+            actionExpectations = self.calcActExpectations(self.dirichletVals)
 
-        expectedReward = actionExpectations[action]
-
-        return expectedReward, stimuli, activeStimuli
+        return actionExpectations, stimuli, activeStimuli
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -168,44 +174,99 @@ class BP(model):
 
         modReward = self.rewFunc(reward, action, stimuli)
 
-        delta = modReward * expectation
+        return modReward
 
-        return delta
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
+        """
+        Parameters
+        ----------
+        delta : float
+            The difference between the reward and the expected reward
+        action : int
+            The action chosen by the model in this timestep
+        stimuli : list of float
+            The weights of the different stimuli in this timestep
+        stimuliFilter : list of bool
+            A list describing if a stimulus cue is present in this timestep
 
-    def updateModel(self, delta, action, stimuliFilter):
+        """
 
-        postProb = self._postProb(delta)
-        self.posteriorProb = postProb
+        # Find the new activities
+        self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
-        if self.probActions:
-            # Then we need to combine the expectations before calculating the probabilities
-            actPostProb = self.actStimMerge(postProb, stimuliFilter)
-            self.probabilities = self._prob(actPostProb)
+        # We need to combine the expectations before calculating the probabilities
+        if self.numCues > 1:
+            actionExpectations = self.calcActExpectations(self.actStimMerge(self.dirichletVals, stimuli))
         else:
-            self.probabilities = self._prob(postProb)
+            actionExpectations = self.calcActExpectations(self.dirichletVals)
 
+        self.probabilities = self.calcProbabilities(actionExpectations)
 
-    def _postProb(self, delta):
+    def _newExpect(self, action, delta, stimuli):
 
-        newProb = delta/sum(delta)
+        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/sum(stimuli)
 
-        return newProb
+        self.expectations = self.updateExpectations(self.dirichletVals)
 
-    def _prob(self, expectation):
+    def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
+        """
+        Calculate the probabilities associated with the actions
 
-        numerator = exp(self.beta * expectation)
+        Parameters
+        ----------
+        actionValues : 1D ndArray of floats
+
+        Returns
+        -------
+        probArray : 1D ndArray of floats
+            The probabilities associated with the actionValues
+        """
+        numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
-        p = numerator / denominator
+        probArray = numerator / denominator
 
-        return p
-#
-#        diff = 2*self.posteriorProb - sum(self.posteriorProb)
-#        p = 1.0 / (1.0 + exp(-self.beta*diff))
-#
-#        self.probabilities = p
+        return probArray
 
+    def actorStimulusProbs(self):
+        """
+        Calculates in the model-appropriate way the probability of each action.
+
+        Returns
+        -------
+        probabilities : 1D ndArray of floats
+            The probabilities associated with the action choices
+
+        """
+
+        probabilities = self.calcProbabilities(self.expectedRewards)
+
+        return probabilities
+
+    def actStimMerge(self, dirichletVals, stimuli):
+
+        dirVals = dirichletVals * expand_dims(repeat([stimuli], self.numActions, axis=0), 2)
+
+        actDirVals = sum(dirVals, 1)
+
+        return actDirVals
+
+    def calcActExpectations(self, dirichletVals):
+
+        actExpect = fromiter((sum(dirichlet(d).mean() * self.validRew) for d in dirichletVals), float, count=self.numActions)
+
+        return actExpect
+
+    def updateExpectations(self, dirichletVals):
+
+        def sumFunc(p, r=[]):
+            return sum(dirichlet(p).mean() * r)
+
+        expectations = apply_along_axis(sumFunc, 2, dirichletVals, r=self.validRew)
+
+        return expectations
 
 def blankStim():
     """
