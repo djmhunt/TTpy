@@ -210,7 +210,7 @@ def deckStimDirect():
     """
 
     def deckStim(observation):
-        return 1, observation
+        return 1, 1
 
     deckStim.Name = "deckStimDirect"
     return deckStim
