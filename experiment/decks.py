@@ -275,6 +275,40 @@ def deckRewDirectNormal(maxRewardVal):
     return deckRew
 
 
+def deckRewDirectPhi(kwargs):
+    """
+    Processes the decks reward for models expecting just the reward, but in range [0,1]
+
+    Parameters
+    ----------
+    maxRewardVal : int
+        The highest value a reward can have
+
+    Returns
+    -------
+    deckRew : function
+        The function expects to be passed a tuple containing the reward and the
+        last action. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    See Also
+    --------
+    model.opal, model.opals
+    """
+    phi = kwargs.pop('phi', 1)
+
+    def deckRew(reward, action, stimuli):
+        return reward * phi
+
+    deckRew.Name = "deckRewDirectPhi"
+    deckRew.Params = {"phi": phi}
+    return deckRew
+
+
 def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     """
     Processes the decks reward for models expecting the reward information

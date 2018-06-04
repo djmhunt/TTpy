@@ -84,6 +84,7 @@ class ACE(model):
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
+        self.genEventModifiers(kwargRemains)
 
         self.genStandardParameterDetails()
         self.parameters["alphaE"] = self.alphaE

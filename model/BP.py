@@ -83,6 +83,7 @@ class BP(model):
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
+        self.genEventModifiers(kwargRemains)
 
         self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
         self.expectations = self.updateExpectations(self.dirichletVals)

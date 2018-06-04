@@ -65,6 +65,7 @@ class model(object):
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
+        self.genEventModifiers(kwargRemains)
 
         self.genStandardParameterDetails()
 
@@ -522,6 +523,28 @@ class model(object):
         self.recActionProbs = []
         self.recActionProb = []
         self.simID = None
+
+    def genEventModifiers(self, kwargs):
+        """
+        Check if any of the stimulus, reward or decision functions need to be initialised with parameters that might be
+        fitted.
+        """
+
+        self.stimFunc = self._eventModifier(self.stimFunc, kwargs)
+        self.rewFunc = self._eventModifier(self.rewFunc, kwargs)
+        self.decisionFunc = self._eventModifier(self.decisionFunc, kwargs)
+
+    def _eventModifier(self, eFunc, kwargs):
+
+        try:
+            f = eFunc(kwargs)
+            if callable(f):
+                return f
+            else:
+                return eFunc
+        except TypeError:
+            return eFunc
+
 
     def params(self):
         """
