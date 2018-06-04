@@ -72,7 +72,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
             exp = None
 
         for v in partModelVars.itervalues():
-            modelOtherArgs[v] = "<Varies on participant>"
+            modelOtherArgs[v] = "<Varies for each participant>"
 
         outputting.logSimFittingParams(model.Name, modelInitParamVars, modelOtherArgs)
 
