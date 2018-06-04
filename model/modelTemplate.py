@@ -9,7 +9,7 @@ from types import NoneType
 
 from model.modelSetPlot import modelSetPlot
 from model.modelPlot import modelPlot
-from model.decision.binary import decSingle
+from model.decision.discrete import decWeightProb
 from utils import callableDetailsString
 
 
@@ -64,7 +64,7 @@ class model(object):
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numActions + 1))))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
 
@@ -146,7 +146,6 @@ class model(object):
         # Otherwise choose an action
         lastAction = self.currAction
         if type(validActions) is NoneType:
-            # TODO implement the capacity to set what the defaultNonAction is
             self.currAction = self.defaultNonAction
         else:
             self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, lastAction, events, validActions)
@@ -469,6 +468,8 @@ class model(object):
 
         self.actionCode = kwargs.pop('actionCodes', {k: k for k in xrange(self.numActions)})
 
+        self.defaultNonAction = kwargs.pop('nonAction', None)
+
         defaultPrior = ones(self.numActions) / self.numActions
         self.prior = kwargs.pop('prior', defaultPrior)
 
@@ -491,7 +492,7 @@ class model(object):
 
     def genStandardParameterDetails(self):
         """
-        Generates the standard parameters descibing the model as implemented.
+        Generates the standard parameters describing the model as implemented.
         """
 
         self.parameters = {"Name": self.Name,
@@ -499,6 +500,7 @@ class model(object):
                            "numCues": self.numCues,
                            "numCritics": self.numCritics,
                            "prior": self.prior.copy(),
+                           "nonAction": self.defaultNonAction,
                            "actionCode": self.actionCode.copy(),
                            "stimFunc": callableDetailsString(self.stimFunc),
                            "decFunc": callableDetailsString(self.decisionFunc)}

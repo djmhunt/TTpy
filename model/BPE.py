@@ -2,14 +2,15 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on ideas we had.
 """
-
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import ones, array, sum, shape, ndarray, max
+from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray, sum
+from scipy.stats import dirichlet #, beta
+from collections import OrderedDict
+from itertools import izip
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
@@ -17,9 +18,9 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 
-class ACE(model):
+class BPE(model):
 
-    """A basic, complete actor-critic model with decision making based on qLearnE
+    """The Bayesian predictor model
 
     Attributes
     ----------
@@ -30,10 +31,6 @@ class ACE(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    alphaE : float, optional
-        Learning rate parameter for the update of the expectations. Default ``\alpha``
-    alphaA : float, optional
-        Learning rate parameter for the update of the actor. Default ``\alpha``
     epsilon : float, optional
         Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
@@ -45,16 +42,17 @@ class ACE(model):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
+    validRewards : list, ndarray, optional
+        The different reward values that can occur in the task. Default ``array([0, 1])``
     actionCodes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
+    dirichletInit : float, optional
+        The initial values for values of the dirichlet distribution.
+        Normally 0, 1/2 or 1. Default 1
     prior : array of floats in ``[0, 1]``, optional
-        The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numCues)) / numCritics)``
-    expect: array of floats, optional
-        The initialisation of the the expected reward.
-        Default ``ones((numActions, numCues)) * 5 / numCues``
+        Ignored in this case
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -64,37 +62,39 @@ class ACE(model):
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.discrete.decWeightProb
+
+    See Also
+    --------
+    model.BP : This model is heavily based on that one
     """
 
-    Name = "ACE"
+    Name = "BPE"
 
     def __init__(self, **kwargs):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        # A record of the kwarg keys, the variable they create and their default value
-
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.alphaE = kwargRemains.pop('alphaE', self.alpha)
-        self.alphaA = kwargRemains.pop('alphaA', self.alpha)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.alpha = kwargRemains.pop('alpha', 0.3)
+        dirichletInit = kwargRemains.pop('dirichletInit', 1)
+        self.validRew = kwargRemains.pop('validRewards', array([0, 1]))
+        self.rewLoc = OrderedDict(((k, v) for k, v in izip(self.validRew, range(len(self.validRew)))))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
+        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
+        self.expectations = self.updateExpectations(self.dirichletVals)
+
         self.genStandardParameterDetails()
-        self.parameters["alphaE"] = self.alphaE
-        self.parameters["alphaA"] = self.alphaA
         self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectations.copy()
-        self.parameters["actorExpectation"] = self.actorExpectations.copy()
+        self.parameters["alpha"] = self.alpha
+        self.parameters["dirichletInit"] = dirichletInit
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recActorExpectations = []
+        self.recDirichletVals = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -107,7 +107,7 @@ class ACE(model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
+        results["dirichletVals"] = array(self.recDirichletVals)
 
         return results
 
@@ -118,7 +118,7 @@ class ACE(model):
         """
 
         self.storeStandardResults()
-        self.recActorExpectations.append(self.actorExpectations.flatten())
+        self.recDirichletVals.append(self.dirichletVals.copy())
 
     def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -142,7 +142,7 @@ class ACE(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        actionExpectations = self._actExpectations(self.expectations, stimuli)
+        actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -168,9 +168,7 @@ class ACE(model):
 
         modReward = self.rewFunc(reward, action, stimuli)
 
-        delta = modReward - expectation
-
-        return delta
+        return modReward
 
     def updateModel(self, delta, action, stimuli, stimuliFilter):
         """
@@ -191,26 +189,24 @@ class ACE(model):
         self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
-        self.probabilities = self.actorStimulusProbs()
+        # We need to combine the expectations before calculating the probabilities
+        actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
+        self.probabilities = self.calcProbabilities(actionExpectations)
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/sum(stimuli)
-        newExpectations = newExpectations * (newExpectations >= 0)
-        self.expectations[action] = newExpectations
+        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/sum(stimuli)
 
-        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/sum(stimuli)
-        newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
-        self.actorExpectations[action] = newActorExpectations
+        self.expectations = self.updateExpectations(self.dirichletVals)
 
-    def _actExpectations(self, expectations, stimuli):
+    def _actExpectations(self, dirichletVals, stimuli):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.numCues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.calcActExpectations(self.actStimMerge(dirichletVals, stimuli))
         else:
-            actionExpectations = expectations
+            actionExpectations = self.calcActExpectations(dirichletVals[:, 0, :])
 
         return actionExpectations
 
@@ -247,11 +243,32 @@ class ACE(model):
 
         """
 
-        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
-        probabilities = self.calcProbabilities(actExpectations)
+        probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
 
+    def actStimMerge(self, dirichletVals, stimuli):
+
+        dirVals = dirichletVals * expand_dims(repeat([stimuli], self.numActions, axis=0), 2)
+
+        actDirVals = sum(dirVals, 1)
+
+        return actDirVals
+
+    def calcActExpectations(self, dirichletVals):
+
+        actExpect = fromiter((sum(dirichlet(d).mean() * self.validRew) for d in dirichletVals), float, count=self.numActions)
+
+        return actExpect
+
+    def updateExpectations(self, dirichletVals):
+
+        def meanFunc(p, r=[]):
+            return sum(dirichlet(p).mean() * r)
+
+        expectations = apply_along_axis(meanFunc, 2, dirichletVals, r=self.validRew)
+
+        return expectations
 
 def blankStim():
     """

@@ -14,8 +14,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign, max, shape
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class qLearnE(model):
@@ -34,8 +33,6 @@ class qLearnE(model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    kappa : float, optional
-        The autocorelation parameter for which positive values promote sticking and negative values promote alternation
     epsilon : float, optional
         Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
@@ -65,7 +62,7 @@ class qLearnE(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
 
     See Also
     --------
@@ -80,20 +77,16 @@ class qLearnE(model):
 
         # A record of the kwarg keys, the variable they create and their default value
 
-        self.kappa = kwargRemains.pop('kappa', 0)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
-        self.lastAction = kwargRemains.pop('firstAction', 1)
-
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
-        self.parameters["kappa"] = self.kappa
         self.parameters["epsilon"] = self.epsilon
         self.parameters["expectation"] = self.expectations.copy()
 
@@ -144,12 +137,7 @@ class qLearnE(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -199,10 +187,8 @@ class qLearnE(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
-
-        self.lastAction = action
 
     def _newExpect(self, action, delta, stimuli):
 
@@ -212,7 +198,19 @@ class qLearnE(model):
 
         self.expectations[action] = newExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -226,17 +224,10 @@ class qLearnE(model):
             The probabilities associated with the actionValues
         """
 
-        lastAction = -ones(shape(actionValues))
-        lastAction[self.lastAction] = 1
-
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
         bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
-        p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
-
-        change = self.kappa * lastAction
-        probArray = p + (1 - p) * change * (change > 0) + p * change * (change < 0)
-        #probArray = p + p * (1 - p) * change
+        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 

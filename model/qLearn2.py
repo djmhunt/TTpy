@@ -24,8 +24,7 @@ from numpy import exp, ones, array
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class qLearn2(model):
@@ -57,7 +56,6 @@ class qLearn2(model):
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -85,7 +83,7 @@ class qLearn2(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
 
     See Also
     --------
@@ -105,11 +103,9 @@ class qLearn2(model):
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
-        self.lastAction = kwargRemains.pop('firstAction', 1)
-
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -165,12 +161,7 @@ class qLearn2(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -216,23 +207,33 @@ class qLearn2(model):
         """
 
         # Find the new activities
-        self._newExpect(delta, action, stimuli)
+        self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
-        self.lastAction = action
-
-    def _newExpect(self, delta, action, stimuli):
+    def _newExpect(self, action, delta, stimuli):
 
         if delta > 0:
             self.expectations[action] += self.alphaPos*delta*stimuli/sum(stimuli)
         else:
             self.expectations[action] += self.alphaNeg*delta*stimuli/sum(stimuli)
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 

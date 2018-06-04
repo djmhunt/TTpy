@@ -17,8 +17,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class qLearn(model):
@@ -38,7 +37,8 @@ class qLearn(model):
     alpha : float, optional
         Learning rate parameter
     beta : float, optional
-        Sensitivity parameter for probabilities
+        Sensitivity parameter for probabilities. Also known as an exploration-
+        exploitation parameter. Defined as :math:`\\beta` in the paper
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
@@ -69,7 +69,7 @@ class qLearn(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decRandom
+        in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
     Name = "qLearn"
@@ -78,8 +78,6 @@ class qLearn(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        # A record of the kwarg keys, the variable they create and their default value
-
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
@@ -87,7 +85,7 @@ class qLearn(model):
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -141,12 +139,7 @@ class qLearn(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -196,18 +189,28 @@ class qLearn(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
     def _newExpect(self, action, delta, stimuli):
 
         newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
-
         newExpectations = newExpectations * (newExpectations >= 0)
-
         self.expectations[action] = newExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -220,6 +223,7 @@ class qLearn(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
+
         numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 

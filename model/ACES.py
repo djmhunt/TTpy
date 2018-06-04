@@ -14,8 +14,7 @@ from numpy import ones, array, sum, shape, ndarray, max
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class ACES(model):
@@ -60,7 +59,7 @@ class ACES(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
     Name = "ACES"
@@ -73,17 +72,17 @@ class ACES(model):
 
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', 1)
+        self.expectations = kwargRemains.pop('expect', 0.5)
         self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectations#.copy()
+        self.parameters["expectation"] = self.expectations
         self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
         # Recorded information
@@ -185,20 +184,29 @@ class ACES(model):
         self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
-        # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.actorExpectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        self.probabilities = self.actorStimulusProbs()
 
     def _newExpect(self, action, delta, stimuli):
 
-        self.expectations = self.expectations + self.alpha*delta
+        self.expectations += self.alpha*delta
 
         newActorExpectations = self.actorExpectations[action] + delta * stimuli/sum(stimuli)
         newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
         self.actorExpectations[action] = newActorExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
-        # type: (Iterable) -> ndarray
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -212,19 +220,10 @@ class ACES(model):
             The probabilities associated with the actionValues
         """
 
-        #lastAction = -ones(shape(actionValues))
-        #lastAction[self.lastAction] = 1
-
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
         bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
-        p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
-
-        probArray = p
-
-        #change = self.kappa * lastAction
-        #probArray = p + (1 - p) * change * (change > 0) + p * change * (change < 0)
-        # probArray = p + p * (1 - p) * change
+        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
@@ -239,7 +238,8 @@ class ACES(model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
+        probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
 

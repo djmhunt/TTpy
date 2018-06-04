@@ -14,8 +14,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class tdE(model):
@@ -65,7 +64,11 @@ class tdE(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
+
+    See Also
+    --------
+    model.td0 : This model is heavily based on that one
     """
 
     Name = "tdE"
@@ -84,7 +87,7 @@ class tdE(model):
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.lastAction = 0
         self.lastStimuli = zeros(self.numCues)
@@ -142,12 +145,7 @@ class tdE(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -201,7 +199,7 @@ class tdE(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
         self.lastStimuli = stimuli
@@ -215,7 +213,19 @@ class tdE(model):
 
         self.expectations[action] = newExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 

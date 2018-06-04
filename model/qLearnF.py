@@ -2,14 +2,17 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on ideas we had.
+:Reference: Based on the paper Regulatory fit effects in a choice task
+                Worthy, D. a, Maddox, W. T., & Markman, A. B. (2007).
+                Psychonomic Bulletin & Review, 14(6), 1125–32.
+                Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import ones, array, sum, shape, ndarray, max
+from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, max
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
@@ -17,25 +20,29 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 
-class ACE(model):
+class qLearnF(model):
 
-    """A basic, complete actor-critic model with decision making based on qLearnE
+    """The q-Learning algorithm
 
     Attributes
     ----------
     Name : string
         The name of the class used when recording what has been used.
+    currAction : int
+        The current action chosen by the model. Used to pass participant action
+        to model when fitting
 
     Parameters
     ----------
     alpha : float, optional
         Learning rate parameter
-    alphaE : float, optional
-        Learning rate parameter for the update of the expectations. Default ``\alpha``
-    alphaA : float, optional
-        Learning rate parameter for the update of the actor. Default ``\alpha``
-    epsilon : float, optional
-        Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
+    beta : float, optional
+        Sensitivity parameter for probabilities
+    gamma: float, optional
+        future expectation discounting
+    invBeta : float, optional
+        Inverse of sensitivity parameter.
+        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -64,9 +71,13 @@ class ACE(model):
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.discrete.decWeightProb
+
+    See Also
+    --------
+    model.qLearn : This model is heavily based on that one
     """
 
-    Name = "ACE"
+    Name = "qLearnF"
 
     def __init__(self, **kwargs):
 
@@ -74,27 +85,27 @@ class ACE(model):
 
         # A record of the kwarg keys, the variable they create and their default value
 
+        invBeta = kwargRemains.pop('invBeta', 0.2)
+        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.alphaE = kwargRemains.pop('alphaE', self.alpha)
-        self.alphaA = kwargRemains.pop('alphaA', self.alpha)
-        self.epsilon = kwargRemains.pop('epsilon', 0.1)
+        self.gamma = kwargRemains.pop('gamma', 0.3)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
+        self.lastAction = 0
+        self.lastStimuli = ones(self.numCues)
+
         self.genStandardParameterDetails()
-        self.parameters["alphaE"] = self.alphaE
-        self.parameters["alphaA"] = self.alphaA
-        self.parameters["epsilon"] = self.epsilon
+        self.parameters["alpha"] = self.alpha
+        self.parameters["beta"] = self.beta
+        self.parameters["gamma"] = self.gamma
         self.parameters["expectation"] = self.expectations.copy()
-        self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recActorExpectations = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -107,7 +118,6 @@ class ACE(model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
 
         return results
 
@@ -118,7 +128,6 @@ class ACE(model):
         """
 
         self.storeStandardResults()
-        self.recActorExpectations.append(self.actorExpectations.flatten())
 
     def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -188,20 +197,24 @@ class ACE(model):
         """
 
         # Find the new activities
-        self._newExpect(action, delta, stimuli)
+        change = self.alpha*delta*stimuli/sum(stimuli)
+        self._newExpect(action, change)
 
         # Calculate the new probabilities
-        self.probabilities = self.actorStimulusProbs()
+        # We need to combine the expectations before calculating the probabilities
+        actExpectations = self._actExpectations(self.expectations, stimuli)
+        self.probabilities = self.calcProbabilities(actExpectations)
 
-    def _newExpect(self, action, delta, stimuli):
+        self.lastStimuli = stimuli
+        self.lastAction = action
 
-        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/sum(stimuli)
+    def _newExpect(self, action, change):
+
+        newExpectations = self.expectations[action] + change
+
         newExpectations = newExpectations * (newExpectations >= 0)
-        self.expectations[action] = newExpectations
 
-        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/sum(stimuli)
-        newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
-        self.actorExpectations[action] = newActorExpectations
+        self.expectations[action] = newExpectations
 
     def _actExpectations(self, expectations, stimuli):
 
@@ -229,12 +242,22 @@ class ACE(model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == max(actionValues)
-        deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
-        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
+        numerator = exp(self.beta * actionValues)
+        denominator = sum(numerator)
+
+        probArray = numerator / denominator
 
         return probArray
+
+    def lastChoiceReinforcement(self):
+        """
+        Allows the model to update its expectations once the action has been chosen.
+        """
+
+        lastStimuli = self.lastStimuli
+
+        change = self.alpha * self.gamma * max(self.expectedRewards) * lastStimuli/sum(lastStimuli)
+        self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):
         """
@@ -247,8 +270,7 @@ class ACE(model):
 
         """
 
-        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
-        probabilities = self.calcProbabilities(actExpectations)
+        probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
 

@@ -11,18 +11,16 @@
 
 """
 
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
 from numpy import exp, ones, array
 
-from modelTemplate import model
+from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.discrete import decMaxProb
-from utils import callableDetailsString, errorResp
-from outputtingUtils import exportClassData
+from model.decision.discrete import decWeightProb
 
 class OpALS(model):
 
@@ -52,7 +50,7 @@ class OpALS(model):
         Learning rate parameter for Go, the positive part of the actor learning
         Default is ``alpha``
     alphaNogo : float, optional
-        Learning rate aprameter for Nogo, the negative part of the actor learning
+        Learning rate parameter for Nogo, the negative part of the actor learning
         Default is ``alpha``
     alphaGoDiff : float, optional
         The difference between ``alphaCrit`` and ``alphaGo``. The default is ``None``
@@ -104,7 +102,7 @@ class OpALS(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
 
     Notes
     -----
@@ -155,7 +153,7 @@ class OpALS(model):
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decMaxProb(range(self.numCritics)))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         if self.alphaGoNogoDiff:
             self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
@@ -220,7 +218,7 @@ class OpALS(model):
         self.recActionValues.append(self.actionValues.copy())
 
     def rewardExpectation(self, observation):
-        """Calculate the reward based on the action and stimuli
+        """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are experiment dependent
 
@@ -241,12 +239,7 @@ class OpALS(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -292,24 +285,24 @@ class OpALS(model):
         """
 
         # Find the new activities
-        self._critic(delta, action, stimuli)
+        self._critic(action, delta, stimuli)
 
-        self._actor(delta, action, stimuli)
+        self._actor(action, delta, stimuli)
 
         self._actionValues(self.go, self.nogo)
 
         # Calculate the new probabilities
-        # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.actionValues, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        self.probabilities = self.actorStimulusProbs()
 
-    def _critic(self, delta, action, stimuli):
+    def _critic(self, action, delta, stimuli):
 
-        newExpectations = self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
 
-        self.expectations[action] += newExpectations
+        newExpectations = newExpectations * (newExpectations >= 0)
 
-    def _actor(self, delta, action, stimuli):
+        self.expectations[action] = newExpectations
+
+    def _actor(self, action, delta, stimuli):
 
         chosenGo = self.go[action] * stimuli/sum(stimuli)
         chosenNogo = self.nogo[action] * stimuli/sum(stimuli)
@@ -325,7 +318,19 @@ class OpALS(model):
 
         self.actionValues = actionValues
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -357,14 +362,11 @@ class OpALS(model):
 
         """
 
-        if self.probActions:
-            # Then we need to combine the expectations before calculating the probabilities
-            actExpectations = self.actStimMerge(self.actionValues, self.stimuliFilter)
-            probabilities = self.calcProbabilities(actExpectations)
-        else:
-            probabilities = self.calcProbabilities(self.actionValues)
+        actExpectations = self._actExpectations(self.actionValues, self.stimuli)
+        probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
+
 
 def blankStim():
     """

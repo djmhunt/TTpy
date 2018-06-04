@@ -14,8 +14,7 @@ from numpy import exp, array, ones
 from modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class EP(model):
@@ -36,12 +35,11 @@ class EP(model):
     alpha : float, optional
         Learning rate parameter
     beta : float, optional
-        Sensitivity parameter for probabilities
+        Sensitivity parameter for probabilities. Also known as an exploration-
+        exploitation parameter. Defined as :math:`\\beta` in the paper
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    eta : float, optional
-        Decision threshold parameter
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -51,11 +49,10 @@ class EP(model):
     numCritics : integer, optional
         The number of different reaction learning sets.
         Default numActions*numCues
-    probActions : bool, optional
-        Defines if the probabilities calculated by the model are for each
-        action-stimulus pair or for actions. That is, if the stimuli values for
-        each action are combined before the probability calculation.
-        Default ``True``
+    actionCodes : dict with string or int as keys and int values, optional
+        A dictionary used to convert between the action references used by the
+        task or dataset and references used in the models to describe the order
+        in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
@@ -71,7 +68,7 @@ class EP(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
     Name = "EP"
@@ -81,26 +78,24 @@ class EP(model):
         kwargRemains = self.genStandardParameters(kwargs)
 
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.eta = kwargRemains.pop('eta', 0.3)
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
 
     def outputEvolution(self):
-        """ Returns the relevant data expected from a model as well as the parameters for the current model
+        """ Returns all the relevant data for this model
 
         Returns
         -------
@@ -143,12 +138,7 @@ class EP(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -178,24 +168,46 @@ class EP(model):
 
         return delta
 
-    def updateModel(self, delta, action, stimuliFilter):
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
+        """
+        Parameters
+        ----------
+        delta : float
+            The difference between the reward and the expected reward
+        action : int
+            The action chosen by the model in this timestep
+        stimuli : list of float
+            The weights of the different stimuli in this timestep
+        stimuliFilter : list of bool
+            A list describing if a stimulus cue is present in this timestep
+
+        """
 
         # Find the new activities
-        self._newAct(delta)
+        self._newAct(delta, stimuli)
 
         # Calculate the new probabilities
-        if self.probActions:
-            # Then we need to combine the expectations before calculating the probabilities
-            actActivity = self.actStimMerge(self.expectations, stimuliFilter)
-            self.probabilities = self.calcProbabilities(actActivity)
+        # We need to combine the expectations before calculating the probabilities
+        actExpectations = self._actExpectations(self.expectations, stimuli)
+        self.probabilities = self.calcProbabilities(actExpectations)
+
+    def _newAct(self, delta, stimuli):
+
+        self.expectations += self.alpha * delta * stimuli/sum(stimuli)
+
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
         else:
-            self.probabilities = self.calcProbabilities(self.expectations)
+            actionExpectations = expectations
 
-    def _newAct(self, delta):
-
-        self.expectations += self.alpha * delta
+        return actionExpectations
 
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -208,6 +220,7 @@ class EP(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
+
         numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
@@ -234,6 +247,7 @@ class EP(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
+
 
 def blankStim():
     """
@@ -279,4 +293,3 @@ def blankRew():
 
     blankRewFunc.Name = "blankRew"
     return blankRewFunc
-

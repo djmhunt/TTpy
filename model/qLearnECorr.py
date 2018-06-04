@@ -2,14 +2,14 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on ideas we had.
+:Reference: Based on the Epsilon-greedy method along with a past choice autocorrelation inspired by ``qLearnCorr``
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import ones, array, sum, shape, ndarray, max
+from numpy import exp, ones, array, isnan, isinf, sum, sign, max, shape
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
@@ -17,23 +17,24 @@ from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 
-class ACE(model):
+class qLearnECorr(model):
 
-    """A basic, complete actor-critic model with decision making based on qLearnE
+    """The q-Learning algorithm
 
     Attributes
     ----------
     Name : string
         The name of the class used when recording what has been used.
+    currAction : int
+        The current action chosen by the model. Used to pass participant action
+        to model when fitting
 
     Parameters
     ----------
     alpha : float, optional
         Learning rate parameter
-    alphaE : float, optional
-        Learning rate parameter for the update of the expectations. Default ``\alpha``
-    alphaA : float, optional
-        Learning rate parameter for the update of the actor. Default ``\alpha``
+    kappa : float, optional
+        The autocorrelation parameter for which positive values promote sticking and negative values promote alternation
     epsilon : float, optional
         Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
@@ -64,9 +65,13 @@ class ACE(model):
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
         in to a decision. Default is model.decision.discrete.decWeightProb
+
+    See Also
+    --------
+    model.qLearnCorr : This model is heavily based on that one
     """
 
-    Name = "ACE"
+    Name = "qLearnECorr"
 
     def __init__(self, **kwargs):
 
@@ -74,27 +79,25 @@ class ACE(model):
 
         # A record of the kwarg keys, the variable they create and their default value
 
+        self.kappa = kwargRemains.pop('kappa', 0)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.alphaE = kwargRemains.pop('alphaE', self.alpha)
-        self.alphaA = kwargRemains.pop('alphaA', self.alpha)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
+
+        self.lastAction = kwargRemains.pop('firstAction', 1)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
-        self.parameters["alphaE"] = self.alphaE
-        self.parameters["alphaA"] = self.alphaA
+        self.parameters["alpha"] = self.alpha
+        self.parameters["kappa"] = self.kappa
         self.parameters["epsilon"] = self.epsilon
         self.parameters["expectation"] = self.expectations.copy()
-        self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
         # Recorded information
         self.genStandardResultsStore()
-        self.recActorExpectations = []
 
     def outputEvolution(self):
         """ Returns all the relevant data for this model
@@ -107,7 +110,6 @@ class ACE(model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
 
         return results
 
@@ -118,7 +120,6 @@ class ACE(model):
         """
 
         self.storeStandardResults()
-        self.recActorExpectations.append(self.actorExpectations.flatten())
 
     def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -191,17 +192,19 @@ class ACE(model):
         self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
-        self.probabilities = self.actorStimulusProbs()
+        # We need to combine the expectations before calculating the probabilities
+        actExpectations = self._actExpectations(self.expectations, stimuli)
+        self.probabilities = self.calcProbabilities(actExpectations)
+
+        self.lastAction = action
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/sum(stimuli)
-        newExpectations = newExpectations * (newExpectations >= 0)
-        self.expectations[action] = newExpectations
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
 
-        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/sum(stimuli)
-        newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
-        self.actorExpectations[action] = newActorExpectations
+        newExpectations = newExpectations * (newExpectations >= 0)
+
+        self.expectations[action] = newExpectations
 
     def _actExpectations(self, expectations, stimuli):
 
@@ -229,10 +232,17 @@ class ACE(model):
             The probabilities associated with the actionValues
         """
 
+        lastAction = -ones(shape(actionValues))
+        lastAction[self.lastAction] = 1
+
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
         bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
-        probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
+        p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
+
+        change = self.kappa * lastAction
+        probArray = p + (1 - p) * change * (change > 0) + p * change * (change < 0)
+        #probArray = p + p * (1 - p) * change
 
         return probArray
 
@@ -247,8 +257,7 @@ class ACE(model):
 
         """
 
-        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
-        probabilities = self.calcProbabilities(actExpectations)
+        probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
 

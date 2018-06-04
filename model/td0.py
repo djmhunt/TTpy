@@ -14,8 +14,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class td0(model):
@@ -68,7 +67,7 @@ class td0(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
     Name = "td0"
@@ -77,21 +76,18 @@ class td0(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        # A record of the kwarg keys, the variable they create and their default value
-
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.gamma = kwargRemains.pop('gamma', 0.3)
-        self.eta = kwargRemains.pop('eta', 0.3)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=self.eta))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.lastAction = 0
-        self.lastStimuliFilter = zeros(self.numCues)
+        self.lastStimuli = ones(self.numCues)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -146,12 +142,7 @@ class td0(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -205,7 +196,7 @@ class td0(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
         self.lastStimuli = stimuli
@@ -219,7 +210,19 @@ class td0(model):
 
         self.expectations[action] = newExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -232,21 +235,11 @@ class td0(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
+
         numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
         probArray = numerator / denominator
-
-#        inftest = isinf(numerator)
-#        if inftest.any():
-#            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
-#
-#            logger = logging.getLogger('qLearn')
-#            message = "Overflow in calculating the prob with expectation "
-#            message += str(expectation)
-#            message += " \n Returning the prob: " + str(probs)
-#            logger.warning(message)
 
         return probArray
 

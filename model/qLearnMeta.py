@@ -17,8 +17,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decEta
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class qLearnMeta(model):
@@ -38,7 +37,7 @@ class qLearnMeta(model):
     alpha : float, optional
         Learning rate parameter
     tau : float, optional
-        Beta  rate Sensitivity parameter for probabilities
+        Beta rate Sensitivity parameter for probabilities
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
@@ -89,11 +88,10 @@ class qLearnMeta(model):
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(eta=0.3))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
-        #self.parameters["beta"] = self.beta
         self.parameters["tau"] = self.tau
         self.parameters["expectation"] = self.expectations.copy()
 
@@ -156,12 +154,7 @@ class qLearnMeta(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -235,10 +228,10 @@ class qLearnMeta(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
-    def _newExpect(self, delta, action, stimuli):
+    def _newExpect(self, action, delta, stimuli):
 
         newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
 
@@ -246,7 +239,19 @@ class qLearnMeta(model):
 
         self.expectations[action] = newExpectations
 
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
     def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -259,21 +264,11 @@ class qLearnMeta(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
+
         numerator = exp(self.beta * actionValues)
         denominator = sum(numerator)
 
         probArray = numerator / denominator
-
-#        inftest = isinf(numerator)
-#        if inftest.any():
-#            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
-#
-#            logger = logging.getLogger('qLearn')
-#            message = "Overflow in calculating the prob with expectation "
-#            message += str(expectation)
-#            message += " \n Returning the prob: " + str(probs)
-#            logger.warning(message)
 
         return probArray
 

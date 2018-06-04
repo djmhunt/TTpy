@@ -18,8 +18,7 @@ from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.discrete import decProbThresh
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class qLearnCorr(model):
@@ -72,7 +71,11 @@ class qLearnCorr(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.discrete.decWeightProb
+
+    See Also
+    --------
+    model.qLearn : This model is heavily based on that one
     """
 
     Name = "qLearnCorr"
@@ -81,17 +84,17 @@ class qLearnCorr(model):
 
         kwargRemains = self.genStandardParameters(kwargs)
 
-        # A record of the kwarg keys, the variable they create and their default value
-
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.kappa = kwargRemains.pop('kappa', 0.2)
         self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
 
+        self.lastAction = kwargRemains.pop('firstAction', 1)
+
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decProbThresh(kwargRemains.pop('expResp', (0,1)), eta=kwargRemains.pop('eta', 0.8)))
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -146,12 +149,7 @@ class qLearnCorr(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.actStimMerge(self.expectations, stimuli)
-        else:
-            actionExpectations = self.expectations
+        actionExpectations = self._actExpectations(self.expectations, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -201,18 +199,32 @@ class qLearnCorr(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self.actStimMerge(self.expectations, stimuli)
+        actExpectations = self._actExpectations(self.expectations, stimuli)
         self.probabilities = self.calcProbabilities(actExpectations)
 
-    def _newExpect(self, delta, action, stimuli):
+        self.lastAction = action
+
+    def _newExpect(self, action, delta, stimuli):
 
         newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
 
-        newExpectations = newExpectations * (newExpectations >=0)
+        newExpectations = newExpectations * (newExpectations >= 0)
 
         self.expectations[action] = newExpectations
 
-    def calcProbabilities(self, actionValues, action):
+    def _actExpectations(self, expectations, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.actStimMerge(expectations, stimuli)
+        else:
+            actionExpectations = expectations
+
+        return actionExpectations
+
+    def calcProbabilities(self, actionValues):
+        # type: (ndarray) -> ndarray
         """
         Calculate the probabilities associated with the actions
 
@@ -226,23 +238,12 @@ class qLearnCorr(model):
             The probabilities associated with the actionValues
         """
         lastAction = zeros(shape(actionValues))
-        lastAction[action] = 1
+        lastAction[self.lastAction] = 1
 
         numerator = exp(self.beta * (actionValues + self.kappa * lastAction))
         denominator = sum(numerator)
 
         probArray = numerator / denominator
-
-#        inftest = isinf(numerator)
-#        if inftest.any():
-#            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
-#
-#            logger = logging.getLogger('qLearn')
-#            message = "Overflow in calculating the prob with expectation "
-#            message += str(expectation)
-#            message += " \n Returning the prob: " + str(probs)
-#            logger.warning(message)
 
         return probArray
 
@@ -257,7 +258,7 @@ class qLearnCorr(model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards, self.currAction)
+        probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
 

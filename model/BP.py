@@ -7,16 +7,15 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray
-from scipy.stats import dirichlet #, beta
+from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray, sum
+from scipy.stats import dirichlet
 from collections import OrderedDict
 from itertools import izip
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
 from model.modelSetPlot import modelSetPlot
-from model.decision.binary import decRandom
-from utils import callableDetailsString
+from model.decision.discrete import decWeightProb
 
 
 class BP(model):
@@ -52,8 +51,8 @@ class BP(model):
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
-    betaInit : float, optional
-        The initial values for the alpha and beta values of the beta distribution.
+    dirichletInit : float, optional
+        The initial values for values of the dirichlet distribution.
         Normally 0, 1/2 or 1. Default 1
     prior : array of floats in ``[0, 1]``, optional
         Ignored in this case
@@ -65,7 +64,7 @@ class BP(model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decRandom
+        in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
     Name = "BP"
@@ -77,21 +76,21 @@ class BP(model):
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        betaInit = kwargRemains.pop('betaInit', 1)
+        dirichletInit = kwargRemains.pop('dirichletInit', 1)
         self.validRew = kwargRemains.pop('validRewards', array([0, 1]))
-        self.rewLoc = OrderedDict((k, v for k, v in izip(self.validRew, range(len(self.validRew)))))
+        self.rewLoc = OrderedDict(((k, v) for k, v in izip(self.validRew, range(len(self.validRew)))))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decRandom())
+        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
 
-        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * betaInit
+        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
         self.expectations = self.updateExpectations(self.dirichletVals)
 
         self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta
         self.parameters["alpha"] = self.alpha
-        self.parameters["betaInit"] = betaInit
+        self.parameters["dirichletInit"] = dirichletInit
 
         # Recorded information
         self.genStandardResultsStore()
@@ -143,12 +142,7 @@ class BP(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        # If there are multiple possible stimuli, filter by active stimuli and calculate
-        # calculate the expectations associated with each action.
-        if self.numCues > 1:
-            actionExpectations = self.calcActExpectations(self.actStimMerge(self.dirichletVals, stimuli))
-        else:
-            actionExpectations = self.calcActExpectations(self.dirichletVals)
+        actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -196,11 +190,7 @@ class BP(model):
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        if self.numCues > 1:
-            actionExpectations = self.calcActExpectations(self.actStimMerge(self.dirichletVals, stimuli))
-        else:
-            actionExpectations = self.calcActExpectations(self.dirichletVals)
-
+        actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
         self.probabilities = self.calcProbabilities(actionExpectations)
 
     def _newExpect(self, action, delta, stimuli):
@@ -208,6 +198,17 @@ class BP(model):
         self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/sum(stimuli)
 
         self.expectations = self.updateExpectations(self.dirichletVals)
+
+    def _actExpectations(self, dirichletVals, stimuli):
+
+        # If there are multiple possible stimuli, filter by active stimuli and calculate
+        # calculate the expectations associated with each action.
+        if self.numCues > 1:
+            actionExpectations = self.calcActExpectations(self.actStimMerge(dirichletVals, stimuli))
+        else:
+            actionExpectations = self.calcActExpectations(dirichletVals[:, 0, :])
+
+        return actionExpectations
 
     def calcProbabilities(self, actionValues):
         # type: (ndarray) -> ndarray
@@ -261,24 +262,21 @@ class BP(model):
 
     def updateExpectations(self, dirichletVals):
 
-        def sumFunc(p, r=[]):
+        def meanFunc(p, r=[]):
             return sum(dirichlet(p).mean() * r)
 
-        expectations = apply_along_axis(sumFunc, 2, dirichletVals, r=self.validRew)
+        expectations = apply_along_axis(meanFunc, 2, dirichletVals, r=self.validRew)
 
         return expectations
 
 def blankStim():
     """
-    Default stimulus processor. Does nothing.Returns ([1,0], None)
+    Default stimulus processor. Does nothing.
 
     Returns
     -------
     blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
+        The function expects to be passed the event and then return it.
 
     Attributes
     ----------
@@ -288,7 +286,7 @@ def blankStim():
     """
 
     def blankStimFunc(event):
-        return ([1,0], None)
+        return event
 
     blankStimFunc.Name = "blankStim"
     return blankStimFunc
