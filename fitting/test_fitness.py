@@ -15,7 +15,7 @@ from numpy import array
 from models import models
 from model.qLearn import qLearn
 from fitting.fit import fit
-from fitting.fitters.minimize import minimize
+from fitting.fitAlgs.minimize import minimize
 
 #def test_an_exception():
 #    with raises(IndexError):

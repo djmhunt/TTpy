@@ -48,8 +48,9 @@ def simpleSum(modVals):
 
 
 def logprob(modVals):
+    # type: (Union[ndarray, list]) -> float
     """
-    Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
+    Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -2\mathrm{log}_2(\\vec x)`
 
     Returns
     -------
@@ -67,6 +68,7 @@ def logprob(modVals):
 
 
 def logAverageProb(modVals):
+    # type: (Union[ndarray, list]) -> float
     """
     Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
 
@@ -88,22 +90,117 @@ def logAverageProb(modVals):
 
 
 def maxprob(modVals):
+    # type: (Union[ndarray, list]) -> float
     """
     Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
 
     Returns
     -------
     fit : float
-        The sum of the model valaues returned
+        The sum of the model values returned
     """
 
     fit = sum(1-modVals)
 
     return fit
 
+def bayesInfoCrit(**kwargs):
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
+    """
+    Generates a function that calculates the Bayesian Information Criterion (BIC)
+
+    :math:`\lambda \mathrm{log}_2(T)+ f_{\mathrm{mod}}\left(\\vec x\right)`
+
+    Parameters
+    ----------
+    kwargs
+
+    Returns
+    -------
+
+    """
+    numParams = kwargs.get("numParams", 2)
+
+    def BICfunc(modVals, **kwargs):
+        # type: (Union[ndarray, list]) -> float
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        BICmod = numParams * log2(numSamples) + logprob(modVals)
+        return BICmod
+
+    BICfunc.Name = "bayesInfoCrit"
+    BICfunc.Params = {"numParams": numParams}
+    return BICfunc
+
+def bayesRand(**kwargs):
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
+    randActProb = kwargs.get("randActProb", 1 / 2)
+
+    def BICfunc(modVals, **kwargs):
+
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        BICrand = logprob(ones(numSamples) * randActProb)
+        return BICrand
+
+    BICfunc.Name = "bayesRand"
+    BICfunc.Params = {"randActProb": randActProb}
+    return BICfunc
+
+def bayesFactor2(**kwargs):
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
+    """
+
+    :math:`2^{\frac{}{2}}`
+
+    Parameters
+    ----------
+    kwargs
+
+    Returns
+    -------
+
+    """
+    numParams = kwargs.get("numParams", 2)
+    randActProb = kwargs.get("randActProb", 1 / 2)
+    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICrandfunc = bayesRand(randActProb=randActProb)
+
+    def bayesFunc(modVals, **kwargs):
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
+        BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
+
+        bayesF = 2 ** ((BICrandom - BICmod) / 2)
+
+        return bayesF
+
+    bayesFunc.Name = "bayesFactor2"
+    bayesFunc.Params = {"randActProb": randActProb,
+                     "numParams": numParams}
+    return bayesFunc
+
+
+def r2(**kwargs):
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
+    numParams = kwargs.get("numParams", 2)
+    randActProb = kwargs.get("randActProb", 1 / 2)
+    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICrandfunc = bayesRand(randActProb=randActProb)
+
+    def r2func(modVals, **kwargs):
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
+        BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
+
+        r = BICmod/BICrandom - 1
+        return r
+
+    r2func.Name = "r2"
+    r2func.Params = {"randActProb": randActProb,
+                     "numParams": numParams}
+    return r2func
 
 def BIC2(**kwargs):
-    # type : (int, float) -> Callable[[Union[ndarray, list]], float]
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
 
     Parameters
@@ -125,12 +222,15 @@ def BIC2(**kwargs):
     """
 
     # Set the values that will be fixed for the whole fitting process
-    numParams = kwargs.pop("numParams", 2)
-    qualityThreshold = kwargs.pop("qualityThreshold", 20)
-    numActions = kwargs.pop("numActions", 2)
-    randActProb = kwargs.pop("randActProb", 1/numActions)
+    numParams = kwargs.get("numParams", 2)
+    qualityThreshold = kwargs.get("qualityThreshold", 20)
+    numActions = kwargs.get("numActions", 2)
+    randActProb = kwargs.get("randActProb", 1/numActions)
 
-    def BICfunc(modVals):
+    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICrandfunc = bayesRand(randActProb=randActProb)
+
+    def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
         """
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
@@ -144,16 +244,16 @@ def BIC2(**kwargs):
             The sum of the model values returned
         """
 
-        numSamples = shape(modVals)
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
 
         # We define the Bayesian Information Criteria for the probability of the model given the data, relative a
         # guessing model
 
-        BICval = numParams * log2(amax(numSamples)) + logprob(modVals)
-        BICrandom = logprob(ones(numSamples) * randActProb)
+        BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
+        BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
         qualityConvertor = qualityThreshold**(2/BICrandom)
 
-        fit = qualityConvertor * 2**(BICval/BICrandom - 1)
+        fit = qualityConvertor * 2**(BICmod/BICrandom - 1)
 
         return fit
 
@@ -166,7 +266,7 @@ def BIC2(**kwargs):
 
 
 def BIC2Boot(**kwargs):
-    # type : (int, float) -> Callable[[Union[ndarray, list]], float]
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
     An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the
     difference between different sample distributions would become more pronounced. This was not found to be true.
@@ -248,9 +348,11 @@ def BIC2Boot(**kwargs):
                       "sampleLen": sampleLen}
     return BICfunc
 
+
 def WBIC2(**kwargs):
-    # type : (int, float) -> Callable[[Union[ndarray, list]], float]
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
+    Unfinished WBIC implementation
 
     Parameters
     ----------
@@ -265,14 +367,14 @@ def WBIC2(**kwargs):
         # type: (Union[ndarray, list]) -> float
         """
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
-        The function is a modified version of the Bayesian Informaiton Criterion
+        The function is a modified version of the Bayesian Information Criterion
 
         It provides a fit such that when a value is less than one it is a valid fit
 
         Returns
         -------
         fit : float
-            The sum of the model valaues returned
+            The sum of the model values returned
         """
 
         numSamples = shape(modVals)

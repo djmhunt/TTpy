@@ -11,10 +11,10 @@ from scipy import optimize
 from itertools import izip
 from types import NoneType
 
-from fitting.fitters.fitAlg import fitAlg
+from fitting.fitAlgs.fitAlg import fitAlg
 from utils import callableDetailsString
-from fitting.fitters.qualityFunc import qualFuncIdent
-from fitting.fitters.boundFunc import scalarBound
+from fitting.fitAlgs.qualityFunc import qualFuncIdent
+from fitting.fitAlgs.boundFunc import scalarBound
 
 import pytest
 
@@ -65,7 +65,7 @@ class evolutionary(fitAlg):
 
     See Also
     --------
-    fitting.fitters.fitAlg.fitAlg : The general fitting strategy class, from
+    fitting.fitAlgs.fitAlg.fitAlg : The general fitting strategy class, from
                                     which this one inherits
     fitting.fit.fit : The general fitting framework class
     scipy.optimise.differential_evolution : The fitting class this wraps around
@@ -122,7 +122,7 @@ class evolutionary(fitAlg):
         self.iterbestParams = []
         self.iterConvergence = []
 
-        self.logger = logging.getLogger('Fitting.fitters.evolutionary')
+        self.logger = logging.getLogger('Fitting.fitAlgs.evolutionary')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -230,7 +230,7 @@ class evolutionary(fitAlg):
 
         See Also
         --------
-        fitting.fitters.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
+        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
         """
 
         optimizeResult = optimize.differential_evolution(self.fitness,

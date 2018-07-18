@@ -31,7 +31,7 @@ class fitter(fit):
         The key containing the participant reward data
     modelParam : string
         The key to be compared in the model data
-    fitAlg : fitting.fitters.fitAlg instance
+    fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
     scalar : function
         Transforms the participant action form to match that of the model
@@ -60,7 +60,7 @@ class fitter(fit):
     See Also
     --------
     fitting.fit.fit : The class this inherits many functions from
-    fitting.fitters.fitAlg.fitAlg : The general fitting class
+    fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
     """
 
     Name = "actReactFitter"
@@ -83,8 +83,8 @@ class fitter(fit):
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
-        fitting.fitters.fitAlg.fitAlg : The general fitting class
-        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by
+        fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
+        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         # Run model with given parameters
@@ -117,7 +117,6 @@ class fitter(fit):
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning fit value " + repr(self.fpRespVal))
             return ones(array(self.partRewards).shape)*self.fpRespVal
-
 
         return modelPerformance
 

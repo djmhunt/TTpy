@@ -23,7 +23,7 @@ class fit(object):
         The key containing the participant reward data
     modelParam : string
         The key to be compared in the model data
-    fitAlg : fitting.fitters.fitAlg instance
+    fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
     scalar : function
         Transforms the participant action form to match that of the model
@@ -51,7 +51,7 @@ class fit(object):
 
     See Also
     --------
-    fitting.fitters.fitAlg.fitAlg : The general fitting class
+    fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
     """
 
     Name = 'none'
@@ -103,8 +103,8 @@ class fit(object):
         See Also
         --------
         fitting.fit.fit.participant : Fits participant data
-        fitting.fitters.fitAlg.fitAlg : The general fitting class
-        fitting.fitters.fitAlg.fitAlg.fitness : The function that this one is called by
+        fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
+        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         return [0]
@@ -227,20 +227,14 @@ class fit(object):
         Returns
         -------
         info : (dict,dict)
-            The fitting info and the fitting.fitters info
+            The fitting info and the fitting.fitAlgs info
 
         See Also
         --------
-        fitting.fitters.fitAlg.fitAlg.info
+        fitting.fitAlgs.fitAlg.fitAlg.info
         """
 
         fitAlgInfo = self.fitAlg.info()
-
-#        labeledFitAlgInfo = {"fitAlg_"+k:v for k,v in fitAlgInfo.iteritems()}
-
-#        labeledFitInfo = {"fit_" + k : v for k,v in self.fitInfo.iteritems()}
-
-#        fitInfo = mergeDicts(labeledFitAlgInfo, labeledFitInfo)
 
         return self.fitInfo, fitAlgInfo
 
@@ -277,7 +271,6 @@ class fit(object):
             The kwarg model arguments
         """
 
-#        inputs = {k : v for k,v in izip(self.mParamNames, modelParameters)}
         inputs = self.getModParams(*modelParameters)
 
         for k, v in self.mOtherParams.iteritems():
@@ -293,7 +286,7 @@ class fit(object):
         Parameters
         ----------
         modelParameters : list of floats
-            The parameter values in the order extacted from the modelSetup
+            The parameter values in the order extracted from the modelSetup
             parameter dictionary
 
         Returns

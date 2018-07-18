@@ -11,8 +11,8 @@ from numpy import linspace
 from itertools import izip
 
 from utils import listMergeNP, callableDetailsString
-from fitting.fitters.qualityFunc import qualFuncIdent
-from fitting.fitters.boundFunc import scalarBound
+from fitting.fitAlgs.qualityFunc import qualFuncIdent
+from fitting.fitAlgs.boundFunc import scalarBound
 
 
 class fitAlg(object):
@@ -69,7 +69,7 @@ class fitAlg(object):
         self.testedParams = []
         self.testedParamQualities = []
 
-        self.logger = logging.getLogger('Fitting.fitters.fitAlg')
+        self.logger = logging.getLogger('Fitting.fitAlgs.fitAlg')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -125,7 +125,7 @@ class fitAlg(object):
 
         See Also
         --------
-        fitting.fitters.qualityFunc : the module of fitQualFunc functions
+        fitting.fitAlgs.qualityFunc : the module of fitQualFunc functions
         fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
         fitting.fit.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
 

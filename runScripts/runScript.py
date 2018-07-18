@@ -73,10 +73,10 @@ from dataFitting import dataFitting
 
 from data import data
 
-#from fitting.fitters.boundFunc import infBound, scalarBound
+#from fitting.fitAlgs.boundFunc import infBound, scalarBound
 
 from fitting.actReactFitter import fitter
-from fitting.fitters.evolutionary import evolutionary
+from fitting.fitAlgs.evolutionary import evolutionary
 
 # Import data
 dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])

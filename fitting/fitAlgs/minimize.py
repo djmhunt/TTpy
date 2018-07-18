@@ -6,15 +6,15 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitting.fitters.fitAlg import fitAlg
+from fitting.fitAlgs.fitAlg import fitAlg
 
 from numpy import array, around, nanargmin
 from scipy import optimize
 from itertools import izip
 
 from utils import callableDetailsString
-from fitting.fitters.qualityFunc import qualFuncIdent
-from fitting.fitters.boundFunc import scalarBound
+from fitting.fitAlgs.qualityFunc import qualFuncIdent
+from fitting.fitAlgs.boundFunc import scalarBound
 
 import pytest
 
@@ -80,7 +80,7 @@ class minimize(fitAlg):
 
     See Also
     --------
-    fitting.fitters.fitAlg.fitAlg : The general fitting method class, from
+    fitting.fitAlgs.fitAlg.fitAlg : The general fitting method class, from
                                     which this one inherits
     fitting.fit.fit : The general fitting framework class
     scipy.optimise.minimize : The fitting class this wraps around
@@ -127,7 +127,7 @@ class minimize(fitAlg):
         self.testedParams = []
         self.testedParamQualities = []
 
-        self.logger = logging.getLogger('Fitting.fitters.minimize')
+        self.logger = logging.getLogger('Fitting.fitAlgs.minimize')
 
 #    def callback(self,Xi):
 #        """

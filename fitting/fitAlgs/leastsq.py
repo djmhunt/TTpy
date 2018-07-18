@@ -6,14 +6,14 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitting.fitters.fitAlg import fitAlg
+from fitting.fitAlgs.fitAlg import fitAlg
 
 from scipy import optimize
 from numpy import log
 
 from utils import callableDetailsString
-from fitting.fitters.qualityFunc import qualFuncIdent
-from fitting.fitters.boundFunc import scalarBound
+from fitting.fitAlgs.qualityFunc import qualFuncIdent
+from fitting.fitAlgs.boundFunc import scalarBound
 
 
 class leastsq(fitAlg):
@@ -39,7 +39,7 @@ class leastsq(fitAlg):
 
     See Also
     --------
-    fitting.fitters.fitAlg.fitAlg : The general fitting method class, from
+    fitting.fitAlgs.fitAlg.fitAlg : The general fitting method class, from
                                     which this one inherits
     fitting.fit.fit : The general fitting framework class
     scipy.optimise.leastsq : The fitting class this wraps around
@@ -63,7 +63,7 @@ class leastsq(fitAlg):
         self.testedParams = []
         self.testedParamQualities = []
 
-        self.logger = logging.getLogger('Fitting.fitters.leastsq')
+        self.logger = logging.getLogger('Fitting.fitAlgs.leastsq')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """

@@ -42,7 +42,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
     data.data : Data import function
     """
 
-#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):
+#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitAlgs.fitter)):
     if not (isinstance(data, list)): #and isinstance(fitter, fit)):
 
         logger = outputting.getLogger('dataFitting')
