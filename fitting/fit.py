@@ -25,8 +25,6 @@ class fit(object):
         The key to be compared in the model data
     fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
-    scalar : function
-        Transforms the participant action form to match that of the model
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -56,13 +54,12 @@ class fit(object):
 
     Name = 'none'
 
-    def __init__(self, partChoiceParam, partRewardParam, modelParam, fitAlg, scalar, **kwargs):
+    def __init__(self, partChoiceParam, partRewardParam, modelParam, fitAlg, **kwargs):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
         self.modelparam = modelParam
         self.fitAlg = fitAlg
-        self.scalar = scalar
         self.partStimuliParams = kwargs.pop('stimuliParams', None)
         self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
@@ -75,11 +72,6 @@ class fit(object):
                         'participantActChoiceParams': self.partActChoiceParams,
                         'modelParam': modelParam,
                         'fitSubset': self.fitSubset}
-        try:
-            self.fitInfo['scalarName'] = self.scalar.Name
-            self.fitInfo['scalarEffect'] = self._scalarEffect()
-        except AttributeError:
-            self.fitInfo['scalarEffect'] = self._scalarEffect()
 
         self.fitInfo.update(kwargs.copy())
 
@@ -147,7 +139,7 @@ class fit(object):
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
-        self.partChoices = self.scalar(partData[self.partChoiceParam])
+        self.partChoices = partData[self.partChoiceParam]
 
         self.partRewards = partData[self.partRewardParam]
 
@@ -208,7 +200,7 @@ class fit(object):
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
-        self.partChoices = self.scalar(partData[self.partChoiceParam])
+        self.partChoices = partData[self.partChoiceParam]
 
         self.partRewards = partData[self.partRewardParam]
 
@@ -342,19 +334,3 @@ class fit(object):
         observation = [(s, a) for a, s in izip(actionData, stimuliData)]
 
         return observation
-
-    def _scalarEffect(self):
-        """
-        Presents the transformation provided by the scalar
-
-        Returns
-        -------
-        description : string
-            The description of the effect of the scalar
-        """
-
-        testBed = [0, 1, 2, 3, 10]
-
-        response = self.scalar(array(testBed))
-
-        return repr(testBed) + " --> " + repr(list(response))
