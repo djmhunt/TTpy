@@ -564,7 +564,8 @@ class outputting(object):
 
         self.participantFit["Name"].append(participant["Name"])
         self.participantFit["assignedName"].append(participant["assignedName"])
-        self.participantFit["fitQuality"].append(fittingData["fitQuality"])
+        for k in filter(lambda x: 'fitQuality' in x, fittingData.keys()):
+            self.participantFit[k].append(fittingData[k])
         for k, v in fittingData["finalParameters"].iteritems():
             self.participantFit[k].append(v)
         for k, v in partModelVars.iteritems():
