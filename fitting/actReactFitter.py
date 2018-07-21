@@ -29,12 +29,10 @@ class fitter(fit):
         The key to be compared in the participant data
     partRewardParam : string
         The key containing the participant reward data
-    modelParam : string
-        The key to be compared in the model data
+    modelFitVar : string
+        The variable to be compared in the model data
     fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
-    scalar : function
-        Transforms the participant action form to match that of the model
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -103,7 +101,7 @@ class fitter(fit):
         # Pull out the values to be compared
 
         modelData = modelInstance.outputEvolution()
-        modelChoices = modelData[self.modelparam]
+        modelChoices = modelData[self.modelFitVar]
 
         if self.fitSubsetChosen is not NoneType:
             modelPerformance = modelChoices[self.fitSubsetChosen]
@@ -166,27 +164,28 @@ class fitter(fit):
 
         modelInstance = self.model(**args)
 
-        self._simRun(modelInstance, partAct, partReward, partObs)
+        _simRun(modelInstance, partAct, partReward, partObs)
 
         return modelInstance
 
-    def _simRun(self, modelInstance, partAct, partReward, partObs):
-        """
-        Simulates the events of a simulation from the perspective of a model
 
-        Parameters
-        ----------
-        modelInstance : model.modelTemplate.modelTemplate class instance
-        partAct : list
-            The list of actions taken by the participant
-        partReward : list
-            The feedback received by the participant
-        partObs : list
-            The observations received by the participant
-        """
+def _simRun(modelInstance, partAct, partReward, partObs):
+    """
+    Simulates the events of a simulation from the perspective of a model
 
-        for action, reward, observation in izip(partAct, partReward, partObs):
+    Parameters
+    ----------
+    modelInstance : model.modelTemplate.modelTemplate class instance
+    partAct : list
+        The list of actions taken by the participant
+    partReward : list
+        The feedback received by the participant
+    partObs : list
+        The observations received by the participant
+    """
 
-            modelInstance.observe(observation)
-            modelInstance.overrideActionChoice(action)
-            modelInstance.feedback(reward)
+    for action, reward, observation in izip(partAct, partReward, partObs):
+
+        modelInstance.observe(observation)
+        modelInstance.overrideActionChoice(action)
+        modelInstance.feedback(reward)

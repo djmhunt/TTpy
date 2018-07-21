@@ -20,8 +20,8 @@ class fit(object):
     partChoiceParam : string
         The key to be compared in the participant data
     partRewardParam : string
-        The key containing the participant reward data
-    modelParam : string
+        The variable containing the participant reward data
+    modelFitVar : string
         The key to be compared in the model data
     fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
@@ -54,11 +54,11 @@ class fit(object):
 
     Name = 'none'
 
-    def __init__(self, partChoiceParam, partRewardParam, modelParam, fitAlg, **kwargs):
+    def __init__(self, partChoiceParam, partRewardParam, modelFitVar, fitAlg, **kwargs):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
-        self.modelparam = modelParam
+        self.modelFitVar = modelFitVar
         self.fitAlg = fitAlg
         self.partStimuliParams = kwargs.pop('stimuliParams', None)
         self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
@@ -70,7 +70,7 @@ class fit(object):
                         'participantRewardParam': partRewardParam,
                         'participantStimuliParams': self.partStimuliParams,
                         'participantActChoiceParams': self.partActChoiceParams,
-                        'modelParam': modelParam,
+                        'modelFitVar': modelFitVar,
                         'fitSubset': self.fitSubset}
 
         self.fitInfo.update(kwargs.copy())

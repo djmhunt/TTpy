@@ -26,12 +26,26 @@ class fitter(fit):
         The key to be compared in the participant data
     partRewardParam : string
         The key containing the participant reward data
-    modelParam : string
-        The key to be compared in the model data
+    modelFitVar : string
+        The variable to be compared in the model data
     fitAlg : fitting.fitAlgs.fitAlg instance
         An instance of one of the fitting algorithms
-    scalar : function
-        Transforms the participant action form to match that of the model
+    stimuliParams : list of strings or None, optional
+        The keys containing the observational parameters seen by the
+        participant before taking a decision on an action. Default ``None``
+    actChoiceParams : string or None or list of ints, optional
+        The name of the key in partData where the list of valid actions
+        can be found. If ``None`` then the action list is considered to
+        stay constant. If a list then the list will be taken as the list
+        of actions that can be taken at each instance. Default ``None``
+    fpRespVal : float, optional
+        If a floating point error occurs when running a fit the fit function
+        will return a value for each element of fpRespVal.
+        Default is 1/1e100
+    fitSubset : ``float('Nan')``, ``None`` or list of int, optional
+        Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+        This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
+        feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
         
     Attributes
     ----------
@@ -73,13 +87,13 @@ class fitter(fit):
         # Pull out the values to be compared
 
         modelData = model.outputEvolution()
-        modelChoices = modelData[self.modelparam]
+        modelChoices = modelData[self.modelFitVar]
         partChoices = self.partChoices
 
         # Check lengths
         if len(partChoices) != len(modelChoices):
             raise ValueError("The length of the model and participatiant data are different. %s:%s to %s:%s " %
-                             (self.partChoiceParam, len(partChoices), self.modelparam, len(modelChoices)))
+                             (self.partChoiceParam, len(partChoices), self.modelFitVar, len(modelChoices)))
 
         # Find the difference
 
