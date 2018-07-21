@@ -25,6 +25,8 @@ class fitAlg(object):
         The name of the function used to calculate the quality of the fit.
         The value it returns proivides the fitter with its fitting guide.
         Default ``fitAlg.null``
+    qualFuncArgs : dict, optional
+        The parameters used to initialise fitQualFunc. Default ``{}``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
@@ -35,6 +37,9 @@ class fitAlg(object):
     numStartPoints : int, optional
         The number of starting points generated for each parameter. Only used with some fitting algorithms
         Default 4
+    extraFitMeasures : dict of dict, optional
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
@@ -55,6 +60,9 @@ class fitAlg(object):
         self.allBounds = bounds
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+
+        measureDict = kwargs.pop("extraFitMeasures", {})
+        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
 
         self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
@@ -116,7 +124,7 @@ class fitAlg(object):
         Parameters
         ----------
         *params : array of floats
-            The paramaters proposed by the fitting algorithm
+            The parameters proposed by the fitting algorithm
 
         Returns
         -------
@@ -146,6 +154,31 @@ class fitAlg(object):
         self.testedParamQualities.append(fitQuality)
 
         return fitQuality
+
+    def extraMeasures(self, *params):
+        """
+
+        Parameters
+        ----------
+        *params : array of floats
+            The parameters proposed by the fitting algorithm
+
+        Returns
+        -------
+        fitQuality : dict of float
+            The fit quality value calculated using the fit quality functions described in extraMeasures
+
+        """
+
+        modVals = self.sim(*params)
+
+        measureVals = {}
+        for m, f in self.measures.iteritems():
+
+            fitQuality = f(modVals)
+            measureVals[m] = fitQuality
+
+        return measureVals
 
     def info(self):
         """

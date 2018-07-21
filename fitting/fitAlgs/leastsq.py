@@ -28,9 +28,14 @@ class leastsq(fitAlg):
         The name of the function used to calculate the quality of the fit.
         The value it returns proivides the fitter with its fitting guide.
         Default ``fitAlg.null``
+    qualFuncArgs : dict, optional
+        The parameters used to initialise fitQualFunc. Default ``{}``
     numStartPoints : int, optional
         The number of starting points generated for each parameter.
         Default 4
+    extraFitMeasures : dict of dict, optional
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
@@ -54,6 +59,9 @@ class leastsq(fitAlg):
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
+
+        measureDict = kwargs.pop("extraFitMeasures", {})
+        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
 
         self.fitInfo = {'Name':self.Name,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),

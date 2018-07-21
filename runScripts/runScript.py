@@ -95,7 +95,7 @@ def scaleFuncSingle():
 
 
 # Define the fitting algorithm
-fitAlg = evolutionary(fitQualFunc="BIC2",
+fitAlg = evolutionary(fitQualFunc="BIC2fit",
                       qualFuncArgs={"numParams": len(parameters),
                                     "numActions": numActions,
                                     "randActProb": 1/2},

@@ -159,12 +159,16 @@ class fit(object):
 
         model = self.fittedModel(*fitVals)
 
+        fitMeasures = self.fitAlg.extraMeasures(*fitVals)
+
         testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, array(testedParams[0]).T)])
 
         fittingData = {"testedParameters": testedParamDict,
                        "fitQualities": testedParams[1],
                        "fitQuality": fitQuality,
                        "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
+
+        fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
 
         try:
             fittingData.update(testedParams[2])

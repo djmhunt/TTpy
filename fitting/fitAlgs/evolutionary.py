@@ -27,8 +27,10 @@ class evolutionary(fitAlg):
     ----------
     fitQualFunc : string, optional
         The name of the function used to calculate the quality of the fit.
-        The value it returns proivides the fitter with its fitting guide.
+        The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
+    qualFuncArgs : dict, optional
+        The parameters used to initialise fitQualFunc. Default ``{}``
     strategy : string or list of strings, optional
         The name of the fitting strategy or list of names of fitting strategy or
         name of list of fitting strategies. Valid names found in the notes.
@@ -51,6 +53,9 @@ class evolutionary(fitAlg):
         the standard deviation of the population energies is greater than 1 the
         solving process terminates: convergence = mean(pop) * tol / stdev(pop) > 1
         Default 0.01
+    extraFitMeasures : dict of dict, optional
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
@@ -96,6 +101,9 @@ class evolutionary(fitAlg):
         self.popsize = kwargs.pop("popSize", 15)
         self.tolerence = kwargs.pop("tolerance", 0.01)
 
+        measureDict = kwargs.pop("extraFitMeasures", {})
+        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
+
         self._setType(strategy)
 
         self.fitInfo = {'Name': self.Name,
@@ -137,7 +145,7 @@ class evolutionary(fitAlg):
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
-            The list of the intial parameters
+            The list of the initial parameters
 
         Returns
         -------

@@ -29,6 +29,8 @@ class basinhopping(fitAlg):
         The name of the function used to calculate the quality of the fit.
         The value it returns proivides the fitter with its fitting guide.
         Default ``fitAlg.null``
+    qualFuncArgs : dict, optional
+        The parameters used to initialise fitQualFunc. Default ``{}``
     method : string or list of strings, optional
         The name of the fitting method or list of names of fitting method or
         name of list of fitting methods. Valid names found in the notes.
@@ -51,6 +53,9 @@ class basinhopping(fitAlg):
         minimal difference) between a fit value and its related boundaries
         before a fit value is considered different from a boundary. The default
         is `5`. This is only valid if ``boundFit`` is ``False``
+    extraFitMeasures : dict of dict, optional
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
@@ -103,6 +108,9 @@ class basinhopping(fitAlg):
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
         self.boundFit = kwargs.pop("boundFit", True)
         self.boundSensitivity = kwargs.pop("boundSensitivity", 5)
+
+        measureDict = kwargs.pop("extraFitMeasures", {})
+        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
 
         self._setType(method, bounds)
 
