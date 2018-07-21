@@ -16,10 +16,16 @@ def qualFuncIdent(value, **kwargs):
 
     if isinstance(value, Callable):
         fitness = value
-    elif value == "BIC2":
-        fitness = BIC2(**kwargs)
-    elif value == "BIC2Boot":
-        fitness = BIC2Boot(**kwargs)
+    elif value == "BIC":
+        fitness = bayesInfoCrit(**kwargs)
+    elif value == "r2":
+        fitness = r2(**kwargs)
+    elif value == "bayesFactor":
+        fitness = bayesFactor2(**kwargs)
+    elif value == "BIC2fit":
+        fitness = BIC2fit(**kwargs)
+    elif value == "BIC2fitBoot":
+        fitness = BIC2fitBoot(**kwargs)
     elif value == "WBIC2":
         fitness = WBIC2(**kwargs)
     elif value == "-2log":
@@ -199,7 +205,8 @@ def r2(**kwargs):
                      "numParams": numParams}
     return r2func
 
-def BIC2(**kwargs):
+
+def BIC2fit(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
 
@@ -257,7 +264,7 @@ def BIC2(**kwargs):
 
         return fit
 
-    BICfunc.Name = "BIC2"
+    BICfunc.Name = "BIC2fit"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
                       "numActions": numActions,
@@ -265,7 +272,7 @@ def BIC2(**kwargs):
     return BICfunc
 
 
-def BIC2Boot(**kwargs):
+def BIC2fitBoot(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
     An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the
@@ -339,7 +346,7 @@ def BIC2Boot(**kwargs):
 
         return fit
 
-    BICfunc.Name = "BIC2Boot"
+    BICfunc.Name = "BIC2fitBoot"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
                       "numActions": numActions,
