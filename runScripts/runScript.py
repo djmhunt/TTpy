@@ -84,24 +84,18 @@ dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFi
 for d in dat:
     d["validActions"] = d["ValidActions"].T
 
-# Create a scaling function to match up the actions understood by the model and
-# those taken by the participant
-def scaleFuncSingle():
-    def scaleFunc(x):
-        return x
-
-    scaleFunc.Name = "Repeat"
-    return scaleFunc
-
-
 # Define the fitting algorithm
 fitAlg = evolutionary(fitQualFunc="BIC2fit",
                       qualFuncArgs={"numParams": len(parameters),
                                     "numActions": numActions,
-                                    "randActProb": 1/2},
+                                    "randActProb": 1/2,
+                                    "qualityThreshold": 20},
                       bounds=bounds,
                       boundCostFunc=None,  # scalarBound(base=140),
                       tolerance=0.01,
+                      extraFitMeasures={"BIC": {"numParams": len(parameters)},
+                                        "r2": {"numParams": len(parameters), "randActProb": 1/2},
+                                        "bayesFactor": {"numParams": len(parameters), "randActProb": 1/2}},
                       polish=False)
 
 # Set up the fitter
@@ -109,7 +103,6 @@ fit = fitter('Decisions',
              'Rewards',
              'ActionProb',
              fitAlg,
-             scaleFuncSingle(),
              fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
              #stimuliParams=["stimCues"],
              actChoiceParams='validActions')
