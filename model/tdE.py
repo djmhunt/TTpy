@@ -91,7 +91,7 @@ class tdE(model):
         self.genEventModifiers(kwargRemains)
 
         self.lastAction = 0
-        self.lastStimuli = zeros(self.numCues)
+        self.lastStimuli = ones(self.numCues)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
