@@ -15,7 +15,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array
+from numpy import exp, ones, array, sum
 
 from model.modelTemplate import model
 from model.modelPlot import modelPlot
