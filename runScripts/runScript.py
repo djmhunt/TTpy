@@ -85,7 +85,7 @@ for d in dat:
     d["validActions"] = d["ValidActions"].T
 
 # Define the fitting algorithm
-fitAlg = evolutionary(fitQualFunc="BIC2fit",
+fitAlg = evolutionary(fitQualFunc="BIC2norm",
                       qualFuncArgs={"numParams": len(parameters),
                                     "numActions": numActions,
                                     "randActProb": 1/2,

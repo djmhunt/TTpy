@@ -55,10 +55,10 @@
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="n">fitness</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;BIC2fit&quot;</span><span class="p">:</span>
-        <span class="n">fitness</span> <span class="o">=</span> <span class="n">BIC2fit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;BIC2fitBoot&quot;</span><span class="p">:</span>
-        <span class="n">fitness</span> <span class="o">=</span> <span class="n">BIC2fitBoot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;BIC2norm&quot;</span><span class="p">:</span>
+        <span class="n">fitness</span> <span class="o">=</span> <span class="n">BIC2norm</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;BIC2normBoot&quot;</span><span class="p">:</span>
+        <span class="n">fitness</span> <span class="o">=</span> <span class="n">BIC2normBoot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;WBIC2&quot;</span><span class="p">:</span>
         <span class="n">fitness</span> <span class="o">=</span> <span class="n">WBIC2</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;-2log&quot;</span><span class="p">:</span>
@@ -141,7 +141,7 @@
     <span class="k">return</span> <span class="n">fit</span></div>
 
 
-<div class="viewcode-block" id="BIC2"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.qualityFunc.BIC2">[docs]</a><span class="k">def</span> <span class="nf">BIC2fit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BIC2"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.qualityFunc.BIC2">[docs]</a><span class="k">def</span> <span class="nf">BIC2norm</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># type : (int, float) -&gt; Callable[[Union[ndarray, list]], float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -196,7 +196,7 @@
 
         <span class="k">return</span> <span class="n">fit</span>
 
-    <span class="n">BICfunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;BIC2fit&quot;</span>
+    <span class="n">BICfunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;BIC2norm&quot;</span>
     <span class="n">BICfunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;numParams&quot;</span><span class="p">:</span> <span class="n">numParams</span><span class="p">,</span>
                       <span class="s2">&quot;qualityThreshold&quot;</span><span class="p">:</span> <span class="n">qualityThreshold</span><span class="p">,</span>
                       <span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">,</span>
@@ -204,7 +204,7 @@
     <span class="k">return</span> <span class="n">BICfunc</span></div>
 
 
-<div class="viewcode-block" id="BIC2Boot"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.qualityFunc.BIC2Boot">[docs]</a><span class="k">def</span> <span class="nf">BIC2fitBoot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BIC2Boot"><a class="viewcode-back" href="../../../fitting.fitters.html#fitting.fitters.qualityFunc.BIC2Boot">[docs]</a><span class="k">def</span> <span class="nf">BIC2normBoot</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># type : (int, float) -&gt; Callable[[Union[ndarray, list]], float]</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the</span>
@@ -278,7 +278,7 @@
 
         <span class="k">return</span> <span class="n">fit</span>
 
-    <span class="n">BICfunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;BIC2fitBoot&quot;</span>
+    <span class="n">BICfunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;BIC2normBoot&quot;</span>
     <span class="n">BICfunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;numParams&quot;</span><span class="p">:</span> <span class="n">numParams</span><span class="p">,</span>
                       <span class="s2">&quot;qualityThreshold&quot;</span><span class="p">:</span> <span class="n">qualityThreshold</span><span class="p">,</span>
                       <span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">,</span>
