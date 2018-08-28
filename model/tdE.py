@@ -183,11 +183,11 @@ class tdE(model):
         delta : float
             The difference between the reward and the expected reward
         action : int
-            The action chosen by the model in this timestep
+            The action chosen by the model in this trialstep
         stimuli : list of float
-            The weights of the different stimuli in this timestep
+            The weights of the different stimuli in this trialstep
         stimuliFilter : list of bool
-            A list describing if a stimulus cue is present in this timestep
+            A list describing if a stimulus cue is present in this trialstep
 
         """
 

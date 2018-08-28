@@ -60,8 +60,8 @@ class Probstim(experiment):
         The actual reality the cues pointed to. The correct response the participant is trying to get correct
     cues: array of floats, optional
         The cues used to guess the actualities
-    timeSteps: int, optional
-        If no provided cues, it is the number of timesteps for the generated set of cues. Default ``100``
+    trialsteps: int, optional
+        If no provided cues, it is the number of trialsteps for the generated set of cues. Default ``100``
     numStim: int, optional
         If no provided cues, it is the number of distinct stimuli for the generated set of cues. Default ``4``
     correctProb: float in [0,1], optional
@@ -108,7 +108,7 @@ class Probstim(experiment):
             self.T = len(self.cues)
             numStim = len(self.cues[0])
         else:
-            self.T = kwargs.pop("timeSteps", 100)
+            self.T = kwargs.pop("trialsteps", 100)
             numStim = kwargs.pop("numStim", 4)
             stim = zeros((self.T, numStim))
             stim[range(self.T), randint(numStim, size=self.T)] = 1
@@ -136,7 +136,7 @@ class Probstim(experiment):
         self.parameters = {"Name": self.Name,
                            "Actualities": array(self.actualities),
                            "Cues": array(self.cues),
-                           "numTimesteps": self.T,
+                           "numtrialsteps": self.T,
                            "numRewardless": rewardlessT,
                            "numCues": numStim}
 

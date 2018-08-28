@@ -110,7 +110,7 @@ def eventDictKeySet(data, parameters):
         original dictionary value array.
     T : int
         The length of the longest array. This represents the number of 
-        timesteps that have elapsed since the start of the simulation. 
+        trialsteps that have elapsed since the start of the simulation.
 
     See Also
     --------
@@ -180,7 +180,7 @@ def newEventDict(keySet, data, T, dataLabel=''):
         parameters and identifiers
     T : int
         The length of the longest array. This represents the number of 
-        timesteps that have elapsed since the start of the simulation.
+        trialsteps that have elapsed since the start of the simulation.
     dataLabel : string
         An identifier to be added to the beginning of each key string.
         Default ''

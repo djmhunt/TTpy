@@ -309,7 +309,7 @@ class fit(object):
             The name of the key in partData where the list of valid actions
             can be found. If ``None`` then the action list is considered to
             stay constant. If a list then the list will be taken as the list
-            of actions that can be taken at every timestep.
+            of actions that can be taken at every trialstep.
 
         Returns
         -------
