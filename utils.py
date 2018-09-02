@@ -10,7 +10,10 @@ import logging
 import sys
 import collections
 
-from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray
+from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray, mean, sum, zeros
+from scipy.stats import rankdata
+from numpy.random import random
+from collections import Counter
 #from itertools import izip, chain
 from os import getcwd, makedirs
 from os.path import exists
@@ -744,6 +747,7 @@ def movingaverage(data, windowSize, edgeCorrection=False):
 def runningMean(oldMean, newValue, numValues):
     # type: (float, float, int) -> float
     """
+    A running mean
 
     Parameters
     ----------
@@ -846,6 +850,7 @@ def discountAverage(data, discount):
 
     return results
 
+
 def runningSTD(oldSTD, oldMean, newMean, newValue):
     # type: (float, float, float, float) -> float
     """
@@ -885,6 +890,197 @@ def runningSTD(oldSTD, oldMean, newMean, newValue):
     newSTD = oldSTD + (newValue - oldMean)*(newValue - newMean)
 
     return newSTD
+
+
+def kendalw(data, ranked = False):
+    # type: (Union[list, ndarray], Optional[bool]) -> float
+    """
+    Calculates Kendall's W for a n*m array with n items and m 'judges'.
+
+    Parameters
+    ----------
+    data : list or ndarray
+        The data in the form of an n*m array with n items and m 'judges'
+    ranked : bool, optional
+        If the data has already been ranked or not. Default ``False``
+
+    Returns
+    -------
+    w : float
+        The Kendall's W
+
+    Notes
+    -----
+    Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. http://doi.org/10.4135/9781412961288.n55
+
+    Examples
+    --------
+	>>> data = array([[2., 0., 5., 1.],
+                      [3., 3., 3., 4.],
+                      [1., 5., 3., 5.],
+                      [1., 1., 4., 2.],
+                      [2., 4., 5., 1.],
+                      [1., 0., 0., 2.]])
+    >>> kendalw(data)
+    0.22857
+
+	>>> data = array([[1, 1, 1, 1],
+                      [2, 2, 2, 2],
+                      [3, 3, 3, 3],
+                      [4, 4, 4, 4],
+                      [5, 5, 5, 5],
+                      [6, 6, 6, 6]])
+    >>> kendalw(data)
+    1.0
+    """
+    ranks = data
+    if not ranked:
+        rankVals = []
+        for r in data.T:
+            rankVals.append(rankdata(r))
+        ranks = array(rankVals).T
+
+    sranks = sum(abs(array(ranks)), 1)
+    mrank = mean(sranks)
+    ssdrank = sum((sranks-mrank)**2)
+    (n,m) = ranks.shape
+    w = (12*ssdrank)/((n**3-n)*m**2)
+    return w
+
+
+def kendalwt(data, ranked = False):
+    # type: (Union[list, ndarray], Optional[bool]) -> float
+    """
+    Calculates Kendall's W for a n*m array with n items and m 'judges'. Corrects for ties.
+    
+    Parameters
+    ----------
+    data : list or ndarray
+        The data in the form of an n*m array with n items and m 'judges'
+    ranked : bool, optional
+        If the data has already been ranked or not. Default ``False``
+
+    Returns
+    -------
+    w : float
+        The Kendall's W
+
+    Notes
+    -----
+    Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. http://doi.org/10.4135/9781412961288.n55
+
+    Examples
+    --------
+    >>> data = array([[2., 0., 5., 1.],
+                      [3., 3., 3., 4.],
+                      [1., 5., 3., 5.],
+                      [1., 1., 4., 2.],
+                      [2., 4., 5., 1.],
+                      [1., 0., 0., 2.]])
+    >>> kendalwt(data)
+    0.24615
+
+    >>> data = array([[1, 1, 1, 1],
+                      [2, 2, 2, 2],
+                      [3, 3, 3, 3],
+                      [4, 4, 4, 4],
+                      [5, 5, 5, 5],
+                      [6, 6, 6, 6]])
+    >>> kendalwt(data)
+    1.0
+    """
+    ranks = data
+    if not ranked:
+        rankVals = []
+        for r in data.T:
+            rankVals.append(rankdata(r))
+        ranks = array(rankVals).T
+    
+    sranks = sum(abs(array(ranks)), 1)
+    mrank = mean(sranks)
+    ssdrank = sum((sranks-mrank)**2)
+    (n,m) = ranks.shape
+
+    T = zeros(m)
+    for (i, counts) in ((i, Counter(x).most_common()) for i, x in enumerate(ranks.T)):
+        for (num, count) in counts:
+            if count > 1:
+                T[i] += count**3 - count
+    
+    w1 = 12*ssdrank
+    w3 = ((n**3)-n)*(m**2)
+    w4 = m*sum(T)
+    w = w1 / (w3-w4)
+    return w
+
+
+def kendalwts(data, ranked = False):
+    # type: (Union[list, ndarray], Optional[bool]) -> float
+    """
+    Calculates Kendall's W for a n*m array with n items and m 'judges'. Corrects for ties.
+    
+    Parameters
+    ----------
+    data : list or ndarray
+        The data in the form of an n*m array with n items and m 'judges'
+    ranked : bool, optional
+        If the data has already been ranked or not. Default ``False``
+
+    Returns
+    -------
+    w : float
+        The Kendall's W
+
+    Notes
+    -----
+    Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. http://doi.org/10.4135/9781412961288.n55
+
+    Examples
+    --------
+    >>> data = array([[2., 0., 5., 1.],
+                      [3., 3., 3., 4.],
+                      [1., 5., 3., 5.],
+                      [1., 1., 4., 2.],
+                      [2., 4., 5., 1.],
+                      [1., 0., 0., 2.]])
+    >>> kendalws(data)
+    0.24615
+
+    >>> data = array([[1, 1, 1, 1],
+                      [2, 2, 2, 2],
+                      [3, 3, 3, 3],
+                      [4, 4, 4, 4],
+                      [5, 5, 5, 5],
+                      [6, 6, 6, 6]])
+    >>> kendalws(data)
+    1.0
+    """
+    ranks = data
+    if not ranked:
+        rankVals = []
+        for r in data.T:
+            rankVals.append(rankdata(r))
+        ranks = array(rankVals).T
+    
+    sranks = sum(abs(array(ranks)), 1)
+    mrank = mean(sranks)
+    ssdrank = sum((sranks-mrank)**2)
+    (n,m) = ranks.shape
+
+    T = zeros(m)
+    for (i, counts) in ((i, Counter(x).most_common()) for i, x in enumerate(ranks.T)):
+        for (num, count) in counts:
+            if count > 1:
+                T[i] += count**3 - count
+    
+    w1 = 12*sum(sranks**2)
+    w2 = 3*n*(m**2)*((n+1)**2)
+    w3 = ((n**3)-n)*(m**2)
+    w4 = m*sum(T)
+    w = ((w1-w2)/(w3-w4))
+
+    return w
+
 
 #if __name__ == '__main__':
 #    from timeit import timeit

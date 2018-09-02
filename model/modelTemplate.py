@@ -269,11 +269,11 @@ class model(object):
         delta : float
             The difference between the reward and the expected reward
         action : int
-            The action chosen by the model in this timestep
+            The action chosen by the model in this trialstep
         stimuli : list of float
-            The weights of the different stimuli in this timestep
+            The weights of the different stimuli in this trialstep
         stimuliFilter : list of bool
-            A list describing if a stimulus cue is present in this timestep
+            A list describing if a stimulus cue is present in this trialstep
 
         """
 
@@ -361,7 +361,7 @@ class model(object):
 
     def lastChoiceReinforcement(self):
         """
-        Allows the model to update the reward expectation for the previous timestep given the choice made in this timestep
+        Allows the model to update the reward expectation for the previous trialstep given the choice made in this trialstep
 
         Returns
         -------
@@ -545,7 +545,6 @@ class model(object):
         except TypeError:
             return eFunc
 
-
     def params(self):
         """
         Returns the parameters of the model
@@ -556,6 +555,10 @@ class model(object):
         """
 
         return self.parameters.copy()
+
+    def __repr__(self):
+
+        return self.params()
 
     def setsimID(self, simID):
         """

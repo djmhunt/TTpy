@@ -38,6 +38,7 @@ class models(object):
     def __init__(self, *args):
         """ """
 
+        self.count = -1
         self.models = []
 
         for a in args:
@@ -45,6 +46,8 @@ class models(object):
             variables = OrderedDict(a[1])
             other = a[2]
             self.models.append((model, variables, other))
+
+        self.countLen = len(self.models)
 
     def reset(self):
         """
@@ -55,6 +58,7 @@ class models(object):
         """
 
         self.count = -1
+        self.countLen = len(self.models)
 
     def __iter__(self):
         """ Returns the iterator for the creation of models"""

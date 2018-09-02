@@ -205,9 +205,11 @@ class evolutionary(fitAlg):
                 fitParams = optimizeResult.x
                 fitVal = optimizeResult.fun
 
-        iterDetails = dict(bestParams=array(self.iterbestParams).T, convergence=self.iterConvergence)
+        fitDetails = dict(optimizeResult)
+        fitDetails['bestParams'] = array(self.iterbestParams).T
+        fitDetails['convergence'] = self.iterConvergence
 
-        return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
+        return fitParams, fitVal, (self.testedParams, self.testedParamQualities, fitDetails)
 
     def callback(self, xk, convergence):
         """

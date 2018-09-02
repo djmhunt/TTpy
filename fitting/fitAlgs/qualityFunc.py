@@ -17,15 +17,15 @@ def qualFuncIdent(value, **kwargs):
     if isinstance(value, Callable):
         fitness = value
     elif value == "BIC":
-        fitness = bayesInfoCrit(**kwargs)
+        fitness = BIC2(**kwargs)
     elif value == "r2":
         fitness = r2(**kwargs)
     elif value == "bayesFactor":
-        fitness = bayesFactor2(**kwargs)
-    elif value == "BIC2fit":
-        fitness = BIC2fit(**kwargs)
-    elif value == "BIC2fitBoot":
-        fitness = BIC2fitBoot(**kwargs)
+        fitness = bayesFactor(**kwargs)
+    elif value == "BIC2norm":
+        fitness = BIC2norm(**kwargs)
+    elif value == "BIC2normBoot":
+        fitness = BIC2normBoot(**kwargs)
     elif value == "WBIC2":
         fitness = WBIC2(**kwargs)
     elif value == "-2log":
@@ -110,7 +110,8 @@ def maxprob(modVals):
 
     return fit
 
-def bayesInfoCrit(**kwargs):
+
+def BIC2(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
     Generates a function that calculates the Bayesian Information Criterion (BIC)
@@ -133,9 +134,10 @@ def bayesInfoCrit(**kwargs):
         BICmod = numParams * log2(numSamples) + logprob(modVals)
         return BICmod
 
-    BICfunc.Name = "bayesInfoCrit"
+    BICfunc.Name = "BIC2"
     BICfunc.Params = {"numParams": numParams}
     return BICfunc
+
 
 def bayesRand(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
@@ -151,11 +153,12 @@ def bayesRand(**kwargs):
     BICfunc.Params = {"randActProb": randActProb}
     return BICfunc
 
-def bayesFactor2(**kwargs):
+
+def bayesFactor(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
 
-    :math:`2^{\frac{}{2}}`
+    :math:`2^{\frac{x}{2}}`
 
     Parameters
     ----------
@@ -167,7 +170,7 @@ def bayesFactor2(**kwargs):
     """
     numParams = kwargs.get("numParams", 2)
     randActProb = kwargs.get("randActProb", 1 / 2)
-    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICmodfunc = BIC2(numParams=numParams)
     BICrandfunc = bayesRand(randActProb=randActProb)
 
     def bayesFunc(modVals, **kwargs):
@@ -179,7 +182,7 @@ def bayesFactor2(**kwargs):
 
         return bayesF
 
-    bayesFunc.Name = "bayesFactor2"
+    bayesFunc.Name = "bayesFactor"
     bayesFunc.Params = {"randActProb": randActProb,
                      "numParams": numParams}
     return bayesFunc
@@ -189,7 +192,7 @@ def r2(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     numParams = kwargs.get("numParams", 2)
     randActProb = kwargs.get("randActProb", 1 / 2)
-    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICmodfunc = BIC2(numParams=numParams)
     BICrandfunc = bayesRand(randActProb=randActProb)
 
     def r2func(modVals, **kwargs):
@@ -206,7 +209,7 @@ def r2(**kwargs):
     return r2func
 
 
-def BIC2fit(**kwargs):
+def BIC2norm(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
 
@@ -217,7 +220,7 @@ def BIC2fit(**kwargs):
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     numActions: int or list of ints the length of the number of trials being fitted, optional
-        The number of actions the participant can choose between for each timestep of the experiment. May need to be
+        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
@@ -234,14 +237,14 @@ def BIC2fit(**kwargs):
     numActions = kwargs.get("numActions", 2)
     randActProb = kwargs.get("randActProb", 1/numActions)
 
-    BICmodfunc = bayesInfoCrit(numParams=numParams)
+    BICmodfunc = BIC2(numParams=numParams)
     BICrandfunc = bayesRand(randActProb=randActProb)
 
     def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
         """
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
-        The function is a modified version of the Bayesian Informaiton Criterion
+        The function is a modified version of the Bayesian Information Criterion
 
         It provides a fit such that when a value is less than one it is a valid fit
 
@@ -264,7 +267,7 @@ def BIC2fit(**kwargs):
 
         return fit
 
-    BICfunc.Name = "BIC2fit"
+    BICfunc.Name = "BIC2norm"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
                       "numActions": numActions,
@@ -272,7 +275,7 @@ def BIC2fit(**kwargs):
     return BICfunc
 
 
-def BIC2fitBoot(**kwargs):
+def BIC2normBoot(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
     """
     An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the
@@ -285,7 +288,7 @@ def BIC2fitBoot(**kwargs):
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     numActions: int or list of ints the length of the number of trials being fitted, optional
-        The number of actions the participant can choose between for each timestep of the experiment. May need to be
+        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
@@ -346,7 +349,7 @@ def BIC2fitBoot(**kwargs):
 
         return fit
 
-    BICfunc.Name = "BIC2fitBoot"
+    BICfunc.Name = "BIC2normBoot"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
                       "numActions": numActions,

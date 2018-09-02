@@ -202,7 +202,7 @@ def pavlovStimTemporal():
         ``(stim,rew,stimDur)``and an action (unused) and yield a series of
         events ``t,c,r```.
         ``stim`` is the value of the stimulus. It is expected to be a list-like
-        object. ``rew`` is a list containing the reward for each timestep.
+        object. ``rew`` is a list containing the reward for each trialstep.
         The reward is expected to be a float. ``stimDur`` is the duration of
         the stimulus, an ``int``. This should be less than the length of ``rew``.
         ``c`` the stimulus. ``r`` the reward. ``t`` is the time

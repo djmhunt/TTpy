@@ -118,7 +118,7 @@ class experiment(object):
 
     def procede(self):
         """
-        Updates the experiment before the next timestep
+        Updates the experiment before the next trialstep
         """
 
         pass

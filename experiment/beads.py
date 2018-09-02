@@ -85,7 +85,7 @@ class Beads(experiment):
                            "N": self.T,
                            "beadSequence": self.beads}
 
-        # Set timestep count
+        # Set trialstep count
         self.t = -1
 
         # Recording variables
