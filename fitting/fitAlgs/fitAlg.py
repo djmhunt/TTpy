@@ -7,7 +7,9 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import logging
 
 from math import isinf
-from numpy import linspace
+from numpy import linspace, dot, finfo
+from numpy.linalg import inv, svd
+from scipy import optimize
 from itertools import izip
 
 from utils import listMergeNP, callableDetailsString
@@ -78,6 +80,10 @@ class fitAlg(object):
         self.testedParamQualities = []
 
         self.logger = logging.getLogger('Fitting.fitAlgs.fitAlg')
+
+    def __repr__(self):
+
+        return repr(self.info())
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -179,6 +185,30 @@ class fitAlg(object):
             measureVals[m] = fitQuality
 
         return measureVals
+
+    def covariance(self, fitvals, fitinfo, br=0.01):
+
+        if 'hess_inv' in fitinfo:
+            cov = fitinfo['hess_inv']
+        elif 'hess' in fitinfo:
+            hess = fitinfo['hess']
+            cov = inv(hess)
+        elif 'jac' in fitinfo:
+            jac = fitinfo['jac']
+            cov = covariance(jac)
+        else:
+            reducedBounds = [(v-br*(u-l)/2, v+br*(u-l)/2) for v, (l, u) in izip(fitvals, self.boundVals)]
+            reducedBounds = [(max(rl, ol), min(ru, ou)) for (rl, ru), (ol, ou) in izip(reducedBounds, self.boundVals)]
+            bounds = [i for i in izip(*reducedBounds)]
+            optimizeResult = optimize.least_squares(self.fitness,
+                                                    fitvals[:],
+                                                    method="dogbox",
+                                                    jac='3-point',
+                                                    bounds=bounds)
+            jac = optimizeResult.jac
+            cov = covariance(jac)
+
+        return cov
 
     def info(self):
         """
@@ -461,3 +491,21 @@ class fitAlg(object):
                 return True
 
         return False
+
+
+def covariance(jac):
+    """ Calculates the covariance based on the estimated jacobian
+
+    Inspired by how this is calculated in scipy.optimise.curve_fit, as found at
+    https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739
+
+    """
+
+    # Do Moore-Penrose inverse discarding zero singular values.
+    U, s, VT = svd(jac, full_matrices=False)
+    threshold = finfo(float).eps * max(jac.shape) * s[0]
+    s = s[s > threshold]
+    VT = VT[:s.size]
+    cov = dot(VT.T / s ** 2, VT)
+
+    return cov

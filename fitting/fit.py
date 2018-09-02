@@ -4,7 +4,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from itertools import izip
+from itertools import izip, product
 from collections import OrderedDict
 from numpy import array, concatenate, isnan, ndarray
 from types import NoneType
@@ -64,6 +64,7 @@ class fit(object):
         self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
         self.fitSubset = kwargs.pop('fitSubset', None)
+        self.calcCovariance = kwargs.pop('calcCov', True)
 
         self.fitInfo = {'Name': self.Name,
                         'participantChoiceParam': partChoiceParam,
@@ -155,23 +156,29 @@ class fit(object):
         else:
             self.fitSubsetChosen = None
 
-        fitVals, fitQuality, testedParams = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
+        fitVals, fitQuality, fitInfo = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
 
         model = self.fittedModel(*fitVals)
 
         fitMeasures = self.fitAlg.extraMeasures(*fitVals)
 
-        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, array(testedParams[0]).T)])
+        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, array(fitInfo[0]).T)])
 
         fittingData = {"testedParameters": testedParamDict,
-                       "fitQualities": testedParams[1],
+                       "fitQualities": fitInfo[1],
                        "fitQuality": fitQuality,
                        "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
 
         fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
 
+        if self.calcCovariance:
+            covariance = self.fitAlg.covariance(fitVals, fitInfo[2])
+            covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in izip(self.mParamNames, covariance)
+                                                                 for p2, c in izip(self.mParamNames, cr)})
+            fittingData.update(covdict)
+
         try:
-            fittingData.update(testedParams[2])
+            fittingData.update(fitInfo[2])
         finally:
             return model, fitQuality, fittingData
 
