@@ -455,6 +455,62 @@ def dataSpectrumVsEvents(data, events, eventLabel, axisLabels):
 
     return fig
 
+###
+
+def scatterplot_matrix(data, names=[], **kwargs):
+    """
+    Plots a scatterplot matrix of subplots.  Each row of "data" is plotted
+    against other rows, resulting in a nrows by nrows grid of subplots with the
+    diagonal subplots labeled with "names".  Additional keyword arguments are
+    passed on to matplotlib's "plot" command. Returns the matplotlib figure
+    object containg the subplot grid.
+    Modified from https://stackoverflow.com/questions/7941207/is-there-a-function-to-make-scatterplot-matrices-in-matplotlib
+    """
+    numvars, numdata = data.shape
+    fig, axes = plt.subplots(nrows=numvars, ncols=numvars, figsize=(8,8))
+    fig.subplots_adjust(hspace=0.0, wspace=0.0)
+
+    xpos = i//nrows
+    ypos = nrows - i%nrows - 1
+    ax = axes[ypos, xpos]
+
+    groupData.ActionProb.plot(kind='hist', bins=100, ax=ax)
+
+    ax.set_xlabel("alpha: %2.1f"%(round(alpha,1)))
+    ax.set_ylabel("beta: %2.1f"%(round(beta,1)))
+    ax.set_frame_on(False)
+
+    for ax in axes.flat:
+        # Set up ticks only on one side for the "edge" subplots...
+        if ax.is_first_col():
+            ax.yaxis.set_ticks_position('left')
+            ax.yaxis.set_label_position('left')
+        elif ax.is_last_col():
+            ax.yaxis.set_ticks_position('right')
+            ax.yaxis.set_label_position('right')
+        else:
+            ax.yaxis.set_visible(False)
+
+        if ax.is_first_row():
+            ax.xaxis.set_ticks_position('top')
+            ax.xaxis.set_label_position('top')
+        elif ax.is_last_row():
+            ax.xaxis.set_ticks_position('bottom')
+            ax.xaxis.set_label_position('bottom')
+        else:
+            ax.xaxis.set_visible(False)
+
+
+    # FIX #2: if numvars is odd, the bottom right corner plot doesn't have the
+    # correct axes limits, so we pull them from other axes
+    if numvars%2:
+        xlimits = axes[0,-1].get_xlim()
+        ylimits = axes[-1,0].get_ylim()
+        axes[-1,-1].set_xlim(xlimits)
+        axes[-1,-1].set_ylim(ylimits)
+
+    return fig
+
 
 ### Pandas realted plotting functions
 def pandasPlot(data, axisLabels = {}):
@@ -665,10 +721,10 @@ def axContour(ax, X, Y, z, minZ=0, CB=None, CB_label="", cmap=local_cmap, maxCon
 
     xi = linspace(xMin, xMax, 50)
     yi = linspace(yMin, yMax, 50)
-    ZGrid = griddata((X, Y), 
-                     z, 
-                     (xi[None, :], yi[:, None]), 
-                     fill_value=0, 
+    ZGrid = griddata((X, Y),
+                     z,
+                     (xi[None, :], yi[:, None]),
+                     fill_value=0,
                      method='cubic')
     XGrid, YGrid = meshgrid(xi, yi)
 
@@ -753,9 +809,9 @@ def axQuiver(ax, X, Y, dX, dY, axisLabels, CB_label=""):
     xLabel = axisLabels.pop("xLabel", "Event")
     yLabel = axisLabels.pop("yLabel", "Value")
     title = axisLabels.pop("title", "")
-    
+
     im = ax.quiver(X, Y, dX, dY, pivot='mid', cmap=local_cmap)
-    
+
     CBI = plt.colorbar(im, orientation='horizontal', shrink=0.8)
     CBI.set_label(CB_label)
     ax.legend()
@@ -916,9 +972,10 @@ def legend(*axis, **kwargs):
 
         # for plotting the legend outside the box
         # Shrink current axis's height by 10% on the bottom
-        box = ax.get_position()
-        ax.set_position([box.x0, box.y0 + box.height * 0.1,
-                         box.width, box.height * 0.9])
+        if not embed:
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                             box.width, box.height * 0.9])
 
     if not lineList:
         return
