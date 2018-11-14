@@ -347,6 +347,34 @@ def weatherStimAllAction(numActions):
     return weatherStim
 
 
+def weatherRewDirect():
+    """
+    Processes the weather reward for models expecting the reward feedback
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    weatherRew : function
+        The function expects to be passed a tuple containing the reward the
+        last action and the last stimuli. The function returns the reward.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def weatherRew(reward, action, stimuli):
+
+        return reward
+
+    weatherRew.Name = "weatherRewDirect"
+    return weatherRew
+
+
 def weatherRewDiff():
     """
     Processes the weather reward for models expecting reward corrections
