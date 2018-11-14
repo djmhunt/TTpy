@@ -86,8 +86,6 @@ class fitter(fit):
         """
 
         # Run model with given parameters
-        #modelInstance = self.fittedModel(*modelParameters)
-        # TODO: work out why I can't use the next few lines of code
         try:
             modelInstance = self.fittedModel(*modelParameters)
         except FloatingPointError:

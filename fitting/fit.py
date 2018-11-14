@@ -41,6 +41,8 @@ class fit(object):
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
         This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
         feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
+    calcCov : bool, optional
+        Estimating the covariance
 
     Attributes
     ----------

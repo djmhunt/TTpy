@@ -485,7 +485,7 @@ class model(object):
         self.probabilities = array(self.prior)
         self.decProbabilities = array(self.prior)
         self.expectedRewards = ones(self.numActions)
-        self.expectedReward = 1
+        self.expectedReward = array([1])
 
 
 

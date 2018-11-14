@@ -102,6 +102,7 @@ class qLearnK(model):
 
         self.genStandardParameterDetails()
         self.parameters["sigma"] = self.sigma
+        self.parameters["sigmaG"] = self.sigmaG
         self.parameters["beta"] = self.beta
         self.parameters["lambda"] = self.drift
         self.parameters["expectation"] = self.expectations.copy()
@@ -123,8 +124,8 @@ class qLearnK(model):
         """
 
         results = self.standardResultOutput()
-        results["sigmaA"] = array(self.recsigmaA)
-        results["alphaA"] = array(self.recalphaA)
+        results["sigmaA"] = array(self.recsigmaA).T
+        results["alphaA"] = array(self.recalphaA).T
 
         return results
 
