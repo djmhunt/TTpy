@@ -10,8 +10,9 @@ import logging
 import sys
 import collections
 
-from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray, mean, sum, zeros
+from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray, mean, sum, zeros, dot, trace
 from scipy.stats import rankdata
+from numpy.linalg import inv, slogdet
 from numpy.random import random
 from collections import Counter
 #from itertools import izip, chain
@@ -1080,6 +1081,38 @@ def kendalwts(data, ranked = False):
     w = ((w1-w2)/(w3-w4))
 
     return w
+
+
+def kldivergence(m0, m1, c0, c1):
+    """
+    Calculates the Kullback–Leibler divergence between two distributions using the means and covariances
+
+    Parameters
+    ----------
+    m0 : array of N floats
+        The means of distribution 0
+    m1 : array of N floats
+        The means of distribution 1
+    c0 : NxN array of floats
+        The covariance matrix for distribution 0
+    c1 : NxN array of floats
+        The covariance matrix for distribution 1
+
+    Returns
+    -------
+    kl : float
+        The Kullback–Leibler divergence
+
+    """
+
+    ic0 = inv(c0)
+    ic1 = inv(c1)
+
+    cm = dot(c1, ic0)
+    ldcms, ldcm = slogdet(cm)
+    kl = 0.5 * (ldcm + trace(dot(ic1, dot(array([m0 - m1]).T, array([m0 - m1])) + c0 - c1)))
+
+    return kl
 
 
 #if __name__ == '__main__':
