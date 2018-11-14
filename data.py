@@ -11,7 +11,7 @@ import cPickle as pickle
 from os import listdir
 from scipy.io import loadmat
 from scipy.io.matlab.mio5_params import mat_struct
-from numpy import array, shape
+from numpy import array, shape, dtype
 from itertools import izip, chain
 from pandas import read_excel, read_csv
 from types import NoneType
@@ -497,7 +497,14 @@ def getxlsxData(folder, files, fileIDs, **kwargs):
 
         if len(splitBy) > 0:
             # The data must be split
-            classifierList = (sortStrings(list(set(dat[s])), '')[0] for s in splitBy)
+            classifierList = []
+            for s in splitBy:
+                if dat[s].dtype in [dtype('int64'), dtype('float64')]:
+                    sSorted = sorted(list(set(dat[s])))
+                    classifierList.append([str(n) for n in sSorted])
+                else:
+                    classifierList.append(sortStrings(list(set(dat[s])), '')[0])
+
             participants = listMerge(*classifierList)
 
             for p in participants:
