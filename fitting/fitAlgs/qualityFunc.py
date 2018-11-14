@@ -5,7 +5,7 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import log2, sum, ones, exp, shape, amax, array, linspace, concatenate, prod
+from numpy import log2, sum, ones, exp, shape, amax, array, linspace, concatenate, prod, log
 from numpy.random import choice
 from collections import Callable
 
@@ -30,6 +30,8 @@ def qualFuncIdent(value, **kwargs):
         fitness = WBIC2(**kwargs)
     elif value == "-2log":
         fitness = logprob
+    elif value == "-loge":
+        fitness = logeprob
     elif value == "-2AvLog":
         fitness = logAverageProb
     elif value == "1-prob":
@@ -67,6 +69,26 @@ def logprob(modVals):
     logModCoiceprob = log2(modVals)
 
     probs = -2*logModCoiceprob
+
+    fit = sum(probs)
+
+    return fit
+
+
+def logeprob(modVals):
+    # type: (Union[ndarray, list]) -> float
+    """
+    Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -\mathrm{log}_e(\\vec x)`
+
+    Returns
+    -------
+    fit : float
+        The sum of the model values returned
+    """
+
+    logModCoiceprob = log(modVals)
+
+    probs = -logModCoiceprob
 
     fit = sum(probs)
 
