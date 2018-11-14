@@ -7,10 +7,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import logging
 
 from math import isinf
-from numpy import linspace, dot, finfo
+from numpy import linspace, dot, finfo, expand_dims
 from numpy.linalg import inv, svd
-from scipy import optimize
+from scipy.optimize import approx_fprime, least_squares
+from algopy import UTPM
 from itertools import izip
+
+import numdifftools as nd
 
 from utils import listMergeNP, callableDetailsString
 from fitting.fitAlgs.qualityFunc import qualFuncIdent
@@ -25,7 +28,7 @@ class fitAlg(object):
     ----------
     fitQualFunc : string, optional
         The name of the function used to calculate the quality of the fit.
-        The value it returns proivides the fitter with its fitting guide.
+        The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
@@ -149,7 +152,8 @@ class fitAlg(object):
 
         # Start by checking that the parameters are valid
         if self.allBounds and self.invalidParams(*pms):
-            return self.boundCostFunc(pms, self.boundVals)
+            pseudofitQuality = self.boundCostFunc(pms, self.boundVals, self.fitQualFunc)
+            return pseudofitQuality
 
         # Run the simulation with these parameters
         modVals = self.sim(*pms)
@@ -186,7 +190,25 @@ class fitAlg(object):
 
         return measureVals
 
-    def covariance(self, fitvals, fitinfo, br=0.01):
+    def covariance(self, paramvals, fitinfo, br=0.00000001):
+        """
+        The covariance at a point
+
+        Parameters
+        ----------
+        paramvals : array or list
+            The parameters at which the
+        fitinfo : dict
+            The
+        br : float, optional
+            The fraction of the
+
+        Returns
+        -------
+        covariance : float
+            The covariance at the point paramvals
+
+        """
 
         if 'hess_inv' in fitinfo:
             cov = fitinfo['hess_inv']
@@ -197,16 +219,12 @@ class fitAlg(object):
             jac = fitinfo['jac']
             cov = covariance(jac)
         else:
-            reducedBounds = [(v-br*(u-l)/2, v+br*(u-l)/2) for v, (l, u) in izip(fitvals, self.boundVals)]
-            reducedBounds = [(max(rl, ol), min(ru, ou)) for (rl, ru), (ol, ou) in izip(reducedBounds, self.boundVals)]
-            bounds = [i for i in izip(*reducedBounds)]
-            optimizeResult = optimize.least_squares(self.fitness,
-                                                    fitvals[:],
-                                                    method="dogbox",
-                                                    jac='3-point',
-                                                    bounds=bounds)
-            jac = optimizeResult.jac
-            cov = covariance(jac)
+            #inc = [br*(u-l) for l, u in self.boundVals]
+            #jac = approx_fprime(paramvals, self.fitness, inc)
+            #cov = covariance(jac)
+
+            hessfunc = nd.Hessian(self.fitness)
+            cov = inv(hessfunc(paramvals))
 
         return cov
 
@@ -507,5 +525,8 @@ def covariance(jac):
     s = s[s > threshold]
     VT = VT[:s.size]
     cov = dot(VT.T / s ** 2, VT)
+
+    # Alternative method found, but assumes the residuals are small
+    #cov = inv(dot(jac.T, jac))
 
     return cov
