@@ -56,17 +56,15 @@ class fit(object):
 
     Name = 'none'
 
-    def __init__(self, partChoiceParam, partRewardParam, modelFitVar, fitAlg, **kwargs):
+    def __init__(self, partChoiceParam, partRewardParam, modelFitVar, **kwargs):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
         self.modelFitVar = modelFitVar
-        self.fitAlg = fitAlg
         self.partStimuliParams = kwargs.pop('stimuliParams', None)
         self.partActChoiceParams = kwargs.pop('actChoiceParams', None)
         self.fpRespVal = kwargs.pop('fpRespVal', 1/1e100)
         self.fitSubset = kwargs.pop('fitSubset', None)
-        self.calcCovariance = kwargs.pop('calcCov', True)
 
         self.fitInfo = {'Name': self.Name,
                         'participantChoiceParam': partChoiceParam,
@@ -104,7 +102,7 @@ class fit(object):
 
         return [0]
 
-    def participant(self, model, modelSetup, partData, exp=None):
+    def getSim(self, model, modelSetup, partData, exp=None):
         """
         Fit participant data to a model for a given experiment
 
@@ -158,31 +156,7 @@ class fit(object):
         else:
             self.fitSubsetChosen = None
 
-        fitVals, fitQuality, fitInfo = self.fitAlg.fit(self.fitness, self.mParamNames, self.mInitialParams[:])
-
-        model = self.fittedModel(*fitVals)
-
-        fitMeasures = self.fitAlg.extraMeasures(*fitVals)
-
-        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(self.mParamNames, array(fitInfo[0]).T)])
-
-        fittingData = {"testedParameters": testedParamDict,
-                       "fitQualities": fitInfo[1],
-                       "fitQuality": fitQuality,
-                       "finalParameters": OrderedDict([(key, val) for key, val in izip(self.mParamNames, fitVals)])}
-
-        fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
-
-        if self.calcCovariance:
-            covariance = self.fitAlg.covariance(fitVals, fitInfo[2])
-            covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in izip(self.mParamNames, covariance)
-                                                                 for p2, c in izip(self.mParamNames, cr)})
-            fittingData.update(covdict)
-
-        try:
-            fittingData.update(fitInfo[2])
-        finally:
-            return model, fitQuality, fittingData
+        return self.fitness
 
     def participantMatchResult(self, exp, model, modelSetup, partData):
         """
@@ -225,23 +199,15 @@ class fit(object):
 
     def info(self):
         """
-        The information relating to the fitting method used
-
-        Includes information on the fitting algorithm used
+        The dictionary describing the fitting algorithm chosen
 
         Returns
         -------
-        info : (dict,dict)
-            The fitting info and the fitting.fitAlgs info
-
-        See Also
-        --------
-        fitting.fitAlgs.fitAlg.fitAlg.info
+        fitInfo : dict
+            The dictionary of fitting class information
         """
 
-        fitAlgInfo = self.fitAlg.info()
-
-        return self.fitInfo, fitAlgInfo
+        return self.fitInfo
 
     def fittedModel(self, *modelParameters):
         """

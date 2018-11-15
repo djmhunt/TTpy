@@ -90,13 +90,15 @@ class evolutionary(fitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
+        self.modFit = modFit
         strategy = kwargs.pop("strategy", None)
 
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+        self.calcCovariance = kwargs.pop('calcCov', True)
         self.polish = kwargs.pop("polish", False)
         self.popsize = kwargs.pop("popSize", 15)
         self.tolerence = kwargs.pop("tolerance", 0.01)

@@ -58,7 +58,9 @@ class leastsq(fitAlg):
 
     Name = 'leastsq'
 
-    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+
+        self.modFit = modFit
 
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)

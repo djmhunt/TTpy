@@ -98,7 +98,9 @@ class basinhopping(fitAlg):
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+
+        self.modFit = modFit
 
         method = kwargs.pop("method", None)
 

@@ -7,7 +7,8 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import logging
 
 from math import isinf
-from numpy import linspace, dot, finfo, expand_dims
+from collections import OrderedDict
+from numpy import array, linspace, dot, finfo, expand_dims
 from numpy.linalg import inv, svd
 from scipy.optimize import approx_fprime, least_squares
 from algopy import UTPM
@@ -59,12 +60,14 @@ class fitAlg(object):
 
     Name = 'none'
 
-    def __init__(self, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
+        self.modFit = modFit
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
+        self.calcCovariance = kwargs.pop('calcCov', True)
 
         measureDict = kwargs.pop("extraFitMeasures", {})
         self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
@@ -87,6 +90,65 @@ class fitAlg(object):
     def __repr__(self):
 
         return repr(self.info())
+
+    def participant(self, model, modelSetup, partData, exp=None):
+        """
+        Fit participant data to a model for a given experiment
+
+        Parameters
+        ----------
+        model : model.model.model inherited class
+            The model you wish to try and fit values to
+        modelSetup : (dict,dict)
+            The first dictionary is the model initial parameters. The second
+            are the other model parameters
+        partData : dict
+            The participant data
+        exp : experiment.experiment.experiment inherited class, optional
+            The experiment being fitted. If you are fitting using
+            participant responses only it will not be used. Default ``None``
+
+        Returns
+        -------
+        model : model.model.model inherited class instance
+            The model with the best fit parameters
+        fitQuality : float
+            Specifies the fit quality for this participant to the model
+        testedParams : tuple of OrderedDict and list
+            They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
+            fit qualities of these parameters.
+        """
+
+        sim = self.modFit.getSim(model, modelSetup, partData, exp=None)
+
+        mInitialParams = modelSetup[0].values() # These are passed seperately to define at this point the order of the parameters
+        mParamNames = modelSetup[0].keys()
+
+        fitVals, fitQuality, fitInfo = self.fit(sim, mParamNames, mInitialParams[:])
+
+        modelRun = self.modFit.fittedModel(*fitVals)
+
+        fitMeasures = self.extraMeasures(*fitVals)
+
+        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(mParamNames, array(fitInfo[0]).T)])
+
+        fittingData = {"testedParameters": testedParamDict,
+                       "fitQualities": fitInfo[1],
+                       "fitQuality": fitQuality,
+                       "finalParameters": OrderedDict([(key, val) for key, val in izip(mParamNames, fitVals)])}
+
+        fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
+
+        if self.calcCovariance:
+            covariance = self.covariance(fitVals, fitInfo[2])
+            covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in izip(mParamNames, covariance)
+                                                                 for p2, c in izip(mParamNames, cr)})
+            fittingData.update(covdict)
+
+        try:
+            fittingData.update(fitInfo[2])
+        finally:
+            return modelRun, fitQuality, fittingData
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -230,15 +292,23 @@ class fitAlg(object):
 
     def info(self):
         """
-        The dictionary describing the fitting algorithm chosen
+        The information relating to the fitting method used
+
+        Includes information on the fitting algorithm used
 
         Returns
         -------
-        fitInfo : dict
-            The dictionary of fitting class information
+        info : (dict,dict)
+            The fitting info and the fitting.fitAlgs info
+
+        See Also
+        --------
+        fitting.fitAlgs.fitAlg.fitAlg.info
         """
 
-        return self.fitInfo
+        modFitInfo = self.modFit.info()
+
+        return self.fitInfo, modFitInfo
 
     def setBounds(self, mParamNames):
         """
