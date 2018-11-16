@@ -8,28 +8,28 @@ import logging
 
 from math import isinf
 from collections import OrderedDict
-from numpy import array, linspace, dot, finfo, expand_dims
+from numpy import array, linspace, dot, finfo
 from numpy.linalg import inv, svd
-from scipy.optimize import approx_fprime, least_squares
-from algopy import UTPM
 from itertools import izip
 
 import numdifftools as nd
 
 from utils import listMergeNP, callableDetailsString
-from fitting.fitAlgs.qualityFunc import qualFuncIdent
-from fitting.fitAlgs.boundFunc import scalarBound
+from fitAlgs.qualityFunc import qualFuncIdent
+from fitAlgs.boundFunc import scalarBound
 
 
 class fitAlg(object):
     """
-    The abstract class for fitting data
+    The abstract class for simMethods data
 
     Parameters
     ----------
+    simMethod : simMethods.fitAlgs.fitAlg instance
+        An instance of one of the simMethods algorithms
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the fit.
-        The value it returns provides the fitter with its fitting guide.
+        The name of the function used to calculate the quality of the simMethod.
+        The value it returns provides the fitter with its simMethods guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
@@ -41,28 +41,28 @@ class fitAlg(object):
         A function used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound``
     numStartPoints : int, optional
-        The number of starting points generated for each parameter. Only used with some fitting algorithms
+        The number of starting points generated for each parameter. Only used with some simMethods algorithms
         Default 4
     extraFitMeasures : dict of dict, optional
-        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the fitting method
+        The name of the simMethods method
 
     See Also
     --------
-    fitting.fit.fit : The general fitting framework class
+    simMethods.simMethod.simMethod : The general simMethods framework class
 
     """
 
     Name = 'none'
 
-    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.modFit = modFit
+        self.simMethod = simMethod
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
@@ -98,35 +98,35 @@ class fitAlg(object):
         Parameters
         ----------
         model : model.model.model inherited class
-            The model you wish to try and fit values to
+            The model you wish to try and simMethod values to
         modelSetup : (dict,dict)
             The first dictionary is the model initial parameters. The second
             are the other model parameters
         partData : dict
             The participant data
         exp : experiment.experiment.experiment inherited class, optional
-            The experiment being fitted. If you are fitting using
+            The experiment being fitted. If you are simMethods using
             participant responses only it will not be used. Default ``None``
 
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best fit parameters
+            The model with the best simMethod parameters
         fitQuality : float
-            Specifies the fit quality for this participant to the model
+            Specifies the simMethod quality for this participant to the model
         testedParams : tuple of OrderedDict and list
             They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+            simMethod qualities of these parameters.
         """
 
-        sim = self.modFit.getSim(model, modelSetup, partData, exp=None)
+        sim = self.simMethod.getSim(model, modelSetup, partData, exp=None)
 
         mInitialParams = modelSetup[0].values() # These are passed seperately to define at this point the order of the parameters
         mParamNames = modelSetup[0].keys()
 
         fitVals, fitQuality, fitInfo = self.fit(sim, mParamNames, mInitialParams[:])
 
-        modelRun = self.modFit.fittedModel(*fitVals)
+        modelRun = self.simMethod.fittedModel(*fitVals)
 
         fitMeasures = self.extraMeasures(*fitVals)
 
@@ -152,15 +152,15 @@ class fitAlg(object):
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the fitting algorithms and starting parameters
+        Runs the model through the simMethods algorithms and starting parameters
         and returns the best one. This is the abstract version that always
         returns ``(0,0)``
 
         Parameters
         ----------
         sim : function
-            The function used by a fitting algorithm to generate a fit for
-            given model parameters. One example is ``fit.fitness``
+            The function used by a simMethods algorithm to generate a simMethod for
+            given model parameters. One example is ``simMethod.fitness``
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
@@ -169,16 +169,16 @@ class fitAlg(object):
         Returns
         -------
         fitParams : list of floats
-            The best fitting parameters
+            The best simMethods parameters
         fitQuality : float
-            The quality of the fit as defined by the quality function chosen.
+            The quality of the simMethod as defined by the quality function chosen.
         testedParams : tuple of two lists
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+            simMethod qualities of these parameters.
 
         See Also
         --------
-        fit.fitness
+        simMethod.fitness
 
         """
 
@@ -190,26 +190,26 @@ class fitAlg(object):
 
     def fitness(self, *params):
         """
-        Generates a fit quality value used by the fitting function. This is the function passed to the fitting function.
+        Generates a simMethod quality value used by the simMethods function. This is the function passed to the simMethods function.
 
         Parameters
         ----------
         *params : array of floats
-            The parameters proposed by the fitting algorithm
+            The parameters proposed by the simMethods algorithm
 
         Returns
         -------
         fitQuality : float
-            The fit quality value calculated using the fitQualFunc function
+            The simMethod quality value calculated using the fitQualFunc function
 
         See Also
         --------
-        fitting.fitAlgs.qualityFunc : the module of fitQualFunc functions
+        simMethods.fitAlgs.qualityFunc : the module of fitQualFunc functions
         fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
-        fitting.fit.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
+        simMethods.simMethod.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
 
         """
-        # This is because the fitting functions return an array and we want a list
+        # This is because the simMethods functions return an array and we want a list
         pms = list(*params)
 
         # Start by checking that the parameters are valid
@@ -233,12 +233,12 @@ class fitAlg(object):
         Parameters
         ----------
         *params : array of floats
-            The parameters proposed by the fitting algorithm
+            The parameters proposed by the simMethods algorithm
 
         Returns
         -------
         fitQuality : dict of float
-            The fit quality value calculated using the fit quality functions described in extraMeasures
+            The simMethod quality value calculated using the simMethod quality functions described in extraMeasures
 
         """
 
@@ -292,23 +292,23 @@ class fitAlg(object):
 
     def info(self):
         """
-        The information relating to the fitting method used
+        The information relating to the simMethods method used
 
-        Includes information on the fitting algorithm used
+        Includes information on the simMethods algorithm used
 
         Returns
         -------
         info : (dict,dict)
-            The fitting info and the fitting.fitAlgs info
+            The simMethods info and the simMethods.fitAlgs info
 
         See Also
         --------
-        fitting.fitAlgs.fitAlg.fitAlg.info
+        simMethods.fitAlgs.fitAlg.fitAlg.info
         """
 
-        modFitInfo = self.modFit.info()
+        simMethodInfo = self.simMethod.info()
 
-        return self.fitInfo, modFitInfo
+        return self.fitInfo, simMethodInfo
 
     def setBounds(self, mParamNames):
         """
@@ -420,7 +420,7 @@ class fitAlg(object):
 
         else:
             if len(bounds) != len(initialParams):
-                raise ValueError('Bounds do not fit number of initial parameters', str(len(bounds)), str(len(initialParams)))
+                raise ValueError('Bounds do not simMethod number of initial parameters', str(len(bounds)), str(len(initialParams)))
 
             startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in izip(initialParams, bounds))
 

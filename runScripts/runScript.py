@@ -12,7 +12,6 @@ with the data.
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-
 sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
@@ -20,19 +19,18 @@ from numpy import ones
 
 ### Import all experiments, models, outputting and interface functions
 # The experiments and stimulus processors
-from experiment.probSelect import probSelectStimDirect, probSelectRewDirect
+from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
 
 # The model factory
 from models import models
 # The decision methods
-#from model.decision.binary import decEta, decEtaSets, decSingle, decRandom
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
 
 from outputting import outputting
 
-### Set the outputting, model sets and experiment sets
+### Set the outputting and model sets
 alpha = 0.5
 alphaBounds = (0, 1)
 beta = 0.5
@@ -46,6 +44,7 @@ paramExtras = {'numActions': numActions,
                'numCues': numCues,
                'actionCodes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
                'expect': ones((numActions, numCues)) / 2,
+               'prior': ones(numActions) / numActions,
                'stimFunc': probSelectStimDirect(),
                'rewFunc': probSelectRewDirect(),
                'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
@@ -73,10 +72,10 @@ from dataFitting import dataFitting
 
 from data import data
 
-#from fitting.fitAlgs.boundFunc import infBound, scalarBound
+from fitAlgs import infBound, scalarBound
 
-from fitting.actReactFitter import fitter
-from fitting.fitAlgs.evolutionary import evolutionary
+from fitAlgs.simMethods.actReactFitter import fitter
+from fitAlgsevolutionary import evolutionary
 
 # Import data
 dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
@@ -84,28 +83,27 @@ dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFi
 for d in dat:
     d["validActions"] = d["ValidActions"].T
 
-# Define the fitting algorithm
-fitAlg = evolutionary(fitQualFunc="BIC2norm",
-                      qualFuncArgs={"numParams": len(parameters),
-                                    "numActions": numActions,
-                                    "randActProb": 1/2,
-                                    "qualityThreshold": 20},
-                      bounds=bounds,
-                      boundCostFunc=None,  # scalarBound(base=140),
-                      tolerance=0.01,
-                      extraFitMeasures={"BIC": {"numParams": len(parameters)},
-                                        "r2": {"numParams": len(parameters), "randActProb": 1/2},
-                                        "bayesFactor": {"numParams": len(parameters), "randActProb": 1/2}},
-                      polish=False)
+# Set up the model simulation
+modSim = fitter('Decisions',
+                'Rewards',
+                'ActionProb',
+                fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
+                #stimuliParams=["stimCues"],
+                actChoiceParams='validActions'
+                )
 
-# Set up the fitter
-fit = fitter('Decisions',
-             'Rewards',
-             'ActionProb',
-             fitAlg,
-             fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
-             #stimuliParams=["stimCues"],
-             actChoiceParams='validActions')
+# Define the fitting algorithm
+fitAlg = evolutionary(modSim,
+                      fitQualFunc="BIC2norm",
+                      qualFuncArgs={"numParams": len(parameters), "numActions": numActions, "qualityThreshold": 20},
+                      # strategy="all",
+                      boundCostFunc=scalarBound(base=160), #None, # scalarBound(base=160),
+                      polish=False,
+                      bounds=bounds,
+                      extraFitMeasures={"-2log": {},
+                                        "BIC": {"numParams": len(parameters)},
+                                        "r2": {"numParams": len(parameters), "randActProb": 1/numActions},
+                                        "bayesFactor": {"numParams": len(parameters), "randActProb": 1/numActions}})
 
 # Run the data fitter
-dataFitting(modelSet, output, data=dat, fitter=fit, partLabel='simID')
+dataFitting(modelSet, output, data=dat, fitter=fitAlg, partLabel='simID')

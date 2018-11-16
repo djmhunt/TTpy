@@ -8,14 +8,14 @@ import sys
 sys.path.append("../")
 
 import pytest
-from pytest import raises, fixture
+from pytest import fixture
 
 from numpy import array
 
 from models import models
 from model.qLearn import qLearn
-from fitting.fit import fit
-from fitting.fitAlgs.minimize import minimize
+from simMethods.simMethod import simMethod
+from fitAlgs.minimize import minimize
 
 #def test_an_exception():
 #    with raises(IndexError):
@@ -98,7 +98,7 @@ def fitting():
         
     fitAlg = minimize(fitQualFunc = "-2log", method = 'constrained', bounds= {'alpha':(0,1),'theta':(0,40)})
 
-    fitFunc = fit('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
+    fitFunc = simMethod('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
     return fitFunc, fitAlg
     

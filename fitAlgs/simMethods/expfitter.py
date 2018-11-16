@@ -4,14 +4,14 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from fitting.fit import fit
+from simMethods.simMethod import simMethod
 
 from itertools import izip
 from types import NoneType
 
-class fitter(fit):
+class fitter(simMethod):
 
-    """A class for fitting data by running through an experiment
+    """A class for simMethods data by running through an experiment
 
     To be fixed later
     
@@ -28,8 +28,6 @@ class fitter(fit):
         The key containing the participant reward data
     modelFitVar : string
         The variable to be compared in the model data
-    fitAlg : fitting.fitAlgs.fitAlg instance
-        An instance of one of the fitting algorithms
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -39,7 +37,7 @@ class fitter(fit):
         stay constant. If a list then the list will be taken as the list
         of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occurs when running a fit the fit function
+        If a floating point error occurs when running a simMethod the simMethod function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
     fitSubset : ``float('Nan')``, ``None`` or list of int, optional
@@ -50,12 +48,12 @@ class fitter(fit):
     Attributes
     ----------
     Name : string
-        The name of the fitting type
+        The name of the simMethods type
         
     See Also
     --------
-    fitting.fit.fit : The class this inherits many functions from
-    fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
+    simMethods.simMethod.simMethod : The class this inherits many functions from
+    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
     """
     
     Name = "experimentFitter"
@@ -72,13 +70,13 @@ class fitter(fit):
         Returns
         -------
         modelPerformance : list of floats
-            The performance metric for the model that will be used to characterise the quality of the fit.
+            The performance metric for the model that will be used to characterise the quality of the simMethod.
             
         See Also
         --------
-        fitting.fit.fit.participant : Fits participant data
-        fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
-        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
+        simMethods.simMethod.simMethod.participant : Fits participant data
+        simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
+        simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         # Run model with given parameters

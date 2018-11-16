@@ -6,7 +6,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitting.fit import fit
+from fitAlgs.simMethods.simMethod import simMethod
 
 from itertools import izip
 from numpy import array, ones, isnan
@@ -16,12 +16,12 @@ from types import NoneType
 #from utils import listMerGen
 
 
-class fitter(fit):
+class fitter(simMethod):
 
     """
-    A class for fitting data by passing the participant data through the model.
+    A class for simMethods data by passing the participant data through the model.
 
-    Used only for fitting action-response models
+    Used only for simMethods action-response models
 
     Parameters
     ----------
@@ -31,8 +31,6 @@ class fitter(fit):
         The key containing the participant reward data
     modelFitVar : string
         The variable to be compared in the model data
-    fitAlg : fitting.fitAlgs.fitAlg instance
-        An instance of one of the fitting algorithms
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -42,7 +40,7 @@ class fitter(fit):
         stay constant. If a list then the list will be taken as the list
         of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occurs when running a fit the fit function
+        If a floating point error occurs when running a simMethod the simMethod function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
     fitSubset : ``float('Nan')``, ``None`` or list of int, optional
@@ -53,12 +51,12 @@ class fitter(fit):
     Attributes
     ----------
     Name : string
-        The Name of the fitting type
+        The Name of the simMethods type
 
     See Also
     --------
-    fitting.fit.fit : The class this inherits many functions from
-    fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
+    simMethods.simMethod.simMethod : The class this inherits many functions from
+    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
     """
 
     Name = "actReactFitter"
@@ -76,13 +74,13 @@ class fitter(fit):
         Returns
         -------
         modelPerformance : list of floats
-            The performance metric for the model that will be used to characterise the quality of the fit.
+            The performance metric for the model that will be used to characterise the quality of the simMethod.
 
         See Also
         --------
-        fitting.fit.fit.participant : Fits participant data
-        fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
-        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
+        simMethods.simMethod.simMethod.participant : Fits participant data
+        simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
+        simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         # Run model with given parameters
@@ -91,7 +89,7 @@ class fitter(fit):
         except FloatingPointError:
             message = errorResp()
             logger = logging.getLogger('Fitter')
-            logger.warning(message + "\n. Abandoning fitting with parameters: "
+            logger.warning(message + "\n. Abandoning simMethods with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning an action choice probability for each trialstep of "
                                    + repr(self.fpRespVal))
@@ -110,7 +108,7 @@ class fitter(fit):
         if isnan(modelPerformance).any():
             logger = logging.getLogger('Fitter')
             message = "model performance values contain NaN"
-            logger.warning(message + ".\n Abandoning fitting with parameters: "
+            logger.warning(message + ".\n Abandoning simMethods with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning an action choice probability for each trialstep of "
                                    + repr(self.fpRespVal))

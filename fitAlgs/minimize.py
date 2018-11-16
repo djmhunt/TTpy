@@ -6,34 +6,32 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitting.fitAlgs.fitAlg import fitAlg
+from fitAlgs.fitAlg import fitAlg
 
-from numpy import array, around, all
+from numpy import around, nanargmin
 from scipy import optimize
 from itertools import izip
 
 from utils import callableDetailsString
-from fitting.fitAlgs.qualityFunc import qualFuncIdent
-from fitting.fitAlgs.boundFunc import scalarBound
-
-import pytest
+from fitAlgs.qualityFunc import qualFuncIdent
+from fitAlgs import scalarBound
 
 
-class basinhopping(fitAlg):
+class minimize(fitAlg):
 
-    """The class for fitting data using scipy.optimise.basinhopping
+    """The class for simMethods data using scipy.optimise.minimize
 
     Parameters
     ----------
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the fit.
-        The value it returns proivides the fitter with its fitting guide.
+        The name of the function used to calculate the quality of the simMethod.
+        The value it returns proivides the fitter with its simMethods guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     method : string or list of strings, optional
-        The name of the fitting method or list of names of fitting method or
-        name of list of fitting methods. Valid names found in the notes.
+        The name of the simMethods method or list of names of simMethods method or
+        name of list of simMethods methods. Valid names found in the notes.
         Default ``unconstrained``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
@@ -50,31 +48,31 @@ class basinhopping(fitAlg):
         as those that do not. Default is True
     boundSensitivity : int, optional
         Defines the smallest number of decimal places difference (so the
-        minimal difference) between a fit value and its related boundaries
-        before a fit value is considered different from a boundary. The default
+        minimal difference) between a simMethod value and its related boundaries
+        before a simMethod value is considered different from a boundary. The default
         is `5`. This is only valid if ``boundFit`` is ``False``
     extraFitMeasures : dict of dict, optional
-        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the fitting method
+        The name of the simMethods method
     unconstrained : list
-        The list of valid unconstrained fitting methods
+        The list of valid unconstrained simMethods methods
     constrained : list
-        The list of valid constrained fitting methods
+        The list of valid constrained simMethods methods
 
 
     Notes
     -----
     unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
     constrained = ['L-BFGS-B','TNC','SLSQP']
-    Custom fitting algorithms are also allowed in theory, but it has yet to be
+    Custom simMethods algorithms are also allowed in theory, but it has yet to be
     implemented.
 
-    For each fitting function a set of different starting parameters will be
+    For each simMethods function a set of different starting parameters will be
     tried. These are the combinations of all the values of the different
     parameters. For each starting parameter provided a set of numStartPoints
     starting points will be chosen, surrounding the starting point provided. If
@@ -85,22 +83,21 @@ class basinhopping(fitAlg):
 
     See Also
     --------
-    fitting.fitAlgs.fitAlg.fitAlg : The general fitting method class, from
+    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods method class, from
                                     which this one inherits
-    fitting.fit.fit : The general fitting framework class
-    scipy.optimise.basinhopping : The fitting class this wraps around
-    scipy.optimise.minimize : The fitting class basinhopping wraps around
+    simMethods.simMethod.simMethod : The general simMethods framework class
+    scipy.optimise.minimize : The simMethods class this wraps around
 
     """
 
-    Name = 'basinhopping'
+    Name = 'minimise'
 
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.modFit = modFit
+        self.simMethod = simMethod
 
         method = kwargs.pop("method", None)
 
@@ -118,8 +115,8 @@ class basinhopping(fitAlg):
 
         self.fitInfo = {'Name': self.Name,
                         'fitQualityFunction': fitQualFunc,
-                        'bounds': self.bounds,
                         'boundaryCostFunction': callableDetailsString(boundCostFunc),
+                        'bounds': self.allBounds,
                         'numStartPoints': self.numStartPoints,
                         'boundFit': self.boundFit,
                         'boundSensitivity': self.boundSensitivity
@@ -130,86 +127,67 @@ class basinhopping(fitAlg):
         else:
             self.fitInfo['method'] = self.methodSet
 
+        self.count = 1
+
         self.boundVals = None
+        self.boundNames = None
 
         self.testedParams = []
         self.testedParamQualities = []
-        self.iterbestParams = []
-        self.iterfuncValMin = []
-        self.iterparamAccept = []
 
-        self.logger = logging.getLogger('Fitting.fitAlgs.basinhopping')
+        self.logger = logging.getLogger('Fitting.fitAlgs.minimize')
 
-    def callback(self, x, f, accept):
-        """
-        Used for storing the state after each stage of fitting
-
-        Parameters
-        ----------
-        x : coordinates of the trial minimum
-        f : function value of the trial minimum
-        accept : whether or not that minimum was accepted
-        """
-
-        self.iterbestParams.append(x)
-        self.iterfuncValMin.append(f)
-        self.iterparamAccept.append(accept)
+#    def callback(self,Xi):
+#        """
+#        Used for printing state after each stage of simMethods
+#        """
+#
+#        print('{0:4d}: {1:s}'.format(self.count, Xi))
+#
+#        self.count += 1
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the fitting algorithms and starting parameters
+        Runs the model through the simMethods algorithms and starting parameters
         and returns the best one.
 
         Parameters
         ----------
         sim : function
-            The function used by a fitting algorithm to generate a fit for
-            given model parameters. One example is fit.fitness
+            The function used by a simMethods algorithm to generate a simMethod for
+            given model parameters. One example is simMethod.fitness
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
-            The list of the intial parameters
+            The list of the initial parameters
 
         Returns
         -------
         fitParams : list of floats
-            The best fitting parameters
+            The best simMethods parameters
         fitQuality : float
-            The quality of the fit as defined by the quality function chosen.
-        testedParams : tuple of two lists and a dictionary
+            The quality of the simMethod as defined by the quality function chosen.
+        testedParams : tuple of two lists
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters. The dictionary contains the coordinates of the trial minimum, the
-            function value of the trial minimum and whether or not that minimum was accepted. Each is stored in a list.
+            simMethod qualities of these parameters.
 
         See Also
         --------
-        fit.fitness
+        simMethod.fitness
         """
 
         self.sim = sim
         self.testedParams = []
         self.testedParamQualities = []
-        self.iterbestParams = []
-        self.iterfuncValMin = []
-        self.iterparamAccept = []
 
         method = self.method
         methodSet = self.methodSet
-        bounds = self.bounds
-        boundVals = self.boundVals
         boundFit = self.boundFit
         boundSensitivity = self.boundSensitivity
         numStartPoints = self.numStartPoints
 
-        if bounds is None:
-            boundVals = [(0, float('Inf')) for i in mInitialParams]
-            bounds = {k: v for k, v in izip(mParamNames, boundVals)}
-            self.bounds = bounds
-            self.boundVals = array(boundVals)
-
-        if boundVals is None:
-            boundVals = array([bounds[k] for k in mParamNames])
-            self.boundVals = boundVals
+        self.setBounds(mParamNames)
+        boundVals = self.boundVals
 
         initParamSets = self.startParams(mInitialParams, bounds=boundVals, numPoints=numStartPoints)
 
@@ -229,12 +207,12 @@ class basinhopping(fitAlg):
             bestResult = self._bestfit(resultSet, boundVals, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
             if bestResult is None:
-                return mInitialParams, float("inf")
+                return mInitialParams, float("inf"), (self.testedParams, self.testedParamQualities)
             else:
                 fitParams = bestResult.x
                 fitVal = bestResult.fun
 
-                return fitParams, fitVal
+                return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
         else:
             optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
@@ -242,27 +220,22 @@ class basinhopping(fitAlg):
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
 
-            iterDetails = dict(bestParams=self.iterbestParams, funcVal=self.iterfuncValMin, paramAccept=self.iterparamAccept)
-
-            return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
+            return fitParams, fitVal, (self.testedParams, self.testedParamQualities)
 
     def _methodFit(self, method, initParamSets, bounds, boundFit=True, boundSensitivity=5):
 
         resultSet = []
 
-        boundFunc = self._bounds
-
         for i in initParamSets:
 
-            optimizeResult = optimize.basinhopping(self.fitQualFunc, i[:],
-                                                   accept_test=boundFunc,
-                                                   callback=self.callback
- #                                                  minimizer_kwargs={'method': method,
- #                                                                    'bounds': bounds}
- #                                                                    }
-                                                  )
+            optimizeResult = optimize.minimize(self.fitness, i[:],
+                                               method=method,
+                                               bounds=bounds)  # ,
+        #                                      callback= self.callback )
+            self.count = 1
 
-            resultSet.append(optimizeResult)
+            if optimizeResult.success is True:
+                resultSet.append(optimizeResult)
 
         bestResult = self._bestfit(resultSet, bounds, boundFit=boundFit, boundSensitivity=boundSensitivity)
 
@@ -274,17 +247,19 @@ class basinhopping(fitAlg):
         if len(resultSet) == 0:
             return None
 
-        genFitVal, genFitid = min((r.fun, idx) for (idx, r) in enumerate(resultSet))
+        genFitid = nanargmin([r.fun for r in resultSet])
 
         # Debug code
 #        data = {}
 #        data["fitVal"] = array([o.fun for o in resultSet])
 #        data['nIter'] = array([o.nit for o in resultSet])
 #        data['parameters'] = array([o.x for o in resultSet])
+#        data['success'] = array([o.success for o in resultSet])
 #        data['nfev'] = array([o.nfev for o in resultSet])
 #        data['message'] = array([o.message for o in resultSet])
-#        data['minimization_failures'] = array([o.minimization_failures for o in resultSet])
+#        data['jac'] = array([o.jac for o in resultSet])
 #        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
+#        print(array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]), array([o.fun for o in resultSet])]).T)
 #        pytest.set_trace()
 
         # If boundary fits are acceptable
@@ -303,7 +278,7 @@ class basinhopping(fitAlg):
                 return resultSet[genFitid]
 
             else:
-                fitVal, fitid = min((r.fun, idx) for (idx, r) in enumerate(reducedResults))
+                fitid = nanargmin([r.fun for r in reducedResults])
 
                 return reducedResults[fitid]
 
@@ -311,36 +286,22 @@ class basinhopping(fitAlg):
 
         self.method = None
         self.methodSet = None
-        self.bounds = None
+        self.allBounds = None
         if isinstance(method, list):
             self.methodSet = method
-            self.bounds = bounds
+            self.allBounds = bounds
         elif method in self.unconstrained:
             self.method = method
         elif method in self.constrained:
             self.method = method
-            self.bounds = bounds
+            self.allBounds = bounds
         elif callable(method):
             self.method = method
-            self.bounds = bounds
+            self.allBounds = bounds
         elif method == 'constrained':
             self.methodSet = self.constrained
-            self.bounds = bounds
+            self.allBounds = bounds
         elif method == 'unconstrained':
             self.methodSet = self.unconstrained
         else:
             self.methodSet = self.unconstrained
-
-    def _bounds(self, **kwargs):
-        """
-        Based on http://docs.scipy.org/doc/scipy-dev/reference/generated/scipy.optimize.basinhopping.html
-        """
-        boundArr = self.boundVals
-        x = kwargs["x_new"]
-        tmax = bool(all(x < boundArr[:,1]))
-        tmin = bool(all(x > boundArr[:,0]))
-
-        return tmax and tmin
-
-
-

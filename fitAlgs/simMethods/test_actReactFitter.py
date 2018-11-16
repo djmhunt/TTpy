@@ -8,14 +8,14 @@ import sys
 sys.path.append("../")
 
 import pytest
-from pytest import raises, fixture
+from pytest import fixture
 
 from numpy import array
 
 from models import models
 from model.qLearn import qLearn
-from fitting.actReactFitter import fitter
-from fitting.fitAlgs.minimize import minimize
+from actReactFitter import fitter
+from fitAlgs.minimize import minimize
 
 #def test_an_exception():
 #    with raises(IndexError):

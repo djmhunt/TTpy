@@ -6,7 +6,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 from simulation import simulation
 
-from fitting.fit import fit
+from fitAlgs.fitAlg import fitAlg
 
 
 def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", partModelVars={}, experiments=None):
@@ -21,9 +21,9 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
     outputting : outputting.outputting
         An outputting class instance
     data : list of dictionaries
-        Each dictionary should all contain the keys associated with the fitting
-    fitter : fitting.fit.fit
-        A fitting class instance
+        Each dictionary should all contain the keys associated with the simMethods
+    fitter : fitAlgs.fitAlg
+        A fitAlg class instance
     partLabel : basestring, optional
         The key (label) used to identify each participant. Default ``Name``
     partModelVars : dict of string, optional
@@ -38,12 +38,11 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
     experiments.experiments : The experiments factory
     models.models : The model factory
     outputting.outputting : The outputting class
-    fitting.fit.fit : Abstract class for fitting data
+    fitAlgs.simMethods.simMethod.simMethod : Abstract class for a method of fitting data
     data.data : Data import function
     """
 
-#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitAlgs.fitter)):
-    if not (isinstance(data, list)): #and isinstance(fitter, fit)):
+    if not (isinstance(data, list)): #and isinstance(fitter, fitAlg)):
 
         logger = outputting.getLogger('dataFitting')
         message = "Data not recognised. "

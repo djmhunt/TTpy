@@ -11,9 +11,9 @@ from types import NoneType
 from copy import deepcopy
 
 
-class fit(object):
+class simMethod(object):
 
-    """The abstract class for fitting data
+    """The abstract class for simMethods data
 
     Parameters
     ----------
@@ -23,8 +23,6 @@ class fit(object):
         The variable containing the participant reward data
     modelFitVar : string
         The key to be compared in the model data
-    fitAlg : fitting.fitAlgs.fitAlg instance
-        An instance of one of the fitting algorithms
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -34,7 +32,7 @@ class fit(object):
         stay constant. If a list then the list will be taken as the list
         of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occurs when running a fit the fit function
+        If a floating point error occurs when running a simMethod the simMethod function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
     fitSubset : ``float('Nan')``, ``None`` or list of int, optional
@@ -47,11 +45,11 @@ class fit(object):
     Attributes
     ----------
     Name : string
-        The name of the fitting type
+        The name of the simMethods type
 
     See Also
     --------
-    fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
+    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
     """
 
     Name = 'none'
@@ -90,14 +88,14 @@ class fit(object):
         Returns
         -------
         modelChoices : list of floats
-            The choices made by the model that will be used to characterise the quality of the fit.
+            The choices made by the model that will be used to characterise the quality of the simMethod.
             In this case defined as ``[0]``
 
         See Also
         --------
-        fitting.fit.fit.participant : Fits participant data
-        fitting.fitAlgs.fitAlg.fitAlg : The general fitting class
-        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
+        simMethods.simMethod.simMethod.participant : Fits participant data
+        simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
+        simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         return [0]
@@ -109,25 +107,25 @@ class fit(object):
         Parameters
         ----------
         model : model.model.model inherited class
-            The model you wish to try and fit values to
+            The model you wish to try and simMethod values to
         modelSetup : (dict,dict)
             The first dictionary is the model initial parameters. The second
             are the other model parameters
         partData : dict
             The participant data
         exp : experiment.experiment.experiment inherited class, optional
-            The experiment being fitted. If you are fitting using
+            The experiment being fitted. If you are simMethods using
             participant responses only it will not be used. Default ``None``
 
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best fit parameters
+            The model with the best simMethod parameters
         fitQuality : float
-            Specifies the fit quality for this participant to the model
+            Specifies the simMethod quality for this participant to the model
         testedParams : tuple of OrderedDict and list
             They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+            simMethod qualities of these parameters.
         """
         fitSubset = self.fitSubset
 
@@ -165,10 +163,10 @@ class fit(object):
         Parameters
         ----------
         exp : experiment.experiment.experiment inherited class
-            The experiment being fitted. If you are fitting using
+            The experiment being fitted. If you are simMethods using
             participant responses only it will not be used, so can be anything
         model : model.model.model inherited class
-            The model you wish to try and fit values to
+            The model you wish to try and simMethod values to
         modelSetup : (dict,dict)
             The first dictionary is the model varying parameters. The second
             are the other model parameters
@@ -178,7 +176,7 @@ class fit(object):
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best fit parameters
+            The model with the best simMethod parameters
         """
 
         self.exp = exp
@@ -199,12 +197,12 @@ class fit(object):
 
     def info(self):
         """
-        The dictionary describing the fitting algorithm chosen
+        The dictionary describing the simMethods algorithm chosen
 
         Returns
         -------
         fitInfo : dict
-            The dictionary of fitting class information
+            The dictionary of simMethods class information
         """
 
         return self.fitInfo

@@ -6,13 +6,12 @@ Notes
 -----
 This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each successful investigation and storing it
- with the data.
+with the data.
 """
 ### Import useful functions
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-
 sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
@@ -28,7 +27,6 @@ from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRe
 # The model factory
 from models import models
 # The decision methods
-from model.decision.binary import decEta, decEtaSets, decSingle, decRandom
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
@@ -62,6 +60,7 @@ paramExtras = {'numActions': numActions,
                'numCues': numCues,
                'actionCodes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
                'expect': ones((numActions, numCues)) / 2,
+               'prior': ones(numActions) / numActions,
                'stimFunc': probSelectStimDirect(),
                'rewFunc': probSelectRewDirect(),
                'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}

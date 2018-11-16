@@ -6,37 +6,34 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import array, around, nanargmin, isnan
+from numpy import array, nanargmin
 from scipy import optimize
-from itertools import izip
 from types import NoneType
 
-from fitting.fitAlgs.fitAlg import fitAlg
+from fitAlgs.fitAlg import fitAlg
 from utils import callableDetailsString
-from fitting.fitAlgs.qualityFunc import qualFuncIdent
-from fitting.fitAlgs.boundFunc import scalarBound
-
-import pytest
+from fitAlgs.qualityFunc import qualFuncIdent
+from fitAlgs.boundFunc import scalarBound
 
 
 class evolutionary(fitAlg):
 
-    """The class for fitting data using scipy.optimise.differential_evolution
+    """The class for simMethods data using scipy.optimise.differential_evolution
 
     Parameters
     ----------
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the fit.
-        The value it returns provides the fitter with its fitting guide.
+        The name of the function used to calculate the quality of the simMethod.
+        The value it returns provides the fitter with its simMethods guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     strategy : string or list of strings, optional
-        The name of the fitting strategy or list of names of fitting strategy or
-        name of list of fitting strategies. Valid names found in the notes.
+        The name of the simMethods strategy or list of names of simMethods strategy or
+        name of list of simMethods strategies. Valid names found in the notes.
         Default ``best1bin``
     bounds : dictionary of tuples of length two with floats, optional
-        The boundaries for fitting. Default is ``None``, which
+        The boundaries for simMethods. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
     boundCostFunc : function, optional
         A function used to calculate the penalty for exceeding the boundaries.
@@ -54,15 +51,15 @@ class evolutionary(fitAlg):
         solving process terminates: convergence = mean(pop) * tol / stdev(pop) > 1
         Default 0.01
     extraFitMeasures : dict of dict, optional
-        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the fitting strategies
+        The name of the simMethods strategies
     strategySet : list
-        The list of valid fitting strategies.
+        The list of valid simMethods strategies.
         Currently these are: 'best1bin', 'best1exp', 'rand1exp',
         'randtobest1exp', 'best2exp', 'rand2exp', 'randtobest1bin',
         'best2bin', 'rand2bin', 'rand1bin'
@@ -70,10 +67,10 @@ class evolutionary(fitAlg):
 
     See Also
     --------
-    fitting.fitAlgs.fitAlg.fitAlg : The general fitting strategy class, from
+    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods strategy class, from
                                     which this one inherits
-    fitting.fit.fit : The general fitting framework class
-    scipy.optimise.differential_evolution : The fitting class this wraps around
+    simMethods.simMethod.simMethod : The general simMethods framework class
+    scipy.optimise.differential_evolution : The simMethods class this wraps around
 
     """
 
@@ -90,9 +87,9 @@ class evolutionary(fitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, modFit, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.modFit = modFit
+        self.simMethod = simMethod
         strategy = kwargs.pop("strategy", None)
 
         self.boundCostFunc = boundCostFunc
@@ -136,14 +133,14 @@ class evolutionary(fitAlg):
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the fitting algorithms and starting parameters
+        Runs the model through the simMethods algorithms and starting parameters
         and returns the best one.
 
         Parameters
         ----------
         sim : function
-            The function used by a fitting algorithm to generate a fit for
-            given model parameters. One example is fit.fitness
+            The function used by a simMethods algorithm to generate a simMethod for
+            given model parameters. One example is simMethod.fitness
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
@@ -152,17 +149,17 @@ class evolutionary(fitAlg):
         Returns
         -------
         fitParams : list of floats
-            The best fitting parameters
+            The best simMethods parameters
         fitQuality : float
-            The quality of the fit as defined by the quality function chosen.
+            The quality of the simMethod as defined by the quality function chosen.
         testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters. The dictionary contains the parameters and convergence values from each
+            simMethod qualities of these parameters. The dictionary contains the parameters and convergence values from each
             iteration, stored in two lists.
 
         See Also
         --------
-        fit.fitness
+        simMethod.fitness
 
         """
 
@@ -215,11 +212,11 @@ class evolutionary(fitAlg):
 
     def callback(self, xk, convergence):
         """
-        Used for storing the state after each stage of fitting
+        Used for storing the state after each stage of simMethods
 
         Parameters
         ----------
-        xk : coordinates of best fit
+        xk : coordinates of best simMethod
         convergence : the proportion of the points from the iteration that have converged
         """
 
@@ -242,7 +239,7 @@ class evolutionary(fitAlg):
 
         See Also
         --------
-        fitting.fitAlgs.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
+        simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
         """
 
         optimizeResult = optimize.differential_evolution(self.fitness,
@@ -259,7 +256,7 @@ class evolutionary(fitAlg):
             return optimizeResult
         else:
             if optimizeResult.message == 'Maximum number of iterations has been exceeded.':
-                message = "Maximum number of fitting iterations has been exceeded. " \
+                message = "Maximum number of simMethods iterations has been exceeded. " \
                           "Returning the best results found so far: "
                 message += "Params " + str(optimizeResult.x)
                 message += " Fit quality " + str(optimizeResult.fun)
