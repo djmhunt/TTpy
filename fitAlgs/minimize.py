@@ -107,6 +107,10 @@ class minimize(fitAlg):
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
         self.boundFit = kwargs.pop("boundFit", True)
         self.boundSensitivity = kwargs.pop("boundSensitivity", 5)
+        self.calcCovariance = kwargs.pop('calcCov', True)
+        if self.calcCovariance:
+            br = kwargs.pop('boundRatio', 0.000001)
+            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
         measureDict = kwargs.pop("extraFitMeasures", {})
         self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}

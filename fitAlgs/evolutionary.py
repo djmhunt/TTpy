@@ -99,6 +99,9 @@ class evolutionary(fitAlg):
         self.polish = kwargs.pop("polish", False)
         self.popsize = kwargs.pop("popSize", 15)
         self.tolerence = kwargs.pop("tolerance", 0.01)
+        if self.calcCovariance:
+            br = kwargs.pop('boundRatio', 0.000001)
+            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
         measureDict = kwargs.pop("extraFitMeasures", {})
         self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}

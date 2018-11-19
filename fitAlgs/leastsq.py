@@ -68,6 +68,10 @@ class leastsq(fitAlg):
         self.jacmethod = kwargs.pop('jac', '3-point')
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
+        self.calcCovariance = kwargs.pop('calcCov', True)
+        if self.calcCovariance:
+            br = kwargs.pop('boundRatio', 0.000001)
+            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
         measureDict = kwargs.pop("extraFitMeasures", {})
         self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}

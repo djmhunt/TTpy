@@ -8,8 +8,10 @@ import logging
 
 from math import isinf
 from collections import OrderedDict
-from numpy import array, linspace, dot, finfo
-from numpy.linalg import inv, svd
+from scipy.optimize import approx_fprime
+from numpy import array, linspace, dot, finfo, expand_dims
+from numpy.linalg import inv, svd, LinAlgError
+from scipy.linalg import pinvh
 from itertools import izip
 
 import numdifftools as nd
@@ -17,6 +19,7 @@ import numdifftools as nd
 from utils import listMergeNP, callableDetailsString
 from fitAlgs.qualityFunc import qualFuncIdent
 from fitAlgs.boundFunc import scalarBound
+from utils import errorResp
 
 
 class fitAlg(object):
@@ -68,6 +71,9 @@ class fitAlg(object):
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
         self.calcCovariance = kwargs.pop('calcCov', True)
+        if self.calcCovariance:
+            br = kwargs.pop('boundRatio', 0.000001)
+            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
         measureDict = kwargs.pop("extraFitMeasures", {})
         self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
@@ -140,7 +146,7 @@ class fitAlg(object):
         fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
 
         if self.calcCovariance:
-            covariance = self.covariance(fitVals, fitInfo[2])
+            covariance = self.covariance(mParamNames, fitVals, fitInfo[2])
             covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in izip(mParamNames, covariance)
                                                                  for p2, c in izip(mParamNames, cr)})
             fittingData.update(covdict)
@@ -252,7 +258,7 @@ class fitAlg(object):
 
         return measureVals
 
-    def covariance(self, paramvals, fitinfo, br=0.00000001):
+    def covariance(self, mParamNames, paramvals, fitinfo):
         """
         The covariance at a point
 
@@ -262,8 +268,6 @@ class fitAlg(object):
             The parameters at which the
         fitinfo : dict
             The
-        br : float, optional
-            The fraction of the
 
         Returns
         -------
@@ -277,16 +281,25 @@ class fitAlg(object):
         elif 'hess' in fitinfo:
             hess = fitinfo['hess']
             cov = inv(hess)
-        elif 'jac' in fitinfo:
-            jac = fitinfo['jac']
-            cov = covariance(jac)
+        #elif 'jac' in fitinfo:
+        #    jac = fitinfo['jac']
+        #    cov = covariance(jac)
         else:
-            #inc = [br*(u-l) for l, u in self.boundVals]
-            #jac = approx_fprime(paramvals, self.fitness, inc)
+            inc = [self.hessInc[p] for p in mParamNames]
+            #jac = expand_dims(approx_fprime(paramvals, self.fitness, inc), axis=0)
             #cov = covariance(jac)
+            #cov = inv(dot(jac.T, jac))
 
-            hessfunc = nd.Hessian(self.fitness)
-            cov = inv(hessfunc(paramvals))
+            hessfunc = nd.Hessian(self.fitness, step=inc)
+            try:
+                hess = hessfunc(paramvals)
+                cov = inv(hess)
+            except LinAlgError:#("Singular matrix"):
+                cov = pinvh(hess)
+                message = errorResp()
+                logger = logging.getLogger('Fitter')
+                logger.warning(message + "\n. Covariance calculation failed. Switching to calculating it using a "
+                               + "Moore–Penrose pseudo-inverse")
 
         return cov
 
