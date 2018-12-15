@@ -26,9 +26,9 @@ class fitter(simMethod):
     Parameters
     ----------
     partChoiceParam : string
-        The key to be compared in the participant data
+        The participant data key of their action choices
     partRewardParam : string
-        The key containing the participant reward data
+        The participant data key of the participant reward data
     modelFitVar : string
         The variable to be compared in the model data
     stimuliParams : list of strings or None, optional
@@ -89,7 +89,7 @@ class fitter(simMethod):
         except FloatingPointError:
             message = errorResp()
             logger = logging.getLogger('Fitter')
-            logger.warning(message + "\n. Abandoning simMethods with parameters: "
+            logger.warning(message + "\n. Abandoning fitting with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning an action choice probability for each trialstep of "
                                    + repr(self.fpRespVal))
@@ -108,7 +108,7 @@ class fitter(simMethod):
         if isnan(modelPerformance).any():
             logger = logging.getLogger('Fitter')
             message = "model performance values contain NaN"
-            logger.warning(message + ".\n Abandoning simMethods with parameters: "
+            logger.warning(message + ".\n Abandoning fitting with parameters: "
                                    + repr(self.getModParams(*modelParameters))
                                    + " Returning an action choice probability for each trialstep of "
                                    + repr(self.fpRespVal))

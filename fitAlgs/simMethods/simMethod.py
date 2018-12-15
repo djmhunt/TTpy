@@ -18,9 +18,9 @@ class simMethod(object):
     Parameters
     ----------
     partChoiceParam : string
-        The key to be compared in the participant data
+        The participant data key of their action choices
     partRewardParam : string
-        The variable containing the participant reward data
+        The participant data key of the participant reward data
     modelFitVar : string
         The key to be compared in the model data
     stimuliParams : list of strings or None, optional

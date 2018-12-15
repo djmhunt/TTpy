@@ -1000,7 +1000,7 @@ def kendalwt(data, ranked = False):
     sranks = sum(abs(array(ranks)), 1)
     mrank = mean(sranks)
     ssdrank = sum((sranks-mrank)**2)
-    (n,m) = ranks.shape
+    (n, m) = ranks.shape
 
     T = zeros(m)
     for (i, counts) in ((i, Counter(x).most_common()) for i, x in enumerate(ranks.T)):
