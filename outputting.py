@@ -122,6 +122,20 @@ class outputting(object):
         message = "Experiment completed. Shutting down"
         self.logger.info(message)
 
+        self.logger.removeHandler(self.consoleHandler)
+
+        logging.shutdown()
+        sys.stderr = sys.__stdout__
+        seterrcall(self.oldnperrcall)
+
+        root = logging.getLogger()
+        for h in root.handlers[:]:
+            h.close()
+            root.removeHandler(h)
+        for f in root.filters[:]:
+            f.close()
+            root.removeFilter(f)
+
     ### Folder management
 
     def folderSetup(self):
@@ -243,7 +257,7 @@ class outputting(object):
                 cwd = getcwd().replace("\\", "/")
                 for s in stack():
                     p = s[1].replace("\\", "/")
-                    if cwd in p and "outputting.py" not in p:
+                    if ("outputting(" in s[4][0]) or (cwd in p and "outputting.py" not in p):
                         shu.copy(p, self.outputFolder)
                         break
 
@@ -303,6 +317,7 @@ class outputting(object):
             console = logging.StreamHandler()
             console.setLevel(logLevel)
             console.setFormatter(consoleFormat)
+            self.consoleHandler = console
             # add the handler to the root logger
             logging.getLogger('').addHandler(console)
         else:
@@ -311,15 +326,16 @@ class outputting(object):
                                 level=logLevel)
 
         # Set the standard error output
-        sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
-        # Set the numpy error output
-        seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
+        sys.stderr = streamLoggerSim(self.getLogger('STDERR'), logging.ERROR)
+        # Set the numpy error output and save the old one
+        self.oldnperrcall = seterrcall(streamLoggerSim(self.getLogger('NPSTDERR'), logging.ERROR))
         seterr(all=npErrResp)
 
-        logging.info(self.date)
-        logging.info("Log initialised")
+        logger = self.getLogger("Setup")
+        logger.info(self.date)
+        logger.info("Log initialised")
         if logFile:
-            logging.info("The log you are reading was written to " + str(logFile))
+            logger.info("The log you are reading was written to " + str(logFile))
 
     def logSimParams(self, expParams, modelParams, simID):
         """
