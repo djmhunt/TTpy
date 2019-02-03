@@ -433,7 +433,8 @@ class model(object):
         results["Stimuli"] = array(self.recStimuli).T
         results["Rewards"] = array(self.recReward)
         results["Expectations"] = array(self.recExpectations).T
-        results["ExpectedRewards"] = array(self.recExpectedReward).T
+        results["ExpectedReward"] = array(self.recExpectedReward).T
+        results["ExpectedRewards"] = array(self.recExpectedRewards).T
         results["ValidActions"] = array(self.recValidActions).T
         results["Decisions"] = array(self.recDecision)
         results["UpdatedProbs"] = array(self.recProbabilities).T
