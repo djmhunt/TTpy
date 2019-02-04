@@ -72,7 +72,7 @@ class ACES(model):
 
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', 0.5)
+        self.expectationsF = kwargRemains.pop('expect', 0.5)
         self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -83,7 +83,7 @@ class ACES(model):
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectations
+        self.parameters["expectation"] = self.expectationsF
         self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
         # Recorded information
@@ -111,6 +111,7 @@ class ACES(model):
         accessed later
         """
 
+        self.expectations = array([self.expectationsF])
         self.storeStandardResults()
         self.recActorExpectations.append(self.actorExpectations.flatten())
 
@@ -136,7 +137,7 @@ class ACES(model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        actionExpectations = array([self.expectations] * self.numActions)
+        actionExpectations = array([self.expectationsF] * self.numActions)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -189,7 +190,7 @@ class ACES(model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        self.expectations += self.alpha*delta
+        self.expectationsF += self.alpha*delta
 
         newActorExpectations = self.actorExpectations[action] + delta * stimuli/sum(stimuli)
         newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
