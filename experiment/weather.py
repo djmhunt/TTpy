@@ -9,7 +9,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, exp, size, ones, nan, sum
+from numpy import array, zeros, exp, size, ones, nan, sum, prod, sum, argmax, shape
 from numpy.random import rand, choice
 from experiment.experimentTemplate import experiment
 # from plotting import dataVsEvents, paramDynamics
@@ -61,6 +61,8 @@ class Weather(experiment):
     cueProbs : array of int, optional
         If generating data, the likelihood of each cue being associated with each actuality. Each row of the array
         describes one actuality, with each column representing one cue. Each column is assumed sum to 1
+    numCues : int, optional
+        The number of cues
     learningLen : int, optional
         The number of trials in the learning phase. Default is 200
     testLen : int, optional
@@ -88,9 +90,10 @@ class Weather(experiment):
         kwargs = self.kwargs.copy()
 
         cueProbs = kwargs.pop("cueProbs", [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]])
+        numCues = kwargs.pop("numCues", shape(cueProbs))
         learningLen = kwargs.pop("learningLen", 200)
         testLen = kwargs.pop("testLen", 100)
-        cues = kwargs.pop("cues", genCues(cueProbs, learningLen+testLen))
+        cues = kwargs.pop("cues", genCues(numCues, learningLen+testLen))
         actualities = kwargs.pop("actualities", genActualities(cueProbs, cues, learningLen, testLen))
 
         self.plotArgs = kwargs.pop('plotArgs', {})
@@ -200,7 +203,7 @@ class Weather(experiment):
 
         self.recAction[self.t] = self.action
 
-def genCues(cueProbs, taskLen):
+def genCues(numCues, taskLen):
     """
 
     Parameters
@@ -216,8 +219,8 @@ def genCues(cueProbs, taskLen):
     cues = []
     for t in xrange(taskLen):
         c = []
-        while sum(c) == 0:
-            c = (rand(len(cueProbs[0])) > 0.5) * 1
+        while sum(c) in [0, numCues]:
+            c = (rand(numCues) > 0.5) * 1
         cues.append(c)
 
     return array(cues)
@@ -237,11 +240,23 @@ def genActualities(cueProbs, cues, learningLen, testLen):
     actions
     """
     actions = []
-    for t in xrange(learningLen):
-        visibleCueProbs = cues[t] * cueProbs
-        actProb = sum(visibleCueProbs, 1)
-        action = choice([0, 1], p=actProb / sum(actProb))
-        actions.append(action)
+
+    if cueProbs is None:
+        probs = {1: {0: 0.75}, 2: {0: 1, 1: 0.5}, 3: {2: 0.75}}
+        for t in xrange(learningLen):
+            c = cues[t]
+            s = sum(c.reshape([2, 2]), 1)
+            prob = probs[sum(s)][prod(s)]
+            a = argmax(s)
+            p = array([1-a, a]) * (prob-(1-prob)) + (1-prob)
+            action = choice([0, 1], p=p)
+            actions.append(action)
+    else:
+        for t in xrange(learningLen):
+            visibleCueProbs = cues[t] * cueProbs
+            actProb = sum(visibleCueProbs, 1)
+            action = choice([0, 1], p=actProb / sum(actProb))
+            actions.append(action)
 
     actions.extend([float("Nan")] * testLen)
 
