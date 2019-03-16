@@ -89,12 +89,19 @@ class fitter(simMethod):
         except FloatingPointError:
             message = errorResp()
             logger = logging.getLogger('Fitter')
-            logger.warning(message + "\n. Abandoning fitting with parameters: "
-                                   + repr(self.getModParams(*modelParameters))
-                                   + " Returning an action choice probability for each trialstep of "
-                                   + repr(self.fpRespVal))
+            logger.warning(
+                u"{0}\n. Abandoning fitting with parameters: {1} Returning an action choice probability for each trialstep of {2}".format(message,
+                                                                                                                                          repr(self.getModParams(*modelParameters)),
+                                                                                                                                          repr(self.fpRespVal)))
             return ones(array(self.partRewards).shape)*self.fpRespVal
-
+        except ValueError as e:
+            logger = logging.getLogger('Fitter')
+            logger.warn("{0} in fitted model. Abandoning fitting with parameters: {1}  Returning an action choice probability for each trialstep of {2} - {3}, - {4}".format(type(e),
+                                                                                                                                                                             repr(self.getModParams(*modelParameters)),
+                                                                                                                                                                             repr(self.fpRespVal),
+                                                                                                                                                                             e.message,
+                                                                                                                                                                             e.args))
+            return ones(array(self.partRewards).shape) * self.fpRespVal
         # Pull out the values to be compared
 
         modelData = modelInstance.outputEvolution()
