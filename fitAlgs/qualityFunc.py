@@ -44,11 +44,11 @@ def qualFuncIdent(value, **kwargs):
 
 def simpleSum(modVals):
     """
-    Generates a simMethod quality value based on :math:`\sum {\\vec x}`
+    Generates a fit quality value based on :math:`\sum {\\vec x}`
 
     Returns
     -------
-    simMethod : float
+    fit : float
         The sum of the model values returned
     """
 
@@ -58,11 +58,11 @@ def simpleSum(modVals):
 def logprob(modVals):
     # type: (Union[ndarray, list]) -> float
     """
-    Generates a simMethod quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -2\mathrm{log}_2(\\vec x)`
+    Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -2\mathrm{log}_2(\\vec x)`
 
     Returns
     -------
-    simMethod : float
+    fit : float
         The sum of the model values returned
     """
 
@@ -78,11 +78,11 @@ def logprob(modVals):
 def logeprob(modVals):
     # type: (Union[ndarray, list]) -> float
     """
-    Generates a simMethod quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -\mathrm{log}_e(\\vec x)`
+    Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -\mathrm{log}_e(\\vec x)`
 
     Returns
     -------
-    simMethod : float
+    fit : float
         The sum of the model values returned
     """
 
@@ -98,11 +98,11 @@ def logeprob(modVals):
 def logAverageProb(modVals):
     # type: (Union[ndarray, list]) -> float
     """
-    Generates a simMethod quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
+    Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
 
     Returns
     -------
-    simMethod : float
+    fit : float
         The sum of the model values returned
     """
 
@@ -120,11 +120,11 @@ def logAverageProb(modVals):
 def maxprob(modVals):
     # type: (Union[ndarray, list]) -> float
     """
-    Generates a simMethod quality value based on :math:`\sum 1-{\\vec x}`
+    Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
 
     Returns
     -------
-    simMethod : float
+    fit : float
         The sum of the model values returned
     """
 
@@ -206,8 +206,73 @@ def bayesFactor(**kwargs):
 
     bayesFunc.Name = "bayesFactor"
     bayesFunc.Params = {"randActProb": randActProb,
-                     "numParams": numParams}
+                        "numParams": numParams}
     return bayesFunc
+
+
+def bayesInv(**kwargs):
+    # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
+    """
+
+    Parameters
+    ----------
+    numParams : int, optional
+        The number of parameters used by the model used for the fitters process. Default 2
+    qualityThreshold : float, optional
+        The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
+    numActions: int or list of ints the length of the number of trials being fitted, optional
+        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
+        specified for each trial if the number of action choices varies between trials. Default 2
+    randActProb: float or list of floats the length of the number of trials being fitted. Optional
+        The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+        of action choices varies between trials. Default ``1/numActions``
+
+    Returns
+    -------
+
+    """
+
+    # Set the values that will be fixed for the whole fitters process
+    numParams = kwargs.get("numParams", 2)
+    qualityThreshold = kwargs.get("qualityThreshold", 20)
+    numActions = kwargs.get("numActions", 2)
+    randActProb = kwargs.get("randActProb", 1/numActions)
+
+    BICmodfunc = BIC2(numParams=numParams)
+    BICrandfunc = bayesRand(randActProb=randActProb)
+
+    def BICfunc(modVals, **kwargs):
+        # type: (Union[ndarray, list]) -> float
+        """
+        Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
+        The function is a modified version of the Bayesian Information Criterion
+
+        It provides a fit such that when a value is less than one it is a valid fit
+
+        Returns
+        -------
+        fit : float
+            The sum of the model values returned
+        """
+
+        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+
+        # We define the Bayesian Information Criteria for the probability of the model given the data, relative a
+        # guessing model
+
+        BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
+        BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
+
+        fit = qualityThreshold * 2**((BICmod-BICrandom) / 2)
+
+        return fit
+
+    BICfunc.Name = "bayesInv"
+    BICfunc.Params = {"numParams": numParams,
+                      "qualityThreshold": qualityThreshold,
+                      "numActions": numActions,
+                      "randActProb": randActProb}
+    return BICfunc
 
 
 def r2(**kwargs):
@@ -238,9 +303,9 @@ def BIC2norm(**kwargs):
     Parameters
     ----------
     numParams : int, optional
-        The number of parameters used by the model used for the simMethods process. Default 2
+        The number of parameters used by the model used for the fits process. Default 2
     qualityThreshold : float, optional
-        The BIC minimum simMethod quality criterion used for determining if a simMethod is valid. Default 20.0
+        The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     numActions: int or list of ints the length of the number of trials being fitted, optional
         The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
@@ -253,7 +318,7 @@ def BIC2norm(**kwargs):
 
     """
 
-    # Set the values that will be fixed for the whole simMethods process
+    # Set the values that will be fixed for the whole fits process
     numParams = kwargs.get("numParams", 2)
     qualityThreshold = kwargs.get("qualityThreshold", 20)
     numActions = kwargs.get("numActions", 2)
@@ -265,14 +330,14 @@ def BIC2norm(**kwargs):
     def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
         """
-        Generates a simMethod quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
+        Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Information Criterion
 
-        It provides a simMethod such that when a value is less than one it is a valid simMethod
+        It provides a fit such that when a value is less than one it is a valid fit
 
         Returns
         -------
-        simMethod : float
+        fit : float
             The sum of the model values returned
         """
 
@@ -306,9 +371,9 @@ def BIC2normBoot(**kwargs):
     Parameters
     ----------
     numParams : int, optional
-        The number of parameters used by the model used for the simMethods process. Default 2
+        The number of parameters used by the model used for the fits process. Default 2
     qualityThreshold : float, optional
-        The BIC minimum simMethod quality criterion used for determining if a simMethod is valid. Default 20.0
+        The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     numActions: int or list of ints the length of the number of trials being fitted, optional
         The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
@@ -325,7 +390,7 @@ def BIC2normBoot(**kwargs):
 
     """
 
-    # Set the values that will be fixed for the whole simMethods process
+    # Set the values that will be fixed for the whole fits process
     numParams = kwargs.pop("numParams", 2)
     qualityThreshold = kwargs.pop("qualityThreshold", 20)
     numActions = kwargs.pop("numActions", 2)
@@ -336,14 +401,14 @@ def BIC2normBoot(**kwargs):
     def BICfunc(modVals):
         # type: (Union[ndarray, list]) -> float
         """
-        Generates a simMethod quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
+        Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Informaiton Criterion
 
-        It provides a simMethod such that when a value is less than one it is a valid simMethod
+        It provides a fit such that when a value is less than one it is a valid fit
 
         Returns
         -------
-        simMethod : float
+        fit : float
             The sum of the model valaues returned
         """
 
@@ -398,14 +463,14 @@ def WBIC2(**kwargs):
     def WBICfunc(modVals):
         # type: (Union[ndarray, list]) -> float
         """
-        Generates a simMethod quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
+        Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Information Criterion
 
-        It provides a simMethod such that when a value is less than one it is a valid simMethod
+        It provides a fit such that when a value is less than one it is a valid fit
 
         Returns
         -------
-        simMethod : float
+        fit : float
             The sum of the model values returned
         """
 
