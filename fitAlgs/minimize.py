@@ -51,6 +51,8 @@ class minimize(fitAlg):
         minimal difference) between a simMethod value and its related boundaries
         before a simMethod value is considered different from a boundary. The default
         is `5`. This is only valid if ``boundFit`` is ``False``
+    calcCov : bool, optional
+        Is the covariance calculated. Default ``True``
     extraFitMeasures : dict of dict, optional
         Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``

@@ -32,7 +32,7 @@ class simMethod(object):
         stay constant. If a list then the list will be taken as the list
         of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
-        If a floating point error occurs when running a simMethod the simMethod function
+        If a floating point error occurs when running a fit the simMethod function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
     fitSubset : ``float('Nan')``, ``None`` or list of int, optional
@@ -49,7 +49,7 @@ class simMethod(object):
 
     See Also
     --------
-    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
+    simMethods.fitAlgs.fitAlg.fitAlg : The general fits class
     """
 
     Name = 'none'
@@ -88,14 +88,14 @@ class simMethod(object):
         Returns
         -------
         modelChoices : list of floats
-            The choices made by the model that will be used to characterise the quality of the simMethod.
+            The choices made by the model that will be used to characterise the quality of the fit.
             In this case defined as ``[0]``
 
         See Also
         --------
         simMethods.simMethod.simMethod.participant : Fits participant data
-        simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods class
-        simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
+        simMethods.fitAlg.fitAlg : The general simMethods class
+        simMethods.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
         return [0]
@@ -107,7 +107,7 @@ class simMethod(object):
         Parameters
         ----------
         model : model.model.model inherited class
-            The model you wish to try and simMethod values to
+            The model you wish to try and fit values to
         modelSetup : (dict,dict)
             The first dictionary is the model initial parameters. The second
             are the other model parameters
@@ -120,12 +120,12 @@ class simMethod(object):
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best simMethod parameters
+            The model with the best fit parameters
         fitQuality : float
-            Specifies the simMethod quality for this participant to the model
+            Specifies the fit quality for this participant to the model
         testedParams : tuple of OrderedDict and list
             They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-            simMethod qualities of these parameters.
+            fit qualities of these parameters.
         """
         fitSubset = self.fitSubset
 
@@ -134,7 +134,7 @@ class simMethod(object):
         else:
             self.exp = None
         self.model = model
-        self.mInitialParams = modelSetup[0].values()  # These are passed seperately to define at this point the order of the parameters
+        self.mInitialParams = modelSetup[0].values()  # These are passed separately to define at this point the order of the parameters
         self.mParamNames = modelSetup[0].keys()
         self.mOtherParams = modelSetup[1]
 
@@ -147,6 +147,8 @@ class simMethod(object):
         if fitSubset is not None:
             if isinstance(fitSubset, (list, ndarray)):
                 self.fitSubsetChosen = fitSubset
+            elif fitSubset == "rewarded":
+                self.fitSubsetChosen = ~isnan(self.partRewards)
             elif isnan(fitSubset):
                 self.fitSubsetChosen = isnan(self.partRewards)
             else:
@@ -166,7 +168,7 @@ class simMethod(object):
             The experiment being fitted. If you are simMethods using
             participant responses only it will not be used, so can be anything
         model : model.model.model inherited class
-            The model you wish to try and simMethod values to
+            The model you wish to try and fit values to
         modelSetup : (dict,dict)
             The first dictionary is the model varying parameters. The second
             are the other model parameters
@@ -176,7 +178,7 @@ class simMethod(object):
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best simMethod parameters
+            The model with the best fit parameters
         """
 
         self.exp = exp

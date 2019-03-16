@@ -46,6 +46,8 @@ class fitAlg(object):
     numStartPoints : int, optional
         The number of starting points generated for each parameter. Only used with some simMethods algorithms
         Default 4
+    calcCov : bool, optional
+        Is the covariance calculated. Default ``True``
     extraFitMeasures : dict of dict, optional
         Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
