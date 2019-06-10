@@ -50,6 +50,8 @@ class evolutionary(fitAlg):
         the standard deviation of the population energies is greater than 1 the
         solving process terminates: convergence = mean(pop) * tol / stdev(pop) > 1
         Default 0.01
+    calcCov : bool, optional
+        Is the covariance calculated. Default ``False``
     extraFitMeasures : dict of dict, optional
         Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
@@ -95,7 +97,7 @@ class evolutionary(fitAlg):
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.calcCovariance = kwargs.pop('calcCov', True)
+        self.calcCovariance = kwargs.pop('calcCov', False)
         self.polish = kwargs.pop("polish", False)
         self.popsize = kwargs.pop("popSize", 15)
         self.tolerence = kwargs.pop("tolerance", 0.01)
@@ -245,15 +247,30 @@ class evolutionary(fitAlg):
         simMethods.fitAlgs.fitAlg.fitAlg.fitness : The function called to provide the fitness of parameter sets
         """
 
-        optimizeResult = optimize.differential_evolution(self.fitness,
-                                                         bounds,
-                                                         strategy=strategy,
-                                                         popsize=self.popsize,
-                                                         tol=self.tolerence,
-                                                         polish=self.polish,
-                                                         callback=self.callback,
-                                                         init='latinhypercube'  # 'random'
-                                                         )
+        try:
+            optimizeResult = optimize.differential_evolution(self.fitness,
+                                                             bounds,
+                                                             strategy=strategy,
+                                                             popsize=self.popsize,
+                                                             tol=self.tolerence,
+                                                             polish=self.polish,
+                                                             callback=self.callback,
+                                                             init='latinhypercube'  # 'random'
+                                                             )
+        except RuntimeError as e:
+            self.logger.warn("{0} in evolutionary fitting. Retrying to run it: {1} - {2}".format(type(e), e.strerror, e.args))
+
+            #Try it one last time
+            optimizeResult = optimize.differential_evolution(self.fitness,
+                                                             bounds,
+                                                             strategy=strategy,
+                                                             popsize=self.popsize,
+                                                             tol=self.tolerence,
+                                                             polish=self.polish,
+                                                             callback=self.callback,
+                                                             init='latinhypercube'  # 'random'
+                                                             )
+
 
         if optimizeResult.success is True:
             return optimizeResult
