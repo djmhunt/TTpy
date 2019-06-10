@@ -668,10 +668,12 @@ class outputting(object):
         recordData = newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
 
         record = pd.DataFrame(recordData)
+
         name = "data/" + extendedLabel
         outputFile = self.newFile(name, 'xlsx')
         xlsxT = pd.ExcelWriter(outputFile)
-        record.to_excel(xlsxT, sheet_name='ParameterFits')
+        # TODO: Remove the engine specification when moving to Python 3
+        record.to_excel(xlsxT, sheet_name='ParameterFits', engine='XlsxWriter')
         xlsxT.save()
 
 
