@@ -334,6 +334,8 @@ class model(object):
 
         """
 
+        if isnan(probabilities).any():
+            raise ValueError("probabilities contain NaN")
         decision, decProbabilities = self.decisionFunc(probabilities, lastAction, stimulus=events, validResponses=validActions)
         self.decision = decision
         self.currActionSymbol = decision
