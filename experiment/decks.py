@@ -74,7 +74,7 @@ class Decks(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
-        if isinstance(decks, str):
+        if isinstance(decks, basestring):
             if decks in deckSets:
                 self.decks = deckSets[decks]
             else:

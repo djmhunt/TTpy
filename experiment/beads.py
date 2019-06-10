@@ -68,7 +68,7 @@ class Beads(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs',{})
 
-        if isinstance(beadSequence, str):
+        if isinstance(beadSequence, basestring):
             if beadSequence in beadSequences:
                 self.beads = beadSequences[beadSequence]
             else:

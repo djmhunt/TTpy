@@ -96,7 +96,7 @@ class Probstim(experiment):
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
-        if isinstance(cues, str):
+        if isinstance(cues, basestring):
             if cues in cueSets:
                 self.cues = cueSets[cues]
                 self.T = len(self.cues)
