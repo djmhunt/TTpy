@@ -501,7 +501,7 @@ def getxlsxData(folder, files, fileIDs, **kwargs):
             for s in splitBy:
                 if dat[s].dtype in [dtype('int64'), dtype('float64')]:
                     sSorted = sorted(list(set(dat[s])))
-                    classifierList.append([str(n) for n in sSorted])
+                    classifierList.append(sSorted)
                 else:
                     classifierList.append(sortStrings(list(set(dat[s])), '')[0])
 
@@ -514,7 +514,7 @@ def getxlsxData(folder, files, fileIDs, **kwargs):
                 subDatDict["fileName"] = f
                 subDatDict["fileID"] = i
                 subDatDict["folder"] = folder
-                subDatDict["Name"] = "-".join(p)
+                subDatDict["Name"] = "-".join([str(pi) for pi in p])
                 dataSets.append(subDatDict)
         else:
             datDict = dat.to_dict(orient='list')
