@@ -70,7 +70,7 @@ class Decks(experiment):
 
         T = kwargs.pop('draws', None)
         decks = kwargs.pop("decks", defaultDecks)
-        self.discard = kwargs.pop("discard", True)
+        self.discard = kwargs.pop("discard", False)
 
         self.plotArgs = kwargs.pop('plotArgs', {})
 
@@ -184,7 +184,8 @@ class Decks(experiment):
 
     def storeState(self):
         """ Stores the state of all the important variables so that they can be
-        output later """
+        output later
+        """
 
         self.recAction[self.t] = self.action
         self.recCardVal[self.t] = self.cardValue
