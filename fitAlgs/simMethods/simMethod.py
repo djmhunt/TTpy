@@ -35,10 +35,11 @@ class simMethod(object):
         If a floating point error occurs when running a fit the simMethod function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
-    fitSubset : ``float('Nan')``, ``None`` or list of int, optional
+    fitSubset : ``float('Nan')``, ``None``, ``"rewarded"`` or list of int, optional
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
-        This can either be described as a list of trial numbers or, by passing ``float('Nan')``, all those trials whose
-        feedback was ``float('Nan')``. Default ``None``, which means all trials will be used.
+        This can either be described as a list of trial numbers or, by passing ``float('Nan')`` for all those trials whose
+        feedback was ``float('Nan')`` or ``"rewarded"`` for those whose feedback was not ``float('Nan')``. Default ``None``, which means all trials
+        will be used.
     calcCov : bool, optional
         Estimating the covariance
 
@@ -51,6 +52,7 @@ class simMethod(object):
     --------
     simMethods.fitAlgs.fitAlg.fitAlg : The general fits class
     """
+## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.
 
     Name = 'none'
 
