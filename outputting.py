@@ -628,7 +628,12 @@ class outputting(object):
         if not self.save:
             return
 
-        handle = 'Pickle/' + results["Name"]
+        # TODO: remove the pulling out of ``Name`` from inside this method and make it more explicit higher up
+        name = results["Name"]
+        if isinstance(name, basestring):
+            handle = 'Pickle/{}'.format(name)
+        else:
+            raise TypeError("The ``Name`` in the participant data is of type {} and not str".format(type(name)))
 
         if label:
             handle += label
