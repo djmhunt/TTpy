@@ -78,7 +78,7 @@ class Decks(experiment):
             if decks in deckSets:
                 self.decks = deckSets[decks]
             else:
-                raise "Unknown deck sets"
+                raise Exception("Unknown deck sets")
         else:
             self.decks = decks
 
