@@ -52,7 +52,7 @@ class Basic(experiment):
 
         self.t += 1
 
-        if self.t ==self.T
+        if self.t ==self.T:
             raise StopIteration
 
         nextStim = 1
