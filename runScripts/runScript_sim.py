@@ -12,7 +12,10 @@ with the data.
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-sys.path.append("../")  # So code can be found from the main folder
+import os
+filePath = os.path.realpath(__file__)
+codePath = filePath.split('\\')[:-2]
+sys.path.append("/".join(codePath))  # So code can be found from the main folder
 
 # Other used function
 from numpy import array, ones, repeat
