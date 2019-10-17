@@ -2,12 +2,10 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Opponent actor learning (OpAL): Modeling
-                interactive effects of striatal dopamine on reinforcement
-                learning and choice incentive.
-                Collins, A. G. E., & Frank, M. J. (2014).
-                Psychological Review, 121(3), 337–66.
-                doi:10.1037/a0037015
+:Reference: Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.
+            Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., & Hutchison, K. E. (2007).
+            Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.
+            doi:10.1073/pnas.0706111104
 
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
