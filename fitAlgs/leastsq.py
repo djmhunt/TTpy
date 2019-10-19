@@ -13,7 +13,7 @@ from numpy import array
 from utils import callableDetailsString
 from fitAlgs.fitAlg import fitAlg
 from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs import scalarBound
+from fitAlgs.boundFunc import scalarBound
 
 
 class leastsq(fitAlg):

@@ -14,7 +14,7 @@ from itertools import izip
 
 from utils import callableDetailsString
 from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs import scalarBound
+from fitAlgs.boundFunc import scalarBound
 
 
 class minimize(fitAlg):

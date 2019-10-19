@@ -4,7 +4,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from simMethods.simMethod import simMethod
+from fitAlgs.simMethods.simMethod import simMethod
 
 from itertools import izip
 from types import NoneType
