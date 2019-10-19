@@ -12,8 +12,6 @@ import logging
 from numpy import ones, array, sum, shape, ndarray, max
 
 from model.modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 

@@ -11,8 +11,6 @@ from numpy import exp, array, ones
 from types import NoneType
 
 from modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 

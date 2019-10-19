@@ -14,8 +14,6 @@ from itertools import izip
 import re
 
 from model.modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 

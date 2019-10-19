@@ -12,15 +12,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import pandas as pd
 
-from numpy import array, zeros, exp, ones, arange, sum
+from numpy import array
 from numpy.random import rand, choice
-from collections import defaultdict
+
 from itertools import izip
 
 from experiment.experimentTemplate import experiment
-from plotting import pandasPlot, lineplot
-from experiment.experimentPlot import experimentPlot
-from experiment.experimentSetPlot import experimentSetPlot
 
 # from utils import varyingParams
 
@@ -60,10 +57,6 @@ class probSelect(experiment):
     numActions : int, optional
         The number of actions that can be chosen at any given time, chosen at
         random from actRewardProb. Default 4
-    plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to
-        its documentation for more details.
-
 
     Notes
     -----
@@ -99,9 +92,6 @@ class probSelect(experiment):
         testLen = kwargs.pop("testLen", 60)
         numActions = kwargs.pop("numActions", len(actRewardProb))
         rewardSize = kwargs.pop("rewardSize", 1)
-
-
-        self.plotArgs = kwargs.pop('plotArgs', {})
 
         self.parameters = {"Name": self.Name,
                            "rewardProb": rewardProb,
@@ -196,7 +186,7 @@ class probSelect(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relevant data for this
+        Saves files containing all the relevant data for this
         experiment run
         """
 
@@ -214,262 +204,6 @@ class probSelect(experiment):
 
         self.recAction[self.t] = self.action
         self.recRewVal[self.t] = self.rewVal
-
-    class experimentPlot(experimentPlot):
-        """
-        Desired plots:
-            :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`
-            :math:`\\beta_N = 1, \\beta_G in ]0,2[`
-
-            Plot the range of
-            :math:`\\alpha_G = 0.2 - \\alpha_N` for :math:`\\alpha_N \in ]0,0.2[` and
-            :math:`\\beta_G = 2 - \\beta_N` for :math:`\\beta_N in ]0,2[` with the Y-axis being
-            Choose(A) = prob(A) - prob(M),
-            Avoid(B) = prob(M) - prob(B),
-            Bias = choose(A) - avoid(B),
-        """
-
-        def _figSets(self):
-
-            # Create all the plots and place them in in a list to be iterated
-
-            self.figSets = []
-
-            self.processEndData()
-
-            fig = self.biasAlpha()
-            self.figSets.append(("biasAlpha", fig))
-
-            fig = self.biasBeta()
-            self.figSets.append(("biasBeta", fig))
-
-            fig = self.chooseAlpha()
-            self.figSets.append(("chooseAlpha", fig))
-
-            fig = self.chooseBeta()
-            self.figSets.append(("chooseBeta", fig))
-
-            fig = self.avoidAlpha()
-            self.figSets.append(("avoidAlpha", fig))
-
-            fig = self.avoidBeta()
-            self.figSets.append(("avoidBeta", fig))
-
-        def processEndData(self):
-            expStore = self.expStore
-            modelStore = self.modelStore
-            plotArgs = self.plotArgs
-
-            probFinal = array([d['Probabilities'][-1] for d in modelStore])
-            data = pd.DataFrame({'ProbA': probFinal[:,0],
-                                 'ProbB': probFinal[:,1],
-                                 'ProbM1': probFinal[:,2],
-                                 'ProbM2': probFinal[:,3],
-                                 'alphaGo': array([d['alphaGo'] for d in modelStore]),
-                                 'beta': array([d['beta'] for d in modelStore]),
-                                 'alphaNogo': array([d['alphaNogo'] for d in modelStore]),
-                                 'betaDiff': array([d['betaDiff'] for d in modelStore])})
-
-            data['chooseA'] = data['ProbA'] - data['ProbM1']
-            data['avoidB'] = data['ProbM1'] - data['ProbB']
-            data['bias'] = data['chooseA'] - data['avoidB']
-            data['betaGo'] = data['beta'] + data['betaDiff']
-            data['betaNogo'] = data['beta'] - data['betaDiff']
-
-            self.df = data
-
-        def _plotEndSubset(self, x, y, z, sort):
-
-            data = self.df.sort(columns=sort)
-
-            selectData = pd.DataFrame(dict(
-                                (z + ' = ' + repr(v), data[data[z] == v].groupby(x).mean()[y].values)
-                                for v in data[z].unique()))
-
-            alphaGoSet = data[x].unique()
-            alphaGoSet.sort()
-            selectData[x] = alphaGoSet
-            plotData = selectData.set_index(x)
-
-            fig = pandasPlot(plotData, axisLabels = {'xLabel':x, 'yLabel':y, 'title':y})
-
-            return fig
-
-
-        def biasAlpha(self):
-
-            fig = self._plotEndSubset('alphaGo', 'bias', 'betaGo', ['betaGo','alphaGo'])
-
-            return fig
-
-        def biasBeta(self):
-
-            fig = self._plotEndSubset('betaGo', 'bias', 'alphaGo', ['alphaGo', 'betaGo'])
-
-            return fig
-
-        def chooseAlpha(self):
-
-            fig = self._plotEndSubset('alphaGo', 'chooseA', 'betaGo', ['betaGo','alphaGo'])
-
-            return fig
-
-        def chooseBeta(self):
-
-            fig = self._plotEndSubset('betaGo', 'chooseA', 'alphaGo', ['alphaGo', 'betaGo'])
-
-            return fig
-
-        def avoidAlpha(self):
-
-            fig = self._plotEndSubset('alphaGo', 'avoidB', 'betaGo', ['betaGo','alphaGo'])
-
-            return fig
-
-        def avoidBeta(self):
-
-            fig = self._plotEndSubset('betaGo', 'avoidB', 'alphaGo', ['alphaGo', 'betaGo'])
-
-            return fig
-
-    class experimentSetPlot(experimentSetPlot):
-        """
-        Desired plots:
-        :math:`\\alpha_N = 0.1, \\alpha_G \in ]0,0.2[`
-        :math:`\\beta_N = 1, \\beta_G in ]0,2[`
-
-        Plot Positive vs negative choice bias against :math:`prob(R|A) \in ]0.5,1[`
-        with:
-        :math:`\\alpha_G=\\alpha_N`, varying :math:`\\beta_G` relative to :math:`\\beta_N`
-        :math:`\\beta_G=\\beta_N`, varying :math:`\\alpha_G` relative to :math:`\\alpha_N`
-
-        Plot time against :math:`E`, :math:`G`, :math:`N` and :math:`G-N`
-        with varying :math:`prob(R|A) \in ]0,1[` and constant
-        :math:`\\alpha_G=\\alpha_N=\\alpha_E` and :math:`\\beta_G=\\beta_N`
-        """
-
-        def _figSets(self):
-
-            # Create all the plots and place them in in a list to be iterated
-
-            self.figSets = []
-
-            self.processEndData()
-
-            fig = self.biasVrewardAlpha()
-            self.figSets.append(('biasVrewardAlpha', fig))
-
-            fig = self.biasVrewardBeta()
-            self.figSets.append(('biasVrewardBeta', fig))
-
-            fig = self.convergeEforP()
-            self.figSets.append(('convergeEforP', fig))
-
-            fig = self.convergeGforP()
-            self.figSets.append(('convergeGforP', fig))
-
-            fig = self.convergeNforP()
-            self.figSets.append(('convergeNforP', fig))
-
-            fig = self.convergeEforR()
-            self.figSets.append(('convergeEforR', fig))
-
-            fig = self.convergeGforR()
-            self.figSets.append(('convergeGforR', fig))
-
-            fig = self.convergeNforR()
-            self.figSets.append(('convergeNforR', fig))
-
-        def processEndData(self):
-            expStore = self.expStore
-            modelStore = self.modelStore
-            plotArgs = self.plotArgs
-
-            probFinal = array([d['Probabilities'][-1] for d in modelStore])
-            data = pd.DataFrame({'ProbA': probFinal[:,0],
-                                 'ProbB': probFinal[:,1],
-                                 'ProbM1': probFinal[:,2],
-                                 'ProbM2': probFinal[:,3],
-                                 'alphaGo': array([d['alphaGo'] for d in modelStore]),
-                                 'beta': array([d['beta'] for d in modelStore]),
-                                 'alphaNogo': array([d['alphaNogo'] for d in modelStore]),
-                                 'betaDiff': array([d['betaDiff'] for d in modelStore]),
-                                 'rewardProb': array([d['rewardProb'] for d in expStore])})
-
-            data['chooseA'] = data['ProbA'] - data['ProbM1']
-            data['avoidB'] = data['ProbM1'] - data['ProbB']
-            data['bias'] = data['chooseA'] - data['avoidB']
-            data['betaGo'] = data['beta'] + data['betaDiff']
-            data['betaNogo'] = data['beta'] - data['betaDiff']
-
-            self.df = data
-
-        def processTimeData(self):
-            expStore = self.expStore
-            modelStore = self.modelStore
-            plotArgs = self.plotArgs
-
-            unGroupedData = defaultdict(defaultdict(defaultdict(list)))
-
-            for e, m in izip(expStore,modelStore):
-                unGroupedData[e['rewardSize']][e['rewardProb']]['E'].append(m['Expectation'])
-                unGroupedData[e['rewardSize']][e['rewardProb']]['G'].append(m['Go'])
-                unGroupedData[e['rewardSize']][e['rewardProb']]['N'].append(m['Nogo'])
-
-            data = {
-                    rS: {
-                        rP: [sum(rPv['E'], axis=0),
-                             sum(rPv['G'], axis=0),
-                             sum(rPv['N'], axis=0),
-                             sum(array(rPv['G'])-array(rPv['N']), axis=0)]
-                        for rP,rPv in rSv.iteritems()}
-                    for rS,rSv in unGroupedData.iteritems()}
-
-            self.dt = data
-
-        def _plotEndSubset(self, x, y, z, sort):
-
-            data = self.df.sort(columns=sort)
-
-            selectData = pd.DataFrame(dict(
-                                (z + ' = ' + repr(v), data[data[z] == v].groupby(x).mean()[y].values)
-                                for v in data[z].unique()))
-
-            alphaGoSet = data[x].unique()
-            alphaGoSet.sort()
-            selectData[x] = alphaGoSet
-            plotData = selectData.set_index(x)
-
-            fig = pandasPlot(plotData, axisLabels={'xlabel':x, 'ylabel':y, 'title':y})
-
-            return fig
-
-        def _plotTimeSubset(self):
-            """"""
-            # return fig
-
-        def biasVrewardAlpha(self):
-
-            fig = self._plotEndSubset('rewardProb', 'bias', 'alphaGo', ['betaGo', 'alphaGo', 'rewardProb'])
-
-            return fig
-
-        def biasVrewardBeta(self):
-
-            fig = self._plotEndSubset('rewardProb', 'bias', 'betaGo', ['alphaGo', 'betaGo', 'rewardProb'])
-
-            return fig
-
-        def convergeEforP(self):
-
-            data = self.dt.get(1,{})
-
-            Y = [data[p]['E'] for p in data.iterkeys()]
-
-            x = arange(len)
-
-            fig = lineplot()
-
 
 def genActSequence(actRewardProb, learningActPairs, learningLen, testLen):
 

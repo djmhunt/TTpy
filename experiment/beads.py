@@ -9,7 +9,6 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-#matplotlib.interactive(True)
 import logging
 
 import pandas as pd
@@ -17,8 +16,6 @@ import pandas as pd
 from numpy import array, zeros
 from numpy.random import rand
 from experiment.experimentTemplate import experiment
-from plotting import dataVsEvents, paramDynamics
-from experiment.experimentPlot import experimentPlot
 from utils import varyingParams
 
 
@@ -45,9 +42,6 @@ class Beads(experiment):
         The sequence of beads to be shown. Bead sequences can also be embedded
         in the code and then referred to by name. The only current one is
         `MooreSellen`, the default sequence.
-    plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to
-        its documentation for more details.
     """
 
     Name = "beads"
@@ -64,9 +58,8 @@ class Beads(experiment):
         kwargs = self.kwargs.copy()
 
         N = kwargs.pop('N',None)
-        beadSequence = kwargs.pop("beadSequence",defaultBeads)
+        beadSequence = kwargs.pop("beadSequence", defaultBeads)
 
-        self.plotArgs = kwargs.pop('plotArgs',{})
 
         if isinstance(beadSequence, basestring):
             if beadSequence in beadSequences:
@@ -161,82 +154,6 @@ class Beads(experiment):
         """
 
         self.recBeads[self.t] = self.beads[self.t]
-
-    class experimentPlot(experimentPlot):
-
-        def _figSets(self):
-
-            # Create all the plots and place them in in a list to be iterated
-
-            self.figSets = []
-
-            fig = self.plotProbJar1()
-            self.figSets.append(('Actions', fig))
-
-            fig = self.varCategoryDynamics()
-            self.figSets.append(('decisionCoM', fig))
-
-            fig = self.varDynamicPlot()
-            self.figSets.append(("firstDecision", fig))
-
-        def varDynamicPlot(self):
-
-            params = self.modelParams[0].keys()
-
-            paramSet = varyingParams(self.modelStore, params)
-            decisionTimes = array([exp["FirstDecision"] for exp in self.expStore])
-
-            fig = paramDynamics(paramSet, decisionTimes, **self.plotArgs)
-
-            return fig
-
-        def varCategoryDynamics(self):
-
-            params = self.modelParams[0].keys()
-            # We assume that the parameters are the same for all the data to be analysed,
-            # otherwise this data is meaningless
-
-            dataSet = varyingParams(self.modelStore,params)
-            dataSet["decisionTimes"] = [exp["FirstDecision"] for exp in self.expStore]
-
-            initData = pd.DataFrame(dataSet)
-
-            maxDecTime = max(dataSet["decisionTimes"])
-            if maxDecTime == 0:
-                logger = logging.getLogger('categoryDynamics')
-                message = "No decisions taken, so no useful data"
-                logger.info(message)
-                return
-
-            dataSets = {d:initData[initData['decisionTimes'] == d] for d in range(1, maxDecTime+1)}
-
-            CoM = pd.DataFrame([dS.mean() for dS in dataSets.itervalues()])
-
-            CoM = CoM.set_index('decisionTimes')
-
-            return CoM
-
-        def plotProbJar1(self):
-            """
-            Plots a set of lines for the probability of jar 1.
-            """
-
-            data = [model["Probabilities"][:, 0] for model in self.modelStore]
-
-            events = self.expStore[0]["Observables"]
-
-            axisLabels = {"title": "Opinion of next bead being white"}
-            axisLabels["xLabel"] = "Time"
-            axisLabels["yLabel"] = "Probability of Jar 1"
-            axisLabels["y2Label"] = "Bead presented"
-            axisLabels["yMax"] = 1
-            axisLabels["yMin"] = 0
-            eventLabel = "Beads drawn"
-
-            fig = dataVsEvents(data, events, self.modelLabels, eventLabel, axisLabels)
-
-            return fig
-
 
 def generateSequence(numBeads, oneProb, switchProb):
     """

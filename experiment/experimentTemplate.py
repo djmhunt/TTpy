@@ -4,14 +4,7 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import matplotlib
-#matplotlib.interactive(True)
 import logging
-
-import matplotlib.pyplot as plt
-
-from experiment.experimentPlot import experimentPlot
-from experiment.experimentSetPlot import experimentSetPlot
 
 class experiment(object):
     """The abstract experiment class from which all others inherit
@@ -20,8 +13,7 @@ class experiment(object):
 
     Parameters
     ----------
-    plotArgs : dict
-        The arguments for plotting functions
+
 
     Attributes
     ----------
@@ -32,7 +24,7 @@ class experiment(object):
 
     Name = "Empty"
 
-    def __init__(self,**kwargs):
+    def __init__(self, **kwargs):
 
         self.kwargs = kwargs
 
@@ -48,8 +40,6 @@ class experiment(object):
         """
 
         kwargs = self.kwargs.copy()
-
-        self.plotArgs = kwargs.pop('plotArgs',{})
 
         self.recAction = []
 
@@ -170,39 +160,3 @@ class experiment(object):
         """
 
         return self.parameters.copy()
-
-    def plot(self):
-        """
-        Returns a plotting class relevant for this experiment
-
-        Returns
-        -------
-        experimentPlot : experiment.experimentPlot.experimentPlot
-            The plots created for the experiment
-        plotArgs : dict
-            Plot arguments that may be used within the experimentPlot instance
-        """
-
-        return self.experimentPlot, self.plotArgs
-
-    def plotSet(self):
-        """
-        Returns a plotting class relavent for this experiment set
-
-        Returns
-        -------
-        experimentSetPlot : experiment.experimentSetPlot.experimentSetPlot
-            The plots created for the experiment set
-        plotArgs : dict
-            Plot arguments that may be used within the experimentSetPlot instance
-        """
-
-        return self.experimentSetPlot, self.plotArgs
-
-    class experimentPlot(experimentPlot):
-
-        """Abstract class for the creation of plots relevant to a experiment"""
-
-    class experimentSetPlot(experimentSetPlot):
-
-        """Abstract class for the creation of plots relevant to a set of experiments"""

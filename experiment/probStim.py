@@ -5,22 +5,18 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, exp, size, ones, nan, ndarray, isnan, sum
+from numpy import array, zeros, nan, ndarray, isnan, sum
 from numpy.random import rand, randint
 from numpy import float as npfloat
-from types import NoneType
+
 
 from experiment.experimentTemplate import experiment
-# from plotting import dataVsEvents, paramDynamics
-from experiment.experimentPlot import experimentPlot
 
-# from utils import varyingParams
-
-cueSets = {}
-defaultCues = cueSets["Pickering"]
+# TODO: Create a set of test cues
+cueSets = {"Test": []}
+defaultCues = cueSets["Test"]
 
 actualityLists = {}
-
 
 class Probstim(experiment):
     """
@@ -53,9 +49,6 @@ class Probstim(experiment):
     rewardlessT: int, optional
         If no actualities provided, it is the number of actualities at the end of the experiment that will have a
         ``None`` reward. Default ``2*numStim``
-    plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to
-        its documentation for more details.
     """
 
     Name = "probStim"
@@ -74,15 +67,13 @@ class Probstim(experiment):
         cues = kwargs.pop("cues", None)
         actualities = kwargs.pop("actualities", None)
 
-        self.plotArgs = kwargs.pop('plotArgs', {})
-
         if isinstance(cues, basestring):
             if cues in cueSets:
                 self.cues = cueSets[cues]
                 self.T = len(self.cues)
                 numStim = len(self.cues[0])
             else:
-                raise "Unknown cue sets"
+                raise Exception("Unknown cue sets")
         elif isinstance(cues, (list, ndarray)):
             self.cues = cues
             self.T = len(self.cues)
@@ -99,7 +90,7 @@ class Probstim(experiment):
                 self.actualities = actualityLists[actualities]
                 rewardlessT = sum(isnan(array(self.actualities, dtype=npfloat)))
             else:
-                raise "Unknown actualities list"
+                raise Exception("Unknown actualities list")
         elif isinstance(actualities, (list, ndarray)):
             self.actualities = actualities
             rewardlessT = sum(isnan(array(actualities, dtype=npfloat)))
@@ -188,7 +179,7 @@ class Probstim(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relevant data for this
+        Saves files containing all the relevant data for this
         experiment run
         """
 

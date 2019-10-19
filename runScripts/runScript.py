@@ -61,7 +61,6 @@ outputOptions = {'simLabel': 'qLearn_probSelect_fromSim',
                  'simRun': False,
                  'saveFittingProgress': True,
                  'saveOneFile': False,
-                 'saveFigures': False,
                  'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
@@ -75,10 +74,10 @@ from dataFitting import dataFitting
 
 from data import data
 
-from fitAlgs import infBound, scalarBound
+from fitAlgs.boundFunc import infBound, scalarBound
 
 from fitAlgs.simMethods.actReactFitter import fitter
-from fitAlgsevolutionary import evolutionary
+from fitAlgs.evolutionary import evolutionary
 
 # Import data
 dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])

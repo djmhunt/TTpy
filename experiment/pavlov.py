@@ -14,7 +14,6 @@ from numpy import array, ones, zeros, concatenate
 from numpy.random import choice, random
 
 from experiment.experimentTemplate import experiment
-from experiment.experimentPlot import experimentPlot
 
 class Pavlov(experiment):
 
@@ -78,8 +77,6 @@ class Pavlov(experiment):
 #        simLoop = kwargs.pop('simLoopLen',100) #The number of learning loops are run
 
         self.index = -1
-
-        self.plotArgs = kwargs.pop('plotArgs',{})
 
         self.parameters = {"Name": self.Name,
                            "rewMag": self.rewMag,
@@ -148,8 +145,7 @@ class Pavlov(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relevant data for this
-        experiment run
+        Saves files containing all the relevant data for this experiment run
 
         Returns
         -------

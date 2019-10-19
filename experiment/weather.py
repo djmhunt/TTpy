@@ -9,13 +9,9 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, exp, size, ones, nan, sum, prod, sum, argmax, shape
+from numpy import array, zeros, size, ones, nan, prod, sum, argmax, shape
 from numpy.random import rand, choice
 from experiment.experimentTemplate import experiment
-# from plotting import dataVsEvents, paramDynamics
-from experiment.experimentPlot import experimentPlot
-
-# from utils import varyingParams
 
 cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1], [1, 1, 0, 1], [0, 1, 0, 0],
                          [0, 1, 1, 0], [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 1, 1], [1, 1, 0, 1], [1, 0, 0, 1],
@@ -71,9 +67,6 @@ class Weather(experiment):
         The actual reality the cues pointed to; the correct response the participant is trying to get correct
     cues : array of floats, optional
         The stimulus cues used to guess the actualities
-    plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to
-        its documentation for more details.
     """
 
     Name = "weather"
@@ -95,8 +88,6 @@ class Weather(experiment):
         testLen = kwargs.pop("testLen", 100)
         cues = kwargs.pop("cues", genCues(numCues, learningLen+testLen))
         actualities = kwargs.pop("actualities", genActualities(cueProbs, cues, learningLen, testLen))
-
-        self.plotArgs = kwargs.pop('plotArgs', {})
 
         if isinstance(cues, basestring):
             if cues in cueSets:
@@ -187,8 +178,7 @@ class Weather(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavent data for this
-        experiment run
+        Saves files containing all the relevant data for this experiment run
         """
 
         results = self.parameters.copy()

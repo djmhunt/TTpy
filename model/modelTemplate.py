@@ -7,8 +7,6 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 from numpy import array, size, isnan, ones, reshape, sum
 from types import NoneType
 
-from model.modelSetPlot import modelSetPlot
-from model.modelPlot import modelPlot
 from model.decision.discrete import decWeightProb
 from utils import callableDetailsString
 
@@ -395,7 +393,7 @@ class model(object):
         actionParams = sum(actionParamSets, axis=1, keepdims=True)
 
         return actionParams
-
+## TODO: Change the name of this to returnTaskState
     def outputEvolution(self):
         """
         Returns all the relevant data for this model
@@ -576,38 +574,6 @@ class model(object):
         """
 
         self.simID = simID
-
-    def plot(self):
-        """
-        Returns a plotting class relevant for this model
-
-        Returns
-        -------
-        modelPlot : model.modelPlot
-        """
-
-        return self.modelPlot
-
-    def plotSet(self):
-        """
-        Returns a plotting class relevant analysis of sets of results from this
-        model
-
-        Returns
-        -------
-        modelSetPlot : model.modelSetPlot
-        """
-
-        return self.modelSetPlot
-
-    class modelPlot(modelPlot):
-
-        """Abstract class for the creation of plots relevant to a model"""
-
-    class modelSetPlot(modelSetPlot):
-
-        """Abstract class for the creation of plots relevant to a set of models"""
-
 
 def blankStim():
     """

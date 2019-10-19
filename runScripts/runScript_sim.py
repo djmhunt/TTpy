@@ -76,7 +76,6 @@ outputOptions = {'simLabel': 'qLearn_probSelectSimSet',
                  'pickleData': True,
                  'simRun': True,
                  'saveFittingProgress': False,
-                 'saveFigures': False,
                  'saveOneFile': False,
                  'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'

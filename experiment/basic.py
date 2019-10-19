@@ -80,8 +80,7 @@ class Basic(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavent data for this
-        experiment run
+        Saves files containing all the relevant data for this experiment run
         """
 
         results = self.parameters.copy()

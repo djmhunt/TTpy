@@ -4,12 +4,9 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import matplotlib
-#matplotlib.interactive(True)
 import logging
 import sys
 
-import matplotlib.pyplot as plt
 import cPickle as pickle
 import pandas as pd
 import datetime as dt
@@ -25,9 +22,6 @@ from types import NoneType
 from copy import copy
 
 from utils import listMerGen, callableDetailsString
-from participants.fitResults import plotFitting
-from plotting import paramDynamics, addPoint
-
 
 class outputting(object):
 
@@ -58,8 +52,6 @@ class outputting(object):
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
     saveFittingProgress : bool, optional
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
-    saveFigures : bool, optional
-        Defines if figures are produced or not. Default is ``True``
 
 
     See Also
@@ -78,7 +70,6 @@ class outputting(object):
         self.pickleData = kwargs.get('pickleData', False)
         self.simRun = kwargs.get('simRun', False)
         self.saveFittingProgress = kwargs.pop("saveFittingProgress", False)
-        self.saveFigures = kwargs.pop("saveFigures", True)
         self.label = kwargs.pop("simLabel", "Untitled")
         self.logLevel = kwargs.pop("logLevel", logging.INFO)  # logging.DEBUG
         self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
@@ -107,17 +98,13 @@ class outputting(object):
 
     def end(self):
         """
-        To run once everything has been completed. Displays the figures if not
-        silent.
+        To run once everything has been completed.
         """
 
         if len(self.participantFit) > 0:
             participantFit = pd.DataFrame.from_dict(self.participantFit)
             outputFile = self.newFile("participantFits", 'csv')
             participantFit.to_csv(outputFile)
-
-        if not self.silent:
-            plt.show()
 
         message = "Experiment completed. Shutting down"
         self.logger.info(message)
@@ -540,10 +527,6 @@ class outputting(object):
             message = "Store data for " + participantName
             self.logger.info(message)
 
-            #if self.saveFigures:
-            #    ep = plotFitting(participant, modelData, fitQuality)
-            #    self.savePlots(ep)
-
             self.recordFitting(fittingData, label, participant, partModelVars)
 
             if self.pickleData:
@@ -553,7 +536,7 @@ class outputting(object):
                 self.pickleLog(participant, "_partData" + label)
                 self.pickleLog(fittingData, "_fitData" + label)
 
-    ### Ploting
+    ### Recording
     def recordFitting(self, fittingData, label, participant, partModelVars):
         """
         Records formatted versions of the fitting data
@@ -589,10 +572,6 @@ class outputting(object):
 
         if self.saveFittingProgress:
             self._makeFittingDataSet(fittingData.copy(), extendedLabel, participant)
-
-        if self.saveFigures:
-            paramSet = fittingData["testedParameters"]
-            plotFitting(paramSet, fittingData, extendedLabel)
 
     ### Pickle
     def pickleRec(self, data, handle):
@@ -680,229 +659,6 @@ class outputting(object):
         # TODO: Remove the engine specification when moving to Python 3
         record.to_excel(xlsxT, sheet_name='ParameterFits', engine='XlsxWriter')
         xlsxT.save()
-
-
-### Plotting functions
-def plotModel(modelPlot, saveFigures=True):
-    """
-    Feeds the model data into the relevant plotting functions for the class
-
-    Parameters
-    ----------
-    modelPlot : model.modelPlot
-        The model's modelPlot class
-
-    See Also
-    --------
-    model.modelPlot : The template for modelPlot class for each model
-    savePlots : Saves the plots created by modelPlot
-    """
-
-    if not saveFigures:
-        return
-
-    mp = modelPlot(modelData, modelParams, modelLabels)
-
-    message = "Produce plots for the model " + modelLabels
-    logger.info(message)
-
-    savePlots(mp)
-
-def plotModelSet(modelSetPlot):
-    """
-    Feeds the model set data into the relevant plotting functions for the class
-
-    Parameters
-    ----------
-    modelSetPlot : model.modelSetPlot
-        The model's modelSetPlot class
-
-    See Also
-    --------
-    model.modelSetPlot : The template for modelSetPlot class for each model
-    savePlots : Saves the plots created by modelSetPlot
-    """
-
-    modelSet = modelStores
-    modelParams = modelParams
-    modelLabels = modelLabelStore
-    mp = modelSetPlot(modelSet, modelParams, modelLabels)
-
-    savePlots(mp)
-
-def plotExperiment(expInput):
-    """
-    Feeds the experiment data into the relevant plotting functions for the class
-
-    Parameters
-    ----------
-    expInput : (experiment.experimentPlot, dict)
-        The experiment's experimentPlot class and a dictionary of plot
-        attributes
-
-    See Also
-    --------
-    experiment.experimentPlot : The template for experimentPlot class for each experiment
-    savePlots : Saves the plots created by experimentPlot
-    """
-
-    if not self.saveFigures:
-        return
-
-    expPlot, plotArgs = expInput
-
-    expSet = expStore
-    expParams = expParamStore
-    expLabels = expLabelStore
-    modelSet = modelStore
-    modelParams = modelParamStore
-    modelLabels = modelLabelStore
-
-    # Initialise the class
-    ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
-
-    savePlots(ep)
-
-
-def plotExperimentSet(expInput):
-    """
-    Feeds the experiment set data into the relevant plotting functions for the class
-
-    Parameters
-    ----------
-    expInput : (experiment.experimentSetPlot, dict)
-        The experiment's experimentSetPlot class and a dictionary of plot
-        attributes
-
-    See Also
-    --------
-    experiment.experimentSetPlot : The template for experimentSetPlot class for each experiment
-    savePlots : Saves the plots created by experimentPlot
-    """
-    if not self.saveFigures:
-        return
-
-    expPlot, plotArgs = expInput
-
-    expSet = expStore
-    expParams = expParamStore
-    expLabels = expLabelStore
-    modelSet = modelStore
-    modelParams = modelParamStore
-    modelLabels = modelLabelStore
-
-    # Initialise the class
-    ep = expPlot(expSet, expParams, expLabels, modelSet, modelParams, modelLabels, plotArgs)
-
-    savePlots(ep)
-
-
-def plotFitting(paramSet, fittingData, label):
-
-    paramLabels = paramSet.keys()
-    fitQualities = fittingData["fitQualities"]
-    fitQuality = fittingData["fitQuality"]
-    finalParameters = fittingData["finalParameters"]
-
-    axisLabels = {"title": "Tested parameters with final fit quality of " + str(around(fitQuality, 1))}
-
-    fitQualityMax = amax(fitQualities)
-    fitQualityMin = amin(fitQualities)
-    if fitQualityMin <= 0:
-        fitQualityMin = 1
-
-    if (log10(fitQualityMax) - log10(fitQualityMin)) > 2 and log10(fitQualityMin) >= 0:
-        results = log10(fitQualities)
-    else:
-        results = fitQualities
-
-    if len(paramSet) == 1:
-        axisLabels["yLabel"] = r'log_{10}(Fit quality)'
-        fig = paramDynamics(paramSet,
-                            results,
-                            axisLabels)
-        addPoint([finalParameters[paramLabels[0]]], [fitQuality], fig.axes[0])
-    elif len(paramSet) == 2:
-        axisLabels["cbLabel"] = r'log_{10}(Fit quality)'
-        fig = paramDynamics(paramSet,
-                            results,
-                            axisLabels,
-                            contour=True,
-                            heatmap=False,
-                            scatter=True,
-                            cmap="viridis")
-        addPoint([finalParameters[paramLabels[0]]], [finalParameters[paramLabels[1]]], fig.axes[0])
-    else:
-        fig = paramDynamics(paramSet,
-                            results,
-                            axisLabels)
-
-    savePlots([(label, fig)])
-
-
-def savePlots(plots, save=True):
-    """
-    Saves a list of plots in the appropriate way
-
-    Parameters
-    ----------
-    plots : list of (string, savable object)
-        The currently accepted objects are matplotlib.pyplot.figure,
-        pandas.DataFrame and xml.etree.ElementTree.ElementTree
-        The string is the handle of the figure
-
-    See Also
-    --------
-    vtkWriter, plotting, matplotlib.pyplot.figure, pandas.DataFrame,
-    pandas.DataFrame.to_excel, xml.etree.ElementTree.ElementTree,
-    xml.etree.ElementTree.ElementTree.outputTrees
-
-    """
-
-    for handle, plot in plots:
-        if hasattr(plot, "savefig") and callable(getattr(plot, "savefig")):
-
-            fileName = self.newFile(handle, 'png')
-
-            self.outputFig(plot, fileName)
-
-        elif hasattr(plot, "outputTrees") and callable(getattr(plot, "outputTrees")):
-
-            if save:
-                fileName = self.newFile(handle, '')
-
-                plot.outputTrees(fileName)
-
-        elif hasattr(plot, "to_excel") and callable(getattr(plot, "to_excel")):
-            outputFile = self.newFile(handle, 'xlsx')
-
-            if save:
-                plot.to_excel(outputFile, sheet_name=handle)
-
-
-def outputFig(fig, fileName, save=True, silent=False):
-    """Saves the figure to a .png file and/or displays it on the screen.
-
-    Parameters
-    ----------
-    fig : MatPlotLib figure object
-        The figure to be output
-    fileName : string
-        The file to be saved to
-
-    """
-
-#        plt.figure(fig.number)
-
-    if save:
-        ndpi = fig.get_dpi()
-        fig.savefig(fileName, dpi=ndpi)
-
-    if not silent:
-        plt.figure(fig.number)
-        plt.draw()
-    else:
-        plt.close(fig)
 
 
 ### Utils

@@ -24,7 +24,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='1.1.0',
+    version='0.9',
 
     description='python Human Probabilistic Decision-Modelling is a framework for modelling and fitting the responses of people to probabilistic decison making tasks. ',
     long_description=long_description,
@@ -66,7 +66,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy', 'scipy', 'pandas', 'matplotlib'],
+    install_requires=['numpy', 'scipy', 'pandas'],
 
 )
 

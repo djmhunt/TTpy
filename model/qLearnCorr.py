@@ -16,8 +16,6 @@ import logging
 from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
 
 from model.modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 

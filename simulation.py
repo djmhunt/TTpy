@@ -58,14 +58,6 @@ def simulation(experiments, models, outputting):
 
                 outputting.recordSim(exp.outputEvolution(), model.outputEvolution(), str(simID))
 
-                #outputting.plotModel(model.plot())
-
                 simID += 1
-
-            #outputting.plotModelSet(model.plotSet())
-
-        #outputting.plotExperiment(exp.plot())
-
-    #outputting.plotExperimentSet(exp.plotSet())
 
     outputting.end()

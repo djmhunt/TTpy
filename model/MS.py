@@ -14,11 +14,7 @@ import logging
 from numpy import exp, zeros, array, ones
 
 from modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.binary import decEta
-from plotting import dataVsEvents, lineplot
-from utils import callableDetailsString
 
 
 class MS(model):
@@ -234,65 +230,6 @@ class MS(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-    class modelSetPlot(modelSetPlot):
-
-        """Class for the creation of plots relevant to the model set"""
-
-        def _figSets(self):
-            """ Contains all the figures """
-
-            self.figSets = []
-
-            # Create all the plots and place them in in a list to be iterated
-
-            fig = self.dPChanges()
-            self.figSets.append(('dPChanges', fig))
-
-            fig = self.trial3_4Diff()
-            self.figSets.append(('trial3_4Diff', fig))
-
-        def dPChanges(self):
-            """
-            A graph reproducing figures 3 & 4 from the paper
-            """
-
-            gainLables = array(["Gain " + str(m["beta"]) for m in self.modelStore])
-
-            dP = array([m["Probabilities"][:, 0] - m["Probabilities"][:, 1] for m in self.modelStore])
-            events = array(self.modelStore[0]["Events"])
-
-            axisLabels = {"title":"Confidence by Learning Trial for Different Gain Parameters"}
-            axisLabels["xLabel"] = "Trial number"
-            axisLabels["yLabel"] = r"$\Delta P$"
-            axisLabels["y2Label"] = "Bead presented"
-            axisLabels["yMax"] = 1
-            axisLabels["yMin"] = 0
-            eventLabel = "Beads drawn"
-
-            fig = dataVsEvents(dP, events, gainLables, eventLabel, axisLabels)
-
-            return fig
-
-        def trial3_4Diff(self):
-            """
-            A graph reproducing figures 5 from the paper
-            """
-
-            dPDiff = array([m["ProbDifference"][3]-m["ProbDifference"][2] for m in self.modelStore])
-
-            gain = array([m["beta"] for m in self.modelStore])
-
-            axisLabels = {"title":"Change in Confidence in Light of Disconfirmatory Evidence"}
-            axisLabels["xLabel"] = "Trial number"
-            axisLabels["yLabel"] = r"$\Delta P\left(4\right) - \Delta P\left(3\right)$"
-#            axisLabels["yMax"] = 0
-#            axisLabels["yMin"] = -0.5
-
-            fig = lineplot(gain, dPDiff, [], axisLabels)
-
-            return fig
-
 
 def blankStim():
     """

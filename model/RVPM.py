@@ -15,10 +15,6 @@ from numpy import exp, array, amax, dot, ones, mean, square
 from collections import defaultdict
 
 from modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
-from utils import listMerge, mergeDatasets, callableDetailsString
-from plotting import lineplot
 
 
 class RVPM(model):
@@ -293,86 +289,6 @@ class RVPM(model):
     def _tsnUpdate(self, dV, ddeltaP, ddeltaM):
         signal = amax([0, self.zeta*dV]) + amax([0, ddeltaP]) - amax([0, ddeltaM])
         return signal
-
-    class modelSetPlot(modelSetPlot):
-
-        """Class for the creation of plots relevant to the model set"""
-
-        def _figSets(self):
-            """ Contains all the figures """
-
-            self.figSets = []
-
-            # Create all the plots and place them in in a list to be iterated
-
-            self._processData()
-            fig = self.avResponse("V")
-            self.figSets.append(('VResponse', fig))
-            fig = self.avResponse("DP")
-            self.figSets.append(('dPResponse', fig))
-            fig = self.avResponse("DM")
-            self.figSets.append(('dMResponse', fig))
-            fig = self.avResponse("TSN")
-            self.figSets.append(('TSNResponse', fig))
-            fig = self.avResponse("w")
-            self.figSets.append(('wResponse', fig))
-
-        def _processData(self):
-
-            self.modelData = mergeDatasets(self.modelStore, extend=True)
-
-            averagedData = defaultdict(dict)
-
-            for t in ["_early", "_late"]:
-                cmax = [c.argmax() for c in self.modelData["stim"+t]]
-
-                for key in ["V", "DP", "DM", "TSN"]:  # ,"w"]:
-                    averagedData[key][key+t] = self._dataAverage(self.modelData[key+t], cmax)
-
-            self.modelAverages = averagedData
-
-        def _dataAverage(self, data, cmax):
-
-            cLists = [[] for i in xrange(max(cmax)+1)]
-
-            for i, cm in enumerate(cmax):
-                cLists[cm].append(data[i])
-
-            meanVals = [mean(i, axis=0) for i in cLists]
-
-            return meanVals
-
-        def avResponse(self, key):
-            """
-            The averaged response from different parts of the model in the form
-            of figure 1 from the paper
-
-            Parameters
-            ----------
-            key : string
-                The key to
-
-            """
-            data = self.modelAverages[key]
-
-            dataKeys = data.keys()
-            dataStim = [i for i in xrange(len(data[dataKeys[0]]))]
-
-            Y = array(range(len(data[dataKeys[0]][0])))
-
-            labels = ["c=" + j + " " + i for i, j in listMerge(dataKeys, dataStim)]
-
-            plotData = [data[i][int(j)] for i, j in listMerge(dataKeys, dataStim)]
-
-            axisLabels = {"title": "Untitled"}
-            axisLabels["xLabel"] = r"$t/10 \textrm{ms}$"
-            axisLabels["yLabel"] = key
-#            axisLabels["yMax"] = 0
-#            axisLabels["yMin"] = -0.5
-
-            fig = lineplot(Y, plotData, labels, axisLabels)
-
-            return fig
 
 
 def blankStim():

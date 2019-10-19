@@ -12,7 +12,6 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 from numpy import array, zeros, exp
 from numpy.random import rand
 from experiment.experimentTemplate import experiment
-from experiment.experimentPlot import experimentPlot
 
 
 ### decks
@@ -50,9 +49,6 @@ class Decks(experiment):
         The decks of cards
     discard: bool
         Defines if you discard the card not chosen or if you keep it.
-    plotArgs : dictionary, optional
-        Any arguments that will be later used by ``experimentPlot``. Refer to
-        its documentation for more details.
     """
 
     Name = "decks"
@@ -71,8 +67,6 @@ class Decks(experiment):
         T = kwargs.pop('draws', None)
         decks = kwargs.pop("decks", defaultDecks)
         self.discard = kwargs.pop("discard", False)
-
-        self.plotArgs = kwargs.pop('plotArgs', {})
 
         if isinstance(decks, basestring):
             if decks in deckSets:
@@ -169,7 +163,7 @@ class Decks(experiment):
 
     def outputEvolution(self):
         """
-        Plots and saves files containing all the relavent data for this
+        Saves files containing all the relavent data for this
         experiment run
         """
 

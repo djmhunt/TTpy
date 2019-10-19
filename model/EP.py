@@ -12,8 +12,6 @@ import logging
 from numpy import exp, array, ones
 
 from modelTemplate import model
-from model.modelPlot import modelPlot
-from model.modelSetPlot import modelSetPlot
 from model.decision.discrete import decWeightProb
 
 

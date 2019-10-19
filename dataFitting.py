@@ -4,15 +4,13 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from simulation import simulation
-
 from fitAlgs.fitAlg import fitAlg
 
 
 def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", partModelVars={}, experiments=None):
     """
     A framework for fitting models to data for experiments, along with
-    recording the plots and data associated with the best fits.
+    recording the data associated with the fits.
 
     Parameters
     ----------
@@ -110,14 +108,7 @@ def dataFitting(models, outputting, data=None, fitter=None, partLabel="Name", pa
                                             partModelVars,
                                             expData=expEvolution)
 
-
-            #outputting.plotModel(modelFitted.plot())
-
         modelID += 1
-        #outputting.plotModelSet(modelFitted.plotSet())
-
-    #if exp is not None:
-        #outputting.plotExperiment(exp.plot())
 
     outputting.end()
 
