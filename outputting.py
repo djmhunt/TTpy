@@ -36,8 +36,6 @@ class outputting(object):
         If true a copy of the top level script running the current function
         will be copied to the log folder. Only works if save is set to ``True``
         Default ``True``
-    silent : bool, optional
-        States if a log is not written to stdout. Defaults to ``False``
     pickleData : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
@@ -64,7 +62,6 @@ class outputting(object):
 
     def __init__(self, **kwargs):
 
-        self.silent = kwargs.get('silent', False)
         self.save = kwargs.get('save', True)
         self.saveScript = kwargs.get('saveScript', True)
         self.pickleData = kwargs.get('pickleData', False)
@@ -109,19 +106,20 @@ class outputting(object):
         message = "Experiment completed. Shutting down"
         self.logger.info(message)
 
-        self.logger.removeHandler(self.consoleHandler)
+        if self.save:
+            self.logger.removeHandler(self.consoleHandler)
 
-        logging.shutdown()
-        sys.stderr = sys.__stdout__
-        seterrcall(self.oldnperrcall)
+            logging.shutdown()
+            sys.stderr = sys.__stdout__
+            seterrcall(self.oldnperrcall)
 
-        root = logging.getLogger()
-        for h in root.handlers[:]:
-            h.close()
-            root.removeHandler(h)
-        for f in root.filters[:]:
-            f.close()
-            root.removeFilter(f)
+            root = logging.getLogger()
+            for h in root.handlers[:]:
+                h.close()
+                root.removeHandler(h)
+            for f in root.filters[:]:
+                f.close()
+                root.removeFilter(f)
 
     ### Folder management
 

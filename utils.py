@@ -27,7 +27,7 @@ from traceback import extract_tb
 # For analysing the state of the computer
 # import psutil
 
-def fancyLogger(logLevel, fileName="", silent=False):
+def fancyLogger(logLevel, fileName=""):
     """
     Sets up the style of logging for all the simulations
 
@@ -38,8 +38,6 @@ def fancyLogger(logLevel, fileName="", silent=False):
     fileName : string, optional
         The filename that the log will be written to. If empty no log will be
         written to a file. Default is empty
-    silent : bool, optional
-        States if a log is not written to stdout. Defaults to False
     """
 
     class streamLoggerSim(object):

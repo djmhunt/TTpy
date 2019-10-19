@@ -77,7 +77,6 @@ outputOptions = {'simLabel': 'qLearn_probSelectSimSet',
                  'simRun': True,
                  'saveFittingProgress': False,
                  'saveOneFile': False,
-                 'silent': True,
                  'npErrResp': 'log'}  # 'raise','log'
 output = outputting(**outputOptions)
 
