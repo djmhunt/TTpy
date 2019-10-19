@@ -2,21 +2,20 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import pytest
 
 from utils import listMerGen
 
 from numpy import array
-from pytest import raises, fixture
 
 def test_an_exception():
     with raises(IndexError):
         # Indexing the 30th item in a 3 item list
         [5, 10, 15][30]
 
-@fixture(scope="module")  
+@pytest.fixture(scope="module")
 def listMerTestData():
     
     v = 3
