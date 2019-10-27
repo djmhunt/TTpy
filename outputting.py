@@ -13,159 +13,183 @@ import datetime as dt
 
 import shutil as shu
 from os import getcwd, makedirs
-from os.path import isfile, exists
+from os.path import exists
 from inspect import stack
-from numpy import seterr, seterrcall, array, ndarray, shape, prod, log10, around, size, amax, amin
-from itertools import izip
-from collections import OrderedDict, Callable, defaultdict
+from numpy import seterr, seterrcall, array, ndarray, shape, prod, size
+from collections import OrderedDict, defaultdict
 from types import NoneType
-from copy import copy
 
-from utils import listMerGen, callableDetailsString
+from utils import listMerGen
 
-class outputting(object):
 
-    """An class which manages the outputting to the screen and to files of all
-    data in any form for the simulation
+#%% Folder management
+def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging.INFO, npSetErr="log"):
+    """
+    Creates the folder structure for the saved data and created the log file as ``log.txt``
 
     Parameters
     ----------
+    label : string, optional
+        The label for the simulation
     save : bool, optional
         If true the data will be saved to files. Default ``True``
+    pickleData : bool, optional
+        If true the data for each model, experiment and participant is recorded.
+        Default is ``False``
     saveScript : bool, optional
         If true a copy of the top level script running the current function
         will be copied to the log folder. Only works if save is set to ``True``
         Default ``True``
-    pickleData : bool, optional
-        If true the data for each model, experiment and participant is recorded.
-        Default is ``False``
-    simLabel : string, optional
-        The label for the simulation
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default ``logging.INFO``
-    maxLabelLength : int, optional
-        The maximum length of a label to be used as a reference for an
-        individual model-experiment combination. Default 18
-    npErrResp : {'log', 'raise'}
+    npSetErr : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
-    saveFittingProgress : bool, optional
-        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
 
+    Returns
+    -------
+    outputFolder : basestring
+        The folder into which the data will be saved
+    fileNameGen : function
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
+        returns one ``fileName`` string
+    closeLoggers : function
+        Closes the logging systems that have been set up
 
     See Also
     --------
-    date : Identifies today's date
-    saving : Sets up the log file and folder to save results
-    fancyLogger : Log creator
-    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
+    folderSetup : creates the folders
+    """
+    dateStr = date()
+    if save:
+        outputFolder = folderSetup(label, dateStr, pickleData=pickleData, basePath=None)
+        fileNameGen = fileNameGenerator(outputFolder)
+        logFile = fileNameGen('log', 'txt')
+
+        if saveScript:
+            cwd = getcwd().replace("\\", "/")
+            for s in stack():
+                p = s[1].replace("\\", "/")
+                if ("outputting(" in s[4][0]) or (cwd in p and "outputting.py" not in p):
+                    shu.copy(p, outputFolder)
+                    break
+    else:
+        outputFolder = None
+        logFile = None
+        fileNameGen = None
+
+    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=logLevel, npErrResp=npSetErr)
+
+    logger = logging.getLogger('Framework')
+
+    message = "Beginning experiment labelled: " + label
+    logger.info(message)
+
+    return outputFolder, fileNameGen, closeLoggers
+
+
+def folderSetup(label, dateStr, pickleData=False, basePath=None):
+    """
+    Identifies and creates the folder the data will be stored in
+
+    Folder will be created as "./Outputs/<simLabel>_<date>/". If that had
+    previously been created then it is created as
+    "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
+    available integer.
+
+    A subfolder is also created with the name ``Pickle`` if  pickleData is
+    true.
+
+    Parameters
+    ----------
+    label : basestring
+        The label for the simulation
+    dateStr : basestring
+        The date identifier
+    pickleData : bool, optional
+        If true the data for each model, experiment and participant is recorded.
+        Default is ``False``
+    basePath : basestring, optional
+        The path into which the new folder will be placed. Default is current working directory
+
+    Returns
+    -------
+    folderName : string
+        The folder path that has just been created
+
+    Examples
+    --------
+    >>> newFolder = outputting.folderSetup("a","today", basePath=".")
+    >>> newFolder
+    './Outputs/a_today/'
+
+    See Also
+    --------
+    newFile : Creates a new file
+    saving : Creates the log system
+
+    """
+    if not basePath:
+        basePath = getcwd().replace("\\", "/")
+
+    # While the folders have already been created, check for the next one
+    folderName = "{}/Outputs/{}_{}".format(basePath, label, dateStr)
+    if exists(folderName):
+        i = 1
+        folderName += '_no_'
+        while exists(folderName + str(i)):
+            i += 1
+        folderName += str(i)
+
+    folderName += "/"
+    makedirs(folderName)
+
+    makedirs(folderName + 'data/')
+
+    if pickleData:
+        makedirs(folderName + 'Pickle/')
+
+    return folderName
+
+
+#%% File management
+def fileNameGenerator(outputFolder=None):
+    """
+    Keeps track of filenames that have been used and generates the next unused one
+
+    Parameters
+    ----------
+    outputFolder : string, optional
+        The folder into which the new file will be placed. Default is the current working directory
+
+    Returns
+    -------
+    newFileName : function
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
+        returns one ``fileName`` string
+
+    Examples
+    --------
+    >>> fileNameGen = outputting.fileNameGenerator("./")
+    >>> fileNameGen("a", "b")
+    './a.b'
+    >>> fileNameGen("a", "b")
+    './a_1.b'
+    >>> fileNameGen("", "")
+    './'
+    >>> fileNameGen = outputting.fileNameGenerator()
+    >>> fileName = fileNameGen("", "")
+    >>> fileName == getcwd()
+    True
     """
 
-    def __init__(self, **kwargs):
+    if not outputFolder:
+        outputFolder = getcwd()
 
-        self.save = kwargs.get('save', True)
-        self.saveScript = kwargs.get('saveScript', True)
-        self.pickleData = kwargs.get('pickleData', False)
-        self.simRun = kwargs.get('simRun', False)
-        self.saveFittingProgress = kwargs.pop("saveFittingProgress", False)
-        self.label = kwargs.pop("simLabel", "Untitled")
-        self.logLevel = kwargs.pop("logLevel", logging.INFO)  # logging.DEBUG
-        self.maxLabelLength = kwargs.pop("maxLabelLength", 18)
-        self.npErrResp = kwargs.pop("npErrResp", 'log')
+    outputFileCounts = defaultdict(int)
 
-        # Initialise the stores of information
-        self.participantFit = defaultdict(list)
-
-        self.fitInfo = None
-        self.outputFileCounts = defaultdict(int)
-
-        self.lastExpLabelID = 0
-        self.lastModelLabelID = 0
-
-        self.date = date()
-
-        self.saving()
-
-        self.fancyLogger(logFile=self.logFile, logLevel=self.logLevel, npErrResp=self.npErrResp)
-
-        self.logger = logging.getLogger('Framework')
-        self.loggerSim = logging.getLogger('Simulation')
-
-        message = "Beginning experiment labelled: " + self.label
-        self.logger.info(message)
-
-    def end(self):
+    def newFileName(handle, extension):
         """
-        To run once everything has been completed.
-        """
-
-        if len(self.participantFit) > 0:
-            participantFit = pd.DataFrame.from_dict(self.participantFit)
-            outputFile = self.newFile("participantFits", 'csv')
-            participantFit.to_csv(outputFile)
-
-        message = "Experiment completed. Shutting down"
-        self.logger.info(message)
-
-        if self.save:
-            self.logger.removeHandler(self.consoleHandler)
-
-            logging.shutdown()
-            sys.stderr = sys.__stdout__
-            seterrcall(self.oldnperrcall)
-
-            root = logging.getLogger()
-            for h in root.handlers[:]:
-                h.close()
-                root.removeHandler(h)
-            for f in root.filters[:]:
-                f.close()
-                root.removeFilter(f)
-
-    ### Folder management
-
-    def folderSetup(self):
-        """
-        Identifies and creates the folder the data will be stored in
-
-        Folder will be created as "./Outputs/<simLabel>_<date>/". If that had
-        previously been created then it is created as
-        "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
-        available integer.
-
-        A subfolder is also created with the name ``Pickle`` if  pickleData is
-        true.
-
-        See Also
-        --------
-        newFile : Creates a new file
-        saving : Creates the log system
-
-        """
-
-        # While the folders have already been created, check for the next one
-        folderName = './Outputs/' + self.label + "_" + self.date
-        if exists(folderName):
-            i = 1
-            folderName += '_no_'
-            while exists(folderName + str(i)):
-                i += 1
-            folderName += str(i)
-
-        folderName += "/"
-        makedirs(folderName)
-
-        if self.simRun or self.saveFittingProgress:
-            makedirs(folderName + 'data/')
-
-        if self.pickleData:
-            makedirs(folderName + 'Pickle/')
-
-        self.outputFolder = folderName
-
-    ### File management
-    def newFile(self, handle, extension):
-        """
-        Creates a new file withe the name <handle> and the extension <extension>
+        Creates a new unused file name with the <handle> and the extension <extension>
 
         Parameters
         ----------
@@ -180,7 +204,7 @@ class outputting(object):
             The filename allowed for the file
         """
 
-        if not self.save:
+        if not outputFolder:
             return ''
 
         if extension == '':
@@ -188,11 +212,11 @@ class outputting(object):
         else:
             end = "." + extension
 
-        fileName = self.outputFolder + handle
+        fileName = outputFolder + handle
         fileNameForm = fileName + end
 
-        lastCount = self.outputFileCounts[fileNameForm]
-        self.outputFileCounts[fileNameForm] += 1
+        lastCount = outputFileCounts[fileNameForm]
+        outputFileCounts[fileNameForm] += 1
         if lastCount > 0:
             fileName += "_" + str(lastCount)
         # if exists(fileName + end):
@@ -204,470 +228,180 @@ class outputting(object):
 
         return fileName
 
-    ### Logging
-    def getLogger(self, name):
-        """
-        Returns a named logger stream
+    return newFileName
 
-        Parameters
-        ----------
-        name : string
-            Name of the logger
 
-        Returns
-        -------
-        logger : logging.logger instance
-            The named logger
-        """
-
-        logger = logging.getLogger(name)
-
-        return logger
-
-    def saving(self):
-        """
-        Creates the folder structure for the saved data and created the log file
-        as log.txt
-
-        See Also
-        --------
-        folderSetup : creates the folders
-        """
-
-        if self.save:
-            self.folderSetup()
-            self.logFile = self.newFile('log', 'txt')
-
-            if self.saveScript:
-                cwd = getcwd().replace("\\", "/")
-                for s in stack():
-                    p = s[1].replace("\\", "/")
-                    if ("outputting(" in s[4][0]) or (cwd in p and "outputting.py" not in p):
-                        shu.copy(p, self.outputFolder)
-                        break
-
-        else:
-            self.outputFolder = ''
-            self.logFile = ''
-
-    def fancyLogger(self, logFile="./log.txt", logLevel=logging.INFO, npErrResp='log'):
-        """
-        Sets up the style of logging for all the simulations
-
-        Parameters
-        ----------
-        logFile : string, optional
-            Provides the path the log will be written to. Default "./log.txt"
-        logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
-            Defines the level of the log. Default logging.INFO
-        npErrResp : {'log', 'raise'}
-            Defines the response to numpy errors. Default ``log``. See numpy.seterr
-
-        See Also
-        --------
-        logging : The Python standard logging library
-        numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
-        """
-
-        class streamLoggerSim(object):
-            """
-            Fake file-like stream object that redirects writes to a logger instance.
-            Based on one found at:
-                http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
-            """
-            def __init__(self, logger, log_level=logging.INFO):
-                self.logger = logger
-                self.log_level = log_level
-                self.linebuf = ''
-
-            def write(self, buf):
-                for line in buf.rstrip().splitlines():
-                    self.logger.log(self.log_level, line.rstrip())
-
-            # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
-            def flush(self):
-                try:
-                    self.logger.flush()
-                except AttributeError:
-                    pass
-
-        if logFile:
-            logging.basicConfig(filename=logFile,
-                                format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                                datefmt='%m-%d %H:%M',
-                                level=logLevel,
-                                filemode='w')
-
-            consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-            console = logging.StreamHandler()
-            console.setLevel(logLevel)
-            console.setFormatter(consoleFormat)
-            self.consoleHandler = console
-            # add the handler to the root logger
-            logging.getLogger('').addHandler(console)
-        else:
-            logging.basicConfig(datefmt='%m-%d %H:%M',
-                                format='%(name)-12s %(levelname)-8s %(message)s',
-                                level=logLevel)
-
-        # Set the standard error output
-        sys.stderr = streamLoggerSim(self.getLogger('STDERR'), logging.ERROR)
-        # Set the numpy error output and save the old one
-        self.oldnperrcall = seterrcall(streamLoggerSim(self.getLogger('NPSTDERR'), logging.ERROR))
-        seterr(all=npErrResp)
-
-        logger = self.getLogger("Setup")
-        logger.info(self.date)
-        logger.info("Log initialised")
-        if logFile:
-            logger.info("The log you are reading was written to " + str(logFile))
-
-    def logSimParams(self, expParams, modelParams, simID):
-        """
-        Writes to the log the description and the label of the experiment and model
-
-        Parameters
-        ----------
-        expParams : dict
-            The experiment parameters
-        modelParams : dict
-            The model parameters
-        simID : string
-            The identifier for each simulation.
-
-        See Also
-        --------
-        recordSimParams : Records these parameters for later use
-        """
-
-        expDesc = expParams.pop('Name') + ": "
-        expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems()]
-        expDesc += ", ".join(expDescriptors)
-
-        modelDesc = modelParams.pop('Name') + ": "
-        modelDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in modelParams.iteritems()]
-        modelDesc += ", ".join(modelDescriptors)
-
-        message = "Simulation " + simID + " contains the experiment '" + expDesc + "'."
-        message += "The model used is '" + modelDesc + "'."
-        self.loggerSim.info(message)
-
-    def logSimFittingParams(self, modelName, modelFitVars, modelOtherArgs, expParams={}):
-        """
-        Logs the model and experiment parameters that used as initial fitting
-        conditions
-
-        Parameters
-        ----------
-        modelName : string
-            The name of the model
-        modelFitVars : dict
-            The model parameters that will be fitted over and varied.
-        modelOtherArgs : dict
-            The other parameters used in the model whose attributes have been
-            modified by the user
-        expParams : dict, optional
-            The experiment parameters. Default ``dict()``
-        """
-        message = "The fit will use the model '" + modelName + "'"
-
-        modelFitParams = [k + ' around ' + str(v).strip('[]()') for k, v in modelFitVars.iteritems()]
-        message += " fitted with the parameters " + ", ".join(modelFitParams)
-
-        modelParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
-        modelFuncs = [k + ' = ' + callableDetailsString(v) for k, v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
-        message += " and using the other user specified parameters " + ", ".join(modelParams)
-        message += " and the functions " + ", ".join(modelFuncs)
-
-        if len(expParams) > 0:
-            message += ". This is based on the experiment '" + expParams['Name'] + "' "
-
-            expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems() if k != 'Name']
-            message += "with the parameters " + ", ".join(expDescriptors) + "."
-
-        self.loggerSim.info(message)
-
-    def logModFittedParams(self, modelFitVars, modelParams, fitQuality, partName):
-        """
-        Logs the model and experiment parameters that used as initial fitting
-        conditions
-
-        Parameters
-        ----------
-        modelFitVars : dict
-            The model parameters that have been fitted over and varied.
-        modelParams : dict
-            The model parameters for the fitted model
-        fitQuality : float
-            The value of goodness of fit
-        partName : int or string
-            The identifier for each participant
-        """
-        params = modelFitVars.keys()
-
-        modelFitParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelParams.iteritems() if k in params]
-        message = "The fitted values for participant " + str(partName) + " are " + ", ".join(modelFitParams)
-
-        message += " with a fit quality of " + str(fitQuality) + "."
-
-        self.loggerSim.info(message)
-
-    def logFittingParams(self, fitInfo):
-        """
-        Records and outputs to the log the parameters associated with the fitting algorithms
-
-        Parameters
-        ----------
-        fitInfo : dict
-            The details of the fitting
-        """
-
-        self.fitInfo = fitInfo
-
-        log = logging.getLogger('Framework')
-
-        message = "Fitting information:"
-        log.info(message)
-
-        for f in fitInfo:
-            message = "For " + f['Name'] + ":"
-            log.info(message)
-
-            for k, v in f.iteritems():
-                if k == "Name":
-                    continue
-
-                message = k + ": " + repr(v)
-                log.info(message)
-
-    ### Data collection
-    def recordSim(self, expData, modelData, simID):
-        """
-        Records the data from an experiment-model run. Creates a pickled version
-
-        Parameters
-        ----------
-        expData : dict
-            The data from the experiment
-        modelData : dict
-            The data from the model
-        simID : basestring
-            The label identifying the simulation
-
-        See Also
-        --------
-        pickleLog : records the picked data
-        """
-
-        message = "Beginning simulation output processing"
-        self.logger.info(message)
-
-        label = "_sim-" + simID
-
-        if self.outputFolder:
-
-            message = "Store data for simulation " + simID
-            self.logger.info(message)
-
-            if self.simRun:
-                self._simModelLog(modelData, simID)
-
-            if self.pickleData:
-                self.pickleLog(expData, "_expData" + label)
-                self.pickleLog(modelData, "_modelData" + label)
-
-    def recordParticipantFit(self, participant, partName, modelData, modelName, fitQuality, fittingData, partModelVars, expData=None):
-        """
-        Record the data relevant to the participant fitting
-
-        Parameters
-        ----------
-        participant : dict
-            The participant data
-        partName : int or string
-            The identifier for each participant
-        modelData : dict
-            The data from the model
-        modelName : basestring
-            The label given to the model
-        fitQuality : float
-            The quality of the fit as provided by the fitting function
-        fittingData : dict
-            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
-            tested, in the order they were tested, and a list of the fit qualities of these parameters
-        partModelVars : dict of string
-            A dictionary of model settings whose values should vary from participant to participant based on the
-            values found in the imported participant data files. The key is the label given in the participant data file,
-            as a string, and the value is the associated label in the model, also as a string.
-        expData : dict, optional
-            The data from the experiment. Default ``None``
-
-        See Also
-        --------
-        pickleLog : records the picked data
-        """
-
-        partNameStr = str(partName)
-
-        message = "Recording participant " + partNameStr + " model fit"
-        self.logger.info(message)
-
-        label = "_Model-" + modelName + "_Part-" + partNameStr
-
-        participantName = "Participant " + partNameStr
-
-        participant.setdefault("Name", participantName)
-        participant.setdefault("assignedName", participantName)
-        fittingData.setdefault("Name", participantName)
-
-        if self.outputFolder:
-
-            message = "Store data for " + participantName
-            self.logger.info(message)
-
-            self.recordFitting(fittingData, label, participant, partModelVars)
-
-            if self.pickleData:
-                if expData is not None:
-                    self.pickleLog(expData, "_expData" + label)
-                self.pickleLog(modelData, "_modelData" + label)
-                self.pickleLog(participant, "_partData" + label)
-                self.pickleLog(fittingData, "_fitData" + label)
-
-    ### Recording
-    def recordFitting(self, fittingData, label, participant, partModelVars):
-        """
-        Records formatted versions of the fitting data
-
-        Parameters
-        ----------
-        fittingData : dict, optional
-            Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
-            tested, in the order they were tested, and a list of the fit qualities of these parameters.
-        label : basestring
-            The label used to identify the fit in the file names
-        participant : dict
-            The participant data
-        partModelVars : dict of string
-            A dictionary of model settings whose values should vary from participant to participant based on the
-            values found in the imported participant data files. The key is the label given in the participant data file,
-            as a string, and the value is the associated label in the model, also as a string.
-
-        Returns
-        -------
-
-        """
-        extendedLabel = "ParameterFits" + label
-
-        self.participantFit["Name"].append(participant["Name"])
-        self.participantFit["assignedName"].append(participant["assignedName"])
-        for k in filter(lambda x: 'fitQuality' in x, fittingData.keys()):
-            self.participantFit[k].append(fittingData[k])
-        for k, v in fittingData["finalParameters"].iteritems():
-            self.participantFit[k].append(v)
-        for k, v in partModelVars.iteritems():
-            self.participantFit[v] = participant[k]
-
-        if self.saveFittingProgress:
-            self._makeFittingDataSet(fittingData.copy(), extendedLabel, participant)
-
-    ### Pickle
-    def pickleRec(self, data, handle):
-        """
-        Writes the data to a pickle file
-
-        Parameters
-        ----------
-        data : object
-            Data to be written to the file
-        handle : string
-            The name of the file
-        """
-
-        outputFile = self.newFile(handle, 'pkl')
-
-        with open(outputFile, 'w') as w:
-            pickle.dump(data, w)
-
-    def pickleLog(self, results, label=""):
-        """
-        Stores the data in the appropriate pickle file in a Pickle subfolder
-        of the outputting folder
-
-        Parameters
-        ----------
-        results : dict
-            The data to be stored
-        label : string, optional
-            A label for the results file
-        """
-
-        if not self.save:
-            return
-
-        # TODO: remove the pulling out of ``Name`` from inside this method and make it more explicit higher up
-        name = results["Name"]
-        if isinstance(name, basestring):
-            handle = 'Pickle/{}'.format(name)
-        else:
-            raise TypeError("The ``Name`` in the participant data is of type {} and not str".format(type(name)))
-
-        if label:
-            handle += label
-
-        self.pickleRec(results, handle)
-
-    ### Excel
-    def _simModelLog(self, modelData, simID):
-
-        data = dictData2Lists(modelData)
-        record = pd.DataFrame(data)
-        name = "data/modelSim_" + simID
-        outputFile = self.newFile(name, 'csv')
-        record.to_csv(outputFile)
-        #outputFile = self.newFile(name, 'xlsx')
-        #xlsxT = pd.ExcelWriter(outputFile)
-        #record.to_excel(xlsxT, sheet_name='modelLog')
-        #xlsxT.save()
-
-    def _makeFittingDataSet(self, fittingData, extendedLabel, participant):
-
-        data = OrderedDict()
-        data['folder'] = self.outputFolder
-        partFittingKeys, partFittingMaxListLen = listDictKeySet(participant)
-        partData = newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
-        data.update(partData)
-
-        paramFittingDict = copy(fittingData["testedParameters"])
-        paramFittingDict['partFitName'] = fittingData.pop("Name")
-        #paramFittingDict['fitQuality'] = fittingData.pop("fitQuality")
-        #paramFittingDict["fitQualities"] = fittingData.pop("fitQualities")
-        for k, v in fittingData.pop("finalParameters").iteritems():
-            paramFittingDict[k + "final"] = v
-        paramFittingDict.update(fittingData)
-        data.update(paramFittingDict)
-        recordFittingKeys, recordFittingMaxListLen = listDictKeySet(data)
-        recordData = newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
-
-        record = pd.DataFrame(recordData)
-
-        name = "data/" + extendedLabel
-        outputFile = self.newFile(name, 'xlsx')
-        xlsxT = pd.ExcelWriter(outputFile)
-        # TODO: Remove the engine specification when moving to Python 3
-        record.to_excel(xlsxT, sheet_name='ParameterFits', engine='XlsxWriter')
-        xlsxT.save()
-
-
-### Utils
-def reframeListDicts(store, storeLabel=''):
+#%% Logging
+def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='log'):
     """
-    Take a list of dictionaries and turn it into a dictionary of lists
+    Sets up the style of logging for all the simulations
+
+    Parameters
+    ----------
+    dateStr : basestring
+        The date the log will start at
+    logFile : string, optional
+        Provides the path the log will be written to. Default "./log.txt"
+    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+        Defines the level of the log. Default logging.INFO
+    npErrResp : {'log', 'raise'}
+        Defines the response to numpy errors. Default ``log``. See numpy.seterr
+
+    Returns
+    -------
+    closeLoggers : function
+        Closes the logging systems that have been set up
+
+    See Also
+    --------
+    logging : The Python standard logging library
+    numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
+    """
+
+    class streamLoggerSim(object):
+        """
+        Fake file-like stream object that redirects writes to a logger instance.
+        Based on one found at:
+            http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
+        """
+        def __init__(self, logger, log_level=logging.INFO):
+            self.logger = logger
+            self.log_level = log_level
+            self.linebuf = ''
+
+        def write(self, buf):
+            for line in buf.rstrip().splitlines():
+                self.logger.log(self.log_level, line.rstrip())
+
+        # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
+        def flush(self):
+            try:
+                self.logger.flush()
+            except AttributeError:
+                pass
+
+    if logFile:
+        logging.basicConfig(filename=logFile,
+                            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                            datefmt='%m-%d %H:%M',
+                            level=logLevel,
+                            filemode='w')
+
+        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
+        console = logging.StreamHandler()
+        console.setLevel(logLevel)
+        console.setFormatter(consoleFormat)
+        consoleHandler = console
+        # add the handler to the root logger
+        logging.getLogger('').addHandler(console)
+    else:
+        logging.basicConfig(datefmt='%m-%d %H:%M',
+                            format='%(name)-12s %(levelname)-8s %(message)s',
+                            level=logLevel)
+
+    # Set the standard error output
+    sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
+    # Set the numpy error output and save the old one
+    oldnperrcall = seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
+    seterr(all=npErrResp)
+
+    logger = logging.getLogger("Setup")
+    logger.info(dateStr)
+    logger.info("Log initialised")
+    if logFile:
+        logger.info("The log you are reading was written to " + str(logFile))
+
+    # Finally, return a function that closes the loggers when necessary
+    def closeLoggers():
+        """
+        To run once everything has been completed.
+        """
+
+        message = "Experiment completed. Shutting down"
+        logger.info(message)
+
+        if logFile:
+            logger.removeHandler(consoleHandler)
+
+            logging.shutdown()
+            sys.stderr = sys.__stdout__
+            seterrcall(oldnperrcall)
+
+            root = logging.getLogger()
+            for h in root.handlers[:]:
+                h.close()
+                root.removeHandler(h)
+            for f in root.filters[:]:
+                f.close()
+                root.removeFilter(f)
+
+    return closeLoggers
+
+
+#%% Pickle
+def pickleRec(data, handle, fileNameGen):
+    """
+    Writes the data to a pickle file
+
+    Parameters
+    ----------
+    data : object
+        Data to be written to the file
+    handle : string
+        The name of the file
+    fileNameGen : function
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
+        returns one ``fileName`` string
+    """
+
+    outputFile = fileNameGen(handle, 'pkl')
+
+    with open(outputFile, 'w') as w:
+        pickle.dump(data, w)
+
+
+def pickleLog(results, fileNameGen, label="", save=True):
+    """
+    Stores the data in the appropriate pickle file in a Pickle subfolder of the outputting folder
+
+    Parameters
+    ----------
+    results : dict
+        The data to be stored
+    fileNameGen : function
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
+        returns one ``fileName`` string
+    label : string, optional
+        A label for the results file
+    """
+
+    if not fileNameGen:
+        return
+
+    # TODO: remove the pulling out of ``Name`` from inside this method and make it more explicit higher up
+    name = results["Name"]
+    if isinstance(name, basestring):
+        handle = 'Pickle/{}'.format(name)
+    else:
+        raise TypeError("The ``Name`` in the participant data is of type {} and not str".format(type(name)))
+
+    if label:
+        handle += label
+
+    pickleRec(results, handle, fileNameGen)
+
+
+#%% Utils
+def reframeListDicts(store, keySet=None, storeLabel=''):
+    """Take a list of dictionaries and turn it into a dictionary of lists
+    containing only the useful keys
 
     Parameters
     ----------
     store : list of dicts
         The dictionaries would be expected to have many of the same keys
+    keySet : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being included
     storeLabel : string, optional
         An identifier to be added to the beginning of each key string.
         Default is ''.
@@ -681,43 +415,10 @@ def reframeListDicts(store, storeLabel=''):
     See Also
     --------
     flatDictKeySet, newFlatDict
-    """
-
-    keySet = flatDictKeySet(store)
-
-    # For every key now found
-    newStore = newFlatDict(keySet, store, storeLabel)
-
-    return newStore
-
-
-def reframeSelectListDicts(store, keySet, storeLabel=''):
-    """Take a list of dictionaries and turn it into a dictionary of lists
-    containing only the useful keys
-
-    Parameters
-    ----------
-    store : list of dicts
-        The dictionaries would be expected to have many of the same keys
-    keySet : list of strings
-        The keys whose data will be included in the return dictionary
-    storeLabel : string, optional
-        An identifier to be added to the beginning of each key string.
-        Default is ''.
-
-    Returns
-    -------
-    newStore : dict of 1D lists
-        Any dictionary keys containing lists in the input have been split
-        into multiple numbered keys
-
-    See Also
-    --------
-    flatDictSelectKeySet, newFlatDict
 
     """
 
-    keySet = flatDictSelectKeySet(store, keySet)
+    keySet = flatDictKeySet(store, keySet=keySet)
 
     # For every key now found
     newStore = newFlatDict(keySet, store, storeLabel)
@@ -756,53 +457,7 @@ def dictData2Lists(store, storeLabel=''):
     return newStore
 
 
-def flatDictKeySet(store):
-    """
-    Generates a dictionary of keys and identifiers for the new dictionary,
-    splitting any keys with lists into a set of keys, one for each element
-    in the original key.
-
-    These are named <key><location>
-
-    Parameters
-    ----------
-    store : list of dicts
-        The dictionaries would be expected to have many of the same keys.
-        Any dictionary keys containing lists in the input have been split
-        into multiple numbered keys
-
-    Returns
-    -------
-    keySet : OrderedDict with values of OrderedDict, list or None
-        The dictionary of keys to be extracted
-
-    See Also
-    --------
-    reframeListDicts, newFlatDict
-    """
-
-    # Find all the keys
-    keySet = OrderedDict()
-
-    for s in store:
-        for k in s.iterkeys():
-            if k in keySet:
-                continue
-            v = s[k]
-            if isinstance(v, (list, ndarray)):
-                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=False)
-                if listSet is not NoneType:
-                    keySet[k] = listSet
-            elif isinstance(v, dict):
-                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=False)
-                keySet[k] = dictKeySet
-            else:
-                 keySet[k] = None
-
-    return keySet
-
-
-def flatDictSelectKeySet(store, keys):
+def flatDictKeySet(store, keys=None):
     """
     Generates a dictionary of keys and identifiers for the new dictionary,
     including only the keys in the keys list. Any keys with lists  will
@@ -816,8 +471,8 @@ def flatDictSelectKeySet(store, keys):
         The dictionaries would be expected to have many of the same keys.
         Any dictionary keys containing lists in the input have been split
         into multiple numbered keys
-    keys : list of strings
-        The keys whose data will be included in the return dictionary
+    keys : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which   results in all keys being returned
 
     Returns
     -------
@@ -826,24 +481,28 @@ def flatDictSelectKeySet(store, keys):
 
     See Also
     --------
-    reframeSelectListDicts, newFlatDict
+    reframeListDicts, newFlatDict
     """
 
-    # Find all the keys
     keySet = OrderedDict()
 
     for s in store:
-        sKeys = (k for k in s.iterkeys() if k in keys)
+        if keys:
+            sKeys = (k for k in s.iterkeys() if k in keys)
+            abridge = True
+        else:
+            sKeys = s.iterkeys()
+            abridge = False
         for k in sKeys:
             if k in keySet:
                 continue
             v = s[k]
             if isinstance(v, (list, ndarray)):
-                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=True)
+                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
                 if listSet is not NoneType:
                     keySet[k] = listSet
             elif isinstance(v, dict):
-                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=True)
+                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
                 keySet[k] = dictKeySet
             else:
                  keySet[k] = None
@@ -1058,6 +717,7 @@ def listSelection(data, loc):
 
     Returns
     -------
+    selection :
 
     Examples
     --------
@@ -1233,9 +893,14 @@ def date():
     Calculate today's date as a string in the form <year>-<month>-<day>
     and returns it
 
+    Returns
+    -------
+    todayDate : basestring
+        The current date in the format <year>-<month>-<day>
+
     """
-    d = dt.datetime(1987, 1, 14)
+    d = dt.datetime(1987, 1, 1)
     d = d.today()
-    todayDate = str(d.year) + "-" + str(d.month) + "-" + str(d.day)
+    todayDate = "{}-{}-{}".format(d.year, d.month, d.day)
 
     return todayDate

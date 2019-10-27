@@ -8,7 +8,7 @@ This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each successful investigation and storing it
 with the data.
 """
-### Import useful functions
+#%% Import useful functions
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
@@ -21,7 +21,7 @@ sys.path.append("/".join(codePath))  # So code can be found from the main folder
 from numpy import array, ones, repeat
 from collections import OrderedDict
 
-### Import all experiments, models, outputting and interface functions
+#%% Import all experiments, models and interface functions
 # The experiment factory
 from experiments import experiments
 # The experiments and stimulus processors
@@ -33,8 +33,6 @@ from models import models
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
-
-from outputting import outputting
 
 ### Set the outputting, model sets and experiment sets
 expParams = {}
@@ -70,18 +68,14 @@ paramExtras = {'numActions': numActions,
 
 modelSet = models((qLearn, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'qLearn_probSelectSimSet',
-                 'save': True,
-                 'saveScript': True,
-                 'pickleData': True,
-                 'simRun': True,
-                 'saveFittingProgress': False,
-                 'saveOneFile': False,
-                 'npErrResp': 'log'}  # 'raise','log'
-output = outputting(**outputOptions)
-
-### For simulating experiments
+#%% For simulating experiments
 
 from simulation import simulation
 
-simulation(expSets, modelSet, output)
+simulation(expSets,
+           modelSet,
+           simLabel='qLearn_probSelectSimSet',
+           save=True,
+           saveScript=True,
+           pickleData=True,
+           npSetErr="log") # 'raise','log'

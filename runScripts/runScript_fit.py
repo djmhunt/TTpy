@@ -8,7 +8,7 @@ This is a script with all the components for running an investigation. I would
 recommend making a copy of this for each successful investigation and storing it
 with the data.
 """
-### Import useful functions
+#%% Import useful functions
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
@@ -20,7 +20,7 @@ sys.path.append("/".join(codePath))  # So code can be found from the main folder
 # Other used function
 from numpy import ones
 
-### Import all experiments, models, outputting and interface functions
+#%% Import all experiments, models and interface functions
 # The experiments and stimulus processors
 from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
 
@@ -31,9 +31,7 @@ from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
 
-from outputting import outputting
-
-### Set the outputting and model sets
+#%% Set the model sets
 alpha = 0.5
 alphaBounds = (0, 1)
 beta = 0.5
@@ -54,20 +52,10 @@ paramExtras = {'numActions': numActions,
 
 modelSet = models((qLearn, parameters, paramExtras))
 
-outputOptions = {'simLabel': 'qLearn_probSelect_fromSim',
-                 'save': True,
-                 'saveScript': True,
-                 'pickleData': True,
-                 'simRun': False,
-                 'saveFittingProgress': True,
-                 'saveOneFile': False,
-                 'npErrResp': 'log'}  # 'raise','log'
-output = outputting(**outputOptions)
-
 bounds = {'alpha': alphaBounds,
           'beta': betaBounds}
 
-### For data fitting
+#%% For data fitting
 
 from dataFitting import dataFitting
 
@@ -79,7 +67,7 @@ from fitAlgs.simMethods.actReactFitter import fitter
 from fitAlgs.evolutionary import evolutionary
 
 # Import data
-dat = data("./Outputs/qLearn_probSelectSimSet_2018-4-19/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
+dat = data("./Outputs/qLearn_probSelectSimSet_2019-10-22/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
 
 for d in dat:
     d["validActions"] = d["ValidActions"].T
@@ -106,5 +94,14 @@ fitAlg = evolutionary(modSim,
                                         "r2": {"numParams": len(parameters), "randActProb": 1/numActions},
                                         "bayesFactor": {"numParams": len(parameters), "randActProb": 1/numActions}})
 
-# Run the data fitter
-dataFitting(modelSet, output, data=dat, fitter=fitAlg, partLabel='simID')
+#%% Run the data fitSim
+dataFitting(modelSet,
+            dat,
+            fitAlg,
+            partLabel='simID',
+            simLabel='qLearn_probSelect_fromSim',
+            save=True,
+            saveFittingProgress=True,
+            saveScript=True,
+            pickleData=True,
+            npSetErr='log')  # 'raise','log'
