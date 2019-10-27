@@ -19,19 +19,19 @@ from fitAlgs.boundFunc import scalarBound
 
 class basinhopping(fitAlg):
 
-    """The class for simMethods data using scipy.optimise.basinhopping
+    """The class for fitting data using scipy.optimise.basinhopping
 
     Parameters
     ----------
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the simMethod.
-        The value it returns proivides the fitter with its simMethods guide.
+        The name of the function used to calculate the quality of the fit.
+        The value it returns provides the fitter with its fit guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     method : string or list of strings, optional
-        The name of the simMethods method or list of names of simMethods method or
-        name of list of simMethods methods. Valid names found in the notes.
+        The name of the fitting method or list of names of fitting methods or
+        name of list of fitting methods. Valid names found in the notes.
         Default ``unconstrained``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
@@ -48,33 +48,33 @@ class basinhopping(fitAlg):
         as those that do not. Default is True
     boundSensitivity : int, optional
         Defines the smallest number of decimal places difference (so the
-        minimal difference) between a simMethod value and its related boundaries
-        before a simMethod value is considered different from a boundary. The default
+        minimal difference) between a fit value and its related boundaries
+        before a fit value is considered different from a boundary. The default
         is `5`. This is only valid if ``boundFit`` is ``False``
     calcCov : bool, optional
         Is the covariance calculated. Default ``True``
     extraFitMeasures : dict of dict, optional
-        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the simMethods method
+        The name of the fitting method
     unconstrained : list
-        The list of valid unconstrained simMethods methods
+        The list of valid unconstrained fitting methods
     constrained : list
-        The list of valid constrained simMethods methods
+        The list of valid constrained fitting methods
 
 
     Notes
     -----
     unconstrained = ['Nelder-Mead','Powell','CG','BFGS']
     constrained = ['L-BFGS-B','TNC','SLSQP']
-    Custom simMethods algorithms are also allowed in theory, but it has yet to be
+    Custom fitting algorithms are also allowed in theory, but it has yet to be
     implemented.
 
-    For each simMethods function a set of different starting parameters will be
+    For each fitting function a set of different starting parameters will be
     tried. These are the combinations of all the values of the different
     parameters. For each starting parameter provided a set of numStartPoints
     starting points will be chosen, surrounding the starting point provided. If
@@ -85,12 +85,9 @@ class basinhopping(fitAlg):
 
     See Also
     --------
-    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods method class, from
-                                    which this one inherits
-    simMethods.simMethod.simMethod : The general simMethods framework class
-    scipy.optimise.basinhopping : The simMethods class this wraps around
-    scipy.optimise.minimize : The simMethods class basinhopping wraps around
-
+    fitAlgs.fitAlg.fitAlg : The general fitting method class, from which this one inherits
+    filtAlgs.fitSims.fitSim : The general fitting class
+    scipy.optimise.basinhopping : The fitting class this wraps around
     """
 
     Name = 'basinhopping'
@@ -98,9 +95,9 @@ class basinhopping(fitAlg):
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.simMethod = simMethod
+        self.fitSim = fitSim
 
         method = kwargs.pop("method", None)
 
@@ -146,7 +143,7 @@ class basinhopping(fitAlg):
 
     def callback(self, x, f, accept):
         """
-        Used for storing the state after each stage of simMethods
+        Used for storing the state after each stage of fitter
 
         Parameters
         ----------
@@ -161,14 +158,14 @@ class basinhopping(fitAlg):
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the simMethods algorithms and starting parameters
+        Runs the model through the fitting algorithms and starting parameters
         and returns the best one.
 
         Parameters
         ----------
         sim : function
-            The function used by a simMethods algorithm to generate a simMethod for
-            given model parameters. One example is simMethod.fitness
+            The function used by a fitting algorithm to generate a fit for
+            given model parameters. One example is fitAlgs.fitAlg.fitness
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
@@ -177,17 +174,17 @@ class basinhopping(fitAlg):
         Returns
         -------
         fitParams : list of floats
-            The best simMethods parameters
+            The best fitting parameters
         fitQuality : float
-            The quality of the simMethod as defined by the quality function chosen.
+            The quality of the fit as defined by the quality function chosen.
         testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            simMethod qualities of these parameters. The dictionary contains the coordinates of the trial minimum, the
+            fit qualities of these parameters. The dictionary contains the coordinates of the trial minimum, the
             function value of the trial minimum and whether or not that minimum was accepted. Each is stored in a list.
 
         See Also
         --------
-        simMethod.fitness
+        fitAlgs.fitAlg.fitness
         """
 
         self.sim = sim

@@ -25,13 +25,13 @@ class leastsq(fitAlg):
     Parameters
     ----------
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the simMethod.
-        The value it returns provides the fitter with its simMethods guide.
+        The name of the function used to calculate the quality of the fit.
+        The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     bounds : dictionary of tuples of length two with floats, optional
-        The boundaries for simMethods. Default is ``None``, which
+        The boundaries for fitting. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
     method : {‘trf’, ‘dogbox’, ‘lm’}, optional
         Algorithm to perform minimization. Default ``dogbox``
@@ -41,28 +41,27 @@ class leastsq(fitAlg):
     calcCov : bool, optional
         Is the covariance calculated. Default ``True``
     extraFitMeasures : dict of dict, optional
-        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the simMethods method
+        The name of the fitting method
 
     See Also
     --------
-    simMethods.fitAlgs.fitAlg.fitAlg : The general simMethods method class, from
-                                    which this one inherits
-    simMethods.simMethod.simMethod : The general simMethods framework class
-    scipy.optimize.least_squares : The simMethods class this wraps around
+    fitAlgs.fitAlg.fitAlg : The general fitting method class, from which this one inherits
+    fitAlgs.fitSims.fitSim : The general fitting class
+    scipy.optimize.least_squares : The fitting class this wraps around
 
     """
 
     Name = 'leastsq'
 
-    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.simMethod = simMethod
+        self.fitSim = fitSim
 
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
@@ -92,14 +91,13 @@ class leastsq(fitAlg):
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the simMethods algorithms and starting parameters
-        and returns the best one.
+        Runs the model through the fitting algorithms and starting parameters and returns the best one.
 
         Parameters
         ----------
         sim : function
-            The function used by a simMethods algorithm to generate a simMethod for
-            given model parameters. One example is simMethod.fitness
+            The function used by a fitting algorithm to generate a fit for given model parameters. One example is
+            fitAlg.fitness
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
@@ -108,16 +106,16 @@ class leastsq(fitAlg):
         Returns
         -------
         fitParams : list of floats
-            The best simMethods parameters
+            The best fitting parameters
         fitQuality : float
-            The quality of the simMethod as defined by the quality function chosen.
+            The quality of the fit as defined by the quality function chosen.
         testedParams : tuple of two lists
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            simMethod qualities of these parameters.
+            fit qualities of these parameters.
 
         See Also
         --------
-        simMethod.fitness
+        fitAlgs.fitAlg.fitness
         """
 
         self.sim = sim
@@ -140,7 +138,7 @@ class leastsq(fitAlg):
             fitVal = optimizeResult.fun
 
         if optimizeResult.status == 0:
-            message = "Maximum number of simMethods evaluations has been exceeded. " \
+            message = "Maximum number of fitting evaluations has been exceeded. " \
                       "Returning the best results found so far: "
             message += "Params " + str(fitParams)
             message += " Fit quality " + str(fitVal)

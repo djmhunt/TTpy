@@ -63,7 +63,7 @@ from data import data
 
 from fitAlgs.boundFunc import infBound, scalarBound
 
-from fitAlgs.simMethods.actReactFitter import fitter
+from fitAlgs.fitSims import fitSim
 from fitAlgs.evolutionary import evolutionary
 
 # Import data
@@ -73,7 +73,7 @@ for d in dat:
     d["validActions"] = d["ValidActions"].T
 
 # Set up the model simulation
-modSim = fitter('Decisions',
+modSim = fitSim('Decisions',
                 'Rewards',
                 'ActionProb',
                 fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
@@ -94,7 +94,7 @@ fitAlg = evolutionary(modSim,
                                         "r2": {"numParams": len(parameters), "randActProb": 1/numActions},
                                         "bayesFactor": {"numParams": len(parameters), "randActProb": 1/numActions}})
 
-#%% Run the data fitSim
+#%% Run the data fitter
 dataFitting(modelSet,
             dat,
             fitAlg,

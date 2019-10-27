@@ -20,9 +20,9 @@ from utils import listMerGen, callableDetailsString
 from fitAlgs.fitAlg import fitAlg
 
 
-def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experiments=None, simLabel="Untitled", save=True, saveFittingProgress=False, saveScript=True, pickleData=False, logLevel=logging.INFO, npSetErr="log"):
+def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLabel="Untitled", save=True, saveFittingProgress=False, saveScript=True, pickleData=False, logLevel=logging.INFO, npSetErr="log"):
     """
-    A framework for fitting models to data for experiments, along with
+    A framework for fitting models to data for tasks, along with
     recording the data associated with the fits.
 
     Parameters
@@ -39,8 +39,6 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
         A dictionary of model settings whose values should vary from participant to participant based on the
         values found in the imported participant data files. The key is the label given in the participant data file,
         as a string, and the value is the associated label in the model, also as a string. Default ``{}``
-    experiments : experiments.experiments, optional
-        An experiment factory generating each of the different experiments being considered. Default ``None``
     simLabel : string, optional
         The label for the simulation
     save : bool, optional
@@ -52,7 +50,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
         will be copied to the log folder. Only works if save is set to ``True``
         Default ``True``
     pickleData : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, and participant is recorded.
         Default is ``False``
     logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default ``logging.INFO``
@@ -62,7 +60,6 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
 
     See Also
     --------
-    experiments.experiments : The experiments factory
     models.models : The model factory
     outputting.outputting : The outputting class
     fitAlgs.fitSims.fitSim : Abstract class for a method of fitting data
@@ -97,11 +94,6 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
         modelInitParamVars = modelInfo[1]
         modelOtherArgs = modelInfo[2]
 
-        if experiments is not None:
-            exp = experiments.create(0)
-        else:
-            exp = None
-
         for v in partModelVars.itervalues():
             modelOtherArgs[v] = "<Varies for each participant>"
 
@@ -120,15 +112,10 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
             message = "Beginning participant fit for participant %s"%(partName)
             logger.info(message)
 
-            modelFitted, fitQuality, fittingData = fitter.participant(model, (modelInitParamVars, modelOtherArgs), participant, exp=exp)
+            modelFitted, fitQuality, fittingData = fitter.participant(model, (modelInitParamVars, modelOtherArgs), participant)
 
             message = "Participant fitted"
             logger.debug(message)
-
-            if exp is not None:
-                expEvolution = exp.outputEvolution()
-            else:
-                expEvolution = None
 
             logModFittedParams(modelInitParamVars, modelFitted.params(), fitQuality, partName)
 
@@ -142,8 +129,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, experi
                                                    outputFolder=outputFolder,
                                                    fileNameGen=fileNameGen,
                                                    pickleData=pickleData,
-                                                   saveFittingProgress=saveFittingProgress,
-                                                   expData=expEvolution)
+                                                   saveFittingProgress=saveFittingProgress)
 
         modelID += 1
 

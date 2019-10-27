@@ -14,7 +14,7 @@ from numpy.linalg import inv, svd, LinAlgError
 from scipy.linalg import pinvh
 from itertools import izip
 
-import numdifftools as nd
+#import numdifftools as nd
 
 from utils import listMergeNP, callableDetailsString
 from fitAlgs.qualityFunc import qualFuncIdent
@@ -24,15 +24,15 @@ from utils import errorResp
 
 class fitAlg(object):
     """
-    The abstract class for simMethods data
+    The abstract class for fitting data
 
     Parameters
     ----------
-    simMethod : simMethods.fitAlgs.fitAlg instance
-        An instance of one of the simMethods algorithms
+    fitSim : fitAlgs.fitSims.fitSim instance
+        An instance of one of the fitting algorithms
     fitQualFunc : string, optional
-        The name of the function used to calculate the quality of the simMethod.
-        The value it returns provides the fitter with its simMethods guide.
+        The name of the function used to calculate the quality of the fit.
+        The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
     qualFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
@@ -44,35 +44,35 @@ class fitAlg(object):
         A function used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound``
     numStartPoints : int, optional
-        The number of starting points generated for each parameter. Only used with some simMethods algorithms
+        The number of starting points generated for each parameter. Only used with some fitting algorithms
         Default 4
     calcCov : bool, optional
-        Is the covariance calculated. Default ``True``
+        Is the covariance calculated. Default ``False``
     extraFitMeasures : dict of dict, optional
-        Dictionary of simMethod measures not used to simMethod the model, but to provide more information. The keys are the
+        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
         fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
     Name : string
-        The name of the simMethods method
+        The name of the fitting method
 
     See Also
     --------
-    simMethods.simMethod.simMethod : The general simMethods framework class
+    fitAlgs.fitSims.fitSim : The general fitting class
 
     """
 
     Name = 'none'
 
-    def __init__(self, simMethod, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
 
-        self.simMethod = simMethod
+        self.fitSim = fitSim
         self.boundCostFunc = boundCostFunc
         self.allBounds = bounds
         self.numStartPoints = kwargs.pop("numStartPoints", 4)
         self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.calcCovariance = kwargs.pop('calcCov', True)
+        self.calcCovariance = kwargs.pop('calcCov', False)
         if self.calcCovariance:
             br = kwargs.pop('boundRatio', 0.000001)
             self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
@@ -99,42 +99,39 @@ class fitAlg(object):
 
         return repr(self.info())
 
-    def participant(self, model, modelSetup, partData, exp=None):
+    def participant(self, model, modelSetup, partData):
         """
-        Fit participant data to a model for a given experiment
+        Fit participant data to a model for a given task
 
         Parameters
         ----------
         model : model.model.model inherited class
-            The model you wish to try and simMethod values to
+            The model you wish to try and fit values to
         modelSetup : (dict,dict)
             The first dictionary is the model initial parameters. The second
             are the other model parameters
         partData : dict
             The participant data
-        exp : experiment.experiment.experiment inherited class, optional
-            The experiment being fitted. If you are simMethods using
-            participant responses only it will not be used. Default ``None``
 
         Returns
         -------
         model : model.model.model inherited class instance
-            The model with the best simMethod parameters
+            The model with the best fit parameters
         fitQuality : float
-            Specifies the simMethod quality for this participant to the model
+            Specifies the fit quality for this participant to the model
         testedParams : tuple of OrderedDict and list
             They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-            simMethod qualities of these parameters.
+            fit qualities of these parameters.
         """
 
-        sim = self.simMethod.getSim(model, modelSetup, partData, exp=None)
+        sim = self.fitSim.getSim(model, modelSetup, partData)
 
-        mInitialParams = modelSetup[0].values() # These are passed seperately to define at this point the order of the parameters
+        mInitialParams = modelSetup[0].values() # These are passed separately to define at this point the order of the parameters
         mParamNames = modelSetup[0].keys()
 
         fitVals, fitQuality, fitInfo = self.fit(sim, mParamNames, mInitialParams[:])
 
-        modelRun = self.simMethod.fittedModel(*fitVals)
+        modelRun = self.fitSim.fittedModel(*fitVals)
 
         fitMeasures = self.extraMeasures(*fitVals)
 
@@ -160,15 +157,15 @@ class fitAlg(object):
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
-        Runs the model through the simMethods algorithms and starting parameters
+        Runs the model through the fitting algorithms and starting parameters
         and returns the best one. This is the abstract version that always
         returns ``(0,0)``
 
         Parameters
         ----------
         sim : function
-            The function used by a simMethods algorithm to generate a simMethod for
-            given model parameters. One example is ``simMethod.fitness``
+            The function used by a fitting algorithm to generate a fit for
+            given model parameters. One example is ``fitAlgs.fitAlg.fitness``
         mParamNames : list of strings
             The list of initial parameter names
         mInitialParams : list of floats
@@ -177,16 +174,16 @@ class fitAlg(object):
         Returns
         -------
         fitParams : list of floats
-            The best simMethods parameters
+            The best fitting parameters
         fitQuality : float
-            The quality of the simMethod as defined by the quality function chosen.
+            The quality of the fit as defined by the quality function chosen.
         testedParams : tuple of two lists
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
-            simMethod qualities of these parameters.
+            fit qualities of these parameters.
 
         See Also
         --------
-        simMethod.fitness
+        fitAlgs.fitAlg.fitness
 
         """
 
@@ -198,26 +195,26 @@ class fitAlg(object):
 
     def fitness(self, *params):
         """
-        Generates a simMethod quality value used by the simMethods function. This is the function passed to the simMethods function.
+        Generates a fit quality value used by the fitting function. This is the function passed to the fitting function.
 
         Parameters
         ----------
         *params : array of floats
-            The parameters proposed by the simMethods algorithm
+            The parameters proposed by the fitting algorithm
 
         Returns
         -------
         fitQuality : float
-            The simMethod quality value calculated using the fitQualFunc function
+            The fit quality value calculated using the fitQualFunc function
 
         See Also
         --------
-        simMethods.fitAlgs.qualityFunc : the module of fitQualFunc functions
+        fitAlgs.qualityFunc : the module of fitQualFunc functions
         fitAlg.invalidParams : Checks if the parameters are valid and if not returns ``inf``
-        simMethods.simMethod.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
+        fitAlgs.fitSims.fitSim.fitness : Runs the model simulation and returns the values used to calculate the fitQuality
 
         """
-        # This is because the simMethods functions return an array and we want a list
+        # This is because the fitting functions return an array and we want a list
         pms = list(*params)
 
         # Start by checking that the parameters are valid
@@ -241,12 +238,12 @@ class fitAlg(object):
         Parameters
         ----------
         *params : array of floats
-            The parameters proposed by the simMethods algorithm
+            The parameters proposed by the fitting algorithm
 
         Returns
         -------
         fitQuality : dict of float
-            The simMethod quality value calculated using the simMethod quality functions described in extraMeasures
+            The fit quality value calculated using the fit quality functions described in extraMeasures
 
         """
 
@@ -288,42 +285,32 @@ class fitAlg(object):
         #    cov = covariance(jac)
         else:
             inc = [self.hessInc[p] for p in mParamNames]
-            #jac = expand_dims(approx_fprime(paramvals, self.fitness, inc), axis=0)
+            # TODO : Check if this is correct or replace it with other methods
+            jac = expand_dims(approx_fprime(paramvals, self.fitness, inc), axis=0)
             #cov = covariance(jac)
-            #cov = inv(dot(jac.T, jac))
-
-            hessfunc = nd.Hessian(self.fitness, step=inc)
-            try:
-                hess = hessfunc(paramvals)
-                cov = inv(hess)
-            except LinAlgError:#("Singular matrix"):
-                cov = pinvh(hess)
-                message = errorResp()
-                logger = logging.getLogger('Fitter')
-                logger.warning(message + "\n. Covariance calculation failed. Switching to calculating it using a "
-                               + "Moore–Penrose pseudo-inverse")
+            cov = inv(dot(jac.T, jac))
 
         return cov
 
     def info(self):
         """
-        The information relating to the simMethods method used
+        The information relating to the fitting method used
 
-        Includes information on the simMethods algorithm used
+        Includes information on the fitting algorithm used
 
         Returns
         -------
         info : (dict,dict)
-            The simMethods info and the simMethods.fitAlgs info
+            The fitSims info and the fitAlgs.fitAlg info
 
         See Also
         --------
-        simMethods.fitAlgs.fitAlg.fitAlg.info
+        fitAlg.fitSims.fitSim.info
         """
 
-        simMethodInfo = self.simMethod.info()
+        fitSimInfo = self.fitSim.info()
 
-        return self.fitInfo, simMethodInfo
+        return self.fitInfo, fitSimInfo
 
     def setBounds(self, mParamNames):
         """
@@ -435,7 +422,7 @@ class fitAlg(object):
 
         else:
             if len(bounds) != len(initialParams):
-                raise ValueError('Bounds do not simMethod number of initial parameters', str(len(bounds)), str(len(initialParams)))
+                raise ValueError('Bounds do not fit the number of initial parameters', str(len(bounds)), str(len(initialParams)))
 
             startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in izip(initialParams, bounds))
 

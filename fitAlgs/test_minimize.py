@@ -13,7 +13,7 @@ from numpy import array
 
 from models import models
 from model.qLearn import qLearn
-from fitAlgs.simMethods.simMethod import simMethod
+from fitAlgs.fitSims import fitSim
 from fitAlgs.minimize import minimize
 
 #def test_an_exception():
@@ -90,7 +90,7 @@ def fitting():
         
     fitAlg = minimize(fitQualFunc="-2log", method='constrained', bounds={'alpha': (0, 1),'theta': (0, 5)})
 
-    fitFunc = simMethod('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
+    fitFunc = fitSim('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
     return fitFunc, fitAlg
     
