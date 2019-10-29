@@ -23,21 +23,22 @@ class Basic(experiment):
 
         kwargs = self.kwargs.copy()
 
-        self.T = kwargs.pop("trials", 100)
+        self.nbr_of_trials = kwargs.pop("trials", 100)
 
         self.parameters = {"Name": self.Name,
-                           "Trials": self.T}
+                           "Trials": self.nbr_of_trials}
 
-        self.t = -1
-        self.action = None
+        self.trial = -1  # start at -1 so first call to next will yield trial 0
+        self.action = None  # placeholder for what action is taken
 
-        self.recAction = [-1] * self.T
+        self.action_history = [-1] * self.nbr_of_trials
 
         return self
 
     def next(self):
         """
-        Produces the next stimulus for the iterator
+        the experiment class is an iterator [link to iterator documentation]
+        this function produces the next stimulus for the experiment iterator
 
         Returns
         -------
@@ -50,15 +51,15 @@ class Basic(experiment):
         StopIteration
         """
 
-        self.t += 1
+        self.trial += 1
 
-        if self.t ==self.T:
+        if self.trial == self.nbr_of_trials:
             raise StopIteration
 
-        nextStim = 1
+        nextStimulus = 1
         nextValidActions = (0, 1)
 
-        return nextStim, nextValidActions
+        return nextStimulus, nextValidActions
 
     def receiveAction(self, action):
         """
@@ -85,22 +86,22 @@ class Basic(experiment):
 
         results = self.parameters.copy()
 
-        results["partActions"] = self.recAction.copy()
+        results["participantActions"] = self.action_history.copy()
 
     def storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later
         """
 
-        self.recAction[self.t] = self.action
+        self.action_history[self.trial] = self.action
 
-def basicStimDirect():
+def basicStimulusDirect():
     """
     Processes the stimulus cues for models expecting just the event
 
     Returns
     -------
-    basicStim : function
+    basicStimulus : function
         The function returns a tuple of ``1`` and the observation.
 
     Attributes
@@ -113,20 +114,20 @@ def basicStimDirect():
     model.qLearn, model.qLearn2
     """
 
-    def basicStim(observation):
+    def basicStimulus(observation):
         return 1, 1
 
-    basicStim.Name = "basicStimDirect"
-    return basicStim
+    basicStimulus.Name = "basicStimulusDirect"
+    return basicStimulus
 
 
-def basicRewDirect():
+def basicRewardDirect():
     """
     Processes the reward for models expecting just the reward
 
     Returns
     -------
-    deckRew : function
+    basicReward : function
         The function expects to be passed a tuple containing the reward and the
         last action. The function returns the reward.
 
@@ -140,8 +141,8 @@ def basicRewDirect():
     model.qLearn, model.qLearn2
     """
 
-    def basicRew(reward, action, stimuli):
+    def basicReward(reward, action, stimuli):
         return reward
 
-    basicRew.Name = "basicRewDirect"
-    return basicRew
+    basicReward.Name = "basicRewardDirect"
+    return basicReward
