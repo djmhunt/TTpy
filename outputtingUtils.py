@@ -10,7 +10,7 @@ from numpy import array, ndarray, shape, size
 from collections import OrderedDict
 from types import NoneType
 
-from utils import newFile, listMerGen
+from utils import newFile, listMergeGen
 
 
 def exportClassData(data, parameters, outputFolder="./"):
@@ -236,7 +236,7 @@ def _genVarKeys(p, v):
     
     arrSets = [range(0, i) for i in shape(v)]
     # Now record each one
-    for genLoc in listMerGen(*arrSets):
+    for genLoc in listMergeGen(*arrSets):
         if len(genLoc) == 1:
             loc = genLoc[0]
         else:

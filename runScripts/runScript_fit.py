@@ -20,16 +20,25 @@ sys.path.append("/".join(codePath))  # So code can be found from the main folder
 # Other used function
 from numpy import ones
 
-#%% Import all experiments, models and interface functions
+#%% Import all experiments, models and fitting functions
 # The experiments and stimulus processors
 from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
 
 # The model factory
-from models import models
+from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
+
+# For importing the data
+from data import data
+
+#For data fitting
+from dataFitting import dataFitting
+from fitAlgs.boundFunc import infBound, scalarBound
+from fitAlgs.fitSims import fitSim
+from fitAlgs.evolutionary import evolutionary
 
 #%% Set the model sets
 alpha = 0.5
@@ -50,29 +59,18 @@ paramExtras = {'numActions': numActions,
                'rewFunc': probSelectRewDirect(),
                'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
-modelSet = models((qLearn, parameters, paramExtras))
+modelSet = ModelGen(qLearn, parameters, paramExtras)
 
 bounds = {'alpha': alphaBounds,
           'beta': betaBounds}
 
-#%% For data fitting
-
-from dataFitting import dataFitting
-
-from data import data
-
-from fitAlgs.boundFunc import infBound, scalarBound
-
-from fitAlgs.fitSims import fitSim
-from fitAlgs.evolutionary import evolutionary
-
-# Import data
-dat = data("./Outputs/qLearn_probSelectSimSet_2019-10-22/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
+#%% Import data
+dat = data("./Outputs/qLearn_probSelectSimSet_2019-10-29/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
 
 for d in dat:
     d["validActions"] = d["ValidActions"].T
 
-# Set up the model simulation
+#%% Set up the fitting
 modSim = fitSim('Decisions',
                 'Rewards',
                 'ActionProb',

@@ -23,18 +23,18 @@ from collections import OrderedDict
 
 #%% Import all experiments, models and interface functions
 # The experiment factory
-from experiments import experiments
+from experimentGenerator import ExperimentGen
 # The experiments and stimulus processors
 from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
 
 # The model factory
-from models import models
+from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
 
-### Set the outputting, model sets and experiment sets
+### Set the model sets and experiment sets
 expParams = {}
 expExtraParams = {'numActions': 6,
                   'learningLen': 200,
@@ -47,11 +47,11 @@ expExtraParams = {'numActions': 6,
                                                 ("E", 0.60),
                                                 ("F", 0.40)]),
                   'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
-expSets = experiments((probSelect, expParams, expExtraParams))
+expSets = ExperimentGen(probSelect, expParams, expExtraParams)
 
 numActions = 6
 numCues = 1
-repetitions = 30
+repetitions = 2
 alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
 betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
 
@@ -66,7 +66,7 @@ paramExtras = {'numActions': numActions,
                'rewFunc': probSelectRewDirect(),
                'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
-modelSet = models((qLearn, parameters, paramExtras))
+modelSet = ModelGen(qLearn, parameters, paramExtras)
 
 #%% For simulating experiments
 

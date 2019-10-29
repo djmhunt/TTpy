@@ -274,7 +274,7 @@ def listMergeNP(*args):
         return r.T
 
 
-def listMerGen(*args):
+def listMergeGen(*args):
     """Fast merging of lists of numbers
 
     Parameters
@@ -289,17 +289,17 @@ def listMerGen(*args):
 
     Examples
     --------
-    >>> for i in listMerGen(0.7): print(repr(i))
+    >>> for i in listMergeGen(0.7): print(repr(i))
     array([ 0.7])
-    >>> for i in listMerGen([0.7, 0.1]): print(repr(i))
+    >>> for i in listMergeGen([0.7, 0.1]): print(repr(i))
     array([ 0.7])
     array([ 0.1])
-    >>> for i in listMerGen([0.7, 0.1], [0.6]): print(repr(i))
+    >>> for i in listMergeGen([0.7, 0.1], [0.6]): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
-    >>> for i in listMerGen([0.7, 0.1], []): print(repr(i))
+    >>> for i in listMergeGen([0.7, 0.1], []): print(repr(i))
 
-    >>> for i in listMerGen([0.7, 0.1], 0.6): print(repr(i))
+    >>> for i in listMergeGen([0.7, 0.1], 0.6): print(repr(i))
     array([ 0.7,  0.6])
     array([ 0.1,  0.6])
     """

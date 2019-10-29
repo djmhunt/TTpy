@@ -19,7 +19,7 @@ from numpy import seterr, seterrcall, array, ndarray, shape, prod, size
 from collections import OrderedDict, defaultdict
 from types import NoneType
 
-from utils import listMerGen
+from utils import listMergeGen
 
 
 #%% Folder management
@@ -876,7 +876,7 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     # We need to calculate every combination of co-ordinates in the array
     arrSets = [range(0, i) for i in dataShape]
     # Now record each one
-    locList = [tuple(loc) for loc in listMerGen(*arrSets)]
+    locList = [tuple(loc) for loc in listMergeGen(*arrSets)]
     listItemLen = len(locList[0])
     if listItemLen == 1:
         returnList = array(locList)#.flatten()
