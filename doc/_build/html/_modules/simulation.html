@@ -9,11 +9,15 @@
     <title>simulation &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -43,8 +47,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
 
-<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">):</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">outputting</span>
+
+
+<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">experiments</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">simLabel</span><span class="o">=</span><span class="s2">&quot;Untitled&quot;</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saveScript</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npSetErr</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A framework for letting models interact with experiments and record the data</span>
 
@@ -54,15 +64,31 @@
 <span class="sd">        An experiment factory generating each of the different experiments being considered</span>
 <span class="sd">    models : models.models</span>
 <span class="sd">        A model factory generating each of the different models being considered</span>
-<span class="sd">    outputing : outputting.outputting</span>
+<span class="sd">    save : bool, optional</span>
+<span class="sd">        If true the data will be saved to files. Default ``True``</span>
+<span class="sd">    saveScript : bool, optional</span>
+<span class="sd">        If true a copy of the top level script running the current function</span>
+<span class="sd">        will be copied to the log folder. Only works if save is set to ``True``</span>
+<span class="sd">        Default ``True``</span>
+<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        Default is ``False``</span>
+<span class="sd">    simLabel : string, optional</span>
+<span class="sd">        The label for the simulation</span>
+<span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
+<span class="sd">        Defines the level of the log. Default ``logging.INFO``</span>
+<span class="sd">    npSetErr : {&#39;log&#39;, &#39;raise&#39;}</span>
+<span class="sd">        Defines the response to numpy errors. Default ``log``. See numpy.seterr</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    experiments.experiments, models.models, outputting.outputting</span>
+<span class="sd">    experiments.experiments, models.models</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+    <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">closeLoggers</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="n">simLabel</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">,</span> <span class="n">saveScript</span><span class="o">=</span><span class="n">saveScript</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">npSetErr</span><span class="o">=</span><span class="n">npSetErr</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
     <span class="n">simID</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -77,7 +103,7 @@
 
                 <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">expNum</span><span class="p">)</span>
 
-                <span class="n">outputting</span><span class="o">.</span><span class="n">logSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
+                <span class="n">logSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
                 <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment&quot;</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
@@ -95,19 +121,107 @@
                 <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed&quot;</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-                <span class="n">outputting</span><span class="o">.</span><span class="n">recordSim</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
-
-                <span class="c1">#outputting.plotModel(model.plot())</span>
+                <span class="n">recordSim</span><span class="p">(</span><span class="n">fileNameGen</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">)</span>
 
                 <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="c1">#outputting.plotModelSet(model.plotSet())</span>
+    <span class="n">closeLoggers</span><span class="p">()</span></div>
 
-        <span class="c1">#outputting.plotExperiment(exp.plot())</span>
 
-    <span class="c1">#outputting.plotExperimentSet(exp.plotSet())</span>
+<div class="viewcode-block" id="recordSim"><a class="viewcode-back" href="../simulation.html#simulation.recordSim">[docs]</a><span class="k">def</span> <span class="nf">recordSim</span><span class="p">(</span><span class="n">fileNameGen</span><span class="p">,</span> <span class="n">expData</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Records the data from an experiment-model run. Creates a pickled version</span>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fileNameGen : function</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string</span>
+<span class="sd">    expData : dict</span>
+<span class="sd">        The data from the experiment</span>
+<span class="sd">    modelData : dict</span>
+<span class="sd">        The data from the model</span>
+<span class="sd">    simID : basestring</span>
+<span class="sd">        The label identifying the simulation</span>
+<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        Default is ``False``</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    pickleLog : records the picked data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning simulation output processing&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_sim-&quot;</span> <span class="o">+</span> <span class="n">simID</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">simModelCSV</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pickleData</span><span class="p">:</span>
+        <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logSimParams"><a class="viewcode-back" href="../simulation.html#simulation.logSimParams">[docs]</a><span class="k">def</span> <span class="nf">logSimParams</span><span class="p">(</span><span class="n">expParams</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes to the log the description and the label of the experiment and model</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expParams : dict</span>
+<span class="sd">        The experiment parameters</span>
+<span class="sd">    modelParams : dict</span>
+<span class="sd">        The model parameters</span>
+<span class="sd">    simID : string</span>
+<span class="sd">        The identifier for each simulation.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    recordSimParams : Records these parameters for later use</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">expDesc</span> <span class="o">=</span> <span class="n">expParams</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+    <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">expDesc</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span>
+
+    <span class="n">modelDesc</span> <span class="o">=</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+    <span class="n">modelDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">modelDesc</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelDescriptors</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span> <span class="o">+</span> <span class="s2">&quot; contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expDesc</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">modelDesc</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+
+    <span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+    <span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="simModelCSV"><a class="viewcode-back" href="../simulation.html#simulation.simModelCSV">[docs]</a><span class="k">def</span> <span class="nf">simModelCSV</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">):</span>
+    <span class="c1"># type: (dict, basestring, function) -&gt; None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves the fitting data to a CSV file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modelData : dict</span>
+<span class="sd">        The data from the model</span>
+<span class="sd">    simID : string</span>
+<span class="sd">        The identifier for the simulation</span>
+<span class="sd">    fileNameGen : function</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">dictData2Lists</span><span class="p">(</span><span class="n">modelData</span><span class="p">)</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data/modelSim_&quot;</span> <span class="o">+</span> <span class="n">simID</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
+    <span class="n">record</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -146,7 +260,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

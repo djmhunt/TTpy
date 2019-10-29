@@ -9,11 +9,15 @@
     <title>model.modelTemplate &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -46,13 +50,11 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">reshape</span><span class="p">,</span> <span class="nb">sum</span>
 <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
 
-<span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="k">import</span> <span class="n">modelSetPlot</span>
-<span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="k">import</span> <span class="n">modelPlot</span>
-<span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="k">import</span> <span class="n">decSingle</span>
+<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">callableDetailsString</span>
 
 
-<div class="viewcode-block" id="model"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model">[docs]</a><span class="k">class</span> <span class="nc">model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="model"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model">[docs]</a><span class="k">class</span> <span class="nc">model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The model class is a general template for a model. It also contains</span>
@@ -103,7 +105,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decSingle</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genEventModifiers</span><span class="p">(</span><span class="n">kwargRemains</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
 
@@ -129,7 +132,7 @@
 
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="model.action"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.action"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the action of the model</span>
 
@@ -140,7 +143,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currActionSymbol</span></div>
 
-<div class="viewcode-block" id="model.observe"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.observe">[docs]</a>    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<div class="viewcode-block" id="model.observe"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.observe">[docs]</a>    <span class="k">def</span> <span class="nf">observe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the latest observation and decides what to do with it</span>
 
@@ -185,7 +188,6 @@
         <span class="c1"># Otherwise choose an action</span>
         <span class="n">lastAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
-            <span class="c1"># TODO implement the capacity to set what the defaultNonAction is</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseAction</span><span class="p">(</span><span class="n">expectedProbs</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">)</span>
@@ -193,7 +195,7 @@
         <span class="c1"># Now that the action has been chosen, add any reinforcement of the previous choice in the expectations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lastChoiceReinforcement</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.feedback"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+<div class="viewcode-block" id="model.feedback"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the reaction to the action and processes it</span>
 
@@ -210,7 +212,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">lastObservation</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.processEvent"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.processEvent">[docs]</a>    <span class="k">def</span> <span class="nf">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="model.processEvent"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.processEvent">[docs]</a>    <span class="k">def</span> <span class="nf">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Integrates the information from a stimulus, action, response set, regardless</span>
 <span class="sd">        of which of the three elements are present.</span>
@@ -248,7 +250,7 @@
         <span class="c1"># Use that discrepancy to update the model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updateModel</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuliFilter</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="model.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="model.rewardExpectation"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the expected reward for each action based on the stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
@@ -277,7 +279,7 @@
         <span class="c1"># stimuli = self.stimFunc(response, action, lastObservation=stimuli)</span>
         <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="model.delta"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="model.delta"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the comparison between the reward and the expectation</span>
 
@@ -301,24 +303,24 @@
 
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="model.updateModel"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+<div class="viewcode-block" id="model.updateModel"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        delta : float</span>
 <span class="sd">            The difference between the reward and the expected reward</span>
 <span class="sd">        action : int</span>
-<span class="sd">            The action chosen by the model in this timestep</span>
+<span class="sd">            The action chosen by the model in this trialstep</span>
 <span class="sd">        stimuli : list of float</span>
-<span class="sd">            The weights of the different stimuli in this timestep</span>
+<span class="sd">            The weights of the different stimuli in this trialstep</span>
 <span class="sd">        stimuliFilter : list of bool</span>
-<span class="sd">            A list describing if a stimulus cue is present in this timestep</span>
+<span class="sd">            A list describing if a stimulus cue is present in this trialstep</span>
 
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
         <span class="c1"># There is no model here</span>
 
-<div class="viewcode-block" id="model.calcProbabilities"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+<div class="viewcode-block" id="model.calcProbabilities"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the probabilities associated with the action</span>
 
@@ -337,7 +339,7 @@
 
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="model.actorStimulusProbs"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.actorStimulusProbs"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates in the model-appropriate way the probability of each action.</span>
 
@@ -350,7 +352,7 @@
 
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="model.chooseAction"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.chooseAction">[docs]</a>    <span class="k">def</span> <span class="nf">chooseAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
+<div class="viewcode-block" id="model.chooseAction"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.chooseAction">[docs]</a>    <span class="k">def</span> <span class="nf">chooseAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Chooses the next action and returns the associated probabilities</span>
 
@@ -373,6 +375,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="n">isnan</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;probabilities contain NaN&quot;</span><span class="p">)</span>
         <span class="n">decision</span><span class="p">,</span> <span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimulus</span><span class="o">=</span><span class="n">events</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="n">validActions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decision</span> <span class="o">=</span> <span class="n">decision</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currActionSymbol</span> <span class="o">=</span> <span class="n">decision</span>
@@ -380,7 +384,7 @@
 
         <span class="k">return</span> <span class="n">decisionCode</span><span class="p">,</span> <span class="n">decProbabilities</span></div>
 
-<div class="viewcode-block" id="model.overrideActionChoice"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.overrideActionChoice">[docs]</a>    <span class="k">def</span> <span class="nf">overrideActionChoice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="model.overrideActionChoice"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.overrideActionChoice">[docs]</a>    <span class="k">def</span> <span class="nf">overrideActionChoice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides a method for overriding the model action choice. This is used when fitting models to participant actions.</span>
 
@@ -393,21 +397,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">currActionSymbol</span> <span class="o">=</span> <span class="n">action</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionCode</span><span class="p">[</span><span class="n">action</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="model.choiceReflection"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.choiceReflection">[docs]</a>    <span class="k">def</span> <span class="nf">choiceReflection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.choiceReflection"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.choiceReflection">[docs]</a>    <span class="k">def</span> <span class="nf">choiceReflection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows the model to update its state once an action has been chosen.</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="model.lastChoiceReinforcement"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.lastChoiceReinforcement">[docs]</a>    <span class="k">def</span> <span class="nf">lastChoiceReinforcement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.lastChoiceReinforcement"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.lastChoiceReinforcement">[docs]</a>    <span class="k">def</span> <span class="nf">lastChoiceReinforcement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allows the model to update the reward expectation for the previous timestep given the choice made in this timestep</span>
+<span class="sd">        Allows the model to update the reward expectation for the previous trialstep given the choice made in this trialstep</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="model.actStimMerge"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.actStimMerge">[docs]</a>    <span class="k">def</span> <span class="nf">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actStimuliParam</span><span class="p">,</span> <span class="n">stimFilter</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="model.actStimMerge"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.actStimMerge">[docs]</a>    <span class="k">def</span> <span class="nf">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actStimuliParam</span><span class="p">,</span> <span class="n">stimFilter</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes the parameter to be merged by stimuli and filters it by the stimuli values</span>
 
@@ -432,8 +436,8 @@
         <span class="n">actionParams</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">actionParamSets</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actionParams</span></div>
-
-<div class="viewcode-block" id="model.outputEvolution"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">## TODO: Change the name of this to returnTaskState</span>
+<div class="viewcode-block" id="model.outputEvolution"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all the relevant data for this model</span>
 
@@ -446,7 +450,7 @@
 
         <span class="k">return</span> <span class="n">results</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.storeState"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.storeState"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        accessed later</span>
@@ -454,7 +458,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">storeStandardResults</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.standardResultOutput"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.standardResultOutput">[docs]</a>    <span class="k">def</span> <span class="nf">standardResultOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.standardResultOutput"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.standardResultOutput">[docs]</a>    <span class="k">def</span> <span class="nf">standardResultOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the relevant data expected from a model as well as the parameters for the current model</span>
 
@@ -472,7 +476,8 @@
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Stimuli&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recStimuli</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Rewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recReward</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Expectations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectations</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ExpectedRewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ExpectedReward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectedReward</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ExpectedRewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recExpectedRewards</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;ValidActions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recValidActions</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Decisions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDecision</span><span class="p">)</span>
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;UpdatedProbs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recProbabilities</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
@@ -481,7 +486,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="model.storeStandardResults"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.storeStandardResults">[docs]</a>    <span class="k">def</span> <span class="nf">storeStandardResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.storeStandardResults"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.storeStandardResults">[docs]</a>    <span class="k">def</span> <span class="nf">storeStandardResults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the store of standard results found across models</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -498,7 +503,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">currActionSymbol</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="model.genStandardParameters"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.genStandardParameters">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="model.genStandardParameters"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.genStandardParameters">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardParameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialises the standard parameters and variables for a model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -507,6 +512,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;numCritics&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">actionCode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;actionCodes&#39;</span><span class="p">,</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;nonAction&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="n">defaultPrior</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;prior&#39;</span><span class="p">,</span> <span class="n">defaultPrior</span><span class="p">)</span>
@@ -522,15 +529,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
 
 
 
         <span class="k">return</span> <span class="n">kwargs</span></div>
 
-<div class="viewcode-block" id="model.genStandardParameterDetails"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.genStandardParameterDetails">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardParameterDetails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.genStandardParameterDetails"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.genStandardParameterDetails">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardParameterDetails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates the standard parameters descibing the model as implemented.</span>
+<span class="sd">        Generates the standard parameters describing the model as implemented.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
@@ -538,11 +545,12 @@
                            <span class="s2">&quot;numCues&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">,</span>
                            <span class="s2">&quot;numCritics&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCritics</span><span class="p">,</span>
                            <span class="s2">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                           <span class="s2">&quot;nonAction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span><span class="p">,</span>
                            <span class="s2">&quot;actionCode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">actionCode</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
                            <span class="s2">&quot;stimFunc&quot;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">),</span>
                            <span class="s2">&quot;decFunc&quot;</span><span class="p">:</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">)}</span></div>
 
-<div class="viewcode-block" id="model.genStandardResultsStore"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.genStandardResultsStore">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardResultsStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.genStandardResultsStore"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.genStandardResultsStore">[docs]</a>    <span class="k">def</span> <span class="nf">genStandardResultsStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up the dictionary that stores the standard variables used to track a model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -560,7 +568,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionProb</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="model.params"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="model.genEventModifiers"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.genEventModifiers">[docs]</a>    <span class="k">def</span> <span class="nf">genEventModifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if any of the stimulus, reward or decision functions need to be initialised with parameters that might be</span>
+<span class="sd">        fitted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">eFunc</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">f</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">eFunc</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">eFunc</span>
+
+<div class="viewcode-block" id="model.params"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parameters of the model</span>
 
@@ -571,7 +600,11 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="model.setsimID"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.setsimID">[docs]</a>    <span class="k">def</span> <span class="nf">setsimID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">()</span>
+
+<div class="viewcode-block" id="model.setsimID"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.model.setsimID">[docs]</a>    <span class="k">def</span> <span class="nf">setsimID</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters</span>
@@ -583,41 +616,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div></div>
 
-<div class="viewcode-block" id="model.plot"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a plotting class relevant for this model</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        modelPlot : model.modelPlot</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelPlot</span></div>
-
-<div class="viewcode-block" id="model.plotSet"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.plotSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a plotting class relevant analysis of sets of results from this</span>
-<span class="sd">        model</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        modelSetPlot : model.modelSetPlot</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelSetPlot</span></div>
-
-<div class="viewcode-block" id="model.modelPlot"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.modelPlot">[docs]</a>    <span class="k">class</span> <span class="nc">modelPlot</span><span class="p">(</span><span class="n">modelPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a model&quot;&quot;&quot;</span></div>
-
-<div class="viewcode-block" id="model.modelSetPlot"><a class="viewcode-back" href="../../model.html#model.modelTemplate.model.modelSetPlot">[docs]</a>    <span class="k">class</span> <span class="nc">modelSetPlot</span><span class="p">(</span><span class="n">modelSetPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a set of models&quot;&quot;&quot;</span></div></div>
-
-
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.modelTemplate.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default stimulus processor. Does nothing.Returns ([1,0], None)</span>
 
@@ -643,7 +644,7 @@
     <span class="k">return</span> <span class="n">blankStimFunc</span></div>
 
 
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.html#model.modelTemplate.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
+<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default reward processor. Does nothing. Returns reward</span>
 
@@ -703,7 +704,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

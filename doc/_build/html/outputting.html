@@ -9,15 +9,18 @@
     <title>outputting module &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="outputtingUtils module" href="outputtingUtils.html" />
-    <link rel="prev" title="fitting.fitters package" href="fitting.fitters.html" /> 
+    <link rel="prev" title="fitAlgs.shgo module" href="fitAlgs.shgo.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,10 +32,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="outputtingUtils.html" title="outputtingUtils module"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="fitting.fitters.html" title="fitting.fitters package"
+          <a href="fitAlgs.shgo.html" title="fitAlgs.shgo module"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
@@ -43,9 +43,137 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-outputting">
-<span id="outputting-module"></span><h1>outputting module<a class="headerlink" href="#module-outputting" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
+  <div class="section" id="outputting-module">
+<h1>outputting module<a class="headerlink" href="#outputting-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>outputting Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-outputting"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code>(object[,&nbsp;dtype,&nbsp;copy,&nbsp;order,&nbsp;subok,&nbsp;ndmin])</td>
+<td>Create an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.date" title="outputting.date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">date</span></code></a>()</td>
+<td>Calculate today’s date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt; and returns it</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.dictData2Lists" title="outputting.dictData2Lists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dictData2Lists</span></code></a>(store[,&nbsp;storeLabel])</td>
+<td>Take a dictionary of arrays, values and lists and turn it into a dictionary of lists</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.dictKeyGen" title="outputting.dictKeyGen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dictKeyGen</span></code></a>(store[,&nbsp;maxListLen,&nbsp;returnList,&nbsp;…])</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param store:</th><td class="field-body">The dictionary to be broken down into keys</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">exists</span></code>(path)</td>
+<td>Test whether a path exists.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.fancyLogger" title="outputting.fancyLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fancyLogger</span></code></a>(dateStr[,&nbsp;logFile,&nbsp;logLevel,&nbsp;…])</td>
+<td>Sets up the style of logging for all the simulations</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.fileNameGenerator" title="outputting.fileNameGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fileNameGenerator</span></code></a>([outputFolder])</td>
+<td>Keeps track of filenames that have been used and generates the next unused one</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.flatDictKeySet" title="outputting.flatDictKeySet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatDictKeySet</span></code></a>(store[,&nbsp;keys])</td>
+<td>Generates a dictionary of keys and identifiers for the new dictionary, including only the keys in the keys list.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.folderSetup" title="outputting.folderSetup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">folderSetup</span></code></a>(label,&nbsp;dateStr[,&nbsp;pickleData,&nbsp;…])</td>
+<td>Identifies and creates the folder the data will be stored in</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">getcwd</span></code>()</td>
+<td>Return a string representing the current working directory.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.listDictKeySet" title="outputting.listDictKeySet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listDictKeySet</span></code></a>(store)</td>
+<td>Generates a dictionary of keys and identifiers for the new dictionary, splitting any keys with arrays into a set of keys, one for each column in the original key.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.listKeyGen" title="outputting.listKeyGen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listKeyGen</span></code></a>(data[,&nbsp;maxListLen,&nbsp;returnList,&nbsp;…])</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body">The list to be broken down</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerGen</span></code>(*args)</td>
+<td>Fast merging of lists of numbers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.listSelection" title="outputting.listSelection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listSelection</span></code></a>(data,&nbsp;loc)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param data:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedirs</span></code>(path&nbsp;[[,&nbsp;mode])</td>
+<td>Super-mkdir; create a leaf directory and all intermediate ones.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newFlatDict</span></code></a>(keySet,&nbsp;store,&nbsp;labelPrefix)</td>
+<td>Takes a list of dictionaries and returns a dictionary of 1D lists.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.newListDict" title="outputting.newListDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newListDict</span></code></a>(keySet,&nbsp;maxListLen,&nbsp;store,&nbsp;…)</td>
+<td>Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.pad" title="outputting.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pad</span></code></a>(vals,&nbsp;maxListLen)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.pickleLog" title="outputting.pickleLog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pickleLog</span></code></a>(results,&nbsp;fileNameGen[,&nbsp;label,&nbsp;save])</td>
+<td>Stores the data in the appropriate pickle file in a Pickle subfolder of the outputting folder</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.pickleRec" title="outputting.pickleRec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pickleRec</span></code></a>(data,&nbsp;handle,&nbsp;fileNameGen)</td>
+<td>Writes the data to a pickle file</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code>(a[,&nbsp;axis,&nbsp;dtype,&nbsp;out,&nbsp;keepdims,&nbsp;initial])</td>
+<td>Return the product of array elements over a given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#outputting.reframeListDicts" title="outputting.reframeListDicts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reframeListDicts</span></code></a>(store[,&nbsp;keySet,&nbsp;storeLabel])</td>
+<td>Take a list of dictionaries and turn it into a dictionary of lists containing only the useful keys</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#outputting.saving" title="outputting.saving"><code class="xref py py-obj docutils literal notranslate"><span class="pre">saving</span></code></a>(label[,&nbsp;save,&nbsp;pickleData,&nbsp;…])</td>
+<td>Creates the folder structure for the saved data and created the log file as <code class="docutils literal notranslate"><span class="pre">log.txt</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">seterr</span></code>([all,&nbsp;divide,&nbsp;over,&nbsp;under,&nbsp;invalid])</td>
+<td>Set how floating-point errors are handled.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">seterrcall</span></code>(func)</td>
+<td>Set the floating-point error callback function or log object.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code>(a)</td>
+<td>Return the shape of an array.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code>(a[,&nbsp;axis])</td>
+<td>Return the number of elements along a given axis.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">stack</span></code>([context])</td>
+<td>Return a list of records for the stack above the caller’s frame.</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-outputting"></span><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -58,6 +186,16 @@
 <code class="descclassname">outputting.</code><code class="descname">date</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate today’s date as a string in the form &lt;year&gt;-&lt;month&gt;-&lt;day&gt;
 and returns it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>todayDate</strong> – The current date in the format &lt;year&gt;-&lt;month&gt;-&lt;day&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">basestring</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -98,11 +236,11 @@ into multiple numbered keys</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The dictionary to be broken down into keys</li>
-<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>float with no decimal places</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If returnList is <code class="docutils literal notranslate"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal notranslate"><span class="pre">False</span></code>
+<li><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The dictionary to be broken down into keys</li>
+<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>float with no decimal places</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – If returnList is <code class="docutils literal notranslate"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal notranslate"><span class="pre">False</span></code>
 this should stay <code class="docutils literal notranslate"><span class="pre">None</span></code>. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>returnList</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>abridge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>returnList</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>abridge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -156,35 +294,76 @@ this should stay <code class="docutils literal notranslate"><span class="pre">No
 </dd></dl>
 
 <dl class="function">
-<dt id="outputting.flatDictKeySet">
-<code class="descclassname">outputting.</code><code class="descname">flatDictKeySet</code><span class="sig-paren">(</span><em>store</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#flatDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.flatDictKeySet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
-splitting any keys with lists into a set of keys, one for each element
-in the original key.</p>
-<p>These are named &lt;key&gt;&lt;location&gt;</p>
+<dt id="outputting.fancyLogger">
+<code class="descclassname">outputting.</code><code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>dateStr</em>, <em>logFile=u'./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the style of logging for all the simulations</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>store</strong> (<em>list of dicts</em>) – The dictionaries would be expected to have many of the same keys.
-Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dateStr</strong> (<em>basestring</em>) – The date the log will start at</li>
+<li><strong>logFile</strong> (<em>string</em><em>, </em><em>optional</em>) – Provides the path the log will be written to. Default “./log.txt”</li>
+<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default logging.INFO</li>
+<li><strong>npErrResp</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>keySet</strong> – The dictionary of keys to be extracted</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>closeLoggers</strong> – Closes the logging systems that have been set up</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">OrderedDict with values of OrderedDict, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a> or None</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">function</p>
+</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.reframeListDicts" title="outputting.reframeListDicts"><code class="xref py py-func docutils literal notranslate"><span class="pre">reframeListDicts()</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">newFlatDict()</span></code></a></p>
+<dl class="last docutils">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">logging()</span></code></dt>
+<dd>The Python standard logging library</dd>
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.seterr()</span></code></dt>
+<dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
+</dl>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="outputting.flatDictSelectKeySet">
-<code class="descclassname">outputting.</code><code class="descname">flatDictSelectKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#flatDictSelectKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.flatDictSelectKeySet" title="Permalink to this definition">¶</a></dt>
+<dt id="outputting.fileNameGenerator">
+<code class="descclassname">outputting.</code><code class="descname">fileNameGenerator</code><span class="sig-paren">(</span><em>outputFolder=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#fileNameGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.fileNameGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keeps track of filenames that have been used and generates the next unused one</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>outputFolder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder into which the new file will be placed. Default is the current working directory</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>newFileName</strong> – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fileNameGen</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">fileNameGenerator</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileNameGen</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="go">&#39;./a.b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileNameGen</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">)</span>
+<span class="go">&#39;./a_1.b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileNameGen</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="go">&#39;./&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileNameGen</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">fileNameGenerator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileName</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fileName</span> <span class="o">==</span> <span class="n">getcwd</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.flatDictKeySet">
+<code class="descclassname">outputting.</code><code class="descname">flatDictKeySet</code><span class="sig-paren">(</span><em>store</em>, <em>keys=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#flatDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.flatDictKeySet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
 including only the keys in the keys list. Any keys with lists  will
 be split into a set of keys, one for each element in the original key.</p>
@@ -197,21 +376,69 @@ be split into a set of keys, one for each element in the original key.</p>
 <li><strong>store</strong> (<em>list of dicts</em>) – The dictionaries would be expected to have many of the same keys.
 Any dictionary keys containing lists in the input have been split
 into multiple numbered keys</li>
-<li><strong>keys</strong> (<em>list of strings</em>) – The keys whose data will be included in the return dictionary</li>
+<li><strong>keys</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – The keys whose data will be included in the return dictionary. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which   results in all keys being returned</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>keySet</strong> – The dictionary of keys to be extracted</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">OrderedDict with values of OrderedDict, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a> or None</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">OrderedDict with values of OrderedDict, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)">None</a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.reframeSelectListDicts" title="outputting.reframeSelectListDicts"><code class="xref py py-func docutils literal notranslate"><span class="pre">reframeSelectListDicts()</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">newFlatDict()</span></code></a></p>
+<p class="last"><a class="reference internal" href="#outputting.reframeListDicts" title="outputting.reframeListDicts"><code class="xref py py-func docutils literal notranslate"><span class="pre">reframeListDicts()</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">newFlatDict()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="outputting.folderSetup">
+<code class="descclassname">outputting.</code><code class="descname">folderSetup</code><span class="sig-paren">(</span><em>label</em>, <em>dateStr</em>, <em>pickleData=False</em>, <em>basePath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#folderSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.folderSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies and creates the folder the data will be stored in</p>
+<p>Folder will be created as “./Outputs/&lt;simLabel&gt;_&lt;date&gt;/”. If that had
+previously been created then it is created as
+“./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/”, where “&lt;#&gt;” is the first
+available integer.</p>
+<p>A subfolder is also created with the name <code class="docutils literal notranslate"><span class="pre">Pickle</span></code> if  pickleData is
+true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>label</strong> (<em>basestring</em>) – The label for the simulation</li>
+<li><strong>dateStr</strong> (<em>basestring</em>) – The date identifier</li>
+<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>basePath</strong> (<em>basestring</em><em>, </em><em>optional</em>) – The path into which the new folder will be placed. Default is current working directory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>folderName</strong> – The folder path that has just been created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">newFolder</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">folderSetup</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;today&quot;</span><span class="p">,</span> <span class="n">basePath</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">newFolder</span>
+<span class="go">&#39;./Outputs/a_today/&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">newFile()</span></code></dt>
+<dd>Creates a new file</dd>
+<dt><a class="reference internal" href="#outputting.saving" title="outputting.saving"><code class="xref py py-func docutils literal notranslate"><span class="pre">saving()</span></code></a></dt>
+<dd>Creates the log system</dd>
+</dl>
 </div>
 </dd></dl>
 
@@ -226,7 +453,7 @@ in the original key.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The dictionary to be split up</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The dictionary to be split up</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
 <li><strong>keySet</strong> (<em>OrderedDict with values of OrderedDict, list or None</em>) – The dictionary of keys to be extracted</li>
@@ -250,11 +477,11 @@ in the original key.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>numpy.ndarray</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a>) – The list to be broken down</li>
-<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>float with no decimal places</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If returnList is <code class="docutils literal notranslate"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal notranslate"><span class="pre">False</span></code>
+<li><strong>data</strong> (<em>numpy.ndarray</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – The list to be broken down</li>
+<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>float with no decimal places</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – If returnList is <code class="docutils literal notranslate"><span class="pre">True</span></code> this should be the length of the longest list. If returnList is <code class="docutils literal notranslate"><span class="pre">False</span></code>
 this should stay <code class="docutils literal notranslate"><span class="pre">None</span></code>. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>returnList</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>abridge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>returnList</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the lists will be broken into 1D lists or values. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>abridge</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the final dataset will be a summary or the whole lot. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -300,10 +527,16 @@ this should stay <code class="docutils literal notranslate"><span class="pre">No
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> – </li>
 <li><strong>loc</strong> – </li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">selection</p>
 </td>
 </tr>
 </tbody>
@@ -330,7 +563,7 @@ put in its place</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>keySet</strong> (<em>OrderedDict with values of OrderedDict</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> or </em><em>None</em>) – The dictionary of keys to be extracted</li>
+<li><strong>keySet</strong> (<em>OrderedDict with values of OrderedDict</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The dictionary of keys to be extracted</li>
 <li><strong>store</strong> (<em>list of dicts</em>) – The dictionaries would be expected to have many of the same keys.
 Any dictionary keys containing lists in the input have been split
 into multiple numbered keys</li>
@@ -343,7 +576,7 @@ into multiple numbered keys</li>
 store.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
 </td>
 </tr>
 </tbody>
@@ -382,9 +615,9 @@ store.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>keySet</strong> (<em>OrderedDict with values of OrderedDict</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> or </em><em>None</em>) – The dictionary of keys to be extracted</li>
-<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The longest list in the dictionary</li>
-<li><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – A dictionary of numbers, strings, lists and arrays</li>
+<li><strong>keySet</strong> (<em>OrderedDict with values of OrderedDict</em><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The dictionary of keys to be extracted</li>
+<li><strong>maxListLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The longest list in the dictionary</li>
+<li><strong>store</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary of numbers, strings, lists and arrays</li>
 <li><strong>labelPrefix</strong> (<em>string</em>) – An identifier to be added to the beginning of each key string.</li>
 </ul>
 </td>
@@ -393,7 +626,7 @@ store.</p>
 1D lists.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)">dict</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
 </td>
 </tr>
 </tbody>
@@ -423,258 +656,22 @@ store.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="outputting.outputFig">
-<code class="descclassname">outputting.</code><code class="descname">outputFig</code><span class="sig-paren">(</span><em>fig</em>, <em>fileName</em>, <em>save=True</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputFig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputFig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the figure to a .png file and/or displays it on the screen.</p>
+<dt id="outputting.pad">
+<code class="descclassname">outputting.</code><code class="descname">pad</code><span class="sig-paren">(</span><em>vals</em>, <em>maxListLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#pad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.pad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="outputting.pickleLog">
+<code class="descclassname">outputting.</code><code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>fileNameGen</em>, <em>label=u''</em>, <em>save=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the data in the appropriate pickle file in a Pickle subfolder of the outputting folder</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fig</strong> (<em>MatPlotLib figure object</em>) – The figure to be output</li>
-<li><strong>fileName</strong> (<em>string</em>) – The file to be saved to</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
-<dt id="outputting.outputting">
-<em class="property">class </em><code class="descclassname">outputting.</code><code class="descname">outputting</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>An class which manages the outputting to the screen and to files of all
-data in any form for the simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data will be saved to files. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>saveScript</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If true a copy of the top level script running the current function
-will be copied to the log folder. Only works if save is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>silent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – States if a log is not written to stdout. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
-Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>simLabel</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation</li>
-<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default <code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code></li>
-<li><strong>maxLabelLength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em>, </em><em>optional</em>) – The maximum length of a label to be used as a reference for an
-individual model-experiment combination. Default 18</li>
-<li><strong>npErrResp</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
-<li><strong>saveFittingProgress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Specifies if the results from each iteration of the fitting process should be returned. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>saveFigures</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if figures are produced or not. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.date" title="outputting.date"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a></dt>
-<dd>Identifies today’s date</dd>
-<dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><code class="xref py py-class docutils literal notranslate"><span class="pre">saving</span></code></a></dt>
-<dd>Sets up the log file and folder to save results</dd>
-<dt><a class="reference internal" href="#outputting.outputting.fancyLogger" title="outputting.outputting.fancyLogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">fancyLogger</span></code></a></dt>
-<dd>Log creator</dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.seterr</span></code></dt>
-<dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
-</dl>
-</div>
-<dl class="method">
-<dt id="outputting.outputting.end">
-<code class="descname">end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.end" title="Permalink to this definition">¶</a></dt>
-<dd><p>To run once everything has been completed. Displays the figures if not
-silent.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.fancyLogger">
-<code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logFile=u'./log.txt'</em>, <em>logLevel=20</em>, <em>npErrResp=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.fancyLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets up the style of logging for all the simulations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>logFile</strong> (<em>string</em><em>, </em><em>optional</em>) – Provides the path the log will be written to. Default “./log.txt”</li>
-<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default logging.INFO</li>
-<li><strong>npErrResp</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">logging()</span></code></dt>
-<dd>The Python standard logging library</dd>
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.seterr()</span></code></dt>
-<dd>The function npErrResp is passed to for defining the response to numpy errors</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.folderSetup">
-<code class="descname">folderSetup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.folderSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.folderSetup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identifies and creates the folder the data will be stored in</p>
-<p>Folder will be created as “./Outputs/&lt;simLabel&gt;_&lt;date&gt;/”. If that had
-previously been created then it is created as
-“./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/”, where “&lt;#&gt;” is the first
-available integer.</p>
-<p>A subfolder is also created with the name <code class="docutils literal notranslate"><span class="pre">Pickle</span></code> if  pickleData is
-true.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.newFile" title="outputting.outputting.newFile"><code class="xref py py-meth docutils literal notranslate"><span class="pre">newFile()</span></code></a></dt>
-<dd>Creates a new file</dd>
-<dt><a class="reference internal" href="#outputting.outputting.saving" title="outputting.outputting.saving"><code class="xref py py-meth docutils literal notranslate"><span class="pre">saving()</span></code></a></dt>
-<dd>Creates the log system</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.getLogger">
-<code class="descname">getLogger</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.getLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.getLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a named logger stream</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>string</em>) – Name of the logger</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>logger</strong> – The named logger</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">logging.logger instance</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.logFittingParams">
-<code class="descname">logFittingParams</code><span class="sig-paren">(</span><em>fitInfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logFittingParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Records and outputs to the log the parameters associated with the fitting algorithms</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fitInfo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The details of the fitting</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.logModFittedParams">
-<code class="descname">logModFittedParams</code><span class="sig-paren">(</span><em>modelFitVars</em>, <em>modelParams</em>, <em>fitQuality</em>, <em>partName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logModFittedParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logModFittedParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Logs the model and experiment parameters that used as initial fitting
-conditions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>modelFitVars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The model parameters that have been fitted over and varied.</li>
-<li><strong>modelParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The model parameters for the fitted model</li>
-<li><strong>fitQuality</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The value of goodness of fit</li>
-<li><strong>partName</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>string</em>) – The identifier for each participant</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.logSimFittingParams">
-<code class="descname">logSimFittingParams</code><span class="sig-paren">(</span><em>modelName</em>, <em>modelFitVars</em>, <em>modelOtherArgs</em>, <em>expParams={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logSimFittingParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimFittingParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Logs the model and experiment parameters that used as initial fitting
-conditions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>modelName</strong> (<em>string</em>) – The name of the model</li>
-<li><strong>modelFitVars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The model parameters that will be fitted over and varied.</li>
-<li><strong>modelOtherArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The other parameters used in the model whose attributes have been
-modified by the user</li>
-<li><strong>expParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – The experiment parameters. Default <code class="docutils literal notranslate"><span class="pre">dict()</span></code></li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.logSimParams">
-<code class="descname">logSimParams</code><span class="sig-paren">(</span><em>expParams</em>, <em>modelParams</em>, <em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.logSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.logSimParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes to the log the description and the label of the experiment and model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>expParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The experiment parameters</li>
-<li><strong>modelParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The model parameters</li>
-<li><strong>simID</strong> (<em>string</em>) – The identifier for each simulation.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">recordSimParams()</span></code></dt>
-<dd>Records these parameters for later use</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.newFile">
-<code class="descname">newFile</code><span class="sig-paren">(</span><em>handle</em>, <em>extension</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.newFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.newFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>handle</strong> (<em>string</em>) – The file name</li>
-<li><strong>extension</strong> (<em>string</em>) – The extension of the file</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileName</strong> – The filename allowed for the file</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.pickleLog">
-<code class="descname">pickleLog</code><span class="sig-paren">(</span><em>results</em>, <em>label=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleLog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores the data in the appropriate pickle file in a Pickle subfolder
-of the outputting folder</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>results</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The data to be stored</li>
+<li><strong>results</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data to be stored</li>
+<li><strong>fileNameGen</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
 <li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em>) – A label for the results file</li>
 </ul>
 </td>
@@ -683,237 +680,38 @@ of the outputting folder</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="outputting.outputting.pickleRec">
-<code class="descname">pickleRec</code><span class="sig-paren">(</span><em>data</em>, <em>handle</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.pickleRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.pickleRec" title="Permalink to this definition">¶</a></dt>
+<dl class="function">
+<dt id="outputting.pickleRec">
+<code class="descclassname">outputting.</code><code class="descname">pickleRec</code><span class="sig-paren">(</span><em>data</em>, <em>handle</em>, <em>fileNameGen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#pickleRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.pickleRec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the data to a pickle file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.6)"><em>object</em></a>) – Data to be written to the file</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><em>object</em></a>) – Data to be written to the file</li>
 <li><strong>handle</strong> (<em>string</em>) – The name of the file</li>
+<li><strong>fileNameGen</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.recordFitting">
-<code class="descname">recordFitting</code><span class="sig-paren">(</span><em>fittingData</em>, <em>label</em>, <em>participant</em>, <em>partModelVars</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordFitting" title="Permalink to this definition">¶</a></dt>
-<dd><p>Records formatted versions of the fitting data</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fittingData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
-tested, in the order they were tested, and a list of the fit qualities of these parameters.</li>
-<li><strong>label</strong> (<em>basestring</em>) – The label used to identify the fit in the file names</li>
-<li><strong>participant</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The participant data</li>
-<li><strong>partModelVars</strong> (<em>dict of string</em>) – A dictionary of model settings whose values should vary from participant to participant based on the
-values found in the imported participant data files. The key is the label given in the participant data file,
-as a string, and the value is the associated label in the model, also as a string.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.recordParticipantFit">
-<code class="descname">recordParticipantFit</code><span class="sig-paren">(</span><em>participant</em>, <em>partName</em>, <em>modelData</em>, <em>modelName</em>, <em>fitQuality</em>, <em>fittingData</em>, <em>partModelVars</em>, <em>expData=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordParticipantFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordParticipantFit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Record the data relevant to the participant fitting</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>participant</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The participant data</li>
-<li><strong>partName</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a><em> or </em><em>string</em>) – The identifier for each participant</li>
-<li><strong>modelData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The data from the model</li>
-<li><strong>modelName</strong> (<em>basestring</em>) – The label given to the model</li>
-<li><strong>fitQuality</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The quality of the fit as provided by the fitting function</li>
-<li><strong>fittingData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
-tested, in the order they were tested, and a list of the fit qualities of these parameters</li>
-<li><strong>partModelVars</strong> (<em>dict of string</em>) – A dictionary of model settings whose values should vary from participant to participant based on the
-values found in the imported participant data files. The key is the label given in the participant data file,
-as a string, and the value is the associated label in the model, also as a string.</li>
-<li><strong>expData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – The data from the experiment. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.pickleLog" title="outputting.outputting.pickleLog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pickleLog()</span></code></a></dt>
-<dd>records the picked data</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.recordSim">
-<code class="descname">recordSim</code><span class="sig-paren">(</span><em>expData</em>, <em>modelData</em>, <em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.recordSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.recordSim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Records the data from an experiment-model run. Creates a pickled version</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>expData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The data from the experiment</li>
-<li><strong>modelData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The data from the model</li>
-<li><strong>simID</strong> (<em>basestring</em>) – The label identifying the simulation</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.pickleLog" title="outputting.outputting.pickleLog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pickleLog()</span></code></a></dt>
-<dd>records the picked data</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="outputting.outputting.saving">
-<code class="descname">saving</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#outputting.saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.outputting.saving" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the folder structure for the saved data and created the log file
-as log.txt</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="#outputting.outputting.folderSetup" title="outputting.outputting.folderSetup"><code class="xref py py-meth docutils literal notranslate"><span class="pre">folderSetup()</span></code></a></dt>
-<dd>creates the folders</dd>
-</dl>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="outputting.pad">
-<code class="descclassname">outputting.</code><code class="descname">pad</code><span class="sig-paren">(</span><em>vals</em>, <em>maxListLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#pad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.pad" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="outputting.plotExperiment">
-<code class="descclassname">outputting.</code><code class="descname">plotExperiment</code><span class="sig-paren">(</span><em>expInput</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#plotExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.plotExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the experiment data into the relevant plotting functions for the class</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>expInput</strong> (<em>(</em><a class="reference internal" href="experiment.html#experiment.experimentTemplate.experiment.experimentPlot" title="experiment.experimentTemplate.experiment.experimentPlot"><em>experiment.experimentPlot</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>)</em>) – The experiment’s experimentPlot class and a dictionary of plot
-attributes</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="experiment.html#module-experiment.experimentPlot" title="experiment.experimentPlot"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiment.experimentPlot()</span></code></a></dt>
-<dd>The template for experimentPlot class for each experiment</dd>
-<dt><a class="reference internal" href="#outputting.savePlots" title="outputting.savePlots"><code class="xref py py-func docutils literal notranslate"><span class="pre">savePlots()</span></code></a></dt>
-<dd>Saves the plots created by experimentPlot</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="outputting.plotExperimentSet">
-<code class="descclassname">outputting.</code><code class="descname">plotExperimentSet</code><span class="sig-paren">(</span><em>expInput</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#plotExperimentSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.plotExperimentSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the experiment set data into the relevant plotting functions for the class</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>expInput</strong> (<em>(</em><a class="reference internal" href="experiment.html#experiment.experimentTemplate.experiment.experimentSetPlot" title="experiment.experimentTemplate.experiment.experimentSetPlot"><em>experiment.experimentSetPlot</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>)</em>) – The experiment’s experimentSetPlot class and a dictionary of plot
-attributes</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="experiment.html#module-experiment.experimentSetPlot" title="experiment.experimentSetPlot"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiment.experimentSetPlot()</span></code></a></dt>
-<dd>The template for experimentSetPlot class for each experiment</dd>
-<dt><a class="reference internal" href="#outputting.savePlots" title="outputting.savePlots"><code class="xref py py-func docutils literal notranslate"><span class="pre">savePlots()</span></code></a></dt>
-<dd>Saves the plots created by experimentPlot</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="outputting.plotFitting">
-<code class="descclassname">outputting.</code><code class="descname">plotFitting</code><span class="sig-paren">(</span><em>paramSet</em>, <em>fittingData</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#plotFitting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.plotFitting" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="outputting.plotModel">
-<code class="descclassname">outputting.</code><code class="descname">plotModel</code><span class="sig-paren">(</span><em>modelPlot</em>, <em>saveFigures=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#plotModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.plotModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the model data into the relevant plotting functions for the class</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelPlot</strong> (<a class="reference internal" href="model.html#model.modelTemplate.model.modelPlot" title="model.modelTemplate.model.modelPlot"><em>model.modelPlot</em></a>) – The model’s modelPlot class</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="model.html#module-model.modelPlot" title="model.modelPlot"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.modelPlot()</span></code></a></dt>
-<dd>The template for modelPlot class for each model</dd>
-<dt><a class="reference internal" href="#outputting.savePlots" title="outputting.savePlots"><code class="xref py py-func docutils literal notranslate"><span class="pre">savePlots()</span></code></a></dt>
-<dd>Saves the plots created by modelPlot</dd>
-</dl>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="outputting.plotModelSet">
-<code class="descclassname">outputting.</code><code class="descname">plotModelSet</code><span class="sig-paren">(</span><em>modelSetPlot</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#plotModelSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.plotModelSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Feeds the model set data into the relevant plotting functions for the class</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelSetPlot</strong> (<a class="reference internal" href="model.html#model.modelTemplate.model.modelSetPlot" title="model.modelTemplate.model.modelSetPlot"><em>model.modelSetPlot</em></a>) – The model’s modelSetPlot class</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="model.html#module-model.modelSetPlot" title="model.modelSetPlot"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.modelSetPlot()</span></code></a></dt>
-<dd>The template for modelSetPlot class for each model</dd>
-<dt><a class="reference internal" href="#outputting.savePlots" title="outputting.savePlots"><code class="xref py py-func docutils literal notranslate"><span class="pre">savePlots()</span></code></a></dt>
-<dd>Saves the plots created by modelSetPlot</dd>
-</dl>
-</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="outputting.reframeListDicts">
-<code class="descclassname">outputting.</code><code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a list of dictionaries and turn it into a dictionary of lists</p>
+<code class="descclassname">outputting.</code><code class="descname">reframeListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet=None</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeListDicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a list of dictionaries and turn it into a dictionary of lists
+containing only the useful keys</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>store</strong> (<em>list of dicts</em>) – The dictionaries would be expected to have many of the same keys</li>
+<li><strong>keySet</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – The keys whose data will be included in the return dictionary. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in all keys being included</li>
 <li><strong>storeLabel</strong> (<em>string</em><em>, </em><em>optional</em>) – An identifier to be added to the beginning of each key string.
 Default is ‘’.</li>
 </ul>
@@ -935,57 +733,48 @@ into multiple numbered keys</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="outputting.reframeSelectListDicts">
-<code class="descclassname">outputting.</code><code class="descname">reframeSelectListDicts</code><span class="sig-paren">(</span><em>store</em>, <em>keySet</em>, <em>storeLabel=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#reframeSelectListDicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.reframeSelectListDicts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a list of dictionaries and turn it into a dictionary of lists
-containing only the useful keys</p>
+<dt id="outputting.saving">
+<code class="descclassname">outputting.</code><code class="descname">saving</code><span class="sig-paren">(</span><em>label</em>, <em>save=True</em>, <em>pickleData=False</em>, <em>saveScript=True</em>, <em>logLevel=20</em>, <em>npSetErr=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.saving" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the folder structure for the saved data and created the log file as <code class="docutils literal notranslate"><span class="pre">log.txt</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>store</strong> (<em>list of dicts</em>) – The dictionaries would be expected to have many of the same keys</li>
-<li><strong>keySet</strong> (<em>list of strings</em>) – The keys whose data will be included in the return dictionary</li>
-<li><strong>storeLabel</strong> (<em>string</em><em>, </em><em>optional</em>) – An identifier to be added to the beginning of each key string.
-Default is ‘’.</li>
+<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation</li>
+<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data will be saved to files. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>saveScript</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true a copy of the top level script running the current function
+will be copied to the log folder. Only works if save is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default <code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code></li>
+<li><strong>npSetErr</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newStore</strong> – Any dictionary keys containing lists in the input have been split
-into multiple numbered keys</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict of 1D lists</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>outputFolder</strong> (<em>basestring</em>) – The folder into which the data will be saved</li>
+<li><strong>fileNameGen</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
+<li><strong>closeLoggers</strong> (<em>function</em>) – Closes the logging systems that have been set up</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#outputting.flatDictSelectKeySet" title="outputting.flatDictSelectKeySet"><code class="xref py py-func docutils literal notranslate"><span class="pre">flatDictSelectKeySet()</span></code></a>, <a class="reference internal" href="#outputting.newFlatDict" title="outputting.newFlatDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">newFlatDict()</span></code></a></p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#outputting.folderSetup" title="outputting.folderSetup"><code class="xref py py-func docutils literal notranslate"><span class="pre">folderSetup()</span></code></a></dt>
+<dd>creates the folders</dd>
+</dl>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="outputting.savePlots">
-<code class="descclassname">outputting.</code><code class="descname">savePlots</code><span class="sig-paren">(</span><em>plots</em>, <em>save=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/outputting.html#savePlots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.savePlots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves a list of plots in the appropriate way</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plots</strong> (<em>list of</em><em> (</em><em>string</em><em>, </em><em>savable object</em><em>)</em>) – The currently accepted objects are matplotlib.pyplot.figure,
-pandas.DataFrame and xml.etree.ElementTree.ElementTree
-The string is the handle of the figure</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="vtkWriter.html#module-vtkWriter" title="vtkWriter"><code class="xref py py-func docutils literal notranslate"><span class="pre">vtkWriter()</span></code></a>, <a class="reference internal" href="plotting.html#module-plotting" title="plotting"><code class="xref py py-func docutils literal notranslate"><span class="pre">plotting()</span></code></a>, <code class="xref py py-func docutils literal notranslate"><span class="pre">matplotlib.pyplot.figure()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.DataFrame()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">pandas.DataFrame.to_excel()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">xml.etree.ElementTree.ElementTree()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">xml.etree.ElementTree.ElementTree.outputTrees()</span></code></p>
 </div>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -994,12 +783,20 @@ The string is the handle of the figure</td>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">outputting module</a><ul>
+<li><a class="reference internal" href="#id1">outputting Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="fitting.fitters.html"
-                        title="previous chapter">fitting.fitters package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="outputtingUtils.html"
-                        title="next chapter">outputtingUtils module</a></p>
+  <p class="topless"><a href="fitAlgs.shgo.html"
+                        title="previous chapter">fitAlgs.shgo module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -1033,17 +830,14 @@ The string is the handle of the figure</td>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="outputtingUtils.html" title="outputtingUtils module"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="fitting.fitters.html" title="fitting.fitters package"
+          <a href="fitAlgs.shgo.html" title="fitAlgs.shgo module"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

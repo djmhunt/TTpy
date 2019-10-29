@@ -5,16 +5,16 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import log2, sum, ones, exp, shape, amax, array, linspace, concatenate, prod, log
-from numpy.random import choice
-from collections import Callable
+import collections
 
-from utils import movingaverage
+import numpy as np
+
+import utils
 
 
 def qualFuncIdent(value, **kwargs):
 
-    if isinstance(value, Callable):
+    if isinstance(value, collections.Callable):
         fitness = value
     elif value == "BIC":
         fitness = BIC2(**kwargs)
@@ -52,7 +52,7 @@ def simpleSum(modVals):
         The sum of the model values returned
     """
 
-    return sum(modVals)
+    return np.sum(modVals)
 
 
 def logprob(modVals):
@@ -66,11 +66,11 @@ def logprob(modVals):
         The sum of the model values returned
     """
 
-    logModCoiceprob = log2(modVals)
+    logModCoiceprob = np.log2(modVals)
 
     probs = -2*logModCoiceprob
 
-    fit = sum(probs)
+    fit = np.sum(probs)
 
     return fit
 
@@ -86,11 +86,11 @@ def logeprob(modVals):
         The sum of the model values returned
     """
 
-    logModCoiceprob = log(modVals)
+    logModCoiceprob = np.log(modVals)
 
     probs = -logModCoiceprob
 
-    fit = sum(probs)
+    fit = np.sum(probs)
 
     return fit
 
@@ -106,13 +106,13 @@ def logAverageProb(modVals):
         The sum of the model values returned
     """
 
-    correctedVals = movingaverage(modVals, 3, edgeCorrection=True)
+    correctedVals = utils.movingaverage(modVals, 3, edgeCorrection=True)
 
-    logModCoiceprob = log2(correctedVals)
+    logModCoiceprob = np.log2(correctedVals)
 
     probs = -2 * logModCoiceprob
 
-    fit = sum(probs)
+    fit = np.sum(probs)
 
     return fit
 
@@ -128,7 +128,7 @@ def maxprob(modVals):
         The sum of the model values returned
     """
 
-    fit = sum(1-modVals)
+    fit = np.sum(1-modVals)
 
     return fit
 
@@ -152,8 +152,8 @@ def BIC2(**kwargs):
 
     def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
-        BICmod = numParams * log2(numSamples) + logprob(modVals)
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
+        BICmod = numParams * np.log2(numSamples) + logprob(modVals)
         return BICmod
 
     BICfunc.Name = "BIC2"
@@ -167,8 +167,8 @@ def bayesRand(**kwargs):
 
     def BICfunc(modVals, **kwargs):
 
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
-        BICrand = logprob(ones(numSamples) * randActProb)
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
+        BICrand = logprob(np.ones(numSamples) * randActProb)
         return BICrand
 
     BICfunc.Name = "bayesRand"
@@ -196,7 +196,7 @@ def bayesFactor(**kwargs):
     BICrandfunc = bayesRand(randActProb=randActProb)
 
     def bayesFunc(modVals, **kwargs):
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
         BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
         BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
 
@@ -255,7 +255,7 @@ def bayesInv(**kwargs):
             The sum of the model values returned
         """
 
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
 
         # We define the Bayesian Information Criteria for the probability of the model given the data, relative a
         # guessing model
@@ -283,7 +283,7 @@ def r2(**kwargs):
     BICrandfunc = bayesRand(randActProb=randActProb)
 
     def r2func(modVals, **kwargs):
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
         BICmod = kwargs.get('BICmod', BICmodfunc(modVals, numSamples=numSamples))
         BICrandom = kwargs.get('BICrand', BICrandfunc(modVals, numSamples=numSamples))
 
@@ -341,7 +341,7 @@ def BIC2norm(**kwargs):
             The sum of the model values returned
         """
 
-        numSamples = kwargs.get('numSamples', amax(shape(modVals)))
+        numSamples = kwargs.get('numSamples', np.amax(np.shape(modVals)))
 
         # We define the Bayesian Information Criteria for the probability of the model given the data, relative a
         # guessing model
@@ -412,24 +412,24 @@ def BIC2normBoot(**kwargs):
             The sum of the model valaues returned
         """
 
-        sample = array(modVals).squeeze()
+        sample = np.array(modVals).squeeze()
 
         # Calculate the resampled modVals
         numVals = sample.shape
         T = max(numVals)
-        probdist = linspace(2 / (T * (T + 1)), 2 / (T + 1), T)
-        choices = choice(range(T), size=numSamples, p=probdist)
-        modValsExtra = array([sample[i: i + sampleLen] for i in choices]).squeeze()
+        probdist = np.linspace(2 / (T * (T + 1)), 2 / (T + 1), T)
+        choices = np.random.choice(range(T), size=numSamples, p=probdist)
+        modValsExtra = np.array([sample[i: i + sampleLen] for i in choices]).squeeze()
 
-        extendedSample = concatenate((sample, modValsExtra))
+        extendedSample = np.concatenate((sample, modValsExtra))
 
-        numTrials = shape(extendedSample)
+        numTrials = np.shape(extendedSample)
 
         # We define the Bayesian Information Criteria for the probability of the model given the data, relative a
         # guessing model
 
-        BICval = numParams * log2(amax(numTrials)) + logprob(extendedSample)
-        BICrandom = logprob(ones(numTrials) * randActProb)
+        BICval = numParams * np.log2(np.amax(numTrials)) + logprob(extendedSample)
+        BICrandom = logprob(np.ones(numTrials) * randActProb)
         qualityConvertor = qualityThreshold**(2/BICrandom)
 
         fit = qualityConvertor * 2**(BICval/BICrandom - 1)
@@ -474,10 +474,10 @@ def WBIC2(**kwargs):
             The sum of the model values returned
         """
 
-        numSamples = shape(modVals)
+        numSamples = np.shape(modVals)
 
-        temp = 1 / (log2(amax(numSamples)))
-        fit = 1 + logprob(modVals) / prod(modVals**temp)
+        temp = 1 / (np.log2(np.amax(numSamples)))
+        fit = 1 + logprob(modVals) / np.prod(modVals**temp)
 
         return fit
 

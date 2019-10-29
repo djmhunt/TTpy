@@ -8,13 +8,10 @@ Code
    dataFitting
    experiment
    experiments
-   fitting
+   fitAlgs
    model
    models
    outputting
    outputtingUtils
-   participants
-   plotting
    simulation
    utils
-   vtkWriter

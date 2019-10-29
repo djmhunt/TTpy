@@ -1,0 +1,379 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>model.MS_rev module &#8212; pyHPDM 0.9 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="model.OpAL module" href="model.OpAL.html" />
+    <link rel="prev" title="model.MS module" href="model.MS.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.OpAL.html" title="model.OpAL module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model.MS.html" title="model.MS module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="model.html" accesskey="U">model package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-model.MS_rev">
+<span id="model-ms-rev-module"></span><h1>model.MS_rev module<a class="headerlink" href="#module-model.MS_rev" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the paper Jumping to conclusions: a network model predicts schizophrenic patients’ performance on a probabilistic reasoning task.
+Moore, S. C., &amp; Sellen, J. L. (2006).
+Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9.
+Retrieved from <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/17458441">http://www.ncbi.nlm.nih.gov/pubmed/17458441</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">In the original paper this model used a modified Luce choice
+algorithm, rather than the logistic algorithm used here.</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.MS_rev.MS_rev">
+<em class="property">class </em><code class="descclassname">model.MS_rev.</code><code class="descname">MS_rev</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<p>An adapted version of the Morre &amp; Sellen model</p>
+<dl class="attribute">
+<dt id="model.MS_rev.MS_rev.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.MS_rev.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the class used when recording what has been used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="model.MS_rev.MS_rev.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.MS_rev.MS_rev.currAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current action chosen by the model. Used to pass participant action
+to model when fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter</li>
+<li><strong>beta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Sensitivity parameter for probabilities</li>
+<li><strong>invBeta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Inverse of sensitivity parameter.
+Defined as <span class="math notranslate nohighlight">\(\frac{1}{\beta+1}\)</span>. Default <code class="docutils literal notranslate"><span class="pre">0.2</span></code></li>
+<li><strong>eta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Decision threshold parameter</li>
+<li><strong>numActions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
+Default 2.</li>
+<li><strong>numCues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
+<dd>Default 1.</dd>
+</dl>
+</li>
+<li><strong>numCritics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
+Default numActions*numCues</li>
+<li><strong>actionCodes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
+task or dataset and references used in the models to describe the order
+in which the action information is stored.</li>
+<li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
+Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></li>
+<li><strong>activity</strong> (<em>array</em><em>, </em><em>optional</em>) – The initialisation of the <cite>activity</cite> of the neurons. The values are between <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code>
+Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics</span></code></li>
+<li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</li>
+<li><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
+understand. Default is blankRew</li>
+<li><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.binary.decEta</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt>
+<code class="descname">Name</code><em class="property"> = 'MS_rev'</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates in the model-appropriate way the probability of each action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probabilities</strong> – The probabilities associated with the action choices</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the probabilities associated with the actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>actionValues</strong> (<em>1D ndArray of floats</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>probArray</strong> – The probabilities associated with the actionValues</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the comparison between the reward and the expectation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</li>
+<li><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</li>
+<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">delta</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the reward based on the action and stimuli</p>
+<p>This contains parts that are experiment dependent</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</li>
+<li><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</li>
+<li><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be accessed later</p>
+<p>The stored variables are ones that describe the model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.MS_rev.MS_rev.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.MS_rev.blankRew">
+<code class="descclassname">model.MS_rev.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.blankRew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default reward processor. Does nothing. Returns reward</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.MS_rev.Name">
+<code class="descclassname">model.MS_rev.</code><code class="descname">Name</code><a class="headerlink" href="#model.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The identifier of the function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.MS_rev.blankStim">
+<code class="descclassname">model.MS_rev.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return [1,0].</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt>
+<code class="descclassname">model.MS_rev.</code><code class="descname">Name</code></dt>
+<dd><p>The identifier of the function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="model.MS.html"
+                        title="previous chapter">model.MS module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="model.OpAL.html"
+                        title="next chapter">model.OpAL module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model.MS_rev.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.OpAL.html" title="model.OpAL module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="model.MS.html" title="model.MS module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="model.html" >model package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

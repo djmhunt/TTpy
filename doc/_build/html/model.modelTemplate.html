@@ -1,0 +1,612 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>model.modelTemplate module &#8212; pyHPDM 0.9 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="model.qLearn module" href="model.qLearn.html" />
+    <link rel="prev" title="model.RVPM module" href="model.RVPM.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.qLearn.html" title="model.qLearn module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="model.RVPM.html" title="model.RVPM module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="model.html" accesskey="U">model package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-model.modelTemplate">
+<span id="model-modeltemplate-module"></span><h1>model.modelTemplate module<a class="headerlink" href="#module-model.modelTemplate" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="model.modelTemplate.blankRew">
+<code class="descclassname">model.modelTemplate.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.blankRew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default reward processor. Does nothing. Returns reward</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="model.modelTemplate.Name">
+<code class="descclassname">model.modelTemplate.</code><code class="descname">Name</code><a class="headerlink" href="#model.modelTemplate.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The identifier of the function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="model.modelTemplate.blankStim">
+<code class="descclassname">model.modelTemplate.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.blankStim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default stimulus processor. Does nothing.Returns ([1,0], None)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>blankStimFunc</strong> (<em>function</em>) – The function expects to be passed the event and then return [1,0].</li>
+<li><strong>currAction</strong> (<em>int</em>) – The current action chosen by the model. Used to pass participant action
+to model when fitting</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt>
+<code class="descclassname">model.modelTemplate.</code><code class="descname">Name</code></dt>
+<dd><p>The identifier of the function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="model.modelTemplate.model">
+<em class="property">class </em><code class="descclassname">model.modelTemplate.</code><code class="descname">model</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The model class is a general template for a model. It also contains
+universal methods used by all models.</p>
+<dl class="attribute">
+<dt id="model.modelTemplate.model.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.modelTemplate.model.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the class used when recording what has been used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="model.modelTemplate.model.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.modelTemplate.model.currAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current action chosen by the model. Used to pass participant action
+to model when fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>numActions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
+Default 2.</li>
+<li><strong>numCues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
+<dd>Default 1.</dd>
+</dl>
+</li>
+<li><strong>numCritics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
+Default numActions*numCues</li>
+<li><strong>actionCodes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
+task or dataset and references used in the models to describe the order
+in which the action information is stored.</li>
+<li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,1]</span></code>, optional) – The prior probability of of the states being the correct one.
+Default <code class="docutils literal notranslate"><span class="pre">ones((self.numActions,</span> <span class="pre">self.numCues))</span> <span class="pre">/</span> <span class="pre">self.numCritics)</span></code></li>
+<li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</li>
+<li><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
+understand. Default is blankRew</li>
+<li><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
+in to a decision.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt>
+<code class="descname">Name</code><em class="property"> = u'modelTemplate'</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.actStimMerge">
+<code class="descname">actStimMerge</code><span class="sig-paren">(</span><em>actStimuliParam</em>, <em>stimFilter=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.actStimMerge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.actStimMerge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the parameter to be merged by stimuli and filters it by the stimuli values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>actStimuliParam</strong> (<em>list of floats</em>) – <dl class="docutils">
+<dt>The list of values representing each action stimuli pair, where the stimuli will have their filtered</dt>
+<dd>values merged together.</dd>
+</dl>
+</li>
+<li><strong>stimFilter</strong> (<em>array of floats</em><em> or </em><em>a float</em><em>, </em><em>optional</em>) – The list of active stimuli with their weightings or one weight for all.
+Default <code class="docutils literal notranslate"><span class="pre">1</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>actionParams</strong> – The parameter values associated with each action</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of floats</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.action">
+<code class="descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the action of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">integer or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)">None</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates in the model-appropriate way the probability of each action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probabilities</strong> – The probabilities associated with the action choices</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the probabilities associated with the action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>actionValues</strong> (<em>1D ndArray of floats</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>probArray</strong> – The probabilities associated with the actionValues</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.choiceReflection">
+<code class="descname">choiceReflection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.choiceReflection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.choiceReflection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the model to update its state once an action has been chosen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.chooseAction">
+<code class="descname">chooseAction</code><span class="sig-paren">(</span><em>probabilities</em>, <em>lastAction</em>, <em>events</em>, <em>validActions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.chooseAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.chooseAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chooses the next action and returns the associated probabilities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>probabilities</strong> (<em>list of floats</em>) – The probabilities associated with each combinations</li>
+<li><strong>lastAction</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The last chosen action</li>
+<li><strong>events</strong> (<em>list of floats</em>) – The stimuli. If probActions is True then this will be unused as the probabilities will already be</li>
+<li><strong>validActions</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>newAction</strong> (<em>int</em>) – The chosen action</li>
+<li><strong>decProbabilities</strong> (<em>list of floats</em>) – The weights for the different actions</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the comparison between the reward and the expectation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</li>
+<li><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</li>
+<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">delta</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.feedback">
+<code class="descname">feedback</code><span class="sig-paren">(</span><em>response</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.feedback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the reaction to the action and processes it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>response</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The response from the experiment after an action. Returns without doing
+anything if the value of response is <cite>None</cite>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.genEventModifiers">
+<code class="descname">genEventModifiers</code><span class="sig-paren">(</span><em>kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.genEventModifiers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.genEventModifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if any of the stimulus, reward or decision functions need to be initialised with parameters that might be
+fitted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.genStandardParameterDetails">
+<code class="descname">genStandardParameterDetails</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.genStandardParameterDetails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.genStandardParameterDetails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the standard parameters describing the model as implemented.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.genStandardParameters">
+<code class="descname">genStandardParameters</code><span class="sig-paren">(</span><em>kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.genStandardParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.genStandardParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialises the standard parameters and variables for a model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.genStandardResultsStore">
+<code class="descname">genStandardResultsStore</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.genStandardResultsStore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.genStandardResultsStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up the dictionary that stores the standard variables used to track a model</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.lastChoiceReinforcement">
+<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the model to update the reward expectation for the previous trialstep given the choice made in this trialstep</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.observe">
+<code class="descname">observe</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.observe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receives the latest observation and decides what to do with it</p>
+<p>There are five possible states:
+Observation
+Observation Action
+Observation Action Feedback
+Action Feedback
+Observation Feedback</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> (<em>tuple of</em><em> (</em><em>{int | float | tuple}</em><em>,</em><em>{tuple of int | None}</em><em>)</em>) – The stimulus from the experiment followed by the tuple of valid
+actions. Passes the values onto a processing function,
+self._updateObservation``.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.outputEvolution">
+<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.overrideActionChoice">
+<code class="descname">overrideActionChoice</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.overrideActionChoice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.overrideActionChoice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a method for overriding the model action choice. This is used when fitting models to participant actions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Action chosen by external source to same situation</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.params">
+<code class="descname">params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parameters of the model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>parameters</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.processEvent">
+<code class="descname">processEvent</code><span class="sig-paren">(</span><em>action=None</em>, <em>response=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.processEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.processEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integrates the information from a stimulus, action, response set, regardless
+of which of the three elements are present.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The chosen action of the model. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>response</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The response from the experiment after an action. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the expected reward for each action based on the stimuli</p>
+<p>This contains parts that are experiment dependent</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stimuli</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>expectedRewards</strong> (<em>float</em>) – The expected reward for each action</li>
+<li><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</li>
+<li><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.setsimID">
+<code class="descname">setsimID</code><span class="sig-paren">(</span><em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.setsimID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.setsimID" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>simID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.standardResultOutput">
+<code class="descname">standardResultOutput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.standardResultOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.standardResultOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the relevant data expected from a model as well as the parameters for the current model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – A dictionary of details about the</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.storeStandardResults">
+<code class="descname">storeStandardResults</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.storeStandardResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.storeStandardResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the store of standard results found across models</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.modelTemplate.model.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/modelTemplate.html#model.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.modelTemplate.model.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</li>
+<li><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</li>
+<li><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="model.RVPM.html"
+                        title="previous chapter">model.RVPM module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="model.qLearn.html"
+                        title="next chapter">model.qLearn module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/model.modelTemplate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="model.qLearn.html" title="model.qLearn module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="model.RVPM.html" title="model.RVPM module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="model.html" >model package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

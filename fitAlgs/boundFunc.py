@@ -5,7 +5,7 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array
+import numpy as np
 
 
 def infBound(base=0):
@@ -41,7 +41,7 @@ def infBound(base=0):
 
     def cost(parameters, bounds, fitQualFunc):
 
-        boundArr = array(bounds)
+        boundArr = np.array(bounds)
 
         if any(parameters < boundArr[:, 0]) or any(parameters > boundArr[:, 1]):
             return response
@@ -86,7 +86,7 @@ def scalarBound(base=0):
 
     def cost(parameters, bounds, fitQualFunc):
 
-        boundArr = array(bounds)
+        boundArr = np.array(bounds)
 
         minOut = sum((boundArr[:, 0] - parameters) * (parameters < boundArr[:, 0]))
 

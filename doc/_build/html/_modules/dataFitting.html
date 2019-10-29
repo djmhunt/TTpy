@@ -9,11 +9,15 @@
     <title>dataFitting &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
@@ -43,61 +47,89 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">simulation</span> <span class="k">import</span> <span class="n">simulation</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">fitting.fit</span> <span class="k">import</span> <span class="n">fit</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">outputting</span>
+
+<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">listMerGen</span><span class="p">,</span> <span class="n">callableDetailsString</span>
+
+<span class="kn">from</span> <span class="nn">fitAlgs.fitAlg</span> <span class="k">import</span> <span class="n">fitAlg</span>
 
 
-<div class="viewcode-block" id="dataFitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.dataFitting">[docs]</a><span class="k">def</span> <span class="nf">dataFitting</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">outputting</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fitter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partLabel</span><span class="o">=</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">partModelVars</span><span class="o">=</span><span class="p">{},</span> <span class="n">experiments</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="dataFitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.dataFitting">[docs]</a><span class="k">def</span> <span class="nf">dataFitting</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fitter</span><span class="p">,</span> <span class="n">partLabel</span><span class="o">=</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">partModelVars</span><span class="o">=</span><span class="p">{},</span> <span class="n">simLabel</span><span class="o">=</span><span class="s2">&quot;Untitled&quot;</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveScript</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npSetErr</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A framework for fitting models to data for experiments, along with</span>
-<span class="sd">    recording the plots and data associated with the best fits.</span>
+<span class="sd">    A framework for fitting models to data for tasks, along with</span>
+<span class="sd">    recording the data associated with the fits.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    models : models.models</span>
 <span class="sd">        A model factory generating each of the different models being considered</span>
-<span class="sd">    outputting : outputting.outputting</span>
-<span class="sd">        An outputting class instance</span>
 <span class="sd">    data : list of dictionaries</span>
 <span class="sd">        Each dictionary should all contain the keys associated with the fitting</span>
-<span class="sd">    fitter : fitting.fit.fit</span>
-<span class="sd">        A fitting class instance</span>
+<span class="sd">    fitter : fitAlgs.fitAlg</span>
+<span class="sd">        A fitAlg class instance</span>
 <span class="sd">    partLabel : basestring, optional</span>
 <span class="sd">        The key (label) used to identify each participant. Default ``Name``</span>
 <span class="sd">    partModelVars : dict of string, optional</span>
 <span class="sd">        A dictionary of model settings whose values should vary from participant to participant based on the</span>
 <span class="sd">        values found in the imported participant data files. The key is the label given in the participant data file,</span>
 <span class="sd">        as a string, and the value is the associated label in the model, also as a string. Default ``{}``</span>
-<span class="sd">    experiments : experiments.experiments, optional</span>
-<span class="sd">        An experiment factory generating each of the different experiments being considered. Default ``None``</span>
+<span class="sd">    simLabel : string, optional</span>
+<span class="sd">        The label for the simulation</span>
+<span class="sd">    save : bool, optional</span>
+<span class="sd">        If true the data will be saved to files. Default ``True``</span>
+<span class="sd">    saveFittingProgress : bool, optional</span>
+<span class="sd">        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``</span>
+<span class="sd">    saveScript : bool, optional</span>
+<span class="sd">        If true a copy of the top level script running the current function</span>
+<span class="sd">        will be copied to the log folder. Only works if save is set to ``True``</span>
+<span class="sd">        Default ``True``</span>
+<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        If true the data for each model, and participant is recorded.</span>
+<span class="sd">        Default is ``False``</span>
+<span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
+<span class="sd">        Defines the level of the log. Default ``logging.INFO``</span>
+<span class="sd">    npErrResp : {&#39;log&#39;, &#39;raise&#39;}</span>
+<span class="sd">        Defines the response to numpy errors. Default ``log``. See numpy.seterr</span>
+
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    experiments.experiments : The experiments factory</span>
 <span class="sd">    models.models : The model factory</span>
 <span class="sd">    outputting.outputting : The outputting class</span>
-<span class="sd">    fitting.fit.fit : Abstract class for fitting data</span>
+<span class="sd">    fitAlgs.fitSims.fitSim : Abstract class for a method of fitting data</span>
 <span class="sd">    data.data : Data import function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<span class="c1">#    if not (isinstance(data, pandas.DataFrame) and isinstance(fitter,fitters.fitter)):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span> <span class="c1">#and isinstance(fitter, fit)):</span>
+    <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">closeLoggers</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="n">simLabel</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="n">save</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">,</span> <span class="n">saveScript</span><span class="o">=</span><span class="n">saveScript</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">npSetErr</span><span class="o">=</span><span class="n">npSetErr</span><span class="p">)</span>
 
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;dataFitting&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span> <span class="c1">#and isinstance(fitter, fitAlg)):</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;dataFitting&#39;</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Data not recognised. &quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">closeLoggers</span><span class="p">()</span>
         <span class="k">return</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">logFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+    <span class="n">logFittingParams</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the data fitting&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="n">modelID</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Initialise the stores of information</span>
+    <span class="n">participantFits</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: defaultdict[Any, list]</span>
 
     <span class="k">for</span> <span class="n">modelInfo</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iterFitting</span><span class="p">():</span>
 
@@ -105,15 +137,10 @@
         <span class="n">modelInitParamVars</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">modelOtherArgs</span> <span class="o">=</span> <span class="n">modelInfo</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">experiments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">exp</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partModelVars</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
-            <span class="n">modelOtherArgs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Varies on participant&gt;&quot;</span>
+            <span class="n">modelOtherArgs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Varies for each participant&gt;&quot;</span>
 
-        <span class="n">outputting</span><span class="o">.</span><span class="n">logSimFittingParams</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">)</span>
+        <span class="n">logSimFittingParams</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 
@@ -125,42 +152,322 @@
                 <span class="n">modelOtherArgs</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
             <span class="c1"># Find the best model values from those proposed</span>
-
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning participant fit for participant </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">partName</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">fittingData</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">),</span> <span class="n">participant</span><span class="p">,</span> <span class="n">exp</span><span class="o">=</span><span class="n">exp</span><span class="p">)</span>
+            <span class="n">modelFitted</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">fittingData</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">),</span> <span class="n">participant</span><span class="p">)</span>
 
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Participant fitted&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">exp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">expEvolution</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">expEvolution</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">logModFittedParams</span><span class="p">(</span><span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partName</span><span class="p">)</span>
 
-            <span class="n">outputting</span><span class="o">.</span><span class="n">logModFittedParams</span><span class="p">(</span><span class="n">modelInitParamVars</span><span class="p">,</span> <span class="n">modelFitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partName</span><span class="p">)</span>
-
-            <span class="n">outputting</span><span class="o">.</span><span class="n">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span>
-                                            <span class="n">partName</span><span class="p">,</span>
-                                            <span class="n">modelFitted</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span>
-                                            <span class="nb">str</span><span class="p">(</span><span class="n">modelID</span><span class="p">),</span>
-                                            <span class="n">fitQuality</span><span class="p">,</span>
-                                            <span class="n">fittingData</span><span class="p">,</span>
-                                            <span class="n">partModelVars</span><span class="p">,</span>
-                                            <span class="n">expData</span><span class="o">=</span><span class="n">expEvolution</span><span class="p">)</span>
-
-
-            <span class="c1">#outputting.plotModel(modelFitted.plot())</span>
+            <span class="n">participantFits</span> <span class="o">=</span> <span class="n">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span>
+                                                   <span class="n">partName</span><span class="p">,</span>
+                                                   <span class="n">modelFitted</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span>
+                                                   <span class="nb">str</span><span class="p">(</span><span class="n">modelID</span><span class="p">),</span>
+                                                   <span class="n">fittingData</span><span class="p">,</span>
+                                                   <span class="n">partModelVars</span><span class="p">,</span>
+                                                   <span class="n">participantFits</span><span class="p">,</span>
+                                                   <span class="n">outputFolder</span><span class="o">=</span><span class="n">outputFolder</span><span class="p">,</span>
+                                                   <span class="n">fileNameGen</span><span class="o">=</span><span class="n">fileNameGen</span><span class="p">,</span>
+                                                   <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">,</span>
+                                                   <span class="n">saveFittingProgress</span><span class="o">=</span><span class="n">saveFittingProgress</span><span class="p">)</span>
 
         <span class="n">modelID</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="c1">#outputting.plotModelSet(modelFitted.plotSet())</span>
 
-    <span class="c1">#if exp is not None:</span>
-        <span class="c1">#outputting.plotExperiment(exp.plot())</span>
+    <span class="n">fitRecord</span><span class="p">(</span><span class="n">participantFits</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">)</span>
+    <span class="n">closeLoggers</span><span class="p">()</span></div>
 
-    <span class="n">outputting</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
+<span class="c1"># %% Data record functions  </span>
+<div class="viewcode-block" id="recordParticipantFit"><a class="viewcode-back" href="../dataFitting.html#dataFitting.recordParticipantFit">[docs]</a><span class="k">def</span> <span class="nf">recordParticipantFit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">partName</span><span class="p">,</span> <span class="n">modelData</span><span class="p">,</span> <span class="n">modelName</span><span class="p">,</span> <span class="n">fittingData</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span> <span class="n">outputFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">expData</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Record the data relevant to the participant fitting</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    participant : dict</span>
+<span class="sd">        The participant data</span>
+<span class="sd">    partName : int or string</span>
+<span class="sd">        The identifier for each participant</span>
+<span class="sd">    modelData : dict</span>
+<span class="sd">        The data from the model</span>
+<span class="sd">    modelName : basestring</span>
+<span class="sd">        The label given to the model</span>
+<span class="sd">    fittingData : dict</span>
+<span class="sd">        Dictionary of details of the different fits, including an ordered dictionary containing the parameter values</span>
+<span class="sd">        tested, in the order they were tested, and a list of the fit qualities of these parameters</span>
+<span class="sd">    partModelVars : dict of string</span>
+<span class="sd">        A dictionary of model settings whose values should vary from participant to participant based on the</span>
+<span class="sd">        values found in the imported participant data files. The key is the label given in the participant data file,</span>
+<span class="sd">        as a string, and the value is the associated label in the model, also as a string.</span>
+<span class="sd">    participantFits : defaultdict of lists</span>
+<span class="sd">        A dictionary to be filled with the summary of the participant fits</span>
+<span class="sd">    outputFolder : basestring, optional</span>
+<span class="sd">        The folder into which the data will be saved. Default ``None``</span>
+<span class="sd">    fileNameGen : function or None</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string. Default ``None``</span>
+<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        Default is ``False``</span>
+<span class="sd">    saveFittingProgress : bool, optional</span>
+<span class="sd">        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``</span>
+<span class="sd">    expData : dict, optional</span>
+<span class="sd">        The data from the experiment. Default ``None``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    participantFits : defaultdict of lists</span>
+<span class="sd">        A dictionary to be filled with the summary of the previous and current participant fits</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    outputting.pickleLog : records the picked data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+    <span class="n">partNameStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">partName</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Recording participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span> <span class="o">+</span> <span class="s2">&quot; model fit&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;_Model-&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;_Part-&quot;</span> <span class="o">+</span> <span class="n">partNameStr</span>
+
+    <span class="n">participantName</span> <span class="o">=</span> <span class="s2">&quot;Participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span>
+
+    <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+    <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;assignedName&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+    <span class="n">fittingData</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fileNameGen</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for &quot;</span> <span class="o">+</span> <span class="n">participantName</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="n">participantFits</span> <span class="o">=</span> <span class="n">recordFitting</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="n">saveFittingProgress</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">pickleData</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">expData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">expData</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+            <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+            <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_partData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+            <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="s2">&quot;_fitData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">participantFits</span></div>
+
+
+<span class="c1"># %% Recording</span>
+<div class="viewcode-block" id="recordFitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.recordFitting">[docs]</a><span class="k">def</span> <span class="nf">recordFitting</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Records formatted versions of the fitting data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fittingData : dict, optional</span>
+<span class="sd">        Dictionary of details of the different fits, including an ordered dictionary containing the parameter values</span>
+<span class="sd">        tested, in the order they were tested, and a list of the fit qualities of these parameters.</span>
+<span class="sd">    label : basestring</span>
+<span class="sd">        The label used to identify the fit in the file names</span>
+<span class="sd">    participant : dict</span>
+<span class="sd">        The participant data</span>
+<span class="sd">    partModelVars : dict of string</span>
+<span class="sd">        A dictionary of model settings whose values should vary from participant to participant based on the</span>
+<span class="sd">        values found in the imported participant data files. The key is the label given in the participant data file,</span>
+<span class="sd">        as a string, and the value is the associated label in the model, also as a string.</span>
+<span class="sd">    participantFits : defaultdict of lists</span>
+<span class="sd">        A dictionary to be filled with the summary of the participant fits</span>
+<span class="sd">    outputFolder : basestring</span>
+<span class="sd">        The folder into which the data will be saved</span>
+<span class="sd">    fileNameGen : function</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string</span>
+<span class="sd">    saveFittingProgress : bool, optional</span>
+<span class="sd">        Specifies if the results from each iteration of the fitting process should be returned. Default ``False``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    participantFits : defaultdict of lists</span>
+<span class="sd">        A dictionary to be filled with the summary of the previous and current participant fits</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extendedLabel</span> <span class="o">=</span> <span class="s2">&quot;ParameterFits&quot;</span> <span class="o">+</span> <span class="n">label</span>
+
+    <span class="n">participantFits</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">])</span>
+    <span class="n">participantFits</span><span class="p">[</span><span class="s2">&quot;assignedName&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s2">&quot;assignedName&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;fitQuality&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">participantFits</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fittingData</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">participantFits</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partModelVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">participantFits</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">saveFittingProgress</span><span class="p">:</span>
+        <span class="n">fittingDataXLSX</span><span class="p">(</span><span class="n">fittingData</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">participantFits</span></div>
+
+
+<span class="c1">#%% logging</span>
+<div class="viewcode-block" id="logSimFittingParams"><a class="viewcode-back" href="../dataFitting.html#dataFitting.logSimFittingParams">[docs]</a><span class="k">def</span> <span class="nf">logSimFittingParams</span><span class="p">(</span><span class="n">modelName</span><span class="p">,</span> <span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelOtherArgs</span><span class="p">,</span> <span class="n">expParams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logs the model and experiment parameters that used as initial fitting</span>
+<span class="sd">    conditions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modelName : string</span>
+<span class="sd">        The name of the model</span>
+<span class="sd">    modelFitVars : dict</span>
+<span class="sd">        The model parameters that will be fitted over and varied.</span>
+<span class="sd">    modelOtherArgs : dict</span>
+<span class="sd">        The other parameters used in the model whose attributes have been</span>
+<span class="sd">        modified by the user</span>
+<span class="sd">    expParams : dict, optional</span>
+<span class="sd">        The experiment parameters. Default ``dict()``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">expParams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expParams</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fit will use the model &#39;&quot;</span> <span class="o">+</span> <span class="n">modelName</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+
+    <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; around &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; fitted with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
+
+    <span class="n">modelParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
+    <span class="n">modelFuncs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="n">callableDetailsString</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelOtherArgs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Callable</span><span class="p">)]</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and using the other user specified parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelParams</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; and the functions &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFuncs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">expParams</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;. This is based on the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">expParams</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span>
+
+        <span class="n">expDescriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">expParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;Name&#39;</span><span class="p">]</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;with the parameters &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">expDescriptors</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+
+    <span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+    <span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logModFittedParams"><a class="viewcode-back" href="../dataFitting.html#dataFitting.logModFittedParams">[docs]</a><span class="k">def</span> <span class="nf">logModFittedParams</span><span class="p">(</span><span class="n">modelFitVars</span><span class="p">,</span> <span class="n">modelParams</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">partName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Logs the model and experiment parameters that used as initial fitting</span>
+<span class="sd">    conditions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modelFitVars : dict</span>
+<span class="sd">        The model parameters that have been fitted over and varied.</span>
+<span class="sd">    modelParams : dict</span>
+<span class="sd">        The model parameters for the fitted model</span>
+<span class="sd">    fitQuality : float</span>
+<span class="sd">        The value of goodness of fit</span>
+<span class="sd">    partName : int or string</span>
+<span class="sd">        The identifier for each participant</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">modelFitVars</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="n">modelFitParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">modelParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;The fitted values for participant &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">partName</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; are &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">modelFitParams</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fitQuality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+
+    <span class="n">loggerSim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+    <span class="n">loggerSim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="logFittingParams"><a class="viewcode-back" href="../dataFitting.html#dataFitting.logFittingParams">[docs]</a><span class="k">def</span> <span class="nf">logFittingParams</span><span class="p">(</span><span class="n">fitInfo</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Records and outputs to the log the parameters associated with the fitting algorithms</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fitInfo : dict</span>
+<span class="sd">        The details of the fitting</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Fitting information:&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fitInfo</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;For &quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Name&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<span class="c1">#%% CSV</span>
+<div class="viewcode-block" id="fitRecord"><a class="viewcode-back" href="../dataFitting.html#dataFitting.fitRecord">[docs]</a><span class="k">def</span> <span class="nf">fitRecord</span><span class="p">(</span><span class="n">participantFits</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the participant fits summary as a csv file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    participantFits :</span>
+<span class="sd">        A summary of the recovered parameters</span>
+<span class="sd">    fileNameGen : function</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Update the function documentation here when the datatype is known</span>
+    <span class="n">participantFit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">participantFits</span><span class="p">)</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="s2">&quot;participantFits&quot;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
+    <span class="n">participantFit</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span></div>
+
+
+<span class="c1">#%% Excel</span>
+<div class="viewcode-block" id="fittingDataXLSX"><a class="viewcode-back" href="../dataFitting.html#dataFitting.fittingDataXLSX">[docs]</a><span class="k">def</span> <span class="nf">fittingDataXLSX</span><span class="p">(</span><span class="n">fittingData</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves the fitting data to an XLSX file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fittingData : dict, optional</span>
+<span class="sd">        Dictionary of details of the different fits, including an ordered dictionary containing the parameter values</span>
+<span class="sd">        tested, in the order they were tested, and a list of the fit qualities of these parameters.</span>
+<span class="sd">    label : basestring</span>
+<span class="sd">        The label used to identify the fit in the file names</span>
+<span class="sd">    participant : dict</span>
+<span class="sd">        The participant data</span>
+<span class="sd">    outputFolder : basestring</span>
+<span class="sd">        The path of the output folder</span>
+<span class="sd">    fileNameGen : function</span>
+<span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
+<span class="sd">        returns one ``fileName`` string</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputFolder</span>
+    <span class="n">partFittingKeys</span><span class="p">,</span> <span class="n">partFittingMaxListLen</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">listDictKeySet</span><span class="p">(</span><span class="n">participant</span><span class="p">)</span>
+    <span class="n">partData</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">newListDict</span><span class="p">(</span><span class="n">partFittingKeys</span><span class="p">,</span> <span class="n">partFittingMaxListLen</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="s1">&#39;part&#39;</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">partData</span><span class="p">)</span>
+
+    <span class="n">paramFittingDict</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">fittingData</span><span class="p">[</span><span class="s2">&quot;testedParameters&quot;</span><span class="p">])</span>
+    <span class="n">paramFittingDict</span><span class="p">[</span><span class="s1">&#39;partFitName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span>
+    <span class="c1">#paramFittingDict[&#39;fitQuality&#39;] = fittingData.pop(&quot;fitQuality&quot;)</span>
+    <span class="c1">#paramFittingDict[&quot;fitQualities&quot;] = fittingData.pop(&quot;fitQualities&quot;)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fittingData</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">paramFittingDict</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;final&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">paramFittingDict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fittingData</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">paramFittingDict</span><span class="p">)</span>
+    <span class="n">recordFittingKeys</span><span class="p">,</span> <span class="n">recordFittingMaxListLen</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">listDictKeySet</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">recordData</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">newListDict</span><span class="p">(</span><span class="n">recordFittingKeys</span><span class="p">,</span> <span class="n">recordFittingMaxListLen</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">record</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">recordData</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span> <span class="o">+</span> <span class="n">label</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;xlsx&#39;</span><span class="p">)</span>
+    <span class="n">xlsxT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">ExcelWriter</span><span class="p">(</span><span class="n">outputFile</span><span class="p">)</span>
+    <span class="c1"># TODO: Remove the engine specification when moving to Python 3</span>
+    <span class="n">record</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="n">xlsxT</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">&#39;ParameterFits&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;XlsxWriter&#39;</span><span class="p">)</span>
+    <span class="n">xlsxT</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 </pre></div>
 
           </div>
@@ -199,7 +506,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

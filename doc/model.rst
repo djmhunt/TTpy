@@ -1,6 +1,11 @@
 model package
 =============
 
+.. automodule:: model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -11,203 +16,40 @@ Subpackages
 Submodules
 ----------
 
-model.ACBasic module
---------------------
+.. toctree::
 
-.. automodule:: model.ACBasic
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   model.ACBasic
+   model.ACE
+   model.ACES
+   model.BHMM
+   model.BP
+   model.BPE
+   model.BPMS
+   model.BPV
+   model.EP
+   model.EPE
+   model.MS
+   model.MS_rev
+   model.OpAL
+   model.OpALE
+   model.OpALS
+   model.OpALSE
+   model.OpAL_H
+   model.OpAL_HE
+   model.RVPM
+   model.modelTemplate
+   model.qLearn
+   model.qLearn2
+   model.qLearn2E
+   model.qLearnCorr
+   model.qLearnE
+   model.qLearnECorr
+   model.qLearnF
+   model.qLearnK
+   model.qLearnMeta
+   model.qLearnSP
+   model.randomBias
+   model.td0
+   model.tdE
+   model.tdr
 
-model.ACE module
-----------------
-
-.. automodule:: model.ACE
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.ACES module
------------------
-
-.. automodule:: model.ACES
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.BHMM module
------------------
-
-.. automodule:: model.BHMM
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.BP module
----------------
-
-.. automodule:: model.BP
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.BPMS module
------------------
-
-.. automodule:: model.BPMS
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.EP module
----------------
-
-.. automodule:: model.EP
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.MS module
----------------
-
-.. automodule:: model.MS
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.MS\_rev module
---------------------
-
-.. automodule:: model.MS_rev
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.OpAL module
------------------
-
-.. automodule:: model.OpAL
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.OpALS module
-------------------
-
-.. automodule:: model.OpALS
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.OpALSE module
--------------------
-
-.. automodule:: model.OpALSE
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.OpAL\_H module
---------------------
-
-.. automodule:: model.OpAL_H
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.RVPM module
------------------
-
-.. automodule:: model.RVPM
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.modelPlot module
-----------------------
-
-.. automodule:: model.modelPlot
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.modelSetPlot module
--------------------------
-
-.. automodule:: model.modelSetPlot
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.modelTemplate module
---------------------------
-
-.. automodule:: model.modelTemplate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.qLearn module
--------------------
-
-.. automodule:: model.qLearn
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.qLearn2 module
---------------------
-
-.. automodule:: model.qLearn2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.qLearnCorr module
------------------------
-
-.. automodule:: model.qLearnCorr
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.qLearnE module
---------------------
-
-.. automodule:: model.qLearnE
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.qLearnMeta module
------------------------
-
-.. automodule:: model.qLearnMeta
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.td0 module
-----------------
-
-.. automodule:: model.td0
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-model.tdE module
-----------------
-
-.. automodule:: model.tdE
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: model
-    :members:
-    :undoc-members:
-    :show-inheritance:

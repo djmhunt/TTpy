@@ -9,15 +9,18 @@
     <title>utils module &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="plotting module" href="plotting.html" />
-    <link rel="prev" title="outputtingUtils module" href="outputtingUtils.html" /> 
+    <link rel="next" title="argProcess" href="api/utils.argProcess.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,11 +32,8 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plotting.html" title="plotting module"
+          <a href="api/utils.argProcess.html" title="argProcess"
              accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="outputtingUtils.html" title="outputtingUtils module"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
@@ -43,9 +43,121 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-utils">
-<span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
+  <div class="section" id="utils-module">
+<h1>utils module<a class="headerlink" href="#utils-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>utils Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-utils"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#utils.argProcess" title="utils.argProcess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argProcess</span></code></a>(**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.callableDetails" title="utils.callableDetails"><code class="xref py py-obj docutils literal notranslate"><span class="pre">callableDetails</span></code></a>(item)</td>
+<td>Takes a callable item and extracts the details.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.callableDetailsString" title="utils.callableDetailsString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">callableDetailsString</span></code></a>(item)</td>
+<td>Takes a callable item and returns a string detailing the function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.date" title="utils.date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">date</span></code></a>()</td>
+<td>Provides a string of today’s date</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.discountAverage" title="utils.discountAverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">discountAverage</span></code></a>(data,&nbsp;discount)</td>
+<td>An accumulating mean</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.errorResp" title="utils.errorResp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">errorResp</span></code></a>()</td>
+<td>Takes an error that has been caught and returns the details as a string</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.fancyLogger" title="utils.fancyLogger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fancyLogger</span></code></a>(logLevel[,&nbsp;fileName])</td>
+<td>Sets up the style of logging for all the simulations</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.flatten" title="utils.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>(l)</td>
+<td>Yields the elements in order from any N dimensional iterable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.folderSetup" title="utils.folderSetup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">folderSetup</span></code></a>(simType)</td>
+<td>Identifies and creates the folder the data will be stored in</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.kendalw" title="utils.kendalw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kendalw</span></code></a>(data[,&nbsp;ranked])</td>
+<td>Calculates Kendall’s W for a n*m array with n items and m ‘judges’.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.kendalwt" title="utils.kendalwt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kendalwt</span></code></a>(data[,&nbsp;ranked])</td>
+<td>Calculates Kendall’s W for a n*m array with n items and m ‘judges’.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.kendalwts" title="utils.kendalwts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kendalwts</span></code></a>(data[,&nbsp;ranked])</td>
+<td>Calculates Kendall’s W for a n*m array with n items and m ‘judges’.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.kldivergence" title="utils.kldivergence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kldivergence</span></code></a>(m0,&nbsp;m1,&nbsp;c0,&nbsp;c1)</td>
+<td>Calculates the Kullback–Leibler divergence between two distributions using the means and covariances</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.listMerGen" title="utils.listMerGen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerGen</span></code></a>(*args)</td>
+<td>Fast merging of lists of numbers</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.listMerge" title="utils.listMerge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerge</span></code></a>(*args)</td>
+<td>For merging lists with objects that are not solely numbers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.listMergeNP" title="utils.listMergeNP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMergeNP</span></code></a>(*args)</td>
+<td>Fast merging of lists of numbers</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.mergeDatasetRepr" title="utils.mergeDatasetRepr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeDatasetRepr</span></code></a>(data[,&nbsp;dataLabel])</td>
+<td>Take a list of dictionaries and turn it into a dictionary of lists of strings</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.mergeDatasets" title="utils.mergeDatasets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeDatasets</span></code></a>(data[,&nbsp;extend])</td>
+<td>Take a list of dictionaries and turn it into a dictionary of lists of objects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.mergeDicts" title="utils.mergeDicts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeDicts</span></code></a>(*args)</td>
+<td>Merges any number of dictionaries with different keys into a new dict</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.mergeTwoDicts" title="utils.mergeTwoDicts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeTwoDicts</span></code></a>(x,&nbsp;y)</td>
+<td>Given two dicts, merge them into a new dict as a shallow copy</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.movingaverage" title="utils.movingaverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">movingaverage</span></code></a>(data,&nbsp;windowSize[,&nbsp;edgeCorrection])</td>
+<td>Average over an array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.newFile" title="utils.newFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newFile</span></code></a>(handle,&nbsp;extension,&nbsp;outputFolder)</td>
+<td>Creates a new file withe the name &lt;handle&gt; and the extension &lt;extension&gt;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.runningAverage" title="utils.runningAverage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runningAverage</span></code></a>(data)</td>
+<td>An accumulating mean</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.runningMean" title="utils.runningMean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runningMean</span></code></a>(oldMean,&nbsp;newValue,&nbsp;numValues)</td>
+<td>A running mean</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.runningSTD" title="utils.runningSTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runningSTD</span></code></a>(oldSTD,&nbsp;oldMean,&nbsp;newMean,&nbsp;newValue)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param oldSTD:</th><td class="field-body">The old running average standard deviation</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.saving" title="utils.saving"><code class="xref py py-obj docutils literal notranslate"><span class="pre">saving</span></code></a>(save,&nbsp;label)</td>
+<td>Creates a folder and produces a log filename</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.unique" title="utils.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a>(seq[,&nbsp;idfun])</td>
+<td>Finds the unique items in a list and returns them in order found.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#utils.varyingParams" title="utils.varyingParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varyingParams</span></code></a>(intObjects,&nbsp;params)</td>
+<td>Takes a list of models or experiments and returns a dictionary with only the parameters which vary and their values</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-utils"></span><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -151,8 +263,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> or </em><em>1-D array of floats</em>) – The set of values to be averaged</li>
-<li><strong>discount</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The value by which each previous value is discounted</li>
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>1-D array of floats</em>) – The set of values to be averaged</li>
+<li><strong>discount</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The value by which each previous value is discounted</li>
 </ul>
 </td>
 </tr>
@@ -208,7 +320,7 @@
 
 <dl class="function">
 <dt id="utils.fancyLogger">
-<code class="descclassname">utils.</code><code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logLevel</em>, <em>fileName=u''</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.fancyLogger" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">utils.</code><code class="descname">fancyLogger</code><span class="sig-paren">(</span><em>logLevel</em>, <em>fileName=u''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#fancyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.fancyLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the style of logging for all the simulations</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -218,7 +330,6 @@
 <li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – The lowest level to which logging is recorded</li>
 <li><strong>fileName</strong> (<em>string</em><em>, </em><em>optional</em>) – The filename that the log will be written to. If empty no log will be
 written to a file. Default is empty</li>
-<li><strong>silent</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – States if a log is not written to stdout. Defaults to False</li>
 </ul>
 </td>
 </tr>
@@ -273,6 +384,177 @@ to access them.</td>
 </dd></dl>
 
 <dl class="function">
+<dt id="utils.kendalw">
+<code class="descclassname">utils.</code><code class="descname">kendalw</code><span class="sig-paren">(</span><em>data</em>, <em>ranked=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#kendalw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.kendalw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates Kendall’s W for a n*m array with n items and m ‘judges’.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>ndarray</em>) – The data in the form of an n*m array with n items and m ‘judges’</li>
+<li><strong>ranked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If the data has already been ranked or not. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>w</strong> – The Kendall’s W</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. <a class="reference external" href="http://doi.org/10.4135/9781412961288.n55">http://doi.org/10.4135/9781412961288.n55</a></p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="go">              [3., 3., 3., 4.],</span>
+<span class="go">              [1., 5., 3., 5.],</span>
+<span class="go">              [1., 1., 4., 2.],</span>
+<span class="go">              [2., 4., 5., 1.],</span>
+<span class="go">              [1., 0., 0., 2.]])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kendalw</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">0.22857</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="go">              [2, 2, 2, 2],</span>
+<span class="go">              [3, 3, 3, 3],</span>
+<span class="go">              [4, 4, 4, 4],</span>
+<span class="go">              [5, 5, 5, 5],</span>
+<span class="go">              [6, 6, 6, 6]])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">kendalw</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.kendalwt">
+<code class="descclassname">utils.</code><code class="descname">kendalwt</code><span class="sig-paren">(</span><em>data</em>, <em>ranked=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#kendalwt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.kendalwt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates Kendall’s W for a n*m array with n items and m ‘judges’. Corrects for ties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>ndarray</em>) – The data in the form of an n*m array with n items and m ‘judges’</li>
+<li><strong>ranked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If the data has already been ranked or not. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>w</strong> – The Kendall’s W</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. <a class="reference external" href="http://doi.org/10.4135/9781412961288.n55">http://doi.org/10.4135/9781412961288.n55</a></p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="go">                  [3., 3., 3., 4.],</span>
+<span class="go">                  [1., 5., 3., 5.],</span>
+<span class="go">                  [1., 1., 4., 2.],</span>
+<span class="go">                  [2., 4., 5., 1.],</span>
+<span class="go">                  [1., 0., 0., 2.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kendalwt</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">0.24615</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="go">                  [2, 2, 2, 2],</span>
+<span class="go">                  [3, 3, 3, 3],</span>
+<span class="go">                  [4, 4, 4, 4],</span>
+<span class="go">                  [5, 5, 5, 5],</span>
+<span class="go">                  [6, 6, 6, 6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kendalwt</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.kendalwts">
+<code class="descclassname">utils.</code><code class="descname">kendalwts</code><span class="sig-paren">(</span><em>data</em>, <em>ranked=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#kendalwts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.kendalwts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates Kendall’s W for a n*m array with n items and m ‘judges’. Corrects for ties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>ndarray</em>) – The data in the form of an n*m array with n items and m ‘judges’</li>
+<li><strong>ranked</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If the data has already been ranked or not. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>w</strong> – The Kendall’s W</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Based on Legendre, P. (2010). Coefficient of Concordance. In Encyclopedia of Research Design (pp. 164–169). 2455 Teller Road, Thousand Oaks California 91320 United States: SAGE Publications, Inc. <a class="reference external" href="http://doi.org/10.4135/9781412961288.n55">http://doi.org/10.4135/9781412961288.n55</a></p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+<span class="go">                  [3., 3., 3., 4.],</span>
+<span class="go">                  [1., 5., 3., 5.],</span>
+<span class="go">                  [1., 1., 4., 2.],</span>
+<span class="go">                  [2., 4., 5., 1.],</span>
+<span class="go">                  [1., 0., 0., 2.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kendalws</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">0.24615</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="go">                  [2, 2, 2, 2],</span>
+<span class="go">                  [3, 3, 3, 3],</span>
+<span class="go">                  [4, 4, 4, 4],</span>
+<span class="go">                  [5, 5, 5, 5],</span>
+<span class="go">                  [6, 6, 6, 6]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kendalws</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.kldivergence">
+<code class="descclassname">utils.</code><code class="descname">kldivergence</code><span class="sig-paren">(</span><em>m0</em>, <em>m1</em>, <em>c0</em>, <em>c1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#kldivergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.kldivergence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the Kullback–Leibler divergence between two distributions using the means and covariances</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>m0</strong> (<em>array of N floats</em>) – The means of distribution 0</li>
+<li><strong>m1</strong> (<em>array of N floats</em>) – The means of distribution 1</li>
+<li><strong>c0</strong> (<em>NxN array of floats</em>) – The covariance matrix for distribution 0</li>
+<li><strong>c1</strong> (<em>NxN array of floats</em>) – The covariance matrix for distribution 1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kl</strong> – The Kullback–Leibler divergence</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="utils.listMerGen">
 <code class="descclassname">utils.</code><code class="descname">listMerGen</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#listMerGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMerGen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fast merging of lists of numbers</p>
@@ -315,9 +597,9 @@ to access them.</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>list of lists</em>) – A list of 1D lists of objects</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>combinations</strong> – An array with len(args) columns and a row for each combination</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>combinations</strong> – An np.array with len(args) columns and a row for each combination</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
 </tr>
 </tbody>
 </table>
@@ -339,9 +621,9 @@ to access them.</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>list of lists of numbers</em>) – A list of 1D lists of numbers</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>combinations</strong> – An array with len(args) columns and a row for each combination</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>combinations</strong> – An np.array with len(args) columns and a row for each combination</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">array</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.array</td>
 </tr>
 </tbody>
 </table>
@@ -389,7 +671,7 @@ each of the former key values.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<em>list of dicts containing strings</em><em>, </em><em>lists</em><em> or </em><em>numbers</em>) – </li>
-<li><strong>extend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – If lists should be extended rather than appended. Default False</li>
+<li><strong>extend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If lists should be extended rather than appended. Default False</li>
 </ul>
 </td>
 </tr>
@@ -483,8 +765,8 @@ data set did not contain a key a value of None will be entered for it.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data</strong> (<em>list of floats</em>) – The data to average</li>
-<li><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The size of the window</li>
-<li><strong>edgeCorrection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> the edges are repaired so that there is no unusual dropoff</li>
+<li><strong>windowSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The size of the window</li>
+<li><strong>edgeCorrection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> the edges are repaired so that there is no unusual dropoff</li>
 </ul>
 </td>
 </tr>
@@ -565,7 +847,7 @@ data set did not contain a key a value of None will be entered for it.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em> or </em><em>1-D array of floats</em>) – The set of values to be averaged</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em> or </em><em>1-D array of floats</em>) – The set of values to be averaged</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – The values from the moving average</td>
 </tr>
@@ -583,21 +865,22 @@ data set did not contain a key a value of None will be entered for it.</p>
 <dl class="function">
 <dt id="utils.runningMean">
 <code class="descclassname">utils.</code><code class="descname">runningMean</code><span class="sig-paren">(</span><em>oldMean</em>, <em>newValue</em>, <em>numValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#runningMean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.runningMean" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>A running mean</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>oldMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The old running average mean</li>
-<li><strong>newValue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The new value to be added to the mean</li>
-<li><strong>numValues</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The number of values in the new running mean once this value is included</li>
+<li><strong>oldMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The old running average mean</li>
+<li><strong>newValue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The new value to be added to the mean</li>
+<li><strong>numValues</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of values in the new running mean once this value is included</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newMean</strong> – The new running average mean</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -622,17 +905,17 @@ data set did not contain a key a value of None will be entered for it.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>oldSTD</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The old running average standard deviation</li>
-<li><strong>oldMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The old running average mean</li>
-<li><strong>newMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The new running average mean</li>
-<li><strong>newValue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)"><em>float</em></a>) – The new value to be added to the mean</li>
+<li><strong>oldSTD</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The old running average standard deviation</li>
+<li><strong>oldMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The old running average mean</li>
+<li><strong>newMean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The new running average mean</li>
+<li><strong>newValue</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The new value to be added to the mean</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newSTD</strong> – The new running average standard deviation</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.6)">float</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
 </td>
 </tr>
 </tbody>
@@ -662,7 +945,7 @@ This version is taken from <a class="reference external" href="https://www.johnd
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a>) – If a file is to be saved</li>
+<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – If a file is to be saved</li>
 <li><strong>label</strong> (<em>string</em>) – A special label to add to the folder name</li>
 </ul>
 </td>
@@ -698,7 +981,7 @@ be compared. Default is the <code class="docutils literal notranslate"><span cla
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – The list of unique items</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)">list</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
 </td>
 </tr>
 </tbody>
@@ -727,6 +1010,8 @@ which vary and their values</p>
 </dd></dl>
 
 </div>
+</div>
+</div>
 
 
           </div>
@@ -734,12 +1019,20 @@ which vary and their values</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="outputtingUtils.html"
-                        title="previous chapter">outputtingUtils module</a></p>
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">utils module</a><ul>
+<li><a class="reference internal" href="#id1">utils Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Next topic</h4>
-  <p class="topless"><a href="plotting.html"
-                        title="next chapter">plotting module</a></p>
+  <p class="topless"><a href="api/utils.argProcess.html"
+                        title="next chapter">argProcess</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -773,17 +1066,14 @@ which vary and their values</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plotting.html" title="plotting module"
+          <a href="api/utils.argProcess.html" title="argProcess"
              >next</a> |</li>
-        <li class="right" >
-          <a href="outputtingUtils.html" title="outputtingUtils module"
-             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

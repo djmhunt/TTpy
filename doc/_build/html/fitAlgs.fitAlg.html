@@ -1,0 +1,529 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>fitAlgs.fitAlg module &#8212; pyHPDM 0.9 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="fitAlgs.fitSims module" href="fitAlgs.fitSims.html" />
+    <link rel="prev" title="fitAlgs.evolutionary module" href="fitAlgs.evolutionary.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fitAlgs.evolutionary.html" title="fitAlgs.evolutionary module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="fitAlgs.html" accesskey="U">fitAlgs package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-fitAlgs.fitAlg">
+<span id="fitalgs-fitalg-module"></span><h1>fitAlgs.fitAlg module<a class="headerlink" href="#module-fitAlgs.fitAlg" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="fitAlgs.fitAlg.covariance">
+<code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">covariance</code><span class="sig-paren">(</span><em>jac</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the covariance based on the estimated jacobian</p>
+<p>Inspired by how this is calculated in scipy.optimise.curve_fit, as found at
+<a class="reference external" href="https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739">https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739</a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fitAlgs.fitAlg.fitAlg">
+<em class="property">class </em><code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitSim</em>, <em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The abstract class for fitting data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fitSim</strong> (<em>fitAlgs.fitSims.fitSim instance</em>) – An instance of one of the fitting algorithms</li>
+<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+The value it returns provides the fitter with its fitting guide.
+Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
+<li><strong>qualFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
+<li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
+<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter. Only used with some fitting algorithms
+Default 4</li>
+<li><strong>calcCov</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is the covariance calculated. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>extraFitMeasures</strong> (<em>dict of dict</em><em>, </em><em>optional</em>) – Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
+fitQUalFunc used names and the values are the qualFuncArgs. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="fitAlgs.fitAlg.fitAlg.Name">
+<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the fitting method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim" title="fitAlgs.fitSims.fitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></a></dt>
+<dd>The general fitting class</dd>
+</dl>
+</div>
+<dl class="attribute">
+<dt>
+<code class="descname">Name</code><em class="property"> = u'none'</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.covariance">
+<code class="descname">covariance</code><span class="sig-paren">(</span><em>mParamNames</em>, <em>paramvals</em>, <em>fitinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>The covariance at a point</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>paramvals</strong> (<em>array</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – The parameters at which the</li>
+<li><strong>fitinfo</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>covariance</strong> – The covariance at the point paramvals</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.extraMeasures">
+<code class="descname">extraMeasures</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.extraMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.extraMeasures" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*params</strong> (<em>array of floats</em>) – The parameters proposed by the fitting algorithm</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fitQuality</strong> – The fit quality value calculated using the fit quality functions described in extraMeasures</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict of float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the model through the fitting algorithms and starting parameters
+and returns the best one. This is the abstract version that always
+returns <code class="docutils literal notranslate"><span class="pre">(0,0)</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sim</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is <code class="docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitness</span></code></li>
+<li><strong>mParamNames</strong> (<em>list of strings</em>) – The list of initial parameter names</li>
+<li><strong>mInitialParams</strong> (<em>list of floats</em>) – The list of the initial parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fitParams</strong> (<em>list of floats</em>) – The best fitting parameters</li>
+<li><strong>fitQuality</strong> (<em>float</em>) – The quality of the fit as defined by the quality function chosen.</li>
+<li><strong>testedParams</strong> (<em>tuple of two lists</em>) – The two lists are a list containing the parameter values tested, in the order they were tested, and the
+fit qualities of these parameters.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitness()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.fitness">
+<code class="descname">fitness</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.fitness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value used by the fitting function. This is the function passed to the fitting function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*params</strong> (<em>array of floats</em>) – The parameters proposed by the fitting algorithm</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>fitQuality</strong> – The fit quality value calculated using the fitQualFunc function</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="fitAlgs.qualityFunc.html#module-fitAlgs.qualityFunc" title="fitAlgs.qualityFunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.qualityFunc()</span></code></a></dt>
+<dd>the module of fitQualFunc functions</dd>
+<dt><a class="reference internal" href="#fitAlgs.fitAlg.fitAlg.invalidParams" title="fitAlgs.fitAlg.fitAlg.invalidParams"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.invalidParams()</span></code></a></dt>
+<dd>Checks if the parameters are valid and if not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></dd>
+<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.fitness" title="fitAlgs.fitSims.fitSim.fitness"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim.fitness()</span></code></a></dt>
+<dd>Runs the model simulation and returns the values used to calculate the fitQuality</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.info">
+<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>The information relating to the fitting method used</p>
+<p>Includes information on the fitting algorithm used</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>info</strong> – The fitSims info and the fitAlgs.fitAlg info</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a>,<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a>)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.fitSims.fitSim.info()</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.invalidParams">
+<code class="descname">invalidParams</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.invalidParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.invalidParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies if the parameters passed are within the bounds provided</p>
+<p>If they are not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>params</strong> (<em>list of floats</em>) – Parameters to be passed to the sim</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>validity</strong> – If the parameters are valid or not</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Bool</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>No note</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.participant">
+<code class="descname">participant</code><span class="sig-paren">(</span><em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit participant data to a model for a given task</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> (<em>model.model.model inherited class</em>) – The model you wish to try and fit values to</li>
+<li><strong>modelSetup</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>)</em>) – The first dictionary is the model initial parameters. The second
+are the other model parameters</li>
+<li><strong>partData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The participant data</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>model</strong> (<em>model.model.model inherited class instance</em>) – The model with the best fit parameters</li>
+<li><strong>fitQuality</strong> (<em>float</em>) – Specifies the fit quality for this participant to the model</li>
+<li><strong>testedParams</strong> (<em>tuple of OrderedDict and list</em>) – They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
+fit qualities of these parameters.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.setBounds">
+<code class="descname">setBounds</code><span class="sig-paren">(</span><em>mParamNames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.setBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.setBounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the bounds have changed</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mParamNames</strong> (<em>list of strings</em>) – An ordered list of the names of the parameters to be fitted</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;two&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{&#39;string&#39;: (0, inf), &#39;two&#39;: (0, inf)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
+<span class="go">[&#39;string&#39;, &#39;two&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(0, inf), (0, inf)]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
+<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(-1, 1), (0, 5)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
+<span class="go">￼[(0, 2), (0, 5)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.startParamVals">
+<code class="descname">startParamVals</code><span class="sig-paren">(</span><em>initial</em>, <em>bMin=-inf</em>, <em>bMax=inf</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.startParamVals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a set of starting points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>initial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The inital starting value proposed</li>
+<li><strong>bMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The minimum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('-Inf')</span></code></li>
+<li><strong>bMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('Inf')</span></code></li>
+<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of starting parameter values to be calculated around the inital
+point</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>startParams</strong> – The generated starting parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of floats</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>For each starting parameter provided a set of numStartPoints
+starting points will be chosen, surrounding the starting point provided. If
+the starting point provided is less than one but greater than zero it
+will be assumed that the values cannot leave those bounds, otherwise,
+unless otherwise told, it will be assumed that they can take any
+positive value and will be chosen to be eavenly spaced around the
+provided value.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">array([ 0.25,  0.5 ,  0.75])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([ 4.,  5.,  6.])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([ 1.,  5.,  9.])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([ 2.5,  5. ,  7.5])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.fitAlg.startParams">
+<code class="descname">startParams</code><span class="sig-paren">(</span><em>initialParams</em>, <em>bounds=None</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.startParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.startParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a list of different starting parameters to run the minimization
+over</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>initialParams</strong> (<em>list of floats</em>) – The inital starting values proposed</li>
+<li><strong>bounds</strong> (<em>list of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
+translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
+<li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of starting parameter values to be calculated around
+each inital point</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>startParamSet</strong> – The generated starting parameter combinations</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of list of floats</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#fitAlgs.fitAlg.fitAlg.startParamVals" title="fitAlgs.fitAlg.fitAlg.startParamVals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.startParamVals()</span></code></a></dt>
+<dd>Used in this function</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[ 0.33333333,  0.33333333],</span>
+<span class="go">       [ 0.66666667,  0.33333333],</span>
+<span class="go">       [ 0.33333333,  0.66666667],</span>
+<span class="go">       [ 0.66666667,  0.66666667]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fitAlgs.evolutionary.html"
+                        title="previous chapter">fitAlgs.evolutionary module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="fitAlgs.fitSims.html"
+                        title="next chapter">fitAlgs.fitSims module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/fitAlgs.fitAlg.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="fitAlgs.evolutionary.html" title="fitAlgs.evolutionary module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="fitAlgs.html" >fitAlgs package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

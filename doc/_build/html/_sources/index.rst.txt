@@ -13,7 +13,7 @@ The framework has until now either been run with a run script or live in a comma
 
 Running scripts
 ***************
-Example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` experiment and ``runScript.py`` for fitting the data generated from ``runScript_sim.py``. A visual display of the interactions in one of these scripts will soon be created.
+Example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` experiment and ``runScript_fit.py`` for fitting the data generated from ``runScript_sim.py``. A visual display of the interactions in one of these scripts will soon be created.
 
 Documentation
 *************
@@ -33,12 +33,10 @@ Contents:
    experiment
    models
    model
-   fitting
+   fitAlgs
    outputting
    outputtingUtils
    utils
-   plotting
-   vtkWriter
 
 
 Indices and tables

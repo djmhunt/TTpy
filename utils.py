@@ -5,27 +5,18 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import datetime as dt
+import numpy as np
+import scipy.stats as stats
 
 import logging
 import sys
 import collections
-
-from numpy import seterr, seterrcall, meshgrid, array, amax, ones, convolve, arange, ndarray, mean, sum, zeros, dot, trace
-from scipy.stats import rankdata
-from numpy.linalg import inv, slogdet
-from numpy.random import random
-from collections import Counter
-#from itertools import izip, chain
-from os import getcwd, makedirs
-from os.path import exists
-from collections import defaultdict, Callable
-#from types import NoneType
-from sys import exc_info
-from traceback import extract_tb
-
+import os
+import traceback
 
 # For analysing the state of the computer
 # import psutil
+
 
 def fancyLogger(logLevel, fileName=""):
     """
@@ -83,8 +74,8 @@ def fancyLogger(logLevel, fileName=""):
     # Set the standard error output
     sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
     # Set the numpy error output
-    seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
-    seterr(all='log')
+    np.seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
+    np.seterr(all='log')
 
     logging.info(date())
     logging.info("Log initialised")
@@ -108,15 +99,15 @@ def folderSetup(simType):
 
     # While the folders have already been created, check for the next one
     folderName = './Outputs/' + date + "_" + simType
-    if exists(folderName):
+    if os.path.exists(folderName):
         i = 1
         folderName += '_no_'
-        while exists(folderName + str(i)):
+        while os.path.exists(folderName + str(i)):
             i += 1
         folderName += str(i)
 
     folderName += "/"
-    makedirs(folderName + 'Pickle/')
+    os.makedirs(folderName + 'Pickle/')
 
     return folderName
 
@@ -183,9 +174,9 @@ def newFile(handle, extension, outputFolder):
         end = "." + extension
 
     fileName = outputFolder + handle
-    if exists(fileName + end):
+    if os.path.exists(fileName + end):
         i = 1
-        while exists(fileName + "_" + str(i) + end):
+        while os.path.exists(fileName + "_" + str(i) + end):
             i += 1
         fileName += "_" + str(i)
 
@@ -220,8 +211,8 @@ def listMerge(*args):
 
     Returns
     -------
-    combinations : array
-        An array with len(args) columns and a row for each combination
+    combinations : np.array
+        An np.array with len(args) columns and a row for each combination
 
     Examples
     --------
@@ -242,7 +233,7 @@ def listMerge(*args):
 #                t.append(i+[y])
 #        r = t
 
-    return array(r)
+    return np.array(r)
 
 
 def listMergeNP(*args):
@@ -255,8 +246,8 @@ def listMergeNP(*args):
 
     Returns
     -------
-    combinations : array
-        An array with len(args) columns and a row for each combination
+    combinations : np.array
+        An np.array with len(args) columns and a row for each combination
 
     Examples
     --------
@@ -267,18 +258,18 @@ def listMergeNP(*args):
     """
 
     if len(args) == 0:
-        return array([[]])
+        return np.array([[]])
 
     elif len(args) == 1:
-        a = array(args[0])
-        r = a.reshape((amax(a.shape), 1))
+        a = np.array(args[0])
+        r = a.reshape((np.amax(a.shape), 1))
 
         return r
 
     else:
-        A = meshgrid(*args)
+        A = np.meshgrid(*args)
 
-        r = array([i.flatten()for i in A])
+        r = np.array([i.flatten()for i in A])
 
         return r.T
 
@@ -313,18 +304,18 @@ def listMerGen(*args):
     array([ 0.1,  0.6])
     """
     if len(args) == 0:
-        r = array([[]])
+        r = np.array([[]])
     elif len(args) == 1:
-        a = array(args[0])
+        a = np.array(args[0])
         if a.shape:
-            r = a.reshape((amax(a.shape), 1))
+            r = a.reshape((np.amax(a.shape), 1))
         else:
-            r = array([[a]])
+            r = np.array([[a]])
 
     else:
-        A = meshgrid(*args)
+        A = np.meshgrid(*args)
 
-        r = array([i.flatten() for i in A]).T
+        r = np.array([i.flatten() for i in A]).T
 
     for i in r:
         yield i
@@ -367,7 +358,7 @@ def mergeDatasetRepr(data, dataLabel=''):
         keySet = keySet.union(s.keys())
 
     # For every key
-    partStore = defaultdict(list)
+    partStore = collections.defaultdict(list)
     for key in keySet:
         for s in data:
             v = repr(s.get(key, None))
@@ -423,7 +414,7 @@ def mergeDatasets(data, extend=False):
     keySet = set(k for d in data for k in d.keys())
 
     # For every key
-    newStore = defaultdict(list)
+    newStore = collections.defaultdict(list)
     for key in keySet:
         for d in data:
             dv = d.get(key, None)
@@ -558,7 +549,7 @@ def callableDetails(item):
 
     """
 
-    if isinstance(item, Callable):
+    if isinstance(item, collections.Callable):
         try:
             details = {str(k): str(v).strip('[]()') for k, v in item.Params.iteritems()}
         except:
@@ -637,8 +628,8 @@ def errorResp():
     A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()  
     
     """
-    errorType, value, traceback = exc_info()
-    errorLoc = extract_tb(traceback)[-1]
+    errorType, value, tracebackval = sys.exc_info()
+    errorLoc = traceback.extract_tb(tracebackval)[-1]
     description = "A " + str(errorType) + ' : "%s"' % (value)
     description += " in " + errorLoc[0] + " line " + str(errorLoc[1])
     description += " function " + errorLoc[2] + ": " + errorLoc[3]
@@ -726,15 +717,15 @@ def movingaverage(data, windowSize, edgeCorrection=False):
     array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
     """
-    window = ones(int(windowSize)) / float(windowSize)
-    convolution = convolve(data, window, 'same')
+    window = np.ones(int(windowSize)) / float(windowSize)
+    convolution = np.convolve(data, window, 'same')
 
     if edgeCorrection and windowSize > 1:
         leftEdge = windowSize // 2
-        leftSet = arange(leftEdge)
+        leftSet = np.arange(leftEdge)
         convolution[:leftEdge] /= ((leftEdge + (windowSize % 2) + leftSet) / windowSize)
         rightEdge = (windowSize - 1) // 2
-        rightSet = arange(rightEdge, 0, -1)
+        rightSet = np.arange(rightEdge, 0, -1)
         convolution[-rightEdge:] /= ((leftEdge + rightSet) / windowSize)
 
     return convolution
@@ -799,7 +790,7 @@ def runningAverage(data):
     """
 
     count = 2
-    results = ones(len(data))
+    results = np.ones(len(data))
     i = data[0]
     results[0] = i
     for n in data[1:]:
@@ -836,13 +827,13 @@ def discountAverage(data, discount):
     array([ 1,  1.8,  2.71428571,  3.68235294])
 
     """
-    counter = arange(0, len(data), 1)
+    counter = np.arange(0, len(data), 1)
     weights = discount ** counter
-    results = ones(len(data))
+    results = np.ones(len(data))
     for c in counter:
         chosenWeights = weights[c::-1]
         weighted = data[:c+1] * chosenWeights
-        results[c] = sum(weighted) / sum(chosenWeights)
+        results[c] = np.sum(weighted) / np.sum(chosenWeights)
 
     return results
 
@@ -888,7 +879,7 @@ def runningSTD(oldSTD, oldMean, newMean, newValue):
     return newSTD
 
 
-def kendalw(data, ranked = False):
+def kendalw(data, ranked=False):
     # type: (Union[list, ndarray], Optional[bool]) -> float
     """
     Calculates Kendall's W for a n*m array with n items and m 'judges'.
@@ -928,17 +919,18 @@ def kendalw(data, ranked = False):
                       [6, 6, 6, 6]])
     >>> kendalw(data)
     1.0
+
     """
     ranks = data
     if not ranked:
         rankVals = []
         for r in data.T:
-            rankVals.append(rankdata(r))
-        ranks = array(rankVals).T
+            rankVals.append(stats.rankdata(r))
+        ranks = np.array(rankVals).T
 
-    sranks = sum(abs(array(ranks)), 1)
-    mrank = mean(sranks)
-    ssdrank = sum((sranks-mrank)**2)
+    sranks = np.sum(abs(np.array(ranks)), 1)
+    mrank = np.mean(sranks)
+    ssdrank = np.sum((sranks-mrank)**2)
     (n,m) = ranks.shape
     w = (12*ssdrank)/((n**3-n)*m**2)
     return w
@@ -989,23 +981,23 @@ def kendalwt(data, ranked = False):
     if not ranked:
         rankVals = []
         for r in data.T:
-            rankVals.append(rankdata(r))
-        ranks = array(rankVals).T
+            rankVals.append(stats.rankdata(r))
+        ranks = np.array(rankVals).T
     
-    sranks = sum(abs(array(ranks)), 1)
-    mrank = mean(sranks)
-    ssdrank = sum((sranks-mrank)**2)
+    sranks = np.sum(abs(np.array(ranks)), 1)
+    mrank = np.mean(sranks)
+    ssdrank = np.sum((sranks-mrank)**2)
     (n, m) = ranks.shape
 
-    T = zeros(m)
-    for (i, counts) in ((i, Counter(x).most_common()) for i, x in enumerate(ranks.T)):
+    T = np.zeros(m)
+    for (i, counts) in ((i, collections.Counter(x).most_common()) for i, x in enumerate(ranks.T)):
         for (num, count) in counts:
             if count > 1:
                 T[i] += count**3 - count
     
     w1 = 12*ssdrank
     w3 = ((n**3)-n)*(m**2)
-    w4 = m*sum(T)
+    w4 = m*np.sum(T)
     w = w1 / (w3-w4)
     return w
 
@@ -1055,24 +1047,24 @@ def kendalwts(data, ranked = False):
     if not ranked:
         rankVals = []
         for r in data.T:
-            rankVals.append(rankdata(r))
-        ranks = array(rankVals).T
+            rankVals.append(stats.rankdata(r))
+        ranks = np.array(rankVals).T
     
-    sranks = sum(abs(array(ranks)), 1)
-    mrank = mean(sranks)
-    ssdrank = sum((sranks-mrank)**2)
+    sranks = np.sum(abs(np.array(ranks)), 1)
+    mrank = np.mean(sranks)
+    ssdrank = np.sum((sranks-mrank)**2)
     (n,m) = ranks.shape
 
-    T = zeros(m)
-    for (i, counts) in ((i, Counter(x).most_common()) for i, x in enumerate(ranks.T)):
+    T = np.zeros(m)
+    for (i, counts) in ((i, collections.Counter(x).most_common()) for i, x in enumerate(ranks.T)):
         for (num, count) in counts:
             if count > 1:
                 T[i] += count**3 - count
     
-    w1 = 12*sum(sranks**2)
+    w1 = 12*np.sum(sranks**2)
     w2 = 3*n*(m**2)*((n+1)**2)
     w3 = ((n**3)-n)*(m**2)
-    w4 = m*sum(T)
+    w4 = m*np.sum(T)
     w = ((w1-w2)/(w3-w4))
 
     return w
@@ -1100,12 +1092,12 @@ def kldivergence(m0, m1, c0, c1):
 
     """
 
-    ic0 = inv(c0)
-    ic1 = inv(c1)
+    ic0 = np.linalg.inv(c0)
+    ic1 = np.linalg.inv(c1)
 
-    cm = dot(c1, ic0)
-    ldcms, ldcm = slogdet(cm)
-    kl = 0.5 * (ldcm + trace(dot(ic1, dot(array([m0 - m1]).T, array([m0 - m1])) + c0 - c1)))
+    cm = np.dot(c1, ic0)
+    ldcms, ldcm = np.linalg.slogdet(cm)
+    kl = 0.5 * (ldcm + np.trace(np.dot(ic1, np.dot(np.array([m0 - m1]).T, np.array([m0 - m1])) + c0 - c1)))
 
     return kl
 

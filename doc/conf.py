@@ -29,21 +29,21 @@ sys.path.insert(0, os.path.abspath('../'))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-#	'sphinx.ext.linkcode',
-	'sphinx.ext.graphviz',
-	'sphinx.ext.inheritance_diagram',
-	'sphinx.ext.autosummary',
-	'sphinx.ext.napoleon',
-#    'numpydoc',
-]
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.todo',
+              'sphinx.ext.coverage',
+              'sphinx.ext.mathjax',
+              'sphinx.ext.viewcode',
+#	           'sphinx.ext.linkcode',
+	          'sphinx.ext.graphviz',
+	          'sphinx.ext.inheritance_diagram',
+	          'sphinx.ext.autosummary',
+	          'sphinx.ext.napoleon',
+              'sphinx_automodapi.automodapi',
+#             'numpydoc',
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -82,7 +82,7 @@ release = '0.9'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', 'pyan', 'Backups', 'testData', 'test', 'setup']
+exclude_patterns = ['_build', 'pyan', 'Backups', 'testData', 'test', 'setup', 'runScript']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -274,7 +274,6 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}

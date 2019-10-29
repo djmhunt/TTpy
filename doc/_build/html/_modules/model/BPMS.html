@@ -9,11 +9,15 @@
     <title>model.BPMS &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -50,13 +54,11 @@
 <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
 
 <span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="k">import</span> <span class="n">modelPlot</span>
-<span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="k">import</span> <span class="n">modelSetPlot</span>
 <span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="k">import</span> <span class="n">decSingle</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">callableDetailsString</span>
 
 
-<div class="viewcode-block" id="BPMS"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS">[docs]</a><span class="k">class</span> <span class="nc">BPMS</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS">[docs]</a><span class="k">class</span> <span class="nc">BPMS</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;The Bayesian Predictor with Markovian Switching model</span>
 
@@ -147,7 +149,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionLoc</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="BPMS.outputEvolution"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS.outputEvolution"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
 
 <span class="sd">        Returns</span>
@@ -164,7 +166,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="BPMS.storeState"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS.storeState"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        accessed later</span>
@@ -175,7 +177,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recActionLoc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actionLoc</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recPosteriorProb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">posteriorProb</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="BPMS.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS.rewardExpectation"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the reward based on the action and stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
@@ -210,7 +212,7 @@
 
         <span class="k">return</span> <span class="n">expectedReward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">activeStimuli</span></div>
 
-<div class="viewcode-block" id="BPMS.delta"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS.delta"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the comparison between the reward and the expectation</span>
 
@@ -236,7 +238,7 @@
 
         <span class="k">return</span> <span class="n">delta</span></div>
 
-<div class="viewcode-block" id="BPMS.updateModel"><a class="viewcode-back" href="../../model.html#model.BPMS.BPMS.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+<div class="viewcode-block" id="BPMS.updateModel"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.BPMS.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
 
         <span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
 
@@ -302,7 +304,7 @@
         <span class="k">return</span> <span class="n">ps</span></div>
 
 
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.BPMS.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default stimulus processor. Does nothing.Returns [1,0]</span>
 
@@ -327,7 +329,7 @@
     <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankStim&quot;</span>
     <span class="k">return</span> <span class="n">blankStimFunc</span></div>
 
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.html#model.BPMS.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
+<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.BPMS.html#model.BPMS.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default reward processor. Does nothing. Returns reward</span>
 
@@ -386,7 +388,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

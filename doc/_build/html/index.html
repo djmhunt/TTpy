@@ -9,11 +9,15 @@
     <title>PyHPDM! &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="simulation module" href="simulation.html" /> 
@@ -45,7 +49,7 @@
 <p>The framework has until now either been run with a run script or live in a command-line (or <a class="reference external" href="http://jupyter.org/">jupyter notebook</a>).</p>
 <div class="section" id="running-scripts">
 <h2>Running scripts<a class="headerlink" href="#running-scripts" title="Permalink to this headline">¶</a></h2>
-<p>Example running scripts can be found in <code class="docutils literal notranslate"><span class="pre">./runScripts/</span></code>. Here, a number of scripts have been created as templates: <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code> for simulating the <code class="docutils literal notranslate"><span class="pre">probSelect</span></code> experiment and <code class="docutils literal notranslate"><span class="pre">runScript.py</span></code> for fitting the data generated from <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code>. A visual display of the interactions in one of these scripts will soon be created.</p>
+<p>Example running scripts can be found in <code class="docutils literal notranslate"><span class="pre">./runScripts/</span></code>. Here, a number of scripts have been created as templates: <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code> for simulating the <code class="docutils literal notranslate"><span class="pre">probSelect</span></code> experiment and <code class="docutils literal notranslate"><span class="pre">runScript_fit.py</span></code> for fitting the data generated from <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code>. A visual display of the interactions in one of these scripts will soon be created.</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
@@ -54,22 +58,84 @@
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="simulation.html">simulation module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dataFitting.html">dataFitting module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data.html">data module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="experiments.html">experiments module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">simulation module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#id1">simulation Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simulation.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/simulation.logSimParams.html">logSimParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/simulation.recordSim.html">recordSim</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/simulation.simModelCSV.html">simModelCSV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/simulation.simulation.html">simulation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataFitting.html">dataFitting module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dataFitting.html#id1">dataFitting Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dataFitting.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.dataFitting.html">dataFitting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.fitRecord.html">fitRecord</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.fittingDataXLSX.html">fittingDataXLSX</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.logFittingParams.html">logFittingParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.logModFittedParams.html">logModFittedParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.logSimFittingParams.html">logSimFittingParams</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.recordFitting.html">recordFitting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/dataFitting.recordParticipantFit.html">recordParticipantFit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data.html#id1">data Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.data.html">data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.datasets.html">datasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getFiles.html">getFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getUniquePrefix.html">getUniquePrefix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getUniqueSuffix.html">getUniqueSuffix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getcsvData.html">getcsvData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getmatData.html">getmatData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getpickleData.html">getpickleData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getpickleFiles.html">getpickleFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getpickledFileData.html">getpickledFileData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getpickledGroupedFiles.html">getpickledGroupedFiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.getxlsxData.html">getxlsxData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.intCore.html">intCore</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.sortStrings.html">sortStrings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.sortbylastnum.html">sortbylastnum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.strCore.html">strCore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">experiments module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#id1">experiments Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="experiments.html#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/experiments.experiments.html">experiments</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="experiments.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="experiment.html">experiment package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.beads">experiment.beads module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.decks">experiment.decks module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.experimentPlot">experiment.experimentPlot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.experimentSetPlot">experiment.experimentSetPlot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.experimentTemplate">experiment.experimentTemplate module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.pavlov">experiment.pavlov module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.probSelect">experiment.probSelect module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.probStim">experiment.probStim module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment.weather">experiment.weather module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="experiment.html#module-experiment">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiment.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="experiment.basic.html">experiment.basic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.beads.html">experiment.beads module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.decks.html">experiment.decks module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.experimentTemplate.html">experiment.experimentTemplate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.pavlov.html">experiment.pavlov module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.probSelect.html">experiment.probSelect module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.probStim.html">experiment.probStim module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="experiment.weather.html">experiment.weather module</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">models module</a></li>
@@ -77,78 +143,147 @@
 <li class="toctree-l2"><a class="reference internal" href="model.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="model.decision.html">model.decision package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="model.decision.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="model.decision.html#module-model.decision.binary">model.decision.binary module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="model.decision.html#module-model.decision.discrete">model.decision.discrete module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="model.decision.html#module-model.decision">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.ACBasic">model.ACBasic module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.ACE">model.ACE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.ACES">model.ACES module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.BHMM">model.BHMM module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.BP">model.BP module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.BPMS">model.BPMS module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.EP">model.EP module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.MS">model.MS module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.MS_rev">model.MS_rev module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.OpAL">model.OpAL module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.OpALS">model.OpALS module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.OpALSE">model.OpALSE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.OpAL_H">model.OpAL_H module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.RVPM">model.RVPM module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.modelPlot">model.modelPlot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.modelSetPlot">model.modelSetPlot module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.modelTemplate">model.modelTemplate module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.qLearn">model.qLearn module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.qLearn2">model.qLearn2 module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.qLearnCorr">model.qLearnCorr module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.qLearnE">model.qLearnE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.qLearnMeta">model.qLearnMeta module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.td0">model.td0 module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model.tdE">model.tdE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="model.html#module-model">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="fitting.html">fitting package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="fitting.fitters.html">fitting.fitters package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.basinhopping">fitting.fitters.basinhopping module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.boundFunc">fitting.fitters.boundFunc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.evolutionary">fitting.fitters.evolutionary module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.fitAlg">fitting.fitters.fitAlg module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.leastsq">fitting.fitters.leastsq module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.minimize">fitting.fitters.minimize module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.qualityFunc">fitting.fitters.qualityFunc module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters.test_minimize">fitting.fitters.test_minimize module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="fitting.fitters.html#module-fitting.fitters">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="model.ACBasic.html">model.ACBasic module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.ACE.html">model.ACE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.ACES.html">model.ACES module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.BHMM.html">model.BHMM module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.BP.html">model.BP module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.BPE.html">model.BPE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.BPMS.html">model.BPMS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.BPV.html">model.BPV module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.EP.html">model.EP module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.EPE.html">model.EPE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.MS.html">model.MS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.MS_rev.html">model.MS_rev module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpAL.html">model.OpAL module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpALE.html">model.OpALE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpALS.html">model.OpALS module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpALSE.html">model.OpALSE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpAL_H.html">model.OpAL_H module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.OpAL_HE.html">model.OpAL_HE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.RVPM.html">model.RVPM module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.modelTemplate.html">model.modelTemplate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearn.html">model.qLearn module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearn2.html">model.qLearn2 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearn2E.html">model.qLearn2E module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnCorr.html">model.qLearnCorr module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnE.html">model.qLearnE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnECorr.html">model.qLearnECorr module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnF.html">model.qLearnF module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnK.html">model.qLearnK module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnMeta.html">model.qLearnMeta module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.qLearnSP.html">model.qLearnSP module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.randomBias.html">model.randomBias module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.td0.html">model.td0 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.tdE.html">model.tdE module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="model.tdr.html">model.tdr module</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting.actReactFitter">fitting.actReactFitter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting.expfitter">fitting.expfitter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting.fit">fitting.fit module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting.test_actReactFitter">fitting.test_actReactFitter module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting.test_fitness">fitting.test_fitness module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="fitting.html#module-fitting">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitAlgs.html">fitAlgs package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fitAlgs.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.basinhopping.html">fitAlgs.basinhopping module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.boundFunc.html">fitAlgs.boundFunc module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fitAlgs.boundFunc.html#id1">fitAlgs.boundFunc Module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="outputting.html">outputting module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="outputtingUtils.html">outputtingUtils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotting.html">plotting module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vtkWriter.html">vtkWriter package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#module-vtkWriter.vtkAbstract">vtkWriter.vtkAbstract module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#module-vtkWriter.vtkCSV">vtkWriter.vtkCSV module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#module-vtkWriter.vtkStructured">vtkWriter.vtkStructured module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#module-vtkWriter.vtkUnstructured">vtkWriter.vtkUnstructured module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vtkWriter.html#module-vtkWriter">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.evolutionary.html">fitAlgs.evolutionary module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.fitAlg.html">fitAlgs.fitAlg module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.fitSims.html">fitAlgs.fitSims module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fitAlgs.fitSims.html#id1">fitAlgs.fitSims Module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.leastsq.html">fitAlgs.leastsq module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.minimize.html">fitAlgs.minimize module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.qualityFunc.html">fitAlgs.qualityFunc module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="fitAlgs.qualityFunc.html#id1">fitAlgs.qualityFunc Module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fitAlgs.shgo.html">fitAlgs.shgo module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="outputting.html">outputting module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="outputting.html#id1">outputting Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="outputting.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.date.html">date</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.dictData2Lists.html">dictData2Lists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.dictKeyGen.html">dictKeyGen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.fancyLogger.html">fancyLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.fileNameGenerator.html">fileNameGenerator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.flatDictKeySet.html">flatDictKeySet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.folderSetup.html">folderSetup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.listDictKeySet.html">listDictKeySet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.listKeyGen.html">listKeyGen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.listSelection.html">listSelection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.newFlatDict.html">newFlatDict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.newListDict.html">newListDict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.pad.html">pad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.pickleLog.html">pickleLog</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.pickleRec.html">pickleRec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.reframeListDicts.html">reframeListDicts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputting.saving.html">saving</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="outputtingUtils.html">outputtingUtils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="outputtingUtils.html#id1">outputtingUtils Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="outputtingUtils.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/outputtingUtils.eventDictKeySet.html">eventDictKeySet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputtingUtils.exportClassData.html">exportClassData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputtingUtils.newEventDict.html">newEventDict</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/outputtingUtils.reframeEventDicts.html">reframeEventDicts</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#id1">utils Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.argProcess.html">argProcess</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.callableDetails.html">callableDetails</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.callableDetailsString.html">callableDetailsString</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.date.html">date</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.discountAverage.html">discountAverage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.errorResp.html">errorResp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.fancyLogger.html">fancyLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.flatten.html">flatten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.folderSetup.html">folderSetup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.kendalw.html">kendalw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.kendalwt.html">kendalwt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.kendalwts.html">kendalwts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.kldivergence.html">kldivergence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.listMerGen.html">listMerGen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.listMerge.html">listMerge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.listMergeNP.html">listMergeNP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.mergeDatasetRepr.html">mergeDatasetRepr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.mergeDatasets.html">mergeDatasets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.mergeDicts.html">mergeDicts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.mergeTwoDicts.html">mergeTwoDicts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.movingaverage.html">movingaverage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.newFile.html">newFile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.runningAverage.html">runningAverage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.runningMean.html">runningMean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.runningSTD.html">runningSTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.saving.html">saving</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.unique.html">unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/utils.varyingParams.html">varyingParams</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -170,7 +305,7 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table Of Contents</a></h3>
+  <h3><a href="#">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">PyHPDM!</a><ul>
 <li><a class="reference internal" href="#running-scripts">Running scripts</a></li>
@@ -223,7 +358,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

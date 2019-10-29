@@ -7,12 +7,13 @@ A collection of decision making functions where there are only two possible acti
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from warnings import warn
+import warnings
+import random
+import itertools
+import collections
 
-from random import choice, random
-from numpy import sum, array, arange, reshape, ones
-from itertools import izip
-from collections import OrderedDict
+import numpy as np
+
 from types import NoneType
 
 
@@ -58,11 +59,11 @@ def decSingle(expResponses=(0, 1)):
             elif len(validResponses) == 0:
                 return None, prob
             elif set(validResponses) != expResponseSet:
-                warn("Bad validResponses: " + str(validResponses))
+                warnings.warn("Bad validResponses: " + str(validResponses))
             else:
-                warn("Bad number of validResponses: " + str(validResponses))
+                warnings.warn("Bad number of validResponses: " + str(validResponses))
 
-        randNum = random()
+        randNum = random.random()
 
         lastNotAction = list(expResponseSet.difference([lastAction]))[0]
 
@@ -76,7 +77,7 @@ def decSingle(expResponses=(0, 1)):
         pSet = {lastNotAction: prob,
                 lastAction: 1-prob}
 
-        probDict = OrderedDict({k: pSet[k] for k in expResponses})
+        probDict = collections.OrderedDict({k: pSet[k] for k in expResponses})
 
         return decision, probDict
 
@@ -117,9 +118,9 @@ def decEta(expResponses=(0, 1), eta=0):
 
     def decisionFunc(prob, lastAction, stimulus=None, validResponses=None):
 
-        probabilities = array(prob).flatten()
+        probabilities = np.array(prob).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probabilities)})
 
         if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
@@ -128,9 +129,9 @@ def decEta(expResponses=(0, 1), eta=0):
             elif len(validResponses) == 0:
                 return None, probDict
             elif set(validResponses) != expResponseSet:
-                warn("Bad validResponses: " + str(validResponses))
+                warnings.warn("Bad validResponses: " + str(validResponses))
             elif len(validResponses) > 2:
-                warn("Bad number of validResponses: " + str(validResponses))
+                warnings.warn("Bad number of validResponses: " + str(validResponses))
 
         prob = probabilities[0]
 
@@ -138,7 +139,7 @@ def decEta(expResponses=(0, 1), eta=0):
             if prob > 0.5:
                 decision = expResponses[0]
             elif prob == 0.5:
-                decision = choice(expResponses)
+                decision = random.choice(expResponses)
             else:
                 decision = expResponses[1]
         else:
@@ -181,9 +182,9 @@ def decRandom(expResponses=(0, 1)):
 
     def decisionFunc(prob, lastAction, stimulus=None, validResponses=None):
 
-        probabilities = array(prob).flatten()
+        probabilities = np.array(prob).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probabilities)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probabilities)})
 
         if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
@@ -192,17 +193,17 @@ def decRandom(expResponses=(0, 1)):
             elif len(validResponses) == 0:
                 return None, probDict
             elif set(validResponses) != expResponseSet:
-                warn("Bad validResponses: " + str(validResponses))
+                warnings.warn("Bad validResponses: " + str(validResponses))
             elif len(validResponses) > 2:
-                warn("Bad number of validResponses: " + str(validResponses))
+                warnings.warn("Bad number of validResponses: " + str(validResponses))
 
         prob = probabilities[0]
-        decVal = random()
+        decVal = random.random()
 
         if prob > decVal:
             decision = expResponses[0]
         elif prob == decVal:
-            decision = choice(expResponses)
+            decision = random.choice(expResponses)
         else:
             decision = expResponses[1]
 
@@ -249,25 +250,25 @@ def decEtaSets(expResponses=(0, 1), eta=0):
 
     Examples
     --------
-    >>> from numpy import array
+    >>> import numpy as np
     >>> from model.decision.binary import decEtaSets
     >>> lastAct = 0
     >>> dec = decEtaSets()
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct)
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct)
     (0, {0:0.8, 1:0.2})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0])
     (0, {0: 1})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0,3])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[0,3])
     model\decision\binary.py:223: UserWarning: Bad number of validResponses: [0, 3]
     warn("Bad number of validResponses: " + str(validResponses))
     (0, {0:0.8, 1:0.2})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, validResponses=[])
     (None, {0:0.8, 1:0.2})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,0])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,0])
     (0, {0:0.6, 1:0.4})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,1])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[1,1])
     (0, {0:0.8, 1:0.2})
-    >>> dec(array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[0,0])
+    >>> dec(np.array([0.3,0.7,0.2,0.05]), lastAct, stimulus=[0,0])
     (0, {0:0.8, 1:0.2})
     """
 
@@ -282,17 +283,17 @@ def decEtaSets(expResponses=(0, 1), eta=0):
         else:
             numStim = int(probLen / 2)
 
-        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (array(stimulus) == 0).all():
+        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (np.array(stimulus) == 0).all():
             respWeights = stimulus
         else:
-            respWeights = ones(numStim)
+            respWeights = np.ones(numStim)
 
-        probSets = reshape(probabilities, (2, numStim))
-        expectSet = sum(respWeights * probSets, 1)
+        probSets = np.reshape(probabilities, (2, numStim))
+        expectSet = np.sum(respWeights * probSets, 1)
 
-        probPair = expectSet / sum(expectSet)
+        probPair = expectSet / np.sum(expectSet)
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probPair)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probPair)})
 
         if type(validResponses) is not NoneType:
             if len(validResponses) == 1:
@@ -301,9 +302,9 @@ def decEtaSets(expResponses=(0, 1), eta=0):
             elif len(validResponses) == 0:
                 return None, probDict
             elif set(validResponses) != expResponseSet:
-                warn("Bad validResponses: " + str(validResponses))
+                warnings.warn("Bad validResponses: " + str(validResponses))
             elif len(validResponses) > 2:
-                warn("Bad number of validResponses: " + str(validResponses))
+                warnings.warn("Bad number of validResponses: " + str(validResponses))
 
         probDec = probPair[0]
 
@@ -311,7 +312,7 @@ def decEtaSets(expResponses=(0, 1), eta=0):
             if probDec > 0.5:
                 decision = expResponses[0]
             elif probDec == 0.5:
-                decision = choice(expResponses)
+                decision = random.choice(expResponses)
             else:
                 decision = expResponses[1]
         else:

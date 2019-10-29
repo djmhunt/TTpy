@@ -9,15 +9,19 @@
     <title>simulation module &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="dataFitting module" href="dataFitting.html" />
-    <link rel="prev" title="PyDM!" href="index.html" /> 
+    <link rel="next" title="logSimParams" href="api/simulation.logSimParams.html" />
+    <link rel="prev" title="PyHPDM!" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,10 +33,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataFitting.html" title="dataFitting module"
+          <a href="api/simulation.logSimParams.html" title="logSimParams"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="PyDM!"
+          <a href="index.html" title="PyHPDM!"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
@@ -43,9 +47,41 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-simulation">
-<span id="simulation-module"></span><h1>simulation module<a class="headerlink" href="#module-simulation" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
+  <div class="section" id="simulation-module">
+<h1>simulation module<a class="headerlink" href="#simulation-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>simulation Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-simulation"></span><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#simulation.logSimParams" title="simulation.logSimParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logSimParams</span></code></a>(expParams,&nbsp;modelParams,&nbsp;simID)</td>
+<td>Writes to the log the description and the label of the experiment and model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#simulation.recordSim" title="simulation.recordSim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recordSim</span></code></a>(fileNameGen,&nbsp;expData,&nbsp;modelData,&nbsp;simID)</td>
+<td>Records the data from an experiment-model run.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#simulation.simModelCSV" title="simulation.simModelCSV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simModelCSV</span></code></a>(modelData,&nbsp;simID,&nbsp;fileNameGen)</td>
+<td>Saves the fitting data to a CSV file</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#simulation.simulation" title="simulation.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a>(experiments,&nbsp;models[,&nbsp;simLabel,&nbsp;…])</td>
+<td>A framework for letting models interact with experiments and record the data</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-simulation"></span><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -54,8 +90,84 @@
 </tbody>
 </table>
 <dl class="function">
+<dt id="simulation.logSimParams">
+<code class="descclassname">simulation.</code><code class="descname">logSimParams</code><span class="sig-paren">(</span><em>expParams</em>, <em>modelParams</em>, <em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#logSimParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.logSimParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes to the log the description and the label of the experiment and model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>expParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The experiment parameters</li>
+<li><strong>modelParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The model parameters</li>
+<li><strong>simID</strong> (<em>string</em>) – The identifier for each simulation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">recordSimParams()</span></code></dt>
+<dd>Records these parameters for later use</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.recordSim">
+<code class="descclassname">simulation.</code><code class="descname">recordSim</code><span class="sig-paren">(</span><em>fileNameGen</em>, <em>expData</em>, <em>modelData</em>, <em>simID</em>, <em>pickleData=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#recordSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.recordSim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Records the data from an experiment-model run. Creates a pickled version</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fileNameGen</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
+<li><strong>expData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the experiment</li>
+<li><strong>modelData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the model</li>
+<li><strong>simID</strong> (<em>basestring</em>) – The label identifying the simulation</li>
+<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">pickleLog()</span></code></dt>
+<dd>records the picked data</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.simModelCSV">
+<code class="descclassname">simulation.</code><code class="descname">simModelCSV</code><span class="sig-paren">(</span><em>modelData</em>, <em>simID</em>, <em>fileNameGen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simModelCSV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simModelCSV" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the fitting data to a CSV file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>modelData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the model</li>
+<li><strong>simID</strong> (<em>string</em>) – The identifier for the simulation</li>
+<li><strong>fileNameGen</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="simulation.simulation">
-<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>experiments</em>, <em>models</em>, <em>outputting</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>experiments</em>, <em>models</em>, <em>simLabel=u'Untitled'</em>, <em>save=True</em>, <em>saveScript=True</em>, <em>pickleData=False</em>, <em>logLevel=20</em>, <em>npSetErr=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A framework for letting models interact with experiments and record the data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -64,7 +176,15 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>experiments</strong> (<a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><em>experiments.experiments</em></a>) – An experiment factory generating each of the different experiments being considered</li>
 <li><strong>models</strong> (<a class="reference internal" href="models.html#models.models" title="models.models"><em>models.models</em></a>) – A model factory generating each of the different models being considered</li>
-<li><strong>outputing</strong> (<a class="reference internal" href="outputting.html#outputting.outputting" title="outputting.outputting"><em>outputting.outputting</em></a>) – </li>
+<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data will be saved to files. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>saveScript</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true a copy of the top level script running the current function
+will be copied to the log folder. Only works if save is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>simLabel</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation</li>
+<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default <code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code></li>
+<li><strong>npSetErr</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
 </ul>
 </td>
 </tr>
@@ -72,10 +192,12 @@
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiments.experiments()</span></code></a>, <a class="reference internal" href="models.html#models.models" title="models.models"><code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></a>, <a class="reference internal" href="outputting.html#outputting.outputting" title="outputting.outputting"><code class="xref py py-func docutils literal notranslate"><span class="pre">outputting.outputting()</span></code></a></p>
+<p class="last"><a class="reference internal" href="experiments.html#experiments.experiments" title="experiments.experiments"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiments.experiments()</span></code></a>, <a class="reference internal" href="models.html#models.models" title="models.models"><code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></a></p>
 </div>
 </dd></dl>
 
+</div>
+</div>
 </div>
 
 
@@ -84,12 +206,23 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">simulation module</a><ul>
+<li><a class="reference internal" href="#id1">simulation Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">PyDM!</a></p>
+                        title="previous chapter">PyHPDM!</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="dataFitting.html"
-                        title="next chapter">dataFitting module</a></p>
+  <p class="topless"><a href="api/simulation.logSimParams.html"
+                        title="next chapter">logSimParams</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -123,17 +256,17 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dataFitting.html" title="dataFitting module"
+          <a href="api/simulation.logSimParams.html" title="logSimParams"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="PyDM!"
+          <a href="index.html" title="PyHPDM!"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

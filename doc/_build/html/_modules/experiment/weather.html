@@ -9,11 +9,15 @@
     <title>experiment.weather &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -48,13 +52,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">nan</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">shape</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">choice</span>
 <span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
-<span class="c1"># from plotting import dataVsEvents, paramDynamics</span>
-<span class="kn">from</span> <span class="nn">experiment.experimentPlot</span> <span class="k">import</span> <span class="n">experimentPlot</span>
-
-<span class="c1"># from utils import varyingParams</span>
 
 <span class="n">cueSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Pickering&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
@@ -83,7 +83,7 @@
 <span class="n">defaultActualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="s2">&quot;Pickering&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the 1994 paper &quot;Probabilistic classification learning in amnesia.&quot;</span>
 
@@ -97,18 +97,24 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    actualities: int, optional</span>
+<span class="sd">    cueProbs : array of int, optional</span>
+<span class="sd">        If generating data, the likelihood of each cue being associated with each actuality. Each row of the array</span>
+<span class="sd">        describes one actuality, with each column representing one cue. Each column is assumed sum to 1</span>
+<span class="sd">    numCues : int, optional</span>
+<span class="sd">        The number of cues</span>
+<span class="sd">    learningLen : int, optional</span>
+<span class="sd">        The number of trials in the learning phase. Default is 200</span>
+<span class="sd">    testLen : int, optional</span>
+<span class="sd">        The number of trials in the test phase. Default is 100</span>
+<span class="sd">    actualities : array of int, optional</span>
 <span class="sd">        The actual reality the cues pointed to; the correct response the participant is trying to get correct</span>
-<span class="sd">    cues: array of floats, optional</span>
-<span class="sd">        The cues used to guess the actualities</span>
-<span class="sd">    plotArgs : dictionary, optional</span>
-<span class="sd">        Any arguments that will be later used by ``experimentPlot``. Refer to</span>
-<span class="sd">        its documentation for more details.</span>
+<span class="sd">    cues : array of floats, optional</span>
+<span class="sd">        The stimulus cues used to guess the actualities</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weather&quot;</span>
 
-<div class="viewcode-block" id="Weather.reset"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.reset"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new experiment instance</span>
 
@@ -119,16 +125,18 @@
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="n">defaultCues</span><span class="p">)</span>
-        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="n">defaultActualities</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">cueProbs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cueProbs&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]])</span>
+        <span class="n">numCues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numCues&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">))</span>
+        <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="n">testLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;testLen&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="n">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">+</span><span class="n">testLen</span><span class="p">))</span>
+        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="n">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cues</span> <span class="ow">in</span> <span class="n">cueSets</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cueSets</span><span class="p">[</span><span class="n">cues</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="s2">&quot;Unknown cue sets&quot;</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown cue sets&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cues</span>
 
@@ -136,7 +144,7 @@
             <span class="k">if</span> <span class="n">actualities</span> <span class="ow">in</span> <span class="n">actualityLists</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="n">actualities</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="s2">&quot;Unknown actualities list&quot;</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown actualities list&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualities</span>
 
@@ -155,7 +163,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -181,7 +189,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="Weather.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.receiveAction"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -193,7 +201,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="Weather.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.feedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feedback to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -204,17 +212,16 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Weather.procede"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.procede"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Weather.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.outputEvolution"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Plots and saves files containing all the relavent data for this</span>
-<span class="sd">        experiment run</span>
+<span class="sd">        Saves files containing all the relevant data for this experiment run</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -223,14 +230,72 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Weather.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.weather.Weather.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.storeState"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
+<div class="viewcode-block" id="genCues"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genCues">[docs]</a><span class="k">def</span> <span class="nf">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">taskLen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="weatherStimDirect"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherStimDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherStimDirect</span><span class="p">():</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cueProbs</span>
+<span class="sd">    taskLen</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cues</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">cues</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">taskLen</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numCues</span><span class="p">]:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="n">numCues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+        <span class="n">cues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">cues</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="genActualities"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genActualities">[docs]</a><span class="k">def</span> <span class="nf">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cueProbs</span>
+<span class="sd">    cues</span>
+<span class="sd">    learningLen</span>
+<span class="sd">    testLen</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    actions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">cueProbs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">},</span> <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}}</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">learningLen</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">cues</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">probs</span><span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">)][</span><span class="n">prod</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">learningLen</span><span class="p">):</span>
+            <span class="n">visibleCueProbs</span> <span class="o">=</span> <span class="n">cues</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">cueProbs</span>
+            <span class="n">actProb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">visibleCueProbs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">actProb</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">actProb</span><span class="p">))</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+    <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Nan&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">testLen</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="weatherStimDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherStimDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherStimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather stimuli for models expecting just the event</span>
 
@@ -257,7 +322,7 @@
     <span class="k">return</span> <span class="n">weatherStim</span></div>
 
 
-<div class="viewcode-block" id="weatherStimAllAction"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherStimAllAction">[docs]</a><span class="k">def</span> <span class="nf">weatherStimAllAction</span><span class="p">(</span><span class="n">numActions</span><span class="p">):</span>
+<div class="viewcode-block" id="weatherStimAllAction"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherStimAllAction">[docs]</a><span class="k">def</span> <span class="nf">weatherStimAllAction</span><span class="p">(</span><span class="n">numActions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather stimuli for models expecting feedback from all</span>
 <span class="sd">    possible actions</span>
@@ -330,7 +395,35 @@
     <span class="k">return</span> <span class="n">weatherStim</span></div>
 
 
-<div class="viewcode-block" id="weatherRewDiff"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherRewDiff">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDiff</span><span class="p">():</span>
+<div class="viewcode-block" id="weatherRewDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDirect</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the weather reward for models expecting the reward feedback</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    weatherRew : function</span>
+<span class="sd">        The function expects to be passed a tuple containing the reward the</span>
+<span class="sd">        last action and the last stimuli. The function returns the reward.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">reward</span>
+
+    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherRewDirect&quot;</span>
+    <span class="k">return</span> <span class="n">weatherRew</span></div>
+
+
+<div class="viewcode-block" id="weatherRewDiff"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDiff">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDiff</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather reward for models expecting reward corrections</span>
 
@@ -364,7 +457,7 @@
     <span class="k">return</span> <span class="n">weatherRew</span></div>
 
 
-<div class="viewcode-block" id="weatherRewDualCorrection"><a class="viewcode-back" href="../../experiment.html#experiment.weather.weatherRewDualCorrection">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDualCorrection</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
+<div class="viewcode-block" id="weatherRewDualCorrection"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDualCorrection">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDualCorrection</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting the reward correction</span>
 <span class="sd">    from two possible actions.</span>
@@ -432,7 +525,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

@@ -9,11 +9,15 @@
     <title>model.ACE &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -51,13 +55,10 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">ones</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="nb">max</span>
 
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">model.modelPlot</span> <span class="k">import</span> <span class="n">modelPlot</span>
-<span class="kn">from</span> <span class="nn">model.modelSetPlot</span> <span class="k">import</span> <span class="n">modelSetPlot</span>
-<span class="kn">from</span> <span class="nn">model.decision.binary</span> <span class="k">import</span> <span class="n">decRandom</span>
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">callableDetailsString</span>
+<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
 
 
-<div class="viewcode-block" id="ACE"><a class="viewcode-back" href="../../model.html#model.ACE.ACE">[docs]</a><span class="k">class</span> <span class="nc">ACE</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE">[docs]</a><span class="k">class</span> <span class="nc">ACE</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A basic, complete actor-critic model with decision making based on qLearnE</span>
 
@@ -70,6 +71,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    alpha : float, optional</span>
 <span class="sd">        Learning rate parameter</span>
+<span class="sd">    alphaE : float, optional</span>
+<span class="sd">        Learning rate parameter for the update of the expectations. Default ``\alpha``</span>
+<span class="sd">    alphaA : float, optional</span>
+<span class="sd">        Learning rate parameter for the update of the actor. Default ``\alpha``</span>
 <span class="sd">    epsilon : float, optional</span>
 <span class="sd">        Noise parameter. The larger it is the less likely the model is to choose the highest expected reward</span>
 <span class="sd">    numActions : integer, optional</span>
@@ -99,7 +104,7 @@
 <span class="sd">        understand. Default is blankRew</span>
 <span class="sd">    decFunc : function, optional</span>
 <span class="sd">        The function that takes the internal values of the model and turns them</span>
-<span class="sd">        in to a decision. Default is model.decision.binary.decEta</span>
+<span class="sd">        in to a decision. Default is model.decision.discrete.decWeightProb</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;ACE&quot;</span>
@@ -111,16 +116,20 @@
         <span class="c1"># A record of the kwarg keys, the variable they create and their default value</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaE</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alphaE&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alphaA</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alphaA&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;epsilon&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;expect&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;actorExpect&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decRandom</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">genEventModifiers</span><span class="p">(</span><span class="n">kwargRemains</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alphaE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alphaA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;epsilon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;expectation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;actorExpectation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -129,7 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">genStandardResultsStore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActorExpectations</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="ACE.outputEvolution"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.outputEvolution"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
 
 <span class="sd">        Returns</span>
@@ -144,7 +153,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="ACE.storeState"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.storeState"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        accessed later</span>
@@ -153,7 +162,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">storeStandardResults</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recActorExpectations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="ACE.rewardExpectation"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.rewardExpectation"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the estimated reward based on the action and stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
@@ -175,16 +184,11 @@
 
         <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimuli</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
-        <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
-        <span class="c1"># calculate the expectations associated with each action.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span>
+        <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actionExpectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">activeStimuli</span></div>
 
-<div class="viewcode-block" id="ACE.delta"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.delta"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the comparison between the reward and the expectation</span>
 
@@ -210,18 +214,18 @@
 
         <span class="k">return</span> <span class="n">delta</span></div>
 
-<div class="viewcode-block" id="ACE.updateModel"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.updateModel"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        delta : float</span>
 <span class="sd">            The difference between the reward and the expected reward</span>
 <span class="sd">        action : int</span>
-<span class="sd">            The action chosen by the model in this timestep</span>
+<span class="sd">            The action chosen by the model in this trialstep</span>
 <span class="sd">        stimuli : list of float</span>
-<span class="sd">            The weights of the different stimuli in this timestep</span>
+<span class="sd">            The weights of the different stimuli in this trialstep</span>
 <span class="sd">        stimuliFilter : list of bool</span>
-<span class="sd">            A list describing if a stimulus cue is present in this timestep</span>
+<span class="sd">            A list describing if a stimulus cue is present in this trialstep</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -229,22 +233,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_newExpect</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
 
         <span class="c1"># Calculate the new probabilities</span>
-        <span class="c1"># We need to combine the expectations before calculating the probabilities</span>
-        <span class="n">actExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="n">actExpectations</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorStimulusProbs</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_newExpect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="n">newExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">delta</span><span class="o">*</span><span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">newExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaE</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
         <span class="n">newExpectations</span> <span class="o">=</span> <span class="n">newExpectations</span> <span class="o">*</span> <span class="p">(</span><span class="n">newExpectations</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">newExpectations</span>
 
-        <span class="n">newActorExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta</span><span class="o">*</span><span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">newActorExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphaA</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
         <span class="n">newActorExpectations</span> <span class="o">=</span> <span class="n">newActorExpectations</span> <span class="o">*</span> <span class="p">(</span><span class="n">newActorExpectations</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">newActorExpectations</span>
 
-<div class="viewcode-block" id="ACE.calcProbabilities"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
-        <span class="c1"># type: (Iterable) -&gt; ndarray</span>
+    <span class="k">def</span> <span class="nf">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+
+        <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
+        <span class="c1"># calculate the expectations associated with each action.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="n">expectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actionExpectations</span> <span class="o">=</span> <span class="n">expectations</span>
+
+        <span class="k">return</span> <span class="n">actionExpectations</span>
+
+<div class="viewcode-block" id="ACE.calcProbabilities"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+        <span class="c1"># type: (ndarray) -&gt; ndarray</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the probabilities associated with the actions</span>
 
@@ -258,23 +271,14 @@
 <span class="sd">            The probabilities associated with the actionValues</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#lastAction = -ones(shape(actionValues))</span>
-        <span class="c1">#lastAction[self.lastAction] = 1</span>
-
         <span class="n">cbest</span> <span class="o">=</span> <span class="n">actionValues</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">actionValues</span><span class="p">)</span>
         <span class="n">deltaEpsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
         <span class="n">bestEpsilon</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cbest</span><span class="p">)</span> <span class="o">+</span> <span class="n">deltaEpsilon</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">bestEpsilon</span> <span class="o">*</span> <span class="n">cbest</span> <span class="o">+</span> <span class="n">deltaEpsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cbest</span><span class="p">)</span>
-
-        <span class="n">probArray</span> <span class="o">=</span> <span class="n">p</span>
-
-        <span class="c1">#change = self.kappa * lastAction</span>
-        <span class="c1">#probArray = p + (1 - p) * change * (change &gt; 0) + p * change * (change &lt; 0)</span>
-        <span class="c1"># probArray = p + p * (1 - p) * change</span>
+        <span class="n">probArray</span> <span class="o">=</span> <span class="n">bestEpsilon</span> <span class="o">*</span> <span class="n">cbest</span> <span class="o">+</span> <span class="n">deltaEpsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cbest</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">probArray</span></div>
 
-<div class="viewcode-block" id="ACE.actorStimulusProbs"><a class="viewcode-back" href="../../model.html#model.ACE.ACE.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ACE.actorStimulusProbs"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.ACE.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates in the model-appropriate way the probability of each action.</span>
 
@@ -285,12 +289,13 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="p">)</span>
+        <span class="n">actExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actorExpectations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="n">actExpectations</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">probabilities</span></div></div>
 
 
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.html#model.ACE.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
+<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default stimulus processor. Does nothing.</span>
 
@@ -313,7 +318,7 @@
     <span class="k">return</span> <span class="n">blankStimFunc</span></div>
 
 
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.html#model.ACE.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
+<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.ACE.html#model.ACE.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Default reward processor. Does nothing. Returns reward</span>
 
@@ -372,7 +377,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

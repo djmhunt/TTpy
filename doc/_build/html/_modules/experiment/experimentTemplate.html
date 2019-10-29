@@ -9,11 +9,15 @@
     <title>experiment.experimentTemplate &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -43,24 +47,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="c1">#matplotlib.interactive(True)</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="kn">from</span> <span class="nn">experiment.experimentPlot</span> <span class="k">import</span> <span class="n">experimentPlot</span>
-<span class="kn">from</span> <span class="nn">experiment.experimentSetPlot</span> <span class="k">import</span> <span class="n">experimentSetPlot</span>
-
-<div class="viewcode-block" id="experiment"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment">[docs]</a><span class="k">class</span> <span class="nc">experiment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment">[docs]</a><span class="k">class</span> <span class="nc">experiment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The abstract experiment class from which all others inherit</span>
 
 <span class="sd">    Many general methods for experiments are found only here</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    plotArgs : dict</span>
-<span class="sd">        The arguments for plotting functions</span>
+
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -71,13 +67,13 @@
 
     <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Empty&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<div class="viewcode-block" id="experiment.reset"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.reset"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new experiment instance</span>
 
@@ -87,8 +83,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;plotArgs&#39;</span><span class="p">,{})</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -102,7 +96,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="experiment.next"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.next"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -148,21 +142,21 @@
 
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="experiment.receiveAction"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.receiveAction"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="experiment.procede"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.procede"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the experiment before the next timestep</span>
+<span class="sd">        Updates the experiment before the next trialstep</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="experiment.feedback"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.feedback"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 
@@ -174,7 +168,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="experiment.outputEvolution"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.outputEvolution"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all the relevent data for this experiment run</span>
 
@@ -190,7 +184,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="experiment.storeState"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.storeState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
@@ -198,7 +192,7 @@
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="experiment.params"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="experiment.params"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parameters of the experiment as a dictionary</span>
 
@@ -208,43 +202,7 @@
 <span class="sd">            The parameters of the experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="experiment.plot"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a plotting class relevant for this experiment</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        experimentPlot : experiment.experimentPlot.experimentPlot</span>
-<span class="sd">            The plots created for the experiment</span>
-<span class="sd">        plotArgs : dict</span>
-<span class="sd">            Plot arguments that may be used within the experimentPlot instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">experimentPlot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span></div>
-
-<div class="viewcode-block" id="experiment.plotSet"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.plotSet">[docs]</a>    <span class="k">def</span> <span class="nf">plotSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a plotting class relavent for this experiment set</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        experimentSetPlot : experiment.experimentSetPlot.experimentSetPlot</span>
-<span class="sd">            The plots created for the experiment set</span>
-<span class="sd">        plotArgs : dict</span>
-<span class="sd">            Plot arguments that may be used within the experimentSetPlot instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">experimentSetPlot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotArgs</span></div>
-
-<div class="viewcode-block" id="experiment.experimentPlot"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.experimentPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentPlot</span><span class="p">(</span><span class="n">experimentPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a experiment&quot;&quot;&quot;</span></div>
-
-<div class="viewcode-block" id="experiment.experimentSetPlot"><a class="viewcode-back" href="../../experiment.html#experiment.experimentTemplate.experiment.experimentSetPlot">[docs]</a>    <span class="k">class</span> <span class="nc">experimentSetPlot</span><span class="p">(</span><span class="n">experimentSetPlot</span><span class="p">):</span>
-
-        <span class="sd">&quot;&quot;&quot;Abstract class for the creation of plots relevant to a set of experiments&quot;&quot;&quot;</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div></div>
 </pre></div>
 
           </div>
@@ -283,7 +241,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>

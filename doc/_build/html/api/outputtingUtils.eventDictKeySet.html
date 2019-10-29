@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>eventDictKeySet &#8212; pyHPDM 0.9 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="exportClassData" href="outputtingUtils.exportClassData.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="outputtingUtils.exportClassData.html" title="exportClassData"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../outputtingUtils.html" accesskey="U">outputtingUtils module</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="eventdictkeyset">
+<h1>eventDictKeySet<a class="headerlink" href="#eventdictkeyset" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="outputtingUtils.eventDictKeySet">
+<code class="descclassname">outputtingUtils.</code><code class="descname">eventDictKeySet</code><span class="sig-paren">(</span><em>data</em>, <em>parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/outputtingUtils.html#eventDictKeySet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputtingUtils.eventDictKeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a dictionary of keys and identifiers for the new dictionary,
+splitting any keys with 2D lists into a set of keys, one for each column
+in the original key.</p>
+<p>These are named &lt;key&gt;&lt;column number&gt;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary containing two dimensional arrays and some 1D
+parameters and identifiers</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – A dictionary containing some 1D arrays, floats and strings. These are
+seen as not changing over the simulation, so will be split if there are
+multiple items</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>keySet</strong> (<em>dict</em>) – The keys are the keys for the new dictionary. The values contain a
+two element tuple. The first element is the original name of the
+key and the second is the location of the value to be stored in the
+original dictionary value array.</li>
+<li><strong>T</strong> (<em>int</em>) – The length of the longest array. This represents the number of
+trialsteps that have elapsed since the start of the simulation.</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../outputtingUtils.html#outputtingUtils.exportClassData" title="outputtingUtils.exportClassData"><code class="xref py py-func docutils literal notranslate"><span class="pre">exportClassData()</span></code></a>, <a class="reference internal" href="../outputtingUtils.html#outputtingUtils.newEventDict" title="outputtingUtils.newEventDict"><code class="xref py py-func docutils literal notranslate"><span class="pre">newEventDict()</span></code></a>, <a class="reference internal" href="../outputtingUtils.html#outputtingUtils.reframeEventDicts" title="outputtingUtils.reframeEventDicts"><code class="xref py py-func docutils literal notranslate"><span class="pre">reframeEventDicts()</span></code></a></p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Next topic</h4>
+  <p class="topless"><a href="outputtingUtils.exportClassData.html"
+                        title="next chapter">exportClassData</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/outputtingUtils.eventDictKeySet.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="outputtingUtils.exportClassData.html" title="exportClassData"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../outputtingUtils.html" >outputtingUtils module</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

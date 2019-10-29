@@ -8,12 +8,12 @@ number of actions, but they are countable.
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from warnings import warn
+import warnings
+import itertools
+import collections
 
-from numpy.random import choice
-from numpy import argmax, array, where, amax, ones, reshape, sum, shape
-from itertools import izip
-from collections import OrderedDict
+import numpy as np
+
 from types import NoneType
 
 
@@ -64,24 +64,24 @@ def decWeightProb(expResponses):
     ￼(3, {1:0.2,2:0.3,3:0.5})
     """
 
-    expResp = array(expResponses)
+    expResp = np.array(expResponses)
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        probArray = array(probabilities).flatten()
+        probArray = np.array(probabilities).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probArray)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
         if type(prob) is NoneType:
             return None, probDict
 
-        normProb = prob / sum(prob)
+        normProb = prob / np.sum(prob)
 
-        decision = choice(resp, p=normProb)
+        decision = np.random.choice(resp, p=normProb)
 
-        probDict = OrderedDict({k: v for k, v in izip(resp, normProb)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(resp, normProb)})
 
         return decision, probDict
 
@@ -138,13 +138,13 @@ def decMaxProb(expResponses):
     ￼(3, {1:0.2,2:0.3,3:0.5})
     """
 
-    expResp = array(expResponses)
+    expResp = np.array(expResponses)
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        probArray = array(probabilities).flatten()
+        probArray = np.array(probabilities).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probArray)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
@@ -153,9 +153,9 @@ def decMaxProb(expResponses):
 
         # In case there are multiple choices with the same probability, pick
         # one at random
-        probIndexes = where(prob == amax(prob))[0]
+        probIndexes = np.where(prob == np.amax(prob))[0]
 
-        decision = choice(resp[probIndexes])
+        decision = np.random.choice(resp[probIndexes])
 
         return decision, probDict
 
@@ -196,59 +196,61 @@ def decMaxProbSets(expResponses):
     >>> lastAct = 0
     >>> d = decMaxProbSets([0,1,2])
     >>> d([0.1,0.4,0.2,0.3,0.5,0.5], lastAct)
-    ￼(2, {0:0.25,1:0.25,2:0.5})
+    (2, OrderedDict([(0, 0.25), (1, 0.25), (2, 0.5)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct)
-    ￼(1, {0:0.2,1:0.4,2:0.4})
+    (1, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct)
-    ￼(2, {0:0.2,1:0.4,2:0.4})
+    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0,2])
-    ￼(2, {0:0.2,1:0.4,2:0.4})
+    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0])
-    ￼(0, {0:0.2,1:0.4,2:0.4})
+    (0, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0,3])
-    model\decision\discrete.py:181: UserWarning: Some of the validResponses are not in expResponses: [0, 3]
-    warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
-    ￼(2, {0:0.2,1:0.4,2:0.4})
+    Stimuli invalid: None. Ignoring stimuli
+      warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
+    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[])
-    ￼(None, {0:0.2,1:0.4,2:0.4})
+    (None, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, stimulus=[1,0])
-    ￼(2, {0:0.1,1:0.4,2:0.5})
+    (2, OrderedDict([(0, 0.1), (1, 0.4), (2, 0.5)]))
     >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, stimulus=[0,0])
-    ￼(2, {0:0.2,1:0.4,2:0.4})
+    Stimuli invalid: [0, 0]. Ignoring stimuli
+      warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
+    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
     """
 
-    expResp = array(expResponses)
+    expResp = np.array(expResponses)
     expRespSize = len(expResp)
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
         numStim = int(len(probabilities) / expRespSize)
 
-        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (array(stimulus) == 0).all():
+        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (np.array(stimulus) == 0).all():
             respWeights = stimulus
         else:
-            warn("Stimuli invalid: " + repr(stimulus) + ". Ignoring stimuli")
-            respWeights = ones(numStim)
+            warnings.warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
+            respWeights = np.ones(numStim)
 
-        probLists = reshape(probabilities, (expRespSize, numStim))
-        expectList = sum(respWeights * probLists, 1)
+        probLists = np.reshape(probabilities, (expRespSize, numStim))
+        expectList = np.sum(respWeights * probLists, 1)
 
-        probNormList = (expectList / sum(expectList)).flatten()
+        probNormList = (expectList / np.sum(expectList)).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResp, probNormList)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResp, probNormList)})
 
         prob, resp = validProbabilities(probNormList, expResp, validResponses)
 
         if type(prob) is NoneType:
             return None, probDict
 
-        probMax = amax(prob)
+        probMax = np.amax(prob)
 
         # In case there are multiple choices with the same probability, pick
         # one at random
-        probIndexes = where(prob == probMax)[0]
+        probIndexes = np.where(prob == probMax)[0]
 
-        decision = choice(resp[probIndexes])
+        decision = np.random.choice(resp[probIndexes])
 
         return decision, probDict
 
@@ -308,13 +310,13 @@ def decProbThresh(expResponses, eta=0.8):
     ￼(3, {1:0.2,2:0.3,3:0.5})
     """
 
-    expResp = array(expResponses)
+    expResp = np.array(expResponses)
 
     def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
 
-        probArray = array(probabilities).flatten()
+        probArray = np.array(probabilities).flatten()
 
-        probDict = OrderedDict({k: v for k, v in izip(expResponses, probArray)})
+        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
@@ -322,11 +324,11 @@ def decProbThresh(expResponses, eta=0.8):
             return None, probDict
 
         # If probMax is above a threshold, we pick the best one, otherwise we pick at random
-        if amax(prob) >= eta:
-            probIndexes = where(prob >= eta)[0]
-            decision = choice(resp[probIndexes])
+        if np.amax(prob) >= eta:
+            probIndexes = np.where(prob >= eta)[0]
+            decision = np.random.choice(resp[probIndexes])
         else:
-            decision = choice(resp)
+            decision = np.random.choice(resp)
 
         return decision, probDict
 
@@ -364,10 +366,10 @@ def validProbabilities(probabilities, expResp, validResponses):
         resp = expResp
         prob = probabilities
     else:
-        resp = array([r for r in expResp if r in validResponses])
-        prob = array([probabilities[i] for i, r in enumerate(expResp) if r in validResponses])
+        resp = np.array([r for r in expResp if r in validResponses])
+        prob = np.array([probabilities[i] for i, r in enumerate(expResp) if r in validResponses])
         if len(resp) != len(validResponses):
-            warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
+            warnings.warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
             resp = expResp
             prob = probabilities
         elif len(validResponses) == 0:

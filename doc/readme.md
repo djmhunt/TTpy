@@ -10,11 +10,14 @@
 
 5. Open a command line in "./Code/doc"
 
-6. Build the rst files automatically (OR add them by hand!): `sphinx-apidoc -o . ../ -f -d 4`
+6. Build the rst files automatically (OR add them by hand!) using [`shinx-apidoc`](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html): 
+	`sphinx-apidoc -o . ../ --force --follow-links -d 4 --separate --module-first`
 
 7. Clean up the generated `rst` files to include only what you want
 
-8. Make the html documentation: `make.bat html`
+8. Include in the rst files the line `.. automodapi:: mymodulename` to break the module into different pages
+
+9. Make the html documentation: `make.bat html`
 
 # ReStructured Text
 
@@ -33,3 +36,10 @@
 
 * [Sphinx](http://sphinx-doc.org/)
 * [Sphinx autobuild](https://pypi.python.org/pypi/sphinx-autobuild)
+
+# NumPy style
+* [napoleon](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)
+* [style doc](https://numpydoc.readthedocs.io/en/latest/format.html#docstring-standard)
+
+# automodapi
+* [automodapi](https://github.com/astropy/sphinx-automodapi)

@@ -9,14 +9,17 @@
     <title>data module &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="experiments module" href="experiments.html" />
     <link rel="prev" title="dataFitting module" href="dataFitting.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,9 +32,6 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="experiments.html" title="experiments module"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="dataFitting.html" title="dataFitting module"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
@@ -43,9 +43,114 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-data">
-<span id="data-module"></span><h1>data module<a class="headerlink" href="#module-data" title="Permalink to this headline">¶</a></h1>
-<p>This module allows for the importing of participant data for use in fitting</p>
+  <div class="section" id="data-module">
+<h1>data module<a class="headerlink" href="#data-module" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>data Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-data"></span><p>This module allows for the importing of participant data for use in fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code>(object[,&nbsp;dtype,&nbsp;copy,&nbsp;order,&nbsp;subok,&nbsp;ndmin])</td>
+<td>Create an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.data" title="data.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>(folder,&nbsp;fileType,&nbsp;**kwargs)</td>
+<td>A function for reading in and returning a dataset</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.datasets" title="data.datasets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datasets</span></code></a>(folders,&nbsp;fileTypes)</td>
+<td>A function for reading in multiple datasets in one go</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">finditer</span></code>(pattern,&nbsp;string[,&nbsp;flags])</td>
+<td>Return an iterator over all non-overlapping matches in the string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.getFiles" title="data.getFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getFiles</span></code></a>(folder,&nbsp;fileType,&nbsp;**kwargs)</td>
+<td>Produces the list of valid input files</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.getUniquePrefix" title="data.getUniquePrefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUniquePrefix</span></code></a>(unorderedList,&nbsp;suffixLen)</td>
+<td>Identifies any initial part of strings that are identical for all string</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.getUniqueSuffix" title="data.getUniqueSuffix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getUniqueSuffix</span></code></a>(unorderedList,&nbsp;knownSuffixLen)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">param unorderedList:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">A list of strings to be ordered</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.getcsvData" title="data.getcsvData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getcsvData</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs,&nbsp;**kwargs)</td>
+<td>Loads the data from csv files</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.getmatData" title="data.getmatData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getmatData</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs)</td>
+<td>Loads the data from MATLAB files</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.getpickleData" title="data.getpickleData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpickleData</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs,&nbsp;**kwargs)</td>
+<td>Loads the data from python pickle files</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.getpickleFiles" title="data.getpickleFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpickleFiles</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs)</td>
+<td>Loads the data from valid python pickle files</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.getpickledFileData" title="data.getpickledFileData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpickledFileData</span></code></a>(folder,&nbsp;fileName[,&nbsp;header])</td>
+<td>Loads the data from a python pickle file and returns it as a dictionary if it is not already one</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.getpickledGroupedFiles" title="data.getpickledGroupedFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getpickledGroupedFiles</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs)</td>
+<td>Loads the data from valid python pickle files and returns them grouped by number</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.getxlsxData" title="data.getxlsxData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getxlsxData</span></code></a>(folder,&nbsp;files,&nbsp;fileIDs,&nbsp;**kwargs)</td>
+<td>Loads the data from xlsx files</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.intCore" title="data.intCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">intCore</span></code></a>(unorderedList,&nbsp;prefix,&nbsp;suffix)</td>
+<td>Takes the <em>core</em> part of a string and, assuming it is an integer, sorts them.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerge</span></code>(*args)</td>
+<td>For merging lists with objects that are not solely numbers</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">listdir</span></code>(path)</td>
+<td>Return a list containing the names of the entries in the directory.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadmat</span></code>(file_name[,&nbsp;mdict,&nbsp;appendmat])</td>
+<td>Load MATLAB file.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_csv</span></code>(filepath_or_buffer[,&nbsp;sep,&nbsp;…])</td>
+<td>Read a comma-separated values (csv) file into DataFrame.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_excel</span></code>(*args,&nbsp;**kwargs)</td>
+<td>Read an Excel file into a pandas DataFrame.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">search</span></code>(pattern,&nbsp;string[,&nbsp;flags])</td>
+<td>Scan through string looking for a match to the pattern, returning a match object, or None if no match was found.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code>(a)</td>
+<td>Return the shape of an array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.sortStrings" title="data.sortStrings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sortStrings</span></code></a>(unorderedList,&nbsp;suffix[,&nbsp;terminalID])</td>
+<td>Takes an unordered list of strings and sorts them if possible and necessary</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#data.sortbylastnum" title="data.sortbylastnum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sortbylastnum</span></code></a>(dataFiles)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#data.strCore" title="data.strCore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strCore</span></code></a>(unorderedList,&nbsp;prefixLen,&nbsp;suffixLen)</td>
+<td>Takes the <em>core</em> part of a string and, assuming it is a string, sorts them.</td>
+</tr>
+</tbody>
+</table>
+<span class="target" id="module-data"></span><p>This module allows for the importing of participant data for use in fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -66,7 +171,7 @@
 <li><strong>folder</strong> (<em>string</em>) – The folder string should end in a “/”</li>
 <li><strong>fileType</strong> (<em>string</em>) – The file extension found after the “.”. Currently only mat, csv, pkl and xlsx files are
 supported.</li>
-<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a>) – The keyword arguments used by the</li>
+<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The keyword arguments used by the</li>
 </ul>
 </td>
 </tr>
@@ -132,8 +237,8 @@ supported.</li>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>folder</strong> (<em>string</em>) – The folder string should end in a <code class="docutils literal notranslate"><span class="pre">/</span></code></li>
 <li><strong>fileType</strong> (<em>string</em>) – The file extension found after the <code class="docutils literal notranslate"><span class="pre">.</span></code>.</li>
-<li><strong>validFiles</strong> (<em>list of strings</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – A list of the names of numbered pickled files to be imported. Default None</li>
-<li><strong>terminalID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>validFiles</strong> (<em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A list of the names of numbered pickled files to be imported. Default None</li>
+<li><strong>terminalID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
 </ul>
 </td>
 </tr>
@@ -173,7 +278,7 @@ for all string</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>unorderedList</strong> (<em>list of strings</em>) – A list of strings to be ordered</li>
-<li><strong>suffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The length of the identified suffix</li>
+<li><strong>suffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The length of the identified suffix</li>
 </ul>
 </td>
 </tr>
@@ -204,14 +309,14 @@ the list</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>unorderedList</strong> (<em>list of strings</em>) – A list of strings to be ordered</li>
-<li><strong>knownSuffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The length of the suffix identified so far</li>
+<li><strong>knownSuffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The length of the suffix identified so far</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>suffixLen</strong> – The length of the discovered suffix</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)">int</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
 </td>
 </tr>
 </tbody>
@@ -230,10 +335,10 @@ the list</p>
 <li><strong>folder</strong> (<em>string</em>) – The folder string should end in a “/”</li>
 <li><strong>files</strong> (<em>list of strings</em>) – A list of filenames</li>
 <li><strong>fileIDs</strong> (<em>list of strings</em>) – A list of the changing parts of filenames</li>
-<li><strong>splitBy</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies
+<li><strong>splitBy</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies
 the column or columns that can distinguish and identify the rows for
 each participant. Default <code class="docutils literal notranslate"><span class="pre">[]</span></code></li>
-<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
+<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
 </ul>
 </td>
 </tr>
@@ -298,7 +403,7 @@ each participant. Default <code class="docutils literal notranslate"><span class
 <li><strong>folder</strong> (<em>string</em>) – The folder string should end in a “/”</li>
 <li><strong>files</strong> (<em>list of strings</em>) – A list of filenames</li>
 <li><strong>fileIDs</strong> (<em>list of strings</em>) – A list of the changing parts of filenames</li>
-<li><strong>groupbyNumber</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the different valid files should be put together by their number. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>groupbyNumber</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if the different valid files should be put together by their number. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -402,10 +507,10 @@ each participant. Default <code class="docutils literal notranslate"><span class
 <li><strong>folder</strong> (<em>string</em>) – The folder string should end in a “/”</li>
 <li><strong>files</strong> (<em>list of strings</em>) – A list of filenames</li>
 <li><strong>fileIDs</strong> (<em>list of strings</em>) – A list of the changing parts of filenames</li>
-<li><strong>splitBy</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.6)"><em>list</em></a><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies
+<li><strong>splitBy</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies
 the column or columns that can distinguish and identify the rows for
 each participant. Default <code class="docutils literal notranslate"><span class="pre">[]</span></code></li>
-<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.6)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
+<li><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
 </ul>
 </td>
 </tr>
@@ -476,7 +581,7 @@ sorts them. Returns the list sorted</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>unorderedList</strong> (<em>list of strings</em>) – A list of valid strings</li>
 <li><strong>suffix</strong> (<em>string</em>) – A known suffix for the string</li>
-<li><strong>terminalID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.6)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
+<li><strong>terminalID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
 </ul>
 </td>
 </tr>
@@ -523,8 +628,8 @@ sorts them. Returns the list sorted</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>unorderedList</strong> (<em>list of strings</em>) – The list of strings to be sorted</li>
-<li><strong>prefixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The length of the unchanging start of each filename</li>
-<li><strong>suffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.6)"><em>int</em></a>) – The length of the unchanging end of each filename</li>
+<li><strong>prefixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The length of the unchanging start of each filename</li>
+<li><strong>suffixLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The length of the unchanging end of each filename</li>
 </ul>
 </td>
 </tr>
@@ -539,6 +644,8 @@ sorts them. Returns the list sorted</p>
 </dd></dl>
 
 </div>
+</div>
+</div>
 
 
           </div>
@@ -546,12 +653,20 @@ sorts them. Returns the list sorted</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">data module</a><ul>
+<li><a class="reference internal" href="#id1">data Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="dataFitting.html"
                         title="previous chapter">dataFitting module</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="experiments.html"
-                        title="next chapter">experiments module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -585,9 +700,6 @@ sorts them. Returns the list sorted</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="experiments.html" title="experiments module"
-             >next</a> |</li>
-        <li class="right" >
           <a href="dataFitting.html" title="dataFitting module"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
@@ -595,7 +707,7 @@ sorts them. Returns the list sorted</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>
 </html>
