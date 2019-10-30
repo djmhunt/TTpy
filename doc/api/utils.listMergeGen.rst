@@ -1,0 +1,6 @@
+listMergeGen
+============
+
+.. currentmodule:: utils
+
+.. autofunction:: listMergeGen

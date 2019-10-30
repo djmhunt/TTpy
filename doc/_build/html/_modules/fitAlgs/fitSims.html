@@ -47,14 +47,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">types</span>
 
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span><span class="p">,</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">ndarray</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
-
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">errorResp</span>
+<span class="kn">import</span> <span class="nn">utils</span>
 
 
 <div class="viewcode-block" id="fitSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim">[docs]</a><span class="k">class</span> <span class="nc">fitSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -151,7 +151,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fittedModel</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="n">errorResp</span><span class="p">()</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">errorResp</span><span class="p">()</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">u</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">. Abandoning fitting with parameters: </span><span class="si">{1}</span><span class="s2"> Returning an action choice probability for each trialstep of </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span>
@@ -160,7 +160,7 @@
                                                                                                                                                       <span class="o">*</span><span class="n">modelParameters</span><span class="p">)),</span>
                                                                                                                                               <span class="nb">repr</span><span class="p">(</span>
                                                                                                                                                   <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="n">ones</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -170,26 +170,26 @@
                     <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">),</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">ones</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
 
         <span class="c1"># Pull out the values to be compared</span>
 
         <span class="n">modelData</span> <span class="o">=</span> <span class="n">modelInstance</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">()</span>
         <span class="n">modelChoices</span> <span class="o">=</span> <span class="n">modelData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">modelFitVar</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
             <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">modelChoices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">modelChoices</span>
 
-        <span class="k">if</span> <span class="n">isnan</span><span class="p">(</span><span class="n">modelPerformance</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">modelPerformance</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;model performance values contain NaN&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="se">\n</span><span class="s2"> Abandoning fitting with parameters: &quot;</span>
                            <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">))</span>
                            <span class="o">+</span> <span class="s2">&quot; Returning an action choice probability for each trialstep of &quot;</span>
                            <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">ones</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
 
         <span class="k">return</span> <span class="n">modelPerformance</span></div>
 
@@ -231,12 +231,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">partObs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatPartStim</span><span class="p">(</span><span class="n">partData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partStimuliParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partActChoiceParams</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fitSubset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">fitSubset</span>
             <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;rewarded&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">isnan</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -332,7 +332,7 @@
         <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mOtherParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">inputs</span></div>
 
@@ -353,7 +353,7 @@
 <span class="sd">            The kwarg model parameter arguments</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mParamNames</span><span class="p">,</span> <span class="n">modelParameters</span><span class="p">)}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mParamNames</span><span class="p">,</span> <span class="n">modelParameters</span><span class="p">)}</span>
 
         <span class="k">return</span> <span class="n">params</span></div>
 
@@ -380,24 +380,24 @@
 <span class="sd">            observation instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="ow">is</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
             <span class="n">partDataLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span><span class="p">])</span>
             <span class="n">stimuliData</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">partData</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stimuli</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">partData</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stimuli</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
             <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
             <span class="n">actionData</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">validActions</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">actionData</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="n">validActions</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">actionData</span> <span class="o">=</span> <span class="p">(</span><span class="n">validActions</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
 
-        <span class="n">observation</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">actionData</span><span class="p">,</span> <span class="n">stimuliData</span><span class="p">)]</span>
+        <span class="n">observation</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">actionData</span><span class="p">,</span> <span class="n">stimuliData</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="n">observation</span></div>
 
@@ -444,7 +444,7 @@
 <span class="sd">        The observations received by the participant</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">):</span>
         <span class="n">modelInstance</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
         <span class="n">modelInstance</span><span class="o">.</span><span class="n">overrideActionChoice</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="n">modelInstance</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>

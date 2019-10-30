@@ -27,7 +27,8 @@ class ExperimentGen(object):
     """
 
     def __init__(self, experiment, parameters, otherOptions):
-        """ """
+
+        self.count = -1
 
         self.experimentClass = experiment
         self.experimentDetailList = params(parameters, otherOptions)
@@ -35,14 +36,17 @@ class ExperimentGen(object):
         self.countLen = len(self.experimentDetailList)
 
     def __iter__(self):
-        """ Returns the iterator for the creation of experiments"""
+        """ 
+        Returns the iterator for the creation of experiments
+        """
 
         self.count = -1
 
         return self
 
     def next(self):
-        """ Produces the next experiment instance for the iterator
+        """ 
+        Produces the next experiment instance for the iterator
 
         Returns
         -------

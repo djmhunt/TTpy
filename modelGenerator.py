@@ -32,7 +32,6 @@ class ModelGen(object):
     """
 
     def __init__(self, model, parameters, otherOptions):
-        """ """
 
         self.count = -1
 
@@ -44,7 +43,9 @@ class ModelGen(object):
         self.countLen = len(self.modelDetailList)
 
     def __iter__(self):
-        """ Returns the iterator for the creation of models"""
+        """ 
+        Returns the iterator for the creation of models
+        """
 
         self.count = -1
 

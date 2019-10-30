@@ -50,18 +50,18 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">scipy.io</span> <span class="k">as</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">listdir</span>
-<span class="kn">from</span> <span class="nn">scipy.io</span> <span class="k">import</span> <span class="n">loadmat</span>
-<span class="kn">from</span> <span class="nn">scipy.io.matlab.mio5_params</span> <span class="k">import</span> <span class="n">mat_struct</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span><span class="p">,</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">read_excel</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">utils</span>
+
 <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">deque</span>
-<span class="kn">from</span> <span class="nn">re</span> <span class="k">import</span> <span class="n">search</span><span class="p">,</span> <span class="n">finditer</span>
-
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">listMerge</span>
 
 
 <div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../data.html#data.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">fileTypes</span><span class="p">):</span>
@@ -85,13 +85,13 @@
 <span class="sd">    data : The function called by this one</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dataSetList</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">fileTypes</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="n">fileTypes</span><span class="p">):</span>
 
         <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileType</span><span class="p">)</span>
 
         <span class="n">dataSetList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
-    <span class="n">dataSet</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">dataSetList</span><span class="p">))</span>
+    <span class="n">dataSet</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">dataSetList</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">dataSet</span></div>
 
@@ -193,7 +193,7 @@
     <span class="n">validFiles</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;validFiles&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">terminalID</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;terminalID&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">files</span> <span class="o">=</span> <span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 
     <span class="n">dataFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">fileType</span><span class="p">)]</span>
 
@@ -268,8 +268,8 @@
 <div class="viewcode-block" id="sortbylastnum"><a class="viewcode-back" href="../data.html#data.sortbylastnum">[docs]</a><span class="k">def</span> <span class="nf">sortbylastnum</span><span class="p">(</span><span class="n">dataFiles</span><span class="p">):</span>
 
     <span class="c1"># sort by the last number on the filename</span>
-    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">]</span>
-    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
+    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">]</span>
+    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
 
     <span class="c1"># check if number part is a float or an int (assuming the same for all) and use the appropriate conversion</span>
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">dataFiles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">numsplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">footSplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
@@ -277,7 +277,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">int</span>
 
-    <span class="n">fileNameSections</span> <span class="o">=</span> <span class="p">[(</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">]),</span> <span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:])</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
+    <span class="n">fileNameSections</span> <span class="o">=</span> <span class="p">[(</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">]),</span> <span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:])</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">dataFiles</span><span class="p">)]</span>
 
     <span class="c1"># Sort the keys for groupFiles</span>
     <span class="n">sortedFileNames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fileNameSections</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">fileGroup</span><span class="p">:</span> <span class="n">fileGroup</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -468,9 +468,9 @@
 
     <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
 
-        <span class="n">mat</span> <span class="o">=</span> <span class="n">loadmat</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="n">struct_as_record</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">squeeze_me</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">loadmat</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="n">struct_as_record</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">squeeze_me</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">dataD</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fileName&quot;</span><span class="p">:</span> <span class="n">f</span><span class="p">,</span>
                  <span class="s2">&quot;fileID&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
@@ -479,7 +479,7 @@
         <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mat</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;__&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">mat_struct</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">matlab</span><span class="o">.</span><span class="n">mio5_params</span><span class="o">.</span><span class="n">mat_struct</span><span class="p">:</span>
                 <span class="n">matstructData</span> <span class="o">=</span> <span class="p">{</span><span class="n">sk</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">sk</span><span class="p">)</span> <span class="k">for</span> <span class="n">sk</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">_fieldnames</span><span class="p">}</span>
                 <span class="n">dataD</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">matstructData</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -530,25 +530,25 @@
 
     <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
 
         <span class="c1"># In case the file is open, this will in fact be a temporary file and not a valid file.</span>
         <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;~$&#39;</span><span class="p">):</span>
             <span class="k">continue</span>
 
-        <span class="n">dat</span> <span class="o">=</span> <span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitBy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># The data must be split</span>
             <span class="n">classifierList</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splitBy</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">),</span> <span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">)]:</span>
+                <span class="k">if</span> <span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;float64&#39;</span><span class="p">)]:</span>
                     <span class="n">sSorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">])))</span>
                     <span class="n">classifierList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sSorted</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">classifierList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sortStrings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">])),</span> <span class="s1">&#39;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
-            <span class="n">participants</span> <span class="o">=</span> <span class="n">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">classifierList</span><span class="p">)</span>
+            <span class="n">participants</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">classifierList</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
 
@@ -609,14 +609,14 @@
 
     <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">f</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
 
-        <span class="n">dat</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitBy</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># The data must be split</span>
             <span class="n">classifierList</span> <span class="o">=</span> <span class="p">(</span><span class="n">sortStrings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">s</span><span class="p">])),</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splitBy</span><span class="p">)</span>
-            <span class="n">participants</span> <span class="o">=</span> <span class="n">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">classifierList</span><span class="p">)</span>
+            <span class="n">participants</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMerge</span><span class="p">(</span><span class="o">*</span><span class="n">classifierList</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
 
@@ -695,7 +695,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dataSets</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">ID</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">ID</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">fileIDs</span><span class="p">):</span>
         <span class="n">fileData</span> <span class="o">=</span> <span class="n">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
         <span class="n">fileData</span><span class="p">[</span><span class="s2">&quot;fileID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ID</span>
         <span class="n">dataSets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fileData</span><span class="p">)</span>
@@ -725,17 +725,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: See how this can be shifted to have more flexible sorting</span>
     <span class="c1"># group by the last number on the filename</span>
-    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
-    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">)]</span>
+    <span class="n">footSplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\.(?:[a-zA-Z]+)$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+    <span class="n">numsplit</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+(\.\d+|$)?$&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">)]</span>
 
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">numsplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">footSplit</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
         <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">float</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">numRepr</span> <span class="o">=</span> <span class="nb">int</span>
 
-    <span class="n">groupedHeaders</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">groupedFooters</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+    <span class="n">groupedHeaders</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">groupedFooters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">numsplit</span><span class="p">,</span> <span class="n">footSplit</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
         <span class="n">groupedHeaders</span><span class="p">[</span><span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
         <span class="n">groupedFooters</span><span class="p">[</span><span class="n">numRepr</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">n</span><span class="p">:</span><span class="n">d</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">d</span><span class="p">:])</span>
 
@@ -747,7 +747,7 @@
         <span class="n">groupData</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">groupedHeaders</span><span class="p">[</span><span class="n">gn</span><span class="p">]</span>
         <span class="n">footers</span> <span class="o">=</span> <span class="n">groupedFooters</span><span class="p">[</span><span class="n">gn</span><span class="p">]</span>
-        <span class="n">fileNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">head</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gn</span><span class="p">)</span> <span class="o">+</span> <span class="n">foot</span> <span class="k">for</span> <span class="n">head</span><span class="p">,</span> <span class="n">foot</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">footers</span><span class="p">)]</span>
+        <span class="n">fileNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">head</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">gn</span><span class="p">)</span> <span class="o">+</span> <span class="n">foot</span> <span class="k">for</span> <span class="n">head</span><span class="p">,</span> <span class="n">foot</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">footers</span><span class="p">)]</span>
 
         <span class="c1">#find the unique part of the file headers</span>
         <span class="n">headerLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -760,7 +760,7 @@
                 <span class="k">break</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">h</span><span class="p">[</span><span class="n">labelStart</span><span class="p">:]</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">fileNames</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">fileNames</span><span class="p">):</span>
             <span class="n">groupData</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">getpickledFileData</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">))</span>
         <span class="n">groupedData</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">groupData</span><span class="p">)</span>
 
@@ -796,7 +796,7 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">finalData</span> <span class="o">=</span> <span class="p">{</span><span class="n">header</span> <span class="o">+</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dat</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()}</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
             <span class="n">transformedData</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dat</span><span class="p">):</span>
                 <span class="n">transformedData</span><span class="p">[</span><span class="n">header</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="o">=</span> <span class="n">i</span>

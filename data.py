@@ -7,18 +7,18 @@ This module allows for the importing of participant data for use in fitting
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import cPickle as pickle
+import scipy.io as io
+import numpy as np
+import pandas as pd
 
-from os import listdir
-from scipy.io import loadmat
-from scipy.io.matlab.mio5_params import mat_struct
-from numpy import array, shape, dtype
-from itertools import izip, chain
-from pandas import read_excel, read_csv
+import os
+import itertools
+import collections
+import re
+
+import utils
+
 from types import NoneType
-from collections import Iterable, defaultdict, deque
-from re import search, finditer
-
-from utils import listMerge
 
 
 def datasets(folders, fileTypes):
@@ -42,13 +42,13 @@ def datasets(folders, fileTypes):
     data : The function called by this one
     """
     dataSetList = []
-    for folder, fileType in izip(folders, fileTypes):
+    for folder, fileType in itertools.izip(folders, fileTypes):
 
         d = data(folder, fileType)
 
         dataSetList.append(d)
 
-    dataSet = list(chain(*dataSetList))
+    dataSet = list(itertools.chain(*dataSetList))
 
     return dataSet
 
@@ -150,7 +150,7 @@ def getFiles(folder, fileType, **kwargs):
     validFiles = kwargs.pop('validFiles', None)
     terminalID = kwargs.pop('terminalID', True)
 
-    files = listdir(folder)
+    files = os.listdir(folder)
 
     dataFiles = [f for f in files if f.endswith(fileType)]
 
@@ -225,8 +225,8 @@ def sortStrings(unorderedList, suffix, terminalID=True):
 def sortbylastnum(dataFiles):
 
     # sort by the last number on the filename
-    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in dataFiles]
-    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, dataFiles)]
+    footSplit = [re.search(r"\.(?:[a-zA-Z]+)$", f).start() for f in dataFiles]
+    numsplit = [re.search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in itertools.izip(footSplit, dataFiles)]
 
     # check if number part is a float or an int (assuming the same for all) and use the appropriate conversion
     if "." in dataFiles[0][numsplit[0]:footSplit[0]]:
@@ -234,7 +234,7 @@ def sortbylastnum(dataFiles):
     else:
         numRepr = int
 
-    fileNameSections = [(f[:n], numRepr(f[n:d]), f[d:]) for n, d, f in izip(numsplit, footSplit, dataFiles)]
+    fileNameSections = [(f[:n], numRepr(f[n:d]), f[d:]) for n, d, f in itertools.izip(numsplit, footSplit, dataFiles)]
 
     # Sort the keys for groupFiles
     sortedFileNames = sorted(fileNameSections, key=lambda fileGroup: fileGroup[1])
@@ -425,9 +425,9 @@ def getmatData(folder, files, fileIDs):
 
     dataSets = []
 
-    for f, i in izip(files, fileIDs):
+    for f, i in itertools.izip(files, fileIDs):
 
-        mat = loadmat(folder + f, struct_as_record=False, squeeze_me=True)
+        mat = io.loadmat(folder + f, struct_as_record=False, squeeze_me=True)
 
         dataD = {"fileName": f,
                  "fileID": i,
@@ -436,7 +436,7 @@ def getmatData(folder, files, fileIDs):
         for m, v in mat.iteritems():
             if m[0:2] == "__":
                 continue
-            elif type(v) == mat_struct:
+            elif type(v) == io.matlab.mio5_params.mat_struct:
                 matstructData = {sk: getattr(v, sk) for sk in v._fieldnames}
                 dataD.update(matstructData)
             else:
@@ -487,25 +487,25 @@ def getxlsxData(folder, files, fileIDs, **kwargs):
 
     dataSets = []
 
-    for f, i in izip(files, fileIDs):
+    for f, i in itertools.izip(files, fileIDs):
 
         # In case the file is open, this will in fact be a temporary file and not a valid file.
         if f.startswith('~$'):
             continue
 
-        dat = read_excel(folder + f, **kwargs)
+        dat = pd.read_excel(folder + f, **kwargs)
 
         if len(splitBy) > 0:
             # The data must be split
             classifierList = []
             for s in splitBy:
-                if dat[s].dtype in [dtype('int64'), dtype('float64')]:
+                if dat[s].dtype in [np.dtype('int64'), np.dtype('float64')]:
                     sSorted = sorted(list(set(dat[s])))
                     classifierList.append(sSorted)
                 else:
                     classifierList.append(sortStrings(list(set(dat[s])), '')[0])
 
-            participants = listMerge(*classifierList)
+            participants = utils.listMerge(*classifierList)
 
             for p in participants:
 
@@ -566,14 +566,14 @@ def getcsvData(folder, files, fileIDs, **kwargs):
 
     dataSets = []
 
-    for f, i in izip(files, fileIDs):
+    for f, i in itertools.izip(files, fileIDs):
 
-        dat = read_csv(folder + f, **kwargs)
+        dat = pd.read_csv(folder + f, **kwargs)
 
         if len(splitBy) > 0:
             # The data must be split
             classifierList = (sortStrings(list(set(dat[s])), '') for s in splitBy)
-            participants = listMerge(*classifierList)
+            participants = utils.listMerge(*classifierList)
 
             for p in participants:
 
@@ -652,7 +652,7 @@ def getpickleFiles(folder, files, fileIDs):
 
     """
     dataSets = []
-    for fileName, ID in izip(files, fileIDs):
+    for fileName, ID in itertools.izip(files, fileIDs):
         fileData = getpickledFileData(folder, fileName)
         fileData["fileID"] = ID
         dataSets.append(fileData)
@@ -682,17 +682,17 @@ def getpickledGroupedFiles(folder, files, fileIDs):
     """
     # TODO: See how this can be shifted to have more flexible sorting
     # group by the last number on the filename
-    footSplit = [search(r"\.(?:[a-zA-Z]+)$", f).start() for f in files]
-    numsplit = [search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in izip(footSplit, files)]
+    footSplit = [re.search(r"\.(?:[a-zA-Z]+)$", f).start() for f in files]
+    numsplit = [re.search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in itertools.izip(footSplit, files)]
 
     if "." in files[0][numsplit[0]:footSplit[0]]:
         numRepr = float
     else:
         numRepr = int
 
-    groupedHeaders = defaultdict(list)
-    groupedFooters = defaultdict(list)
-    for n, d, f in izip(numsplit, footSplit, files):
+    groupedHeaders = collections.defaultdict(list)
+    groupedFooters = collections.defaultdict(list)
+    for n, d, f in itertools.izip(numsplit, footSplit, files):
         groupedHeaders[numRepr(f[n:d])].append(f[:n])
         groupedFooters[numRepr(f[n:d])].append(f[d:])
 
@@ -704,7 +704,7 @@ def getpickledGroupedFiles(folder, files, fileIDs):
         groupData = {}
         headers = groupedHeaders[gn]
         footers = groupedFooters[gn]
-        fileNames = [head + str(gn) + foot for head, foot in izip(headers, footers)]
+        fileNames = [head + str(gn) + foot for head, foot in itertools.izip(headers, footers)]
 
         #find the unique part of the file headers
         headerLen = len(headers[0])
@@ -717,7 +717,7 @@ def getpickledGroupedFiles(folder, files, fileIDs):
                 break
         labels = [h[labelStart:] for h in headers]
 
-        for header, fileName in izip(labels, fileNames):
+        for header, fileName in itertools.izip(labels, fileNames):
             groupData.update(getpickledFileData(folder, fileName, header=header))
         groupedData.append(groupData)
 
@@ -753,7 +753,7 @@ def getpickledFileData(folder, fileName, header=''):
 
         if isinstance(dat, dict):
             finalData = {header + k: v for k, v in dat.iteritems()}
-        elif isinstance(dat, Iterable):
+        elif isinstance(dat, collections.Iterable):
             transformedData = dict()
             for n, i in enumerate(dat):
                 transformedData[header + str(n)] = i

@@ -4,14 +4,14 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import numpy as np
+
 import logging
+import itertools
+import copy
+import types
 
-from itertools import izip, product
-from numpy import array, ones, isnan, ndarray
-from types import NoneType
-from copy import deepcopy
-
-from utils import errorResp
+import utils
 
 
 class fitSim(object):
@@ -108,7 +108,7 @@ class fitSim(object):
         try:
             modelInstance = self.fittedModel(*modelParameters)
         except FloatingPointError:
-            message = errorResp()
+            message = utils.errorResp()
             logger = logging.getLogger('Fitter')
             logger.warning(
                     u"{0}\n. Abandoning fitting with parameters: {1} Returning an action choice probability for each trialstep of {2}".format(message,
@@ -117,7 +117,7 @@ class fitSim(object):
                                                                                                                                                       *modelParameters)),
                                                                                                                                               repr(
                                                                                                                                                   self.fpRespVal)))
-            return ones(array(self.partRewards).shape) * self.fpRespVal
+            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
         except ValueError as e:
             logger = logging.getLogger('Fitter')
             logger.warn(
@@ -127,26 +127,26 @@ class fitSim(object):
                     repr(self.fpRespVal),
                     e.message,
                     e.args))
-            return ones(array(self.partRewards).shape) * self.fpRespVal
+            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
 
         # Pull out the values to be compared
 
         modelData = modelInstance.outputEvolution()
         modelChoices = modelData[self.modelFitVar]
 
-        if self.fitSubsetChosen is not NoneType:
+        if self.fitSubsetChosen is not types.NoneType:
             modelPerformance = modelChoices[self.fitSubsetChosen]
         else:
             modelPerformance = modelChoices
 
-        if isnan(modelPerformance).any():
+        if np.isnan(modelPerformance).any():
             logger = logging.getLogger('Fitter')
             message = "model performance values contain NaN"
             logger.warning(message + ".\n Abandoning fitting with parameters: "
                            + repr(self.getModParams(*modelParameters))
                            + " Returning an action choice probability for each trialstep of "
                            + repr(self.fpRespVal))
-            return ones(array(self.partRewards).shape) * self.fpRespVal
+            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
 
         return modelPerformance
 
@@ -188,12 +188,12 @@ class fitSim(object):
         self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
 
         if fitSubset is not None:
-            if isinstance(fitSubset, (list, ndarray)):
+            if isinstance(fitSubset, (list, np.ndarray)):
                 self.fitSubsetChosen = fitSubset
             elif fitSubset == "rewarded":
-                self.fitSubsetChosen = ~isnan(self.partRewards)
-            elif isnan(fitSubset):
-                self.fitSubsetChosen = isnan(self.partRewards)
+                self.fitSubsetChosen = ~np.isnan(self.partRewards)
+            elif np.isnan(fitSubset):
+                self.fitSubsetChosen = np.isnan(self.partRewards)
             else:
                 self.fitSubsetChosen = None
         else:
@@ -289,7 +289,7 @@ class fitSim(object):
         inputs = self.getModParams(*modelParameters)
 
         for k, v in self.mOtherParams.iteritems():
-            inputs[k] = deepcopy(v)
+            inputs[k] = copy.deepcopy(v)
 
         return inputs
 
@@ -310,7 +310,7 @@ class fitSim(object):
             The kwarg model parameter arguments
         """
 
-        params = {k: v for k, v in izip(self.mParamNames, modelParameters)}
+        params = {k: v for k, v in itertools.izip(self.mParamNames, modelParameters)}
 
         return params
 
@@ -337,24 +337,24 @@ class fitSim(object):
             observation instance.
         """
 
-        if type(stimuli) is NoneType:
+        if type(stimuli) is types.NoneType:
             partDataLen = len(partData[self.partRewardParam])
             stimuliData = (None for i in xrange(partDataLen))
         else:
             if len(stimuli) > 1:
-                stimuliData = array([partData[s] for s in stimuli]).T
+                stimuliData = np.array([partData[s] for s in stimuli]).T
             else:
-                stimuliData = array(partData[stimuli[0]]).T
+                stimuliData = np.array(partData[stimuli[0]]).T
             partDataLen = stimuliData.shape[0]
 
-        if type(validActions) is NoneType:
+        if type(validActions) is types.NoneType:
             actionData = (None for i in xrange(partDataLen))
         elif isinstance(validActions, basestring):
             actionData = partData[validActions]
         else:
             actionData = (validActions for i in xrange(partDataLen))
 
-        observation = [(s, a) for a, s in izip(actionData, stimuliData)]
+        observation = [(s, a) for a, s in itertools.izip(actionData, stimuliData)]
 
         return observation
 
@@ -401,7 +401,7 @@ def _simRun(modelInstance, partAct, partReward, partObs):
         The observations received by the participant
     """
 
-    for action, reward, observation in izip(partAct, partReward, partObs):
+    for action, reward, observation in itertools.izip(partAct, partReward, partObs):
         modelInstance.observe(observation)
         modelInstance.overrideActionChoice(action)
         modelInstance.feedback(reward)

@@ -7,10 +7,10 @@ Code
    data
    dataFitting
    experiment
-   experiments
+   experimentGenerator
    fitAlgs
    model
-   models
+   modelGenerator
    outputting
    outputtingUtils
    simulation
