@@ -12,10 +12,7 @@ with the data.
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-import os
-filePath = os.path.realpath(__file__)
-codePath = filePath.split('\\')[:-2]
-sys.path.append("/".join(codePath))  # So code can be found from the main folder
+sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
 from numpy import array, ones, repeat
@@ -52,9 +49,12 @@ expSets = experiments((Balltask, expParams, expExtraParams))
 
 numActions = 3
 numCues = 3
-repetitions = 30
-alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
-betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+#repetitions = 30
+#alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
+#betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+repetitions = 1
+alphaSet = repeat(array([0.5]), repetitions)
+betaSet = array([0.7])
 
 parameters = {'alpha': alphaSet,
               'beta': betaSet}

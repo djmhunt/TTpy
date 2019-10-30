@@ -37,7 +37,7 @@ class Balltask(experiment):
         bag_sequence = np.random.permutation(bag_sequence)
 
         self.parameters = {
-            "name"         : self.Name,
+            "Name"         : self.Name,
             "nbr_of_bags"  : nbr_of_bags,
             "bag_colors"   : bag_colors,
             "balls_per_bag": balls_per_bag,
