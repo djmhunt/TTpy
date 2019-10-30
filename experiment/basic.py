@@ -87,6 +87,8 @@ class Basic(experiment):
         results = self.parameters.copy()
 
         results["participantActions"] = self.action_history.copy()
+        
+        return results
 
     def storeState(self):
         """ Stores the state of all the important variables so that they can be
