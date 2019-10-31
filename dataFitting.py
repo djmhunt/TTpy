@@ -113,7 +113,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
 
             participantFits = recordParticipantFit(participant,
                                                    partName,
-                                                   modelFitted.outputEvolution(),
+                                                   modelFitted.returnTaskState(),
                                                    str(modelID),
                                                    fittingData,
                                                    partModelVars,

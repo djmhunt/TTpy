@@ -11,11 +11,11 @@ import logging
 
 from numpy import ones, array, sum, shape, ndarray, max
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class ACE(model):
+class ACE(Model):
 
     """A basic, complete actor-critic model with decision making based on qLearnE
 
@@ -95,7 +95,7 @@ class ACE(model):
         self.genStandardResultsStore()
         self.recActorExpectations = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

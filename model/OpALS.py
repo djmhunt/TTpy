@@ -17,10 +17,10 @@ import logging
 
 from numpy import exp, ones, array, sum
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
-class OpALS(model):
+class OpALS(Model):
 
     """The Opponent actor learning model modified to have saturation values
     
@@ -188,7 +188,7 @@ class OpALS(model):
         self.recNogo = []
         self.recActionValues = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

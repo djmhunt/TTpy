@@ -11,7 +11,7 @@ from model.decision.discrete import decWeightProb
 from utils import callableDetailsString
 
 
-class model(object):
+class Model(object):
 
     """
     The model class is a general template for a model. It also contains
@@ -394,7 +394,7 @@ class model(object):
 
         return actionParams
 ## TODO: Change the name of this to returnTaskState
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
         Returns all the relevant data for this model
 

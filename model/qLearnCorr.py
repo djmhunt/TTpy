@@ -15,11 +15,11 @@ import logging
 
 from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnCorr(model):
+class qLearnCorr(Model):
 
     """The q-Learning algorithm
 
@@ -104,7 +104,7 @@ class qLearnCorr(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

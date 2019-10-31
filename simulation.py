@@ -76,7 +76,7 @@ def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=T
             message = "Experiment completed"
             logger.debug(message)
 
-            recordSim(fileNameGen, exp.outputEvolution(), model.outputEvolution(), str(simID), pickleData=pickleData)
+            recordSim(fileNameGen, exp.outputEvolution(), model.returnTaskState(), str(simID), pickleData=pickleData)
 
             simID += 1
 

@@ -21,11 +21,11 @@ import logging
 
 from numpy import exp, ones, array, sum
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearn2(model):
+class qLearn2(Model):
 
     """The q-Learning algorithm modified to have different positive and
     negative reward prediction errors
@@ -116,7 +116,7 @@ class qLearn2(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

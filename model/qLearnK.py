@@ -13,11 +13,11 @@ import logging
 
 from numpy import exp, ones, array, isnan, isinf, sum, sign
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnK(model):
+class qLearnK(Model):
 
     """The q-Learning Kalman algorithm
 
@@ -111,7 +111,7 @@ class qLearnK(model):
         self.recalphaA = []
 
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

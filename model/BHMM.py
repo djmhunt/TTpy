@@ -21,12 +21,12 @@ import logging
 from numpy import exp, array, ones
 from numpy.random import normal
 
-from modelTemplate import model
+from modelTemplate import Model
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
 
-class BHMM(model):
+class BHMM(Model):
     """The Bayesian Hidden Markov Model model
 
     Attributes
@@ -176,7 +176,7 @@ class BHMM(model):
         self.recPosteriorProb = []
         self.recActionLoc = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

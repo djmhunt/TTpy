@@ -11,11 +11,11 @@ import logging
 
 from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class tdr(model):
+class tdr(Model):
 
     """The td-Learning algorithm
 
@@ -100,7 +100,7 @@ class tdr(model):
         self.genStandardResultsStore()
         self.recActAvReward = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

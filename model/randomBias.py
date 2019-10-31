@@ -13,11 +13,11 @@ from itertools import izip
 
 import re
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class randomBias(model):
+class randomBias(Model):
 
     """A model replicating a participant who chooses randomly, but with a bias towards certain actions
 
@@ -78,7 +78,7 @@ class randomBias(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

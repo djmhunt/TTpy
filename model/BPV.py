@@ -12,11 +12,11 @@ from scipy.stats import dirichlet #, beta
 from collections import OrderedDict
 from itertools import izip
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class BPV(model):
+class BPV(Model):
 
     """The Bayesian predictor model
 
@@ -89,7 +89,7 @@ class BPV(model):
         self.genStandardResultsStore()
         self.recDirichletVals = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

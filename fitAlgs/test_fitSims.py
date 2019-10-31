@@ -149,7 +149,7 @@ class TestClass:
         
         model = fit._simSetup(*paramInputs)
         
-        results = model.outputEvolution()
+        results = model.returnTaskState()
 
         probs = results["Probabilities"]
         act = results["Actions"]

@@ -14,10 +14,10 @@ import logging
 from numpy import exp, array, amax, dot, ones, mean, square
 from collections import defaultdict
 
-from modelTemplate import model
+from modelTemplate import Model
 
 
-class RVPM(model):
+class RVPM(Model):
     """The reward value and prediction model
 
     Attributes
@@ -112,7 +112,7 @@ class RVPM(model):
         # Recorded information
         self._storeSetup()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

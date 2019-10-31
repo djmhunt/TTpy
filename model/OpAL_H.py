@@ -17,11 +17,11 @@ import logging
 
 from numpy import exp, ones, array, sum
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class OpAL_H(model):
+class OpAL_H(Model):
 
     """The Opponent actor learning model without Hebbian learning
 
@@ -183,7 +183,7 @@ class OpAL_H(model):
         self.recNogo = []
         self.recActionValues = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

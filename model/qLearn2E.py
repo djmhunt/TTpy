@@ -21,11 +21,11 @@ import logging
 
 from numpy import exp, ones, array, shape, sum
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearn2E(model):
+class qLearn2E(Model):
 
     """The q-Learning algorithm modified to have different positive and
     negative reward prediction errors and use the Epsylon greedy method 
@@ -115,7 +115,7 @@ class qLearn2E(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

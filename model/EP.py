@@ -11,11 +11,11 @@ import logging
 
 from numpy import exp, array, ones
 
-from modelTemplate import model
+from modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class EP(model):
+class EP(Model):
 
     """
     The expectation prediction model
@@ -93,7 +93,7 @@ class EP(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

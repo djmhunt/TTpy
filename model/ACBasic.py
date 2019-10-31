@@ -11,11 +11,11 @@ import logging
 
 from numpy import exp, ones, array, isnan, isinf, sum, sign, max
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class ACBasic(model):
+class ACBasic(Model):
 
     """A basic, complete actor-critic model
 
@@ -99,7 +99,7 @@ class ACBasic(model):
         self.genStandardResultsStore()
         self.recActorExpectations = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

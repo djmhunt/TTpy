@@ -16,12 +16,12 @@ import logging
 
 from numpy import exp, array, ones
 
-from modelTemplate import model
+from modelTemplate import Model
 from model.decision.binary import decEta
 from utils import callableDetailsString
 
 
-class MS_rev(model):
+class MS_rev(Model):
 
     """An adapted version of the Morre & Sellen model
 
@@ -102,7 +102,7 @@ class MS_rev(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

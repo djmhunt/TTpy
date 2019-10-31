@@ -10,12 +10,12 @@ import logging
 from numpy import exp, array, ones
 from types import NoneType
 
-from modelTemplate import model
+from modelTemplate import Model
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
 
-class BPMS(model):
+class BPMS(Model):
 
     """The Bayesian Predictor with Markovian Switching model
 
@@ -106,7 +106,7 @@ class BPMS(model):
         self.recPosteriorProb = []
         self.recActionLoc = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

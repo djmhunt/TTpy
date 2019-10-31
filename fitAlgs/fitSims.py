@@ -131,7 +131,7 @@ class fitSim(object):
 
         # Pull out the values to be compared
 
-        modelData = modelInstance.outputEvolution()
+        modelData = modelInstance.returnTaskState()
         modelChoices = modelData[self.modelFitVar]
 
         if self.fitSubsetChosen is not types.NoneType:

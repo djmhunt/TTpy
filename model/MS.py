@@ -13,11 +13,11 @@ import logging
 
 from numpy import exp, zeros, array, ones
 
-from modelTemplate import model
+from modelTemplate import Model
 from model.decision.binary import decEta
 
 
-class MS(model):
+class MS(Model):
 
     """The Moore & Sellen model
 
@@ -100,7 +100,7 @@ class MS(model):
         # Recorded information
         self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns

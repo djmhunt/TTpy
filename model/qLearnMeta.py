@@ -14,11 +14,11 @@ import logging
 
 from numpy import exp, ones, array, isnan, isinf, sum, sign
 
-from model.modelTemplate import model
+from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnMeta(model):
+class qLearnMeta(Model):
 
     """The q-Learning algorithm with a second-order adaptive beta
 
@@ -102,7 +102,7 @@ class qLearnMeta(model):
         self.recRewardDD = []
         self.recBeta = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
