@@ -20,7 +20,7 @@ class ModelGen(object):
 
     Parameters
     ----------
-    model :  model.modelTemplate.model
+    model :  model.modelTemplate.Model
     parameters : dictionary containing floats or lists of floats
         Parameters are the options that you are or are likely to change across 
         model instances. When a parameter contains a list, an instance of the 
@@ -74,7 +74,7 @@ class ModelGen(object):
         
         Returns
         -------
-        model : model.modelTemplate.model
+        model : model.modelTemplate.Model
             The model to be initialised
         parameters : ordered dictionary of floats or bools
             The model instance parameters
