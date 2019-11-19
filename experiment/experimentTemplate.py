@@ -4,10 +4,8 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import logging
 
-
-class experiment(object):
+class Experiment(object):
     """The abstract experiment class from which all others inherit
 
     Many general methods for experiments are found only here
@@ -23,28 +21,16 @@ class experiment(object):
 
     """
 
-    Name = "Empty"
-
     def __init__(self, **kwargs):
 
-        self.kwargs = kwargs
+        self.kwargs = kwargs.copy()
 
-        self.reset()
+        self.Name = self.findName()
 
-    def reset(self):
-        """
-        Creates a new experiment instance
-
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
+        self.parameters = {"Name": self.Name
+                           }
 
         self.recAction = []
-
-        self.parameters = {"Name": self.Name}
 
 
     def __iter__(self):
@@ -73,14 +59,6 @@ class experiment(object):
         # Since there is nothing to iterate over, just return the final state
 
         raise StopIteration
-#        if self.index == self.maxIndex:
-#            raise StopIteration
-#
-#        self.index += 1
-#
-#        self._storeState()
-#
-#        return self.data[self.index], None
 
     def __eq__(self, other):
 
@@ -100,14 +78,23 @@ class experiment(object):
 
         return hash(self.Name)
 
+    def findName(self):
+
+        return self.__class__.__name__
+
     def receiveAction(self,action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
 
         self.recAction.append(action)
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment before the next trialstep
         """
@@ -126,19 +113,19 @@ class experiment(object):
         """
         return None
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Returns all the relevent data for this experiment run
+        Returns all the relevant data for this experiment run
 
         Returns
         -------
         results : dictionary
-            The dictionary contains a series of keys including Name,
-            Observables and Actions.
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = {"Name": self.Name,
-                   "Actions": self.recAction}
+        results = self.standardResultOutput()
+
+        results["Actions"] = self.recAction
 
         return results
 
@@ -149,6 +136,12 @@ class experiment(object):
         """
 
         pass
+
+    def standardResultOutput(self):
+
+        results = self.parameters.copy()
+
+        return results
 
     def params(self):
         """

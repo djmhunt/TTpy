@@ -25,7 +25,7 @@ from collections import OrderedDict
 # The experiment factory
 from experimentGenerator import ExperimentGen
 # The experiments and stimulus processors
-from experiment.probSelect import probSelect, probSelectStimDirect, probSelectRewDirect
+from experiment.probSelect import ProbSelect, probSelectStimDirect, probSelectRewDirect
 
 # The model factory
 from modelGenerator import ModelGen
@@ -54,7 +54,7 @@ expStaticArgs = {'numActions': numActions,
                                                ("D", 0.30),
                                                ("E", 0.60),
                                                ("F", 0.40)]),
-                 'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
+                 'learningActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
 
 modelParameters = {'alpha': alphaSet,
                    'beta': betaSet}
@@ -68,7 +68,7 @@ modelStaticArgs = {'numActions': numActions,
                    'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
 modelSet = ModelGen(qLearn, modelParameters, modelStaticArgs)
-expSets = ExperimentGen(probSelect, expParams, expStaticArgs)
+expSets = ExperimentGen(ProbSelect, expParams, expStaticArgs)
 
 #%% For simulating experiments
 simulation(expSets,

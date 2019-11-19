@@ -9,22 +9,17 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import logging
+import numpy as np
 
-import pandas as pd
-
-from numpy import array, zeros
-from numpy.random import rand
-from experiment.experimentTemplate import experiment
-from utils import varyingParams
-
+from experiment.experimentTemplate import Experiment
 
 # Bead Sequences:
-beadSequences = {"MooreSellen": [1,1,1,0,1,1,1,1,0,1,0,0,0,1,0,0,0,0,1,0]}
+beadSequences = {"MooreSellen": [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]}
 defaultBeads = beadSequences["MooreSellen"]
 
-class Beads(experiment):
-    """Based on the Moore&Sellen Beads task
+
+class Beads(Experiment):
+    """Based on the Moore & Sellen Beads task
 
     Many methods are inherited from the experiment.experiment.experiment class.
     Refer to its documentation for missing methods.
@@ -44,28 +39,15 @@ class Beads(experiment):
         `MooreSellen`, the default sequence.
     """
 
-    Name = "beads"
+    def __init__(self, N=None, beadSequence=defaultBeads, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
-
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        N = kwargs.pop('N',None)
-        beadSequence = kwargs.pop("beadSequence", defaultBeads)
-
+        super(Beads, self).__init__(**kwargs)
 
         if isinstance(beadSequence, basestring):
             if beadSequence in beadSequences:
                 self.beads = beadSequences[beadSequence]
             else:
-                raise "Unknown bead sequence"
+                raise Exception("Unknown bead sequence")
         else:
             self.beads = beadSequence
 
@@ -74,9 +56,8 @@ class Beads(experiment):
         else:
             self.T = len(self.beads)
 
-        self.parameters = {"Name": self.Name,
-                           "N": self.T,
-                           "beadSequence": self.beads}
+        self.parameters["N"] = self.T
+        self.parameters["beadSequence"] = self.beads
 
         # Set trialstep count
         self.t = -1
@@ -86,8 +67,6 @@ class Beads(experiment):
         self.recBeads = [-1]*self.T
         self.recAction = [-1]*self.T
         self.firstDecision = 0
-
-        return self
 
     def next(self):
         """ Produces the next bead for the iterator
@@ -121,7 +100,8 @@ class Beads(experiment):
 
         Parameters
         ----------
-        action : {1,2, None}
+        action : int or string
+            The action taken by the model
         """
 
         self.recAction[self.t] = action
@@ -129,21 +109,21 @@ class Beads(experiment):
         if action and not self.firstDecision:
             self.firstDecision = self.t + 1
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
         Returns all the relevant data for this experiment run
 
         Returns
         -------
         results : dictionary
-            The dictionary contains a series of keys including Name,
-            Observables and Actions.
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = {"Name": self.Name,
-                   "Observables": array(self.recBeads),
-                   "Actions": self.recAction,
-                   "FirstDecision": self.firstDecision}
+        results = self.standardResultOutput()
+
+        results["Observables"] = np.array(self.recBeads)
+        results["Actions"] = self.recAction
+        results["FirstDecision"] = self.firstDecision
 
         return results
 
@@ -154,6 +134,7 @@ class Beads(experiment):
         """
 
         self.recBeads[self.t] = self.beads[self.t]
+
 
 def generateSequence(numBeads, oneProb, switchProb):
     """
@@ -177,9 +158,9 @@ def generateSequence(numBeads, oneProb, switchProb):
         The generated sequence of beads
     """
 
-    sequence = zeros(numBeads)
+    sequence = np.zeros(numBeads)
 
-    probs = rand(numBeads, 2)
+    probs = np.random.rand(numBeads, 2)
     bead = 1
 
     for i in range(numBeads):
@@ -243,7 +224,7 @@ def beadStimDualDirect():
     """
 
     def beadStim(observation, action):
-        stimulus = array([observation, 1-observation])
+        stimulus = np.array([observation, 1-observation])
         return 1, stimulus
 
     beadStim.Name = "beadStimDualDirect"
@@ -281,7 +262,7 @@ def beadStimDualInfo(oneProb):
 
     def beadStim(observation, action):
         stim = oneProb*observation + (1-oneProb)*(1-observation)
-        stimulus = array([stim, 1-stim])
+        stimulus = np.array([stim, 1-stim])
         return 1, stimulus
 
     beadStim.Name = "beadStimDualInfo"

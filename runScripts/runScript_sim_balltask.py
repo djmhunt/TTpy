@@ -20,18 +20,18 @@ from collections import OrderedDict
 
 #%% Import all experiments, models and interface functions
 # The experiment factory
-from experiments import experiments
+from experimentGenerator import ExperimentGen
 # The experiments and stimulus processors
 from experiment.balltask import Balltask, balltaskStimulusDirect, balltaskRewardDirect
 
 # The model factory
-from models import models
+from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import qLearn
 
-### Set the outputting, model sets and experiment sets
+#%% Set the outputting, model sets and experiment sets
 expParams = {}
 #expExtraParams = {'numActions': 6,
 #                  'learningLen': 200,
@@ -44,8 +44,8 @@ expParams = {}
 #                                                ("E", 0.60),
 #                                                ("F", 0.40)]),
 #                  'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
-expExtraParams = {}
-expSets = experiments((Balltask, expParams, expExtraParams))
+expStaticArgs = {}
+expSets = ExperimentGen(Balltask, expParams, expStaticArgs)
 
 numActions = 3
 numCues = 3
@@ -56,18 +56,18 @@ repetitions = 1
 alphaSet = repeat(array([0.5]), repetitions)
 betaSet = array([0.7])
 
-parameters = {'alpha': alphaSet,
-              'beta': betaSet}
-paramExtras = {'numActions': numActions,
-               'numCues': numCues,
-               'actionCodes': {0: 0, 1: 1, 2: 2},
-               'expect': ones((numActions, numCues)) / 2,
-               'prior': ones(numActions) / numActions,
-               'stimFunc': balltaskStimulusDirect(),
-               'rewFunc': balltaskRewardDirect(),
-               'decFunc': decWeightProb([0, 1, 2])}
+modelParameters = {'alpha': alphaSet,
+                   'beta': betaSet}
+modelStaticArgs = {'numActions': numActions,
+                   'numCues': numCues,
+                   'actionCodes': {0: 0, 1: 1, 2: 2},
+                   'expect': ones((numActions, numCues)) / 2,
+                   'prior': ones(numActions) / numActions,
+                   'stimFunc': balltaskStimulusDirect(),
+                   'rewFunc': balltaskRewardDirect(),
+                   'decFunc': decWeightProb([0, 1, 2])}
 
-modelSet = models((qLearn, parameters, paramExtras))
+modelSet = ModelGen(qLearn, modelParameters, modelStaticArgs)
 
 #%% For simulating experiments
 

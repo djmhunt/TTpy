@@ -6,34 +6,38 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from experiment.experimentTemplate import experiment
+import copy
 
-class Basic(experiment):
+from experiment.experimentTemplate import Experiment
 
-    Name = "basic"
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+class Basic(Experiment):
+    """
+    An example of an experiment with all the necessary components, but nothing changing
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
+    Parameters
+    ----------
+    trials : int
+        The number of trials in the experiment
 
-        kwargs = self.kwargs.copy()
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    """
 
-        self.T = kwargs.pop("trials", 100)
+    def __init__(self, trials=100, **kwargs):
 
-        self.parameters = {"Name": self.Name,
-                           "Trials": self.T}
+        super(Basic, self).__init__(**kwargs)
 
-        self.t = -1
-        self.action = None
+        self.nbr_of_trials = trials
 
-        self.recAction = [-1] * self.T
+        self.parameters["Trials"] = self.nbr_of_trials
 
-        return self
+        self.trial = -1  # start at -1 so first call to next will yield trial 0
+        self.action = None  # placeholder for what action is taken
+
+        self.action_history = [-1] * self.nbr_of_trials
 
     def next(self):
         """
@@ -50,19 +54,24 @@ class Basic(experiment):
         StopIteration
         """
 
-        self.t += 1
+        self.trial += 1
 
-        if self.t ==self.T:
+        if self.trial == self.nbr_of_trials:
             raise StopIteration
 
-        nextStim = 1
+        nextStimulus = 1
         nextValidActions = (0, 1)
 
-        return nextStim, nextValidActions
+        return nextStimulus, nextValidActions
 
     def receiveAction(self, action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
         self.action = action
 
@@ -72,35 +81,43 @@ class Basic(experiment):
         """
         return 1
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
-        results["partActions"] = self.recAction.copy()
+        results["participantActions"] = copy.copy(self.action_history)
+        
+        return results
 
     def storeState(self):
         """ Stores the state of all the important variables so that they can be
         output later
         """
 
-        self.recAction[self.t] = self.action
+        self.action_history[self.trial] = self.action
 
-def basicStimDirect():
+
+def basicStimulusDirect():
     """
     Processes the stimulus cues for models expecting just the event
 
     Returns
     -------
-    basicStim : function
+    basicStimulus : function
         The function returns a tuple of ``1`` and the observation.
 
     Attributes
@@ -113,20 +130,20 @@ def basicStimDirect():
     model.qLearn, model.qLearn2
     """
 
-    def basicStim(observation):
+    def basicStimulus(observation):
         return 1, 1
 
-    basicStim.Name = "basicStimDirect"
-    return basicStim
+    basicStimulus.Name = "basicStimulusDirect"
+    return basicStimulus
 
 
-def basicRewDirect():
+def basicRewardDirect():
     """
     Processes the reward for models expecting just the reward
 
     Returns
     -------
-    deckRew : function
+    basicReward : function
         The function expects to be passed a tuple containing the reward and the
         last action. The function returns the reward.
 
@@ -140,8 +157,9 @@ def basicRewDirect():
     model.qLearn, model.qLearn2
     """
 
-    def basicRew(reward, action, stimuli):
+    def basicReward(reward, action, stimuli):
         return reward
 
-    basicRew.Name = "basicRewDirect"
-    return basicRew
+    basicReward.Name = "basicRewardDirect"
+    return basicReward
+

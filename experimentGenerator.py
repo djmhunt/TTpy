@@ -17,7 +17,7 @@ class ExperimentGen(object):
 
     Parameters
     ----------
-    experiment :  experiment.experimentTemplate.experiment
+    experiment :  experiment.experimentTemplate.Experiment
         The experiment that will be run
     parameters : dictionary of floats or lists of floats
         Parameters are the options that you are or are likely to change across experiment instances. When a parameter contains a list, an instance

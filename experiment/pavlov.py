@@ -10,12 +10,12 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, ones, zeros, concatenate
-from numpy.random import choice, random
+import numpy as np
 
-from experiment.experimentTemplate import experiment
+from experiment.experimentTemplate import Experiment
 
-class Pavlov(experiment):
+
+class Pavlov(Experiment):
 
     """
     Based on the Silvetti et al 2011 paper `"Value and prediction error in
@@ -54,45 +54,33 @@ class Pavlov(experiment):
 
     """
 
-    Name = "pavlov"
+    def __init__(self, rewMag=4, rewProb=np.array([0.87, 0.33]), stimMag=1, stimDur=20, rewDur=4, simDur=30, stimRepeats=7, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+        super(Pavlov, self).__init__(**kwargs)
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        self.rewMag = kwargs.pop('rewMag', 4)
-        self.rewProb = kwargs.pop('rewProb', array([0.87, 0.33]))
-        self.stimMag = kwargs.pop('stimMag', 1)
-        self.stimDur = kwargs.pop('stimDur', 20)  # 200) # Stimulus duration
-        self.rewDur = kwargs.pop('rewDur', 4)  # 40) #duration of reward
-        self.simLen = kwargs.pop('simDur', 30)  # 300)  # the length of the simulation
-        self.stimRepeats = kwargs.pop('stimRepeats', 7)  # 72)  # The number of learning runs
+        self.rewMag = rewMag
+        self.rewProb = rewProb
+        self.stimMag = stimMag
+        self.stimDur = stimDur  # Stimulus duration
+        self.rewDur = rewDur  # duration of reward
+        self.simLen = simDur  # the length of the simulation
+        self.stimRepeats = stimRepeats  # The number of learning runs
 #        simLoop = kwargs.pop('simLoopLen',100) #The number of learning loops are run
 
         self.index = -1
 
-        self.parameters = {"Name": self.Name,
-                           "rewMag": self.rewMag,
-                           "rewProb": self.rewProb,
-                           "stimMag": self.stimMag,
-                           "stimDur": self.stimDur,
-                           "rewDur": self.rewDur,
-                           "simLen": self.simLen,
-                           "stimRepeats": self.stimRepeats}
+        self.parameters["rewMag"] = self.rewMag
+        self.parameters["rewProb"] = self.rewProb
+        self.parameters["stimMag"] = self.stimMag
+        self.parameters["stimDur"] = self.stimDur
+        self.parameters["rewDur"] = self.rewDur
+        self.parameters["simLen"] = self.simLen
+        self.parameters["stimRepeats"] = self.stimRepeats
 
         self.cSet, self.stimChoice = self._getStim(self.stimRepeats, self.stimMag)
         self.rewSigSet, self.rewVals = self._getRew(self.stimChoice, self.simLen, self.stimRepeats, self.stimDur, self.rewDur, self.rewMag, self.rewProb)
 
         self.recActions = []
-
-        return self
 
     def next(self):
         """
@@ -121,39 +109,51 @@ class Pavlov(experiment):
         if self.index == self.stimRepeats:
             raise StopIteration
 
-        c = self.cSet[self.index]
-        rewSig = self.rewSigSet[self.index]
-
-        nextStim = (c, rewSig, self.stimDur)
+        nextStim = (self.cSet[self.index], self.stimDur)
         nextValidActions = None
 
         return nextStim, nextValidActions
 
-    def receiveAction(self,action):
+    def receiveAction(self, action):
         """
         Receives the next action from the participant
 
         Parameters
         ----------
-        action : ignored
-            The action is only stored, not used.
+        action : int or string
+            The action taken by the model
         """
 
         self.action = action
 
         self.storeState()
 
-    def outputEvolution(self):
+    def feedback(self):
         """
-        Saves files containing all the relevant data for this experiment run
+        Responds to the action from the participant
+        """
+
+        rewSig = self.rewSigSet[self.index]
+
+        return rewSig
+
+    def proceed(self):
+        """
+        Updates the experiment after feedback
+        """
+        pass
+
+    def returnTaskState(self):
+        """
+        Returns all the relevant data for this experiment run
 
         Returns
         -------
         results : dictionary
-            Contains the class parameters as well as the other useful data
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters
+        results = self.standardResultOutput()
 
         results["choices"] = self.cSet
         results["stimuli"] = self.stimChoice
@@ -171,18 +171,18 @@ class Pavlov(experiment):
         self.recActions.append(self.action)
 
     def _getStim(self, stimRepeats, stimMag):
-        stimChoice = choice([0, 1], size=(stimRepeats, 1))
-        cSet = array([[1-sc[0],sc[0]] for sc in stimChoice])*stimMag
+        stimChoice = np.random.choice([0, 1], size=(stimRepeats, 1))
+        cSet = np.array([[1-sc[0],sc[0]] for sc in stimChoice])*stimMag
 
         return cSet, stimChoice
 
     def _getRew(self, stimChoice, simLen, stimRepeats, stimDur, rewDur, rewMag, rewProb):
 
-        rewVals = (random((stimRepeats,1)) < rewProb[stimChoice])*rewMag
-        rewSig1 = zeros((stimRepeats,stimDur-rewDur))
-        rewSig2 = ones((stimRepeats,rewDur))*rewVals
-        rewSig3 = zeros((stimRepeats,simLen-stimDur))
-        rewSigSet = concatenate((rewSig1,rewSig2,rewSig3),1)
+        rewVals = (np.random.random((stimRepeats, 1)) < rewProb[stimChoice])*rewMag
+        rewSig1 = np.zeros((stimRepeats, stimDur-rewDur))
+        rewSig2 = np.ones((stimRepeats, rewDur))*rewVals
+        rewSig3 = np.zeros((stimRepeats, simLen-stimDur))
+        rewSigSet = np.concatenate((rewSig1, rewSig2, rewSig3), 1)
 
         return rewSigSet, rewVals
 
@@ -216,7 +216,7 @@ def pavlovStimTemporal():
         rewSig = event[1]
         stimDur = event[2]
 
-        cStimZeros = zeros((len(cStim)))
+        cStimZeros = np.zeros((len(cStim)))
 
         for t, r in enumerate(rewSig):
 

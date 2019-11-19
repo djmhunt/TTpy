@@ -5,30 +5,21 @@ TODO: describe experiment
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import copy
+
 import numpy as np
 
-from experiment.experimentTemplate import experiment
+from experiment.experimentTemplate import Experiment
 
 
-class Balltask(experiment):
+class Balltask(Experiment):
+    # TODO: Describe parameters
+    # each bag always contains balls of same color
+    def __init__(self, nbr_of_bags=6, bag_colors=['red', 'green', 'blue'], balls_per_bag=3, **kwargs):
 
-    Name = "balltask"
+        super(Balltask, self).__init__(**kwargs)
 
-    def reset(self):
-        """
-        Creates a new experiment instance
-
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        # temp variables to increase readability
-        nbr_of_bags = kwargs.pop("nbr_of_bags", 6)  # TODO: change to 90
-        bag_colors = kwargs.pop("bag_colors", ['red', 'green', 'blue'])  # each bag always contains balls of same color
-        balls_per_bag = kwargs.pop("balls_per_bag", 3)
+        # TODO: change nbr_of_bags default to 90
         
         # check for counterbalance
         assert(nbr_of_bags % len(bag_colors) == 0), "nbr of bags should be multiple of color count"
@@ -36,14 +27,11 @@ class Balltask(experiment):
         bag_sequence = np.repeat(bag_colors, nbr_of_bags / len(bag_colors))
         bag_sequence = np.random.permutation(bag_sequence)
 
-        self.parameters = {
-            "Name"         : self.Name,
-            "nbr_of_bags"  : nbr_of_bags,
-            "bag_colors"   : bag_colors,
-            "balls_per_bag": balls_per_bag,
-            "bag_sequence" : list(bag_sequence),
-            "nbr_of_trials": nbr_of_bags * balls_per_bag
-        }
+        self.parameters["nbr_of_bags"] = nbr_of_bags
+        self.parameters["bag_colors"] = bag_colors
+        self.parameters["balls_per_bag"] = balls_per_bag
+        self.parameters["bag_sequence"] = list(bag_sequence)
+        self.parameters["nbr_of_trials"] = nbr_of_bags * balls_per_bag
 
         # variables internal to an experiment instance
         self.trial = -1
@@ -54,10 +42,7 @@ class Balltask(experiment):
         
         self.action_history = [-1] * self.parameters['nbr_of_trials']
 #        self.reward_history = [-1] * self.parameters['nbr_of_trials']
-        self.ball_history = [""] * self.parameters['nbr_of_trials'] 
-
-        return self
-
+        self.ball_history = [""] * self.parameters['nbr_of_trials']
 
     def next(self):
         """
@@ -95,13 +80,16 @@ class Balltask(experiment):
 
         return next_stimulus, next_valid_actions
 
-
     def receiveAction(self, action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
         self.action = action
-
 
     def feedback(self):
         """
@@ -109,27 +97,31 @@ class Balltask(experiment):
         balltask has no rewards so we return None
         """
         self.storeState()
+
         return None
 
-
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
         pass
 
-
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        history : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        history = self.parameters.copy()
-        history['participant_actions'] = self.action_history.copy()
-        history['ballcolor'] = self.ball_history.copy()
+        history = self.standardResultOutput()
+
+        history['participant_actions'] = copy.copy(self.action_history)
+        history['ballcolor'] = copy.copy(self.ball_history)
         
         return history
-
 
     def storeState(self):
         """ Stores the state of all the important variables so that they can be

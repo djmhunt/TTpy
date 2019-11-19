@@ -10,19 +10,14 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import pandas as pd
+import numpy as np
 
-from numpy import array
-from numpy.random import rand, choice
+import itertools
 
-from itertools import izip
-
-from experiment.experimentTemplate import experiment
-
-# from utils import varyingParams
+from experiment.experimentTemplate import Experiment
 
 
-class probSelect(experiment):
+class ProbSelect(Experiment):
     """
     Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.
                                         Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., & Hutchison, K. E. (2007).
@@ -69,38 +64,26 @@ class probSelect(experiment):
 
     """
 
-    Name = "probSelect"
+    def __init__(self, rewardProb=0.7, learningActPairs=[(0, 1), (2, 3)], actRewardProb=None, learningLen=240, testLen=60, numActions=None, rewardSize=1, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+        super(ProbSelect, self).__init__(**kwargs)
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
+        if not actRewardProb:
+            actRewardProb = {0: rewardProb,
+                             1: 1-rewardProb,
+                             2: 0.5,
+                             3: 0.5}
 
-        kwargs = self.kwargs.copy()
+        if not numActions:
+            numActions = len(actRewardProb)
 
-        rewardProb = kwargs.pop('rewardProb', 0.7)
-        actRewardProb = kwargs.pop('actRewardProb', {0: rewardProb,
-                                                     1: 1-rewardProb,
-                                                     2: 0.5,
-                                                     3: 0.5})
-        learningActPairs = kwargs.pop("learnActPairs", [(0, 1), (2, 3)])
-        learningLen = kwargs.pop("learningLen", 240)
-        testLen = kwargs.pop("testLen", 60)
-        numActions = kwargs.pop("numActions", len(actRewardProb))
-        rewardSize = kwargs.pop("rewardSize", 1)
-
-        self.parameters = {"Name": self.Name,
-                           "rewardProb": rewardProb,
-                           "actRewardProb": actRewardProb,
-                           "learningActPairs": learningActPairs,
-                           "learningLen": learningLen,
-                           "testLen": testLen,
-                           "numActions": numActions,
-                           "rewardSize": rewardSize}
+        self.parameters["rewardProb"] = rewardProb
+        self.parameters["actRewardProb"] = actRewardProb
+        self.parameters["learningActPairs"] = learningActPairs
+        self.parameters["learningLen"] = learningLen
+        self.parameters["testLen"] = testLen
+        self.parameters["numActions"] = numActions
+        self.parameters["rewardSize"] = rewardSize
 
         self.t = -1
         self.rewardProb = rewardProb
@@ -117,11 +100,8 @@ class probSelect(experiment):
         self.actT = genActSequence(actRewardProb, learningActPairs, learningLen, testLen)
 
         # Recording variables
-
         self.recRewVal = [-1] * self.T
         self.recAction = [-1] * self.T
-
-        return self
 
     def next(self):
         """
@@ -151,6 +131,11 @@ class probSelect(experiment):
     def receiveAction(self, action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
 
         self.action = action
@@ -164,7 +149,7 @@ class probSelect(experiment):
         if self.t < self.learningLen:
             actRewProb = self.actRewardProb[self.action]
 
-            if actRewProb >= rand(1):
+            if actRewProb >= np.random.rand(1):
                 reward = self.rewardSize
             else:
                 reward = 0
@@ -177,24 +162,28 @@ class probSelect(experiment):
 
         return reward
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
 
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this
-        experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
-        results["rewVals"] = array(self.recRewVal)
-        results["actions"] = array(self.recAction)
-        results["validAct"] = array(self.actT)
+        results["rewVals"] = np.array(self.recRewVal)
+        results["Actions"] = np.array(self.recAction)
+        results["validAct"] = np.array(self.actT)
 
         return results
 
@@ -205,19 +194,20 @@ class probSelect(experiment):
         self.recAction[self.t] = self.action
         self.recRewVal[self.t] = self.rewVal
 
+
 def genActSequence(actRewardProb, learningActPairs, learningLen, testLen):
 
     pairNums = range(len(learningActPairs))
-    actPairs = array(learningActPairs)
+    actPairs = np.array(learningActPairs)
 
-    pairs = choice(pairNums, size=learningLen, replace=True)
+    pairs = np.random.choice(pairNums, size=learningLen, replace=True)
     actSeq = list(actPairs[pairs])
 
     for t in xrange(testLen):
-        pairs = choice(pairNums, size=2, replace=False)
-        elements = choice([0, 1], size=2, replace=True)
+        pairs = np.random.choice(pairNums, size=2, replace=False)
+        elements = np.random.choice([0, 1], size=2, replace=True)
 
-        pair = [actPairs[p, e] for p, e in izip(pairs, elements)]
+        pair = [actPairs[p, e] for p, e in itertools.izip(pairs, elements)]
         actSeq.append(pair)
 
     return actSeq
