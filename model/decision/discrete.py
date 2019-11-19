@@ -17,6 +17,7 @@ import numpy as np
 from types import NoneType
 
 
+# TODO: provide default values for expResponses
 def decWeightProb(expResponses):
     """Decisions for an arbitrary number of choices
 
@@ -351,7 +352,7 @@ def validProbabilities(probabilities, expResp, validResponses):
     expResp : tuple or None
         Provides the action responses expected by the experiment for each
         probability estimate.
-    validResponses :
+    validResponses : 1D list or array
         The responses allowed for this trial
 
     Returns

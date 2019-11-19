@@ -321,7 +321,8 @@ class Model(object):
             The last chosen action
         events : list of floats
             The stimuli. If probActions is True then this will be unused as the probabilities will already be
-        validActions
+        validActions : 1D list or array
+            The actions permitted during this trialstep
 
         Returns
         -------
@@ -393,7 +394,7 @@ class Model(object):
         actionParams = sum(actionParamSets, axis=1, keepdims=True)
 
         return actionParams
-## TODO: Change the name of this to returnTaskState
+
     def returnTaskState(self):
         """
         Returns all the relevant data for this model
