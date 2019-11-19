@@ -19,13 +19,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, sum
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearn2(Model):
+class QLearn2(Model):
 
     """The q-Learning algorithm modified to have different positive and
     negative reward prediction errors
@@ -85,10 +85,10 @@ class qLearn2(Model):
 
     See Also
     --------
-    model.qLearn : This model is heavily based on that one
+    model.QLearn : This model is heavily based on that one
     """
 
-    Name = "qLearn2"
+    Name = "QLearn2"
 
     def __init__(self, **kwargs):
 
@@ -99,7 +99,7 @@ class qLearn2(Model):
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -216,9 +216,9 @@ class qLearn2(Model):
     def _newExpect(self, action, delta, stimuli):
 
         if delta > 0:
-            self.expectations[action] += self.alphaPos*delta*stimuli/sum(stimuli)
+            self.expectations[action] += self.alphaPos*delta*stimuli/np.sum(stimuli)
         else:
-            self.expectations[action] += self.alphaNeg*delta*stimuli/sum(stimuli)
+            self.expectations[action] += self.alphaNeg*delta*stimuli/np.sum(stimuli)
 
     def _actExpectations(self, expectations, stimuli):
 
@@ -246,8 +246,8 @@ class qLearn2(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 

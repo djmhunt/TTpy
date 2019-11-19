@@ -268,7 +268,7 @@ def probSelectRewDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def probSelectRew(reward, action, stimuli):

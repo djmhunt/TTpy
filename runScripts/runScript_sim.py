@@ -32,7 +32,7 @@ from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
-from model.qLearn import qLearn
+from model.qLearn import QLearn
 
 from simulation import simulation
 
@@ -67,7 +67,7 @@ modelStaticArgs = {'numActions': numActions,
                    'rewFunc': probSelectRewDirect(),
                    'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
-modelSet = ModelGen(qLearn, modelParameters, modelStaticArgs)
+modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 expSets = ExperimentGen(ProbSelect, expParams, expStaticArgs)
 
 #%% For simulating experiments

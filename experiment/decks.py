@@ -192,7 +192,7 @@ def deckStimDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def deckStim(observation):
@@ -219,7 +219,7 @@ def deckRewDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def deckRew(reward, action, stimuli):
@@ -324,7 +324,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
 
     See Also
     --------
-    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac
+    model.BP, model.EP, model.MSRev, model.decision.binary.decIntEtaReac
 
     Examples
     --------
@@ -369,7 +369,7 @@ def deckRewDualInfo(maxRewardVal, epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
     divisor = maxRewardVal + epsilon
 
@@ -402,7 +402,7 @@ def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
     mid = (maxRewardVal + minRewardVal)/2
 

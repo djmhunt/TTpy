@@ -148,7 +148,7 @@ def balltaskStimulusDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     # TODO! change below to work for more colors than 3
@@ -183,7 +183,7 @@ def balltaskRewardDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def balltaskReward(reward, action, stimuli):

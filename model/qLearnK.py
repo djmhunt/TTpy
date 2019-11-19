@@ -11,13 +11,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnK(Model):
+class QLearnK(Model):
 
     """The q-Learning Kalman algorithm
 
@@ -77,7 +77,7 @@ class qLearnK(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "qLearnK"
+    Name = "QLearnK"
 
     def __init__(self, **kwargs):
 
@@ -88,10 +88,10 @@ class qLearnK(Model):
         self.sigma = kwargRemains.pop('sigma', 1)
         self.sigmaG = kwargRemains.pop('sigmaG', 1)
         self.drift = kwargRemains.pop('lambda', 1)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
         self.expectations0 = self.expectations.copy()
-        self.sigmaA = kwargRemains.pop('sigmaA', ones(self.numActions))
-        self.alphaA = kwargRemains.pop('alphaA', ones(self.numActions))
+        self.sigmaA = kwargRemains.pop('sigmaA', np.ones(self.numActions))
+        self.alphaA = kwargRemains.pop('alphaA', np.ones(self.numActions))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -122,8 +122,8 @@ class qLearnK(Model):
         """
 
         results = self.standardResultOutput()
-        results["sigmaA"] = array(self.recsigmaA).T
-        results["alphaA"] = array(self.recalphaA).T
+        results["sigmaA"] = np.array(self.recsigmaA).T
+        results["alphaA"] = np.array(self.recalphaA).T
 
         return results
 
@@ -218,7 +218,7 @@ class qLearnK(Model):
         self.alphaA = alphaA
 
         newExpectations = self.expectations.copy()
-        newExpectations[action] = self.expectations[action] + self.alphaA[action]*delta*stimuli/sum(stimuli)
+        newExpectations[action] = self.expectations[action] + self.alphaA[action]*delta*stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations = self.drift * newExpectations + (1-self.drift) * self.expectations0
 
@@ -252,17 +252,17 @@ class qLearnK(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
 #        inftest = isinf(numerator)
 #        if inftest.any():
 #            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
+#            probs = possprobs / np.sum(possprobs)
 #
-#            logger = logging.getLogger('qLearn')
+#            logger = logging.getLogger('QLearn')
 #            message = "Overflow in calculating the prob with expectation "
 #            message += str(expectation)
 #            message += " \n Returning the prob: " + str(probs)

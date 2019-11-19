@@ -110,7 +110,7 @@ def decEta(expResponses=(0, 1), eta=0):
 
     See Also
     --------
-    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
+    models.BP, models.MS, models.EP, models.MSRev, models.QLearn, models.QLearn2, models.OpAL
 
     """
 
@@ -174,7 +174,7 @@ def decRandom(expResponses=(0, 1)):
 
     See Also
     --------
-    models.BP, models.MS, models.EP, models.MS_rev, models.qLearn, models.qLearn2, models.OpAL
+    models.BP, models.MS, models.EP, models.MSRev, models.QLearn, models.QLearn2, models.OpAL
 
     """
 
@@ -246,7 +246,7 @@ def decEtaSets(expResponses=(0, 1), eta=0):
 
     See Also
     --------
-    models.BP, models.MS_rev, experiment.decks.deckStimAllInfo
+    models.BP, models.MSRev, experiment.decks.deckStimAllInfo
 
     Examples
     --------

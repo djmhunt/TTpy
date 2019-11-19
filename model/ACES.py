@@ -9,7 +9,8 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import ones, array, sum, shape, ndarray, max
+import numpy as np
+from numpy import ndarray
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
@@ -17,7 +18,7 @@ from model.decision.discrete import decWeightProb
 
 class ACES(Model):
 
-    """A basic, complete actor-critic model with decision making based on qLearnE
+    """A basic, complete actor-critic model with decision making based on QLearnE
 
     Attributes
     ----------
@@ -71,7 +72,7 @@ class ACES(Model):
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
         self.expectationsF = kwargRemains.pop('expect', 0.5)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.actorExpectations = kwargRemains.pop('actorExpect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -99,7 +100,7 @@ class ACES(Model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
+        results["ActorExpectations"] = np.array(self.recActorExpectations).T
 
         return results
 
@@ -109,7 +110,7 @@ class ACES(Model):
         accessed later
         """
 
-        self.expectations = array([self.expectationsF])
+        self.expectations = np.array([self.expectationsF])
         self.storeStandardResults()
         self.recActorExpectations.append(self.actorExpectations.flatten())
 
@@ -135,7 +136,7 @@ class ACES(Model):
 
         activeStimuli, stimuli = self.stimFunc(observation)
 
-        actionExpectations = array([self.expectationsF] * self.numActions)
+        actionExpectations = np.array([self.expectationsF] * self.numActions)
 
         return actionExpectations, stimuli, activeStimuli
 
@@ -190,7 +191,7 @@ class ACES(Model):
 
         self.expectationsF += self.alpha*delta
 
-        newActorExpectations = self.actorExpectations[action] + delta * stimuli/sum(stimuli)
+        newActorExpectations = self.actorExpectations[action] + delta * stimuli/np.sum(stimuli)
         newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
         self.actorExpectations[action] = newActorExpectations
 
@@ -220,9 +221,9 @@ class ACES(Model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == max(actionValues)
+        cbest = actionValues == np.max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray

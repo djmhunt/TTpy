@@ -127,7 +127,7 @@ def basicStimulusDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def basicStimulus(observation):
@@ -154,7 +154,7 @@ def basicRewardDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def basicReward(reward, action, stimuli):

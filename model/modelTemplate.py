@@ -4,7 +4,8 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, size, isnan, ones, reshape, sum
+import numpy as np
+
 from types import NoneType
 
 from model.decision.discrete import decWeightProb
@@ -190,7 +191,7 @@ class Model(object):
         self.choiceReflection()
 
         # If there was a reward passed but it was empty, there is nothing to update
-        if type(response) is not NoneType and (size(response) == 0 or isnan(response)):
+        if type(response) is not NoneType and (np.size(response) == 0 or np.isnan(response)):
             return
 
         # Find the reward expectation
@@ -333,7 +334,7 @@ class Model(object):
 
         """
 
-        if isnan(probabilities).any():
+        if np.isnan(probabilities).any():
             raise ValueError("probabilities contain NaN")
         decision, decProbabilities = self.decisionFunc(probabilities, lastAction, stimulus=events, validResponses=validActions)
         self.decision = decision
@@ -389,9 +390,9 @@ class Model(object):
 
         """
 
-        actionParamSets = reshape(actStimuliParam, (self.numActions, self.numCues))
+        actionParamSets = np.reshape(actStimuliParam, (self.numActions, self.numCues))
         actionParamSets = actionParamSets * stimFilter
-        actionParams = sum(actionParamSets, axis=1, keepdims=True)
+        actionParams = np.sum(actionParamSets, axis=1, keepdims=True)
 
         return actionParams
 
@@ -430,17 +431,17 @@ class Model(object):
         results = self.parameters.copy()
 
         results["simID"] = self.simID
-        results["Actions"] = array(self.recAction)
-        results["Stimuli"] = array(self.recStimuli).T
-        results["Rewards"] = array(self.recReward)
-        results["Expectations"] = array(self.recExpectations).T
-        results["ExpectedReward"] = array(self.recExpectedReward).T
-        results["ExpectedRewards"] = array(self.recExpectedRewards).T
-        results["ValidActions"] = array(self.recValidActions).T
-        results["Decisions"] = array(self.recDecision)
-        results["UpdatedProbs"] = array(self.recProbabilities).T
-        results["ActionProb"] = array(self.recActionProb)
-        results["DecisionProbs"] = array(self.recActionProbs)
+        results["Actions"] = np.array(self.recAction)
+        results["Stimuli"] = np.array(self.recStimuli).T
+        results["Rewards"] = np.array(self.recReward)
+        results["Expectations"] = np.array(self.recExpectations).T
+        results["ExpectedReward"] = np.array(self.recExpectedReward).T
+        results["ExpectedRewards"] = np.array(self.recExpectedRewards).T
+        results["ValidActions"] = np.array(self.recValidActions).T
+        results["Decisions"] = np.array(self.recDecision)
+        results["UpdatedProbs"] = np.array(self.recProbabilities).T
+        results["ActionProb"] = np.array(self.recActionProb)
+        results["DecisionProbs"] = np.array(self.recActionProbs)
 
         return results
 
@@ -465,6 +466,8 @@ class Model(object):
         """Initialises the standard parameters and variables for a model
         """
 
+
+
         self.numActions = kwargs.pop('numActions', 2)
         self.numCues = kwargs.pop('numCues', 1)
         self.numCritics = kwargs.pop('numCritics', self.numActions * self.numCues)
@@ -473,21 +476,21 @@ class Model(object):
 
         self.defaultNonAction = kwargs.pop('nonAction', None)
 
-        defaultPrior = ones(self.numActions) / self.numActions
+        defaultPrior = np.ones(self.numActions) / self.numActions
         self.prior = kwargs.pop('prior', defaultPrior)
 
-        self.stimuli = ones(self.numCues)
-        self.stimuliFilter = ones(self.numCues)
+        self.stimuli = np.ones(self.numCues)
+        self.stimuliFilter = np.ones(self.numCues)
 
         self.currAction = None
         self.decision = None
         self.validActions = None
         self.lastObservation = None
 
-        self.probabilities = array(self.prior)
-        self.decProbabilities = array(self.prior)
-        self.expectedRewards = ones(self.numActions)
-        self.expectedReward = array([1])
+        self.probabilities = np.array(self.prior)
+        self.decProbabilities = np.array(self.prior)
+        self.expectedRewards = np.ones(self.numActions)
+        self.expectedReward = np.array([1])
 
 
 

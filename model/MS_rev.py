@@ -14,16 +14,16 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, ones
+import numpy as np
 
 from modelTemplate import Model
 from model.decision.binary import decEta
 from utils import callableDetailsString
 
 
-class MS_rev(Model):
+class MSRev(Model):
 
-    """An adapted version of the Morre & Sellen model
+    """An adapted version of the More & Sellen model
 
     Attributes
     ----------
@@ -74,7 +74,7 @@ class MS_rev(Model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
-    Name = "MS_rev"
+    Name = "MSRev"
 
     def __init__(self, **kwargs):
 
@@ -84,7 +84,7 @@ class MS_rev(Model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.eta = kwargRemains.pop('eta', 0.3)
-        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
         # The alpha is an activation rate parameter. The M&S paper uses a value of 1.
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -218,7 +218,7 @@ class MS_rev(Model):
         #li = actionValues ** self.beta
         #probArray = li/sum(li)
 
-        numerator = exp(self.beta * actionValues)
+        numerator = np.exp(self.beta * actionValues)
         denominator = sum(numerator)
 
         probArray = numerator / denominator

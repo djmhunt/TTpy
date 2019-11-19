@@ -12,7 +12,7 @@ import pytest
 from numpy import array
 
 from modelGenerator import ModelGen
-from model.qLearn import qLearn
+from model.qLearn import QLearn
 from fitAlgs.fitSims import fitSim
 from fitAlgs.minimize import minimize
 
@@ -33,7 +33,7 @@ def modelSets():
                   'theta': theta}
     paramExtras = {'prior': array([0.5,0.5])}
     
-    modelSet = ModelGen((qLearn, parameters, paramExtras))
+    modelSet = ModelGen((QLearn, parameters, paramExtras))
     modelInfos = [m for m in modelSet.iterInitDetails()]
     modelInfo = modelInfos[0]
     model = modelInfo[0]

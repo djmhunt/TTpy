@@ -7,12 +7,10 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, ones
-from types import NoneType
+import numpy as np
 
 from modelTemplate import Model
 from model.decision.binary import decSingle
-from utils import callableDetailsString
 
 
 class BPMS(Model):
@@ -94,10 +92,10 @@ class BPMS(Model):
 #        if len(prior) != self.numCritics:
 #            raise warning.
 
-        self.posteriorProb = ones(self.numActions) / self.numActions
+        self.posteriorProb = np.ones(self.numActions) / self.numActions
         self.switchProb = 0
-        self.stayMatrix = array([[1-delta, delta], [delta, 1-delta]])
-        self.switchMatrix = array([[delta, 1-delta], [1-delta, delta]])
+        self.stayMatrix = np.array([[1-delta, delta], [delta, 1-delta]])
+        self.switchMatrix = np.array([[delta, 1-delta], [1-delta, delta]])
         self.actionLoc = {k: k for k in range(0, self.numActions)}
 
         # Recorded information
@@ -117,9 +115,9 @@ class BPMS(Model):
         """
 
         results = self.standardResultOutput()
-        results["SwitchProb"] = array(self.recSwitchProb)
-        results["PosteriorProb"] = array(self.recPosteriorProb)
-        results["ActionLocation"] = array(self.recActionLoc)
+        results["SwitchProb"] = np.array(self.recSwitchProb)
+        results["PosteriorProb"] = np.array(self.recPosteriorProb)
+        results["ActionLocation"] = np.array(self.recActionLoc)
 
         return results
 
@@ -220,7 +218,7 @@ class BPMS(Model):
 
         p = delta
 
-        li = array([p[loc[action]], p[loc[1-action]]])
+        li = np.array([p[loc[action]], p[loc[1-action]]])
 
         newProb = li/sum(li)
 
@@ -256,7 +254,7 @@ class BPMS(Model):
         """
 
         pI = prob[1]
-        ps = 1.0 / (1.0 - exp(-self.beta * (pI - self.eta)))
+        ps = 1.0 / (1.0 - np.exp(-self.beta * (pI - self.eta)))
 
         return ps
 

@@ -14,14 +14,13 @@
         DOI:10.1142/S0218001401000836
 
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, array, ones
-from numpy.random import normal
+import numpy as np
 
-from modelTemplate import Model
+from model.modelTemplate import Model
 from model.decision.binary import decSingle
 from utils import callableDetailsString
 
@@ -164,10 +163,10 @@ class BHMM(Model):
         self.previousAction = None
         #        if len(prior) != self.numCritics:
         #            raise warning.
-        self.posteriorProb = ones(self.numActions) / self.numActions
+        self.posteriorProb = np.ones(self.numActions) / self.numActions
         self.switchProb = 0
-        self.stayMatrix = array([[1 - delta, delta], [delta, 1 - delta]])
-        self.switchMatrix = array([[delta, 1 - delta], [1 - delta, delta]])
+        self.stayMatrix = np.array([[1 - delta, delta], [delta, 1 - delta]])
+        self.switchMatrix = np.array([[delta, 1 - delta], [1 - delta, delta]])
         self.actionLoc = {k: k for k in range(0, self.numActions)}
 
         # Recorded information
@@ -187,9 +186,9 @@ class BHMM(Model):
         """
 
         results = self.standardResultOutput()
-        results["SwitchProb"] = array(self.recSwitchProb)
-        results["PosteriorProb"] = array(self.recPosteriorProb)
-        results["ActionLocation"] = array(self.recActionLoc)
+        results["SwitchProb"] = np.array(self.recSwitchProb)
+        results["PosteriorProb"] = np.array(self.recPosteriorProb)
+        results["ActionLocation"] = np.array(self.recActionLoc)
 
         return results
 
@@ -282,7 +281,7 @@ class BHMM(Model):
 
         loc = self.actionLoc
 
-        li = array([postProb[action], postProb[1 - action]])
+        li = np.array([postProb[action], postProb[1 - action]])
         payoffs = self._payoff()
 
         brute = payoffs * li
@@ -321,7 +320,7 @@ class BHMM(Model):
         """
 
         pI = prob[1]
-        ps = 1.0 / (1.0 - exp(-self.beta * (pI - self.eta)))
+        ps = 1.0 / (1.0 - np.exp(-self.beta * (pI - self.eta)))
 
         return ps
 
@@ -332,7 +331,7 @@ class BHMM(Model):
         Y : Payoff
 
         """
-        pay = normal(self.mu, self.sigma, (self.numCritics))
+        pay = np.random.normal(self.mu, self.sigma, (self.numCritics))
 
         return pay
 

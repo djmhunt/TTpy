@@ -7,10 +7,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray, sum
-from scipy.stats import dirichlet
-from collections import OrderedDict
-from itertools import izip
+import numpy as np
+import scipy as sp
+
+import collections
+import itertools
+
+from numpy import ndarray
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
@@ -75,15 +78,15 @@ class BP(Model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         dirichletInit = kwargRemains.pop('dirichletInit', 1)
-        self.validRew = kwargRemains.pop('validRewards', array([0, 1]))
-        self.rewLoc = OrderedDict(((k, v) for k, v in izip(self.validRew, range(len(self.validRew)))))
+        self.validRew = kwargRemains.pop('validRewards', np.array([0, 1]))
+        self.rewLoc = collections.OrderedDict(((k, v) for k, v in itertools.izip(self.validRew, range(len(self.validRew)))))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
         self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
         self.genEventModifiers(kwargRemains)
 
-        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
+        self.dirichletVals = np.ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
         self.expectations = self.updateExpectations(self.dirichletVals)
 
         self.genStandardParameterDetails()
@@ -106,7 +109,7 @@ class BP(Model):
         """
 
         results = self.standardResultOutput()
-        results["dirichletVals"] = array(self.recDirichletVals)
+        results["dirichletVals"] = np.array(self.recDirichletVals)
 
         return results
 
@@ -194,7 +197,7 @@ class BP(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/sum(stimuli)
+        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/np.sum(stimuli)
 
         self.expectations = self.updateExpectations(self.dirichletVals)
 
@@ -223,8 +226,8 @@ class BP(Model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -247,24 +250,24 @@ class BP(Model):
 
     def actStimMerge(self, dirichletVals, stimuli):
 
-        dirVals = dirichletVals * expand_dims(repeat([stimuli], self.numActions, axis=0), 2)
+        dirVals = dirichletVals * np.expand_dims(np.repeat([stimuli], self.numActions, axis=0), 2)
 
-        actDirVals = sum(dirVals, 1)
+        actDirVals = np.sum(dirVals, 1)
 
         return actDirVals
 
     def calcActExpectations(self, dirichletVals):
 
-        actExpect = fromiter((sum(dirichlet(d).mean() * self.validRew) for d in dirichletVals), float, count=self.numActions)
+        actExpect = np.fromiter((np.sum(sp.stats.dirichlet(d).mean() * self.validRew) for d in dirichletVals), float, count=self.numActions)
 
         return actExpect
 
     def updateExpectations(self, dirichletVals):
 
         def meanFunc(p, r=[]):
-            return sum(dirichlet(p).mean() * r)
+            return np.sum(sp.stats.dirichlet(p).mean() * r)
 
-        expectations = apply_along_axis(meanFunc, 2, dirichletVals, r=self.validRew)
+        expectations = np.apply_along_axis(meanFunc, 2, dirichletVals, r=self.validRew)
 
         return expectations
 

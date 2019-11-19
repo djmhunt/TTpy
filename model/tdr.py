@@ -7,15 +7,13 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import logging
-
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class tdr(Model):
+class TDR(Model):
 
     """The td-Learning algorithm
 
@@ -78,8 +76,8 @@ class tdr(Model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.tau = kwargRemains.pop('tau', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actAvReward = kwargRemains.pop('avReward', ones(self.numActions) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        self.actAvReward = kwargRemains.pop('avReward', np.ones(self.numActions) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -87,7 +85,7 @@ class tdr(Model):
         self.genEventModifiers(kwargRemains)
 
         self.lastAction = 0
-        self.lastStimuli = ones(self.numCues)
+        self.lastStimuli = np.ones(self.numCues)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -111,7 +109,7 @@ class tdr(Model):
         """
 
         results = self.standardResultOutput()
-        results["averageReward"] = array(self.recActAvReward)
+        results["averageReward"] = np.array(self.recActAvReward)
 
         return results
 
@@ -197,7 +195,7 @@ class tdr(Model):
         # has been chosen
 
         # Find the new activities
-        change = self.alpha*delta*stimuli/sum(stimuli)
+        change = self.alpha*delta*stimuli/np.sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
@@ -242,8 +240,8 @@ class tdr(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -256,7 +254,7 @@ class tdr(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.expectedRewards[self.currAction] * lastStimuli/sum(lastStimuli)
+        change = self.alpha * self.expectedRewards[self.currAction] * lastStimuli/np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):

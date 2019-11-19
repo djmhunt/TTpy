@@ -205,7 +205,7 @@ def probstimDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta
     """
 
     def probstim(observation):
@@ -236,7 +236,7 @@ def probrewDiff():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def probrew(reward, action, stimuli):
@@ -269,7 +269,7 @@ def probrewDualCorrection(epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
 
     def probrew(reward, action, stimuli):

@@ -9,13 +9,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
+from numpy import np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class tdE(Model):
+class TDE(Model):
 
     """The td-Learning algorithm
 
@@ -66,10 +66,10 @@ class tdE(Model):
 
     See Also
     --------
-    model.td0 : This model is heavily based on that one
+    model.TD0 : This model is heavily based on that one
     """
 
-    Name = "tdE"
+    Name = "TDE"
 
     def __init__(self, **kwargs):
 
@@ -81,7 +81,7 @@ class tdE(Model):
         self.epsilon = kwargRemains.pop('epsilon', 0.3)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.gamma = kwargRemains.pop('gamma', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -89,7 +89,7 @@ class tdE(Model):
         self.genEventModifiers(kwargRemains)
 
         self.lastAction = 0
-        self.lastStimuli = ones(self.numCues)
+        self.lastStimuli = np.ones(self.numCues)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -193,7 +193,7 @@ class tdE(Model):
         # has been chosen
 
         # Find the new activities
-        change = self.alpha*delta*stimuli/sum(stimuli)
+        change = self.alpha*delta*stimuli/np.sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
@@ -240,7 +240,7 @@ class tdE(Model):
 
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
@@ -252,7 +252,7 @@ class tdE(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * lastStimuli/sum(lastStimuli)
+        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * lastStimuli/np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):

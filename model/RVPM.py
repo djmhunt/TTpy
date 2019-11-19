@@ -11,7 +11,8 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, amax, dot, ones, mean, square
+import numpy as np
+
 from collections import defaultdict
 
 from modelTemplate import Model
@@ -82,7 +83,7 @@ class RVPM(Model):
 
         self.alpha = kwargRemains.pop('alpha', 0.005)
         self.beta = kwargRemains.pop('beta', 0.1)
-        self.w = kwargRemains.pop('w', array([0.01, 0.01]))
+        self.w = kwargRemains.pop('w', np.array([0.01, 0.01]))
         self.zeta = kwargRemains.pop('zeta', 2)
         self.tau = kwargRemains.pop('tau', 160)
         self.z = kwargRemains.pop('z', 100)
@@ -172,7 +173,7 @@ class RVPM(Model):
     def _updateGeneralStore(self):
 
         for k, v in self.eventStore.iteritems():
-            self.generalStore[k].append(array(v))
+            self.generalStore[k].append(np.array(v))
 
         for k in self.eventStore.iterkeys():
             self.eventStore[k] = []
@@ -269,25 +270,25 @@ class RVPM(Model):
 
     def _vUpdate(self, w, V, c):
         beta = self.beta
-        new = -beta*V + beta*amax([0, dot(w, c)])
+        new = -beta*V + beta*np.amax([0, np.dot(w, c)])
         return new
 
     def _deltaPUpdate(self, V, deltaP, r):
         beta = self.beta
-        new = -beta*deltaP + beta*amax([0, r-self.zeta*V])
+        new = -beta*deltaP + beta*np.amax([0, r-self.zeta*V])
         return new
 
     def _timeSigMag(self, t):
-        signal = exp((-(t-self.tau)**2)/square(self.z))
+        signal = np.exp((-(t-self.tau)**2)/np.square(self.z))
         return signal
 
     def _deltaMUpdate(self, V, deltaM, T, r):
         beta = self.beta
-        new = -beta*deltaM + beta*T*amax([0, self.zeta*V-r])
+        new = -beta*deltaM + beta*T*np.amax([0, self.zeta*V-r])
         return new
 
     def _tsnUpdate(self, dV, ddeltaP, ddeltaM):
-        signal = amax([0, self.zeta*dV]) + amax([0, ddeltaP]) - amax([0, ddeltaM])
+        signal = np.amax([0, self.zeta*dV]) + np.amax([0, ddeltaP]) - np.amax([0, ddeltaM])
         return signal
 
 

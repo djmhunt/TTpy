@@ -11,7 +11,7 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, zeros, array, ones
+import numpy as np
 
 from modelTemplate import Model
 from model.decision.binary import decEta
@@ -81,7 +81,7 @@ class MS(Model):
         self.alpha = kwargRemains.pop('alpha', 1)
         self.eta = kwargRemains.pop('eta', 0.5)
 
-        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
         # The alpha is an activation rate parameter. The paper uses a value of 1.
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -210,7 +210,7 @@ class MS(Model):
             The probabilities associated with the actionValues
         """
 
-        probArray = 1.0 / (1.0 + exp(-self.beta * actionValues))
+        probArray = 1.0 / (1.0 + np.exp(-self.beta * actionValues))
 
         self.probDifference = probArray[0] - probArray[1]
 

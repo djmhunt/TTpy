@@ -192,7 +192,7 @@ def beadStimDirect():
 
     See Also
     --------
-    model.qLearn
+    model.QLearn
     """
 
     def beadStim(observation, action):
@@ -257,7 +257,7 @@ def beadStimDualInfo(oneProb):
 
     See Also
     --------
-    model.MS, model.MS_rev, model.BP
+    model.MS, model.MSRev, model.BP
     """
 
     def beadStim(observation, action):
@@ -287,7 +287,7 @@ def beadRewDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def beadRew(reward, action, stimuli):

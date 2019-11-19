@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the qLearn model and the choice autocorrelation equation in the paper
+:Reference: Based on the QLearn model and the choice autocorrelation equation in the paper
                 Trial-by-trial data analysis using computational models.
                 Daw, N. D. (2011).
                 Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–38).
@@ -13,13 +13,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnCorr(Model):
+class QLearnCorr(Model):
 
     """The q-Learning algorithm
 
@@ -73,10 +73,10 @@ class qLearnCorr(Model):
 
     See Also
     --------
-    model.qLearn : This model is heavily based on that one
+    model.QLearn : This model is heavily based on that one
     """
 
-    Name = "qLearnCorr"
+    Name = "QLearnCorr"
 
     def __init__(self, **kwargs):
 
@@ -86,7 +86,7 @@ class qLearnCorr(Model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.kappa = kwargRemains.pop('kappa', 0.2)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.lastAction = kwargRemains.pop('firstAction', 1)
 
@@ -205,7 +205,7 @@ class qLearnCorr(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -236,11 +236,11 @@ class qLearnCorr(Model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        lastAction = zeros(shape(actionValues))
+        lastAction = np.zeros(np.shape(actionValues))
         lastAction[self.lastAction] = 1
 
-        numerator = exp(self.beta * (actionValues + self.kappa * lastAction))
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * (actionValues + self.kappa * lastAction))
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 

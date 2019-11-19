@@ -9,7 +9,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, max
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
@@ -80,8 +80,8 @@ class ACBasic(Model):
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.alphaE = kwargRemains.pop('alphaE', self.alpha)
         self.alphaA = kwargRemains.pop('alphaA', self.alpha)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        self.actorExpectations = kwargRemains.pop('actorExpect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -110,7 +110,7 @@ class ACBasic(Model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
+        results["ActorExpectations"] = np.array(self.recActorExpectations).T
 
         return results
 
@@ -198,11 +198,11 @@ class ACBasic(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations[action] = newExpectations
 
-        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/sum(stimuli)
+        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/np.sum(stimuli)
         newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
         self.actorExpectations[action] = newActorExpectations
 
@@ -232,8 +232,8 @@ class ACBasic(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 

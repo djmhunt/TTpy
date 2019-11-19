@@ -8,16 +8,16 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import ones, sum, array
-from itertools import izip
+import numpy as np
 
 import re
+import itertools
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class randomBias(Model):
+class RandomBias(Model):
 
     """A model replicating a participant who chooses randomly, but with a bias towards certain actions
 
@@ -49,7 +49,7 @@ class randomBias(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "randomBias"
+    Name = "RandomBias"
 
     def __init__(self, **kwargs):
 
@@ -62,7 +62,7 @@ class randomBias(Model):
         else:
             for p in actProbLab:
                 actionProbs.append(kwargRemains.pop(p))
-        self.actionProbs = array(actionProbs) / sum(actionProbs)
+        self.actionProbs = np.array(actionProbs) / np.sum(actionProbs)
 
         self.expectations = kwargRemains.pop('expect', None)
 
@@ -72,7 +72,7 @@ class randomBias(Model):
         self.genEventModifiers(kwargRemains)
 
         self.genStandardParameterDetails()
-        for k, v in izip(actProbLab, self.actionProbs):
+        for k, v in itertools.izip(actProbLab, self.actionProbs):
             self.parameters[k] = v
 
         # Recorded information

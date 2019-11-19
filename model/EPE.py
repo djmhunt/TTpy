@@ -9,7 +9,7 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, ones
+import numpy as np
 
 from modelTemplate import Model
 from model.decision.discrete import decWeightProb
@@ -81,7 +81,7 @@ class EPE(Model):
         self.alpha = kwargRemains.pop('alpha', 0.3)
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())

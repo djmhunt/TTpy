@@ -19,13 +19,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, shape, sum
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearn2E(Model):
+class QLearn2E(Model):
 
     """The q-Learning algorithm modified to have different positive and
     negative reward prediction errors and use the Epsylon greedy method 
@@ -83,10 +83,10 @@ class qLearn2E(Model):
 
     See Also
     --------
-    model.qLearn : This model is heavily based on that one
+    model.QLearn : This model is heavily based on that one
     """
 
-    Name = "qLearn2E"
+    Name = "QLearn2E"
 
     def __init__(self, **kwargs):
 
@@ -96,7 +96,7 @@ class qLearn2E(Model):
         self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
         self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.lastAction = kwargRemains.pop('firstAction', 1)
 
@@ -217,9 +217,9 @@ class qLearn2E(Model):
     def _newExpect(self, action, delta, stimuli):
 
         if delta > 0:
-            self.expectations[action] += self.alphaPos*delta*stimuli/sum(stimuli)
+            self.expectations[action] += self.alphaPos*delta*stimuli/np.sum(stimuli)
         else:
-            self.expectations[action] += self.alphaNeg*delta*stimuli/sum(stimuli)
+            self.expectations[action] += self.alphaNeg*delta*stimuli/np.sum(stimuli)
 
     def _actExpectations(self, expectations, stimuli):
 
@@ -249,7 +249,7 @@ class qLearn2E(Model):
 
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray

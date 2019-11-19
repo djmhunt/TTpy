@@ -15,7 +15,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, sum
+import numpy as np
 
 from model.modelTemplate import Model
 
@@ -141,8 +141,8 @@ class OpALSE(Model):
         self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
         self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
         self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCritics)
-        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numCues)))
+        self.expect = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectGo = kwargRemains.pop('expectGo', np.ones((self.numActions, self.numCues)))
         self.saturateVal = kwargRemains.pop('saturateVal', 10)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -158,10 +158,10 @@ class OpALSE(Model):
             self.alphaNogo = self.alpha + self.alphaNogoDiff
 
 
-        self.expectations = array(self.expect)
-        self.go = array(self.expectGo)
-        self.nogo = array(self.expectGo)
-        self.actionValues = ones(self.expectations.shape)
+        self.expectations = np.array(self.expect)
+        self.go = np.array(self.expectGo)
+        self.nogo = np.array(self.expectGo)
+        self.actionValues = np.ones(self.expectations.shape)
 
         self.genStandardParameterDetails()
         self.parameters["alphaCrit"] = self.alphaCrit
@@ -190,9 +190,9 @@ class OpALSE(Model):
         """
 
         results = self.standardResultOutput()
-        results["Go"] = array(self.recGo)
-        results["Nogo"] = array(self.recNogo)
-        results["ActionValues"] = array(self.recActionValues)
+        results["Go"] = np.array(self.recGo)
+        results["Nogo"] = np.array(self.recNogo)
+        results["ActionValues"] = np.array(self.recActionValues)
 
         return results
 
@@ -286,7 +286,7 @@ class OpALSE(Model):
 
     def _critic(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -294,8 +294,8 @@ class OpALSE(Model):
 
     def _actor(self, action, delta, stimuli):
 
-        chosenGo = self.go[action] * stimuli/sum(stimuli)
-        chosenNogo = self.nogo[action] * stimuli/sum(stimuli)
+        chosenGo = self.go[action] * stimuli/np.sum(stimuli)
+        chosenNogo = self.nogo[action] * stimuli/np.sum(stimuli)
 
         self.go[action] += self.alphaGo * chosenGo * delta * (1-chosenGo/self.saturateVal)
         self.nogo[action] -= self.alphaNogo * chosenNogo * delta * (1-chosenNogo/self.saturateVal)
@@ -336,7 +336,7 @@ class OpALSE(Model):
 
         cbest = actionValues == max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray

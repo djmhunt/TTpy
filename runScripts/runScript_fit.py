@@ -29,7 +29,7 @@ from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
-from model.qLearn import qLearn
+from model.qLearn import QLearn
 
 # For importing the data
 from data import data
@@ -59,7 +59,7 @@ modelStaticArgs = {'numActions': numActions,
                    'rewFunc': probSelectRewDirect(),
                    'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
 
-modelSet = ModelGen(qLearn, modelParameters, modelStaticArgs)
+modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 
 
 

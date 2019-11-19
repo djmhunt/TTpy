@@ -12,13 +12,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, max
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnF(Model):
+class QLearnF(Model):
 
     """The q-Learning algorithm
 
@@ -72,10 +72,10 @@ class qLearnF(Model):
 
     See Also
     --------
-    model.qLearn : This model is heavily based on that one
+    model.QLearn : This model is heavily based on that one
     """
 
-    Name = "qLearnF"
+    Name = "QLearnF"
 
     def __init__(self, **kwargs):
 
@@ -87,7 +87,7 @@ class qLearnF(Model):
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.gamma = kwargRemains.pop('gamma', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -95,7 +95,7 @@ class qLearnF(Model):
         self.genEventModifiers(kwargRemains)
 
         self.lastAction = 0
-        self.lastStimuli = ones(self.numCues)
+        self.lastStimuli = np.ones(self.numCues)
 
         self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
@@ -196,7 +196,7 @@ class qLearnF(Model):
         """
 
         # Find the new activities
-        change = self.alpha*delta*stimuli/sum(stimuli)
+        change = self.alpha*delta*stimuli/np.sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
@@ -241,8 +241,8 @@ class qLearnF(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -255,7 +255,7 @@ class qLearnF(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.gamma * max(self.expectedRewards) * lastStimuli/sum(lastStimuli)
+        change = self.alpha * self.gamma * np.max(self.expectedRewards) * lastStimuli/np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):

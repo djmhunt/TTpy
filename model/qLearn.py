@@ -12,13 +12,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearn(Model):
+class QLearn(Model):
 
     """The q-Learning algorithm
 
@@ -70,7 +70,7 @@ class qLearn(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "qLearn"
+    Name = "QLearn"
 
     def __init__(self, **kwargs):
 
@@ -79,7 +79,7 @@ class qLearn(Model):
         invBeta = kwargRemains.pop('invBeta', 0.2)
         self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -193,7 +193,7 @@ class qLearn(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations[action] = newExpectations
 
@@ -223,17 +223,17 @@ class qLearn(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
 #        inftest = isinf(numerator)
 #        if inftest.any():
 #            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
+#            probs = possprobs / np.sum(possprobs)
 #
-#            logger = logging.getLogger('qLearn')
+#            logger = logging.getLogger('QLearn')
 #            message = "Overflow in calculating the prob with expectation "
 #            message += str(expectation)
 #            message += " \n Returning the prob: " + str(probs)

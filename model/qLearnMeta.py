@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the model qLearn as well as the paper:
+:Reference: Based on the model QLearn as well as the paper:
                 Meta-learning in Reinforcement Learning
 
 
@@ -12,13 +12,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign
+from numpy import np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnMeta(Model):
+class QLearnMeta(Model):
 
     """The q-Learning algorithm with a second-order adaptive beta
 
@@ -69,7 +69,7 @@ class qLearnMeta(Model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
-    Name = "qLearnMeta"
+    Name = "QLearnMeta"
 
     def __init__(self, **kwargs):
 
@@ -79,10 +79,10 @@ class qLearnMeta(Model):
 
         self.tau = kwargRemains.pop('tau', 0.2)
         self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
-        self.rewardD = kwargRemains.pop('rewardD', 5.5 * ones((self.numActions, self.numCues)))
-        self.rewardDD = kwargRemains.pop('rewardDD', 5.5 * ones((self.numActions, self.numCues)))
+        self.rewardD = kwargRemains.pop('rewardD', 5.5 * np.ones((self.numActions, self.numCues)))
+        self.rewardDD = kwargRemains.pop('rewardDD', 5.5 * np.ones((self.numActions, self.numCues)))
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
         self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
@@ -94,7 +94,7 @@ class qLearnMeta(Model):
         self.parameters["tau"] = self.tau
         self.parameters["expectation"] = self.expectations.copy()
 
-        self.beta = exp(self.rewardD - self.rewardDD)
+        self.beta = np.exp(self.rewardD - self.rewardDD)
 
         # Recorded information
         self.genStandardResultsStore()
@@ -113,9 +113,9 @@ class qLearnMeta(Model):
         """
 
         results = self.standardResultOutput()
-        results["rewardD"] = array(self.recRewardD).T
-        results["rewardDD"] = array(self.recRewardDD).T
-        results["beta"] = array(self.recBeta).T
+        results["rewardD"] = np.array(self.recRewardD).T
+        results["rewardDD"] = np.array(self.recRewardDD).T
+        results["beta"] = np.array(self.recBeta).T
 
         return results
 
@@ -197,13 +197,13 @@ class qLearnMeta(Model):
 
         #self.rewardD += self.tau * (reward - self.rewardD)
         #self.rewardDD += self.tau * (self.rewardD - self.rewardDD)
-        #self.beta = exp(self.rewardD - self.rewardDD)
+        #self.beta = np.exp(self.rewardD - self.rewardDD)
 
         rewardD = self.rewardD[action]
         rewardDD = self.rewardDD[action]
         rewardD += self.tau * (reward - rewardD)
         rewardDD += self.tau * (rewardD - rewardDD)
-        self.beta[action] = exp(rewardD - rewardDD)
+        self.beta[action] = np.exp(rewardD - rewardDD)
         self.rewardD[action] = rewardD
         self.rewardDD[action] = rewardDD
 
@@ -232,7 +232,7 @@ class qLearnMeta(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -264,8 +264,8 @@ class qLearnMeta(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 

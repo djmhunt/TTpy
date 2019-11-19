@@ -15,10 +15,11 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, sum
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
+
 
 class OpALS(Model):
 
@@ -145,8 +146,8 @@ class OpALS(Model):
         self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
         self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
         self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCritics)
-        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numCues)))
+        self.expect = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCritics)
+        self.expectGo = kwargRemains.pop('expectGo', np.ones((self.numActions, self.numCues)))
         self.saturateVal = kwargRemains.pop('saturateVal', 10)
 
         self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
@@ -165,10 +166,10 @@ class OpALS(Model):
             self.beta = (self.betaGo + self.betaNogo)/2
             self.rho = (self.betaGo - self.betaNogo) / (2 * self.beta)
 
-        self.expectations = array(self.expect)
-        self.go = array(self.expectGo)
-        self.nogo = array(self.expectGo)
-        self.actionValues = ones(self.expectations.shape)
+        self.expectations = np.array(self.expect)
+        self.go = np.array(self.expectGo)
+        self.nogo = np.array(self.expectGo)
+        self.actionValues = np.ones(self.expectations.shape)
 
         self.genStandardParameterDetails()
         self.parameters["alphaCrit"] = self.alphaCrit
@@ -199,9 +200,9 @@ class OpALS(Model):
         """
 
         results = self.standardResultOutput()
-        results["Go"] = array(self.recGo)
-        results["Nogo"] = array(self.recNogo)
-        results["ActionValues"] = array(self.recActionValues)
+        results["Go"] = np.array(self.recGo)
+        results["Nogo"] = np.array(self.recNogo)
+        results["ActionValues"] = np.array(self.recActionValues)
 
         return results
 
@@ -295,7 +296,7 @@ class OpALS(Model):
 
     def _critic(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaCrit * delta * (1-self.expectations[action]/self.saturateVal) * stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -303,8 +304,8 @@ class OpALS(Model):
 
     def _actor(self, action, delta, stimuli):
 
-        chosenGo = self.go[action] * stimuli/sum(stimuli)
-        chosenNogo = self.nogo[action] * stimuli/sum(stimuli)
+        chosenGo = self.go[action] * stimuli/np.sum(stimuli)
+        chosenNogo = self.nogo[action] * stimuli/np.sum(stimuli)
 
         self.go[action] += self.alphaGo * chosenGo * delta * (1-chosenGo/self.saturateVal)
         self.nogo[action] -= self.alphaNogo * chosenNogo * delta * (1-chosenNogo/self.saturateVal)
@@ -343,8 +344,8 @@ class OpALS(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 

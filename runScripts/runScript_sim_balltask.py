@@ -29,7 +29,7 @@ from modelGenerator import ModelGen
 # The decision methods
 from model.decision.discrete import decWeightProb
 # The model
-from model.qLearn import qLearn
+from model.qLearn import QLearn
 
 #%% Set the outputting, model sets and experiment sets
 expParams = {}
@@ -67,7 +67,7 @@ modelStaticArgs = {'numActions': numActions,
                    'rewFunc': balltaskRewardDirect(),
                    'decFunc': decWeightProb([0, 1, 2])}
 
-modelSet = ModelGen(qLearn, modelParameters, modelStaticArgs)
+modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 
 #%% For simulating experiments
 

@@ -2,20 +2,20 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the Epsilon-greedy method along with a past choice autocorrelation inspired by ``qLearnCorr``
+:Reference: Based on the Epsilon-greedy method along with a past choice autocorrelation inspired by ``QLearnCorr``
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, max, shape
+import numpy as np
 
 from model.modelTemplate import Model
 from model.decision.discrete import decWeightProb
 
 
-class qLearnECorr(Model):
+class QLearnECorr(Model):
 
     """The q-Learning algorithm
 
@@ -66,10 +66,10 @@ class qLearnECorr(Model):
 
     See Also
     --------
-    model.qLearnCorr : This model is heavily based on that one
+    model.QLearnCorr : This model is heavily based on that one
     """
 
-    Name = "qLearnECorr"
+    Name = "QLearnECorr"
 
     def __init__(self, **kwargs):
 
@@ -80,7 +80,7 @@ class qLearnECorr(Model):
         self.kappa = kwargRemains.pop('kappa', 0)
         self.alpha = kwargRemains.pop('alpha', 0.3)
         self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
 
         self.lastAction = kwargRemains.pop('firstAction', 1)
 
@@ -199,7 +199,7 @@ class qLearnECorr(Model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -231,12 +231,12 @@ class qLearnECorr(Model):
             The probabilities associated with the actionValues
         """
 
-        lastAction = -ones(shape(actionValues))
+        lastAction = -np.ones(np.shape(actionValues))
         lastAction[self.lastAction] = 1
 
-        cbest = actionValues == max(actionValues)
+        cbest = actionValues == np.max(actionValues)
         deltaEpsilon = self.epsilon * (1 / self.numActions)
-        bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
+        bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         p = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         change = self.kappa * lastAction
