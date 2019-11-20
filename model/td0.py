@@ -68,7 +68,6 @@ class TD0(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "TD0"
 
     def __init__(self, **kwargs):
 

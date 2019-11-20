@@ -69,7 +69,6 @@ class TDE(Model):
     model.TD0 : This model is heavily based on that one
     """
 
-    Name = "TDE"
 
     def __init__(self, **kwargs):
 
