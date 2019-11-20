@@ -124,7 +124,6 @@ class OpAL(Model):
         P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}
     """
 
-    Name = "OpAL"
 
     def __init__(self, **kwargs):
 

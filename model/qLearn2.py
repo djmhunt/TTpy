@@ -88,7 +88,6 @@ class QLearn2(Model):
     model.QLearn : This model is heavily based on that one
     """
 
-    Name = "QLearn2"
 
     def __init__(self, **kwargs):
 

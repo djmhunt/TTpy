@@ -69,7 +69,6 @@ class QLearnMeta(Model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
-    Name = "QLearnMeta"
 
     def __init__(self, **kwargs):
 

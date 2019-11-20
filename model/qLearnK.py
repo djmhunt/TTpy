@@ -77,7 +77,6 @@ class QLearnK(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "QLearnK"
 
     def __init__(self, **kwargs):
 
@@ -109,7 +108,6 @@ class QLearnK(Model):
         self.genStandardResultsStore()
         self.recsigmaA = []
         self.recalphaA = []
-
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model

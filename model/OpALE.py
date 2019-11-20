@@ -121,7 +121,6 @@ class OpALE(Model):
         P_{d,t} = \\frac{ e^{\\epsilon A_{d,t} }}{\\sum_{d \\in D}e^{\\epsilon A_{d,t}}}
     """
 
-    Name = "OpALE"
 
     def __init__(self, **kwargs):
 

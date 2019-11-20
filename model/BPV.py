@@ -63,7 +63,6 @@ class BPV(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "BPV"
 
     def __init__(self, **kwargs):
 

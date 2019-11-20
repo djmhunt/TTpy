@@ -70,7 +70,6 @@ class QLearn(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "QLearn"
 
     def __init__(self, **kwargs):
 

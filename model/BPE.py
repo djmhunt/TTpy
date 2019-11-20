@@ -69,7 +69,6 @@ class BPE(Model):
     model.BP : This model is heavily based on that one
     """
 
-    Name = "BPE"
 
     def __init__(self, **kwargs):
 

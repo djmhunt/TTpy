@@ -75,7 +75,6 @@ class RVPM(Model):
         in to a decision. Default is basicDecision
     """
 
-    Name = "RVPM"
 
     def __init__(self, **kwargs):
 

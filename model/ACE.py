@@ -65,7 +65,6 @@ class ACE(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "ACE"
 
     def __init__(self, **kwargs):
 

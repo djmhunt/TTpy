@@ -69,7 +69,6 @@ class EP(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "EP"
 
     def __init__(self,**kwargs):
 

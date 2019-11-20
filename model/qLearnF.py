@@ -75,7 +75,6 @@ class QLearnF(Model):
     model.QLearn : This model is heavily based on that one
     """
 
-    Name = "QLearnF"
 
     def __init__(self, **kwargs):
 

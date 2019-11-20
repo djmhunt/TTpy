@@ -68,7 +68,6 @@ class BPMS(Model):
     you can only have two stimuli
     """
 
-    Name = "BPMS"
 
     def __init__(self, **kwargs):
 

@@ -72,7 +72,6 @@ class EPE(Model):
     model.EP : This model is heavily based on that one
     """
 
-    Name = "EPE"
 
     def __init__(self,**kwargs):
 

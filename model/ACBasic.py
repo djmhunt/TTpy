@@ -67,8 +67,6 @@ class ACBasic(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "ACBasic"
-
     def __init__(self, **kwargs):
 
         kwargRemains = self.genStandardParameters(kwargs)

@@ -55,7 +55,6 @@ class Model(object):
         in to a decision.
     """
 
-    Name = "modelTemplate"
 
     def __init__(self, **kwargs):
         """"""
@@ -89,6 +88,10 @@ class Model(object):
     def __hash__(self):
 
         return hash(self.Name)
+
+    def findName(self):
+
+        return self.__class__.__name__
 
     def action(self):
         """
@@ -466,7 +469,7 @@ class Model(object):
         """Initialises the standard parameters and variables for a model
         """
 
-
+        self.Name = self.findName()
 
         self.numActions = kwargs.pop('numActions', 2)
         self.numCues = kwargs.pop('numCues', 1)

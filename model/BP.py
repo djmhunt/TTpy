@@ -68,7 +68,6 @@ class BP(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "BP"
 
     def __init__(self, **kwargs):
 

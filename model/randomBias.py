@@ -49,7 +49,6 @@ class RandomBias(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "RandomBias"
 
     def __init__(self, **kwargs):
 

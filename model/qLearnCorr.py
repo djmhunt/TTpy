@@ -76,7 +76,6 @@ class QLearnCorr(Model):
     model.QLearn : This model is heavily based on that one
     """
 
-    Name = "QLearnCorr"
 
     def __init__(self, **kwargs):
 

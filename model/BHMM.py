@@ -135,7 +135,6 @@ class BHMM(Model):
     defined in the simulation.
     """
 
-    Name = "BHMM"
 
     def __init__(self, **kwargs):
 
