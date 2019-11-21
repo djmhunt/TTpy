@@ -89,7 +89,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
         for v in partModelVars.itervalues():
             modelStaticArgs[v] = "<Varies for each participant>"
 
-        logSimFittingParams(model.Name, modelInitParamVars, modelStaticArgs)
+        logSimFittingParams(model.get_Name(), modelInitParamVars, modelStaticArgs)
 
         for participant in data:
 

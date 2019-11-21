@@ -55,6 +55,7 @@ class Model(object):
         in to a decision.
     """
 
+    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
     def __init__(self, **kwargs):
         """"""
@@ -89,9 +90,9 @@ class Model(object):
 
         return hash(self.Name)
 
-    def findName(self):
-
-        return self.__class__.__name__
+    @classmethod
+    def get_Name(cls):
+        return cls.__name__  # self.__class__.__name__
 
     def action(self):
         """
@@ -542,7 +543,8 @@ class Model(object):
         self.rewFunc = self._eventModifier(self.rewFunc, kwargs)
         self.decisionFunc = self._eventModifier(self.decisionFunc, kwargs)
 
-    def _eventModifier(self, eFunc, kwargs):
+    @staticmethod
+    def _eventModifier(eFunc, kwargs):
 
         try:
             f = eFunc(kwargs)
