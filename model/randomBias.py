@@ -14,7 +14,6 @@ import re
 import itertools
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class RandomBias(Model):
@@ -50,32 +49,29 @@ class RandomBias(Model):
     """
 
 
-    def __init__(self, **kwargs):
+    def __init__(self, expect=None, **kwargs):
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        super(RandomBias, self).__init__(**kwargs)
+
         pattern = '^prob\d+$'
-        actProbLab = sorted([k for k in kwargRemains if re.match(pattern, k)])
+        actProbLab = sorted([k for k in kwargs if re.match(pattern, k)])
         actionProbs = []
         if len(actProbLab) != self.numActions:
             raise IndexError("Wrong number of action weights. Received {} instead of {}".format(len(actProbLab), self.numActions))
         else:
             for p in actProbLab:
-                actionProbs.append(kwargRemains.pop(p))
+                actionProbs.append(kwargs.pop(p))
         self.actionProbs = np.array(actionProbs) / np.sum(actionProbs)
 
-        self.expectations = kwargRemains.pop('expect', None)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         for k, v in itertools.izip(actProbLab, self.actionProbs):
             self.parameters[k] = v
+        self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -203,49 +199,3 @@ class RandomBias(Model):
         probabilities = self.calcProbabilities()
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

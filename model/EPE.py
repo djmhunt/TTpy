@@ -12,11 +12,9 @@ import logging
 import numpy as np
 
 from modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class EPE(Model):
-
     """
     The expectation prediction model
 
@@ -32,11 +30,8 @@ class EPE(Model):
     ----------
     alpha : float, optional
         Learning rate parameter
-    beta : float, optional
-        Sensitivity parameter for probabilities
-    invBeta : float, optional
-        Inverse of sensitivity parameter.
-        Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
+    epsilon : float, optional
+        Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
     numActions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -72,28 +67,22 @@ class EPE(Model):
     model.EP : This model is heavily based on that one
     """
 
+    def __init__(self, alpha=0.3, epsilon=0.1,  expect=None, **kwargs):
 
-    def __init__(self,**kwargs):
+        super(EPE, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        self.epsilon = epsilon
 
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
+        self.parameters["epsilon"] = self.epsilon
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -194,7 +183,7 @@ class EPE(Model):
 
     def _newAct(self, delta, stimuli):
 
-        self.expectations += self.alpha * delta * stimuli/sum(stimuli)
+        self.expectations += self.alpha * delta * stimuli / sum(stimuli)
 
     def _actExpectations(self, expectations, stimuli):
 
@@ -243,49 +232,3 @@ class EPE(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing. Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

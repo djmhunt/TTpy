@@ -12,11 +12,9 @@ import logging
 import numpy as np
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class TD0(Model):
-
     """The td-Learning algorithm
 
     Attributes
@@ -55,7 +53,7 @@ class TD0(Model):
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
-        The initialisation of the the expected reward.
+        The initialisation of the expected reward.
         Default ``ones((numActions, numCues)) * 5 / numCues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -68,33 +66,29 @@ class TD0(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
+    def __init__(self, alpha=0.3, beta=4, gamma=0.3, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(TD0, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
-
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.gamma = kwargRemains.pop('gamma', 0.3)
-        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.gamma = gamma
+        
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
         self.lastAction = 0
         self.lastStimuli = np.ones(self.numCues)
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["gamma"] = self.gamma
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -266,48 +260,3 @@ class TD0(Model):
 
         return probabilities
 
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

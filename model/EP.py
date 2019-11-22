@@ -12,7 +12,6 @@ import logging
 import numpy as np
 
 from modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class EP(Model):
@@ -69,28 +68,24 @@ class EP(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
+    def __init__(self, alpha=0.3, beta=4, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self,**kwargs):
+        super(EP, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -245,49 +240,3 @@ class EP(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing. Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

@@ -21,8 +21,6 @@ import logging
 import numpy as np
 
 from model.modelTemplate import Model
-from model.decision.binary import decSingle
-from utils import callableDetailsString
 
 
 class BHMM(Model):
@@ -135,23 +133,17 @@ class BHMM(Model):
     defined in the simulation.
     """
 
+    def __init__(self, beta=4, eta=0, delta=0, mu=1, sigma=1, invBeta=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(BHMM, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.eta = eta
+        self.mu = mu
+        self.sigma = sigma
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.eta = kwargs.pop('eta', 0)
-        delta = kwargs.pop('delta', 0)
-        self.mu = kwargs.pop('mu', 3)
-        self.sigma = kwargs.pop('sigma', 1)
-
-        self.stimFunc = kwargs.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargs.pop('decFunc', decSingle(expResponses=tuple(range(1, self.numCritics + 1))))
-
-        self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
         self.parameters["delta"] = delta
@@ -169,7 +161,6 @@ class BHMM(Model):
         self.actionLoc = {k: k for k in range(0, self.numActions)}
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recSwitchProb = []
         self.recPosteriorProb = []
         self.recActionLoc = []
@@ -333,52 +324,3 @@ class BHMM(Model):
         pay = np.random.normal(self.mu, self.sigma, (self.numCritics))
 
         return pay
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

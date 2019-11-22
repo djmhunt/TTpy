@@ -15,7 +15,6 @@ import logging
 from numpy import np
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class QLearnMeta(Model):
@@ -69,26 +68,26 @@ class QLearnMeta(Model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
+    def __init__(self, alpha=0.3, tau=0.2, rewardD=None, rewardDD=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
-
-        kwargRemains = self.genStandardParameters(kwargs)
+        super(QLearnMeta, self).__init__(**kwargs)
 
         # A record of the kwarg keys, the variable they create and their default value
 
-        self.tau = kwargRemains.pop('tau', 0.2)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        self.tau = tau
+        self.alpha = alpha
 
-        self.rewardD = kwargRemains.pop('rewardD', 5.5 * np.ones((self.numActions, self.numCues)))
-        self.rewardDD = kwargRemains.pop('rewardDD', 5.5 * np.ones((self.numActions, self.numCues)))
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        if rewardD is None:
+            rewardD = 5.5 * np.ones((self.numActions, self.numCues))
+        self.rewardD = rewardD
+        if rewardDD is None:
+            rewardDD = 5.5 * np.ones((self.numActions, self.numCues))
+        self.rewardDD = rewardDD
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["tau"] = self.tau
         self.parameters["expectation"] = self.expectations.copy()
@@ -96,7 +95,6 @@ class QLearnMeta(Model):
         self.beta = np.exp(self.rewardD - self.rewardDD)
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recRewardD = []
         self.recRewardDD = []
         self.recBeta = []
@@ -284,49 +282,3 @@ class QLearnMeta(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

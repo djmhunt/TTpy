@@ -22,7 +22,6 @@ import logging
 import numpy as np
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class QLearn2(Model):
@@ -88,32 +87,31 @@ class QLearn2(Model):
     model.QLearn : This model is heavily based on that one
     """
 
+    def __init__(self, alpha=0.3, beta=4, alphaPos=None, alphaNeg=None, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(QLearn2, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if alphaPos is not None and alphaNeg is not None:
+            self.alphaPos = alphaPos
+            self.alphaNeg = alphaNeg
+        else:
+            self.alphaPos = alpha
+            self.alphaNeg = alpha
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.alphaPos = kwargRemains.pop('alphaPos', self.alpha)
-        self.alphaNeg = kwargRemains.pop('alphaNeg', self.alpha)
-        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.genStandardParameterDetails()
-        self.parameters["alpha"] = self.alpha
         self.parameters["alphaPos"] = self.alphaPos
         self.parameters["alphaNeg"] = self.alphaNeg
         self.parameters["beta"] = self.beta
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -266,49 +264,3 @@ class QLearn2(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

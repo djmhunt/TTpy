@@ -12,6 +12,55 @@ from model.decision.discrete import decWeightProb
 from utils import callableDetailsString
 
 
+def blankStim():
+    """
+    Default stimulus processor. Does nothing.Returns ([1,0], None)
+
+    Returns
+    -------
+    blankStimFunc : function
+        The function expects to be passed the event and then return [1,0].
+    currAction : int
+        The current action chosen by the model. Used to pass participant action
+        to model when fitting
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankStimFunc(event):
+        return [1, 0], None
+
+    blankStimFunc.Name = "blankStim"
+    return blankStimFunc
+
+
+def blankRew():
+    """
+    Default reward processor. Does nothing. Returns reward
+
+    Returns
+    -------
+    blankRewFunc : function
+        The function expects to be passed the reward and then return it.
+
+    Attributes
+    ----------
+    Name : string
+        The identifier of the function
+
+    """
+
+    def blankRewFunc(reward):
+        return reward
+
+    blankRewFunc.Name = "blankRew"
+    return blankRewFunc
+
+
 class Model(object):
 
     """
@@ -55,22 +104,79 @@ class Model(object):
         in to a decision.
     """
 
-    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
+    #Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
-    def __init__(self, **kwargs):
+    @classmethod
+    def get_Name(cls):
+        return cls.__name__
+
+    def __init__(self, numActions=2, numCues=1, numCritics=None, actionCodes=None, nonAction=None, prior=None, stimFunc=blankStim(),
+                 rewFunc=blankRew(), decFunc=None, **kwargs):
         """"""
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.Name = self.get_Name()
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.numActions = numActions
+        self.numCues = numCues
+        if numCritics is None:
+            numCritics = self.numActions * self.numCues
+        self.numCritics = numCritics
 
-        self.genStandardParameterDetails()
+        if actionCodes is None:
+            actionCodes = {k: k for k in xrange(self.numActions)}
+        self.actionCode = actionCodes
+
+        self.defaultNonAction = nonAction
+
+        if prior is None:
+            prior = np.ones(self.numActions) / self.numActions
+        self.prior = prior
+
+        self.stimuli = np.ones(self.numCues)
+        self.stimuliFilter = np.ones(self.numCues)
+
+        self.currAction = None
+        self.decision = None
+        self.validActions = None
+        self.lastObservation = None
+
+        self.probabilities = np.array(self.prior)
+        self.decProbabilities = np.array(self.prior)
+        self.expectedRewards = np.ones(self.numActions)
+        self.expectedReward = np.array([1])
+
+        self.stimFunc = stimFunc
+        self.rewFunc = rewFunc
+        if not decFunc:
+            decFunc = decWeightProb(range(self.numActions))
+        self.decisionFunc = decFunc
+        self.stimFunc = self._eventModifier(self.stimFunc, kwargs)
+        self.rewFunc = self._eventModifier(self.rewFunc, kwargs)
+        self.decisionFunc = self._eventModifier(self.decisionFunc, kwargs)
+
+        self.parameters = {"Name": self.Name,
+                           "numActions": self.numActions,
+                           "numCues": self.numCues,
+                           "numCritics": self.numCritics,
+                           "prior": self.prior.copy(),
+                           "nonAction": self.defaultNonAction,
+                           "actionCode": self.actionCode.copy(),
+                           "stimFunc": callableDetailsString(self.stimFunc),
+                           "decFunc": callableDetailsString(self.decisionFunc)}
 
         # Recorded information
-        self.genStandardResultsStore()
-
+        self.recAction = []
+        self.recActionSymbol = []
+        self.recStimuli = []
+        self.recReward = []
+        self.recExpectations = []
+        self.recExpectedReward = []
+        self.recExpectedRewards = []
+        self.recValidActions = []
+        self.recDecision = []
+        self.recProbabilities = []
+        self.recActionProbs = []
+        self.recActionProb = []
+        self.simID = None
 
     def __eq__(self, other):
 
@@ -89,10 +195,6 @@ class Model(object):
     def __hash__(self):
 
         return hash(self.Name)
-
-    @classmethod
-    def get_Name(cls):
-        return cls.__name__  # self.__class__.__name__
 
     def action(self):
         """
@@ -466,95 +568,6 @@ class Model(object):
         self.recActionProbs.append(self.decProbabilities.copy())
         self.recActionProb.append(self.decProbabilities[self.currActionSymbol])
 
-    def genStandardParameters(self, kwargs):
-        """Initialises the standard parameters and variables for a model
-        """
-
-        self.Name = self.findName()
-
-        self.numActions = kwargs.pop('numActions', 2)
-        self.numCues = kwargs.pop('numCues', 1)
-        self.numCritics = kwargs.pop('numCritics', self.numActions * self.numCues)
-
-        self.actionCode = kwargs.pop('actionCodes', {k: k for k in xrange(self.numActions)})
-
-        self.defaultNonAction = kwargs.pop('nonAction', None)
-
-        defaultPrior = np.ones(self.numActions) / self.numActions
-        self.prior = kwargs.pop('prior', defaultPrior)
-
-        self.stimuli = np.ones(self.numCues)
-        self.stimuliFilter = np.ones(self.numCues)
-
-        self.currAction = None
-        self.decision = None
-        self.validActions = None
-        self.lastObservation = None
-
-        self.probabilities = np.array(self.prior)
-        self.decProbabilities = np.array(self.prior)
-        self.expectedRewards = np.ones(self.numActions)
-        self.expectedReward = np.array([1])
-
-
-
-        return kwargs
-
-    def genStandardParameterDetails(self):
-        """
-        Generates the standard parameters describing the model as implemented.
-        """
-
-        self.parameters = {"Name": self.Name,
-                           "numActions": self.numActions,
-                           "numCues": self.numCues,
-                           "numCritics": self.numCritics,
-                           "prior": self.prior.copy(),
-                           "nonAction": self.defaultNonAction,
-                           "actionCode": self.actionCode.copy(),
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
-
-    def genStandardResultsStore(self):
-        """Set up the dictionary that stores the standard variables used to track a model
-        """
-
-        self.recAction = []
-        self.recActionSymbol = []
-        self.recStimuli = []
-        self.recReward = []
-        self.recExpectations = []
-        self.recExpectedReward = []
-        self.recExpectedRewards = []
-        self.recValidActions = []
-        self.recDecision = []
-        self.recProbabilities = []
-        self.recActionProbs = []
-        self.recActionProb = []
-        self.simID = None
-
-    def genEventModifiers(self, kwargs):
-        """
-        Check if any of the stimulus, reward or decision functions need to be initialised with parameters that might be
-        fitted.
-        """
-
-        self.stimFunc = self._eventModifier(self.stimFunc, kwargs)
-        self.rewFunc = self._eventModifier(self.rewFunc, kwargs)
-        self.decisionFunc = self._eventModifier(self.decisionFunc, kwargs)
-
-    @staticmethod
-    def _eventModifier(eFunc, kwargs):
-
-        try:
-            f = eFunc(kwargs)
-            if callable(f):
-                return f
-            else:
-                return eFunc
-        except TypeError:
-            return eFunc
-
     def params(self):
         """
         Returns the parameters of the model
@@ -584,51 +597,16 @@ class Model(object):
 
         self.simID = simID
 
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns ([1,0], None)
+    @staticmethod
+    def _eventModifier(eFunc, kwargs):
 
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
+        try:
+            f = eFunc(kwargs)
+            if callable(f):
+                return f
+            else:
+                return eFunc
+        except TypeError:
+            return eFunc
 
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0], None
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc
 

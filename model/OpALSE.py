@@ -19,8 +19,6 @@ import numpy as np
 
 from model.modelTemplate import Model
 
-from model.decision.discrete import decWeightProb
-
 
 class OpALSE(Model):
 
@@ -126,43 +124,49 @@ class OpALSE(Model):
         P_{d,t} = \\frac{ e^{\\epsilon A_{d,t} }}{\\sum_{d \\in D}e^{\\epsilon A_{d,t}}}
     """
 
+    def __init__(self, alpha=0.3, epsilon=0.3, rho=0, saturateVal=10, alphaCrit=None, alphaGo=None, alphaNogo=None, alphaGoDiff=None,
+                 alphaNogoDiff=None, alphaGoNogoDiff=None, expect=None, expectGo=None, **kwargs):
 
-    def __init__(self,**kwargs):
+        super(OpALSE, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if alphaCrit is None:
+            alphaCrit = alpha
+        self.alphaCrit = alphaCrit
 
-        self.epsilon = kwargRemains.pop('epsilon', 0.3)
-        self.rho = kwargRemains.pop('rho', 0)
-        self.alpha = kwargRemains.pop('alpha', 0.1)
-        self.alphaGoNogoDiff = kwargRemains.pop('alphaGoNogoDiff', None)
-        self.alphaCrit = kwargRemains.pop('alphaCrit', self.alpha)
-        self.alphaGo = kwargRemains.pop('alphaGo', self.alpha)
-        self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
-        self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
-        self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
-        self.expect = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCritics)
-        self.expectGo = kwargRemains.pop('expectGo', np.ones((self.numActions, self.numCues)))
-        self.saturateVal = kwargRemains.pop('saturateVal', 10)
+        if alphaGo is not None and alphaNogo is not None:
+            self.alphaGo = alphaGo
+            self.alphaNogo = alphaNogo
+        elif alphaGoNogoDiff is not None and (alphaGo is not None or alphaNogo is not None):
+            if alphaGo is not None:
+                self.alphaGo = alphaGo
+                self.alphaNogo = alphaGo - alphaGoNogoDiff
+            elif alphaNogo is not None:
+                self.alphaGo = alphaNogo + alphaGoNogoDiff
+                self.alphaNogo = alphaNogo
+        elif alphaGoDiff is not None and alphaNogoDiff is not None:
+            self.alphaGo = alpha + alphaGoDiff
+            self.alphaNogo = alpha + alphaNogoDiff
+        else:
+            self.alphaGo = alpha
+            self.alphaNogo = alpha
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.epsilon = epsilon
+        self.rho = rho
 
-        if self.alphaGoNogoDiff:
-            self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
-            
-        if self.alphaGoDiff and self.alphaNogoDiff:
-            self.alphaGo = self.alpha + self.alphaGoDiff
-            self.alphaNogo = self.alpha + self.alphaNogoDiff
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCritics
+        self.expect = expect
+        if expectGo is None:
+            expectGo = np.ones((self.numActions, self.numCues))
+        self.expectGo = expectGo
 
+        self.saturateVal = saturateVal
 
         self.expectations = np.array(self.expect)
         self.go = np.array(self.expectGo)
         self.nogo = np.array(self.expectGo)
         self.actionValues = np.ones(self.expectations.shape)
 
-        self.genStandardParameterDetails()
         self.parameters["alphaCrit"] = self.alphaCrit
         self.parameters["alphaGo"] = self.alphaGo
         self.parameters["alphaNogo"] = self.alphaNogo
@@ -173,7 +177,6 @@ class OpALSE(Model):
         self.parameters["saturateVal"] = self.saturateVal
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recGo = []
         self.recNogo = []
         self.recActionValues = []
@@ -355,49 +358,3 @@ class OpALSE(Model):
         probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

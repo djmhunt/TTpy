@@ -10,7 +10,6 @@ import logging
 import numpy as np
 
 from modelTemplate import Model
-from model.decision.binary import decSingle
 
 
 class BPMS(Model):
@@ -68,20 +67,15 @@ class BPMS(Model):
     you can only have two stimuli
     """
 
+    def __init__(self, beta=4, eta=0, delta=0, invBeta=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(BPMS, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.eta = eta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.eta = kwargRemains.pop('eta', 0)
-        delta = kwargRemains.pop('delta', 0)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargRemains.pop('decFunc', decSingle(expResponses=tuple(range(0, self.numCritics))))
-
-        self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
         self.parameters["delta"] = delta
@@ -98,7 +92,6 @@ class BPMS(Model):
         self.actionLoc = {k: k for k in range(0, self.numActions)}
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recSwitchProb = []
         self.recPosteriorProb = []
         self.recActionLoc = []
@@ -256,51 +249,3 @@ class BPMS(Model):
         ps = 1.0 / (1.0 - np.exp(-self.beta * (pI - self.eta)))
 
         return ps
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

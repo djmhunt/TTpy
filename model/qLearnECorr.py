@@ -12,7 +12,6 @@ import logging
 import numpy as np
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class QLearnECorr(Model):
@@ -69,33 +68,24 @@ class QLearnECorr(Model):
     model.QLearnCorr : This model is heavily based on that one
     """
 
+    def __init__(self, alpha=0.3, epsilon=0.1, kappa=0.1,  expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(QLearnECorr, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.kappa = kappa
 
-        # A record of the kwarg keys, the variable they create and their default value
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.kappa = kwargRemains.pop('kappa', 0)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
-
-        self.lastAction = kwargRemains.pop('firstAction', 1)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["kappa"] = self.kappa
         self.parameters["epsilon"] = self.epsilon
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -258,49 +248,3 @@ class QLearnECorr(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

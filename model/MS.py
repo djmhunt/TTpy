@@ -14,7 +14,6 @@ import logging
 import numpy as np
 
 from modelTemplate import Model
-from model.decision.binary import decEta
 
 
 class MS(Model):
@@ -70,34 +69,28 @@ class MS(Model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
+    def __init__(self, alpha=0.3, beta=4, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(MS, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 1)
-        self.eta = kwargRemains.pop('eta', 0.5)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCritics
+        self.expectations = expect
 
-        self.expectations = kwargRemains.pop('expectations', np.ones((self.numActions, self.numCues)) / self.numCritics)
         # The alpha is an activation rate parameter. The paper uses a value of 1.
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
         self.parameters["expectations"] = self.expectations
 
         self.probDifference = 0
         self.firstDecision = 0
 
         # Recorded information
-        self.genStandardResultsStore()
 
     def returnTaskState(self):
         """ Returns all the relevant data for this model
@@ -178,13 +171,13 @@ class MS(Model):
 
         return delta
 
-    def updateModel(self, delta, action, stimuliFilter):
+    def updateModel(self, delta, action, stimuli, stimuliFilter):
 
         # Find the new activities
         self._newActivity(delta)
 
         # Calculate the new probabilities
-        if self.probActions:
+        if self.numCues > 1:
             # Then we need to combine the expectations before calculating the probabilities
             actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self.calcProbabilities(actExpectations)
@@ -229,48 +222,3 @@ class MS(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

@@ -13,11 +13,9 @@ import numpy as np
 from numpy import ndarray
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class ACES(Model):
-
     """A basic, complete actor-critic model with decision making based on QLearnE
 
     Attributes
@@ -48,7 +46,7 @@ class ACES(Model):
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
-        The initialisation of the the expected reward.
+        The initialisation of the expected reward.
         Default ``ones((numActions, numCues)) * 5 / numCues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -61,31 +59,27 @@ class ACES(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
+    def __init__(self, alpha=0.3, epsilon=0.1, expect=None, actorExpect=None, **kwargs):
 
-    def __init__(self, **kwargs):
-
-        kwargRemains = self.genStandardParameters(kwargs)
+        super(ACES, self).__init__(**kwargs)
 
         # A record of the kwarg keys, the variable they create and their default value
+        self.alpha = alpha
+        self.epsilon = epsilon
 
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.expectationsF = kwargRemains.pop('expect', 0.5)
-        self.actorExpectations = kwargRemains.pop('actorExpect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectationsF = expect
+        if actorExpect is None:
+            actorExpect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.actorExpectations = actorExpect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectationsF
+        self.parameters["expectation"] = self.expectationsF.copy()
         self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
-        # Recorded information
-        self.genStandardResultsStore()
+        # Recorded extra information
         self.recActorExpectations = []
 
     def returnTaskState(self):
@@ -242,49 +236,3 @@ class ACES(Model):
         probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

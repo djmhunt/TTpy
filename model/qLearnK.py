@@ -14,7 +14,6 @@ import logging
 import numpy as np
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class QLearnK(Model):
@@ -77,27 +76,31 @@ class QLearnK(Model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
+    def __init__(self, beta=4, sigma=1, sigmaG=1, drift=1, sigmaA=None, alphaA=None, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(QLearnK, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.sigma = kwargRemains.pop('sigma', 1)
-        self.sigmaG = kwargRemains.pop('sigmaG', 1)
-        self.drift = kwargRemains.pop('lambda', 1)
-        self.expectations = kwargRemains.pop('expect', np.ones((self.numActions, self.numCues)) / self.numCues)
+        self.sigma = sigma
+        self.sigmaG = sigmaG
+        self.drift = drift
+
+        if sigmaA is None:
+            sigmaA = np.ones(self.numActions)
+        self.sigmaA = sigmaA
+        if alphaA is None:
+            alphaA = np.ones(self.numActions)
+        self.alphaA = alphaA
+
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
         self.expectations0 = self.expectations.copy()
-        self.sigmaA = kwargRemains.pop('sigmaA', np.ones(self.numActions))
-        self.alphaA = kwargRemains.pop('alphaA', np.ones(self.numActions))
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
 
-        self.genStandardParameterDetails()
         self.parameters["sigma"] = self.sigma
         self.parameters["sigmaG"] = self.sigmaG
         self.parameters["beta"] = self.beta
@@ -105,7 +108,6 @@ class QLearnK(Model):
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recsigmaA = []
         self.recalphaA = []
 
@@ -282,49 +284,3 @@ class QLearnK(Model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

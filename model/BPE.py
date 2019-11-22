@@ -16,7 +16,6 @@ import itertools
 from numpy import ndarray
 
 from model.modelTemplate import Model
-from model.decision.discrete import decWeightProb
 
 
 class BPE(Model):
@@ -69,32 +68,24 @@ class BPE(Model):
     model.BP : This model is heavily based on that one
     """
 
+    def __init__(self, alpha=0.3, epsilon=0.1, dirichletInit=1, validRewards=np.array([0, 1]), **kwargs):
 
-    def __init__(self, **kwargs):
+        super(BPE, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        self.epsilon = epsilon
 
-        self.epsilon = kwargRemains.pop('epsilon', 0.1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        dirichletInit = kwargRemains.pop('dirichletInit', 1)
-        self.validRew = kwargRemains.pop('validRewards', np.array([0, 1]))
+        self.validRew = validRewards
         self.rewLoc = collections.OrderedDict(((k, v) for k, v in itertools.izip(self.validRew, range(len(self.validRew)))))
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
 
         self.dirichletVals = np.ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
         self.expectations = self.updateExpectations(self.dirichletVals)
 
-        self.genStandardParameterDetails()
         self.parameters["epsilon"] = self.epsilon
         self.parameters["alpha"] = self.alpha
         self.parameters["dirichletInit"] = dirichletInit
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recDirichletVals = []
 
     def returnTaskState(self):
@@ -270,48 +261,3 @@ class BPE(Model):
         expectations = np.apply_along_axis(meanFunc, 2, dirichletVals, r=self.validRew)
 
         return expectations
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc
