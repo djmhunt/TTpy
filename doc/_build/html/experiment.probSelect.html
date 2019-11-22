@@ -63,95 +63,10 @@ doi:10.1073/pnas.0706111104</td>
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="experiment.probSelect.choice">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">choice</code><span class="sig-paren">(</span><em>a</em>, <em>size=None</em>, <em>replace=True</em>, <em>p=None</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.probSelect.choice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a random sample from a given 1-D array</p>
-<blockquote>
-<div><div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.0.</span></p>
-</div>
-</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>a</strong> (<em>1-D array-like</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – If an ndarray, a random sample is generated from its elements.
-If an int, the random sample is generated as if a were np.arange(a)</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
-<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
-single value is returned.</li>
-<li><strong>replace</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether the sample is with or without replacement</li>
-<li><strong>p</strong> (<em>1-D array-like</em><em>, </em><em>optional</em>) – The probabilities associated with each entry in a.
-If not given the sample assumes a uniform distribution over all
-entries in a.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>samples</strong> – The generated random samples</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">single item or ndarray</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.8)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> – If a is an int and less than zero, if a or p are not 1-dimensional,
-if a is an array-like of size 0, if p is not a vector of
-probabilities, if a and p have different lengths, or if
-replace=False and the sample size is greater than the population
-size</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">randint()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">shuffle()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">permutation()</span></code></p>
-</div>
-<p class="rubric">Examples</p>
-<p>Generate a uniform random sample from np.arange(5) of size 3:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="go">array([0, 3, 4])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.randint(0,5,3)</span>
-</pre></div>
-</div>
-<p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="go">array([3, 3, 0])</span>
-</pre></div>
-</div>
-<p>Generate a uniform random sample from np.arange(5) of size 3 without
-replacement:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">array([3,1,0])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
-</pre></div>
-</div>
-<p>Generate a non-uniform random sample from np.arange(5) of size
-3 without replacement:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="go">array([2, 3, 0])</span>
-</pre></div>
-</div>
-<p>Any of the above can be repeated with an arbitrary array-like
-instead of just integers. For instance:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
-<span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;],</span>
-<span class="go">      dtype=&#39;|S11&#39;)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="experiment.probSelect.genActSequence">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">genActSequence</code><span class="sig-paren">(</span><em>actRewardProb</em>, <em>learningActPairs</em>, <em>learningLen</em>, <em>testLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#genActSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.genActSequence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="class">
-<dt id="experiment.probSelect.probSelect">
-<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">probSelect</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="experiment.experimentTemplate.html#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
+<dt id="experiment.probSelect.ProbSelect">
+<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">ProbSelect</code><span class="sig-paren">(</span><em>rewardProb=0.7, learningActPairs=[(0, 1), (2, 3)], actRewardProb=None, learningLen=240, testLen=60, numActions=None, rewardSize=1, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment" title="experiment.experimentTemplate.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">experiment.experimentTemplate.Experiment</span></code></a></p>
 <dl class="docutils">
 <dt>Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</dt>
 <dd>Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., &amp; Hutchison, K. E. (2007).
@@ -161,8 +76,8 @@ doi:10.1073/pnas.0706111104</dd>
 <p>Many methods are inherited from the experiment.experiment.experiment class.
 Refer to its documentation for missing methods.</p>
 <dl class="attribute">
-<dt id="experiment.probSelect.probSelect.Name">
-<code class="descname">Name</code><a class="headerlink" href="#experiment.probSelect.probSelect.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.Name">
+<code class="descname">Name</code><a class="headerlink" href="#experiment.probSelect.ProbSelect.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -202,20 +117,15 @@ and M2. Each provides a reward with a different probability: A:P&gt;0.5,
 B:1-P&lt;0.5, M1=M2=0.5. The transfer phase has all the action pairs but no
 feedback. This class only covers the learning phase, but models are
 expected to be implemented as if there is a transfer phase.</p>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'probSelect'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.feedback">
-<code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.feedback" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.feedback">
+<code class="descname">feedback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.feedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.feedback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Responds to the action from the participant</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.next" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produces the next stimulus for the iterator</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -234,48 +144,54 @@ expected to be implemented as if there is a transfer phase.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves files containing all the relevant data for this
-experiment run</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.probSelect.probSelect.procede">
-<code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.procede" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.proceed">
+<code class="descname">proceed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.proceed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.proceed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the experiment after feedback</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.receiveAction">
-<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.receiveAction" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.receiveAction">
+<code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.probSelect.probSelect.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new experiment instance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">The cleaned up object instance</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>string</em>) – The action taken by the model</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.probSelect.probSelect.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelect.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelect.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.probSelect.ProbSelect.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.returnTaskState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – A dictionary containing the class parameters  as well as the other useful data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.probSelect.ProbSelect.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 output later</p>
 </dd></dl>
 
 </dd></dl>
+
+<dl class="function">
+<dt id="experiment.probSelect.genActSequence">
+<code class="descclassname">experiment.probSelect.</code><code class="descname">genActSequence</code><span class="sig-paren">(</span><em>actRewardProb</em>, <em>learningActPairs</em>, <em>learningLen</em>, <em>testLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#genActSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.genActSequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="experiment.probSelect.probSelectRewDirect">
@@ -308,7 +224,7 @@ last action. The function returns the reward.</td>
 
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="model.qLearn.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn()</span></code></a>, <a class="reference internal" href="model.qLearn2.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn2()</span></code></a></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn2()</span></code></p>
 </div>
 </dd></dl>
 
@@ -353,43 +269,6 @@ function returns a list of length 2.</td>
 <span class="go">(1, 1)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">(1, 1)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="experiment.probSelect.rand">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>d0</em>, <em>d1</em>, <em>...</em>, <em>dn</em><span class="sig-paren">)</span><a class="headerlink" href="#experiment.probSelect.rand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Random values in a given shape.</p>
-<p>Create an array of the given shape and populate it with
-random samples from a uniform distribution
-over <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1)</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d1</strong><strong>, </strong><strong>..</strong><strong>, </strong><strong>dn</strong> (<em>d0</em><em>,</em>) – The dimensions of the returned array, should all be positive.
-If no argument is given a single Python float is returned.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>out</strong> – Random values.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">ndarray, shape <code class="docutils literal notranslate"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code></td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">random()</span></code></p>
-</div>
-<p class="rubric">Notes</p>
-<p>This is a convenience function. If you want an interface that
-takes a shape-tuple as the first argument, refer to
-np.random.random_sample .</p>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-<span class="go">array([[ 0.14022471,  0.96360618],  #random</span>
-<span class="go">       [ 0.37601032,  0.25528411],  #random</span>
-<span class="go">       [ 0.49313049,  0.94909878]]) #random</span>
 </pre></div>
 </div>
 </dd></dl>

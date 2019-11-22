@@ -60,74 +60,14 @@
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="model.td0.blankRew">
-<code class="descclassname">model.td0.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.td0.Name">
-<code class="descclassname">model.td0.</code><code class="descname">Name</code><a class="headerlink" href="#model.td0.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.td0.blankStim">
-<code class="descclassname">model.td0.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.td0.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
-<dt id="model.td0.td0">
-<em class="property">class </em><code class="descclassname">model.td0.</code><code class="descname">td0</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<dt id="model.td0.TD0">
+<em class="property">class </em><code class="descclassname">model.td0.</code><code class="descname">TD0</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>beta=4</em>, <em>gamma=0.3</em>, <em>invBeta=None</em>, <em>expect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The td-Learning algorithm</p>
 <dl class="attribute">
-<dt id="model.td0.td0.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.td0.td0.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.td0.TD0.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -140,8 +80,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="model.td0.td0.currAction">
-<code class="descname">currAction</code><a class="headerlink" href="#model.td0.td0.currAction" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.td0.TD0.currAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current action chosen by the model. Used to pass participant action
 to model when fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -178,7 +118,7 @@ task or dataset and references used in the models to describe the order
 in which the action information is stored.</li>
 <li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></li>
-<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the the expected reward.
+<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the expected reward.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">numCues</span></code></li>
 <li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
 understand and a string to identify it later. Default is blankStim</li>
@@ -191,14 +131,9 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'td0'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="model.td0.td0.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -213,8 +148,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -231,8 +166,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.delta" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -257,14 +192,14 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.lastChoiceReinforcement">
-<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.lastChoiceReinforcement">
+<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows the model to update its expectations once the action has been chosen.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -280,8 +215,8 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -302,15 +237,15 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.td0.td0.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#td0.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.td0.updateModel" title="Permalink to this definition">¶</a></dt>
+<dt id="model.td0.TD0.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/td0.html#TD0.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.td0.TD0.updateModel" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

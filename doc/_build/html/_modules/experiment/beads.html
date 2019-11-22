@@ -52,22 +52,17 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span>
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">varyingParams</span>
-
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
 
 <span class="c1"># Bead Sequences:</span>
-<span class="n">beadSequences</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MooreSellen&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]}</span>
+<span class="n">beadSequences</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MooreSellen&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]}</span>
 <span class="n">defaultBeads</span> <span class="o">=</span> <span class="n">beadSequences</span><span class="p">[</span><span class="s2">&quot;MooreSellen&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Beads"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads">[docs]</a><span class="k">class</span> <span class="nc">Beads</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Based on the Moore&amp;Sellen Beads task</span>
+
+<div class="viewcode-block" id="Beads"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads">[docs]</a><span class="k">class</span> <span class="nc">Beads</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Based on the Moore &amp; Sellen Beads task</span>
 
 <span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
@@ -87,28 +82,15 @@
 <span class="sd">        `MooreSellen`, the default sequence.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beads&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beadSequence</span><span class="o">=</span><span class="n">defaultBeads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Beads.reset"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">N</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">beadSequence</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;beadSequence&quot;</span><span class="p">,</span> <span class="n">defaultBeads</span><span class="p">)</span>
-
+        <span class="nb">super</span><span class="p">(</span><span class="n">Beads</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beadSequence</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">beadSequence</span> <span class="ow">in</span> <span class="n">beadSequences</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">beads</span> <span class="o">=</span> <span class="n">beadSequences</span><span class="p">[</span><span class="n">beadSequence</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="s2">&quot;Unknown bead sequence&quot;</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown bead sequence&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">beads</span> <span class="o">=</span> <span class="n">beadSequence</span>
 
@@ -117,9 +99,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                           <span class="s2">&quot;beadSequence&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;beadSequence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span>
 
         <span class="c1"># Set trialstep count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -129,8 +110,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Beads.next"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Produces the next bead for the iterator</span>
@@ -164,7 +143,8 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : {1,2, None}</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
@@ -172,21 +152,21 @@
         <span class="k">if</span> <span class="n">action</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Beads.outputEvolution"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Beads.returnTaskState"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.Beads.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        results : dictionary</span>
-<span class="sd">            The dictionary contains a series of keys including Name,</span>
-<span class="sd">            Observables and Actions.</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                   <span class="s2">&quot;Observables&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">),</span>
-                   <span class="s2">&quot;Actions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">,</span>
-                   <span class="s2">&quot;FirstDecision&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span><span class="p">}</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Observables&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;FirstDecision&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">firstDecision</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -197,6 +177,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beads</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span></div></div>
+
 
 <div class="viewcode-block" id="generateSequence"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.generateSequence">[docs]</a><span class="k">def</span> <span class="nf">generateSequence</span><span class="p">(</span><span class="n">numBeads</span><span class="p">,</span> <span class="n">oneProb</span><span class="p">,</span> <span class="n">switchProb</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -220,9 +201,9 @@
 <span class="sd">        The generated sequence of beads</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">sequence</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">numBeads</span><span class="p">)</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numBeads</span><span class="p">)</span>
 
-    <span class="n">probs</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="n">numBeads</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">numBeads</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
     <span class="n">bead</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numBeads</span><span class="p">):</span>
@@ -254,7 +235,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn</span>
+<span class="sd">    model.QLearn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
@@ -286,7 +267,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">observation</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">])</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">observation</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">])</span>
         <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span>
 
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadStimDualDirect&quot;</span>
@@ -319,12 +300,12 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.MS, model.MS_rev, model.BP</span>
+<span class="sd">    model.MS, model.MSRev, model.BP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">stim</span> <span class="o">=</span> <span class="n">oneProb</span><span class="o">*</span><span class="n">observation</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">)</span>
-        <span class="n">stimulus</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
+        <span class="n">stimulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
         <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span>
 
     <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadStimDualInfo&quot;</span>
@@ -349,7 +330,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">beadRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>

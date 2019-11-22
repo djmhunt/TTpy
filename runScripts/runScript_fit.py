@@ -31,7 +31,7 @@ from model.decision.discrete import decWeightProb
 # The model
 from model.qLearn import QLearn
 
-# For importing the data
+#%% For importing the data
 from data import data
 
 #For data fitting

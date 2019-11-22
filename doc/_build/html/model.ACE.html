@@ -62,9 +62,9 @@
 </table>
 <dl class="class">
 <dt id="model.ACE.ACE">
-<em class="property">class </em><code class="descclassname">model.ACE.</code><code class="descname">ACE</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#ACE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.ACE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
-<p>A basic, complete actor-critic model with decision making based on qLearnE</p>
+<em class="property">class </em><code class="descclassname">model.ACE.</code><code class="descname">ACE</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>epsilon=0.1</em>, <em>alphaE=None</em>, <em>alphaA=None</em>, <em>expect=None</em>, <em>actorExpect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#ACE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.ACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
+<p>A basic, complete actor-critic model with decision making based on QLearnE</p>
 <dl class="attribute">
 <dt id="model.ACE.ACE.Name">
 <code class="descname">Name</code><a class="headerlink" href="#model.ACE.ACE.Name" title="Permalink to this definition">¶</a></dt>
@@ -102,7 +102,7 @@ task or dataset and references used in the models to describe the order
 in which the action information is stored.</li>
 <li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></li>
-<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the the expected reward.
+<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the expected reward.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">numCues</span></code></li>
 <li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
 understand and a string to identify it later. Default is blankStim</li>
@@ -115,11 +115,6 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'ACE'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="model.ACE.ACE.actorStimulusProbs">
 <code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#ACE.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.ACE.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
@@ -181,8 +176,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.ACE.ACE.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#ACE.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.ACE.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.ACE.ACE.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#ACE.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.ACE.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -240,66 +235,6 @@ accessed later</p>
 <li><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.ACE.blankRew">
-<code class="descclassname">model.ACE.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.ACE.Name">
-<code class="descclassname">model.ACE.</code><code class="descname">Name</code><a class="headerlink" href="#model.ACE.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.ACE.blankStim">
-<code class="descclassname">model.ACE.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/ACE.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.ACE.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.ACE.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>

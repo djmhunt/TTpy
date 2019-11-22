@@ -62,12 +62,30 @@
 </table>
 <dl class="class">
 <dt id="experiment.basic.Basic">
-<em class="property">class </em><code class="descclassname">experiment.basic.</code><code class="descname">Basic</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="experiment.experimentTemplate.html#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">experiment.experimentTemplate.experiment</span></code></a></p>
+<em class="property">class </em><code class="descclassname">experiment.basic.</code><code class="descname">Basic</code><span class="sig-paren">(</span><em>trials=100</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment" title="experiment.experimentTemplate.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">experiment.experimentTemplate.Experiment</span></code></a></p>
+<p>An example of an experiment with all the necessary components, but nothing changing</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trials</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of trials in the experiment</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="experiment.basic.Basic.Name">
-<code class="descname">Name</code><em class="property"> = u'basic'</em><a class="headerlink" href="#experiment.basic.Basic.Name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">Name</code><a class="headerlink" href="#experiment.basic.Basic.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the class used when recording what has been used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="experiment.basic.Basic.feedback">
@@ -96,14 +114,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="experiment.basic.Basic.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.outputEvolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves files containing all the relevant data for this experiment run</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.basic.Basic.procede">
-<code class="descname">procede</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.procede"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.procede" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.basic.Basic.proceed">
+<code class="descname">proceed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.proceed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.proceed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the experiment after feedback</p>
 </dd></dl>
 
@@ -111,19 +123,27 @@
 <dt id="experiment.basic.Basic.receiveAction">
 <code class="descname">receiveAction</code><span class="sig-paren">(</span><em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.receiveAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.receiveAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Receives the next action from the participant</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiment.basic.Basic.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new experiment instance</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>self</strong></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>string</em>) – The action taken by the model</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">The cleaned up object instance</td>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="experiment.basic.Basic.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#Basic.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.Basic.returnTaskState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this experiment run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – A dictionary containing the class parameters  as well as the other useful data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
 </tr>
 </tbody>
 </table>
@@ -139,14 +159,14 @@ output later</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="experiment.basic.basicRewDirect">
-<code class="descclassname">experiment.basic.</code><code class="descname">basicRewDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#basicRewDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.basicRewDirect" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.basic.basicRewardDirect">
+<code class="descclassname">experiment.basic.</code><code class="descname">basicRewardDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#basicRewardDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.basicRewardDirect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the reward for models expecting just the reward</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>deckRew</strong> – The function expects to be passed a tuple containing the reward and the
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>basicReward</strong> – The function expects to be passed a tuple containing the reward and the
 last action. The function returns the reward.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
@@ -169,19 +189,19 @@ last action. The function returns the reward.</td>
 
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="model.qLearn.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn()</span></code></a>, <a class="reference internal" href="model.qLearn2.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn2()</span></code></a></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn2()</span></code></p>
 </div>
 </dd></dl>
 
 <dl class="function">
-<dt id="experiment.basic.basicStimDirect">
-<code class="descclassname">experiment.basic.</code><code class="descname">basicStimDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#basicStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.basicStimDirect" title="Permalink to this definition">¶</a></dt>
+<dt id="experiment.basic.basicStimulusDirect">
+<code class="descclassname">experiment.basic.</code><code class="descname">basicStimulusDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/basic.html#basicStimulusDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.basic.basicStimulusDirect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Processes the stimulus cues for models expecting just the event</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>basicStim</strong> – The function returns a tuple of <code class="docutils literal notranslate"><span class="pre">1</span></code> and the observation.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>basicStimulus</strong> – The function returns a tuple of <code class="docutils literal notranslate"><span class="pre">1</span></code> and the observation.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
 </tr>
@@ -203,7 +223,7 @@ last action. The function returns the reward.</td>
 
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="model.qLearn.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn()</span></code></a>, <a class="reference internal" href="model.qLearn2.html#module-model.qLearn2" title="model.qLearn2"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.qLearn2()</span></code></a></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn2()</span></code></p>
 </div>
 </dd></dl>
 

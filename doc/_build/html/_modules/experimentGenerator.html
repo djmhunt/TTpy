@@ -53,14 +53,14 @@
 <span class="kn">import</span> <span class="nn">utils</span>
 
 
-<div class="viewcode-block" id="ExperimentGen"><a class="viewcode-back" href="../api/experimentGenerator.ExperimentGen.html#experimentGenerator.ExperimentGen">[docs]</a><span class="k">class</span> <span class="nc">ExperimentGen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ExperimentGen"><a class="viewcode-back" href="../experimentGenerator.html#experimentGenerator.ExperimentGen">[docs]</a><span class="k">class</span> <span class="nc">ExperimentGen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates experiment class instances based on an experiment and a set of varying parameters</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    experiment :  experiment.experimentTemplate.experiment</span>
+<span class="sd">    experiment :  experiment.experimentTemplate.Experiment</span>
 <span class="sd">        The experiment that will be run</span>
 <span class="sd">    parameters : dictionary of floats or lists of floats</span>
 <span class="sd">        Parameters are the options that you are or are likely to change across experiment instances. When a parameter contains a list, an instance</span>
@@ -87,7 +87,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="ExperimentGen.next"><a class="viewcode-back" href="../api/experimentGenerator.ExperimentGen.html#experimentGenerator.ExperimentGen.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ExperimentGen.next"><a class="viewcode-back" href="../experimentGenerator.html#experimentGenerator.ExperimentGen.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Produces the next experiment instance for the iterator</span>
 
@@ -102,7 +102,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">newExp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ExperimentGen.iterExpID"><a class="viewcode-back" href="../api/experimentGenerator.ExperimentGen.html#experimentGenerator.ExperimentGen.iterExpID">[docs]</a>    <span class="k">def</span> <span class="nf">iterExpID</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ExperimentGen.iterExpID"><a class="viewcode-back" href="../experimentGenerator.html#experimentGenerator.ExperimentGen.iterExpID">[docs]</a>    <span class="k">def</span> <span class="nf">iterExpID</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Yields the experiment IDs. To be used with self.newExp(expID) to receive the next experiment instance</span>
 
@@ -115,7 +115,7 @@
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">countLen</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">c</span></div>
 
-<div class="viewcode-block" id="ExperimentGen.newExp"><a class="viewcode-back" href="../api/experimentGenerator.ExperimentGen.html#experimentGenerator.ExperimentGen.newExp">[docs]</a>    <span class="k">def</span> <span class="nf">newExp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expNum</span><span class="p">):</span>
+<div class="viewcode-block" id="ExperimentGen.newExp"><a class="viewcode-back" href="../experimentGenerator.html#experimentGenerator.ExperimentGen.newExp">[docs]</a>    <span class="k">def</span> <span class="nf">newExp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expNum</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next experiment instance</span>
 
@@ -137,7 +137,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">experimentClass</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="params"><a class="viewcode-back" href="../api/experimentGenerator.params.html#experimentGenerator.params">[docs]</a><span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
+<div class="viewcode-block" id="params"><a class="viewcode-back" href="../experimentGenerator.html#experimentGenerator.params">[docs]</a><span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For the given experiment returns the appropriate list for constructing the experiment instances</span>
 

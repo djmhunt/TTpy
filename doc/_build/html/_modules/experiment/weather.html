@@ -52,9 +52,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">shape</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">choice</span>
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">nan</span>
+
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
 
 <span class="n">cueSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Pickering&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
@@ -83,7 +85,7 @@
 <span class="n">defaultActualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="s2">&quot;Pickering&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the 1994 paper &quot;Probabilistic classification learning in amnesia.&quot;</span>
 
@@ -111,26 +113,18 @@
 <span class="sd">    cues : array of floats, optional</span>
 <span class="sd">        The stimulus cues used to guess the actualities</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">defaultCueProbs</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]]</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weather&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cueProbs</span><span class="o">=</span><span class="n">defaultCueProbs</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">testLen</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">numCues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actualities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Weather.reset"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Weather</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">cueProbs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cueProbs&quot;</span><span class="p">,</span> <span class="p">[[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]])</span>
-        <span class="n">numCues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numCues&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">))</span>
-        <span class="n">learningLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;learningLen&quot;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-        <span class="n">testLen</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;testLen&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="n">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">+</span><span class="n">testLen</span><span class="p">))</span>
-        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="n">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">numCues</span><span class="p">:</span>
+            <span class="n">numCues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cues</span><span class="p">:</span>
+            <span class="n">cues</span> <span class="o">=</span> <span class="n">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">+</span><span class="n">testLen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">actualities</span><span class="p">:</span>
+            <span class="n">actualities</span> <span class="o">=</span> <span class="n">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cues</span> <span class="ow">in</span> <span class="n">cueSets</span><span class="p">:</span>
@@ -150,9 +144,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s2">&quot;Actualities&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">),</span>
-                           <span class="s2">&quot;Cues&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Actualities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Cues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
 
         <span class="c1"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -160,8 +153,6 @@
 
         <span class="c1"># Recording variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -195,7 +186,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : int</span>
+<span class="sd">        action : int or string</span>
 <span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -212,19 +203,24 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Weather.procede"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.proceed"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Weather.outputEvolution"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.returnTaskState"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves files containing all the relevant data for this experiment run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
 
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span>
 
@@ -252,11 +248,11 @@
     <span class="n">cues</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">taskLen</span><span class="p">):</span>
         <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">while</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numCues</span><span class="p">]:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="n">numCues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numCues</span><span class="p">]:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">numCues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
         <span class="n">cues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">cues</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cues</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="genActualities"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genActualities">[docs]</a><span class="k">def</span> <span class="nf">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -278,22 +274,22 @@
         <span class="n">probs</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">},</span> <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}}</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">learningLen</span><span class="p">):</span>
             <span class="n">c</span> <span class="o">=</span> <span class="n">cues</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">prob</span> <span class="o">=</span> <span class="n">probs</span><span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">)][</span><span class="n">prod</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">)</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">probs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">s</span><span class="p">)][</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">prob</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">learningLen</span><span class="p">):</span>
             <span class="n">visibleCueProbs</span> <span class="o">=</span> <span class="n">cues</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">cueProbs</span>
-            <span class="n">actProb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">visibleCueProbs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">actProb</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">actProb</span><span class="p">))</span>
+            <span class="n">actProb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">visibleCueProbs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">actProb</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">actProb</span><span class="p">))</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
     <span class="n">actions</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;Nan&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="n">testLen</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="weatherStimDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherStimDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherStimDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -311,7 +307,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
@@ -347,16 +343,16 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decEtaSet</span>
+<span class="sd">    model.BP, model.EP, model.MSRev, model.decision.binary.decEtaSet</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from experiment.weather import weatherStimAllAction</span>
 <span class="sd">    &gt;&gt;&gt; stim = weatherStimAllAction(2)</span>
-<span class="sd">    &gt;&gt;&gt; stim(array([1, 0, 0, 1]), 0)</span>
-<span class="sd">    (array([1, 0, 0, 1, 0, 0, 0, 0]), array([ 1, 0, 0, 1, 1, 1, 1, 1]))</span>
-<span class="sd">    &gt;&gt;&gt; stim(array([1, 0, 0, 1]), 1)</span>
-<span class="sd">    (array([0, 0, 0, 0, 1, 0, 0, 1]), array([ 1, 1, 1, 1, 1, 0, 0, 1]))</span>
+<span class="sd">    &gt;&gt;&gt; stim(np.array([1, 0, 0, 1]), 0)</span>
+<span class="sd">    (np.array([1, 0, 0, 1, 0, 0, 0, 0]), np.array([ 1, 0, 0, 1, 1, 1, 1, 1]))</span>
+<span class="sd">    &gt;&gt;&gt; stim(np.array([1, 0, 0, 1]), 1)</span>
+<span class="sd">    (np.array([0, 0, 0, 0, 1, 0, 0, 1]), np.array([ 1, 1, 1, 1, 1, 0, 0, 1]))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
@@ -377,10 +373,10 @@
 <span class="sd">            The events processed into a form to be used for updating the expectations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">obsSize</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="n">obsSize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
-        <span class="n">s</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
 
         <span class="n">s</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
         <span class="n">a</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
@@ -443,7 +439,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
@@ -476,13 +472,13 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MSRev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
-        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
         <span class="n">rewardProc</span><span class="p">[</span><span class="n">reward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
 
     <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;deckRewDualInfo&quot;</span>
     <span class="n">weatherRew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>

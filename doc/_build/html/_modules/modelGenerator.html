@@ -56,14 +56,14 @@
 <span class="kn">import</span> <span class="nn">utils</span>
 
 
-<div class="viewcode-block" id="ModelGen"><a class="viewcode-back" href="../api/modelGenerator.ModelGen.html#modelGenerator.ModelGen">[docs]</a><span class="k">class</span> <span class="nc">ModelGen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelGen"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen">[docs]</a><span class="k">class</span> <span class="nc">ModelGen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates model class instances based on a model and a set of varying parameters</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    model :  model.modelTemplate.model</span>
+<span class="sd">    model :  model.modelTemplate.Model</span>
 <span class="sd">    parameters : dictionary containing floats or lists of floats</span>
 <span class="sd">        Parameters are the options that you are or are likely to change across </span>
 <span class="sd">        model instances. When a parameter contains a list, an instance of the </span>
@@ -94,7 +94,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="ModelGen.next"><a class="viewcode-back" href="../api/modelGenerator.ModelGen.html#modelGenerator.ModelGen.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelGen.next"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next item for the iterator</span>
 <span class="sd">        </span>
@@ -111,13 +111,13 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelClass</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelGen.iterInitDetails"><a class="viewcode-back" href="../api/modelGenerator.ModelGen.html#modelGenerator.ModelGen.iterInitDetails">[docs]</a>    <span class="k">def</span> <span class="nf">iterInitDetails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelGen.iterInitDetails"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen.iterInitDetails">[docs]</a>    <span class="k">def</span> <span class="nf">iterInitDetails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Yields a list containing a model object and parameters to initialise them</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        model : model.modelTemplate.model</span>
+<span class="sd">        model : model.modelTemplate.Model</span>
 <span class="sd">            The model to be initialised</span>
 <span class="sd">        parameters : ordered dictionary of floats or bools</span>
 <span class="sd">            The model instance parameters</span>
@@ -128,7 +128,7 @@
             <span class="k">yield</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelClass</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otherOptions</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="params"><a class="viewcode-back" href="../api/modelGenerator.params.html#modelGenerator.params">[docs]</a><span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
+<div class="viewcode-block" id="params"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.params">[docs]</a><span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For the given model returns a list of all that goes in to the model.</span>
 
