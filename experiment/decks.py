@@ -9,14 +9,11 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, exp
-from numpy.random import rand
-from experiment.experimentTemplate import experiment
+import numpy as np
 
+from experiment.experimentTemplate import Experiment
 
-### decks
-
-deckSets = {"WorthyMaddox": array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  8,  1,  6,  2,  1,  1,
+deckSets = {"WorthyMaddox": np.array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  8,  1,  6,  2,  1,  1,
                                     5,  8,  5, 10, 10,  8,  3, 10,  7, 10,  8,  3,  4,  9, 10,  3,  6,
                                     3,  5, 10, 10, 10,  7,  3,  8,  5,  8,  6,  9,  4,  4,  4, 10,  6,
                                     4, 10,  3, 10,  5, 10,  3, 10, 10,  5,  4,  6, 10,  7,  7, 10, 10,
@@ -29,7 +26,7 @@ deckSets = {"WorthyMaddox": array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  
 defaultDecks = deckSets["WorthyMaddox"]
 
 
-class Decks(experiment):
+class Decks(Experiment):
     """
     Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.
 
@@ -51,22 +48,11 @@ class Decks(experiment):
         Defines if you discard the card not chosen or if you keep it.
     """
 
-    Name = "decks"
+    def __init__(self, draws=None, decks=defaultDecks, discard=False, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+        super(Decks, self).__init__(**kwargs)
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        T = kwargs.pop('draws', None)
-        decks = kwargs.pop("decks", defaultDecks)
-        self.discard = kwargs.pop("discard", False)
+        self.discard = discard
 
         if isinstance(decks, basestring):
             if decks in deckSets:
@@ -76,15 +62,14 @@ class Decks(experiment):
         else:
             self.decks = decks
 
-        if T:
-            self.T = T
+        if draws:
+            self.T = draws
         else:
             self.T = len(self.decks[0])
 
-        self.parameters = {"Name": self.Name,
-                           "Draws": self.T,
-                           "Discard": self.discard,
-                           "Decks": self.decks}
+        self.parameters["Draws"] = self.T
+        self.parameters["Discard"] = self.discard
+        self.parameters["Decks"] = self.decks
 
         # Set draw count
         self.t = -1
@@ -99,8 +84,6 @@ class Decks(experiment):
 
         self.recCardVal = [-1]*self.T
         self.recAction = [-1]*self.T
-
-        return self
 
     def next(self):
         """
@@ -130,6 +113,11 @@ class Decks(experiment):
     def receiveAction(self, action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
 
         self.action = action
@@ -154,25 +142,28 @@ class Decks(experiment):
 
         return self.cardValue
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
 
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relavent data for this
-        experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = {"Name": self.Name,
-                   "Actions": self.recAction,
-                   "cardValue": self.recCardVal,
-                   "Decks": self.decks,
-                   "Draws": self.T,
-                   "finalDeckDraws": self.drawn}
+        results = self.standardResultOutput()
+
+        results["Actions"] = self.recAction
+        results["cardValue"] = self.recCardVal
+        results["finalDeckDraws"] = self.drawn
 
         return results
 
@@ -201,7 +192,7 @@ def deckStimDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def deckStim(observation):
@@ -228,7 +219,7 @@ def deckRewDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def deckRew(reward, action, stimuli):
@@ -333,7 +324,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
 
     See Also
     --------
-    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac
+    model.BP, model.EP, model.MSRev, model.decision.binary.decIntEtaReac
 
     Examples
     --------
@@ -345,7 +336,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
     """
     numDiffRewards = maxRewardVal-minRewardVal+1
-    respZeros = zeros(numDiffRewards * numActions)
+    respZeros = np.zeros(numDiffRewards * numActions)
 
     def deckRew(reward, action, stimuli):
         rewardProc = respZeros.copy() + 1
@@ -378,14 +369,14 @@ def deckRewDualInfo(maxRewardVal, epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
     divisor = maxRewardVal + epsilon
 
     def deckRew(reward, action, stimuli):
         rew = (reward / divisor) * (1 - action) + (1 - (reward / divisor)) * action
         rewardProc = [[rew], [1-rew]]
-        return array(rewardProc)
+        return np.array(rewardProc)
 
     deckRew.Name = "deckRewDualInfo"
     deckRew.Params = {"epsilon": epsilon}
@@ -411,17 +402,17 @@ def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
     mid = (maxRewardVal + minRewardVal)/2
 
     def deckRew(reward, action, stimuli):
 
-        x = exp(epsilon * (reward-mid))
+        x = np.exp(epsilon * (reward-mid))
 
         rew = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
         rewardProc = [[rew], [1-rew]]
-        return array(rewardProc)
+        return np.array(rewardProc)
 
     deckRew.Name = "deckRewDualInfoLogistic"
     deckRew.Params = {"midpoint": mid,

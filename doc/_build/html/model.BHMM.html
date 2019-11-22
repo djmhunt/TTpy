@@ -71,8 +71,8 @@ DOI:10.1142/S0218001401000836</td>
 </table>
 <dl class="class">
 <dt id="model.BHMM.BHMM">
-<em class="property">class </em><code class="descclassname">model.BHMM.</code><code class="descname">BHMM</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<em class="property">class </em><code class="descclassname">model.BHMM.</code><code class="descname">BHMM</code><span class="sig-paren">(</span><em>beta=4</em>, <em>eta=0</em>, <em>delta=0</em>, <em>mu=1</em>, <em>sigma=1</em>, <em>invBeta=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The Bayesian Hidden Markov Model model</p>
 <dl class="attribute">
 <dt id="model.BHMM.BHMM.Name">
@@ -154,7 +154,7 @@ switched then</p>
 the action <span class="math notranslate nohighlight">\(A_t\)</span> providing the payoff <span class="math notranslate nohighlight">\(Y_{t}\)</span> as</p>
 <dl class="docutils">
 <dt>math::</dt>
-<dd><a href="#id6"><span class="problematic" id="id7">P_</span></a>mathrm{Post}left(X_{t} = A_{t}right) = frac{Y_{t}cdot <a href="#id8"><span class="problematic" id="id9">P_</span></a>mathrm{Prior}left(X_{t} = A_{t}right) }{sum_{i in vec{X_{t}}} Pleft(Y_{t} | X_{t}=iright)cdot <a href="#id10"><span class="problematic" id="id11">P_</span></a>mathrm{Prior}left(X_{t} = iright) }</dd>
+<dd><a href="#id1"><span class="problematic" id="id2">P_</span></a>mathrm{Post}left(X_{t} = A_{t}right) = frac{Y_{t}cdot <a href="#id3"><span class="problematic" id="id4">P_</span></a>mathrm{Prior}left(X_{t} = A_{t}right) }{sum_{i in vec{X_{t}}} Pleft(Y_{t} | X_{t}=iright)cdot <a href="#id5"><span class="problematic" id="id6">P_</span></a>mathrm{Prior}left(X_{t} = iright) }</dd>
 </dl>
 <p>and for all other actions as</p>
 <dl class="docutils">
@@ -173,17 +173,12 @@ distribution where the probability distribution of payoffs are</p>
 <p>The probability that the subject switches their choice of action is</p>
 <dl class="docutils">
 <dt>math::</dt>
-<dd><a href="#id12"><span class="problematic" id="id13">P_</span></a>mathrm{Switch}left(X_{t},A_{t}right) = frac{1}{1 - exp^{ beta left(mathbf{1}-<a href="#id14"><span class="problematic" id="id15">P_</span></a>mathrm{Post}left(X_{t}left(A_{t}right) = mathrm{Incorrect}right) - alpharight)}}</dd>
+<dd><a href="#id7"><span class="problematic" id="id8">P_</span></a>mathrm{Switch}left(X_{t},A_{t}right) = frac{1}{1 - exp^{ beta left(mathbf{1}-<a href="#id9"><span class="problematic" id="id10">P_</span></a>mathrm{Post}left(X_{t}left(A_{t}right) = mathrm{Incorrect}right) - alpharight)}}</dd>
 </dl>
 <p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is the indecision point (when it is equiprobable to
 make either choice), and <span class="math notranslate nohighlight">\(\beta\)</span> is the degree of stochasticity in
 making the choice (i.e., the exploration/exploitation parameter). Both are
 defined in the simulation.</p>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = 'BHMM'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="model.BHMM.BHMM.delta">
 <code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.delta" title="Permalink to this definition">¶</a></dt>
@@ -211,8 +206,8 @@ defined in the simulation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.BHMM.BHMM.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.BHMM.BHMM.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -261,166 +256,6 @@ accessed later</p>
 <code class="descname">updateModel</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#BHMM.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.BHMM.updateModel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BHMM.blankRew">
-<code class="descclassname">model.BHMM.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.BHMM.Name">
-<code class="descclassname">model.BHMM.</code><code class="descname">Name</code><a class="headerlink" href="#model.BHMM.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BHMM.blankStim">
-<code class="descclassname">model.BHMM.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BHMM.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BHMM.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>blankStimFunc</strong> (<em>function</em>) – The function expects to be passed the event and then return [1,0].</li>
-<li><strong>currAction</strong> (<em>int</em>) – The current action chosen by the model. Used to pass participant action
-to model when fitting</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.BHMM.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.BHMM.normal">
-<code class="descclassname">model.BHMM.</code><code class="descname">normal</code><span class="sig-paren">(</span><em>loc=0.0</em>, <em>scale=1.0</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#model.BHMM.normal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw random samples from a normal (Gaussian) distribution.</p>
-<p>The probability density function of the normal distribution, first
-derived by De Moivre and 200 years later by both Gauss and Laplace
-independently <a class="footnote-reference" href="#id5" id="id1">[2]</a>, is often called the bell curve because of
-its characteristic shape (see the example below).</p>
-<p>The normal distributions occurs often in nature.  For example, it
-describes the commonly occurring distribution of samples influenced
-by a large number of tiny, random disturbances, each with its own
-unique distribution <a class="footnote-reference" href="#id5" id="id2">[2]</a>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>loc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Mean (“centre”) of the distribution.</li>
-<li><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>array_like of floats</em>) – Standard deviation (spread or “width”) of the distribution.</li>
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
-<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  If size is <code class="docutils literal notranslate"><span class="pre">None</span></code> (default),
-a single value is returned if <code class="docutils literal notranslate"><span class="pre">loc</span></code> and <code class="docutils literal notranslate"><span class="pre">scale</span></code> are both scalars.
-Otherwise, <code class="docutils literal notranslate"><span class="pre">np.broadcast(loc,</span> <span class="pre">scale).size</span></code> samples are drawn.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> – Drawn samples from the parameterized normal distribution.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray or scalar</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.stats.norm()</span></code></dt>
-<dd>probability density function, distribution or cumulative density function, etc.</dd>
-</dl>
-</div>
-<p class="rubric">Notes</p>
-<p>The probability density for the Gaussian distribution is</p>
-<div class="math notranslate nohighlight">
-\[p(x) = \frac{1}{\sqrt{ 2 \pi \sigma^2 }}
-e^{ - \frac{ (x - \mu)^2 } {2 \sigma^2} },\]</div>
-<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean and <span class="math notranslate nohighlight">\(\sigma\)</span> the standard
-deviation. The square of the standard deviation, <span class="math notranslate nohighlight">\(\sigma^2\)</span>,
-is called the variance.</p>
-<p>The function has its peak at the mean, and its “spread” increases with
-the standard deviation (the function reaches 0.607 times its maximum at
-<span class="math notranslate nohighlight">\(x + \sigma\)</span> and <span class="math notranslate nohighlight">\(x - \sigma\)</span> <a class="footnote-reference" href="#id5" id="id3">[2]</a>).  This implies that
-<cite>numpy.random.normal</cite> is more likely to return samples lying close to
-the mean, rather than those far away.</p>
-<p class="rubric">References</p>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[1]</td><td>Wikipedia, “Normal distribution”,
-<a class="reference external" href="https://en.wikipedia.org/wiki/Normal_distribution">https://en.wikipedia.org/wiki/Normal_distribution</a></td></tr>
-</tbody>
-</table>
-<table class="docutils footnote" frame="void" id="id5" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>, <a class="fn-backref" href="#id3">3</a>)</em> P. R. Peebles Jr., “Central Limit Theorem” in “Probability,
-Random Variables and Random Signal Principles”, 4th ed., 2001,
-pp. 51, 51, 125.</td></tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<p>Draw samples from the distribution:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="c1"># mean and standard deviation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Verify the mean and the variance:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">mu</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">abs</span><span class="p">(</span><span class="n">sigma</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.01</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>Display the histogram of the samples, along with
-the probability density function:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">ignored</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span>
-<span class="gp">... </span>               <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="p">(</span><span class="n">bins</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">),</span>
-<span class="gp">... </span>         <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </div>

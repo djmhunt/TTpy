@@ -52,14 +52,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">exp</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span>
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
 
-<span class="c1">### decks</span>
-
-<span class="n">deckSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;WorthyMaddox&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>
+<span class="n">deckSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;WorthyMaddox&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>
                                     <span class="mi">5</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>
                                     <span class="mi">3</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">9</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>
                                     <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>
@@ -72,7 +69,7 @@
 <span class="n">defaultDecks</span> <span class="o">=</span> <span class="n">deckSets</span><span class="p">[</span><span class="s2">&quot;WorthyMaddox&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Decks"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks">[docs]</a><span class="k">class</span> <span class="nc">Decks</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks">[docs]</a><span class="k">class</span> <span class="nc">Decks</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.</span>
 
@@ -94,22 +91,11 @@
 <span class="sd">        Defines if you discard the card not chosen or if you keep it.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;decks&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draws</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">decks</span><span class="o">=</span><span class="n">defaultDecks</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Decks.reset"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Decks</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;draws&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">decks</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;decks&quot;</span><span class="p">,</span> <span class="n">defaultDecks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">discard</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;discard&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discard</span> <span class="o">=</span> <span class="n">discard</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decks</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">decks</span> <span class="ow">in</span> <span class="n">deckSets</span><span class="p">:</span>
@@ -119,15 +105,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decks</span> <span class="o">=</span> <span class="n">decks</span>
 
-        <span class="k">if</span> <span class="n">T</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">T</span>
+        <span class="k">if</span> <span class="n">draws</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">draws</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decks</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s2">&quot;Draws&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                           <span class="s2">&quot;Discard&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">discard</span><span class="p">,</span>
-                           <span class="s2">&quot;Decks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decks</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Draws&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Discard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discard</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Decks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decks</span>
 
         <span class="c1"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -142,8 +127,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Decks.next"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -173,6 +156,11 @@
 <div class="viewcode-block" id="Decks.receiveAction"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
@@ -197,25 +185,28 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span></div>
 
-<div class="viewcode-block" id="Decks.procede"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.proceed"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Decks.outputEvolution"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.returnTaskState"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves files containing all the relavent data for this</span>
-<span class="sd">        experiment run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                   <span class="s2">&quot;Actions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">,</span>
-                   <span class="s2">&quot;cardValue&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span><span class="p">,</span>
-                   <span class="s2">&quot;Decks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">decks</span><span class="p">,</span>
-                   <span class="s2">&quot;Draws&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                   <span class="s2">&quot;finalDeckDraws&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">drawn</span><span class="p">}</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;cardValue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;finalDeckDraws&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">drawn</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -244,7 +235,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">deckStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
@@ -271,7 +262,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">deckRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
@@ -376,7 +367,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS_rev, model.decision.binary.decIntEtaReac</span>
+<span class="sd">    model.BP, model.EP, model.MSRev, model.decision.binary.decIntEtaReac</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -388,7 +379,7 @@
 <span class="sd">    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">numDiffRewards</span> <span class="o">=</span> <span class="n">maxRewardVal</span><span class="o">-</span><span class="n">minRewardVal</span><span class="o">+</span><span class="mi">1</span>
-    <span class="n">respZeros</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">numDiffRewards</span> <span class="o">*</span> <span class="n">numActions</span><span class="p">)</span>
+    <span class="n">respZeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numDiffRewards</span> <span class="o">*</span> <span class="n">numActions</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">deckRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">respZeros</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
@@ -421,14 +412,14 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MSRev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">divisor</span> <span class="o">=</span> <span class="n">maxRewardVal</span> <span class="o">+</span> <span class="n">epsilon</span>
 
     <span class="k">def</span> <span class="nf">deckRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="n">rew</span> <span class="o">=</span> <span class="p">(</span><span class="n">reward</span> <span class="o">/</span> <span class="n">divisor</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">reward</span> <span class="o">/</span> <span class="n">divisor</span><span class="p">))</span> <span class="o">*</span> <span class="n">action</span>
         <span class="n">rewardProc</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rew</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">rew</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
 
     <span class="n">deckRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;deckRewDualInfo&quot;</span>
     <span class="n">deckRew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>
@@ -454,17 +445,17 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MSRev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxRewardVal</span> <span class="o">+</span> <span class="n">minRewardVal</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 
     <span class="k">def</span> <span class="nf">deckRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span><span class="o">-</span><span class="n">mid</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span><span class="o">-</span><span class="n">mid</span><span class="p">))</span>
 
         <span class="n">rew</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">action</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">x</span><span class="p">)))</span><span class="o">*</span><span class="n">action</span>
         <span class="n">rewardProc</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rew</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">rew</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
 
     <span class="n">deckRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;deckRewDualInfoLogistic&quot;</span>
     <span class="n">deckRew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;midpoint&quot;</span><span class="p">:</span> <span class="n">mid</span><span class="p">,</span>

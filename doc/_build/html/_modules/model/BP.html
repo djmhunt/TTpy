@@ -50,17 +50,18 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">expand_dims</span><span class="p">,</span> <span class="n">repeat</span><span class="p">,</span> <span class="n">apply_along_axis</span><span class="p">,</span> <span class="n">fromiter</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="nb">sum</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">dirichlet</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">izip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
 
-<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">ndarray</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">Model</span>
 
 
-<div class="viewcode-block" id="BP"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP">[docs]</a><span class="k">class</span> <span class="nc">BP</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
-
+<div class="viewcode-block" id="BP"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP">[docs]</a><span class="k">class</span> <span class="nc">BP</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The Bayesian predictor model</span>
 
 <span class="sd">    Attributes</span>
@@ -108,37 +109,29 @@
 <span class="sd">        in to a decision. Default is model.decision.discrete.decWeightProb</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;BP&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">dirichletInit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validRewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">invBeta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BP</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="n">kwargRemains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="k">if</span> <span class="n">invBeta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">invBeta</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
 
-        <span class="n">invBeta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;invBeta&#39;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">invBeta</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
-        <span class="n">dirichletInit</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;dirichletInit&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;validRewards&#39;</span><span class="p">,</span> <span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span> <span class="o">=</span> <span class="n">validRewards</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">genEventModifiers</span><span class="p">(</span><span class="n">kwargRemains</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span> <span class="o">=</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))</span> <span class="o">*</span> <span class="n">dirichletInit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))</span> <span class="o">*</span> <span class="n">dirichletInit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dirichletInit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dirichletInit</span>
 
         <span class="c1"># Recorded information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardResultsStore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="BP.outputEvolution"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BP.returnTaskState"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
 
 <span class="sd">        Returns</span>
@@ -149,7 +142,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;dirichletVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;dirichletVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
@@ -237,7 +230,7 @@
 
     <span class="k">def</span> <span class="nf">_newExpect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span><span class="p">[</span><span class="n">delta</span><span class="p">]]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span><span class="p">[</span><span class="n">delta</span><span class="p">]]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">stimuli</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">)</span>
 
@@ -266,8 +259,8 @@
 <span class="sd">        probArray : 1D ndArray of floats</span>
 <span class="sd">            The probabilities associated with the actionValues</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">numerator</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">actionValues</span><span class="p">)</span>
-        <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">actionValues</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
 
         <span class="n">probArray</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
 
@@ -290,71 +283,26 @@
 
 <div class="viewcode-block" id="BP.actStimMerge"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP.actStimMerge">[docs]</a>    <span class="k">def</span> <span class="nf">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="n">dirVals</span> <span class="o">=</span> <span class="n">dirichletVals</span> <span class="o">*</span> <span class="n">expand_dims</span><span class="p">(</span><span class="n">repeat</span><span class="p">([</span><span class="n">stimuli</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">dirVals</span> <span class="o">=</span> <span class="n">dirichletVals</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">stimuli</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
-        <span class="n">actDirVals</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dirVals</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">actDirVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dirVals</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actDirVals</span></div>
 
 <div class="viewcode-block" id="BP.calcActExpectations"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP.calcActExpectations">[docs]</a>    <span class="k">def</span> <span class="nf">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">):</span>
 
-        <span class="n">actExpect</span> <span class="o">=</span> <span class="n">fromiter</span><span class="p">((</span><span class="nb">sum</span><span class="p">(</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
+        <span class="n">actExpect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actExpect</span></div>
 
 <div class="viewcode-block" id="BP.updateExpectations"><a class="viewcode-back" href="../../model.BP.html#model.BP.BP.updateExpectations">[docs]</a>    <span class="k">def</span> <span class="nf">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">):</span>
 
         <span class="k">def</span> <span class="nf">meanFunc</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="p">[]):</span>
-            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
 
-        <span class="n">expectations</span> <span class="o">=</span> <span class="n">apply_along_axis</span><span class="p">(</span><span class="n">meanFunc</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span>
+        <span class="n">expectations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="n">meanFunc</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">expectations</span></div></div>
-
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.BP.html#model.BP.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default stimulus processor. Does nothing.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankStimFunc : function</span>
-<span class="sd">        The function expects to be passed the event and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">event</span>
-
-    <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankStim&quot;</span>
-    <span class="k">return</span> <span class="n">blankStimFunc</span></div>
-
-
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.BP.html#model.BP.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default reward processor. Does nothing. Returns reward</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankRewFunc : function</span>
-<span class="sd">        The function expects to be passed the reward and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankRewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reward</span>
-
-    <span class="n">blankRewFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankRew&quot;</span>
-    <span class="k">return</span> <span class="n">blankRewFunc</span></div>
 </pre></div>
 
           </div>

@@ -56,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the qLearn model and the choice autocorrelation equation in the paper
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the QLearn model and the choice autocorrelation equation in the paper
 Trial-by-trial data analysis using computational models.
 Daw, N. D. (2011).
 Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–38).
@@ -64,74 +64,14 @@ Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="model.qLearnCorr.blankRew">
-<code class="descclassname">model.qLearnCorr.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.qLearnCorr.Name">
-<code class="descclassname">model.qLearnCorr.</code><code class="descname">Name</code><a class="headerlink" href="#model.qLearnCorr.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.qLearnCorr.blankStim">
-<code class="descclassname">model.qLearnCorr.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.qLearnCorr.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
-<dt id="model.qLearnCorr.qLearnCorr">
-<em class="property">class </em><code class="descclassname">model.qLearnCorr.</code><code class="descname">qLearnCorr</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<dt id="model.qLearnCorr.QLearnCorr">
+<em class="property">class </em><code class="descclassname">model.qLearnCorr.</code><code class="descname">QLearnCorr</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>beta=4</em>, <em>kappa=0.1</em>, <em>invBeta=None</em>, <em>expect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The q-Learning algorithm</p>
 <dl class="attribute">
-<dt id="model.qLearnCorr.qLearnCorr.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -144,8 +84,8 @@ Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–
 </dd></dl>
 
 <dl class="attribute">
-<dt id="model.qLearnCorr.qLearnCorr.currAction">
-<code class="descname">currAction</code><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.currAction" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.currAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current action chosen by the model. Used to pass participant action
 to model when fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -198,18 +138,13 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="model.qLearn.html#module-model.qLearn" title="model.qLearn"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.qLearn</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">model.QLearn</span></code></dt>
 <dd>This model is heavily based on that one</dd>
 </dl>
 </div>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'qLearnCorr'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -224,8 +159,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -242,8 +177,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.delta" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -268,8 +203,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -285,8 +220,8 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -307,15 +242,15 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.qLearnCorr.qLearnCorr.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#qLearnCorr.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.qLearnCorr.updateModel" title="Permalink to this definition">¶</a></dt>
+<dt id="model.qLearnCorr.QLearnCorr.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearnCorr.html#QLearnCorr.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearnCorr.QLearnCorr.updateModel" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

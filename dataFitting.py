@@ -5,19 +5,15 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
+import collections
+import copy
 
 import pandas as pd
-
-from collections import OrderedDict, defaultdict, Callable
-from copy import copy
 
 from typing import Any
 
 import outputting
-
-from utils import listMerGen, callableDetailsString
-
-from fitAlgs.fitAlg import fitAlg
+import utils
 
 
 def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLabel="Untitled", save=True, saveFittingProgress=False, saveScript=True, pickleData=False, logLevel=logging.INFO, npSetErr="log"):
@@ -27,7 +23,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
 
     Parameters
     ----------
-    models : models.models
+    models : modelGenerator.ModelGen
         A model factory generating each of the different models being considered
     data : list of dictionaries
         Each dictionary should all contain the keys associated with the fitting
@@ -68,7 +64,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
 
     outputFolder, fileNameGen, closeLoggers = outputting.saving(simLabel, save=save, pickleData=pickleData, saveScript=saveScript, logLevel=logLevel, npSetErr=npSetErr)
 
-    if not (isinstance(data, list)): #and isinstance(fitter, fitAlg)):
+    if not (isinstance(data, list)):
 
         logger = logging.getLogger('dataFitting')
         message = "Data not recognised. "
@@ -86,18 +82,14 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
 
     modelID = 0
     # Initialise the stores of information
-    participantFits = defaultdict(list)  # type: defaultdict[Any, list]
+    participantFits = collections.defaultdict(list)  # type: defaultdict[Any, list]
 
-    for modelInfo in models.iterFitting():
-
-        model = modelInfo[0]
-        modelInitParamVars = modelInfo[1]
-        modelOtherArgs = modelInfo[2]
+    for model, modelInitParamVars, modelStaticArgs in models.iterInitDetails():
 
         for v in partModelVars.itervalues():
-            modelOtherArgs[v] = "<Varies for each participant>"
+            modelStaticArgs[v] = "<Varies for each participant>"
 
-        logSimFittingParams(model.Name, modelInitParamVars, modelOtherArgs)
+        logSimFittingParams(model.get_Name(), modelInitParamVars, modelStaticArgs)
 
         for participant in data:
 
@@ -106,13 +98,13 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
                 partName = partName[0]
 
             for k, v in partModelVars.iteritems():
-                modelOtherArgs[v] = participant[k]
+                modelStaticArgs[v] = participant[k]
 
             # Find the best model values from those proposed
             message = "Beginning participant fit for participant %s"%(partName)
             logger.info(message)
 
-            modelFitted, fitQuality, fittingData = fitter.participant(model, (modelInitParamVars, modelOtherArgs), participant)
+            modelFitted, fitQuality, fittingData = fitter.participant(model, (modelInitParamVars, modelStaticArgs), participant)
 
             message = "Participant fitted"
             logger.debug(message)
@@ -121,7 +113,7 @@ def dataFitting(models, data, fitter, partLabel="Name", partModelVars={}, simLab
 
             participantFits = recordParticipantFit(participant,
                                                    partName,
-                                                   modelFitted.outputEvolution(),
+                                                   modelFitted.returnTaskState(),
                                                    str(modelID),
                                                    fittingData,
                                                    partModelVars,
@@ -289,8 +281,8 @@ def logSimFittingParams(modelName, modelFitVars, modelOtherArgs, expParams=None)
     modelFitParams = [k + ' around ' + str(v).strip('[]()') for k, v in modelFitVars.iteritems()]
     message += " fitted with the parameters " + ", ".join(modelFitParams)
 
-    modelParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelOtherArgs.iteritems() if not isinstance(v, Callable)]
-    modelFuncs = [k + ' = ' + callableDetailsString(v) for k, v in modelOtherArgs.iteritems() if isinstance(v, Callable)]
+    modelParams = [k + ' = ' + str(v).strip('[]()') for k, v in modelOtherArgs.iteritems() if not isinstance(v, collections.Callable)]
+    modelFuncs = [k + ' = ' + utils.callableDetailsString(v) for k, v in modelOtherArgs.iteritems() if isinstance(v, collections.Callable)]
     message += " and using the other user specified parameters " + ", ".join(modelParams)
     message += " and the functions " + ", ".join(modelFuncs)
 
@@ -400,13 +392,13 @@ def fittingDataXLSX(fittingData, label, participant, outputFolder, fileNameGen):
 
     """
 
-    data = OrderedDict()
+    data = collections.OrderedDict()
     data['folder'] = outputFolder
     partFittingKeys, partFittingMaxListLen = outputting.listDictKeySet(participant)
     partData = outputting.newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
     data.update(partData)
 
-    paramFittingDict = copy(fittingData["testedParameters"])
+    paramFittingDict = copy.copy(fittingData["testedParameters"])
     paramFittingDict['partFitName'] = fittingData.pop("Name")
     #paramFittingDict['fitQuality'] = fittingData.pop("fitQuality")
     #paramFittingDict["fitQualities"] = fittingData.pop("fitQualities")

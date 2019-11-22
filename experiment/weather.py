@@ -9,9 +9,11 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, size, ones, nan, prod, sum, argmax, shape
-from numpy.random import rand, choice
-from experiment.experimentTemplate import experiment
+import numpy as np
+
+from numpy import nan
+
+from experiment.experimentTemplate import Experiment
 
 cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1], [1, 1, 0, 1], [0, 1, 0, 0],
                          [0, 1, 1, 0], [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 1, 1], [1, 1, 0, 1], [1, 0, 0, 1],
@@ -40,7 +42,7 @@ actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2,
 defaultActualities = actualityLists["Pickering"]
 
 
-class Weather(experiment):
+class Weather(Experiment):
     """
     Based on the 1994 paper "Probabilistic classification learning in amnesia."
 
@@ -68,26 +70,18 @@ class Weather(experiment):
     cues : array of floats, optional
         The stimulus cues used to guess the actualities
     """
+    defaultCueProbs = [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]]
 
-    Name = "weather"
+    def __init__(self, cueProbs=defaultCueProbs, learningLen=200, testLen=100, numCues=None, cues=None, actualities=None, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+        super(Weather, self).__init__(**kwargs)
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        cueProbs = kwargs.pop("cueProbs", [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]])
-        numCues = kwargs.pop("numCues", shape(cueProbs))
-        learningLen = kwargs.pop("learningLen", 200)
-        testLen = kwargs.pop("testLen", 100)
-        cues = kwargs.pop("cues", genCues(numCues, learningLen+testLen))
-        actualities = kwargs.pop("actualities", genActualities(cueProbs, cues, learningLen, testLen))
+        if not numCues:
+            numCues = np.shape(cueProbs)
+        if not cues:
+            cues = genCues(numCues, learningLen+testLen)
+        if not actualities:
+            actualities = genActualities(cueProbs, cues, learningLen, testLen)
 
         if isinstance(cues, basestring):
             if cues in cueSets:
@@ -107,9 +101,8 @@ class Weather(experiment):
 
         self.T = len(self.cues)
 
-        self.parameters = {"Name": self.Name,
-                           "Actualities": array(self.actualities),
-                           "Cues": array(self.cues)}
+        self.parameters["Actualities"] = np.array(self.actualities)
+        self.parameters["Cues"] = np.array(self.cues)
 
         # Set draw count
         self.t = -1
@@ -117,8 +110,6 @@ class Weather(experiment):
 
         # Recording variables
         self.recAction = [-1] * self.T
-
-        return self
 
     def next(self):
         """
@@ -152,7 +143,7 @@ class Weather(experiment):
 
         Parameters
         ----------
-        action : int
+        action : int or string
             The action taken by the model
         """
 
@@ -169,19 +160,24 @@ class Weather(experiment):
 
         return response
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
 
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
         results["Actions"] = self.recAction
 
@@ -209,11 +205,11 @@ def genCues(numCues, taskLen):
     cues = []
     for t in xrange(taskLen):
         c = []
-        while sum(c) in [0, numCues]:
-            c = (rand(numCues) > 0.5) * 1
+        while np.sum(c) in [0, numCues]:
+            c = (np.random.rand(numCues) > 0.5) * 1
         cues.append(c)
 
-    return array(cues)
+    return np.array(cues)
 
 def genActualities(cueProbs, cues, learningLen, testLen):
     """
@@ -235,22 +231,22 @@ def genActualities(cueProbs, cues, learningLen, testLen):
         probs = {1: {0: 0.75}, 2: {0: 1, 1: 0.5}, 3: {2: 0.75}}
         for t in xrange(learningLen):
             c = cues[t]
-            s = sum(c.reshape([2, 2]), 1)
-            prob = probs[sum(s)][prod(s)]
-            a = argmax(s)
-            p = array([1-a, a]) * (prob-(1-prob)) + (1-prob)
-            action = choice([0, 1], p=p)
+            s = np.sum(c.reshape([2, 2]), 1)
+            prob = probs[np.sum(s)][np.prod(s)]
+            a = np.argmax(s)
+            p = np.array([1-a, a]) * (prob-(1-prob)) + (1-prob)
+            action = np.random.choice([0, 1], p=p)
             actions.append(action)
     else:
         for t in xrange(learningLen):
             visibleCueProbs = cues[t] * cueProbs
-            actProb = sum(visibleCueProbs, 1)
-            action = choice([0, 1], p=actProb / sum(actProb))
+            actProb = np.sum(visibleCueProbs, 1)
+            action = np.random.choice([0, 1], p=actProb / np.sum(actProb))
             actions.append(action)
 
     actions.extend([float("Nan")] * testLen)
 
-    return array(actions)
+    return np.array(actions)
 
 def weatherStimDirect():
     """
@@ -268,7 +264,7 @@ def weatherStimDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta
     """
 
     def weatherStim(observation):
@@ -304,16 +300,16 @@ def weatherStimAllAction(numActions):
 
     See Also
     --------
-    model.BP, model.EP, model.MS_rev, model.decision.binary.decEtaSet
+    model.BP, model.EP, model.MSRev, model.decision.binary.decEtaSet
 
     Examples
     --------
     >>> from experiment.weather import weatherStimAllAction
     >>> stim = weatherStimAllAction(2)
-    >>> stim(array([1, 0, 0, 1]), 0)
-    (array([1, 0, 0, 1, 0, 0, 0, 0]), array([ 1, 0, 0, 1, 1, 1, 1, 1]))
-    >>> stim(array([1, 0, 0, 1]), 1)
-    (array([0, 0, 0, 0, 1, 0, 0, 1]), array([ 1, 1, 1, 1, 1, 0, 0, 1]))
+    >>> stim(np.array([1, 0, 0, 1]), 0)
+    (np.array([1, 0, 0, 1, 0, 0, 0, 0]), np.array([ 1, 0, 0, 1, 1, 1, 1, 1]))
+    >>> stim(np.array([1, 0, 0, 1]), 1)
+    (np.array([0, 0, 0, 0, 1, 0, 0, 1]), np.array([ 1, 1, 1, 1, 1, 0, 0, 1]))
     """
 
     def weatherStim(observation, action):
@@ -334,10 +330,10 @@ def weatherStimAllAction(numActions):
             The events processed into a form to be used for updating the expectations
         """
 
-        obsSize = size(observation)
+        obsSize = np.size(observation)
 
-        s = ones((numActions, obsSize))
-        a = zeros((numActions, obsSize))
+        s = np.ones((numActions, obsSize))
+        a = np.zeros((numActions, obsSize))
 
         s[action, :] = observation
         a[action, :] = observation
@@ -400,7 +396,7 @@ def weatherRewDiff():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def weatherRew(reward, action, stimuli):
@@ -433,13 +429,13 @@ def weatherRewDualCorrection(epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
 
     def weatherRew(reward, action, stimuli):
-        rewardProc = zeros((2, len(stimuli))) + epsilon
+        rewardProc = np.zeros((2, len(stimuli))) + epsilon
         rewardProc[reward, stimuli] = 1
-        return array(rewardProc)
+        return np.array(rewardProc)
 
     weatherRew.Name = "deckRewDualInfo"
     weatherRew.Params = {"epsilon": epsilon}

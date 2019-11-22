@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="fitAlgs package" href="fitAlgs.html" />
-    <link rel="prev" title="model.tdE module" href="model.tdE.html" /> 
+    <link rel="prev" title="model.modelTemplate module" href="model.modelTemplate.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -36,7 +36,7 @@
           <a href="fitAlgs.html" title="fitAlgs package"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="model.tdE.html" title="model.tdE module"
+          <a href="model.modelTemplate.html" title="model.modelTemplate module"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="model.html" accesskey="U">model package</a> &#187;</li> 
@@ -58,74 +58,14 @@
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="model.tdr.blankRew">
-<code class="descclassname">model.tdr.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.tdr.Name">
-<code class="descclassname">model.tdr.</code><code class="descname">Name</code><a class="headerlink" href="#model.tdr.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.tdr.blankStim">
-<code class="descclassname">model.tdr.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.tdr.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="class">
-<dt id="model.tdr.tdr">
-<em class="property">class </em><code class="descclassname">model.tdr.</code><code class="descname">tdr</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
+<dt id="model.tdr.TDR">
+<em class="property">class </em><code class="descclassname">model.tdr.</code><code class="descname">TDR</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>beta=4</em>, <em>tau=0.3</em>, <em>invBeta=None</em>, <em>expect=None</em>, <em>avReward=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The td-Learning algorithm</p>
 <dl class="attribute">
-<dt id="model.tdr.tdr.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.tdr.tdr.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.tdr.TDR.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -138,8 +78,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="model.tdr.tdr.currAction">
-<code class="descname">currAction</code><a class="headerlink" href="#model.tdr.tdr.currAction" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.tdr.TDR.currAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current action chosen by the model. Used to pass participant action
 to model when fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -176,7 +116,7 @@ task or dataset and references used in the models to describe the order
 in which the action information is stored.</li>
 <li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></li>
-<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the the expected reward.
+<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the expected reward.
 Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">numCues</span></code></li>
 <li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
 understand and a string to identify it later. Default is blankStim</li>
@@ -189,14 +129,9 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'tdr'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="model.tdr.tdr.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -211,8 +146,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -229,8 +164,8 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.delta" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -255,14 +190,14 @@ in to a decision. Default is model.decision.discrete.decWeightProb</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.lastChoiceReinforcement">
-<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.lastChoiceReinforcement">
+<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows the model to update its expectations once the action has been chosen.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -278,8 +213,8 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -300,15 +235,15 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.tdr.tdr.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#tdr.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.tdr.updateModel" title="Permalink to this definition">¶</a></dt>
+<dt id="model.tdr.TDR.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdr.html#TDR.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdr.TDR.updateModel" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -336,8 +271,8 @@ accessed later</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="model.tdE.html"
-                        title="previous chapter">model.tdE module</a></p>
+  <p class="topless"><a href="model.modelTemplate.html"
+                        title="previous chapter">model.modelTemplate module</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="fitAlgs.html"
                         title="next chapter">fitAlgs package</a></p>
@@ -377,7 +312,7 @@ accessed later</p>
           <a href="fitAlgs.html" title="fitAlgs package"
              >next</a> |</li>
         <li class="right" >
-          <a href="model.tdE.html" title="model.tdE module"
+          <a href="model.modelTemplate.html" title="model.modelTemplate module"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="model.html" >model package</a> &#187;</li> 

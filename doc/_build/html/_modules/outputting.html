@@ -49,20 +49,19 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="kn">import</span> <span class="nn">cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
-
 <span class="kn">import</span> <span class="nn">shutil</span> <span class="k">as</span> <span class="nn">shu</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">getcwd</span><span class="p">,</span> <span class="n">makedirs</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">stack</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">seterr</span><span class="p">,</span> <span class="n">seterrcall</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">size</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">listMerGen</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
 
 
 <span class="c1">#%% Folder management</span>
@@ -109,8 +108,8 @@
         <span class="n">logFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">saveScript</span><span class="p">:</span>
-            <span class="n">cwd</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">():</span>
+            <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">():</span>
                 <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;outputting(&quot;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cwd</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s2">&quot;outputting.py&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">):</span>
                     <span class="n">shu</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">)</span>
@@ -172,24 +171,24 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">basePath</span><span class="p">:</span>
-        <span class="n">basePath</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="n">basePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
     <span class="c1"># While the folders have already been created, check for the next one</span>
     <span class="n">folderName</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/Outputs/</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">basePath</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">dateStr</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folderName</span><span class="p">):</span>
         <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">folderName</span> <span class="o">+=</span> <span class="s1">&#39;_no_&#39;</span>
-        <span class="k">while</span> <span class="n">exists</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
+        <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)):</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">folderName</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
     <span class="n">folderName</span> <span class="o">+=</span> <span class="s2">&quot;/&quot;</span>
-    <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span><span class="p">)</span>
 
-    <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="s1">&#39;data/&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="s1">&#39;data/&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">pickleData</span><span class="p">:</span>
-        <span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="s1">&#39;Pickle/&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folderName</span> <span class="o">+</span> <span class="s1">&#39;Pickle/&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">folderName</span></div>
 
@@ -221,14 +220,14 @@
 <span class="sd">    &#39;./&#39;</span>
 <span class="sd">    &gt;&gt;&gt; fileNameGen = outputting.fileNameGenerator()</span>
 <span class="sd">    &gt;&gt;&gt; fileName = fileNameGen(&quot;&quot;, &quot;&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; fileName == getcwd()</span>
+<span class="sd">    &gt;&gt;&gt; fileName == os.getcwd()</span>
 <span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">outputFolder</span><span class="p">:</span>
-        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 
-    <span class="n">outputFileCounts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">outputFileCounts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">newFileName</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">extension</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -262,9 +261,9 @@
         <span class="n">outputFileCounts</span><span class="p">[</span><span class="n">fileNameForm</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">lastCount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">fileName</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lastCount</span><span class="p">)</span>
-        <span class="c1"># if exists(fileName + end):</span>
+        <span class="c1"># if os.path.exists(fileName + end):</span>
         <span class="c1">#     i = 1</span>
-        <span class="c1">#     while exists(fileName + &quot;_&quot; + str(i) + end):</span>
+        <span class="c1">#     while os.path.exists(fileName + &quot;_&quot; + str(i) + end):</span>
         <span class="c1">#         i += 1</span>
         <span class="c1">#     fileName += &quot;_&quot; + str(i)</span>
         <span class="n">fileName</span> <span class="o">+=</span> <span class="n">end</span>
@@ -345,8 +344,8 @@
     <span class="c1"># Set the standard error output</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;STDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
     <span class="c1"># Set the numpy error output and save the old one</span>
-    <span class="n">oldnperrcall</span> <span class="o">=</span> <span class="n">seterrcall</span><span class="p">(</span><span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">))</span>
-    <span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="n">npErrResp</span><span class="p">)</span>
+    <span class="n">oldnperrcall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">streamLoggerSim</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;NPSTDERR&#39;</span><span class="p">),</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="n">npErrResp</span><span class="p">)</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;Setup&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">dateStr</span><span class="p">)</span>
@@ -368,7 +367,7 @@
 
             <span class="n">logging</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span>
-            <span class="n">seterrcall</span><span class="p">(</span><span class="n">oldnperrcall</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">seterrcall</span><span class="p">(</span><span class="n">oldnperrcall</span><span class="p">)</span>
 
             <span class="n">root</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">handlers</span><span class="p">[:]:</span>
@@ -527,7 +526,7 @@
 <span class="sd">    reframeListDicts, newFlatDict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">keySet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">keys</span><span class="p">:</span>
@@ -540,7 +539,7 @@
             <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keySet</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
                 <span class="n">listSet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">listKeyGen</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="n">abridge</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">listSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
                     <span class="n">keySet</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">listSet</span>
@@ -631,7 +630,7 @@
 <span class="sd">                 (&#39;test&#39;, [&quot;&#39;string&#39;&quot;]),</span>
 <span class="sd">                 (&#39;array_[0]&#39;, [array([1])]), (&#39;array_[1]&#39;, [array([2])]), (&#39;array_[2]&#39;, [array([3])])])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">newStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">newStore</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">labelPrefix</span><span class="p">:</span>
         <span class="n">labelPrefix</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span>
@@ -645,7 +644,7 @@
             <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newFlatDict</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">subStore</span><span class="p">,</span> <span class="n">newKey</span><span class="p">)</span>
             <span class="n">newStore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyStoreSet</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">locCo</span> <span class="ow">in</span> <span class="n">loc</span><span class="p">:</span>
                 <span class="n">tempList</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
@@ -712,7 +711,7 @@
 <span class="sd">                 (&#39;array&#39;, [1, 2, 3, None, None, None])])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">newStore</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">newStore</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">labelPrefix</span><span class="p">:</span>
         <span class="n">labelPrefix</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span>
@@ -725,7 +724,7 @@
             <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">,</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">newKey</span><span class="p">)</span>
             <span class="n">newStore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyStoreSet</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">locCo</span> <span class="ow">in</span> <span class="n">loc</span><span class="p">:</span>
                 <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">listSelection</span><span class="p">(</span><span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">locCo</span><span class="p">))</span>
                 <span class="n">vals</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">)</span>
@@ -733,7 +732,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
                 <span class="n">vals</span> <span class="o">=</span> <span class="n">pad</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">maxListLen</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># We assume the object is a single value or string</span>
@@ -744,7 +743,7 @@
 
 
 <div class="viewcode-block" id="pad"><a class="viewcode-back" href="../outputting.html#outputting.pad">[docs]</a><span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">):</span>
-    <span class="n">vLen</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+    <span class="n">vLen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">vLen</span> <span class="o">&lt;</span> <span class="n">maxListLen</span><span class="p">:</span>
         <span class="n">vals</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxListLen</span> <span class="o">-</span> <span class="n">vLen</span><span class="p">)])</span>
     <span class="k">return</span> <span class="n">vals</span></div>
@@ -837,11 +836,11 @@
 <span class="sd">                  (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
 <span class="sd">    7)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">keySet</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">store</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="n">listSet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">listKeyGen</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="n">maxListLen</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="n">returnList</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="n">abridge</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">listSet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
                 <span class="n">keySet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">listSet</span><span class="p">)</span>
@@ -902,7 +901,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">returnList</span><span class="p">:</span>
-        <span class="n">dataShape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">dataShape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="n">dataShapeFirst</span> <span class="o">=</span> <span class="n">dataShape</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">maxListLen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dataShapeFirst</span>
@@ -910,19 +909,19 @@
             <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dataShapeFirst</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataShape</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">dataShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="c1"># If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document</span>
-    <span class="k">if</span> <span class="n">abridge</span> <span class="ow">and</span> <span class="n">prod</span><span class="p">(</span><span class="n">dataShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">abridge</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dataShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maxListLen</span>
 
     <span class="c1"># We need to calculate every combination of co-ordinates in the array</span>
     <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataShape</span><span class="p">]</span>
     <span class="c1"># Now record each one</span>
-    <span class="n">locList</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">)]</span>
+    <span class="n">locList</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">)]</span>
     <span class="n">listItemLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">locList</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">listItemLen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">returnList</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">locList</span><span class="p">)</span><span class="c1">#.flatten()</span>
+        <span class="n">returnList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">locList</span><span class="p">)</span><span class="c1">#.flatten()</span>
     <span class="k">elif</span> <span class="n">listItemLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maxListLen</span>
     <span class="k">else</span><span class="p">:</span>

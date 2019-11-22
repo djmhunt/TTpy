@@ -50,17 +50,19 @@
 <span class="sd">                Frontiers in Human Neuroscience, 5(August), 75.</span>
 <span class="sd">                doi:10.3389/fnhum.2011.00075</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">amax</span><span class="p">,</span> <span class="n">dot</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">square</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">from</span> <span class="nn">modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">Model</span>
 
 
-<div class="viewcode-block" id="RVPM"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.RVPM">[docs]</a><span class="k">class</span> <span class="nc">RVPM</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="RVPM"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.RVPM">[docs]</a><span class="k">class</span> <span class="nc">RVPM</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The reward value and prediction model</span>
 
 <span class="sd">    Attributes</span>
@@ -117,25 +119,19 @@
 <span class="sd">        in to a decision. Default is basicDecision</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;RVPM&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]),</span> <span class="n">zeta</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">averaging</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RVPM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="n">kwargRemains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">zeta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">averaging</span> <span class="o">=</span> <span class="n">averaging</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;zeta&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="mi">160</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">averaging</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;averaging&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">basicDecision</span><span class="p">())</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Timing sgnal value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Timing signal value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># The stimuli</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reward value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">V</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reward prediction unit</span>
@@ -143,7 +139,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">deltaM</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Negative prediction error unit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">TSN</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Temporally shifted neuron</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;tau&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
@@ -155,7 +150,7 @@
         <span class="c1"># Recorded information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_storeSetup</span><span class="p">()</span>
 
-<div class="viewcode-block" id="RVPM.outputEvolution"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.RVPM.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RVPM.returnTaskState"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.RVPM.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
 
 <span class="sd">        Returns</span>
@@ -215,7 +210,7 @@
     <span class="k">def</span> <span class="nf">_updateGeneralStore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generalStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">eventStore</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -312,99 +307,27 @@
 
     <span class="k">def</span> <span class="nf">_vUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">V</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">V</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">)])</span>
         <span class="k">return</span> <span class="n">new</span>
 
     <span class="k">def</span> <span class="nf">_deltaPUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">deltaP</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">deltaP</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="p">])</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">deltaP</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">new</span>
 
     <span class="k">def</span> <span class="nf">_timeSigMag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">signal</span> <span class="o">=</span> <span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="o">-</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">signal</span>
 
     <span class="k">def</span> <span class="nf">_deltaMUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">deltaM</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
-        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">deltaM</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="o">-</span><span class="n">r</span><span class="p">])</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="o">-</span><span class="n">beta</span><span class="o">*</span><span class="n">deltaM</span> <span class="o">+</span> <span class="n">beta</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">V</span><span class="o">-</span><span class="n">r</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">new</span>
 
     <span class="k">def</span> <span class="nf">_tsnUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dV</span><span class="p">,</span> <span class="n">ddeltaP</span><span class="p">,</span> <span class="n">ddeltaM</span><span class="p">):</span>
-        <span class="n">signal</span> <span class="o">=</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">dV</span><span class="p">])</span> <span class="o">+</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddeltaP</span><span class="p">])</span> <span class="o">-</span> <span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddeltaM</span><span class="p">])</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zeta</span><span class="o">*</span><span class="n">dV</span><span class="p">])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddeltaP</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddeltaM</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">signal</span></div>
 
-
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot; The default stimulus processor generator for RVPM</span>
-
-<span class="sd">    Passes the pavlov stimuli to models that cope with stimuli and rewards</span>
-<span class="sd">    that have a duration.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankStimFunc : function</span>
-<span class="sd">        The function yields a series of ten events ``t,0,0```, where ``t`` is</span>
-<span class="sd">        the time. The stimulus and reward are set to 0.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-
-            <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
-
-    <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankStim&quot;</span>
-
-    <span class="k">return</span> <span class="n">blankStimFunc</span></div>
-
-
-<div class="viewcode-block" id="basicDecision"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.basicDecision">[docs]</a><span class="k">def</span> <span class="nf">basicDecision</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;The default decision function for RVPM</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the probabilities and then return</span>
-<span class="sd">        `None`.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">basicDecisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">):</span>
-
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="n">basicDecisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicDecision&quot;</span>
-
-    <span class="k">return</span> <span class="n">basicDecisionFunc</span></div>
-
-
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.RVPM.html#model.RVPM.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default reward processor. Does nothing. Returns reward</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankRewFunc : function</span>
-<span class="sd">        The function expects to be passed the reward and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankRewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reward</span>
-
-    <span class="n">blankRewFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankRew&quot;</span>
-    <span class="k">return</span> <span class="n">blankRewFunc</span></div>
 </pre></div>
 
           </div>

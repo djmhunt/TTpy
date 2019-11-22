@@ -17,9 +17,9 @@ def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=T
 
     Parameters
     ----------
-    experiments : experiments.experiments
+    experiments : experimentGenerator.ExperimentGen
         An experiment factory generating each of the different experiments being considered
-    models : models.models
+    models : modelGenerator.ModelGen
         A model factory generating each of the different models being considered
     save : bool, optional
         If true the data will be saved to files. Default ``True``
@@ -52,35 +52,33 @@ def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=T
     message = "Beginning the simulation set"
     logger.debug(message)
 
-    for expNum in experiments:
+    for expNum in experiments.iterExpID():
 
-        for modelSet in models:
+        for model in models:
 
-            for model in modelSet:
+            exp = experiments.newExp(expNum)
 
-                exp = experiments.create(expNum)
+            logSimParams(exp.params(), model.params(), simID=str(simID))
 
-                logSimParams(exp.params(), model.params(), simID=str(simID))
+            message = "Beginning experiment"
+            logger.debug(message)
 
-                message = "Beginning experiment"
-                logger.debug(message)
+            for state in exp:
+                model.observe(state)
+                act = model.action()
+                exp.receiveAction(act)
+                response = exp.feedback()
+                model.feedback(response)
+                exp.proceed()
 
-                for state in exp:
-                    model.observe(state)
-                    act = model.action()
-                    exp.receiveAction(act)
-                    response = exp.feedback()
-                    model.feedback(response)
-                    exp.procede()
+            model.setsimID(str(simID))
 
-                model.setsimID(str(simID))
+            message = "Experiment completed"
+            logger.debug(message)
 
-                message = "Experiment completed"
-                logger.debug(message)
+            recordSim(fileNameGen, exp.returnTaskState(), model.returnTaskState(), str(simID), pickleData=pickleData)
 
-                recordSim(fileNameGen, exp.outputEvolution(), model.outputEvolution(), str(simID), pickleData=pickleData)
-
-                simID += 1
+            simID += 1
 
     closeLoggers()
 

@@ -14,16 +14,14 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, ones
+import numpy as np
 
-from modelTemplate import model
-from model.decision.binary import decEta
-from utils import callableDetailsString
+from modelTemplate import Model
 
 
-class MS_rev(model):
+class MSRev(Model):
 
-    """An adapted version of the Morre & Sellen model
+    """An adapted version of the More & Sellen model
 
     Attributes
     ----------
@@ -74,35 +72,28 @@ class MS_rev(model):
         in to a decision. Default is model.decision.binary.decEta
     """
 
-    Name = "MS_rev"
+    def __init__(self, alpha=0.3, beta=4, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(MSRev, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.eta = kwargRemains.pop('eta', 0.3)
-        self.expectations = kwargRemains.pop('expectations', ones((self.numActions, self.numCues)) / self.numCritics)
-        # The alpha is an activation rate parameter. The M&S paper uses a value of 1.
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCritics
+        self.expectations = expect
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decEta(expResponses=(1, 2), eta=self.eta))
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
-        self.parameters["eta"] = self.eta
         self.parameters["expectations"] = self.expectations
 
         self.probDifference = 0
 
         # Recorded information
-        self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -218,7 +209,7 @@ class MS_rev(model):
         #li = actionValues ** self.beta
         #probArray = li/sum(li)
 
-        numerator = exp(self.beta * actionValues)
+        numerator = np.exp(self.beta * actionValues)
         denominator = sum(numerator)
 
         probArray = numerator / denominator
@@ -239,48 +230,3 @@ class MS_rev(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

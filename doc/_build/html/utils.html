@@ -102,11 +102,11 @@
 <tr class="row-odd"><td><a class="reference internal" href="#utils.kldivergence" title="utils.kldivergence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kldivergence</span></code></a>(m0,&nbsp;m1,&nbsp;c0,&nbsp;c1)</td>
 <td>Calculates the Kullback–Leibler divergence between two distributions using the means and covariances</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#utils.listMerGen" title="utils.listMerGen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerGen</span></code></a>(*args)</td>
-<td>Fast merging of lists of numbers</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#utils.listMerge" title="utils.listMerge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerge</span></code></a>(*args)</td>
+<tr class="row-even"><td><a class="reference internal" href="#utils.listMerge" title="utils.listMerge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMerge</span></code></a>(*args)</td>
 <td>For merging lists with objects that are not solely numbers</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#utils.listMergeGen" title="utils.listMergeGen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMergeGen</span></code></a>(*args)</td>
+<td>Fast merging of lists of numbers</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#utils.listMergeNP" title="utils.listMergeNP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listMergeNP</span></code></a>(*args)</td>
 <td>Fast merging of lists of numbers</td>
@@ -555,39 +555,6 @@ to access them.</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="utils.listMerGen">
-<code class="descclassname">utils.</code><code class="descname">listMerGen</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#listMerGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMerGen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fast merging of lists of numbers</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>list of lists of numbers</em>) – A list of 1D lists of numbers</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><strong>combination</strong> (<em>numpy.array of 1 x len(args)</em>) – Array of all combinations</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">(</span><span class="mf">0.7</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-<span class="go">array([ 0.7])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-<span class="go">array([ 0.7])</span>
-<span class="go">array([ 0.1])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-<span class="go">array([ 0.7,  0.6])</span>
-<span class="go">array([ 0.1,  0.6])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMerGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="mf">0.6</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-<span class="go">array([ 0.7,  0.6])</span>
-<span class="go">array([ 0.1,  0.6])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
 <dt id="utils.listMerge">
 <code class="descclassname">utils.</code><code class="descname">listMerge</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#listMerge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMerge" title="Permalink to this definition">¶</a></dt>
 <dd><p>For merging lists with objects that are not solely numbers</p>
@@ -607,6 +574,39 @@ to access them.</td>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">listMerge</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 <span class="go">array([[1, 2, 3, 1, 2, 3, 1, 2, 3],</span>
 <span class="go">       [5, 5, 5, 6, 6, 6, 7, 7, 7]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="utils.listMergeGen">
+<code class="descclassname">utils.</code><code class="descname">listMergeGen</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils.html#listMergeGen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#utils.listMergeGen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fast merging of lists of numbers</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>list of lists of numbers</em>) – A list of 1D lists of numbers</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Yields:</th><td class="field-body"><strong>combination</strong> (<em>numpy.array of 1 x len(args)</em>) – Array of all combinations</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMergeGen</span><span class="p">(</span><span class="mf">0.7</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="go">array([ 0.7])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMergeGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="go">array([ 0.7])</span>
+<span class="go">array([ 0.1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMergeGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="go">array([ 0.7,  0.6])</span>
+<span class="go">array([ 0.1,  0.6])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMergeGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[]):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listMergeGen</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="mf">0.6</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="go">array([ 0.7,  0.6])</span>
+<span class="go">array([ 0.1,  0.6])</span>
 </pre></div>
 </div>
 </dd></dl>

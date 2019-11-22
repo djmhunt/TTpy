@@ -19,8 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="experiments module" href="../experiments.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -31,11 +30,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../experiments.html" title="experiments module"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../experiments.html" accesskey="U">experiments module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -46,84 +41,6 @@
             
   <div class="section" id="experiments">
 <h1>experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="experiments.experiments">
-<em class="property">class </em><code class="descclassname">experiments.</code><code class="descname">experiments</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/experiments.html#experiments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiments.experiments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A factory that generates lists of experiment classes</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<em>a list of tuples of the form</em><em> (</em><a class="reference internal" href="../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment" title="experiment.experimentTemplate.experiment"><em>experiment</em></a><em>,</em><em>variables</em><em>, </em><em>parameters</em><em>)</em>) – Each tuple is an an experiment package, describing an experiment and
-the different parameter combinations that will be tried.</li>
-<li><strong>tuples components</strong> (<em>args</em>) – </li>
-<li><strong>experiment</strong> (<em>experiment.experiment.experiment</em>) – </li>
-<li><strong>variables</strong> (<em>dictonary of floats</em><em> or </em><em>lists of floats</em>) – Variables are the parameters that you are or are likely to change across
-model instances. When a variable contains a list, an instance of the
-experiment will be created for every combination of this variable with
-all the others.</li>
-<li><strong>parameters</strong> (<em>dictionary of float</em><em>, </em><em>string</em><em> or </em><em>binary valued elements</em>) – These contain all the the experiment parameters that define the version
-of the experiment being studied.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods Summary</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../experiments.html#experiments.experiments.create" title="experiments.experiments.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a>(expNum)</td>
-<td>Produces the next experiment instance</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../experiments.html#experiments.experiments.next" title="experiments.experiments.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a>()</td>
-<td>Produces the next item for the iterator</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="experiments.experiments.create">
-<code class="descname">create</code><span class="sig-paren">(</span><em>expNum</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/experiments.html#experiments.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiments.experiments.create" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next experiment instance</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>expNum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of the experiment instance to be intiailised</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>instance</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">experiment.experiment.experiment instance</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="experiments.experiments.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/experiments.html#experiments.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiments.experiments.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produces the next item for the iterator</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>count</strong> – The number of the next experiment instance. This is entered into
-experiments.create(count) to receive the experiment instance</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 
@@ -132,9 +49,6 @@ experiments.create(count) to receive the experiment instance</td>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../experiments.html"
-                        title="previous chapter">experiments module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -167,11 +81,7 @@ experiments.create(count) to receive the experiment instance</td>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../experiments.html" title="experiments module"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../experiments.html" >experiments module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

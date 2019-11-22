@@ -47,9 +47,8 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
 
-<div class="viewcode-block" id="experiment"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment">[docs]</a><span class="k">class</span> <span class="nc">experiment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The abstract experiment class from which all others inherit</span>
 
 <span class="sd">    Many general methods for experiments are found only here</span>
@@ -65,28 +64,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Empty&quot;</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findName</span><span class="p">()</span>
 
-<div class="viewcode-block" id="experiment.reset"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span>
+                           <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">}</span></div>
 
 
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -96,7 +83,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="experiment.next"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.next"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -115,14 +102,6 @@
         <span class="c1"># Since there is nothing to iterate over, just return the final state</span>
 
         <span class="k">raise</span> <span class="ne">StopIteration</span></div>
-<span class="c1">#        if self.index == self.maxIndex:</span>
-<span class="c1">#            raise StopIteration</span>
-<span class="c1">#</span>
-<span class="c1">#        self.index += 1</span>
-<span class="c1">#</span>
-<span class="c1">#        self._storeState()</span>
-<span class="c1">#</span>
-<span class="c1">#        return self.data[self.index], None</span>
 
     <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
@@ -142,21 +121,30 @@
 
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="experiment.receiveAction"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.findName"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+<div class="viewcode-block" id="Experiment.receiveAction"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="experiment.procede"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.proceed"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment before the next trialstep</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="experiment.feedback"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.feedback"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 
@@ -168,23 +156,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="experiment.outputEvolution"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.returnTaskState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevent data for this experiment run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        results : dictionary</span>
-<span class="sd">            The dictionary contains a series of keys including Name,</span>
-<span class="sd">            Observables and Actions.</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                   <span class="s2">&quot;Actions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">}</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="experiment.storeState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.storeState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
@@ -192,7 +180,13 @@
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="experiment.params"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.standardResultOutput"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.standardResultOutput">[docs]</a>    <span class="k">def</span> <span class="nf">standardResultOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="Experiment.params"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parameters of the experiment as a dictionary</span>
 

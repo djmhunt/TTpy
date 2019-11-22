@@ -11,13 +11,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign
+import numpy as np
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class qLearnK(model):
+class QLearnK(Model):
 
     """The q-Learning Kalman algorithm
 
@@ -77,28 +76,31 @@ class qLearnK(model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "qLearnK"
+    def __init__(self, beta=4, sigma=1, sigmaG=1, drift=1, sigmaA=None, alphaA=None, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(QLearnK, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.sigma = kwargRemains.pop('sigma', 1)
-        self.sigmaG = kwargRemains.pop('sigmaG', 1)
-        self.drift = kwargRemains.pop('lambda', 1)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        self.sigma = sigma
+        self.sigmaG = sigmaG
+        self.drift = drift
+
+        if sigmaA is None:
+            sigmaA = np.ones(self.numActions)
+        self.sigmaA = sigmaA
+        if alphaA is None:
+            alphaA = np.ones(self.numActions)
+        self.alphaA = alphaA
+
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
         self.expectations0 = self.expectations.copy()
-        self.sigmaA = kwargRemains.pop('sigmaA', ones(self.numActions))
-        self.alphaA = kwargRemains.pop('alphaA', ones(self.numActions))
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
 
-        self.genStandardParameterDetails()
         self.parameters["sigma"] = self.sigma
         self.parameters["sigmaG"] = self.sigmaG
         self.parameters["beta"] = self.beta
@@ -106,12 +108,10 @@ class qLearnK(model):
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recsigmaA = []
         self.recalphaA = []
 
-
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -122,8 +122,8 @@ class qLearnK(model):
         """
 
         results = self.standardResultOutput()
-        results["sigmaA"] = array(self.recsigmaA).T
-        results["alphaA"] = array(self.recalphaA).T
+        results["sigmaA"] = np.array(self.recsigmaA).T
+        results["alphaA"] = np.array(self.recalphaA).T
 
         return results
 
@@ -218,7 +218,7 @@ class qLearnK(model):
         self.alphaA = alphaA
 
         newExpectations = self.expectations.copy()
-        newExpectations[action] = self.expectations[action] + self.alphaA[action]*delta*stimuli/sum(stimuli)
+        newExpectations[action] = self.expectations[action] + self.alphaA[action]*delta*stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations = self.drift * newExpectations + (1-self.drift) * self.expectations0
 
@@ -252,17 +252,17 @@ class qLearnK(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
 #        inftest = isinf(numerator)
 #        if inftest.any():
 #            possprobs = inftest * 1
-#            probs = possprobs / sum(possprobs)
+#            probs = possprobs / np.sum(possprobs)
 #
-#            logger = logging.getLogger('qLearn')
+#            logger = logging.getLogger('QLearn')
 #            message = "Overflow in calculating the prob with expectation "
 #            message += str(expectation)
 #            message += " \n Returning the prob: " + str(probs)
@@ -284,49 +284,3 @@ class qLearnK(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

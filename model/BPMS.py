@@ -7,15 +7,12 @@ from __future__ import division, print_function
 
 import logging
 
-from numpy import exp, array, ones
-from types import NoneType
+import numpy as np
 
-from modelTemplate import model
-from model.decision.binary import decSingle
-from utils import callableDetailsString
+from modelTemplate import Model
 
 
-class BPMS(model):
+class BPMS(Model):
 
     """The Bayesian Predictor with Markovian Switching model
 
@@ -70,21 +67,15 @@ class BPMS(model):
     you can only have two stimuli
     """
 
-    Name = "BPMS"
+    def __init__(self, beta=4, eta=0, delta=0, invBeta=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(BPMS, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.eta = eta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.eta = kwargRemains.pop('eta', 0)
-        delta = kwargRemains.pop('delta', 0)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.decisionFunc = kwargRemains.pop('decFunc', decSingle(expResponses=tuple(range(0, self.numCritics))))
-
-        self.genStandardParameterDetails()
         self.parameters["beta"] = self.beta
         self.parameters["eta"] = self.eta
         self.parameters["delta"] = delta
@@ -94,19 +85,18 @@ class BPMS(model):
 #        if len(prior) != self.numCritics:
 #            raise warning.
 
-        self.posteriorProb = ones(self.numActions) / self.numActions
+        self.posteriorProb = np.ones(self.numActions) / self.numActions
         self.switchProb = 0
-        self.stayMatrix = array([[1-delta, delta], [delta, 1-delta]])
-        self.switchMatrix = array([[delta, 1-delta], [1-delta, delta]])
+        self.stayMatrix = np.array([[1-delta, delta], [delta, 1-delta]])
+        self.switchMatrix = np.array([[delta, 1-delta], [1-delta, delta]])
         self.actionLoc = {k: k for k in range(0, self.numActions)}
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recSwitchProb = []
         self.recPosteriorProb = []
         self.recActionLoc = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -117,9 +107,9 @@ class BPMS(model):
         """
 
         results = self.standardResultOutput()
-        results["SwitchProb"] = array(self.recSwitchProb)
-        results["PosteriorProb"] = array(self.recPosteriorProb)
-        results["ActionLocation"] = array(self.recActionLoc)
+        results["SwitchProb"] = np.array(self.recSwitchProb)
+        results["PosteriorProb"] = np.array(self.recPosteriorProb)
+        results["ActionLocation"] = np.array(self.recActionLoc)
 
         return results
 
@@ -220,7 +210,7 @@ class BPMS(model):
 
         p = delta
 
-        li = array([p[loc[action]], p[loc[1-action]]])
+        li = np.array([p[loc[action]], p[loc[1-action]]])
 
         newProb = li/sum(li)
 
@@ -256,54 +246,6 @@ class BPMS(model):
         """
 
         pI = prob[1]
-        ps = 1.0 / (1.0 - exp(-self.beta * (pI - self.eta)))
+        ps = 1.0 / (1.0 - np.exp(-self.beta * (pI - self.eta)))
 
         return ps
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.Returns [1,0]
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return [1, 0]
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

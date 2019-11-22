@@ -67,13 +67,13 @@ algorithm, rather than the logistic algorithm used here.</td>
 </tbody>
 </table>
 <dl class="class">
-<dt id="model.MS_rev.MS_rev">
-<em class="property">class </em><code class="descclassname">model.MS_rev.</code><code class="descname">MS_rev</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.model" title="model.modelTemplate.model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.model</span></code></a></p>
-<p>An adapted version of the Morre &amp; Sellen model</p>
+<dt id="model.MS_rev.MSRev">
+<em class="property">class </em><code class="descclassname">model.MS_rev.</code><code class="descname">MSRev</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>beta=4</em>, <em>invBeta=None</em>, <em>expect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
+<p>An adapted version of the More &amp; Sellen model</p>
 <dl class="attribute">
-<dt id="model.MS_rev.MS_rev.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.MS_rev.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.MS_rev.MSRev.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -86,8 +86,8 @@ algorithm, rather than the logistic algorithm used here.</td>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="model.MS_rev.MS_rev.currAction">
-<code class="descname">currAction</code><a class="headerlink" href="#model.MS_rev.MS_rev.currAction" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.MS_rev.MSRev.currAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current action chosen by the model. Used to pass participant action
 to model when fitting</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -137,14 +137,9 @@ in to a decision. Default is model.decision.binary.decEta</li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = 'MS_rev'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -159,8 +154,8 @@ in to a decision. Default is model.decision.binary.decEta</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -177,8 +172,8 @@ in to a decision. Default is model.decision.binary.decEta</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.delta" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -203,8 +198,8 @@ in to a decision. Default is model.decision.binary.decEta</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.outputEvolution">
-<code class="descname">outputEvolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.outputEvolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.outputEvolution" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -220,8 +215,8 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the reward based on the action and stimuli</p>
 <p>This contains parts that are experiment dependent</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -242,76 +237,16 @@ Probabilities, Actions and Events.</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.storeState" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be accessed later</p>
 <p>The stored variables are ones that describe the model.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="model.MS_rev.MS_rev.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MS_rev.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MS_rev.updateModel" title="Permalink to this definition">¶</a></dt>
+<dt id="model.MS_rev.MSRev.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#MSRev.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.MSRev.updateModel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.MS_rev.blankRew">
-<code class="descclassname">model.MS_rev.</code><code class="descname">blankRew</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#blankRew"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.blankRew" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default reward processor. Does nothing. Returns reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankRewFunc</strong> – The function expects to be passed the reward and then return it.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="model.MS_rev.Name">
-<code class="descclassname">model.MS_rev.</code><code class="descname">Name</code><a class="headerlink" href="#model.MS_rev.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="model.MS_rev.blankStim">
-<code class="descclassname">model.MS_rev.</code><code class="descname">blankStim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/MS_rev.html#blankStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.MS_rev.blankStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Default stimulus processor. Does nothing.Returns [1,0]</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>blankStimFunc</strong> – The function expects to be passed the event and then return [1,0].</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">model.MS_rev.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
 
 </dd></dl>
 

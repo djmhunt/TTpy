@@ -5,12 +5,14 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from numpy import array, zeros, nan, ndarray, isnan, sum
-from numpy.random import rand, randint
+import numpy as np
+
+from numpy import nan
+
 from numpy import float as npfloat
 
 
-from experiment.experimentTemplate import experiment
+from experiment.experimentTemplate import Experiment
 
 # TODO: Create a set of test cues
 cueSets = {"Test": []}
@@ -18,7 +20,8 @@ defaultCues = cueSets["Test"]
 
 actualityLists = {}
 
-class Probstim(experiment):
+
+class Probstim(Experiment):
     """
     Basic probabilistic
 
@@ -38,79 +41,66 @@ class Probstim(experiment):
         The cues used to guess the actualities
     trialsteps: int, optional
         If no provided cues, it is the number of trialsteps for the generated set of cues. Default ``100``
-    numStim: int, optional
+    numStimuli: int, optional
         If no provided cues, it is the number of distinct stimuli for the generated set of cues. Default ``4``
     correctProb: float in [0,1], optional
         If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0.
         The default is ``0.8``
     correctProbs: list or array of floats in [0,1], optional
         If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0 for
-        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStim//2) + [corrProb] * (numStim%2)``
+        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStimuli//2) + [corrProb] * (numStimuli%2)``
     rewardlessT: int, optional
         If no actualities provided, it is the number of actualities at the end of the experiment that will have a
-        ``None`` reward. Default ``2*numStim``
+        ``None`` reward. Default ``2*numStimuli``
     """
 
-    Name = "probStim"
+    def __init__(self, cues=None, actualities=None, trialsteps=100, numStimuli=4, correctProb=0.8, correctProbabilities=None, rewardlessT=None, **kwargs):
 
-    def reset(self):
-        """
-        Creates a new experiment instance
-
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
-
-        kwargs = self.kwargs.copy()
-
-        cues = kwargs.pop("cues", None)
-        actualities = kwargs.pop("actualities", None)
+        super(Probstim, self).__init__(**kwargs)
 
         if isinstance(cues, basestring):
             if cues in cueSets:
                 self.cues = cueSets[cues]
                 self.T = len(self.cues)
-                numStim = len(self.cues[0])
+                numStimuli = len(self.cues[0])
             else:
                 raise Exception("Unknown cue sets")
-        elif isinstance(cues, (list, ndarray)):
+        elif isinstance(cues, (list, np.ndarray)):
             self.cues = cues
             self.T = len(self.cues)
-            numStim = len(self.cues[0])
+            numStimuli = len(self.cues[0])
         else:
-            self.T = kwargs.pop("trialsteps", 100)
-            numStim = kwargs.pop("numStim", 4)
-            stim = zeros((self.T, numStim))
-            stim[range(self.T), randint(numStim, size=self.T)] = 1
-            self.cues = stim
+            self.T = trialsteps
+            numStimuli = numStimuli
+            stimuli = np.zeros((self.T, numStimuli))
+            stimuli[range(self.T), np.random.randint(numStimuli, size=self.T)] = 1
+            self.cues = stimuli
 
         if isinstance(actualities, str):
             if actualities in actualityLists:
                 self.actualities = actualityLists[actualities]
-                rewardlessT = sum(isnan(array(self.actualities, dtype=npfloat)))
+                rewardlessT = np.sum(np.isnan(np.array(self.actualities, dtype=npfloat)))
             else:
                 raise Exception("Unknown actualities list")
-        elif isinstance(actualities, (list, ndarray)):
+        elif isinstance(actualities, (list, np.ndarray)):
             self.actualities = actualities
-            rewardlessT = sum(isnan(array(actualities, dtype=npfloat)))
+            rewardlessT = np.sum(np.isnan(np.array(actualities, dtype=npfloat)))
         else:
-            corrProbBasis = kwargs.pop("correctProb", 0.8)
-            corrProbDefault = [corrProbBasis, 1-corrProbBasis] * (numStim//2) + [corrProbBasis] * (numStim%2)
-            correctProbs = kwargs.pop("correctProbs", corrProbDefault)
-            rewardlessT = kwargs.pop("rewardlessT", 2*numStim)
-            corrChoiceProb = sum(self.cues * correctProbs, 1)
-            correctChoice = list((rand(self.T) < corrChoiceProb) * 1)
+            corrProbDefault = [correctProb, 1-correctProb] * (numStimuli // 2) + [correctProb] * (numStimuli % 2)
+            if not correctProbabilities:
+                correctProbabilities = corrProbDefault
+            if not rewardlessT:
+                rewardlessT = 2 * numStimuli
+            corrChoiceProb = np.sum(self.cues * correctProbabilities, 1)
+            correctChoice = list((np.random.rand(self.T) < corrChoiceProb) * 1)
             correctChoice[-rewardlessT:] = [nan] * rewardlessT
             self.actualities = correctChoice
 
-        self.parameters = {"Name": self.Name,
-                           "Actualities": array(self.actualities),
-                           "Cues": array(self.cues),
-                           "numtrialsteps": self.T,
-                           "numRewardless": rewardlessT,
-                           "numCues": numStim}
-
+        self.parameters["Actualities"] = np.array(self.actualities)
+        self.parameters["Cues"] = np.array(self.cues)
+        self.parameters["numtrialsteps"] = self.T
+        self.parameters["numRewardless"] = rewardlessT
+        self.parameters["numCues"] = numStimuli
 
         # Set draw count
         self.t = -1
@@ -118,8 +108,6 @@ class Probstim(experiment):
 
         # Recording variables
         self.recAction = [-1] * self.T
-
-        return self
 
     def next(self):
         """
@@ -153,7 +141,7 @@ class Probstim(experiment):
 
         Parameters
         ----------
-        action : int
+        action : int or string
             The action taken by the model
         """
 
@@ -170,20 +158,24 @@ class Probstim(experiment):
 
         return response
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
 
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this
-        experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
         results["Actions"] = self.recAction
 
@@ -213,7 +205,7 @@ def probstimDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta
     """
 
     def probstim(observation):
@@ -244,7 +236,7 @@ def probrewDiff():
 
     See Also
     --------
-    model.qLearn, model.qLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.decEta
     """
 
     def probrew(reward, action, stimuli):
@@ -277,13 +269,13 @@ def probrewDualCorrection(epsilon):
 
     See Also
     --------
-    model.BP, model.EP, model.MS, model.MS_rev
+    model.BP, model.EP, model.MS, model.MSRev
     """
 
     def probrew(reward, action, stimuli):
-        rewardProc = zeros((2, len(stimuli))) + epsilon
+        rewardProc = np.zeros((2, len(stimuli))) + epsilon
         rewardProc[reward, stimuli] = 1
-        return array(rewardProc)
+        return np.array(rewardProc)
 
     probrew.Name = "probstimDualCorrection"
     probrew.Params = {"epsilon": epsilon}

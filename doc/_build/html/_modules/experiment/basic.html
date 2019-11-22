@@ -49,34 +49,38 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
-<div class="viewcode-block" id="Basic"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic">[docs]</a><span class="k">class</span> <span class="nc">Basic</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basic&quot;</span>
 
-<div class="viewcode-block" id="Basic.reset"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
+<div class="viewcode-block" id="Basic"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic">[docs]</a><span class="k">class</span> <span class="nc">Basic</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An example of an experiment with all the necessary components, but nothing changing</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    trials : int</span>
+<span class="sd">        The number of trials in the experiment</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;trials&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trials</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s2">&quot;Trials&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">}</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Basic</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbr_of_trials</span> <span class="o">=</span> <span class="n">trials</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Trials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbr_of_trials</span>
 
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># start at -1 so first call to next will yield trial 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># placeholder for what action is taken</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_history</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbr_of_trials</span>
 
 <div class="viewcode-block" id="Basic.next"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -93,19 +97,24 @@
 <span class="sd">        StopIteration</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbr_of_trials</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="n">nextStim</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">nextStimulus</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">nextValidActions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
+        <span class="k">return</span> <span class="n">nextStimulus</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
 <div class="viewcode-block" id="Basic.receiveAction"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
@@ -115,35 +124,43 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Basic.procede"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Basic.proceed"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Basic.outputEvolution"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Basic.returnTaskState"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves files containing all the relevant data for this experiment run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
 
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;partActions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;participantActions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_history</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">results</span></div>
 
 <div class="viewcode-block" id="Basic.storeState"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_history</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
-<div class="viewcode-block" id="basicStimDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicStimDirect">[docs]</a><span class="k">def</span> <span class="nf">basicStimDirect</span><span class="p">():</span>
+
+<div class="viewcode-block" id="basicStimulusDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicStimulusDirect">[docs]</a><span class="k">def</span> <span class="nf">basicStimulusDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the stimulus cues for models expecting just the event</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    basicStim : function</span>
+<span class="sd">    basicStimulus : function</span>
 <span class="sd">        The function returns a tuple of ``1`` and the observation.</span>
 
 <span class="sd">    Attributes</span>
@@ -153,23 +170,23 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2</span>
+<span class="sd">    model.QLearn, model.QLearn2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">basicStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">basicStimulus</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
         <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
 
-    <span class="n">basicStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicStimDirect&quot;</span>
-    <span class="k">return</span> <span class="n">basicStim</span></div>
+    <span class="n">basicStimulus</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicStimulusDirect&quot;</span>
+    <span class="k">return</span> <span class="n">basicStimulus</span></div>
 
 
-<div class="viewcode-block" id="basicRewDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicRewDirect">[docs]</a><span class="k">def</span> <span class="nf">basicRewDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="basicRewardDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicRewardDirect">[docs]</a><span class="k">def</span> <span class="nf">basicRewardDirect</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the reward for models expecting just the reward</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    deckRew : function</span>
+<span class="sd">    basicReward : function</span>
 <span class="sd">        The function expects to be passed a tuple containing the reward and the</span>
 <span class="sd">        last action. The function returns the reward.</span>
 
@@ -180,14 +197,15 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2</span>
+<span class="sd">    model.QLearn, model.QLearn2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">basicRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">basicReward</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">reward</span>
 
-    <span class="n">basicRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicRewDirect&quot;</span>
-    <span class="k">return</span> <span class="n">basicRew</span></div>
+    <span class="n">basicReward</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicRewardDirect&quot;</span>
+    <span class="k">return</span> <span class="n">basicReward</span></div>
+
 </pre></div>
 
           </div>

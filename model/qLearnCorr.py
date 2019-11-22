@@ -2,7 +2,7 @@
 """
 :Author: Dominic Hunt
 
-:Reference: Based on the qLearn model and the choice autocorrelation equation in the paper
+:Reference: Based on the QLearn model and the choice autocorrelation equation in the paper
                 Trial-by-trial data analysis using computational models.
                 Daw, N. D. (2011).
                 Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–38).
@@ -13,13 +13,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros, shape
+import numpy as np
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class qLearnCorr(model):
+class QLearnCorr(Model):
 
     """The q-Learning algorithm
 
@@ -73,38 +72,31 @@ class qLearnCorr(model):
 
     See Also
     --------
-    model.qLearn : This model is heavily based on that one
+    model.QLearn : This model is heavily based on that one
     """
 
-    Name = "qLearnCorr"
+    def __init__(self, alpha=0.3, beta=4, kappa=0.1, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(QLearnCorr, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.kappa = kappa
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.kappa = kwargRemains.pop('kappa', 0.2)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
-        self.lastAction = kwargRemains.pop('firstAction', 1)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
-
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["kappa"] = self.kappa
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -205,7 +197,7 @@ class qLearnCorr(model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
 
         newExpectations = newExpectations * (newExpectations >= 0)
 
@@ -236,11 +228,11 @@ class qLearnCorr(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        lastAction = zeros(shape(actionValues))
+        lastAction = np.zeros(np.shape(actionValues))
         lastAction[self.lastAction] = 1
 
-        numerator = exp(self.beta * (actionValues + self.kappa * lastAction))
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * (actionValues + self.kappa * lastAction))
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -260,49 +252,3 @@ class qLearnCorr(model):
         probabilities = self.calcProbabilities(self.expectedRewards)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

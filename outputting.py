@@ -6,20 +6,19 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 import sys
+import os
+import inspect
+import collections
 
 import cPickle as pickle
 import pandas as pd
 import datetime as dt
-
 import shutil as shu
-from os import getcwd, makedirs
-from os.path import exists
-from inspect import stack
-from numpy import seterr, seterrcall, array, ndarray, shape, prod, size
-from collections import OrderedDict, defaultdict
-from types import NoneType
+import numpy as np
 
-from utils import listMerGen
+import utils
+
+from types import NoneType
 
 
 #%% Folder management
@@ -66,8 +65,8 @@ def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging
         logFile = fileNameGen('log', 'txt')
 
         if saveScript:
-            cwd = getcwd().replace("\\", "/")
-            for s in stack():
+            cwd = os.getcwd().replace("\\", "/")
+            for s in inspect.stack():
                 p = s[1].replace("\\", "/")
                 if ("outputting(" in s[4][0]) or (cwd in p and "outputting.py" not in p):
                     shu.copy(p, outputFolder)
@@ -129,24 +128,24 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
 
     """
     if not basePath:
-        basePath = getcwd().replace("\\", "/")
+        basePath = os.getcwd().replace("\\", "/")
 
     # While the folders have already been created, check for the next one
     folderName = "{}/Outputs/{}_{}".format(basePath, label, dateStr)
-    if exists(folderName):
+    if os.path.exists(folderName):
         i = 1
         folderName += '_no_'
-        while exists(folderName + str(i)):
+        while os.path.exists(folderName + str(i)):
             i += 1
         folderName += str(i)
 
     folderName += "/"
-    makedirs(folderName)
+    os.makedirs(folderName)
 
-    makedirs(folderName + 'data/')
+    os.makedirs(folderName + 'data/')
 
     if pickleData:
-        makedirs(folderName + 'Pickle/')
+        os.makedirs(folderName + 'Pickle/')
 
     return folderName
 
@@ -178,14 +177,14 @@ def fileNameGenerator(outputFolder=None):
     './'
     >>> fileNameGen = outputting.fileNameGenerator()
     >>> fileName = fileNameGen("", "")
-    >>> fileName == getcwd()
+    >>> fileName == os.getcwd()
     True
     """
 
     if not outputFolder:
-        outputFolder = getcwd()
+        outputFolder = os.getcwd()
 
-    outputFileCounts = defaultdict(int)
+    outputFileCounts = collections.defaultdict(int)
 
     def newFileName(handle, extension):
         """
@@ -219,9 +218,9 @@ def fileNameGenerator(outputFolder=None):
         outputFileCounts[fileNameForm] += 1
         if lastCount > 0:
             fileName += "_" + str(lastCount)
-        # if exists(fileName + end):
+        # if os.path.exists(fileName + end):
         #     i = 1
-        #     while exists(fileName + "_" + str(i) + end):
+        #     while os.path.exists(fileName + "_" + str(i) + end):
         #         i += 1
         #     fileName += "_" + str(i)
         fileName += end
@@ -302,8 +301,8 @@ def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='
     # Set the standard error output
     sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
     # Set the numpy error output and save the old one
-    oldnperrcall = seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
-    seterr(all=npErrResp)
+    oldnperrcall = np.seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
+    np.seterr(all=npErrResp)
 
     logger = logging.getLogger("Setup")
     logger.info(dateStr)
@@ -325,7 +324,7 @@ def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='
 
             logging.shutdown()
             sys.stderr = sys.__stdout__
-            seterrcall(oldnperrcall)
+            np.seterrcall(oldnperrcall)
 
             root = logging.getLogger()
             for h in root.handlers[:]:
@@ -484,7 +483,7 @@ def flatDictKeySet(store, keys=None):
     reframeListDicts, newFlatDict
     """
 
-    keySet = OrderedDict()
+    keySet = collections.OrderedDict()
 
     for s in store:
         if keys:
@@ -497,7 +496,7 @@ def flatDictKeySet(store, keys=None):
             if k in keySet:
                 continue
             v = s[k]
-            if isinstance(v, (list, ndarray)):
+            if isinstance(v, (list, np.ndarray)):
                 listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
                 if listSet is not NoneType:
                     keySet[k] = listSet
@@ -588,7 +587,7 @@ def newFlatDict(keySet, store, labelPrefix):
                  ('test', ["'string'"]),
                  ('array_[0]', [array([1])]), ('array_[1]', [array([2])]), ('array_[2]', [array([3])])])
     """
-    newStore = OrderedDict()
+    newStore = collections.OrderedDict()
 
     if labelPrefix:
         labelPrefix += "_"
@@ -602,7 +601,7 @@ def newFlatDict(keySet, store, labelPrefix):
             keyStoreSet = newFlatDict(loc, subStore, newKey)
             newStore.update(keyStoreSet)
 
-        elif isinstance(loc, (list, ndarray)):
+        elif isinstance(loc, (list, np.ndarray)):
             for locCo in loc:
                 tempList = []
                 for s in store:
@@ -669,7 +668,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
                  ('array', [1, 2, 3, None, None, None])])
     """
 
-    newStore = OrderedDict()
+    newStore = collections.OrderedDict()
 
     if labelPrefix:
         labelPrefix += "_"
@@ -682,7 +681,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
             keyStoreSet = newListDict(loc, maxListLen, store[key], newKey)
             newStore.update(keyStoreSet)
 
-        elif isinstance(loc, (list, ndarray)):
+        elif isinstance(loc, (list, np.ndarray)):
             for locCo in loc:
                 vals = list(listSelection(store[key], locCo))
                 vals = pad(vals, maxListLen)
@@ -690,7 +689,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
 
         else:
             v = store[key]
-            if isinstance(v, (list, ndarray)):
+            if isinstance(v, (list, np.ndarray)):
                 vals = pad(list(v), maxListLen)
             else:
                 # We assume the object is a single value or string
@@ -701,7 +700,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
 
 
 def pad(vals, maxListLen):
-    vLen = size(vals)
+    vLen = np.size(vals)
     if vLen < maxListLen:
         vals.extend([None for i in range(maxListLen - vLen)])
     return vals
@@ -794,11 +793,11 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
                   ('dict', OrderedDict([('test', None)]))]),
     7)
     """
-    keySet = OrderedDict()
+    keySet = collections.OrderedDict()
 
     for k in store.keys():
         v = store[k]
-        if isinstance(v, (list, ndarray)):
+        if isinstance(v, (list, np.ndarray)):
             listSet, maxListLen = listKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
             if listSet is not NoneType:
                 keySet.setdefault(k, listSet)
@@ -859,7 +858,7 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     """
 
     if returnList:
-        dataShape = list(shape(data))
+        dataShape = list(np.shape(data))
         dataShapeFirst = dataShape.pop(-1)
         if type(maxListLen) is NoneType:
             maxListLen = dataShapeFirst
@@ -867,19 +866,19 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
             maxListLen = dataShapeFirst
 
     else:
-        dataShape = shape(data)
+        dataShape = np.shape(data)
 
     # If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document
-    if abridge and prod(dataShape) > 10:
+    if abridge and np.prod(dataShape) > 10:
         return None, maxListLen
 
     # We need to calculate every combination of co-ordinates in the array
     arrSets = [range(0, i) for i in dataShape]
     # Now record each one
-    locList = [tuple(loc) for loc in listMerGen(*arrSets)]
+    locList = [tuple(loc) for loc in utils.listMergeGen(*arrSets)]
     listItemLen = len(locList[0])
     if listItemLen == 1:
-        returnList = array(locList)#.flatten()
+        returnList = np.array(locList)#.flatten()
     elif listItemLen == 0:
         return None, maxListLen
     else:

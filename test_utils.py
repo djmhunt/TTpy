@@ -6,7 +6,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import pytest
 
-from utils import listMerGen
+from utils import listMergeGen
 
 from numpy import array
 
@@ -28,34 +28,34 @@ def listMerTestData():
 
 class TestClass: 
             
-    def test_listMerGen(self,listMerTestData):
+    def test_listMergeGen(self,listMerTestData):
         
         (interSets, answer) = listMerTestData
-        l = [i for i in listMerGen(*interSets)]
+        l = [i for i in listMergeGen(*interSets)]
         assert (array(l).T == answer).all()
         
-    def test_listMerGenArray(self,listMerTestData):
+    def test_listMergeGenArray(self,listMerTestData):
         
         (interSets, answer) = listMerTestData
         # For numpy Arrays                    
         interSetsTuple = [array(i) for i in interSets] 
-        l = [i for i in listMerGen(*interSetsTuple)]
+        l = [i for i in listMergeGen(*interSetsTuple)]
         assert (array(l).T == answer).all()
         
-    def test_listMerGenTuple(self,listMerTestData):
+    def test_listMergeGenTuple(self,listMerTestData):
         
         (interSets, answer) = listMerTestData
         # For a tuple                    
         interSetsTuple = tuple(interSets) 
-        l = [i for i in listMerGen(*interSetsTuple)]
+        l = [i for i in listMergeGen(*interSetsTuple)]
         assert (array(l).T == answer).all()
         
-    def test_listMerGenGen(self,listMerTestData):
+    def test_listMergeGenGen(self,listMerTestData):
         
         (interSets, answer) = listMerTestData
         # For a generator    
         interSetsGen = (i for i in interSets)
-        l = [i for i in listMerGen(*interSetsGen)]
+        l = [i for i in listMergeGen(*interSetsGen)]
         assert (array(l).T == answer).all() 
     
 if __name__ == '__main__':

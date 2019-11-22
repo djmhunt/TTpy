@@ -9,14 +9,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, max
+import numpy as np
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class ACBasic(model):
-
+class ACBasic(Model):
     """A basic, complete actor-critic model
 
     Attributes
@@ -54,7 +52,7 @@ class ACBasic(model):
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
-        The initialisation of the the expected reward.
+        The initialisation of the expected reward.
         Default ``ones((numActions, numCues)) * 5 / numCues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -67,39 +65,40 @@ class ACBasic(model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "ACBasic"
+    def __init__(self, alpha=0.3, beta=4, invBeta=None, alphaE=None, alphaA=None, expect=None, actorExpect=None, **kwargs):
 
-    def __init__(self, **kwargs):
-
-        kwargRemains = self.genStandardParameters(kwargs)
+        super(ACBasic, self).__init__(**kwargs)
 
         # A record of the kwarg keys, the variable they create and their default value
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.alphaE = kwargRemains.pop('alphaE', self.alpha)
-        self.alphaA = kwargRemains.pop('alphaA', self.alpha)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actorExpectations = kwargRemains.pop('actorExpect', ones((self.numActions, self.numCues)) / self.numCues)
+        if alphaE is None:
+            alphaE = alpha
+        if alphaA is None:
+            alphaA = alpha
+        self.alphaE = alphaE
+        self.alphaA = alphaA
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
+        if actorExpect is None:
+            actorExpect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.actorExpectations = actorExpect
 
-        self.genStandardParameterDetails()
         self.parameters["alphaE"] = self.alphaE
         self.parameters["alphaA"] = self.alphaA
         self.parameters["beta"] = self.beta
         self.parameters["expectation"] = self.expectations.copy()
         self.parameters["actorExpectation"] = self.actorExpectations.copy()
 
-        # Recorded information
-        self.genStandardResultsStore()
+        # Recorded extra information
         self.recActorExpectations = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -110,7 +109,7 @@ class ACBasic(model):
         """
 
         results = self.standardResultOutput()
-        results["ActorExpectations"] = array(self.recActorExpectations).T
+        results["ActorExpectations"] = np.array(self.recActorExpectations).T
 
         return results
 
@@ -198,11 +197,11 @@ class ACBasic(model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaE * delta * stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations[action] = newExpectations
 
-        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/sum(stimuli)
+        newActorExpectations = self.actorExpectations[action] + self.alphaA * delta * stimuli/np.sum(stimuli)
         newActorExpectations = newActorExpectations * (newActorExpectations >= 0)
         self.actorExpectations[action] = newActorExpectations
 
@@ -232,8 +231,8 @@ class ACBasic(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -254,49 +253,3 @@ class ACBasic(model):
         probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

@@ -60,9 +60,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    experiments : experiments.experiments</span>
+<span class="sd">    experiments : experimentGenerator.ExperimentGen</span>
 <span class="sd">        An experiment factory generating each of the different experiments being considered</span>
-<span class="sd">    models : models.models</span>
+<span class="sd">    models : modelGenerator.ModelGen</span>
 <span class="sd">        A model factory generating each of the different models being considered</span>
 <span class="sd">    save : bool, optional</span>
 <span class="sd">        If true the data will be saved to files. Default ``True``</span>
@@ -95,35 +95,33 @@
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the simulation set&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">expNum</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">expNum</span> <span class="ow">in</span> <span class="n">experiments</span><span class="o">.</span><span class="n">iterExpID</span><span class="p">():</span>
 
-        <span class="k">for</span> <span class="n">modelSet</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
 
-            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">modelSet</span><span class="p">:</span>
+            <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">newExp</span><span class="p">(</span><span class="n">expNum</span><span class="p">)</span>
 
-                <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">expNum</span><span class="p">)</span>
+            <span class="n">logSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-                <span class="n">logSimParams</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment&quot;</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">act</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
+                <span class="n">exp</span><span class="o">.</span><span class="n">receiveAction</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">feedback</span><span class="p">()</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+                <span class="n">exp</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
 
-                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
-                    <span class="n">model</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-                    <span class="n">act</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
-                    <span class="n">exp</span><span class="o">.</span><span class="n">receiveAction</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-                    <span class="n">response</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">feedback</span><span class="p">()</span>
-                    <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-                    <span class="n">exp</span><span class="o">.</span><span class="n">procede</span><span class="p">()</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-                <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed&quot;</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="n">recordSim</span><span class="p">(</span><span class="n">fileNameGen</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">)</span>
 
-                <span class="n">recordSim</span><span class="p">(</span><span class="n">fileNameGen</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">outputEvolution</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">)</span>
-
-                <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">closeLoggers</span><span class="p">()</span></div>
 

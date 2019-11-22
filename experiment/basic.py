@@ -6,34 +6,38 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-from experiment.experimentTemplate import experiment
+import copy
 
-class Basic(experiment):
+from experiment.experimentTemplate import Experiment
 
-    Name = "basic"
 
-    def reset(self):
-        """
-        Creates a new experiment instance
+class Basic(Experiment):
+    """
+    An example of an experiment with all the necessary components, but nothing changing
 
-        Returns
-        -------
-        self : The cleaned up object instance
-        """
+    Parameters
+    ----------
+    trials : int
+        The number of trials in the experiment
 
-        kwargs = self.kwargs.copy()
+    Attributes
+    ----------
+    Name : string
+        The name of the class used when recording what has been used.
+    """
 
-        self.nbr_of_trials = kwargs.pop("trials", 100)
+    def __init__(self, trials=100, **kwargs):
 
-        self.parameters = {"Name": self.Name,
-                           "Trials": self.nbr_of_trials}
+        super(Basic, self).__init__(**kwargs)
+
+        self.nbr_of_trials = trials
+
+        self.parameters["Trials"] = self.nbr_of_trials
 
         self.trial = -1  # start at -1 so first call to next will yield trial 0
         self.action = None  # placeholder for what action is taken
 
         self.action_history = [-1] * self.nbr_of_trials
-
-        return self
 
     def next(self):
         """
@@ -64,6 +68,11 @@ class Basic(experiment):
     def receiveAction(self, action):
         """
         Receives the next action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
         """
         self.action = action
 
@@ -73,21 +82,26 @@ class Basic(experiment):
         """
         return 1
 
-    def procede(self):
+    def proceed(self):
         """
         Updates the experiment after feedback
         """
         pass
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """
-        Saves files containing all the relevant data for this experiment run
+        Returns all the relevant data for this experiment run
+
+        Returns
+        -------
+        results : dictionary
+            A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.parameters.copy()
+        results = self.standardResultOutput()
 
-        results["participantActions"] = self.action_history.copy()
-        
+        results["participantActions"] = copy.copy(self.action_history)
+
         return results
 
     def storeState(self):
@@ -96,6 +110,7 @@ class Basic(experiment):
         """
 
         self.action_history[self.trial] = self.action
+
 
 def basicStimulusDirect():
     """
@@ -113,7 +128,7 @@ def basicStimulusDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def basicStimulus(observation):
@@ -140,7 +155,7 @@ def basicRewardDirect():
 
     See Also
     --------
-    model.qLearn, model.qLearn2
+    model.QLearn, model.QLearn2
     """
 
     def basicReward(reward, action, stimuli):

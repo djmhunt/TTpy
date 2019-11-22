@@ -17,6 +17,7 @@ import numpy as np
 from types import NoneType
 
 
+# TODO: provide default values for expResponses
 def decWeightProb(expResponses):
     """Decisions for an arbitrary number of choices
 
@@ -40,7 +41,7 @@ def decWeightProb(expResponses):
 
     See Also
     --------
-    models.qLearn, models.qLearn2, models.OpAL
+    models.QLearn, models.QLearn2, models.OpAL
 
     Examples
     --------
@@ -114,7 +115,7 @@ def decMaxProb(expResponses):
 
     See Also
     --------
-    models.qLearn, models.qLearn2, models.OpAL
+    models.QLearn, models.QLearn2, models.OpAL
 
     Examples
     --------
@@ -188,7 +189,7 @@ def decMaxProbSets(expResponses):
 
     See Also
     --------
-    models.qLearn, models.qLearn2, models.OpAL
+    models.QLearn, models.QLearn2, models.OpAL
 
     Examples
     --------
@@ -284,7 +285,7 @@ def decProbThresh(expResponses, eta=0.8):
 
     See Also
     --------
-    models.qLearn, models.qLearn2, models.OpAL
+    models.QLearn, models.QLearn2, models.OpAL
 
     Examples
     --------
@@ -351,7 +352,7 @@ def validProbabilities(probabilities, expResp, validResponses):
     expResp : tuple or None
         Provides the action responses expected by the experiment for each
         probability estimate.
-    validResponses :
+    validResponses : 1D list or array
         The responses allowed for this trial
 
     Returns

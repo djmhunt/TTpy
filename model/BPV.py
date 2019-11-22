@@ -7,16 +7,18 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, array, ones, expand_dims, repeat, apply_along_axis, fromiter, ndarray, sum
-from scipy.stats import dirichlet #, beta
-from collections import OrderedDict
-from itertools import izip
+import numpy as np
+import scipy as sp
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+import collections
+import itertools
+
+from numpy import ndarray
+
+from model.modelTemplate import Model
 
 
-class BPV(model):
+class BPV(Model):
 
     """The Bayesian predictor model
 
@@ -60,36 +62,28 @@ class BPV(model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "BPV"
+    def __init__(self, alpha=0.3, dirichletInit=1, validRewards=np.array([0, 1]), **kwargs):
 
-    def __init__(self, **kwargs):
+        super(BPV, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
 
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        dirichletInit = kwargRemains.pop('dirichletInit', 1)
-        self.validRew = kwargRemains.pop('validRewards', array([0, 1]))
-        self.rewLoc = OrderedDict(((k, v) for k, v in izip(self.validRew, range(len(self.validRew)))))
+        self.validRew = validRewards
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.rewLoc = collections.OrderedDict(((k, v) for k, v in itertools.izip(self.validRew, range(len(self.validRew)))))
 
-        self.dirichletVals = ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
+        self.dirichletVals = np.ones((self.numActions, self.numCues, len(self.validRew))) * dirichletInit
         self.initDirichletVals = self.dirichletVals.copy()
         self.expectations = self.updateExpectations(self.dirichletVals)
-        self.beta = ones(self.numActions)
+        self.beta = np.ones(self.numActions)
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["dirichletInit"] = dirichletInit
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recDirichletVals = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -100,7 +94,7 @@ class BPV(model):
         """
 
         results = self.standardResultOutput()
-        results["dirichletVals"] = array(self.recDirichletVals)
+        results["dirichletVals"] = np.array(self.recDirichletVals)
 
         return results
 
@@ -188,7 +182,7 @@ class BPV(model):
 
     def _newExpect(self, action, delta, stimuli):
 
-        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/sum(stimuli)
+        self.dirichletVals[action, :, self.rewLoc[delta]] += self.alpha * stimuli/np.sum(stimuli)
 
         self.expectations = self.updateExpectations(self.dirichletVals)
 
@@ -221,8 +215,8 @@ class BPV(model):
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -245,71 +239,26 @@ class BPV(model):
 
     def actStimMerge(self, dirichletVals, stimuli):
 
-        dirVals = dirichletVals * expand_dims(repeat([stimuli], self.numActions, axis=0), 2)
+        dirVals = dirichletVals * np.expand_dims(np.repeat([stimuli], self.numActions, axis=0), 2)
 
-        actDirVals = sum(dirVals, 1)
+        actDirVals = np.sum(dirVals, 1)
 
         return actDirVals
 
     def calcActExpectations(self, dirichletVals):
 
-        actExpect = fromiter((sum(dirichlet(d).mean() * self.validRew) for d in dirichletVals), float)
+        actExpect = np.fromiter((np.sum(sp.stats.dirichlet(d).mean() * self.validRew) for d in dirichletVals), float)
 
-        actUncertainty = fromiter((sum(dirichlet(d).var()) for d in dirichletVals), float)
+        actUncertainty = np.fromiter((np.sum(sp.stats.dirichlet(d).var()) for d in dirichletVals), float)
 
         return actExpect, actUncertainty
 
     def updateExpectations(self, dirichletVals):
 
-        expectations = apply_along_axis(self._meanFunc, 2, dirichletVals, r=self.validRew)
+        expectations = np.apply_along_axis(self._meanFunc, 2, dirichletVals, r=self.validRew)
 
         return expectations
 
     def _meanFunc(self, w, r=[]):
-        e = sum(dirichlet(w).mean() * r)
+        e = np.sum(sp.stats.dirichlet(w).mean() * r)
         return e
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

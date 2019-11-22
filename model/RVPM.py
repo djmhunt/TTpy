@@ -7,17 +7,19 @@
                 Frontiers in Human Neuroscience, 5(August), 75.
                 doi:10.3389/fnhum.2011.00075
 """
-from __future__ import division, print_function
+
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
-from numpy import exp, array, amax, dot, ones, mean, square
+import numpy as np
+
 from collections import defaultdict
 
-from modelTemplate import model
+from model.modelTemplate import Model
 
 
-class RVPM(model):
+class RVPM(Model):
     """The reward value and prediction model
 
     Attributes
@@ -74,25 +76,19 @@ class RVPM(model):
         in to a decision. Default is basicDecision
     """
 
-    Name = "RVPM"
+    def __init__(self, alpha=0.3, beta=4, w=np.array([0.01, 0.01]), zeta=2, tau=160, z=100, averaging=3, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(RVPM, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        self.alpha = alpha
+        self.beta = beta
+        self.w = w
+        self.zeta = zeta
+        self.tau = tau
+        self.z = z
+        self.averaging = averaging
 
-        self.alpha = kwargRemains.pop('alpha', 0.005)
-        self.beta = kwargRemains.pop('beta', 0.1)
-        self.w = kwargRemains.pop('w', array([0.01, 0.01]))
-        self.zeta = kwargRemains.pop('zeta', 2)
-        self.tau = kwargRemains.pop('tau', 160)
-        self.z = kwargRemains.pop('z', 100)
-        self.averaging = kwargRemains.pop('averaging', 3)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', basicDecision())
-
-        self.T = 0  # Timing sgnal value
+        self.T = 0  # Timing signal value
         self.c = 0  # The stimuli
         self.r = 0  # Reward value
         self.V = 0  # Reward prediction unit
@@ -100,7 +96,6 @@ class RVPM(model):
         self.deltaM = 0  # Negative prediction error unit
         self.TSN = 0  # Temporally shifted neuron
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["tau"] = self.tau
@@ -112,7 +107,7 @@ class RVPM(model):
         # Recorded information
         self._storeSetup()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -172,7 +167,7 @@ class RVPM(model):
     def _updateGeneralStore(self):
 
         for k, v in self.eventStore.iteritems():
-            self.generalStore[k].append(array(v))
+            self.generalStore[k].append(np.array(v))
 
         for k in self.eventStore.iterkeys():
             self.eventStore[k] = []
@@ -269,96 +264,24 @@ class RVPM(model):
 
     def _vUpdate(self, w, V, c):
         beta = self.beta
-        new = -beta*V + beta*amax([0, dot(w, c)])
+        new = -beta*V + beta*np.amax([0, np.dot(w, c)])
         return new
 
     def _deltaPUpdate(self, V, deltaP, r):
         beta = self.beta
-        new = -beta*deltaP + beta*amax([0, r-self.zeta*V])
+        new = -beta*deltaP + beta*np.amax([0, r-self.zeta*V])
         return new
 
     def _timeSigMag(self, t):
-        signal = exp((-(t-self.tau)**2)/square(self.z))
+        signal = np.exp((-(t-self.tau)**2)/np.square(self.z))
         return signal
 
     def _deltaMUpdate(self, V, deltaM, T, r):
         beta = self.beta
-        new = -beta*deltaM + beta*T*amax([0, self.zeta*V-r])
+        new = -beta*deltaM + beta*T*np.amax([0, self.zeta*V-r])
         return new
 
     def _tsnUpdate(self, dV, ddeltaP, ddeltaM):
-        signal = amax([0, self.zeta*dV]) + amax([0, ddeltaP]) - amax([0, ddeltaM])
+        signal = np.amax([0, self.zeta*dV]) + np.amax([0, ddeltaP]) - np.amax([0, ddeltaM])
         return signal
 
-
-def blankStim():
-    """ The default stimulus processor generator for RVPM
-
-    Passes the pavlov stimuli to models that cope with stimuli and rewards
-    that have a duration.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function yields a series of ten events ``t,0,0```, where ``t`` is
-        the time. The stimulus and reward are set to 0.
-
-    """
-
-    def blankStimFunc(event, action):
-
-        for t in xrange(10):
-
-            yield t, 1, 0
-
-    blankStimFunc.Name = "blankStim"
-
-    return blankStimFunc
-
-
-def basicDecision():
-    """The default decision function for RVPM
-
-    Returns
-    -------
-    beadStim : function
-        The function expects to be passed the probabilities and then return
-        `None`.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def basicDecisionFunc(prob):
-
-        return None
-
-    basicDecisionFunc.Name = "basicDecision"
-
-    return basicDecisionFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

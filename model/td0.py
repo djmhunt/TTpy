@@ -9,14 +9,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
+import numpy as np
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class td0(model):
-
+class TD0(Model):
     """The td-Learning algorithm
 
     Attributes
@@ -55,7 +53,7 @@ class td0(model):
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
-        The initialisation of the the expected reward.
+        The initialisation of the expected reward.
         Default ``ones((numActions, numCues)) * 5 / numCues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -68,36 +66,31 @@ class td0(model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "td0"
+    def __init__(self, alpha=0.3, beta=4, gamma=0.3, invBeta=None, expect=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(TD0, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
-
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.gamma = kwargRemains.pop('gamma', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.gamma = gamma
+        
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
 
         self.lastAction = 0
-        self.lastStimuli = ones(self.numCues)
+        self.lastStimuli = np.ones(self.numCues)
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["gamma"] = self.gamma
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -190,7 +183,7 @@ class td0(model):
         # has been chosen
 
         # Find the new activities
-        change = self.alpha*delta*stimuli/sum(stimuli)
+        change = self.alpha*delta*stimuli/np.sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
@@ -235,8 +228,8 @@ class td0(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -249,7 +242,7 @@ class td0(model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * lastStimuli/sum(lastStimuli)
+        change = self.alpha * self.gamma * self.expectedRewards[self.currAction] * lastStimuli/np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):
@@ -267,48 +260,3 @@ class td0(model):
 
         return probabilities
 
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

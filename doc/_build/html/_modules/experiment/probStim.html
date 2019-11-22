@@ -48,12 +48,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="nb">sum</span>
-<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">rand</span><span class="p">,</span> <span class="n">randint</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">nan</span>
+
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">float</span> <span class="k">as</span> <span class="n">npfloat</span>
 
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">experiment</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
 
 <span class="c1"># TODO: Create a set of test cues</span>
 <span class="n">cueSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Test&quot;</span><span class="p">:</span> <span class="p">[]}</span>
@@ -61,7 +63,8 @@
 
 <span class="n">actualityLists</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="Probstim"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim">[docs]</a><span class="k">class</span> <span class="nc">Probstim</span><span class="p">(</span><span class="n">experiment</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Probstim"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim">[docs]</a><span class="k">class</span> <span class="nc">Probstim</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Basic probabilistic</span>
 
@@ -81,79 +84,66 @@
 <span class="sd">        The cues used to guess the actualities</span>
 <span class="sd">    trialsteps: int, optional</span>
 <span class="sd">        If no provided cues, it is the number of trialsteps for the generated set of cues. Default ``100``</span>
-<span class="sd">    numStim: int, optional</span>
+<span class="sd">    numStimuli: int, optional</span>
 <span class="sd">        If no provided cues, it is the number of distinct stimuli for the generated set of cues. Default ``4``</span>
 <span class="sd">    correctProb: float in [0,1], optional</span>
 <span class="sd">        If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0.</span>
 <span class="sd">        The default is ``0.8``</span>
 <span class="sd">    correctProbs: list or array of floats in [0,1], optional</span>
 <span class="sd">        If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0 for</span>
-<span class="sd">        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStim//2) + [corrProb] * (numStim%2)``</span>
+<span class="sd">        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStimuli//2) + [corrProb] * (numStimuli%2)``</span>
 <span class="sd">    rewardlessT: int, optional</span>
 <span class="sd">        If no actualities provided, it is the number of actualities at the end of the experiment that will have a</span>
-<span class="sd">        ``None`` reward. Default ``2*numStim``</span>
+<span class="sd">        ``None`` reward. Default ``2*numStimuli``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probStim&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actualities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trialsteps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">numStimuli</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">correctProb</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">correctProbabilities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rewardlessT</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-<div class="viewcode-block" id="Probstim.reset"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new experiment instance</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self : The cleaned up object instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">cues</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cues&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">actualities</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;actualities&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Probstim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cues</span> <span class="ow">in</span> <span class="n">cueSets</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cueSets</span><span class="p">[</span><span class="n">cues</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
-                <span class="n">numStim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">numStimuli</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown cue sets&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cues</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">cues</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
-            <span class="n">numStim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">numStimuli</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;trialsteps&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-            <span class="n">numStim</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;numStim&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-            <span class="n">stim</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">numStim</span><span class="p">))</span>
-            <span class="n">stim</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">randint</span><span class="p">(</span><span class="n">numStim</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">stim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">trialsteps</span>
+            <span class="n">numStimuli</span> <span class="o">=</span> <span class="n">numStimuli</span>
+            <span class="n">stimuli</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">numStimuli</span><span class="p">))</span>
+            <span class="n">stimuli</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">numStimuli</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">=</span> <span class="n">stimuli</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">actualities</span> <span class="ow">in</span> <span class="n">actualityLists</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="n">actualities</span><span class="p">]</span>
-                <span class="n">rewardlessT</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
+                <span class="n">rewardlessT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown actualities list&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">actualities</span>
-            <span class="n">rewardlessT</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">isnan</span><span class="p">(</span><span class="n">array</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
+            <span class="n">rewardlessT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actualities</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">npfloat</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">corrProbBasis</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correctProb&quot;</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
-            <span class="n">corrProbDefault</span> <span class="o">=</span> <span class="p">[</span><span class="n">corrProbBasis</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">corrProbBasis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStim</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">corrProbBasis</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStim</span><span class="o">%</span><span class="mi">2</span><span class="p">)</span>
-            <span class="n">correctProbs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correctProbs&quot;</span><span class="p">,</span> <span class="n">corrProbDefault</span><span class="p">)</span>
-            <span class="n">rewardlessT</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;rewardlessT&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">numStim</span><span class="p">)</span>
-            <span class="n">corrChoiceProb</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">*</span> <span class="n">correctProbs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">correctChoice</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">corrChoiceProb</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">corrProbDefault</span> <span class="o">=</span> <span class="p">[</span><span class="n">correctProb</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">correctProb</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStimuli</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">correctProb</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">numStimuli</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correctProbabilities</span><span class="p">:</span>
+                <span class="n">correctProbabilities</span> <span class="o">=</span> <span class="n">corrProbDefault</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rewardlessT</span><span class="p">:</span>
+                <span class="n">rewardlessT</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">numStimuli</span>
+            <span class="n">corrChoiceProb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span> <span class="o">*</span> <span class="n">correctProbabilities</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">correctChoice</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">corrChoiceProb</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">correctChoice</span><span class="p">[</span><span class="o">-</span><span class="n">rewardlessT</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">rewardlessT</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">actualities</span> <span class="o">=</span> <span class="n">correctChoice</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                           <span class="s2">&quot;Actualities&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">),</span>
-                           <span class="s2">&quot;Cues&quot;</span><span class="p">:</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">),</span>
-                           <span class="s2">&quot;numtrialsteps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                           <span class="s2">&quot;numRewardless&quot;</span><span class="p">:</span> <span class="n">rewardlessT</span><span class="p">,</span>
-                           <span class="s2">&quot;numCues&quot;</span><span class="p">:</span> <span class="n">numStim</span><span class="p">}</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Actualities&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actualities</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Cues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cues</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;numtrialsteps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;numRewardless&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardlessT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;numCues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">numStimuli</span>
 
         <span class="c1"># Set draw count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -161,8 +151,6 @@
 
         <span class="c1"># Recording variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Probstim.next"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -196,7 +184,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : int</span>
+<span class="sd">        action : int or string</span>
 <span class="sd">            The action taken by the model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -213,20 +201,24 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Probstim.procede"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.procede">[docs]</a>    <span class="k">def</span> <span class="nf">procede</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.proceed"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Probstim.outputEvolution"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Probstim.returnTaskState"><a class="viewcode-back" href="../../experiment.probStim.html#experiment.probStim.Probstim.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Saves files containing all the relevant data for this</span>
-<span class="sd">        experiment run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
 
         <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span>
 
@@ -256,7 +248,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.opal, model.opals, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">probstim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
@@ -287,7 +279,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.qLearn, model.qLearn2, model.decision.binary.decEta</span>
+<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.decEta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">probrew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
@@ -320,13 +312,13 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS, model.MS_rev</span>
+<span class="sd">    model.BP, model.EP, model.MS, model.MSRev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">probrew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
-        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
         <span class="n">rewardProc</span><span class="p">[</span><span class="n">reward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
 
     <span class="n">probrew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;probstimDualCorrection&quot;</span>
     <span class="n">probrew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>

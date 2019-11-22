@@ -7,16 +7,12 @@
 
 from __future__ import division, print_function, unicode_literals, absolute_import
 
-import logging
+import numpy as np
 
-from numpy import exp, ones, array, isnan, isinf, sum, sign, zeros
-
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class tdr(model):
-
+class TDR(Model):
     """The td-Learning algorithm
 
     Attributes
@@ -55,7 +51,7 @@ class tdr(model):
         The prior probability of of the states being the correct one.
         Default ``ones((numActions, numCues)) / numCritics)``
     expect: array of floats, optional
-        The initialisation of the the expected reward.
+        The initialisation of the expected reward.
         Default ``ones((numActions, numCues)) * 5 / numCues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
@@ -68,28 +64,26 @@ class tdr(model):
         in to a decision. Default is model.decision.discrete.decWeightProb
     """
 
-    Name = "tdr"
+    def __init__(self, alpha=0.3, beta=4, tau=0.3, invBeta=None, expect=None, avReward=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(TDR, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
-
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.alpha = kwargRemains.pop('alpha', 0.3)
-        self.tau = kwargRemains.pop('tau', 0.3)
-        self.expectations = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCues)
-        self.actAvReward = kwargRemains.pop('avReward', ones(self.numActions) / self.numCues)
-
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        self.alpha = alpha
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        self.beta = beta
+        self.tau = tau
+        
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+        self.expectations = expect
+        if avReward is None:
+            avReward = np.ones(self.numActions) / self.numCues
+        self.actAvReward = avReward
 
         self.lastAction = 0
-        self.lastStimuli = ones(self.numCues)
+        self.lastStimuli = np.ones(self.numCues)
 
-        self.genStandardParameterDetails()
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
         self.parameters["tau"] = self.tau
@@ -97,10 +91,9 @@ class tdr(model):
         self.parameters["avReward"] = self.actAvReward.copy()
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recActAvReward = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -111,7 +104,7 @@ class tdr(model):
         """
 
         results = self.standardResultOutput()
-        results["averageReward"] = array(self.recActAvReward)
+        results["averageReward"] = np.array(self.recActAvReward)
 
         return results
 
@@ -197,7 +190,7 @@ class tdr(model):
         # has been chosen
 
         # Find the new activities
-        change = self.alpha*delta*stimuli/sum(stimuli)
+        change = self.alpha*delta*stimuli/np.sum(stimuli)
         self._newExpect(action, change)
 
         # Calculate the new probabilities
@@ -242,8 +235,8 @@ class tdr(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -256,7 +249,7 @@ class tdr(model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.expectedRewards[self.currAction] * lastStimuli/sum(lastStimuli)
+        change = self.alpha * self.expectedRewards[self.currAction] * lastStimuli/np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actorStimulusProbs(self):
@@ -274,48 +267,3 @@ class tdr(model):
 
         return probabilities
 
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc

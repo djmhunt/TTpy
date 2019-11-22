@@ -4,13 +4,13 @@
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import collections
+import types
+
 import pandas as pd
+import numpy as np
 
-from numpy import array, ndarray, shape, size
-from collections import OrderedDict
-from types import NoneType
-
-from utils import newFile, listMerGen
+import utils
 
 
 def exportClassData(data, parameters, outputFolder="./"):
@@ -40,7 +40,7 @@ def exportClassData(data, parameters, outputFolder="./"):
 
     timeData = reframeEventDicts(data, parameters)
     record = pd.DataFrame(timeData)
-    outputFile = newFile(outName, 'xlsx', outputFolder=outputFolder)
+    outputFile = utils.newFile(outName, 'xlsx', outputFolder=outputFolder)
     xlsxT = pd.ExcelWriter(outputFile)
     record.to_excel(xlsxT, sheet_name=outName)
     xlsxT.save()
@@ -118,17 +118,17 @@ def eventDictKeySet(data, parameters):
     """
 
     # Find all the keys
-    keySet = OrderedDict()
-    paramSet = OrderedDict()
-    dataSet = OrderedDict()
+    keySet = collections.OrderedDict()
+    paramSet = collections.OrderedDict()
+    dataSet = collections.OrderedDict()
     T = 1
     
     for p in parameters.iterkeys():
         v = parameters[p]
-        if isinstance(v, (list, ndarray)):
-            shp = shape(v)
-            if size(shp) == 1:
-                if size(v) == 1:
+        if isinstance(v, (list, np.ndarray)):
+            shp = np.shape(v)
+            if np.size(shp) == 1:
+                if np.size(v) == 1:
                     paramSet.setdefault(p, (None, None))
                 else:
                     paramSet.update(_genVarKeys(p, v))
@@ -142,13 +142,13 @@ def eventDictKeySet(data, parameters):
             continue
         
         v = data[k]
-        if isinstance(v, (list, ndarray)):
-            shp = shape(v)
+        if isinstance(v, (list, np.ndarray)):
+            shp = np.shape(v)
             sze = shp[0]
             if sze > T:
                     T = sze
                     
-            if size(shp) == 1:
+            if np.size(shp) == 1:
                 dataSet.setdefault(k, (None, None))
             else:
                 for col in xrange(0, shp[1]):
@@ -198,45 +198,45 @@ def newEventDict(keySet, data, T, dataLabel=''):
 
     """
 
-    partStore = OrderedDict()
+    partStore = collections.OrderedDict()
 
     for key, (initKey, col) in keySet.iteritems():
 
         partStore.setdefault(key, [])
 
-        if type(initKey) is NoneType:
+        if type(initKey) is types.NoneType:
             v = data.get(key, None)
             
         else:
             rawVal = data.get(initKey, None)
-            if type(rawVal) is NoneType:
+            if type(rawVal) is types.NoneType:
                 v = None
-            elif size(shape(rawVal)) == 1:
-                v = array(rawVal)[col]
+            elif np.size(np.shape(rawVal)) == 1:
+                v = np.array(rawVal)[col]
             else:
-                v = array(rawVal)[:, col]
+                v = np.array(rawVal)[:, col]
             
-        if not isinstance(v, (list, ndarray)):
+        if not isinstance(v, (list, np.ndarray)):
             v = [v]
         
-        sz = size(v)
+        sz = np.size(v)
         partStore[key].extend(v)
         if sz != T:
             diff = T- sz
             partStore[key].extend([None for i in xrange(diff)])
 
-    newStore = OrderedDict(((dataLabel + k, v) for k, v in partStore.iteritems()))
+    newStore = collections.OrderedDict(((dataLabel + k, v) for k, v in partStore.iteritems()))
 
     return newStore
 
 
 def _genVarKeys(p, v):
     
-    pSet = OrderedDict()
+    pSet = collections.OrderedDict()
     
-    arrSets = [range(0, i) for i in shape(v)]
+    arrSets = [range(0, i) for i in np.shape(v)]
     # Now record each one
-    for genLoc in listMerGen(*arrSets):
+    for genLoc in utils.listMergeGen(*arrSets):
         if len(genLoc) == 1:
             loc = genLoc[0]
         else:

@@ -29,9 +29,9 @@ Contents:
    simulation
    dataFitting 
    data
-   experiments
+   experimentGenerator
    experiment
-   models
+   modelGenerator
    model
    fitAlgs
    outputting

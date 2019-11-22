@@ -15,13 +15,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import exp, ones, array, sum
+import numpy as np
 
-from model.modelTemplate import model
-from model.decision.discrete import decWeightProb
+from model.modelTemplate import Model
 
 
-class OpAL_H(model):
+class OpAL_H(Model):
 
     """The Opponent actor learning model without Hebbian learning
 
@@ -124,66 +123,69 @@ class OpAL_H(model):
         P_{d,t} = \\frac{ e^{\\beta A_{d,t} }}{\\sum_{d \\in D}e^{\\beta A_{d,t}}}
     """
 
-    Name = "OpAL_H"
+    def __init__(self, alpha=0.3, beta=4, rho=0, invBeta=None, alphaCrit=None, betaGo=None, betaNogo=None, alphaGo=None, alphaNogo=None, alphaGoDiff=None,
+                 alphaNogoDiff=None, alphaGoNogoDiff=None, expect=None, expectGo=None, **kwargs):
 
-    def __init__(self, **kwargs):
+        super(OpAL_H, self).__init__(**kwargs)
 
-        kwargRemains = self.genStandardParameters(kwargs)
+        if alphaCrit is None:
+            alphaCrit = alpha
+        self.alphaCrit = alphaCrit
 
-        invBeta = kwargRemains.pop('invBeta', 0.2)
-        self.beta = kwargRemains.pop('beta', (1 / invBeta) - 1)
-        self.rho = kwargRemains.pop('rho', 0)
-        self.betaGo = kwargRemains.pop('betaGo', None)
-        self.betaNogo = kwargRemains.pop('betaNogo', None)
-        self.alpha = kwargRemains.pop('alpha', 0.1)
-        self.alphaGoNogoDiff = kwargRemains.pop('alphaGoNogoDiff', None)
-        self.alphaCrit = kwargRemains.pop('alphaCrit', self.alpha)
-        self.alphaGo = kwargRemains.pop('alphaGo', self.alpha)
-        self.alphaNogo = kwargRemains.pop('alphaNogo', self.alpha)
-        self.alphaGoDiff = kwargRemains.pop('alphaGoDiff', None)
-        self.alphaNogoDiff = kwargRemains.pop('alphaNogoDiff', None)
-        self.expect = kwargRemains.pop('expect', ones((self.numActions, self.numCues)) / self.numCritics)
-        self.expectGo = kwargRemains.pop('expectGo', ones((self.numActions, self.numCues)))
+        if alphaGo is not None and alphaNogo is not None:
+            self.alphaGo = alphaGo
+            self.alphaNogo = alphaNogo
+        elif alphaGoNogoDiff is not None and (alphaGo is not None or alphaNogo is not None):
+            if alphaGo is not None:
+                self.alphaGo = alphaGo
+                self.alphaNogo = alphaGo - alphaGoNogoDiff
+            elif alphaNogo is not None:
+                self.alphaGo = alphaNogo + alphaGoNogoDiff
+                self.alphaNogo = alphaNogo
+        elif alphaGoDiff is not None and alphaNogoDiff is not None:
+            self.alphaGo = alpha + alphaGoDiff
+            self.alphaNogo = alpha + alphaNogoDiff
+        else:
+            self.alphaGo = alpha
+            self.alphaNogo = alpha
 
-        self.stimFunc = kwargRemains.pop('stimFunc', blankStim())
-        self.rewFunc = kwargRemains.pop('rewFunc', blankRew())
-        self.decisionFunc = kwargRemains.pop('decFunc', decWeightProb(range(self.numActions)))
-        self.genEventModifiers(kwargRemains)
+        if invBeta is not None:
+            beta = (1 / invBeta) - 1
+        if betaGo is not None and betaNogo is not None:
+            self.beta = (betaGo + betaNogo) / 2
+            self.rho = (betaGo - betaNogo) / (2 * beta)
+        else:
+            self.beta = beta
+            self.rho = rho
 
-        if self.alphaGoNogoDiff:
-            self.alphaNogo = self.alphaGo - self.alphaGoNogoDiff
-            
-        if self.alphaGoDiff and self.alphaNogoDiff:
-            self.alphaGo = self.alpha + self.alphaGoDiff
-            self.alphaNogo = self.alpha + self.alphaNogoDiff
+        if expect is None:
+            expect = np.ones((self.numActions, self.numCues)) / self.numCritics
+        self.expect = expect
+        if expectGo is None:
+            expectGo = np.ones((self.numActions, self.numCues))
+        self.expectGo = expectGo
 
-        if self.betaGo and self.betaNogo:
-            self.beta = (self.betaGo + self.betaNogo)/2
-            self.rho = (self.betaGo - self.betaNogo) / (2 * self.beta)
+        self.expectations = np.array(self.expect)
+        self.go = np.array(self.expectGo)
+        self.nogo = np.array(self.expectGo)
+        self.actionValues = np.ones(self.expectations.shape)
 
-        self.expectations = array(self.expect)
-        self.go = array(self.expectGo)
-        self.nogo = array(self.expectGo)
-        self.actionValues = ones(self.expectations.shape)
-
-        self.genStandardParameterDetails()
         self.parameters["alphaCrit"] = self.alphaCrit
         self.parameters["alphaGo"] = self.alphaGo
         self.parameters["alphaNogo"] = self.alphaNogo
         self.parameters["beta"] = self.beta
-        self.parameters["betaGo"] = self.betaGo
-        self.parameters["betaNogo"] = self.betaNogo
+        self.parameters["betaGo"] = betaGo
+        self.parameters["betaNogo"] = betaNogo
         self.parameters["rho"] = self.rho
         self.parameters["expectation"] = self.expect
         self.parameters["expectationGo"] = self.expectGo
 
         # Recorded information
-        self.genStandardResultsStore()
         self.recGo = []
         self.recNogo = []
         self.recActionValues = []
 
-    def outputEvolution(self):
+    def returnTaskState(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -194,9 +196,9 @@ class OpAL_H(model):
         """
 
         results = self.standardResultOutput()
-        results["Go"] = array(self.recGo)
-        results["Nogo"] = array(self.recNogo)
-        results["ActionValues"] = array(self.recActionValues)
+        results["Go"] = np.array(self.recGo)
+        results["Nogo"] = np.array(self.recNogo)
+        results["ActionValues"] = np.array(self.recActionValues)
 
         return results
 
@@ -290,14 +292,14 @@ class OpAL_H(model):
 
     def _critic(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alphaCrit*delta*stimuli/sum(stimuli)
+        newExpectations = self.expectations[action] + self.alphaCrit*delta*stimuli/np.sum(stimuli)
         newExpectations = newExpectations * (newExpectations >= 0)
         self.expectations[action] = newExpectations
 
     def _actor(self, action, delta, stimuli):
 
-        self.go[action] += self.alphaGo * delta * stimuli/sum(stimuli)
-        self.nogo[action] -= self.alphaNogo * delta * stimuli/sum(stimuli)
+        self.go[action] += self.alphaGo * delta * stimuli/np.sum(stimuli)
+        self.nogo[action] -= self.alphaNogo * delta * stimuli/np.sum(stimuli)
 
     def _actionValues(self, go, nogo):
 
@@ -333,8 +335,8 @@ class OpAL_H(model):
             The probabilities associated with the actionValues
         """
 
-        numerator = exp(self.beta * actionValues)
-        denominator = sum(numerator)
+        numerator = np.exp(self.beta * actionValues)
+        denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
@@ -355,49 +357,3 @@ class OpAL_H(model):
         probabilities = self.calcProbabilities(actExpectations)
 
         return probabilities
-
-
-def blankStim():
-    """
-    Default stimulus processor. Does nothing.
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankStimFunc(event):
-        return event
-
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
-
-
-def blankRew():
-    """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    """
-
-    def blankRewFunc(reward):
-        return reward
-
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc
