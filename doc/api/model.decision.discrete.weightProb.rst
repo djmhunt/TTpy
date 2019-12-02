@@ -1,6 +1,6 @@
-decMaxProb
+weightProb
 ==========
 
 .. currentmodule:: model.decision.discrete
 
-.. autofunction:: decMaxProb
+.. autofunction:: weightProb

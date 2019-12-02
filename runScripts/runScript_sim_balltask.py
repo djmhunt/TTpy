@@ -27,7 +27,7 @@ from experiment.balltask import Balltask, balltaskStimulusDirect, balltaskReward
 # The model factory
 from modelGenerator import ModelGen
 # The decision methods
-from model.decision.discrete import decWeightProb
+from model.decision.discrete import weightProb
 # The model
 from model.qLearn import QLearn
 
@@ -65,7 +65,7 @@ modelStaticArgs = {'numActions': numActions,
                    'prior': ones(numActions) / numActions,
                    'stimFunc': balltaskStimulusDirect(),
                    'rewFunc': balltaskRewardDirect(),
-                   'decFunc': decWeightProb([0, 1, 2])}
+                   'decFunc': weightProb([0, 1, 2])}
 
 modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 

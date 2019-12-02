@@ -59,7 +59,7 @@ class BPV(Model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.discrete.decWeightProb
+        in to a decision. Default is model.decision.discrete.weightProb
     """
 
     def __init__(self, alpha=0.3, dirichletInit=1, validRewards=np.array([0, 1]), **kwargs):

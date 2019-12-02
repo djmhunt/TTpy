@@ -27,7 +27,7 @@ from experiment.probSelect import probSelectStimDirect, probSelectRewDirect
 # The model factory
 from modelGenerator import ModelGen
 # The decision methods
-from model.decision.discrete import decWeightProb
+from model.decision.discrete import weightProb
 # The model
 from model.qLearn import QLearn
 
@@ -57,7 +57,7 @@ modelStaticArgs = {'numActions': numActions,
                    'prior': ones(numActions) / numActions,
                    'stimFunc': probSelectStimDirect(),
                    'rewFunc': probSelectRewDirect(),
-                   'decFunc': decWeightProb(["A", "B", "C", "D", "E", "F"])}
+                   'decFunc': weightProb(["A", "B", "C", "D", "E", "F"])}
 
 modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 

@@ -51,7 +51,7 @@
 
 <span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
 
-<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
+<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">weightProb</span>
 <span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">callableDetailsString</span>
 
 
@@ -190,7 +190,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">stimFunc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">rewFunc</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">decFunc</span><span class="p">:</span>
-            <span class="n">decFunc</span> <span class="o">=</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">))</span>
+            <span class="n">decFunc</span> <span class="o">=</span> <span class="n">weightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">decFunc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eventModifier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>

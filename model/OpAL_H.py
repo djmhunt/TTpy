@@ -96,7 +96,7 @@ class OpAL_H(Model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.discrete.decWeightProb
+        in to a decision. Default is model.decision.discrete.weightProb
 
     Notes
     -----

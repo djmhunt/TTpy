@@ -48,8 +48,227 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="model-tde-module">
-<h1>model.tdE module<a class="headerlink" href="#model-tde-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-model.tdE">
+<span id="model-tde-module"></span><h1>model.tdE module<a class="headerlink" href="#module-model.tdE" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Based on the description on p134-135 of Reinforcement Learning, Sutton &amp; Barto 1998</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="model.tdE.TDE">
+<em class="property">class </em><code class="descclassname">model.tdE.</code><code class="descname">TDE</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>epsilon=0.1</em>, <em>gamma=0.3</em>, <em>expect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
+<p>The td-Learning algorithm</p>
+<dl class="attribute">
+<dt id="model.tdE.TDE.Name">
+<code class="descname">Name</code><a class="headerlink" href="#model.tdE.TDE.Name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the class used when recording what has been used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="model.tdE.TDE.currAction">
+<code class="descname">currAction</code><a class="headerlink" href="#model.tdE.TDE.currAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current action chosen by the model. Used to pass participant action
+to model when fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter</li>
+<li><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Sensitivity parameter for probabilities</li>
+<li><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – future expectation discounting</li>
+<li><strong>numActions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
+Default 2.</li>
+<li><strong>numCues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="docutils">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
+<dd>Default 1.</dd>
+</dl>
+</li>
+<li><strong>numCritics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
+Default numActions*numCues</li>
+<li><strong>actionCodes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
+task or dataset and references used in the models to describe the order
+in which the action information is stored.</li>
+<li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
+Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">/</span> <span class="pre">numCritics)</span></code></li>
+<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the expected reward.
+Default <code class="docutils literal notranslate"><span class="pre">ones((numActions,</span> <span class="pre">numCues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">numCues</span></code></li>
+<li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</li>
+<li><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
+understand. Default is blankRew</li>
+<li><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.discrete.weightProb</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">model.TD0</span></code></dt>
+<dd>This model is heavily based on that one</dd>
+</dl>
+</div>
+<dl class="method">
+<dt id="model.tdE.TDE.actorStimulusProbs">
+<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates in the model-appropriate way the probability of each action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probabilities</strong> – The probabilities associated with the action choices</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.calcProbabilities">
+<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the probabilities associated with the actions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>actionValues</strong> (<em>1D ndArray of floats</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>probArray</strong> – The probabilities associated with the actionValues</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.delta">
+<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the comparison between the reward and the expectation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</li>
+<li><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</li>
+<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">delta</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.lastChoiceReinforcement">
+<code class="descname">lastChoiceReinforcement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.lastChoiceReinforcement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.lastChoiceReinforcement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the model to update its expectations once the action has been chosen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.returnTaskState">
+<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.returnTaskState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the relevant data for this model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.rewardExpectation">
+<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the estimated reward based on the action and stimuli</p>
+<p>This contains parts that are experiment dependent</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</li>
+<li><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</li>
+<li><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.storeState">
+<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.storeState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores the state of all the important variables so that they can be
+accessed later</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="model.tdE.TDE.updateModel">
+<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/tdE.html#TDE.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.tdE.TDE.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</li>
+<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</li>
+<li><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</li>
+<li><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

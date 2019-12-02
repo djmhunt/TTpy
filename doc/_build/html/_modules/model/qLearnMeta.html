@@ -45,7 +45,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 
-<span class="sd">:Reference: Based on the model qLearn as well as the paper:</span>
+<span class="sd">:Reference: Based on the model QLearn as well as the paper:</span>
 <span class="sd">                Meta-learning in Reinforcement Learning</span>
 
 
@@ -55,13 +55,12 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">isinf</span><span class="p">,</span> <span class="nb">sum</span><span class="p">,</span> <span class="n">sign</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">model</span>
-<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">Model</span>
 
 
-<div class="viewcode-block" id="qLearnMeta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta">[docs]</a><span class="k">class</span> <span class="nc">qLearnMeta</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta">[docs]</a><span class="k">class</span> <span class="nc">QLearnMeta</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;The q-Learning algorithm with a second-order adaptive beta</span>
 
@@ -109,43 +108,41 @@
 <span class="sd">        understand. Default is blankRew</span>
 <span class="sd">    decFunc : function, optional</span>
 <span class="sd">        The function that takes the internal values of the model and turns them</span>
-<span class="sd">        in to a decision. Default is model.decision.binary.decEta</span>
+<span class="sd">        in to a decision. Default is model.decision.binary.eta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;qLearnMeta&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">rewardD</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rewardDD</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">expect</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-        <span class="n">kwargRemains</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QLearnMeta</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># A record of the kwarg keys, the variable they create and their default value</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;tau&#39;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;expect&#39;</span><span class="p">,</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewardD&#39;</span><span class="p">,</span> <span class="mf">5.5</span> <span class="o">*</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewardDD&#39;</span><span class="p">,</span> <span class="mf">5.5</span> <span class="o">*</span> <span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">expect</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">expect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="n">expect</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">genEventModifiers</span><span class="p">(</span><span class="n">kwargRemains</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rewardD</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rewardD</span> <span class="o">=</span> <span class="mf">5.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span> <span class="o">=</span> <span class="n">rewardD</span>
+        <span class="k">if</span> <span class="n">rewardDD</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rewardDD</span> <span class="o">=</span> <span class="mf">5.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span> <span class="o">=</span> <span class="n">rewardDD</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;tau&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;expectation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span><span class="p">)</span>
 
         <span class="c1"># Recorded information</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">genStandardResultsStore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recRewardD</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recRewardDD</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeta</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="qLearnMeta.outputEvolution"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.outputEvolution">[docs]</a>    <span class="k">def</span> <span class="nf">outputEvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.returnTaskState"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
 
 <span class="sd">        Returns</span>
@@ -156,13 +153,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewardD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewardD</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewardDD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewardDD</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recBeta</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewardD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewardD</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewardDD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewardDD</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recBeta</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.storeState"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.storeState"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        accessed later</span>
@@ -174,7 +171,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recRewardDD</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recBeta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.rewardExpectation"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.rewardExpectation"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the estimated reward based on the action and stimuli</span>
 
 <span class="sd">        This contains parts that are experiment dependent</span>
@@ -200,7 +197,7 @@
 
         <span class="k">return</span> <span class="n">actionExpectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">activeStimuli</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.delta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.delta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the comparison between the reward and the expectation</span>
 
@@ -228,7 +225,7 @@
 
         <span class="k">return</span> <span class="n">delta</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.updateBeta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.updateBeta">[docs]</a>    <span class="k">def</span> <span class="nf">updateBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.updateBeta"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.updateBeta">[docs]</a>    <span class="k">def</span> <span class="nf">updateBeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters</span>
@@ -240,17 +237,17 @@
 
         <span class="c1">#self.rewardD += self.tau * (reward - self.rewardD)</span>
         <span class="c1">#self.rewardDD += self.tau * (self.rewardD - self.rewardDD)</span>
-        <span class="c1">#self.beta = exp(self.rewardD - self.rewardDD)</span>
+        <span class="c1">#self.beta = np.exp(self.rewardD - self.rewardDD)</span>
 
         <span class="n">rewardD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
         <span class="n">rewardDD</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
         <span class="n">rewardD</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="p">(</span><span class="n">reward</span> <span class="o">-</span> <span class="n">rewardD</span><span class="p">)</span>
         <span class="n">rewardDD</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">*</span> <span class="p">(</span><span class="n">rewardD</span> <span class="o">-</span> <span class="n">rewardDD</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">rewardD</span> <span class="o">-</span> <span class="n">rewardDD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rewardD</span> <span class="o">-</span> <span class="n">rewardDD</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewardD</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewardDD</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardDD</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.updateModel"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.updateModel"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -275,7 +272,7 @@
 
     <span class="k">def</span> <span class="nf">_newExpect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="n">newExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">delta</span><span class="o">*</span><span class="n">stimuli</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">newExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">delta</span><span class="o">*</span><span class="n">stimuli</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
 
         <span class="n">newExpectations</span> <span class="o">=</span> <span class="n">newExpectations</span> <span class="o">*</span> <span class="p">(</span><span class="n">newExpectations</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -292,7 +289,7 @@
 
         <span class="k">return</span> <span class="n">actionExpectations</span>
 
-<div class="viewcode-block" id="qLearnMeta.calcProbabilities"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.calcProbabilities"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
         <span class="c1"># type: (ndarray) -&gt; ndarray</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the probabilities associated with the actions</span>
@@ -307,14 +304,14 @@
 <span class="sd">            The probabilities associated with the actionValues</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">numerator</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">actionValues</span><span class="p">)</span>
-        <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">actionValues</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
 
         <span class="n">probArray</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
 
         <span class="k">return</span> <span class="n">probArray</span></div>
 
-<div class="viewcode-block" id="qLearnMeta.actorStimulusProbs"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.qLearnMeta.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QLearnMeta.actorStimulusProbs"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.QLearnMeta.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates in the model-appropriate way the probability of each action.</span>
 
@@ -328,52 +325,6 @@
         <span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">probabilities</span></div></div>
-
-
-<div class="viewcode-block" id="blankStim"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.blankStim">[docs]</a><span class="k">def</span> <span class="nf">blankStim</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default stimulus processor. Does nothing.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankStimFunc : function</span>
-<span class="sd">        The function expects to be passed the event and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankStimFunc</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">event</span>
-
-    <span class="n">blankStimFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankStim&quot;</span>
-    <span class="k">return</span> <span class="n">blankStimFunc</span></div>
-
-
-<div class="viewcode-block" id="blankRew"><a class="viewcode-back" href="../../model.qLearnMeta.html#model.qLearnMeta.blankRew">[docs]</a><span class="k">def</span> <span class="nf">blankRew</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Default reward processor. Does nothing. Returns reward</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    blankRewFunc : function</span>
-<span class="sd">        The function expects to be passed the reward and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">blankRewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reward</span>
-
-    <span class="n">blankRewFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;blankRew&quot;</span>
-    <span class="k">return</span> <span class="n">blankRewFunc</span></div>
 </pre></div>
 
           </div>

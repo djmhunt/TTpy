@@ -58,7 +58,7 @@ class BPMS(Model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decSingle
+        in to a decision. Default is model.decision.binary.single
 
     Notes
     -----

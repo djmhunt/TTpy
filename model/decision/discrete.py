@@ -18,7 +18,7 @@ from types import NoneType
 
 
 # TODO: provide default values for expResponses
-def decWeightProb(expResponses):
+def weightProb(expResponses):
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing randomly based on which are valid and what their associated probabilities are
@@ -45,33 +45,29 @@ def decWeightProb(expResponses):
 
     Examples
     --------
-    >>> from model.decision.discrete import decWeightProb
-    >>> lastAct = 0
-    >>> d = decWeightProb([0,1,2,3])
-    >>> d([0.2,0.6,0.3,0.5], lastAct)
-    ￼(1, {0:0.2,1:0.6,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct)
-    ￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct, validResponses=[0,2])
-    ￼(2, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d = decWeightProb([1,2,3])
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[1,2])
-    ￼(2, {1:0.2,2:0.3,3:0.5})
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[])
-    ￼(None, {1:0.2,2:0.3,3:0.5})
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[0,2])
-    model\decision\discrete.py:83: UserWarning: Some of the validResponses are not in expResponses: [0, 2]
-    warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
-    ￼(3, {1:0.2,2:0.3,3:0.5})
+    >>> from model.decision.discrete import weightProb
+    >>> np.random.seed(100)
+    >>> d = weightProb([0, 1, 2, 3])
+    >>> d([0.4, 0.8, 0.3, 0.5])
+    (1, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.15), (3, 0.25)]))
+    >>> d([0.1, 0.3, 0.4, 0.2])
+    (1, OrderedDict([(0, 0.1), (1, 0.3), (2, 0.4), (3, 0.2)]))
+    >>> d([0.2, 0.5, 0.3, 0.5], validResponses=[0, 2])
+    (2, OrderedDict([(0, 0.4), (1, 0), (2, 0.6), (3, 0)]))
+    >>> d = weightProb(["A", "B", "C"])
+    >>> d([0.2, 0.3, 0.5], validResponses=["A", "B"])
+    (u'B', OrderedDict([(u'A', 0.4), (u'B', 0.6), (u'C', 0)]))
+    >>> d([0.2, 0.3, 0.5], validResponses=[])
+    (None, OrderedDict([(u'A', 0.2), (u'B', 0.3), (u'C', 0.5)]))
     """
 
     expResp = np.array(expResponses)
 
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+    def decisionFunc(probabilities, lastAction=None, validResponses=None):
 
         probArray = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
+        probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
@@ -82,17 +78,19 @@ def decWeightProb(expResponses):
 
         decision = np.random.choice(resp, p=normProb)
 
-        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(resp, normProb)})
+        abridgedProbDict = {k: v for k, v in itertools.izip(resp, normProb)}
+        abridgedProbDict.update({k: 0 for k in expResp if k not in resp})
+        probDict = collections.OrderedDict([(k, abridgedProbDict[k]) for k in expResp])
 
         return decision, probDict
 
-    decisionFunc.Name = "discrete.decWeightProb"
+    decisionFunc.Name = "discrete.weightProb"
     decisionFunc.Params = {"expResponses": expResponses}
 
     return decisionFunc
 
 
-def decMaxProb(expResponses):
+def maxProb(expResponses):
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing the most likely
@@ -119,33 +117,27 @@ def decMaxProb(expResponses):
 
     Examples
     --------
-    >>> from model.decision.discrete import decMaxProb
-    >>> lastAct = 0
-    >>> d = decMaxProb([0,1,2,3])
-    >>> d([0.2,0.6,0.3,0.5], lastAct)
-    ￼(1, {0:0.2,1:0.6,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct)
-    ￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct, validResponses=[0,2])
-    ￼(2, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d = decMaxProb([1,2,3])
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[1,2])
-    ￼(2, {1:0.2,2:0.3,3:0.5})
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[])
-    ￼(None, {1:0.2,2:0.3,3:0.5})
-    >>> d([0.2,0.3,0.5], lastAct, validResponses=[0,2])
-    model\decision\discrete.py:83: UserWarning: Some of the validResponses are not in expResponses: [0, 2]
-    warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
-    ￼(3, {1:0.2,2:0.3,3:0.5})
+    >>> from model.decision.discrete import maxProb
+    >>> np.random.seed(100)
+    >>> d = maxProb([1,2,3])
+    >>> d([0.6, 0.3, 0.5])
+    (1, OrderedDict([(1, 0.6), (2, 0.3), (3, 0.5)]))
+    >>> d([0.2, 0.3, 0.5], validResponses=[1, 2])
+    (2, OrderedDict([(1, 0.2), (2, 0.3), (3, 0.5)]))
+    >>> d([0.2, 0.3, 0.5], validResponses=[])
+    (None, OrderedDict([(1, 0.2), (2, 0.3), (3, 0.5)]))
+    >>> d = maxProb(["A", "B", "C"])
+    >>> d([0.6, 0.3, 0.5], validResponses=["A", "B"])
+    ('A', OrderedDict([('A', 0.6), ('B', 0.3), ('C', 0.5)]))
     """
 
     expResp = np.array(expResponses)
 
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+    def decisionFunc(probabilities, lastAction=None, validResponses=None):
 
         probArray = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
+        probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
@@ -160,107 +152,14 @@ def decMaxProb(expResponses):
 
         return decision, probDict
 
-    decisionFunc.Name = "discrete.decMaxProb"
+    decisionFunc.Name = "discrete.maxProb"
     decisionFunc.Params = {"expResponses": expResponses}
 
     return decisionFunc
 
 
-def decMaxProbSets(expResponses):
-    """Decisions for an arbitrary number of sets of action-response value probabilities
-
-    Choice made by choosing the most likely
-
-    Parameters
-    ----------
-    expResponses : tuple
-        Provides the action responses expected by the experiment for each
-        probability estimate.
-
-    Returns
-    -------
-    decisionFunc : function
-        Calculates the decisions based on the probabilities and returns the
-        decision and the probability of that decision
-    decision : int or NoneType
-        The action to be taken by the model
-    probDict : OrderedDict of valid responses
-        A dictionary of considered actions as keys and their associated probabilities as values
-
-    See Also
-    --------
-    models.QLearn, models.QLearn2, models.OpAL
-
-    Examples
-    --------
-    >>> from model.decision.discrete import decMaxProbSets
-    >>> lastAct = 0
-    >>> d = decMaxProbSets([0,1,2])
-    >>> d([0.1,0.4,0.2,0.3,0.5,0.5], lastAct)
-    (2, OrderedDict([(0, 0.25), (1, 0.25), (2, 0.5)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct)
-    (1, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct)
-    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0,2])
-    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0])
-    (0, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[0,3])
-    Stimuli invalid: None. Ignoring stimuli
-      warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
-    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, validResponses=[])
-    (None, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, stimulus=[1,0])
-    (2, OrderedDict([(0, 0.1), (1, 0.4), (2, 0.5)]))
-    >>> d([0.1,0.4,0.4,0.6,0.5,0.5], lastAct, stimulus=[0,0])
-    Stimuli invalid: [0, 0]. Ignoring stimuli
-      warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
-    (2, OrderedDict([(0, 0.2), (1, 0.4), (2, 0.4)]))
-    """
-
-    expResp = np.array(expResponses)
-    expRespSize = len(expResp)
-
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
-
-        numStim = int(len(probabilities) / expRespSize)
-
-        if type(stimulus) is not NoneType and numStim == len(stimulus) and not (np.array(stimulus) == 0).all():
-            respWeights = stimulus
-        else:
-            warnings.warn("Stimuli invalid: {}. Ignoring stimuli".format(repr(stimulus)))
-            respWeights = np.ones(numStim)
-
-        probLists = np.reshape(probabilities, (expRespSize, numStim))
-        expectList = np.sum(respWeights * probLists, 1)
-
-        probNormList = (expectList / np.sum(expectList)).flatten()
-
-        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResp, probNormList)})
-
-        prob, resp = validProbabilities(probNormList, expResp, validResponses)
-
-        if type(prob) is NoneType:
-            return None, probDict
-
-        probMax = np.amax(prob)
-
-        # In case there are multiple choices with the same probability, pick
-        # one at random
-        probIndexes = np.where(prob == probMax)[0]
-
-        decision = np.random.choice(resp[probIndexes])
-
-        return decision, probDict
-
-    decisionFunc.Name = "discrete.decMaxProbSets"
-    decisionFunc.Params = {"expResponses": expResponses}
-
-    return decisionFunc
-
-def decProbThresh(expResponses, eta=0.8):
+def probThresh(expResponses, eta=0.8):
+    # type : (list, float) -> (float, collections.OrderedDict)
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing when certain (when probability above a certain value), otherwise randomly
@@ -283,41 +182,29 @@ def decProbThresh(expResponses, eta=0.8):
     probDict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
 
-    See Also
-    --------
-    models.QLearn, models.QLearn2, models.OpAL
-
     Examples
     --------
-    >>> from model.decision.discrete import decProbThresh
-    >>> lastAct = 0
-    >>> d = decProbThresh(expResponses=[0,1,2,3], eta=0.8)
-    >>> d([0.2,0.8,0.3,0.5], lastAct)
-    ￼(1, {0:0.2,1:0.8,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct)
-    ￼(1, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d([0.2,0.5,0.3,0.5], lastAct)
-    ￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})
-    >>> d([0.2,0.8,0.3,0.5], lastAct, validResponses=[0,2])
-    ￼(2, {0:0.2,1:0.8,2:0.3,3:0.5})
-    >>> d([0.2,0.8,0.3,0.5], lastAct, validResponses=[])
-    (None, {0:0.2,1:0.8,2:0.3,3:0.5})
-    >>> d = decProbThresh([1,2,3])
-    >>> d([0.2,0.3,0.8], lastAct, validResponses=[1,2])
-    ￼(2, {1:0.2,2:0.3,3:0.8})
-    >>> d([0.2,0.3,0.8], lastAct, validResponses=[0,2])
-    model\decision\discrete.py:83: UserWarning: Some of the validResponses are not in expResponses: [0, 2]
-    warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
-    ￼(3, {1:0.2,2:0.3,3:0.5})
+    >>> from model.decision.discrete import probThresh
+    >>> np.random.seed(100)
+    >>> d = probThresh(expResponses=[0, 1, 2, 3], eta=0.8)
+    >>> d([0.2, 0.8, 0.3, 0.5])
+    (1, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))
+    >>> d([0.2, 0.8, 0.3, 0.5], validResponses=[0, 2])
+    (0, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))
+    >>> d([0.2, 0.8, 0.3, 0.5], validResponses=[])
+    (None, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))
+    >>> d = probThresh(["A","B","C"])
+    >>> d([0.2, 0.3, 0.8], validResponses=["A", "B"])
+    ('A', OrderedDict([('A', 0.2), ('B', 0.3), ('C', 0.8)]))
     """
 
     expResp = np.array(expResponses)
 
-    def decisionFunc(probabilities, lastAction, stimulus=None, validResponses=None):
+    def decisionFunc(probabilities, lastAction=None, validResponses=None):
 
         probArray = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict({k: v for k, v in itertools.izip(expResponses, probArray)})
+        probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
         prob, resp = validProbabilities(probArray, expResp, validResponses)
 
@@ -333,7 +220,7 @@ def decProbThresh(expResponses, eta=0.8):
 
         return decision, probDict
 
-    decisionFunc.Name = "discrete.decProbThresh"
+    decisionFunc.Name = "discrete.probThresh"
     decisionFunc.Params = {"expResponses": expResponses,
                            "eta": eta}
 
@@ -361,6 +248,12 @@ def validProbabilities(probabilities, expResp, validResponses):
             The probabilities to be evaluated in this trial
         responses: 1D list or None
             The responses associated with each probability
+
+    Examples
+    --------
+    >>> from model.decision.discrete import validProbabilities
+    >>> validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
+    (array([0.1, 0.7]), array(['B', 'C'], dtype='<U1'))
     """
 
     if type(validResponses) is NoneType:
@@ -369,10 +262,10 @@ def validProbabilities(probabilities, expResp, validResponses):
     else:
         resp = np.array([r for r in expResp if r in validResponses])
         prob = np.array([probabilities[i] for i, r in enumerate(expResp) if r in validResponses])
-        if len(resp) != len(validResponses):
+        if len([r for r in validResponses if r not in expResp]) > 0:
             warnings.warn("Some of the validResponses are not in expResponses: " + repr(validResponses))
-            resp = expResp
-            prob = probabilities
+        elif len(resp) != len(validResponses):
+            warnings.warn("Some of the validResponses are repeated: " + repr(validResponses))
         elif len(validResponses) == 0:
             resp = None
             prob = None

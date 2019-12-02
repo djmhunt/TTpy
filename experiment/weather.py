@@ -264,7 +264,7 @@ def weatherStimDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.eta
     """
 
     def weatherStim(observation):
@@ -396,7 +396,7 @@ def weatherRewDiff():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
     def weatherRew(reward, action, stimuli):

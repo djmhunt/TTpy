@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>decProbThresh &#8212; pyHPDM 0.9 documentation</title>
+    <title>probThresh &#8212; pyHPDM 0.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -19,9 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="decWeightProb" href="model.decision.discrete.decWeightProb.html" />
-    <link rel="prev" title="decMaxProbSets" href="model.decision.discrete.decMaxProbSets.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,16 +30,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="model.decision.discrete.decWeightProb.html" title="decWeightProb"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="model.decision.discrete.decMaxProbSets.html" title="decMaxProbSets"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../model.html" >model package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../model.decision.html" >model.decision package</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="../model.decision.discrete.html" accesskey="U">model.decision.discrete module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,11 +39,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="decprobthresh">
-<h1>decProbThresh<a class="headerlink" href="#decprobthresh" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="probthresh">
+<h1>probThresh<a class="headerlink" href="#probthresh" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="model.decision.discrete.decProbThresh">
-<code class="descclassname">model.decision.discrete.</code><code class="descname">decProbThresh</code><span class="sig-paren">(</span><em>expResponses</em>, <em>eta=0.8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model/decision/discrete.html#decProbThresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.discrete.decProbThresh" title="Permalink to this definition">¶</a></dt>
+<dt id="model.decision.discrete.probThresh">
+<code class="descclassname">model.decision.discrete.</code><code class="descname">probThresh</code><span class="sig-paren">(</span><em>expResponses</em>, <em>eta=0.8</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/model/decision/discrete.html#probThresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.decision.discrete.probThresh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decisions for an arbitrary number of choices</p>
 <p>Choice made by choosing when certain (when probability above a certain value), otherwise randomly</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -79,31 +68,19 @@ decision and the probability of that decision</li>
 </tr>
 </tbody>
 </table>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">models.QLearn()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.QLearn2()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.OpAL()</span></code></p>
-</div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decProbThresh</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lastAct</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">decProbThresh</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">eta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
-<span class="go">￼(1, {0:0.2,1:0.8,2:0.3,3:0.5})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
-<span class="go">￼(1, {0:0.2,1:0.5,2:0.3,3:0.5})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">)</span>
-<span class="go">￼(3, {0:0.2,1:0.5,2:0.3,3:0.5})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">￼(2, {0:0.2,1:0.8,2:0.3,3:0.5})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[])</span>
-<span class="go">(None, {0:0.2,1:0.8,2:0.3,3:0.5})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">decProbThresh</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.8</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">￼(2, {1:0.2,2:0.3,3:0.8})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.8</span><span class="p">],</span> <span class="n">lastAct</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">model\decision\discrete.py:83: UserWarning: Some of the validResponses are not in expResponses: [0, 2]</span>
-<span class="go">warn(&quot;Some of the validResponses are not in expResponses: &quot; + repr(validResponses))</span>
-<span class="go">￼(3, {1:0.2,2:0.3,3:0.5})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">probThresh</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">probThresh</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">eta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="go">(1, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="go">(0, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[])</span>
+<span class="go">(None, OrderedDict([(0, 0.2), (1, 0.8), (2, 0.3), (3, 0.5)]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">probThresh</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">])</span>
+<span class="go">(&#39;A&#39;, OrderedDict([(&#39;A&#39;, 0.2), (&#39;B&#39;, 0.3), (&#39;C&#39;, 0.8)]))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -116,12 +93,6 @@ decision and the probability of that decision</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="model.decision.discrete.decMaxProbSets.html"
-                        title="previous chapter">decMaxProbSets</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="model.decision.discrete.decWeightProb.html"
-                        title="next chapter">decWeightProb</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -154,16 +125,7 @@ decision and the probability of that decision</li>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="model.decision.discrete.decWeightProb.html" title="decWeightProb"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="model.decision.discrete.decMaxProbSets.html" title="decMaxProbSets"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../model.html" >model package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../model.decision.html" >model.decision package</a> &#187;</li>
-          <li class="nav-item nav-item-3"><a href="../model.decision.discrete.html" >model.decision.discrete module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

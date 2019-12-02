@@ -1,6 +1,6 @@
-decEta
+single
 ======
 
 .. currentmodule:: model.decision.binary
 
-.. autofunction:: decEta
+.. autofunction:: single

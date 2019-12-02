@@ -287,7 +287,7 @@ def beadRewDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
     def beadRew(reward, action, stimuli):

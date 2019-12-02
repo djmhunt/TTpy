@@ -55,7 +55,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">decWeightProb</span>
+<span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="k">import</span> <span class="n">weightProb</span>
 
 
 <div class="viewcode-block" id="QLearnSP"><a class="viewcode-back" href="../../model.qLearnSP.html#model.qLearnSP.QLearnSP">[docs]</a><span class="k">class</span> <span class="nc">QLearnSP</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -107,7 +107,7 @@
 <span class="sd">        understand. Default is blankRew</span>
 <span class="sd">    decFunc : function, optional</span>
 <span class="sd">        The function that takes the internal values of the model and turns them</span>
-<span class="sd">        in to a decision. Default is model.decision.discrete.decWeightProb</span>
+<span class="sd">        in to a decision. Default is model.decision.discrete.weightProb</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 
@@ -122,7 +122,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimFunc&#39;</span><span class="p">,</span> <span class="n">blankStim</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;rewFunc&#39;</span><span class="p">,</span> <span class="n">blankRew</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">decWeightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">kwargRemains</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decFunc&#39;</span><span class="p">,</span> <span class="n">weightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">genEventModifiers</span><span class="p">(</span><span class="n">kwargRemains</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">genStandardParameterDetails</span><span class="p">()</span>

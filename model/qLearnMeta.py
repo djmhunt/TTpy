@@ -12,7 +12,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import np
+import numpy as np
 
 from model.modelTemplate import Model
 
@@ -65,7 +65,7 @@ class QLearnMeta(Model):
         understand. Default is blankRew
     decFunc : function, optional
         The function that takes the internal values of the model and turns them
-        in to a decision. Default is model.decision.binary.decEta
+        in to a decision. Default is model.decision.binary.eta
     """
 
     def __init__(self, alpha=0.3, tau=0.2, rewardD=None, rewardDD=None, expect=None, **kwargs):

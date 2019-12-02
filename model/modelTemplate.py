@@ -8,7 +8,7 @@ import numpy as np
 
 from types import NoneType
 
-from model.decision.discrete import decWeightProb
+from model.decision.discrete import weightProb
 from utils import callableDetailsString
 
 
@@ -147,7 +147,7 @@ class Model(object):
         self.stimFunc = stimFunc
         self.rewFunc = rewFunc
         if not decFunc:
-            decFunc = decWeightProb(range(self.numActions))
+            decFunc = weightProb(range(self.numActions))
         self.decisionFunc = decFunc
         self.stimFunc = self._eventModifier(self.stimFunc, kwargs)
         self.rewFunc = self._eventModifier(self.rewFunc, kwargs)

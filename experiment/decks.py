@@ -192,7 +192,7 @@ def deckStimDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
     def deckStim(observation):
@@ -219,7 +219,7 @@ def deckRewDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.decEta
+    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
     def deckRew(reward, action, stimuli):
