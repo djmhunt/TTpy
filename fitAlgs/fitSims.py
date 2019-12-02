@@ -40,11 +40,13 @@ class fitSim(object):
         If a floating point error occurs when running a fit the fitter function
         will return a value for each element of fpRespVal.
         Default is 1/1e100
-    fitSubset : ``float('Nan')``, ``None``, ``"rewarded"`` or list of int, optional
+    fitSubset : ``float('Nan')``, ``None``, ``"rewarded"``, ``"unrewarded"``, ``"all"`` or list of int, optional
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
-        This can either be described as a list of trial numbers or, by passing ``float('Nan')`` for all those trials whose
-        feedback was ``float('Nan')`` or ``"rewarded"`` for those whose feedback was not ``float('Nan')``. Default ``None``, which means all trials
-        will be used.
+        This can either be described as a list of trial numbers or, by passing
+        - ``"all"`` for fitting all trials
+        - ``float('Nan')`` or ``"unrewarded"`` for all those trials whose feedback was ``float('Nan')``
+        - ``"rewarded"`` for those who had feedback that was not ``float('Nan')``
+        Default ``None``, which means all trials will be used.
     calcCov : bool, optional
         Estimating the covariance
 
@@ -192,8 +194,12 @@ class fitSim(object):
                 self.fitSubsetChosen = fitSubset
             elif fitSubset == "rewarded":
                 self.fitSubsetChosen = ~np.isnan(self.partRewards)
+            elif fitSubset == "unrewarded":
+                self.fitSubsetChosen = ~np.isnan(self.partRewards)
             elif np.isnan(fitSubset):
                 self.fitSubsetChosen = np.isnan(self.partRewards)
+            elif fitSubset == "all":
+                self.fitSubsetChosen = None
             else:
                 self.fitSubsetChosen = None
         else:
