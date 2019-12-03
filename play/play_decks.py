@@ -14,7 +14,6 @@ decky = Decks()
 
 # decky.Name
 total_points = 0
-decky.reset()
 for state in decky:
     print("draw #{}".format(decky.t))
     print("Your total points are {}".format(total_points))
@@ -24,7 +23,7 @@ for state in decky:
     response = decky.feedback()
     print("you got {} points!".format(response))
     total_points += response
-    decky.procede()  # not actually needed because it's only used if
+    decky.proceed()  # not actually needed because it's only used if
 
 
 print("experiment complete! you raeched {} points!".format(total_points))
