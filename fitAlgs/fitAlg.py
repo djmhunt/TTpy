@@ -6,23 +6,23 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from math import isinf
-from collections import OrderedDict
-from scipy.optimize import approx_fprime
-from numpy import array, linspace, dot, finfo, expand_dims
-from numpy.linalg import inv, svd, LinAlgError
-from scipy.linalg import pinvh
-from itertools import izip
+import numpy as np
+import scipy as sp
+
+import math
+import collections
+import itertools
 
 #import numdifftools as nd
 
-from utils import listMergeNP, callableDetailsString
-from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs.boundFunc import scalarBound
-from utils import errorResp
+import fitAlgs.fitSims.FitSim as FitSim
+import fitAlgs.qualityFunc as qualityFunc
+import fitAlgs.boundFunc as boundFunc
+
+import utils
 
 
-class fitAlg(object):
+class FitAlg(object):
     """
     The abstract class for fitting data
 
@@ -30,11 +30,11 @@ class fitAlg(object):
     ----------
     fitSim : fitAlgs.fitSims.fitSim instance
         An instance of one of the fitting algorithms
-    fitQualFunc : string, optional
+    fitQualityFunc : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
-    qualFuncArgs : dict, optional
+    qualityFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
@@ -43,9 +43,6 @@ class fitAlg(object):
     boundCostFunc : function, optional
         A function used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound``
-    numStartPoints : int, optional
-        The number of starting points generated for each parameter. Only used with some fitting algorithms
-        Default 4
     calcCov : bool, optional
         Is the covariance calculated. Default ``False``
     extraFitMeasures : dict of dict, optional
@@ -63,29 +60,39 @@ class fitAlg(object):
 
     """
 
-    Name = 'none'
+    def __init__(self, fitSim=None, fitQualityFunc=None, qualityFuncArgs={}, bounds=None, boundCostFunc=boundFunc.scalarBound(), extraFitMeasures={}, calcCov=False, boundRatio=0.000001, **kwargs):
 
-    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+        if fitSim is None:
+            self.fitSim = FitSim()
+        elif isinstance(fitSim, FitSim):
+            self.fitSim = fitSim
+        else:
+            raise NameError("fitSim type is incorrect: {}".format(type(fitSim)))
 
-        self.fitSim = fitSim
+        if bounds is None:
+            raise NameError("Please specify bounds for your parameters")
+        else:
+            self.allBounds = bounds
+
+        self.Name = self.findName()
+
         self.boundCostFunc = boundCostFunc
-        self.allBounds = bounds
-        self.numStartPoints = kwargs.pop("numStartPoints", 4)
-        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.calcCovariance = kwargs.pop('calcCov', False)
-        if self.calcCovariance:
-            br = kwargs.pop('boundRatio', 0.000001)
-            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
-        measureDict = kwargs.pop("extraFitMeasures", {})
-        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
+        self.fitQualityFunc = qualityFunc.qualFuncIdent(fitQualityFunc, **qualityFuncArgs)
+        self.calcCovariance = calcCov
+        if self.calcCovariance:
+            self.hessInc = {k: boundRatio * (u - l) for k, (l, u) in self.allBounds.iteritems()}
+
+        self.measures = {k: qualityFunc.qualFuncIdent(k, **v) for k, v in extraFitMeasures.iteritems()}
 
         self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitQualFunc,
-                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
+                        'fitQualityFunction': fitQualityFunc,
+                        'fitQualityArguments': qualityFuncArgs,
+                        'boundaryCostFunction': utils.callableDetailsString(boundCostFunc),
                         'bounds': self.allBounds,
-                        'numStartPoints': self.numStartPoints}
-        self.fitInfo.update(kwargs.copy())
+                        'extraFitMeasures': extraFitMeasures,
+                        'calculateCovariance': calcCov,
+                        'boundRatio': boundRatio}
 
         self.boundVals = None
         self.boundNames = None
@@ -93,11 +100,18 @@ class fitAlg(object):
         self.testedParams = []
         self.testedParamQualities = []
 
-        self.logger = logging.getLogger('Fitting.fitAlgs.fitAlg')
+        self.logger = logging.getLogger(self.Name)
 
     def __repr__(self):
 
         return repr(self.info())
+
+    def findName(self):
+        """
+        Returns the name of the class
+        """
+
+        return self.__class__.__name__
 
     def participant(self, model, modelSetup, partData):
         """
@@ -135,19 +149,19 @@ class fitAlg(object):
 
         fitMeasures = self.extraMeasures(*fitVals)
 
-        testedParamDict = OrderedDict([(key, val[0]) for key, val in izip(mParamNames, array(fitInfo[0]).T)])
+        testedParamDict = collections.OrderedDict([(key, val[0]) for key, val in itertools.izip(mParamNames, np.array(fitInfo[0]).T)])
 
         fittingData = {"testedParameters": testedParamDict,
                        "fitQualities": fitInfo[1],
                        "fitQuality": fitQuality,
-                       "finalParameters": OrderedDict([(key, val) for key, val in izip(mParamNames, fitVals)])}
+                       "finalParameters": collections.OrderedDict([(key, val) for key, val in itertools.izip(mParamNames, fitVals)])}
 
         fittingData.update({"fitQuality_" + k: v for k, v in fitMeasures.iteritems()})
 
         if self.calcCovariance:
             covariance = self.covariance(mParamNames, fitVals, fitInfo[2])
-            covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in izip(mParamNames, covariance)
-                                                                 for p2, c in izip(mParamNames, cr)})
+            covdict = ({"fitQuality_cov_{}_{}".format(p1, p2): c for p1, cr in itertools.izip(mParamNames, covariance)
+                                                                 for p2, c in itertools.izip(mParamNames, cr)})
             fittingData.update(covdict)
 
         try:
@@ -218,14 +232,14 @@ class fitAlg(object):
         pms = list(*params)
 
         # Start by checking that the parameters are valid
-        if self.allBounds and self.invalidParams(*pms):
-            pseudofitQuality = self.boundCostFunc(pms, self.boundVals, self.fitQualFunc)
+        if self.invalidParams(*pms):
+            pseudofitQuality = self.boundCostFunc(pms, self.boundVals, self.fitQualityFunc)
             return pseudofitQuality
 
         # Run the simulation with these parameters
         modVals = self.sim(*pms)
 
-        fitQuality = self.fitQualFunc(modVals)
+        fitQuality = self.fitQualityFunc(modVals)
 
         self.testedParams.append(params)
         self.testedParamQualities.append(fitQuality)
@@ -279,16 +293,16 @@ class fitAlg(object):
             cov = fitinfo['hess_inv']
         elif 'hess' in fitinfo:
             hess = fitinfo['hess']
-            cov = inv(hess)
+            cov = np.linalg.inv(hess)
         #elif 'jac' in fitinfo:
         #    jac = fitinfo['jac']
         #    cov = covariance(jac)
         else:
             inc = [self.hessInc[p] for p in mParamNames]
             # TODO : Check if this is correct or replace it with other methods
-            jac = expand_dims(approx_fprime(paramvals, self.fitness, inc), axis=0)
+            jac = np.expand_dims(sp.optimise.approx_fprime(paramvals, self.fitness, inc), axis=0)
             #cov = covariance(jac)
-            cov = inv(dot(jac.T, jac))
+            cov = np.linalg.inv(np.dot(jac.T, jac))
 
         return cov
 
@@ -323,7 +337,7 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> a = fitAlg()
+        >>> a = FitAlg()
         >>> a.setBounds([])
         >>> a.setBounds(['string','two'])
         >>> a.allBounds
@@ -331,9 +345,9 @@ class fitAlg(object):
         >>> a.boundNames
         ['string', 'two']
         >>> a.boundVals
-        ￼[(0, inf), (0, inf)]
+        [(0, inf), (0, inf)]
 
-        >>> a = fitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
+        >>> a = FitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
         >>> a.allBounds
         {1:(0,5),2:(0,2),3:(-1,1)}
         >>> a.setBounds([])
@@ -343,10 +357,10 @@ class fitAlg(object):
         []
         >>> a.setBounds([3,1])
         >>> a.boundVals
-        ￼[(-1, 1), (0, 5)]
+        [(-1, 1), (0, 5)]
         >>> a.setBounds([2,1])
         >>> a.boundVals
-        ￼[(0, 2), (0, 5)]
+        [(0, 2), (0, 5)]
         """
 
         bounds = self.allBounds
@@ -356,7 +370,7 @@ class fitAlg(object):
         # Check if the bounds have changed or should be added
         if boundNames:
             changed = False
-            for m, b in izip(mParamNames, boundNames):
+            for m, b in itertools.izip(mParamNames, boundNames):
                 if m != b:
                     changed = True
                     break
@@ -371,7 +385,7 @@ class fitAlg(object):
         # If no bounds were defined
         if not bounds:
             boundVals = [(0, float('Inf')) for i in mParamNames]
-            self.allBounds = {k: v for k, v in izip(mParamNames, boundVals)}
+            self.allBounds = {k: v for k, v in itertools.izip(mParamNames, boundVals)}
             self.boundNames = mParamNames
             self.boundVals = boundVals
         else:
@@ -408,9 +422,9 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> a = fitAlg()
+        >>> a = FitAlg()
         >>> self.startParams([0.5,0.5], numPoints=2)
-        array([[ 0.33333333,  0.33333333],
+        np.array([[ 0.33333333,  0.33333333],
                [ 0.66666667,  0.33333333],
                [ 0.33333333,  0.66666667],
                [ 0.66666667,  0.66666667]])
@@ -424,9 +438,9 @@ class fitAlg(object):
             if len(bounds) != len(initialParams):
                 raise ValueError('Bounds do not fit the number of initial parameters', str(len(bounds)), str(len(initialParams)))
 
-            startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in izip(initialParams, bounds))
+            startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in itertools.izip(initialParams, bounds))
 
-        startSets = listMergeNP(*startLists)
+        startSets = utils.listMergeNP(*startLists)
 
         return startSets
 
@@ -463,27 +477,27 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> a = fitAlg()
+        >>> a = FitAlg()
         >>> a.startParamVals(0.5)
-        array([ 0.25,  0.5 ,  0.75])
+        np.array([ 0.25,  0.5 ,  0.75])
 
         >>> a.startParamVals(5)
-        array([ 2.5,  5. ,  7.5])
+        np.array([ 2.5,  5. ,  7.5])
 
         >>> a.startParamVals(-5)
-        array([ 2.5,  5. ,  7.5])
+        np.array([ 2.5,  5. ,  7.5])
 
         >>> a.startParamVals(5, bMin = 0, bMax = 7)
-        array([ 4.,  5.,  6.])
+        np.array([ 4.,  5.,  6.])
 
         >>> a.startParamVals(5, bMin = -3, bMax = 30)
-        array([ 1.,  5.,  9.])
+        np.array([ 1.,  5.,  9.])
 
         >>> a.startParamVals(5, bMin = 0, bMax = 30)
-        array([ 2.5,  5. ,  7.5])
+        np.array([ 2.5,  5. ,  7.5])
 
         >>> a.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)
-        array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])
+        np.array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])
         """
 
 #        initialAbs = abs(initial)
@@ -491,7 +505,7 @@ class fitAlg(object):
         # The number of initial points per parameter
         divVal = (numPoints+1)/2
 
-        if bMax is None or isinf(bMax):
+        if bMax is None or math.isinf(bMax):
             # We can also assume any number smaller than one should stay
             # smaller than one.
             if initial < 1 and initial > 0:
@@ -501,7 +515,7 @@ class fitAlg(object):
         else:
             valMax = bMax
 
-        if bMin is None or isinf(bMin):
+        if bMin is None or math.isinf(bMin):
             # We can also assume any number larger than one should stay
             # bigger than zero.
             if initial > 0:
@@ -537,7 +551,7 @@ class fitAlg(object):
         else:
             vMax = vMin * numPoints
 
-        points = linspace(vMin, vMax, numPoints) + valMin
+        points = np.linspace(vMin, vMax, numPoints) + valMin
 
         return points
 
@@ -563,7 +577,7 @@ class fitAlg(object):
 
         Examples
         --------
-        >>> a = fitAlg(bounds = {1:(0,5), 2:(0,2), 3:(-1,1)})
+        >>> a = FitAlg(bounds = {1:(0,5), 2:(0,2), 3:(-1,1)})
         >>> a.setBounds([3, 1])
         >>> a.invalidParams(0, 0)
         False
@@ -575,7 +589,7 @@ class fitAlg(object):
         True
         """
 
-        for p, (mi, ma) in izip(params, self.boundVals):
+        for p, (mi, ma) in itertools.izip(params, self.boundVals):
 
             if p < mi or p > ma:
                 return True
@@ -592,13 +606,13 @@ def covariance(jac):
     """
 
     # Do Moore-Penrose inverse discarding zero singular values.
-    U, s, VT = svd(jac, full_matrices=False)
-    threshold = finfo(float).eps * max(jac.shape) * s[0]
+    U, s, VT = np.linalg.svd(jac, full_matrices=False)
+    threshold = np.finfo(float).eps * max(jac.shape) * s[0]
     s = s[s > threshold]
     VT = VT[:s.size]
-    cov = dot(VT.T / s ** 2, VT)
+    cov = np.dot(VT.T / s ** 2, VT)
 
     # Alternative method found, but assumes the residuals are small
-    #cov = inv(dot(jac.T, jac))
+    #cov = np.linalg.inv(np.dot(jac.T, jac))
 
     return cov

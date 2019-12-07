@@ -36,8 +36,8 @@ from data import data
 
 #For data fitting
 from dataFitting import dataFitting
-from fitAlgs.fitSims import fitSim
-from fitAlgs.evolutionary import evolutionary
+from fitAlgs.fitSims import FitSim
+from fitAlgs.evolutionary import Evolutionary
 
 #%% Set the model sets
 alphaBounds = (0, 1)
@@ -70,7 +70,7 @@ for d in dat:
     d["validActions"] = d["ValidActions"].T
 
 #%% Set up the fitting
-modSim = fitSim('Decisions',
+modSim = FitSim('Decisions',
                 'Rewards',
                 'ActionProb',
                 fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
@@ -79,11 +79,11 @@ modSim = fitSim('Decisions',
                 )
 
 # Define the fitting algorithm
-fitAlg = evolutionary(modSim,
-                      fitQualFunc="BIC2norm",
-                      qualFuncArgs={"numParams": len(modelParameters), "numActions": numActions, "qualityThreshold": 20},
+fitAlg = Evolutionary(modSim,
+                      fitQualityFunc="BIC2norm",
+                      qualityFuncArgs={"numParams": len(modelParameters), "numActions": numActions, "qualityThreshold": 20},
                       # strategy="all",
-                      boundCostFunc=None, # scalarBound(base=160),
+                      boundCostFunc=None,  # scalarBound(base=160),
                       polish=False,
                       bounds=bounds,
                       extraFitMeasures={"-2log": {},

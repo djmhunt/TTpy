@@ -6,17 +6,15 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from scipy import optimize
-from itertools import izip
-from numpy import array
+import numpy as np
+import scipy as sp
 
-from utils import callableDetailsString
-from fitAlgs.fitAlg import fitAlg
-from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs.boundFunc import scalarBound
+import itertools
+
+import fitAlgs.fitAlg.FitAlg as FitAlg
 
 
-class leastsq(fitAlg):
+class Leastsq(FitAlg):
     """
     Fits data based on the least squared optimizer scipy.optimize.least_squares
 
@@ -24,11 +22,11 @@ class leastsq(fitAlg):
 
     Parameters
     ----------
-    fitQualFunc : string, optional
+    fitQualityFunc : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
-    qualFuncArgs : dict, optional
+    qualityFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for fitting. Default is ``None``, which
@@ -57,37 +55,15 @@ class leastsq(fitAlg):
 
     """
 
-    Name = 'leastsq'
+    def __init__(self, method="dogbox", jac='3-point', **kwargs):
 
-    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+        super(Leastsq, self).__init__(**kwargs)
 
-        self.fitSim = fitSim
+        self.method = method
+        self.jacmethod = jac
 
-        self.numStartPoints = kwargs.pop("numStartPoints", 4)
-        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.method = kwargs.pop('method', "dogbox")
-        self.jacmethod = kwargs.pop('jac', '3-point')
-        self.boundCostFunc = boundCostFunc
-        self.allBounds = bounds
-        self.calcCovariance = kwargs.pop('calcCov', True)
-        if self.calcCovariance:
-            br = kwargs.pop('boundRatio', 0.000001)
-            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
-
-        measureDict = kwargs.pop("extraFitMeasures", {})
-        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
-
-        self.fitInfo = {'Name': self.Name,
-                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'method': self.method,
-                        'jac': self.jacmethod,
-                        'bounds': self.allBounds,
-                        'fitQualityFunction': fitQualFunc}
-
-        self.testedParams = []
-        self.testedParamQualities = []
-
-        self.logger = logging.getLogger('Fitting.fitAlgs.leastsq')
+        self.fitInfo['method'] = self.method
+        self.fitInfo['jacmethod'] = self.jacmethod
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -122,13 +98,13 @@ class leastsq(fitAlg):
         self.testedParams = []
         self.testedParamQualities = []
 
-        bounds = [i for i in izip(*self.boundVals)]
+        bounds = [i for i in itertools.izip(*self.boundVals)]
 
-        optimizeResult = optimize.least_squares(self.fitness,
-                                                mInitialParams[:],
-                                                method=self.method,
-                                                jac=self.jacmethod,
-                                                bounds=bounds)
+        optimizeResult = sp.optimize.least_squares(self.fitness,
+                                                   mInitialParams[:],
+                                                   method=self.method,
+                                                   jac=self.jacmethod,
+                                                   bounds=bounds)
 
         if optimizeResult.success is False and optimizeResult.status == -1:
             fitParams = mInitialParams
@@ -145,7 +121,7 @@ class leastsq(fitAlg):
             self.logger.info(message)
 
         fitDetails = dict(optimizeResult)
-        fitDetails['bestParams'] = array(self.iterbestParams).T
+        fitDetails['bestParams'] = np.array(self.iterbestParams).T
         fitDetails['convergence'] = self.iterConvergence
 
         return fitParams, fitVal, (self.testedParams, self.testedParamQualities, fitDetails)

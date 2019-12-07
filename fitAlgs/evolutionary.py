@@ -6,27 +6,25 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from numpy import array, nanargmin
-from scipy import optimize
+import numpy as np
+import scipy as sp
+
 from types import NoneType
 
-from fitAlgs.fitAlg import fitAlg
-from utils import callableDetailsString
-from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs.boundFunc import scalarBound
+import fitAlgs.fitAlg.FitAlg as FitAlg
 
 
-class evolutionary(fitAlg):
+class Evolutionary(FitAlg):
 
     """The class for fitting data using scipy.optimise.differential_evolution
 
     Parameters
     ----------
-    fitQualFunc : string, optional
+    fitQualityFunc : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fitting guide.
         Default ``fitAlg.null``
-    qualFuncArgs : dict, optional
+    qualityFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     strategy : string or list of strings, optional
         The name of the fitting strategy or list of names of fitting strategies or
@@ -69,13 +67,11 @@ class evolutionary(fitAlg):
 
     See Also
     --------
-    fitAlgs.fitAlg.fitAlg : The general fitting strategy class, from which this one inherits
-    fitAlgs.fitSims.fitSim : The general class for seeing how a parameter combination perform
+    fitAlgs.fitAlg.FitAlg : The general fitting strategy class, from which this one inherits
+    fitAlgs.fitSims.FitSim : The general class for seeing how a parameter combination perform
     scipy.optimise.differential_evolution : The fitting method this wraps around
 
     """
-
-    Name = 'evolutionary'
 
     validStrategySet = ['best1bin',
                         'best1exp',
@@ -88,52 +84,27 @@ class evolutionary(fitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, strategy=None, polish=False, popSize=15, tolerance=0.01, **kwargs):
 
-        self.fitSim = fitSim
-        strategy = kwargs.pop("strategy", None)
+        super(Evolutionary, self).__init__(**kwargs)
 
-        self.boundCostFunc = boundCostFunc
-        self.allBounds = bounds
-        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.calcCovariance = kwargs.pop('calcCov', False)
-        self.polish = kwargs.pop("polish", False)
-        self.popsize = kwargs.pop("popSize", 15)
-        self.tolerence = kwargs.pop("tolerance", 0.01)
-        if self.calcCovariance:
-            br = kwargs.pop('boundRatio', 0.000001)
-            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
-
-        measureDict = kwargs.pop("extraFitMeasures", {})
-        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
+        self.polish = polish
+        self.populationSize = popSize
+        self.tolerance = tolerance
 
         self._setType(strategy)
 
-        self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitQualFunc,
-                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds': self.allBounds,
-                        'polish': self.polish,
-                        "popSize": self.popsize,
-                        "tolerance": self.tolerence
-                        }
+        self.fitInfo['polish'] = self.polish
+        self.fitInfo['popSize'] = self.populationSize
+        self.fitInfo['tolerance'] = self.tolerance
 
         if type(self.strategySet) is NoneType:
             self.fitInfo['strategy'] = self.strategy
         else:
             self.fitInfo['strategy'] = self.strategySet
 
-        self.count = 1
-
-        self.boundVals = None
-        self.boundNames = None
-
-        self.testedParams = []
-        self.testedParamQualities = []
         self.iterbestParams = []
         self.iterConvergence = []
-
-        self.logger = logging.getLogger('Fitting.fitAlgs.evolutionary')
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -209,7 +180,7 @@ class evolutionary(fitAlg):
                 fitVal = optimizeResult.fun
 
         fitDetails = dict(optimizeResult)
-        fitDetails['bestParams'] = array(self.iterbestParams).T
+        fitDetails['bestParams'] = np.array(self.iterbestParams).T
         fitDetails['convergence'] = self.iterConvergence
 
         return fitParams, fitVal, (self.testedParams, self.testedParamQualities, fitDetails)
@@ -247,11 +218,11 @@ class evolutionary(fitAlg):
         """
 
         try:
-            optimizeResult = optimize.differential_evolution(self.fitness,
+            optimizeResult = sp.optimize.differential_evolution(self.fitness,
                                                              bounds,
                                                              strategy=strategy,
-                                                             popsize=self.popsize,
-                                                             tol=self.tolerence,
+                                                             popsize=self.populationSize,
+                                                             tol=self.tolerance,
                                                              polish=self.polish,
                                                              callback=self.callback,
                                                              init='latinhypercube'  # 'random'
@@ -260,11 +231,11 @@ class evolutionary(fitAlg):
             self.logger.warn("{0} in evolutionary fitting. Retrying to run it: {1} - {2}".format(type(e), e.strerror, e.args))
 
             #Try it one last time
-            optimizeResult = optimize.differential_evolution(self.fitness,
+            optimizeResult = sp.optimize.differential_evolution(self.fitness,
                                                              bounds,
                                                              strategy=strategy,
-                                                             popsize=self.popsize,
-                                                             tol=self.tolerence,
+                                                             popsize=self.populationSize,
+                                                             tol=self.tolerance,
                                                              polish=self.polish,
                                                              callback=self.callback,
                                                              init='latinhypercube'  # 'random'
@@ -290,20 +261,20 @@ class evolutionary(fitAlg):
         if len(resultSet) == 0:
             return None
 
-        genFitid = nanargmin([r.fun for r in resultSet])
+        genFitid = np.nanargmin([r.fun for r in resultSet])
 
         # Debug code
 #        data = {}
-#        data["fitVal"] = array([o.fun for o in resultSet])
-#        data['nIter'] = array([o.nit for o in resultSet])
-#        data['parameters'] = array([o.x for o in resultSet])
-#        data['success'] = array([o.success for o in resultSet])
-#        data['nfev'] = array([o.nfev for o in resultSet])
-#        data['message'] = array([o.message for o in resultSet])
-#        data['jac'] = array([o.jac for o in resultSet])
-#        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
-#        print(array([array([o.x[0] for o in resultSet]), array([o.x[1] for o in resultSet]),
-        #      array([o.fun for o in resultSet])]).T)
+#        data["fitVal"] = np.array([o.fun for o in resultSet])
+#        data['nIter'] = np.array([o.nit for o in resultSet])
+#        data['parameters'] = np.array([o.x for o in resultSet])
+#        data['success'] = np.array([o.success for o in resultSet])
+#        data['nfev'] = np.array([o.nfev for o in resultSet])
+#        data['message'] = np.array([o.message for o in resultSet])
+#        data['jac'] = np.array([o.jac for o in resultSet])
+#        print(np.array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
+#        print(np.array([np.array([o.x[0] for o in resultSet]), np.array([o.x[1] for o in resultSet]),
+        #      np.array([o.fun for o in resultSet])]).T)
 #        pytest.set_trace()
 
         return resultSet[genFitid]

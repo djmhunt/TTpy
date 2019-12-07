@@ -6,28 +6,25 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitAlgs.fitAlg import fitAlg
+import numpy as np
+import scipy as sp
 
-from numpy import around, nanargmin
-from scipy import optimize
-from itertools import izip
+import itertools
 
-from utils import callableDetailsString
-from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs.boundFunc import scalarBound
+import fitAlgs.fitAlg.FitAlg as FitAlg
 
 
-class minimize(fitAlg):
+class Minimize(FitAlg):
 
     """The class for fitting data using scipy.optimise.minimize
 
     Parameters
     ----------
-    fitQualFunc : string, optional
+    fitQualityFunc : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fit guide.
         Default ``fitAlg.null``
-    qualFuncArgs : dict, optional
+    qualityFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     method : string or list of strings, optional
         The name of the fitting method or list of names of fitting methods or
@@ -91,56 +88,27 @@ class minimize(fitAlg):
 
     """
 
-    Name = 'minimise'
-
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, method=None, numStartPoints=4, boundFit=True, boundSensitivity=5, **kwargs):
 
-        self.fitSim = fitSim
+        super(Minimize, self).__init__(**kwargs)
 
-        method = kwargs.pop("method", None)
+        self.numStartPoints = numStartPoints
+        self.boundFit = boundFit
+        self.boundSensitivity = boundSensitivity
 
-        self.boundCostFunc = boundCostFunc
-        self.allBounds = bounds
-        self.numStartPoints = kwargs.pop("numStartPoints", 4)
-        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.boundFit = kwargs.pop("boundFit", True)
-        self.boundSensitivity = kwargs.pop("boundSensitivity", 5)
-        self.calcCovariance = kwargs.pop('calcCov', True)
-        if self.calcCovariance:
-            br = kwargs.pop('boundRatio', 0.000001)
-            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
+        self._setType(method, self.allBounds)
 
-        measureDict = kwargs.pop("extraFitMeasures", {})
-        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
-
-        self._setType(method, bounds)
-
-        self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitQualFunc,
-                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'bounds': self.allBounds,
-                        'numStartPoints': self.numStartPoints,
-                        'boundFit': self.boundFit,
-                        'boundSensitivity': self.boundSensitivity
-                        }
+        self.fitInfo['numStartPoints'] = self.numStartPoints
+        self.fitInfo['boundFit'] = self.boundFit
+        self.fitInfo['boundSensitivity'] = self.boundSensitivity
 
         if self.methodSet is None:
             self.fitInfo['method'] = self.method
         else:
             self.fitInfo['method'] = self.methodSet
-
-        self.count = 1
-
-        self.boundVals = None
-        self.boundNames = None
-
-        self.testedParams = []
-        self.testedParamQualities = []
-
-        self.logger = logging.getLogger('Fitting.fitAlgs.minimize')
 
 #    def callback(self,Xi):
 #        """
@@ -233,11 +201,10 @@ class minimize(fitAlg):
 
         for i in initParamSets:
 
-            optimizeResult = optimize.minimize(self.fitness, i[:],
-                                               method=method,
-                                               bounds=bounds)  # ,
-        #                                      callback= self.callback )
-            self.count = 1
+            optimizeResult = sp.optimize.minimize(self.fitness, i[:],
+                                                  method=method,
+                                                  bounds=bounds)  # ,
+        #                                         callback= self.callback )
 
             if optimizeResult.success is True:
                 resultSet.append(optimizeResult)
@@ -252,7 +219,7 @@ class minimize(fitAlg):
         if len(resultSet) == 0:
             return None
 
-        genFitid = nanargmin([r.fun for r in resultSet])
+        genFitid = np.nanargmin([r.fun for r in resultSet])
 
         # Debug code
 #        data = {}
@@ -274,7 +241,7 @@ class minimize(fitAlg):
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in izip(r.x, bounds) if any(around(fitVal-boundVals, boundSensitivity) == 0)]
+                invalid = [1 for fitVal, boundVals in itertools.izip(r.x, bounds) if any(np.around(fitVal-boundVals, boundSensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)
@@ -283,7 +250,7 @@ class minimize(fitAlg):
                 return resultSet[genFitid]
 
             else:
-                fitid = nanargmin([r.fun for r in reducedResults])
+                fitid = np.nanargmin([r.fun for r in reducedResults])
 
                 return reducedResults[fitid]
 

@@ -6,28 +6,25 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import logging
 
-from fitAlgs.fitAlg import fitAlg
+import numpy as np
+import scipy as sp
 
-from numpy import array, around, all
-from scipy import optimize
-from itertools import izip
+import itertools
 
-from utils import callableDetailsString
-from fitAlgs.qualityFunc import qualFuncIdent
-from fitAlgs.boundFunc import scalarBound
+import fitAlgs.fitAlg.FitAlg as FitAlg
 
 
-class basinhopping(fitAlg):
+class Basinhopping(FitAlg):
 
     """The class for fitting data using scipy.optimise.basinhopping
 
     Parameters
     ----------
-    fitQualFunc : string, optional
+    fitQualityFunc : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fit guide.
         Default ``fitAlg.null``
-    qualFuncArgs : dict, optional
+    qualityFuncArgs : dict, optional
         The parameters used to initialise fitQualFunc. Default ``{}``
     method : string or list of strings, optional
         The name of the fitting method or list of names of fitting methods or
@@ -90,56 +87,31 @@ class basinhopping(fitAlg):
     scipy.optimise.basinhopping : The fitting class this wraps around
     """
 
-    Name = 'basinhopping'
-
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, fitSim, fitQualFunc=None, qualFuncArgs={}, boundCostFunc=scalarBound(), bounds=None, **kwargs):
+    def __init__(self, method=None, numStartPoints=4, boundFit=True, boundSensitivity=5, **kwargs):
 
-        self.fitSim = fitSim
+        super(Basinhopping, self).__init__(**kwargs)
 
-        method = kwargs.pop("method", None)
+        self.numStartPoints = numStartPoints
+        self.boundFit = boundFit
+        self.boundSensitivity = boundSensitivity
 
-        self.boundCostFunc = boundCostFunc
-        self.allBounds = bounds
-        self.numStartPoints = kwargs.pop("numStartPoints", 4)
-        self.fitQualFunc = qualFuncIdent(fitQualFunc, **qualFuncArgs)
-        self.boundFit = kwargs.pop("boundFit", True)
-        self.boundSensitivity = kwargs.pop("boundSensitivity", 5)
-        self.calcCovariance = kwargs.pop('calcCov', True)
-        if self.calcCovariance:
-            br = kwargs.pop('boundRatio', 0.000001)
-            self.hessInc = {k: br * (u - l) for k, (l, u) in self.allBounds.iteritems()}
+        self._setType(method, self.allBounds)
 
-        measureDict = kwargs.pop("extraFitMeasures", {})
-        self.measures = {fitQualFunc: qualFuncIdent(fitQualFunc, **qualFuncArgs) for fitQualFunc, qualFuncArgs in measureDict.iteritems()}
-
-        self._setType(method, bounds)
-
-        self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitQualFunc,
-                        'bounds': self.bounds,
-                        'boundaryCostFunction': callableDetailsString(boundCostFunc),
-                        'numStartPoints': self.numStartPoints,
-                        'boundFit': self.boundFit,
-                        'boundSensitivity': self.boundSensitivity
-                        }
+        self.fitInfo['numStartPoints'] = self.numStartPoints
+        self.fitInfo['boundFit'] = self.boundFit
+        self.fitInfo['boundSensitivity'] = self.boundSensitivity
 
         if self.methodSet is None:
             self.fitInfo['method'] = self.method
         else:
             self.fitInfo['method'] = self.methodSet
 
-        self.boundVals = None
-
-        self.testedParams = []
-        self.testedParamQualities = []
-        self.iterbestParams = []
-        self.iterfuncValMin = []
-        self.iterparamAccept = []
-
-        self.logger = logging.getLogger('Fitting.fitAlgs.basinhopping')
+        self.iterBestParams = []
+        self.iterFuncValueMin = []
+        self.iterParameterAccept = []
 
     def callback(self, x, f, accept):
         """
@@ -152,9 +124,9 @@ class basinhopping(fitAlg):
         accept : whether or not that minimum was accepted
         """
 
-        self.iterbestParams.append(x)
-        self.iterfuncValMin.append(f)
-        self.iterparamAccept.append(accept)
+        self.iterBestParams.append(x)
+        self.iterFuncValueMin.append(f)
+        self.iterParameterAccept.append(accept)
 
     def fit(self, sim, mParamNames, mInitialParams):
         """
@@ -190,9 +162,9 @@ class basinhopping(fitAlg):
         self.sim = sim
         self.testedParams = []
         self.testedParamQualities = []
-        self.iterbestParams = []
-        self.iterfuncValMin = []
-        self.iterparamAccept = []
+        self.iterBestParams = []
+        self.iterFuncValueMin = []
+        self.iterParameterAccept = []
 
         method = self.method
         methodSet = self.methodSet
@@ -204,12 +176,12 @@ class basinhopping(fitAlg):
 
         if bounds is None:
             boundVals = [(0, float('Inf')) for i in mInitialParams]
-            bounds = {k: v for k, v in izip(mParamNames, boundVals)}
+            bounds = {k: v for k, v in itertools.izip(mParamNames, boundVals)}
             self.bounds = bounds
-            self.boundVals = array(boundVals)
+            self.boundVals = np.array(boundVals)
 
         if boundVals is None:
-            boundVals = array([bounds[k] for k in mParamNames])
+            boundVals = np.array([bounds[k] for k in mParamNames])
             self.boundVals = boundVals
 
         initParamSets = self.startParams(mInitialParams, bounds=boundVals, numPoints=numStartPoints)
@@ -243,7 +215,7 @@ class basinhopping(fitAlg):
             fitParams = optimizeResult.x
             fitVal = optimizeResult.fun
 
-            iterDetails = dict(bestParams=self.iterbestParams, funcVal=self.iterfuncValMin, paramAccept=self.iterparamAccept)
+            iterDetails = dict(bestParams=self.iterBestParams, funcVal=self.iterFuncValueMin, paramAccept=self.iterParameterAccept)
 
             return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
 
@@ -255,7 +227,7 @@ class basinhopping(fitAlg):
 
         for i in initParamSets:
 
-            optimizeResult = optimize.basinhopping(self.fitQualFunc, i[:],
+            optimizeResult = sp.optimize.basinhopping(self.fitQualFunc, i[:],
                                                    accept_test=boundFunc,
                                                    callback=self.callback
  #                                                  minimizer_kwargs={'method': method,
@@ -279,13 +251,13 @@ class basinhopping(fitAlg):
 
         # Debug code
 #        data = {}
-#        data["fitVal"] = array([o.fun for o in resultSet])
-#        data['nIter'] = array([o.nit for o in resultSet])
-#        data['parameters'] = array([o.x for o in resultSet])
-#        data['nfev'] = array([o.nfev for o in resultSet])
-#        data['message'] = array([o.message for o in resultSet])
-#        data['minimization_failures'] = array([o.minimization_failures for o in resultSet])
-#        print(array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
+#        data["fitVal"] = np.array([o.fun for o in resultSet])
+#        data['nIter'] = np.array([o.nit for o in resultSet])
+#        data['parameters'] = np.array([o.x for o in resultSet])
+#        data['nfev'] = np.array([o.nfev for o in resultSet])
+#        data['message'] = np.array([o.message for o in resultSet])
+#        data['minimization_failures'] = np.array([o.minimization_failures for o in resultSet])
+#        print(np.array([data['parameters'].T[0], data['parameters'].T[1], data["fitVal"]]).T)
 #        pytest.set_trace()
 
         # If boundary fits are acceptable
@@ -295,7 +267,7 @@ class basinhopping(fitAlg):
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in izip(r.x, bounds) if any(around(fitVal-boundVals, boundSensitivity) == 0)]
+                invalid = [1 for fitVal, boundVals in itertools.izip(r.x, bounds) if any(np.around(fitVal-boundVals, boundSensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)
@@ -338,8 +310,8 @@ class basinhopping(fitAlg):
         """
         boundArr = self.boundVals
         x = kwargs["x_new"]
-        tmax = bool(all(x < boundArr[:,1]))
-        tmin = bool(all(x > boundArr[:,0]))
+        tmax = bool(np.all(x < boundArr[:, 1]))
+        tmin = bool(np.all(x > boundArr[:, 0]))
 
         return tmax and tmin
 

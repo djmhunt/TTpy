@@ -14,7 +14,7 @@ import types
 import utils
 
 
-class fitSim(object):
+class FitSim(object):
     """
     A class for fitting data by passing the participant data through the model.
 
@@ -61,9 +61,7 @@ class fitSim(object):
     """
 ## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.
 
-    Name = 'fitSim'
-
-    def __init__(self, partChoiceParam, partRewardParam, modelFitVar, stimuliParams=None, actChoiceParams=None, fpRespVal=1/1e100, fitSubset=None):
+    def __init__(self, partChoiceParam='Actions', partRewardParam='Rewards', modelFitVar='ActionProb', stimuliParams=None, actChoiceParams=None, fpRespVal=1/1e100, fitSubset=None):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
@@ -72,6 +70,8 @@ class fitSim(object):
         self.partActChoiceParams = actChoiceParams
         self.fpRespVal = fpRespVal
         self.fitSubset = fitSubset
+
+        self.Name = self.findName()
 
         self.fitInfo = {'Name': self.Name,
                         'participantChoiceParam': partChoiceParam,
@@ -252,6 +252,13 @@ class fitSim(object):
         """
 
         return self.fitInfo
+
+    def findName(self):
+        """
+        Returns the name of the class
+        """
+
+        return self.__class__.__name__
 
     def fittedModel(self, *modelParameters):
         """
