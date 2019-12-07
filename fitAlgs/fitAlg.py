@@ -15,9 +15,8 @@ import itertools
 
 #import numdifftools as nd
 
-import fitAlgs.fitSims.FitSim as FitSim
-import fitAlgs.qualityFunc as qualityFunc
-import fitAlgs.boundFunc as boundFunc
+from fitAlgs import qualityFunc
+from fitAlgs import boundFunc
 
 import utils
 

@@ -11,7 +11,7 @@ import scipy as sp
 
 from types import NoneType
 
-import fitAlgs.fitAlg.FitAlg as FitAlg
+from fitAlgs.fitAlg import FitAlg
 
 
 class Evolutionary(FitAlg):

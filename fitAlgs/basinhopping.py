@@ -11,7 +11,7 @@ import scipy as sp
 
 import itertools
 
-import fitAlgs.fitAlg.FitAlg as FitAlg
+from fitAlgs.fitAlg import FitAlg
 
 
 class Basinhopping(FitAlg):
