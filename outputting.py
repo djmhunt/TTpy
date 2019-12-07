@@ -117,7 +117,7 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
 
     Examples
     --------
-    >>> newFolder = outputting.folderSetup("a","today", basePath=".")
+    >>> newFolder = folderSetup("a","today", basePath=".")
     >>> newFolder
     './Outputs/a_today/'
 
@@ -168,14 +168,14 @@ def fileNameGenerator(outputFolder=None):
 
     Examples
     --------
-    >>> fileNameGen = outputting.fileNameGenerator("./")
+    >>> fileNameGen = fileNameGenerator("./")
     >>> fileNameGen("a", "b")
     './a.b'
     >>> fileNameGen("a", "b")
     './a_1.b'
     >>> fileNameGen("", "")
     './'
-    >>> fileNameGen = outputting.fileNameGenerator()
+    >>> fileNameGen = fileNameGenerator()
     >>> fileName = fileNameGen("", "")
     >>> fileName == os.getcwd()
     True
@@ -570,12 +570,7 @@ def newFlatDict(keySet, store, labelPrefix):
     >>> from numpy import array
     >>> from collections import OrderedDict
     >>> from outputting import flatDictKeySet
-    >>> store = [{'test': 'string',
-                 'dict': {'test': 1, },
-                 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]),
-                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
-                 'num': 23.6,
-                 'array': array([1, 2, 3])}]
+    >>> store = [{'test': 'string', 'dict': {'test': 1, }, 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]), 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]], 'num': 23.6, 'array': array([1, 2, 3])}]
     >>> keySet = flatDictKeySet(store)
     >>> newFlatDict(keySet, store, '')
     OrderedDict([('OrderedDict_0', ['0.5']), ('OrderedDict_1', ['0.5']),
@@ -622,7 +617,7 @@ def newFlatDict(keySet, store, labelPrefix):
     return newStore
 
 
-def newListDict(keySet, maxListLen, store, labelPrefix):
+def newListDict(keySet, maxListLen, store, labelPrefix=None):
     """
     Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
 
@@ -636,8 +631,8 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
         The longest list in the dictionary
     store : dict
         A dictionary of numbers, strings, lists and arrays
-    labelPrefix : string
-        An identifier to be added to the beginning of each key string.
+    labelPrefix : string or NoneType
+        An identifier to be added to the beginning of each key string. Default ``None``
 
     Returns
     -------
@@ -647,15 +642,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
 
     Examples
     --------
-    >>> from numpy import array
-    >>> from collections import OrderedDict
-    >>> from outputting import listDictKeySet
-    >>> store = {'test': 'string',
-                 'dict': {'test': 1, },
-                 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]),
-                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
-                 'num': 23.6,
-                 'array': array([1, 2, 3])}
+    >>> store = {'test': 'string', 'dict': {'test': 1, }, 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]), 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]], 'num': 23.6, 'array': array([1, 2, 3])}
     >>> keySet, maxListLen = listDictKeySet(store)
     >>> newListDict(keySet, maxListLen, store, '')
     OrderedDict([('OrderedDict_0', [0.5, None, None, None, None, None]),
@@ -699,85 +686,93 @@ def newListDict(keySet, maxListLen, store, labelPrefix):
     return newStore
 
 
-def pad(vals, maxListLen):
-    vLen = np.size(vals)
+def pad(values, maxListLen):
+    """
+    Pads a list with None
+
+    Parameters
+    ----------
+    values : list
+        The list to be extended
+    maxListLen : int
+        The number of elements the list needs to have
+    """
+
+    vLen = np.size(values)
     if vLen < maxListLen:
-        vals.extend([None for i in range(maxListLen - vLen)])
-    return vals
+        values.extend([None for i in range(maxListLen - vLen)])
+    return values
 
 
 def listSelection(data, loc):
     """
+    Allows numpy array-like referencing of lists
 
     Parameters
     ----------
-    data
-    loc
+    data : list
+        The data to be referenced
+    loc : tuple of integers
+        The location to be referenced
 
     Returns
     -------
-    selection :
+    selection : list
+        The referenced subset
 
     Examples
     --------
-    >>> listSelection([1,2,3], [0])
+    >>> listSelection([1, 2, 3], [0])
     1
     >>> listSelection([[1, 2, 3], [4, 5, 6]], [0])
     [1, 2, 3]
-    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0,2))
+    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0, 2))
     3
     """
-    if len(loc) == 1:
+    if len(loc) == 0:
+        return None
+    elif len(loc) == 1:
         return data[loc[0]]
     else:
-        return listSelection(data, loc[:-1])[loc[-1]]
+        subData = listSelection(data, loc[:-1])
+        if len(np.shape(subData)) > 0:
+            return listSelection(data, loc[:-1])[loc[-1]]
+        else:
+            return None
 
 
 def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     """
+    Identifies the columns necessary to convert a dictionary into a table
 
     Parameters
     ----------
     store : dict
         The dictionary to be broken down into keys
     maxListLen : int or float with no decimal places or None, optional
-        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
-        this should stay ``None``. Default ``None``
+        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``
     returnList : bool, optional
-        Defines if the lists will be broken into 1D lists or values. Default ``False``
+        Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values
     abridge : bool, optional
-        Defines if the final dataset will be a summary or the whole lot. Default ``False``
+        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.
+        Default ``False``, not abridged
 
     Returns
     -------
     keySet : OrderedDict with values of OrderedDict, list or None
         The dictionary of keys to be extracted
-    maxListLen : int or None
+    maxListLen : int or float with no decimal places or None, optional
         If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
-        this should stay ``None``.
+        this should return its original value
 
     Examples
     --------
-    >>> from numpy import array
-    >>> store = {'test': 'string',
-                 'dict': {'test': 1},
-                 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],
-                 'num': 23.6,
-                 'array': array([1, 2, 3])}
-    >>> dictKeyGen(store, maxListLen=None, returnList=False, abridge=False)
-    (OrderedDict([('test', None),
-                  ('list', [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)]),
-                  ('array', array([[0], [1], [2]])),
-                  ('num', None),
-                  ('dict', OrderedDict([('test', None)]))]),
-    None)
-    >>> dictKeyGen(store, maxListLen=None, returnList=False, abridge=True)
-    (OrderedDict([('test', None),
-                  ('list', None),
-                  ('array', array([[0], [1], [2]])),
-                  ('num', None),
-                  ('dict', OrderedDict([('test', None)]))]),
-    None)
+    >>> store = {'string': 'string'}
+    >>> dictKeyGen(store)
+    (OrderedDict([('string', None)]), None)
+    >>> store = {'num': 23.6}
+    >>> dictKeyGen(store)
+    (OrderedDict([('num', None)]), None)
     >>> dictKeyGen(store, maxListLen=None, returnList=True, abridge=True)
     (OrderedDict([('test', None),
                   ('list', array([[0], [1]])),
@@ -812,79 +807,67 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
 
 def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     """
+    Identifies the columns necessary to convert a list into a table
 
     Parameters
     ----------
     data : numpy.ndarray or list
         The list to be broken down
     maxListLen : int or float with no decimal places or None, optional
-        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
-        this should stay ``None``. Default ``None``
+        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``
     returnList : bool, optional
-        Defines if the lists will be broken into 1D lists or values. Default ``False``
+        Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values
     abridge : bool, optional
-        Defines if the final dataset will be a summary or the whole lot. Default ``False``
+        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.
+        Default ``False``, not abridged
 
     Returns
     -------
     returnList : None or list of tuples of ints or ints
         The list of co-ordinates for the elements to be extracted from the data. If None the list is used as-is.
-    maxListLen : int or None
+    maxListLen : int or float with no decimal places or None, optional
         If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
-        this should stay ``None``.
+        this should return its original value
 
     Examples
     --------
-    >>> listKeyGen([1, 2, 3], maxListLen=None, returnList=False, abridge=False)
-    (array([[0], [1], [2]]), None)
-    >>> listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=False, abridge=False)
-    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)], None)
-    >>> listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=True, abridge=False)
-    (array([[0], [1]]), 3L)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=False)
-    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)], None)
+    (array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]), None)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=True)
     (None, None)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)
     (array([[0], [1]]), 6L)
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=2, returnList=True, abridge=True)
-    (array([[0], [1]]), 6L)
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=7, returnList=True, abridge=True)
-    (array([[0], [1]]), 7)
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6]], maxListLen=None, returnList=True, abridge=True)
-    (array([[0]]), 6L)
-    >>> listKeyGen([1, 2, 3, 4, 5, 6], maxListLen=None, returnList=True, abridge=True)
-    (None, 6L)
     """
 
+    dataShape = np.shape(data)
+    dataShapeList = list(dataShape)
     if returnList:
-        dataShape = list(np.shape(data))
-        dataShapeFirst = dataShape.pop(-1)
-        if type(maxListLen) is NoneType:
+        dataShapeFirst = dataShapeList.pop(-1)
+        numberColumns = np.prod(dataShapeList)
+        if maxListLen is None:
             maxListLen = dataShapeFirst
         elif dataShapeFirst > maxListLen:
             maxListLen = dataShapeFirst
-
     else:
-        dataShape = np.shape(data)
+        numberColumns = np.prod(dataShape)
 
     # If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document
-    if abridge and np.prod(dataShape) > 10:
+    if abridge and numberColumns > 10:
         return None, maxListLen
 
     # We need to calculate every combination of co-ordinates in the array
-    arrSets = [range(0, i) for i in dataShape]
+    arrSets = [range(0, i) for i in dataShapeList]
     # Now record each one
-    locList = [tuple(loc) for loc in utils.listMergeGen(*arrSets)]
+    locList = np.array([tuple(loc) for loc in utils.listMergeGen(*arrSets)])
     listItemLen = len(locList[0])
     if listItemLen == 1:
-        returnList = np.array(locList)#.flatten()
+        finalList = locList #.flatten()
     elif listItemLen == 0:
         return None, maxListLen
     else:
-        returnList = locList
+        finalList = locList
 
-    return returnList, maxListLen
+    return finalList, maxListLen
 
 
 def date():

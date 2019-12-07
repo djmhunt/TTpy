@@ -13,8 +13,8 @@ from numpy import array
 
 from modelGenerator import ModelGen
 from model.qLearn import QLearn
-from fitAlgs.fitSims import fitSim
-from fitAlgs.minimize import minimize
+from fitAlgs.fitSims import FitSim
+from fitAlgs.minimize import Minimize
 
 #def test_an_exception():
 #    with raises(IndexError):
@@ -95,9 +95,9 @@ def fitting():
     def scaleFunc(x):
         return x - 1
         
-    fitAlg = minimize(fitQualFunc="-2log", method='constrained', bounds={'alpha': (0, 1), 'theta': (0, 40)})
+    fitAlg = Minimize(fitQualityFunc="-2log", method='constrained', bounds={'alpha': (0, 1), 'theta': (0, 40)})
 
-    fitFunc = fitSim('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
+    fitFunc = FitSim('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
     
     return fitFunc, fitAlg
     

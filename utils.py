@@ -251,9 +251,8 @@ def listMergeNP(*args):
 
     Examples
     --------
-    >>> utils.listMergeNP([1, 2, 3], [5, 6, 7]).T
-    array([[1, 2, 3, 1, 2, 3, 1, 2, 3],
-           [5, 5, 5, 6, 6, 6, 7, 7, 7]])
+    >>> listMergeNP([1, 2, 3], [5, 6, 7]).T
+    array([[1, 2, 3, 1, 2, 3, 1, 2, 3], [5, 5, 5, 6, 6, 6, 7, 7, 7]])
 
     """
 
@@ -290,18 +289,18 @@ def listMergeGen(*args):
     Examples
     --------
     >>> for i in listMergeGen(0.7): print(repr(i))
-    array([ 0.7])
+    array([0.7])
     >>> for i in listMergeGen([0.7, 0.1]): print(repr(i))
-    array([ 0.7])
-    array([ 0.1])
+    array([0.7])
+    array([0.1])
     >>> for i in listMergeGen([0.7, 0.1], [0.6]): print(repr(i))
-    array([ 0.7,  0.6])
-    array([ 0.1,  0.6])
+    array([0.7,  0.6])
+    array([0.1,  0.6])
     >>> for i in listMergeGen([0.7, 0.1], []): print(repr(i))
 
     >>> for i in listMergeGen([0.7, 0.1], 0.6): print(repr(i))
-    array([ 0.7,  0.6])
-    array([ 0.1,  0.6])
+    array([0.7,  0.6])
+    array([0.1,  0.6])
     """
     if len(args) == 0:
         r = np.array([[]])
@@ -387,8 +386,7 @@ def mergeDatasets(data, extend=False):
 
     Examples
     --------
-    >>> data = [{'a':[1, 2, 3],'b':[7, 8, 9]},
-                {'b':[4, 5, 6],'c':'string','d':5}]
+    >>> data = [{'a':[1, 2, 3],'b':[7, 8, 9]}, {'b':[4, 5, 6],'c':'string','d':5}]
     >>> mergeDatasets(data)
     {'a': [[1, 2, 3], None],
      'b': [[7, 8, 9], [4, 5, 6]],
@@ -536,13 +534,10 @@ def callableDetails(item):
     Examples
     --------
     >>> from utils import callableDetails
-    >>> def foo():
-    >>>     print("foo")
-    >>>
+    >>> def foo(): print("foo")
     >>> foo.Name = "boo"
     >>> callableDetails(foo)
     ('boo', None)
-
     >>> foo.Params = {1: 2, 2: 3}
     >>> callableDetails(foo)
     ('boo', {'1': '2', '2': '3'})
@@ -555,10 +550,10 @@ def callableDetails(item):
         except:
             details = None
 
-        return (item.Name, details)
+        return item.Name, details
 
     else:
-        return (None, None)
+        return None, None
 
 
 def callableDetailsString(item):
@@ -579,13 +574,10 @@ def callableDetailsString(item):
     Examples
     --------
     >>> from utils import callableDetailsString
-    >>> def foo():
-    >>>     print("foo")
-    >>>
+    >>> def foo(): print("foo")
     >>> foo.Name = "boo"
     >>> callableDetailsString(foo)
     'boo'
-
     >>> foo.Params = {1: 2, 2: 3}
     >>> callableDetailsString(foo)
     'boo with 1 : 2, 2 : 3'
@@ -699,16 +691,16 @@ def movingaverage(data, windowSize, edgeCorrection=False):
     Examples
     --------
     >>> movingaverage([1, 1, 1, 1, 1], 3)
-    array([ 0.66666667, 1, 1, 1, 0.66666667])
+    array([0.66666667, 1, 1, 1, 0.66666667])
 
     >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)
-    array([ 0.5 ,  0.75,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  0.75])
+    array([0.5 ,  0.75,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  0.75])
 
     >>> movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)
-    array([ 1,  1,  1,  1,  1])
+    array([1,  1,  1,  1,  1])
 
     >>> movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
-    array([ 1.5,  2,  3,  4,  4.5])
+    array([1.5,  2,  3,  4,  4.5])
 
     >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)
     array([1 ,  1,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  1])
@@ -769,7 +761,7 @@ def runningMean(oldMean, newValue, numValues):
 
 
 def runningAverage(data):
-    # type: (list) -> ndarray
+    # type: (list) -> np.ndarray
     """
     An accumulating mean
 
@@ -786,7 +778,7 @@ def runningAverage(data):
     Examples
     --------
     >>> runningAverage([1,2,3,4])
-    array([ 1. ,  1.5,  2. ,  2.5])
+    array([1. ,  1.5,  2. ,  2.5])
     """
 
     count = 2
@@ -802,7 +794,7 @@ def runningAverage(data):
 
 
 def discountAverage(data, discount):
-    # type: (list, float) -> ndarray
+    # type: (list, float) -> np.ndarray
     """
     An accumulating mean
 
@@ -880,7 +872,7 @@ def runningSTD(oldSTD, oldMean, newMean, newValue):
 
 
 def kendalw(data, ranked=False):
-    # type: (Union[list, ndarray], Optional[bool]) -> float
+    # type: (Union[list, np.ndarray], Optional[bool]) -> float
     """
     Calculates Kendall's W for a n*m array with n items and m 'judges'.
 
@@ -902,21 +894,11 @@ def kendalw(data, ranked=False):
 
     Examples
     --------
-	>>> data = array([[2., 0., 5., 1.],
-                      [3., 3., 3., 4.],
-                      [1., 5., 3., 5.],
-                      [1., 1., 4., 2.],
-                      [2., 4., 5., 1.],
-                      [1., 0., 0., 2.]])
+	>>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
     >>> kendalw(data)
     0.22857
 
-	>>> data = array([[1, 1, 1, 1],
-                      [2, 2, 2, 2],
-                      [3, 3, 3, 3],
-                      [4, 4, 4, 4],
-                      [5, 5, 5, 5],
-                      [6, 6, 6, 6]])
+	>>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
     >>> kendalw(data)
     1.0
 
@@ -936,8 +918,8 @@ def kendalw(data, ranked=False):
     return w
 
 
-def kendalwt(data, ranked = False):
-    # type: (Union[list, ndarray], Optional[bool]) -> float
+def kendalwt(data, ranked=False):
+    # type: (Union[list, np.ndarray], Optional[bool]) -> float
     """
     Calculates Kendall's W for a n*m array with n items and m 'judges'. Corrects for ties.
     
@@ -959,21 +941,11 @@ def kendalwt(data, ranked = False):
 
     Examples
     --------
-    >>> data = array([[2., 0., 5., 1.],
-                      [3., 3., 3., 4.],
-                      [1., 5., 3., 5.],
-                      [1., 1., 4., 2.],
-                      [2., 4., 5., 1.],
-                      [1., 0., 0., 2.]])
+    >>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
     >>> kendalwt(data)
     0.24615
 
-    >>> data = array([[1, 1, 1, 1],
-                      [2, 2, 2, 2],
-                      [3, 3, 3, 3],
-                      [4, 4, 4, 4],
-                      [5, 5, 5, 5],
-                      [6, 6, 6, 6]])
+    >>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
     >>> kendalwt(data)
     1.0
     """
@@ -1002,14 +974,14 @@ def kendalwt(data, ranked = False):
     return w
 
 
-def kendalwts(data, ranked = False):
-    # type: (Union[list, ndarray], Optional[bool]) -> float
+def kendalwts(data, ranked=False):
+    # type: (Union[list, np.ndarray], Optional[bool]) -> float
     """
     Calculates Kendall's W for a n*m array with n items and m 'judges'. Corrects for ties.
     
     Parameters
     ----------
-    data : list or ndarray
+    data : list or np.ndarray
         The data in the form of an n*m array with n items and m 'judges'
     ranked : bool, optional
         If the data has already been ranked or not. Default ``False``
@@ -1025,22 +997,12 @@ def kendalwts(data, ranked = False):
 
     Examples
     --------
-    >>> data = array([[2., 0., 5., 1.],
-                      [3., 3., 3., 4.],
-                      [1., 5., 3., 5.],
-                      [1., 1., 4., 2.],
-                      [2., 4., 5., 1.],
-                      [1., 0., 0., 2.]])
-    >>> kendalws(data)
+    >>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
+    >>> kendalwts(data)
     0.24615
 
-    >>> data = array([[1, 1, 1, 1],
-                      [2, 2, 2, 2],
-                      [3, 3, 3, 3],
-                      [4, 4, 4, 4],
-                      [5, 5, 5, 5],
-                      [6, 6, 6, 6]])
-    >>> kendalws(data)
+    >>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
+    >>> kendalwts(data)
     1.0
     """
     ranks = data
