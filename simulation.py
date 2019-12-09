@@ -172,7 +172,7 @@ def simModelCSV(modelData, simID, fileNameGen):
         returns one ``fileName`` string
     """
 
-    data = outputting.dictData2Lists(modelData)
+    data = outputting.newListDict(modelData)
     record = pd.DataFrame(data)
     name = "data/modelSim_" + simID
     outputFile = fileNameGen(name, 'csv')

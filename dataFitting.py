@@ -394,8 +394,7 @@ def fittingDataXLSX(fittingData, label, participant, outputFolder, fileNameGen):
 
     data = collections.OrderedDict()
     data['folder'] = outputFolder
-    partFittingKeys, partFittingMaxListLen = outputting.listDictKeySet(participant)
-    partData = outputting.newListDict(partFittingKeys, partFittingMaxListLen, participant, 'part')
+    partData = outputting.newListDict(participant, 'part')
     data.update(partData)
 
     paramFittingDict = copy.copy(fittingData["testedParameters"])
@@ -406,8 +405,7 @@ def fittingDataXLSX(fittingData, label, participant, outputFolder, fileNameGen):
         paramFittingDict[k + "final"] = v
     paramFittingDict.update(fittingData)
     data.update(paramFittingDict)
-    recordFittingKeys, recordFittingMaxListLen = outputting.listDictKeySet(data)
-    recordData = outputting.newListDict(recordFittingKeys, recordFittingMaxListLen, data, "")
+    recordData = outputting.newListDict(data, "")
 
     record = pd.DataFrame(recordData)
 

@@ -115,12 +115,6 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
     folderName : string
         The folder path that has just been created
 
-    Examples
-    --------
-    >>> newFolder = folderSetup("a","today", basePath=".")
-    >>> newFolder
-    './Outputs/a_today/'
-
     See Also
     --------
     newFile : Creates a new file
@@ -391,72 +385,7 @@ def pickleLog(results, fileNameGen, label="", save=True):
 
 
 #%% Utils
-def reframeListDicts(store, keySet=None, storeLabel=''):
-    """Take a list of dictionaries and turn it into a dictionary of lists
-    containing only the useful keys
-
-    Parameters
-    ----------
-    store : list of dicts
-        The dictionaries would be expected to have many of the same keys
-    keySet : list of strings, optional
-        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being included
-    storeLabel : string, optional
-        An identifier to be added to the beginning of each key string.
-        Default is ''.
-
-    Returns
-    -------
-    newStore : dict of 1D lists
-        Any dictionary keys containing lists in the input have been split
-        into multiple numbered keys
-
-    See Also
-    --------
-    flatDictKeySet, newFlatDict
-
-    """
-
-    keySet = flatDictKeySet(store, keySet=keySet)
-
-    # For every key now found
-    newStore = newFlatDict(keySet, store, storeLabel)
-
-    return newStore
-
-
-def dictData2Lists(store, storeLabel=''):
-    """
-    Take a dictionary of arrays, values and lists and turn it into a dictionary of lists
-
-    Parameters
-    ----------
-    store : list of dicts
-        The dictionaries would be expected to have many of the same keys
-    storeLabel : string, optional
-        An identifier to be added to the beginning of each key string.
-        Default is ''.
-
-    Returns
-    -------
-    newStore : dict of 1D lists
-        Any dictionary keys containing arrays in the input have been split
-        into multiple numbered keys
-
-    See Also
-    --------
-    flatDictKeySet, newFlatDict
-    """
-
-    keySet, maxListLen = listDictKeySet(store)
-
-    # For every key now found
-    newStore = newListDict(keySet, maxListLen, store, storeLabel)
-
-    return newStore
-
-
-def flatDictKeySet(store, keys=None):
+def flatDictKeySet(store, selectKeys=None):
     """
     Generates a dictionary of keys and identifiers for the new dictionary,
     including only the keys in the keys list. Any keys with lists  will
@@ -470,8 +399,8 @@ def flatDictKeySet(store, keys=None):
         The dictionaries would be expected to have many of the same keys.
         Any dictionary keys containing lists in the input have been split
         into multiple numbered keys
-    keys : list of strings, optional
-        The keys whose data will be included in the return dictionary. Default ``None``, which   results in all keys being returned
+    selectKeys : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned
 
     Returns
     -------
@@ -486,8 +415,8 @@ def flatDictKeySet(store, keys=None):
     keySet = collections.OrderedDict()
 
     for s in store:
-        if keys:
-            sKeys = (k for k in s.iterkeys() if k in keys)
+        if selectKeys:
+            sKeys = (k for k in s.iterkeys() if k in selectKeys)
             abridge = True
         else:
             sKeys = s.iterkeys()
@@ -509,54 +438,21 @@ def flatDictKeySet(store, keys=None):
     return keySet
 
 
-def listDictKeySet(store):
-    """
-    Generates a dictionary of keys and identifiers for the new dictionary,
-    splitting any keys with arrays into a set of keys, one for each column
-    in the original key.
-
-    These are named <key><location>
-
-    Parameters
-    ----------
-    store : dict
-        The dictionary to be split up
-
-    Returns
-    -------
-    keySet : OrderedDict with values of OrderedDict, list or None
-        The dictionary of keys to be extracted
-    maxListLen : int
-        The longest list in the dictionary
-
-    See Also
-    --------
-    reframeListDicts, newFlatDict
-    """
-
-    keySet, maxListLen = dictKeyGen(store, maxListLen=0, returnList=True, abridge=False)
-
-    return keySet, maxListLen
-
-
-def newFlatDict(keySet, store, labelPrefix):
+def newFlatDict(store, selectKeys=None, labelPrefix=''):
     """
     Takes a list of dictionaries and returns a dictionary of 1D lists.
 
-    If a dictionary did not have that key or list element, then 'None' is
-    put in its place
+    If a dictionary did not have that key or list element, then 'None' is put in its place
 
     Parameters
     ----------
-    keySet : OrderedDict with values of OrderedDict, list or None
-        The dictionary of keys to be extracted
     store : list of dicts
         The dictionaries would be expected to have many of the same keys.
-        Any dictionary keys containing lists in the input have been split
-        into multiple numbered keys
+        Any dictionary keys containing lists in the input have been split into multiple numbered keys
+    selectKeys : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned
     labelPrefix : string
         An identifier to be added to the beginning of each key string.
-
 
     Returns
     -------
@@ -567,21 +463,18 @@ def newFlatDict(keySet, store, labelPrefix):
 
     Examples
     --------
-    >>> from numpy import array
-    >>> from collections import OrderedDict
-    >>> from outputting import flatDictKeySet
-    >>> store = [{'test': 'string', 'dict': {'test': 1, }, 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]), 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]], 'num': 23.6, 'array': array([1, 2, 3])}]
-    >>> keySet = flatDictKeySet(store)
-    >>> newFlatDict(keySet, store, '')
-    OrderedDict([('OrderedDict_0', ['0.5']), ('OrderedDict_1', ['0.5']),
-                 ('list_(0, 0)', [1]), (list_(1, 0)', [7]), ('list_(0, 1)', [2]), ('list_(1, 1)', [8]),
-                 ('list_(0, 2)', [3]), ('list_(1, 2)', [9]), ('list_(0, 3)', [4]), ('list_(1, 3)', [10]),
-                 ('list_(0, 4)', [5]), ('list_(1, 4)', [11]), ('list_(0, 5)', [6]), ('list_(1, 5)', [12]),
-                 ('num', ['23.6']),
-                 ('dict_test', ['1']),
-                 ('test', ["'string'"]),
-                 ('array_[0]', [array([1])]), ('array_[1]', [array([2])]), ('array_[2]', [array([3])])])
+    >>> store = {'list': [1, 2, 3, 4, 5, 6]}
+    >>> newFlatDict(store)
+    OrderedDict([('list_[0]', [1]), ('list_[1]', [2]), ('list_[2]', [3]), ('list_[3]', [4]), ('list_[4]', [5]), ('list_[5]', [6])])
+    >>> store = {'string': 'string'}
+    >>> newFlatDict(store)
+    OrderedDict([('string', ['string'])])
+    >>> store = {'dict': {1: {3: "a"}, 2: "b"}}
+    >>> newFlatDict(store)
+    OrderedDict([('dict_1_3', ['a']), ('dict_2', ['b'])])
     """
+    keySet = flatDictKeySet(store, selectKeys=selectKeys)
+
     newStore = collections.OrderedDict()
 
     if labelPrefix:
@@ -593,9 +486,8 @@ def newFlatDict(keySet, store, labelPrefix):
 
         if isinstance(loc, dict):
             subStore = [s[key] for s in store]
-            keyStoreSet = newFlatDict(loc, subStore, newKey)
+            keyStoreSet = newFlatDict(subStore, labelPrefix=newKey)
             newStore.update(keyStoreSet)
-
         elif isinstance(loc, (list, np.ndarray)):
             for locCo in loc:
                 tempList = []
@@ -604,12 +496,8 @@ def newFlatDict(keySet, store, labelPrefix):
                     if type(rawVal) is NoneType:
                         tempList.append(None)
                     else:
-                        try:
-                            tempList.append(rawVal[locCo])
-                        except TypeError:
-                            tempList.append(listSelection(rawVal, locCo))
+                        tempList.append(listSelection(rawVal, locCo))
                 newStore.setdefault(newKey + "_" + str(locCo), tempList)
-
         else:
             vals = [repr(s.get(key, None)) for s in store]
             newStore.setdefault(newKey, vals)
@@ -617,7 +505,7 @@ def newFlatDict(keySet, store, labelPrefix):
     return newStore
 
 
-def newListDict(keySet, maxListLen, store, labelPrefix=None):
+def newListDict(store, labelPrefix=''):
     """
     Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
 
@@ -625,14 +513,10 @@ def newListDict(keySet, maxListLen, store, labelPrefix=None):
 
     Parameters
     ----------
-    keySet : OrderedDict with values of OrderedDict, list or None
-        The dictionary of keys to be extracted
-    maxListLen : int
-        The longest list in the dictionary
     store : dict
-        A dictionary of numbers, strings, lists and arrays
-    labelPrefix : string or NoneType
-        An identifier to be added to the beginning of each key string. Default ``None``
+        A dictionary of numbers, strings, lists, dictionaries and arrays
+    labelPrefix : string
+        An identifier to be added to the beginning of each key string. Default empty string
 
     Returns
     -------
@@ -642,18 +526,18 @@ def newListDict(keySet, maxListLen, store, labelPrefix=None):
 
     Examples
     --------
-    >>> store = {'test': 'string', 'dict': {'test': 1, }, 'OrderedDict': OrderedDict([(0, 0.5), (1, 0.5)]), 'list': [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]], 'num': 23.6, 'array': array([1, 2, 3])}
-    >>> keySet, maxListLen = listDictKeySet(store)
-    >>> newListDict(keySet, maxListLen, store, '')
-    OrderedDict([('OrderedDict_0', [0.5, None, None, None, None, None]),
-                 ('OrderedDict_1', [0.5, None, None, None, None, None]),
-                 ('list_[0]', [1, 2, 3, 4, 5, 6]),
-                 ('list_[1]', [7, 8, 9, 10, 11, 12]),
-                 ('num', [23.6, None, None, None, None, None]),
-                 ('dict_test', [1, None, None, None, None, None]),
-                 ('test', ['string', None, None, None, None, None]),
-                 ('array', [1, 2, 3, None, None, None])])
+    >>> store = {'list': [1, 2, 3, 4, 5, 6]}
+    >>> newListDict(store)
+    OrderedDict([('list', [1, 2, 3, 4, 5, 6])])
+    >>> store = {'string': 'string'}
+    >>> newListDict(store)
+    OrderedDict([('string', ['string'])])
+    >>> store = {'dict': {1: {3: "a"}, 2: "b"}}
+    >>> newListDict(store)
+    OrderedDict([(u'dict_1_3', ['a']), (u'dict_2', ['b'])])
     """
+
+    keySet, maxListLen = dictKeyGen(store, maxListLen=0, returnList=True, abridge=False)
 
     newStore = collections.OrderedDict()
 
@@ -665,7 +549,7 @@ def newListDict(keySet, maxListLen, store, labelPrefix=None):
         newKey = labelPrefix + str(key)
 
         if isinstance(loc, dict):
-            keyStoreSet = newListDict(loc, maxListLen, store[key], newKey)
+            keyStoreSet = newListDict(store[key], newKey)
             newStore.update(keyStoreSet)
 
         elif isinstance(loc, (list, np.ndarray)):
@@ -722,9 +606,9 @@ def listSelection(data, loc):
 
     Examples
     --------
-    >>> listSelection([1, 2, 3], [0])
+    >>> listSelection([1, 2, 3], (0,))
     1
-    >>> listSelection([[1, 2, 3], [4, 5, 6]], [0])
+    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0,))
     [1, 2, 3]
     >>> listSelection([[1, 2, 3], [4, 5, 6]], (0, 2))
     3
@@ -769,24 +653,17 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     --------
     >>> store = {'string': 'string'}
     >>> dictKeyGen(store)
-    (OrderedDict([('string', None)]), None)
+    (OrderedDict([('string', None)]), 1)
     >>> store = {'num': 23.6}
     >>> dictKeyGen(store)
-    (OrderedDict([('num', None)]), None)
-    >>> dictKeyGen(store, maxListLen=None, returnList=True, abridge=True)
-    (OrderedDict([('test', None),
-                  ('list', array([[0], [1]])),
-                  ('array', None),
-                  ('num', None),
-                  ('dict', OrderedDict([('test', None)]))]),
-    6L)
+    (OrderedDict([('num', None)]), 1)
+    >>> store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
+    >>> dictKeyGen(store, returnList=True, abridge=True)
+    (OrderedDict([('array', array([[0],
+           [1]]))]), 6)
+    >>> store = {'dict': {1: "a", 2: "b"}}
     >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
-    (OrderedDict([('test', None),
-                  ('list', array([[0], [1]])),
-                  ('array', None),
-                  ('num', None),
-                  ('dict', OrderedDict([('test', None)]))]),
-    7)
+    (OrderedDict([('dict', OrderedDict([(1, None), (2, None)]))]), 7)
     """
     keySet = collections.OrderedDict()
 
@@ -801,6 +678,9 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
             keySet.setdefault(k, dictKeySet)
         else:
             keySet.setdefault(k, None)
+
+    if maxListLen is None and len(keySet) > 0:
+        maxListLen = 1
 
     return keySet, maxListLen
 
@@ -832,14 +712,17 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     Examples
     --------
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=False)
-    (array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]), None)
+    (array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]), 1)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=True)
     (None, None)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)
-    (array([[0], [1]]), 6L)
+    (array([[0],
+           [1]]), 6L)
     """
-
     dataShape = np.shape(data)
+    if dataShape[-1] == 0:
+        return None, maxListLen
+
     dataShapeList = list(dataShape)
     if returnList:
         dataShapeFirst = dataShapeList.pop(-1)
@@ -866,6 +749,9 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
         return None, maxListLen
     else:
         finalList = locList
+
+    if maxListLen is None and len(finalList) > 0:
+        maxListLen = 1
 
     return finalList, maxListLen
 
