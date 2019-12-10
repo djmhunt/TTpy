@@ -60,9 +60,62 @@ class TestClass_listMergeGen:
         listData = [i for i in utils.listMergeGen(*interSetsGen)]
         assert (np.array(listData).T == answer).all()
 
+
+#%% For movingaverage
+class TestClass_movingaverage:
+    def test_MA_1(self):
+        result = utils.movingaverage([1, 1, 1, 1, 1], 3)
+        correct_result = np.array([0.66666667, 1, 1, 1, 0.66666667])
+        assert (result == correct_result).all()
+
+    def test_MA_2(self):
+        result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)
+        correct_result = np.array([0.5, 0.75, 1., 1., 1., 1., 1., 0.75])
+        assert (result == correct_result).all()
+
+    def test_MA_edge(self):
+        result = utils.movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)
+        correct_result = np.array([1., 1., 1., 1., 1.])
+        assert (result == correct_result).all()
+
+    def test_MA_edge2(self):
+        result = utils.movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
+        correct_result = np.array([1.5, 2., 3., 4., 4.5])
+        assert (result == correct_result).all()
+
+    def test_MA_edge3(self):
+        result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)
+        correct_result = np.array([1., 1., 1., 1., 1., 1., 1., 1.])
+        assert (result == correct_result).all()
+
+    def test_MA_edge4(self):
+        result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 7, edgeCorrection=True)
+        correct_result = np.array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
+        assert (result == correct_result).all()
+
+
+#%% For errorResp
+class TestClass_errorResp:
+    def test_ER_zeroDiv(self):
+        try:
+            a = 1 / 0.0
+        except:
+            result = utils.errorResp()
+        correct_result = '''A <type 'exceptions.ZeroDivisionError'> : "float division by zero" in'''
+        assert result[:69] == correct_result
+
+    def test_ER_Name(self):
+        try:
+            a = b()
+        except:
+            result = utils.errorResp()
+        correct_result = '''A <type 'exceptions.NameError'> : "global name 'b' is not defined" in'''
+        assert result[:69] == correct_result
+
+
 #%% For kendalwts
 class TestClass_kendalwts:
-    def test_wtsRandom(self):
+    def test_wts_Random(self):
         data = np.array([[2., 0., 5., 1.],
                          [3., 3., 3., 4.],
                          [1., 5., 3., 5.],
