@@ -15,6 +15,7 @@ import itertools
 
 #import numdifftools as nd
 
+from fitAlgs.fitSims import FitSim
 from fitAlgs import qualityFunc
 from fitAlgs import boundFunc
 
@@ -336,22 +337,12 @@ class FitAlg(object):
 
         Examples
         --------
-        >>> a = FitAlg()
-        >>> a.setBounds([])
-        >>> a.setBounds(['string','two'])
+        >>> a = FitAlg(bounds = {1: (0, 5), 2: (0, 2), 3: (-1, 1)})
         >>> a.allBounds
-        {'string': (0, inf), 'two': (0, inf)}
-        >>> a.boundNames
-        ['string', 'two']
-        >>> a.boundVals
-        [(0, inf), (0, inf)]
-
-        >>> a = FitAlg(bounds = {1:(0,5),2:(0,2),3:(-1,1)})
-        >>> a.allBounds
-        {1:(0,5),2:(0,2),3:(-1,1)}
+        {1: (0, 5), 2: (0, 2), 3: (-1, 1)}
         >>> a.setBounds([])
         >>> a.allBounds
-        {1:(0,5),2:(0,2),3:(-1,1)}
+        {1: (0, 5), 2: (0, 2), 3: (-1, 1)}
         >>> a.boundNames
         []
         >>> a.setBounds([3,1])
@@ -393,7 +384,8 @@ class FitAlg(object):
 
         return
 
-    def startParams(self, initialParams, bounds=None, numPoints=3):
+    @classmethod
+    def startParams(cls, initialParams, bounds=None, numPoints=3):
         """
         Defines a list of different starting parameters to run the minimization
         over
@@ -401,14 +393,14 @@ class FitAlg(object):
         Parameters
         ----------
         initialParams : list of floats
-            The inital starting values proposed
+            The initial starting values proposed
         bounds : list of tuples of length two with floats, optional
             The boundaries for methods that use bounds. If unbounded methods are
             specified then the bounds will be ignored. Default is ``None``, which
             translates to boundaries of (0,float('Inf')) for each parameter.
         numPoints : int
             The number of starting parameter values to be calculated around
-            each inital point
+            each initial point
 
         Returns
         -------
@@ -417,40 +409,40 @@ class FitAlg(object):
 
         See Also
         --------
-        fitAlg.startParamVals : Used in this function
+        FitAlg.startParamVals : Used in this function
 
         Examples
         --------
-        >>> a = FitAlg()
-        >>> self.startParams([0.5,0.5], numPoints=2)
-        np.array([[ 0.33333333,  0.33333333],
-               [ 0.66666667,  0.33333333],
-               [ 0.33333333,  0.66666667],
-               [ 0.66666667,  0.66666667]])
+        >>> FitAlg.startParams([0.5,0.5], numPoints=2)
+        array([[0.33333333, 0.33333333],
+               [0.66666667, 0.33333333],
+               [0.33333333, 0.66666667],
+               [0.66666667, 0.66666667]])
         """
 
         if bounds is None:
             # We only have the values passed in as the starting parameters
-            startLists = (self.startParamVals(i, numPoints = numPoints) for i in initialParams)
+            startLists = (cls.startParamVals(i, numPoints=numPoints) for i in initialParams)
 
         else:
             if len(bounds) != len(initialParams):
                 raise ValueError('Bounds do not fit the number of initial parameters', str(len(bounds)), str(len(initialParams)))
 
-            startLists = (self.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in itertools.izip(initialParams, bounds))
+            startLists = (cls.startParamVals(i, bMin=bMin, bMax=bMax, numPoints=numPoints) for i, (bMin, bMax) in itertools.izip(initialParams, bounds))
 
         startSets = utils.listMergeNP(*startLists)
 
         return startSets
 
-    def startParamVals(self, initial, bMin=float('-Inf'), bMax=float('Inf'), numPoints=3):
+    @staticmethod
+    def startParamVals(initial, bMin=float('-Inf'), bMax=float('Inf'), numPoints=3):
         """
         Provides a set of starting points
 
         Parameters
         ----------
         initial : float
-            The inital starting value proposed
+            The initial starting value proposed
         bMin : float, optional
             The minimum value of the parameter. Default is ``float('-Inf')``
         bMax : float, optional
@@ -476,27 +468,20 @@ class FitAlg(object):
 
         Examples
         --------
-        >>> a = FitAlg()
-        >>> a.startParamVals(0.5)
-        np.array([ 0.25,  0.5 ,  0.75])
-
-        >>> a.startParamVals(5)
-        np.array([ 2.5,  5. ,  7.5])
-
-        >>> a.startParamVals(-5)
-        np.array([ 2.5,  5. ,  7.5])
-
-        >>> a.startParamVals(5, bMin = 0, bMax = 7)
-        np.array([ 4.,  5.,  6.])
-
-        >>> a.startParamVals(5, bMin = -3, bMax = 30)
-        np.array([ 1.,  5.,  9.])
-
-        >>> a.startParamVals(5, bMin = 0, bMax = 30)
-        np.array([ 2.5,  5. ,  7.5])
-
-        >>> a.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)
-        np.array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])
+        >>> FitAlg.startParamVals(0.5)
+        array([0.25, 0.5 , 0.75])
+        >>> FitAlg.startParamVals(5)
+        array([2.5, 5. , 7.5])
+        >>> FitAlg.startParamVals(-5)
+        array([2.5, 5. , 7.5])
+        >>> FitAlg.startParamVals(5, bMin = 0, bMax = 7)
+        array([4., 5., 6.])
+        >>> FitAlg.startParamVals(5, bMin = -3, bMax = 30)
+        array([1., 5., 9.])
+        >>> FitAlg.startParamVals(5, bMin = 0, bMax = 30)
+        array([2.5, 5. , 7.5])
+        >>> FitAlg.startParamVals(5, bMin = 3, bMax = 30, numPoints = 7)
+        array([3.5, 4., 4.5, 5., 5.5, 6., 6.5])
         """
 
 #        initialAbs = abs(initial)
