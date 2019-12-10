@@ -25,25 +25,19 @@ def infBound(base=0):
     Examples
     --------
     >>> cst = infBound(base = 160)
-    >>> cst([0.5, 2], [(0, 1),(0, 5)])
+    >>> cst([0.5, 2], [(0, 1), (0, 5)])
     160
-    >>> cst([0.5, 7], [(0, 1),(0, 5)])
-    inf
-    >>> cst([2, 7], [(0, 1),(0, 5)])
-    inf
-    >>> cst([-1, 7], [(0, 1),(0, 5)])
-    inf
-    >>> cst([-1, -2], [(0, 1),(0, 5)])
+    >>> cst([0.5, 7], [(0, 1), (0, 5)])
     inf
     """
 
-    response = float("inf")
+    response = np.inf
 
-    def cost(parameters, bounds, fitQualFunc):
+    def cost(parameters, bounds):
 
         boundArr = np.array(bounds)
 
-        if any(parameters < boundArr[:, 0]) or any(parameters > boundArr[:, 1]):
+        if (parameters < boundArr[:, 0]).any() or any(parameters > boundArr[:, 1]):
             return response
         else:
             return base
@@ -72,19 +66,13 @@ def scalarBound(base=0):
     Examples
     --------
     >>> cst = scalarBound(base=160)
-    >>> cst([0.5, 2], [(0, 1),(0, 5)])
-    160
-    >>> cst([0.5, 7], [(0, 1),(0, 5)])
-    162
-    >>> cst([2, 7], [(0, 1),(0, 5)])
-    163
-    >>> cst([-1, 7], [(0, 1),(0, 5)])
-    163
-    >>> cst([-1, -2], [(0, 1),(0, 5)])
-    163
+    >>> cst([0.5, 2], [(0, 1), (0, 5)])
+    160.0
+    >>> cst([0.5, 7], [(0, 1), (0, 5)])
+    162.0
     """
 
-    def cost(parameters, bounds, fitQualFunc):
+    def cost(parameters, bounds):
 
         boundArr = np.array(bounds)
 
