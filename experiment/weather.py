@@ -189,6 +189,7 @@ class Weather(Experiment):
 
         self.recAction[self.t] = self.action
 
+
 def genCues(numCues, taskLen):
     """
 
@@ -210,6 +211,7 @@ def genCues(numCues, taskLen):
         cues.append(c)
 
     return np.array(cues)
+
 
 def genActualities(cueProbs, cues, learningLen, testLen):
     """
@@ -248,6 +250,7 @@ def genActualities(cueProbs, cues, learningLen, testLen):
 
     return np.array(actions)
 
+
 def weatherStimDirect():
     """
     Processes the weather stimuli for models expecting just the event
@@ -264,7 +267,7 @@ def weatherStimDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.eta
+    model.QLearn, model.OpAL
     """
 
     def weatherStim(observation):
@@ -307,9 +310,9 @@ def weatherStimAllAction(numActions):
     >>> from experiment.weather import weatherStimAllAction
     >>> stim = weatherStimAllAction(2)
     >>> stim(np.array([1, 0, 0, 1]), 0)
-    (np.array([1, 0, 0, 1, 0, 0, 0, 0]), np.array([ 1, 0, 0, 1, 1, 1, 1, 1]))
+    ((1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0))
     >>> stim(np.array([1, 0, 0, 1]), 1)
-    (np.array([0, 0, 0, 0, 1, 0, 0, 1]), np.array([ 1, 1, 1, 1, 1, 0, 0, 1]))
+    ((0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0), (1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0))
     """
 
     def weatherStim(observation, action):
@@ -396,7 +399,7 @@ def weatherRewDiff():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.eta
+    model.QLearn
     """
 
     def weatherRew(reward, action, stimuli):
@@ -426,10 +429,6 @@ def weatherRewDualCorrection(epsilon):
     ----------
     Name : string
         The identifier of the function
-
-    See Also
-    --------
-    model.BP, model.EP, model.MS, model.MSRev
     """
 
     def weatherRew(reward, action, stimuli):

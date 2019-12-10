@@ -32,7 +32,6 @@ class Experiment(object):
 
         self.recAction = []
 
-
     def __iter__(self):
         """
         Returns the iterator for the experiment
@@ -79,6 +78,9 @@ class Experiment(object):
         return hash(self.Name)
 
     def findName(self):
+        """
+        Returns the name of the class
+        """
 
         return self.__class__.__name__
 
@@ -105,11 +107,10 @@ class Experiment(object):
         """
         Responds to the action from the participant
 
-        For this experiment there is no possible response
-
         Returns
         -------
-        feedback : None
+        feedback : None, int or float
+
         """
         return None
 

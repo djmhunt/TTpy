@@ -34,7 +34,7 @@ from model.qLearn import QLearn
 #%% For importing the data
 from data import data
 
-#For data fitting
+#%%For data fitting
 from dataFitting import dataFitting
 from fitAlgs.fitSims import FitSim
 from fitAlgs.evolutionary import Evolutionary
@@ -62,7 +62,6 @@ modelStaticArgs = {'numActions': numActions,
 modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 
 
-
 #%% Import data
 dat = data("./Outputs/qLearn_probSelectSimSet_2019-10-29/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
 
@@ -70,18 +69,20 @@ for d in dat:
     d["validActions"] = d["ValidActions"].T
 
 #%% Set up the fitting
-modSim = FitSim('Decisions',
-                'Rewards',
-                'ActionProb',
+modSim = FitSim(partChoiceParam='Decisions',
+                partRewardParam='Rewards',
+                modelFitVar='ActionProb',
                 fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
                 #stimuliParams=["stimCues"],
                 actChoiceParams='validActions'
                 )
 
 # Define the fitting algorithm
-fitAlg = Evolutionary(modSim,
+fitAlg = Evolutionary(fitSim=modSim,
                       fitQualityFunc="BIC2norm",
-                      qualityFuncArgs={"numParams": len(modelParameters), "numActions": numActions, "qualityThreshold": 20},
+                      qualityFuncArgs={"numParams": len(modelParameters),
+                                       "numActions": numActions,
+                                       "qualityThreshold": 20},
                       # strategy="all",
                       boundCostFunc=None,  # scalarBound(base=160),
                       polish=False,

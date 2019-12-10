@@ -192,7 +192,7 @@ def deckStimDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.eta
+    model.QLearn
     """
 
     def deckStim(observation):
@@ -219,7 +219,7 @@ def deckRewDirect():
 
     See Also
     --------
-    model.QLearn, model.QLearn2, model.decision.binary.eta
+    model.QLearn
     """
 
     def deckRew(reward, action, stimuli):
@@ -251,7 +251,7 @@ def deckRewDirectNormal(maxRewardVal):
 
     See Also
     --------
-    model.opal, model.opals
+    model.OpAL
     """
 
     def deckRew(reward, action, stimuli):
@@ -283,7 +283,7 @@ def deckRewDirectPhi(kwargs):
 
     See Also
     --------
-    model.opal, model.opals
+    model.OpAL
     """
     phi = kwargs.pop('phi', 1)
 
@@ -322,18 +322,14 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     Name : string
         The identifier of the function
 
-    See Also
-    --------
-    model.BP, model.EP, model.MSRev, model.decision.binary.decIntEtaReac
-
     Examples
     --------
     >>> from experiment.decks import deckRewAllInfo
-    >>> rew = deckRewAllInfo(10,1,2)
-    >>> rew(6,0)
-    array([ 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    >>> rew(6,1)
-    array([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
+    >>> rew = deckRewAllInfo(10, 1, 2)
+    >>> rew(6, 0, 1)
+    array([1., 1., 1., 1., 1., 2., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
+    >>> rew(6, 1, 1)
+    array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 1., 1., 1., 1.])
     """
     numDiffRewards = maxRewardVal-minRewardVal+1
     respZeros = np.zeros(numDiffRewards * numActions)
@@ -367,9 +363,6 @@ def deckRewDualInfo(maxRewardVal, epsilon):
     Name : string
         The identifier of the function
 
-    See Also
-    --------
-    model.BP, model.EP, model.MS, model.MSRev
     """
     divisor = maxRewardVal + epsilon
 
@@ -399,10 +392,6 @@ def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
     ----------
     Name : string
         The identifier of the function
-
-    See Also
-    --------
-    model.BP, model.EP, model.MS, model.MSRev
     """
     mid = (maxRewardVal + minRewardVal)/2
 

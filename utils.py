@@ -386,26 +386,16 @@ def mergeDatasets(data, extend=False):
 
     Examples
     --------
-    >>> data = [{'a':[1, 2, 3],'b':[7, 8, 9]}, {'b':[4, 5, 6],'c':'string','d':5}]
+    >>> data = [{'a':[1, 2, 3], 'b':[7, 8, 9]}, {'b':[4, 5, 6], 'c':'string', 'd':5}]
     >>> mergeDatasets(data)
-    {'a': [[1, 2, 3], None],
-     'b': [[7, 8, 9], [4, 5, 6]],
-     'c': [None, 'string'],
-     'd': [None, 5]}
+    {'a': [[1, 2, 3], None], 'c': [None, 'string'], 'b': [[7, 8, 9], [4, 5, 6]], 'd': [None, 5]}
     >>> mergeDatasets(data, extend=True)
-    {'a': [1, 2, 3, None],
-     'b': [7, 8, 9, 4, 5, 6],
-     'c': [None, 'string'],
-     'd': [None, 5]}
-
-     >>> from numpy import array
-     >>> data = [{'b':array([[7,8,9],[1,2,3]])}, {'b':array([[4,5,6],[2,3,4]])}]
+    {'a': [1, 2, 3, None], 'c': [None, 'string'], 'b': [7, 8, 9, 4, 5, 6], 'd': [None, 5]}
+     >>> data = [{'b': np.array([[7, 8, 9], [1, 2, 3]])}, {'b': np.array([[4, 5, 6], [2, 3, 4]])}]
      >>> mergeDatasets(data, extend = True)
      {'b': [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}
      >>> mergeDatasets(data)
-     {'b': [array([[7, 8, 9],
-             [1, 2, 3]]), array([[4, 5, 6],
-             [2, 3, 4]])]}
+     {'b': [array([[7, 8, 9], [1, 2, 3]]), array([[4, 5, 6], [2, 3, 4]])]}
     """
 
     # Find all the keys
@@ -604,21 +594,6 @@ def errorResp():
     -------
     description : string
         Contains the description of the error
-
-    Examples
-    --------
-    >>> try:
-    >>>     a = 1/0.0
-    >>> except:
-    >>>     print(errorResp())
-    A <type 'exceptions.ZeroDivisionError'> : "float division by zero" in <input> line 1 function <module>: a = 1/0.0
-    
-    >>> try:
-    >>>     a = b()
-    >>> except:
-    >>>     print(errorResp())
-    A <type 'exceptions.NameError'> : "name 'b' is not defined" in <input> line 2 function <module>: a = b()  
-    
     """
     errorType, value, tracebackval = sys.exc_info()
     errorLoc = traceback.extract_tb(tracebackval)[-1]
@@ -653,10 +628,10 @@ def unique(seq, idfun=None):
     --------
     >>> a=list('ABeeE')
     >>> unique(a)
-    ['A','B','e','E']
+    ['A', 'B', 'e', 'E']
     
     >>> unique(a, lambda x: x.lower())
-    ['A','B','e'] 
+    ['A', 'B', 'e']
     
     Note
     ----
@@ -691,23 +666,11 @@ def movingaverage(data, windowSize, edgeCorrection=False):
     Examples
     --------
     >>> movingaverage([1, 1, 1, 1, 1], 3)
-    array([0.66666667, 1, 1, 1, 0.66666667])
-
+    array([0.66666667, 1.        , 1.        , 1.        , 0.66666667])
     >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)
-    array([0.5 ,  0.75,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  0.75])
-
+    array([0.5 , 0.75, 1.  , 1.  , 1.  , 1.  , 1.  , 0.75])
     >>> movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)
-    array([1,  1,  1,  1,  1])
-
-    >>> movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
-    array([1.5,  2,  3,  4,  4.5])
-
-    >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)
-    array([1 ,  1,  1.  ,  1.  ,  1.  ,  1.  ,  1.  ,  1])
-
-    >>> movingaverage([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 7, edgeCorrection=True)
-    array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
-
+    array([1., 1., 1., 1., 1.])
     """
     window = np.ones(int(windowSize)) / float(windowSize)
     convolution = np.convolve(data, window, 'same')
@@ -813,10 +776,9 @@ def discountAverage(data, discount):
     Examples
     --------
     >>> discountAverage([1, 2, 3, 4], 1)
-    array([ 1,  1.5,  2,  2.5])
-
+    array([1. , 1.5, 2. , 2.5])
     >>> discountAverage([1, 2, 3, 4], 0.25)
-    array([ 1,  1.8,  2.71428571,  3.68235294])
+    array([1.        , 1.8       , 2.71428571, 3.68235294])
 
     """
     counter = np.arange(0, len(data), 1)
@@ -896,7 +858,7 @@ def kendalw(data, ranked=False):
     --------
 	>>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
     >>> kendalw(data)
-    0.22857
+    0.22857142857142856
 
 	>>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
     >>> kendalw(data)
@@ -943,7 +905,7 @@ def kendalwt(data, ranked=False):
     --------
     >>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
     >>> kendalwt(data)
-    0.24615
+    0.24615384615384617
 
     >>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
     >>> kendalwt(data)
@@ -999,7 +961,7 @@ def kendalwts(data, ranked=False):
     --------
     >>> data = np.array([[2., 0., 5., 1.], [3., 3., 3., 4.], [1., 5., 3., 5.], [1., 1., 4., 2.], [2., 4., 5., 1.], [1., 0., 0., 2.]])
     >>> kendalwts(data)
-    0.24615
+    0.24615384615384617
 
     >>> data = np.array([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]])
     >>> kendalwts(data)
