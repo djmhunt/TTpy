@@ -22,12 +22,12 @@ class FitSim(object):
 
     Parameters
     ----------
-    partChoiceParam : string
-        The participant data key of their action choices
-    partRewardParam : string
-        The participant data key of the participant reward data
-    modelFitVar : string
-        The key to be compared in the model data
+    partChoiceParam : string, optional
+        The participant data key of their action choices. Default ``'Actions'``
+    partRewardParam : string, optional
+        The participant data key of the participant reward data. Default ``'Rewards'``
+    modelFitVar : string, optional
+        The key to be compared in the model data. Default ``'ActionProb'``
     stimuliParams : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
@@ -38,8 +38,7 @@ class FitSim(object):
         of actions that can be taken at each instance. Default ``None``
     fpRespVal : float, optional
         If a floating point error occurs when running a fit the fitter function
-        will return a value for each element of fpRespVal.
-        Default is 1/1e100
+        will return a value for each element of fpRespVal. Default is ``1/1e100``
     fitSubset : ``float('Nan')``, ``None``, ``"rewarded"``, ``"unrewarded"``, ``"all"`` or list of int, optional
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
         This can either be described as a list of trial numbers or, by passing
@@ -47,8 +46,6 @@ class FitSim(object):
         - ``float('Nan')`` or ``"unrewarded"`` for all those trials whose feedback was ``float('Nan')``
         - ``"rewarded"`` for those who had feedback that was not ``float('Nan')``
         Default ``None``, which means all trials will be used.
-    calcCov : bool, optional
-        Estimating the covariance
 
     Attributes
     ----------
@@ -61,7 +58,14 @@ class FitSim(object):
     """
 ## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.
 
-    def __init__(self, partChoiceParam='Actions', partRewardParam='Rewards', modelFitVar='ActionProb', stimuliParams=None, actChoiceParams=None, fpRespVal=1/1e100, fitSubset=None):
+    def __init__(self, partChoiceParam='Actions',
+                 partRewardParam='Rewards',
+                 modelFitVar='ActionProb',
+                 stimuliParams=None,
+                 fitSubset=None,
+                 actChoiceParams=None,
+                 fpRespVal=1/1e100
+                 ):
 
         self.partChoiceParam = partChoiceParam
         self.partRewardParam = partRewardParam
