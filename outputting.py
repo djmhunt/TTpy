@@ -22,16 +22,14 @@ from types import NoneType
 
 
 #%% Folder management
-def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging.INFO, npSetErr="log"):
+def saving(label=None, pickleData=False, saveScript=True, logLevel=logging.INFO, npSetErr="log"):
     """
     Creates the folder structure for the saved data and created the log file as ``log.txt``
 
     Parameters
     ----------
     label : string, optional
-        The label for the simulation
-    save : bool, optional
-        If true the data will be saved to files. Default ``True``
+        The label for the simulation. Default ``None`` will mean no data is saved to files.
     pickleData : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
@@ -59,8 +57,9 @@ def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging
     folderSetup : creates the folders
     """
     dateStr = date()
-    if save:
-        outputFolder = folderSetup(label, dateStr, pickleData=pickleData, basePath=None)
+    if label:
+        saveLabel = label
+        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickleData, basePath=None)
         fileNameGen = fileNameGenerator(outputFolder)
         logFile = fileNameGen('log', 'txt')
 
@@ -68,10 +67,11 @@ def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging
             cwd = os.getcwd().replace("\\", "/")
             for s in inspect.stack():
                 p = s[1].replace("\\", "/")
-                if ("outputting(" in s[4][0]) or (cwd in p and "outputting.py" not in p):
+                if ('outputting(' in s[4][0]) or (cwd in p and 'outputting.py' not in p):
                     shu.copy(p, outputFolder)
                     break
     else:
+        saveLabel = 'Untitled'
         outputFolder = None
         logFile = None
         fileNameGen = None
@@ -80,7 +80,7 @@ def saving(label, save=True, pickleData=False, saveScript=True, logLevel=logging
 
     logger = logging.getLogger('Framework')
 
-    message = "Beginning experiment labelled: " + label
+    message = 'Beginning experiment labelled: {}'.format(saveLabel)
     logger.info(message)
 
     return outputFolder, fileNameGen, closeLoggers
@@ -90,12 +90,12 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
     """
     Identifies and creates the folder the data will be stored in
 
-    Folder will be created as "./Outputs/<simLabel>_<date>/". If that had
+    Folder will be created as "./Outputs/<sim_label>_<date>/". If that had
     previously been created then it is created as
-    "./Outputs/<simLabel>_<date>_no_<#>/", where "<#>" is the first
+    "./Outputs/<sim_label>_<date>_no_<#>/", where "<#>" is the first
     available integer.
 
-    A subfolder is also created with the name ``Pickle`` if  pickleData is
+    A subfolder is also created with the name ``Pickle`` if  pickle is
     true.
 
     Parameters
