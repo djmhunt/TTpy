@@ -83,12 +83,12 @@ def fancyLogger(logLevel, fileName=""):
         logging.info("The log you are reading was written to " + str(fileName))
 
 
-def folderSetup(simType):
+def folderSetup(simDescription, path='./'):
     """Identifies and creates the folder the data will be stored in
 
     Parameters
     ----------
-    simType : string
+    simDescription : string
         A description of the experiment
 
     Returns
@@ -98,7 +98,7 @@ def folderSetup(simType):
     """
 
     # While the folders have already been created, check for the next one
-    folderName = './Outputs/' + date + "_" + simType
+    folderName = path + 'Outputs/' + date + "_" + simDescription
     if os.path.exists(folderName):
         i = 1
         folderName += '_no_'
@@ -200,6 +200,29 @@ def argProcess(**kwargs):
 
     return expArgs, modelArgs, otherArgs
 
+
+def list_all_equal(data):
+    """
+    Checks if all of the elements of a list are the same.
+
+    Parameters
+    ----------
+    data : list of 1D
+        The list of elements to compare
+
+    Returns
+    -------
+    equivalence: bool
+        True if the elements are all the same
+
+    Notes
+    -----
+    Based on https://stackoverflow.com/questions/3844801
+    """
+
+    equivalence = data.count(data[0]) == len(data)
+
+    return equivalence
 
 def listMerge(*args):
     """For merging lists with objects that are not solely numbers
