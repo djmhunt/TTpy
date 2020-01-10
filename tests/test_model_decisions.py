@@ -223,34 +223,34 @@ class TestClass_decProbThresh:
         assert result == correct_result
 
 
-#%% For discrete.validProbabilities
+#%% For discrete._validProbabilities
 class TestClass_validProbabilities:
     def test_VP_reduced_int(self):
         correct_result = (np.array([0.1, 0.7]), np.array([2, 3]))
-        result = discrete.validProbabilities([0.2, 0.1, 0.7], [1, 2, 3], [2, 3])
+        result = discrete._validProbabilities([0.2, 0.1, 0.7], [1, 2, 3], [2, 3])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_reduced_str(self):
         correct_result = (np.array([0.1, 0.7]), np.array(['B', 'C']))
-        result = discrete.validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
+        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_normal(self):
         correct_result = (np.array([0.2, 0.1, 0.7]), np.array(["A", "B", "C"]))
-        result = discrete.validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "B", "C"])
+        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "B", "C"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_err(self):
         correct_result = (np.array([0.2]), np.array(['A']))
-        result = discrete.validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "D"])
+        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "D"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_err_2(self):
         correct_result = (np.array([0.2]), np.array(['A']))
-        result = discrete.validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "A"])
+        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "A"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()

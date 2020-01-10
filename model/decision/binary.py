@@ -35,7 +35,6 @@ def single(expResponses=(0, 1)):
 
     Examples
     --------
-    >>> from model.decision.binary import single
     >>> np.random.seed(100)
     >>> dec = single()
     >>> dec(0.23)

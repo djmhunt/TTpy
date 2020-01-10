@@ -18,7 +18,7 @@ from types import NoneType
 
 
 # TODO: provide default values for expResponses
-def weightProb(expResponses):
+def weightProb(expResponses=(0, 1)):
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing randomly based on which are valid and what their associated probabilities are
@@ -45,7 +45,6 @@ def weightProb(expResponses):
 
     Examples
     --------
-    >>> from model.decision.discrete import weightProb
     >>> np.random.seed(100)
     >>> d = weightProb([0, 1, 2, 3])
     >>> d([0.4, 0.8, 0.3, 0.5])
@@ -69,7 +68,7 @@ def weightProb(expResponses):
 
         probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
-        prob, resp = validProbabilities(probArray, expResp, validResponses)
+        prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
         if type(prob) is NoneType:
             return None, probDict
@@ -90,7 +89,7 @@ def weightProb(expResponses):
     return decisionFunc
 
 
-def maxProb(expResponses):
+def maxProb(expResponses=(0, 1)):
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing the most likely
@@ -117,7 +116,6 @@ def maxProb(expResponses):
 
     Examples
     --------
-    >>> from model.decision.discrete import maxProb
     >>> np.random.seed(100)
     >>> d = maxProb([1,2,3])
     >>> d([0.6, 0.3, 0.5])
@@ -139,7 +137,7 @@ def maxProb(expResponses):
 
         probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
-        prob, resp = validProbabilities(probArray, expResp, validResponses)
+        prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
         if type(prob) is NoneType:
             return None, probDict
@@ -158,7 +156,7 @@ def maxProb(expResponses):
     return decisionFunc
 
 
-def probThresh(expResponses, eta=0.8):
+def probThresh(expResponses=(0, 1), eta=0.8):
     # type : (list, float) -> (float, collections.OrderedDict)
     """Decisions for an arbitrary number of choices
 
@@ -184,7 +182,6 @@ def probThresh(expResponses, eta=0.8):
 
     Examples
     --------
-    >>> from model.decision.discrete import probThresh
     >>> np.random.seed(100)
     >>> d = probThresh(expResponses=[0, 1, 2, 3], eta=0.8)
     >>> d([0.2, 0.8, 0.3, 0.5])
@@ -206,7 +203,7 @@ def probThresh(expResponses, eta=0.8):
 
         probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(expResponses, probArray)])
 
-        prob, resp = validProbabilities(probArray, expResp, validResponses)
+        prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
         if type(prob) is NoneType:
             return None, probDict
@@ -227,7 +224,7 @@ def probThresh(expResponses, eta=0.8):
     return decisionFunc
 
 
-def validProbabilities(probabilities, expResp, validResponses):
+def _validProbabilities(probabilities, expResp, validResponses):
     """
     Takes the list of probabilities, valid responses and possible responses and returns the appropriate probabilities
     and responses
@@ -251,8 +248,7 @@ def validProbabilities(probabilities, expResp, validResponses):
 
     Examples
     --------
-    >>> from model.decision.discrete import validProbabilities
-    >>> validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
+    >>> _validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
     (array([0.1, 0.7]), array(['B', 'C'], dtype='<U1'))
     """
 
