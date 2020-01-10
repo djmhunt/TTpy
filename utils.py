@@ -12,6 +12,8 @@ import logging
 import sys
 import collections
 import os
+import inspect
+import imp
 import traceback
 
 # For analysing the state of the computer
@@ -200,6 +202,132 @@ def argProcess(**kwargs):
 
     return expArgs, modelArgs, otherArgs
 
+
+def find_class(class_name, class_folder, inherited_class, excluded_files=None):
+    """
+    Finds and imports a class from a given folder. Does not look in subfolders
+
+    Parameters
+    ----------
+    class_name : string
+        The name of the fitting module to be used
+    class_folder : basestring
+        The path where the class is likely to be found
+    inherited_class : class
+        The class that the searched for class inherits from
+    excluded_files : list, optional
+        A list of modules to be excluded from the search. Can be described using portions of file names.
+
+    Returns
+    -------
+    sought_class : inherited_class
+        The uninstansiated class sought
+    """
+    folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(class_folder)
+    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] is not '_']
+    if excluded_files:
+        potential_files_filtered = [f for f in potential_files if f not in excluded_files]
+    else:
+        potential_files_filtered = potential_files
+
+    sought_class = None
+    for potential_file in potential_files_filtered:
+        file_path = '{}/{}.py'.format(folder_path, potential_file)
+        module_info = inspect.getmoduleinfo(file_path)
+        with open(file_path) as open_file:
+            potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+            module_classes = inspect.getmembers(potential_module,
+                                                lambda x: inspect.isclass(x)
+                                                          and issubclass(x, inherited_class)
+                                                          and x.__name__ == class_name
+                                                )
+            if module_classes:
+                sought_class = module_classes[0][1]
+                break
+    if sought_class:
+        return sought_class
+    else:
+        raise ClassNameError('Unknown {} of class {}'.format(inherited_class, class_name))
+
+
+def find_function(function_name, function_folder, excluded_files=None):
+    """
+    Finds and imports a function from a given folder. Does not look in subfolders
+
+    Parameters
+    ----------
+    function_name : string
+        The name of the fitting module to be used
+    function_folder : basestring
+        The path where the class is likely to be found
+    excluded_files : list, optional
+        A list of modules to be excluded from the search. Can be described using portions of file names.
+
+    Returns
+    -------
+    sought_class : inherited_class
+        The uninstansiated class sought
+    """
+    folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(function_folder)
+    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] is not '_']
+    if excluded_files:
+        potential_files_filtered = [f for f in potential_files if f not in excluded_files]
+    else:
+        potential_files_filtered = potential_files
+
+    sought_function = None
+    for potential_file in potential_files_filtered:
+        file_path = '{}/{}.py'.format(folder_path, potential_file)
+        module_info = inspect.getmoduleinfo(file_path)
+        with open(file_path) as open_file:
+            potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+            module_functions = inspect.getmembers(potential_module,
+                                                lambda x: inspect.isfunction(x)
+                                                          and x.__name__ == function_name
+                                                )
+            if module_functions:
+                sought_function = module_functions[0][1]
+                break
+    if sought_function:
+        return sought_function
+    else:
+        raise FunctionNameError('Unknown function {}'.format(function_name))
+
+
+class ClassNameError(Exception):
+    pass
+
+class FunctionNameError(Exception):
+    pass
+
+def getClassArgs(inspected_class, arg_ignore=['self']):
+    """
+    Finds the arguments that could be passed into the specified class
+    """
+
+    arg_spec = inspect.getargspec(inspected_class.__init__)
+    args = arg_spec.args
+    if arg_spec.keywords is not None:
+        base_class_arg_spec = inspect.getargspec(inspected_class.__bases__[0].__init__)
+        base_args = base_class_arg_spec.args
+        new_base_args = [arg for arg in base_args if arg not in args]
+        args.extend(new_base_args)
+
+    filtered_args = [arg for arg in args if arg not in arg_ignore]
+
+    return filtered_args
+
+def getFuncArgs(inspected_function):
+    """
+    inds the arguments that could be passed into the specified function
+
+    :param inspected_function:
+    :return:
+    """
+    arg_spec = inspect.getargspec(inspected_function)
+    args = arg_spec.args
+
+    return args
 
 def list_all_equal(data):
     """
@@ -451,13 +579,13 @@ def date():
     return str(d.year) + "-" + str(d.month) + "-" + str(d.day)
 
 
-def flatten(l):
+def flatten(data):
     """
     Yields the elements in order from any N dimensional iterable
 
     Parameters
     ----------
-    l : iterable
+    data : iterable
 
     Yields
     ------
@@ -477,7 +605,7 @@ def flatten(l):
     6 [1, 2]
 
     """
-    for i, v in enumerate(l):
+    for i, v in enumerate(data):
         if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
             for sub, loc in flatten(v):
                 yield sub, [i] + loc
