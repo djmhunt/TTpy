@@ -5,45 +5,82 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
+import fire
 
 import pandas as pd
 
 import outputting
 
+from experimentGenerator import ExperimentGen
+from modelGenerator import ModelGen
 
-def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=True, pickleData=False, logLevel=logging.INFO, npSetErr="log"):
+
+def simulation(experiment_name='Basic',
+               experiment_changing_properties=None,
+               experiment_constant_properties=None,
+               model_name='QLearn',
+               model_changing_properties=None,
+               model_constant_properties=None,
+               sim_label=None,
+               config_file=None,
+               pickle=False,
+               min_log_level=logging.INFO,
+               numpy_error_level="log"):
     """
     A framework for letting models interact with experiments and record the data
 
     Parameters
     ----------
-    experiments : experimentGenerator.ExperimentGen
-        An experiment factory generating each of the different experiments being considered
-    models : modelGenerator.ModelGen
-        A model factory generating each of the different models being considered
-    save : bool, optional
-        If true the data will be saved to files. Default ``True``
-    saveScript : bool, optional
-        If true a copy of the top level script running the current function
-        will be copied to the log folder. Only works if save is set to ``True``
-        Default ``True``
-    pickleData : bool, optional
+    experiment_name : string
+        The name of the file where a experiment.experimentTemplate.Experiment class can be found. Default ``Basic``
+    experiment_changing_properties : dictionary of floats or lists of floats
+        Parameters are the options that you are or are likely to change across experiment instances. When a parameter
+        contains a list, an instance of the experiment will be created for every combination of this parameter with all
+        the others. Default ``None``
+    experiment_constant_properties : dictionary of float, string or binary valued elements
+        These contain all the the experiment options that describe the experiment being studied but do not vary across
+        experiment instances. Default ``None``
+    model_name : string
+        The name of the file where a model.modelTemplate.Model class can be found. Default ``QLearn``
+    model_changing_properties : dictionary containing floats or lists of floats, optional
+        Parameters are the options that you are or are likely to change across
+        model instances. When a parameter contains a list, an instance of the
+        model will be created for every combination of this parameter with
+        all the others. Default ``None``
+    model_constant_properties : dictionary of float, string or binary valued elements, optional
+        These contain all the the model options that define the version
+        of the model being studied. Default ``None``
+    config_file : string, optional
+        The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
+        Default ``None``
+    pickle : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
-    simLabel : string, optional
-        The label for the simulation
-    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+    sim_label : string, optional
+        The label for the simulation. Default ``None``, which means nothing will be saved
+    min_log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default ``logging.INFO``
-    npSetErr : {'log', 'raise'}
+    numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
 
     See Also
     --------
     experiments.experiments, models.models
-
     """
 
-    outputFolder, fileNameGen, closeLoggers = outputting.saving(simLabel, save=save, pickleData=pickleData, saveScript=saveScript, logLevel=logLevel, npSetErr=npSetErr)
+    experiments = ExperimentGen(experiment_name=experiment_name,
+                                parameters=experiment_changing_properties,
+                                other_options=experiment_constant_properties)
+
+    models = ModelGen(model_name=model_name,
+                      parameters=model_changing_properties,
+                      other_options=model_constant_properties)
+
+    outputFolder, fileNameGen, closeLoggers = outputting.saving(label=sim_label,
+                                                                pickle=pickle,
+                                                                config_file=config_file,
+                                                                min_log_level=min_log_level,
+                                                                numpy_error_level=numpy_error_level)
 
     logger = logging.getLogger('Overview')
 
@@ -52,11 +89,11 @@ def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=T
     message = "Beginning the simulation set"
     logger.debug(message)
 
-    for expNum in experiments.iterExpID():
+    for expNum in experiments.iter_experiment_ID():
 
         for model in models:
 
-            exp = experiments.newExp(expNum)
+            exp = experiments.new_experiment(expNum)
 
             logSimParams(exp.params(), model.params(), simID=str(simID))
 
@@ -76,7 +113,7 @@ def simulation(experiments, models, simLabel="Untitled", save=True, saveScript=T
             message = "Experiment completed"
             logger.debug(message)
 
-            recordSim(fileNameGen, exp.returnTaskState(), model.returnTaskState(), str(simID), pickleData=pickleData)
+            recordSim(fileNameGen, exp.returnTaskState(), model.returnTaskState(), str(simID), pickleData=pickle)
 
             simID += 1
 
@@ -177,3 +214,6 @@ def simModelCSV(modelData, simID, fileNameGen):
     name = "data/modelSim_" + simID
     outputFile = fileNameGen(name, 'csv')
     record.to_csv(outputFile)
+
+if __name__ == '__main__':
+  fire.Fire(simulation)

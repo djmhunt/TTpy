@@ -185,6 +185,12 @@ class TestClass_newListDict:
         correct_result = collections.OrderedDict([(u'dict_1_3', ['a']), (u'dict_2', ['b'])])
         assert result == correct_result
 
+    def test_NLD_dict4(self):
+        store = {'dict': {1: "a", 2: "b"}}
+        result = outputting.newListDict(store, maxListLen=3)
+        correct_result = collections.OrderedDict([('dict_1', ['a', None, None]), ('dict_2', ['b', None, None])])
+        assert result == correct_result
+
     # TODO: Upgrade newListDict to cope with this
     #def test_NLD_list_dict(self):
     #    store = {'listDict': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}
