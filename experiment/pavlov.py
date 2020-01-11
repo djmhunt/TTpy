@@ -14,6 +14,9 @@ import numpy as np
 
 from experiment.experimentTemplate import Experiment
 
+from model.modelTemplate import Stimulus, Rewards
+
+# TODO: Update pavlov to work with the current framework
 
 class Pavlov(Experiment):
 
@@ -54,9 +57,9 @@ class Pavlov(Experiment):
 
     """
 
-    def __init__(self, rewMag=4, rewProb=np.array([0.87, 0.33]), stimMag=1, stimDur=20, rewDur=4, simDur=30, stimRepeats=7, **kwargs):
+    def __init__(self, rewMag=4, rewProb=np.array([0.87, 0.33]), stimMag=1, stimDur=20, rewDur=4, simDur=30, stimRepeats=7):
 
-        super(Pavlov, self).__init__(**kwargs)
+        super(Pavlov, self).__init__()
 
         self.rewMag = rewMag
         self.rewProb = rewProb

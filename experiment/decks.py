@@ -13,6 +13,8 @@ import numpy as np
 
 from experiment.experimentTemplate import Experiment
 
+from model.modelTemplate import Stimulus, Rewards
+
 deckSets = {"WorthyMaddox": np.array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2,  8,  1,  6,  2,  1,  1,
                                     5,  8,  5, 10, 10,  8,  3, 10,  7, 10,  8,  3,  4,  9, 10,  3,  6,
                                     3,  5, 10, 10, 10,  7,  3,  8,  5,  8,  6,  9,  4,  4,  4, 10,  6,
@@ -48,9 +50,9 @@ class Decks(Experiment):
         Defines if you discard the card not chosen or if you keep it.
     """
 
-    def __init__(self, draws=None, decks=defaultDecks, discard=False, **kwargs):
+    def __init__(self, draws=None, decks=defaultDecks, discard=False):
 
-        super(Decks, self).__init__(**kwargs)
+        super(Decks, self).__init__()
 
         self.discard = discard
 
@@ -176,126 +178,87 @@ class Decks(Experiment):
         self.recCardVal[self.t] = self.cardValue
 
 
-def deckStimDirect():
-    """
-    Processes the decks stimuli for models expecting just the event
+class StimulusDecksLinear(Stimulus):
 
-    Returns
-    -------
-    deckStim : function
-        The function returns a tuple of ``1`` and the observation.
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
 
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
 
-    See Also
-    --------
-    model.QLearn
-    """
-
-    def deckStim(observation):
+        """
         return 1, 1
 
-    deckStim.Name = "deckStimDirect"
-    return deckStim
 
-
-def deckRewDirect():
+class RewardDecksLinear(Rewards):
     """
     Processes the decks reward for models expecting just the reward
 
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn
     """
 
-    def deckRew(reward, action, stimuli):
-        return reward
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-    deckRew.Name = "deckRewDirect"
-    return deckRew
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback
 
 
-def deckRewDirectNormal(maxRewardVal):
+class RewardDecksNormalised(Rewards):
     """
     Processes the decks reward for models expecting just the reward, but in range [0,1]
 
     Parameters
     ----------
-    maxRewardVal : int
-        The highest value a reward can have
-
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
+    maxReward : int, optional
+        The highest value a reward can have. Default ``10``
 
     See Also
     --------
     model.OpAL
     """
+    maxReward = 10
 
-    def deckRew(reward, action, stimuli):
-        return reward / maxRewardVal
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-    deckRew.Name = "deckRewDirectNormal"
-    return deckRew
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback / self.maxReward
 
 
-def deckRewDirectPhi(kwargs):
+class RewardDecksPhi(Rewards):
     """
-    Processes the decks reward for models expecting just the reward, but in range [0,1]
+    Processes the decks reward for models expecting just the reward, but in range [0, 1]
 
     Parameters
     ----------
-    maxRewardVal : int
-        The highest value a reward can have
-
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.OpAL
+    phi : float
+        The scaling value of the reward
     """
-    phi = kwargs.pop('phi', 1)
 
-    def deckRew(reward, action, stimuli):
-        return reward * phi
+    phi = 1
 
-    deckRew.Name = "deckRewDirectPhi"
-    deckRew.Params = {"phi": phi}
-    return deckRew
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
+
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback * self.phi
 
 
-def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
+class RewardDecksAllInfo(Rewards):
     """
     Processes the decks reward for models expecting the reward information
     from all possible actions
@@ -306,7 +269,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
         The highest value a reward can have
     minRewardVal : int
         The lowest value a reward can have
-    numActions : int
+    number_actions : int
         The number of actions the participant can perform. Assumes the lowest
         valued action is 0
 
@@ -315,7 +278,7 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
     deckRew : function
         The function expects to be passed a tuple containing the reward and the
         last action. The reward that is a float and action is {0,1}. The
-        function returns a array of length (maxRewardVal-minRewardVal)*numActions.
+        function returns a array of length (maxRewardVal-minRewardVal)*number_actions.
 
     Attributes
     ----------
@@ -324,86 +287,74 @@ def deckRewAllInfo(maxRewardVal, minRewardVal, numActions):
 
     Examples
     --------
-    >>> from experiment.decks import deckRewAllInfo
-    >>> rew = deckRewAllInfo(10, 1, 2)
-    >>> rew(6, 0, 1)
+    >>> rew = RewardDecksAllInfo(10, 1, 2)
+    >>> rew.processFeedback(6, 0, 1)
     array([1., 1., 1., 1., 1., 2., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
-    >>> rew(6, 1, 1)
+    >>> rew.processFeedback(6, 1, 1)
     array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 1., 1., 1., 1.])
     """
-    numDiffRewards = maxRewardVal-minRewardVal+1
-    respZeros = np.zeros(numDiffRewards * numActions)
+    maxRewardVal = 10
+    minRewardVal = 1
+    number_actions = 2
 
-    def deckRew(reward, action, stimuli):
-        rewardProc = respZeros.copy() + 1
+    def processFeedback(self, reward, action, stimuli):
+        """
+
+        Returns
+        -------
+        modelFeedback:
+        """
+        numDiffRewards = self.maxRewardVal - self.minRewardVal + 1
+        rewardProc = np.ones(numDiffRewards * self.number_actions)
         rewardProc[numDiffRewards*action + reward - 1] += 1
         return rewardProc.T
 
-    deckRew.Name = "deckRewAllInfo"
-    deckRew.Params = {"maxRewardVal": maxRewardVal,
-                       "minRewardVal": minRewardVal,
-                       "numActions": numActions}
-    return deckRew
 
-
-def deckRewDualInfo(maxRewardVal, epsilon):
+class RewardDecksDualInfo(Rewards):
     """
     Processes the decks reward for models expecting the reward information
     from two possible actions.
 
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The reward that is a float and action is {0,1}. The
-        function returns a list of length 2.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
 
     """
-    divisor = maxRewardVal + epsilon
+    maxRewardVal = 10
+    epsilon = 1
 
-    def deckRew(reward, action, stimuli):
+    def processFeedback(self, reward, action, stimuli):
+        """
+
+        Returns
+        -------
+        modelFeedback:
+        """
+        divisor = self.maxRewardVal + self.epsilon
         rew = (reward / divisor) * (1 - action) + (1 - (reward / divisor)) * action
         rewardProc = [[rew], [1-rew]]
         return np.array(rewardProc)
 
-    deckRew.Name = "deckRewDualInfo"
-    deckRew.Params = {"epsilon": epsilon}
-    return deckRew
 
-
-def deckRewDualInfoLogistic(maxRewardVal, minRewardVal, epsilon):
+class RewardDecksDualInfoLogistic(Rewards):
     """
     Processes the decks rewards for models expecting the reward information
     from two possible actions.
 
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The reward is a float and action is {0,1}. The
-        function returns a list of length 2.
 
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
     """
-    mid = (maxRewardVal + minRewardVal)/2
+    maxRewardVal = 10
+    minRewardVal = 1
+    epsilon = 0.3
 
-    def deckRew(reward, action, stimuli):
+    def processFeedback(self, reward, action, stimuli):
+        """
 
-        x = np.exp(epsilon * (reward-mid))
+        Returns
+        -------
+        modelFeedback:
+        """
+        mid = (self.maxRewardVal + self.minRewardVal) / 2
+        x = np.exp(self.epsilon * (reward-mid))
 
         rew = (x/(1+x))*(1-action) + (1-(x/(1+x)))*action
         rewardProc = [[rew], [1-rew]]
         return np.array(rewardProc)
 
-    deckRew.Name = "deckRewDualInfoLogistic"
-    deckRew.Params = {"midpoint": mid,
-                      "epsilon": epsilon}
-    return deckRew

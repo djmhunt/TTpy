@@ -10,6 +10,7 @@ import copy
 
 from experiment.experimentTemplate import Experiment
 
+from model.modelTemplate import Stimulus, Rewards
 
 class Basic(Experiment):
     """
@@ -26,9 +27,9 @@ class Basic(Experiment):
         The name of the class used when recording what has been used.
     """
 
-    def __init__(self, trials=100, **kwargs):
+    def __init__(self, trials=100):
 
-        super(Basic, self).__init__(**kwargs)
+        super(Basic, self).__init__()
 
         self.nbr_of_trials = trials
 
@@ -112,54 +113,38 @@ class Basic(Experiment):
         self.action_history[self.trial] = self.action
 
 
-def basicStimulusDirect():
+class StimulusBasicSimple(Stimulus):
     """
     Processes the stimulus cues for models expecting just the event
 
-    Returns
-    -------
-    basicStimulus : function
-        The function returns a tuple of ``1`` and the observation.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2
     """
 
-    def basicStimulus(observation):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
+        """
         return 1, 1
 
-    basicStimulus.Name = "basicStimulusDirect"
-    return basicStimulus
 
-
-def basicRewardDirect():
+class RewardBasicDirect(Rewards):
     """
     Processes the reward for models expecting just the reward
-
-    Returns
-    -------
-    basicReward : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2
     """
 
-    def basicReward(reward, action, stimuli):
-        return reward
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-    basicReward.Name = "basicRewardDirect"
-    return basicReward
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback
+

@@ -21,9 +21,7 @@ class Experiment(object):
 
     """
 
-    def __init__(self, **kwargs):
-
-        self.kwargs = kwargs.copy()
+    def __init__(self):
 
         self.Name = self.findName()
 

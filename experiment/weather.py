@@ -14,6 +14,7 @@ import numpy as np
 from numpy import nan
 
 from experiment.experimentTemplate import Experiment
+from model.modelTemplate import Stimulus, Rewards
 
 cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1], [1, 1, 0, 1], [0, 1, 0, 0],
                          [0, 1, 1, 0], [0, 1, 0, 0], [0, 1, 0, 1], [0, 1, 1, 1], [1, 1, 0, 1], [1, 0, 0, 1],
@@ -59,7 +60,7 @@ class Weather(Experiment):
     cueProbs : array of int, optional
         If generating data, the likelihood of each cue being associated with each actuality. Each row of the array
         describes one actuality, with each column representing one cue. Each column is assumed sum to 1
-    numCues : int, optional
+    number_cues : int, optional
         The number of cues
     learningLen : int, optional
         The number of trials in the learning phase. Default is 200
@@ -72,14 +73,14 @@ class Weather(Experiment):
     """
     defaultCueProbs = [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]]
 
-    def __init__(self, cueProbs=defaultCueProbs, learningLen=200, testLen=100, numCues=None, cues=None, actualities=None, **kwargs):
+    def __init__(self, cueProbs=defaultCueProbs, learningLen=200, testLen=100, number_cues=None, cues=None, actualities=None):
 
-        super(Weather, self).__init__(**kwargs)
+        super(Weather, self).__init__()
 
-        if not numCues:
-            numCues = np.shape(cueProbs)
+        if not number_cues:
+            number_cues = np.shape(cueProbs)
         if not cues:
-            cues = genCues(numCues, learningLen+testLen)
+            cues = genCues(number_cues, learningLen+testLen)
         if not actualities:
             actualities = genActualities(cueProbs, cues, learningLen, testLen)
 
@@ -190,7 +191,7 @@ class Weather(Experiment):
         self.recAction[self.t] = self.action
 
 
-def genCues(numCues, taskLen):
+def genCues(number_cues, taskLen):
     """
 
     Parameters
@@ -206,8 +207,8 @@ def genCues(numCues, taskLen):
     cues = []
     for t in xrange(taskLen):
         c = []
-        while np.sum(c) in [0, numCues]:
-            c = (np.random.rand(numCues) > 0.5) * 1
+        while np.sum(c) in [0, number_cues]:
+            c = (np.random.rand(number_cues) > 0.5) * 1
         cues.append(c)
 
     return np.array(cues)
@@ -251,191 +252,77 @@ def genActualities(cueProbs, cues, learningLen, testLen):
     return np.array(actions)
 
 
-def weatherStimDirect():
+class StimulusWeatherDirect(Stimulus):
     """
     Processes the weather stimuli for models expecting just the event
 
-    Returns
-    -------
-    weatherStim : function
-        The function returns the event
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.OpAL
     """
 
-    def weatherStim(observation):
-
-        return observation, observation
-
-    weatherStim.Name = "weatherStimDirect"
-    return weatherStim
-
-
-def weatherStimAllAction(numActions):
-    """
-    Processes the weather stimuli for models expecting feedback from all
-    possible actions
-
-    Parameters
-    ----------
-    numActions : int
-        The number of actions the participant can perform. Assumes the lowest
-        valued action can be represented as 0
-
-    Returns
-    -------
-    weatherStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The event that is a list of {0,1} and action is {0,1}. The
-        function returns a array of length (len(event))*numActions.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.BP, model.EP, model.MSRev, model.decision.binary.decEtaSet
-
-    Examples
-    --------
-    >>> from experiment.weather import weatherStimAllAction
-    >>> stim = weatherStimAllAction(2)
-    >>> stim(np.array([1, 0, 0, 1]), 0)
-    ((1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0))
-    >>> stim(np.array([1, 0, 0, 1]), 1)
-    ((0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0), (1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0))
-    """
-
-    def weatherStim(observation, action):
+    def processStimulus(self, observation):
         """
-        For stimuli processing
-
-        Parameters
-        ----------
-        observation :  None or list of ints or floats
-            The last observation that was recorded
-        action : int
-            The action chosen by the participant
+        Processes the decks stimuli for models expecting just the event
 
         Returns
         -------
-        activeStimuli : tuple of {0,1}
-        stimulus : tuple of floats
-            The events processed into a form to be used for updating the expectations
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
         """
 
-        obsSize = np.size(observation)
-
-        s = np.ones((numActions, obsSize))
-        a = np.zeros((numActions, obsSize))
-
-        s[action, :] = observation
-        a[action, :] = observation
-
-        stimulus = tuple(s.flatten())
-        activeStimuli = tuple(a.flatten())
-
-        return activeStimuli, stimulus
-
-    weatherStim.Name = "weatherStimAllAction"
-    weatherStim.Params = {"numActions": numActions}
-    return weatherStim
+        return observation, observation
 
 
-def weatherRewDirect():
+class RewardsWeatherDirect(Rewards):
     """
     Processes the weather reward for models expecting the reward feedback
 
-    Parameters
-    ----------
-
-    Returns
-    -------
-    weatherRew : function
-        The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
     """
 
-    def weatherRew(reward, action, stimuli):
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-        return reward
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback
 
-    weatherRew.Name = "weatherRewDirect"
-    return weatherRew
 
-
-def weatherRewDiff():
+class RewardWeatherDiff(Rewards):
     """
     Processes the weather reward for models expecting reward corrections
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    weatherRew : function
-        The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn
     """
 
-    def weatherRew(reward, action, stimuli):
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-        if reward == action:
+        Returns
+        -------
+        modelFeedback:
+        """
+
+        if feedback == lastAction:
             return 1
         else:
             return 0
 
-    weatherRew.Name = "weatherRewDiff"
-    return weatherRew
 
-
-def weatherRewDualCorrection(epsilon):
+class RewardWeatherDualCorrection(Rewards):
     """
     Processes the decks reward for models expecting the reward correction
     from two possible actions.
-
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The reward that is a float and
-        action is {0,1}. The function returns a list of length 2.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
     """
+    epsilon = 1
 
-    def weatherRew(reward, action, stimuli):
-        rewardProc = np.zeros((2, len(stimuli))) + epsilon
-        rewardProc[reward, stimuli] = 1
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
+
+        Returns
+        -------
+        modelFeedback:
+        """
+        rewardProc = np.zeros((2, len(stimuli))) + self.epsilon
+        rewardProc[feedback, stimuli] = 1
         return np.array(rewardProc)
-
-    weatherRew.Name = "deckRewDualInfo"
-    weatherRew.Params = {"epsilon": epsilon}
-    return weatherRew

@@ -15,6 +15,7 @@ import numpy as np
 import itertools
 
 from experiment.experimentTemplate import Experiment
+from model.modelTemplate import Stimulus, Rewards
 
 
 class ProbSelect(Experiment):
@@ -49,7 +50,7 @@ class ProbSelect(Experiment):
         The number of trials in the test phase. Default is 60
     rewardSize : float, optional
         The size of reward given if successful. Default 1
-    numActions : int, optional
+    number_actions : int, optional
         The number of actions that can be chosen at any given time, chosen at
         random from actRewardProb. Default 4
 
@@ -64,9 +65,13 @@ class ProbSelect(Experiment):
 
     """
 
-    def __init__(self, rewardProb=0.7, learningActPairs=[(0, 1), (2, 3)], actRewardProb=None, learningLen=240, testLen=60, numActions=None, rewardSize=1, **kwargs):
-
-        super(ProbSelect, self).__init__(**kwargs)
+    def __init__(self, rewardProb=0.7,
+                 learningActPairs=[(0, 1), (2, 3)],
+                 actRewardProb=None,
+                 learningLen=240,
+                 testLen=60,
+                 number_actions=None,
+                 rewardSize=1):
 
         if not actRewardProb:
             actRewardProb = {0: rewardProb,
@@ -74,15 +79,17 @@ class ProbSelect(Experiment):
                              2: 0.5,
                              3: 0.5}
 
-        if not numActions:
-            numActions = len(actRewardProb)
+        if not number_actions:
+            number_actions = len(actRewardProb)
+
+        super(ProbSelect, self).__init__()
 
         self.parameters["rewardProb"] = rewardProb
         self.parameters["actRewardProb"] = actRewardProb
         self.parameters["learningActPairs"] = learningActPairs
         self.parameters["learningLen"] = learningLen
         self.parameters["testLen"] = testLen
-        self.parameters["numActions"] = numActions
+        self.parameters["number_actions"] = number_actions
         self.parameters["rewardSize"] = rewardSize
 
         self.t = -1
@@ -94,7 +101,7 @@ class ProbSelect(Experiment):
         self.T = learningLen + testLen
         self.action = None
         self.rewVal = -1
-        self.numActions = numActions
+        self.number_actions = number_actions
         self.choices = actRewardProb.keys()
 
         self.actT = genActSequence(actRewardProb, learningActPairs, learningLen, testLen)
@@ -213,66 +220,43 @@ def genActSequence(actRewardProb, learningActPairs, learningLen, testLen):
     return actSeq
 
 
-def probSelectStimDirect():
+class StimulusProbSelectDirect(Stimulus):
     """
     Processes the selection stimuli for models expecting just the event
 
-    Returns
-    -------
-    deckStim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The event is an int and the action is {0,1}. The
-        function returns a list of length 2.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.OpAL
-
     Examples
     --------
-    >>> from experiment.probSelect import probSelectStimDirect
-    >>> stim = probSelectStimDirect()
-    >>> stim(1)
+    >>> stim = StimulusProbSelectDirect()
+    >>> stim.processStimulus(1)
     (1, 1)
-    >>> stim(0)
+    >>> stim.processStimulus(0)
     (1, 1)
     """
 
-    def probSelectStim(observation):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+        stimuliActivity : float or list of float
+
+        """
         return 1, 1
 
-    probSelectStim.Name = "probSelectStimDirect"
-    probSelectStim.Params = {}
-    return probSelectStim
 
-
-def probSelectRewDirect():
+class RewardProbSelectDirect(Rewards):
     """
     Processes the probabilistic selection reward for models expecting just the reward
 
-    Returns
-    -------
-    probSelectRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2
     """
 
-    def probSelectRew(reward, action, stimuli):
-        return reward
+    def processFeedback(self, reward, action, stimuli):
+        """
 
-    probSelectRew.Name = "probSelectRewDirect"
-    return probSelectRew
+        Returns
+        -------
+        modelFeedback:
+        """
+        return reward

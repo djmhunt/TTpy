@@ -13,6 +13,7 @@ from numpy import float as npfloat
 
 
 from experiment.experimentTemplate import Experiment
+from model.modelTemplate import Stimulus, Rewards
 
 # TODO: Create a set of test cues
 cueSets = {"Test": []}
@@ -54,9 +55,9 @@ class Probstim(Experiment):
         ``None`` reward. Default ``2*numStimuli``
     """
 
-    def __init__(self, cues=None, actualities=None, trialsteps=100, numStimuli=4, correctProb=0.8, correctProbabilities=None, rewardlessT=None, **kwargs):
+    def __init__(self, cues=None, actualities=None, trialsteps=100, numStimuli=4, correctProb=0.8, correctProbabilities=None, rewardlessT=None):
 
-        super(Probstim, self).__init__(**kwargs)
+        super(Probstim, self).__init__()
 
         if isinstance(cues, basestring):
             if cues in cueSets:
@@ -100,7 +101,7 @@ class Probstim(Experiment):
         self.parameters["Cues"] = np.array(self.cues)
         self.parameters["numtrialsteps"] = self.T
         self.parameters["numRewardless"] = rewardlessT
-        self.parameters["numCues"] = numStimuli
+        self.parameters["number_cues"] = numStimuli
 
         # Set draw count
         self.t = -1
@@ -188,95 +189,62 @@ class Probstim(Experiment):
         self.recAction[self.t] = self.action
 
 
-def probstimDirect():
+class StimulusProbStimDirect(Stimulus):
     """
     Processes the stimuli for models expecting just the event
 
-    Returns
-    -------
-    probstim : function
-        The function expects to be passed a tuple containing the event and the
-        last action. The function returns the event
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.eta
     """
 
-    def probstim(observation):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
+        """
 
         return observation, observation
 
-    probstim.Name = "probstimDirect"
-    return probstim
 
-
-def probrewDiff():
+class RewardProbStimDiff(Rewards):
     """
     Processes the reward for models expecting reward corrections
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    probrew : function
-        The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
-    def probrew(reward, action, stimuli):
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-        if reward == action:
+        Returns
+        -------
+        modelFeedback:
+        """
+
+        if feedback == lastAction:
             return 1
         else:
             return 0
 
-    probrew.Name = "probrewDiff"
-    return probrew
 
-
-def probrewDualCorrection(epsilon):
+class RewardProbStimDualCorrection(Rewards):
     """
     Processes the reward for models expecting the reward correction
     from two possible actions.
-
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward the
-        last action and the last stimuli. The reward that is a float and
-        action is {0,1}. The function returns a list of length 2.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.BP, model.EP, model.MS, model.MSRev
     """
+    epsilon = 1
 
-    def probrew(reward, action, stimuli):
-        rewardProc = np.zeros((2, len(stimuli))) + epsilon
-        rewardProc[reward, stimuli] = 1
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
+
+        Returns
+        -------
+        modelFeedback:
+        """
+        rewardProc = np.zeros((2, len(stimuli))) + self.epsilon
+        rewardProc[feedback, stimuli] = 1
         return np.array(rewardProc)
 
-    probrew.Name = "probstimDualCorrection"
-    probrew.Params = {"epsilon": epsilon}
-    return probrew

@@ -13,6 +13,8 @@ import numpy as np
 
 from experiment.experimentTemplate import Experiment
 
+from model.modelTemplate import Stimulus, Rewards
+
 # Bead Sequences:
 beadSequences = {"MooreSellen": [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]}
 defaultBeads = beadSequences["MooreSellen"]
@@ -39,9 +41,9 @@ class Beads(Experiment):
         `MooreSellen`, the default sequence.
     """
 
-    def __init__(self, N=None, beadSequence=defaultBeads, **kwargs):
+    def __init__(self, N=None, beadSequence=defaultBeads):
 
-        super(Beads, self).__init__(**kwargs)
+        super(Beads, self).__init__()
 
         if isinstance(beadSequence, basestring):
             if beadSequence in beadSequences:
@@ -175,64 +177,48 @@ def generateSequence(numBeads, oneProb, switchProb):
     return sequence
 
 
-def beadStimDirect():
+class StimulusBeadDirect(Stimulus):
     """
     Processes the beads stimuli for models expecting just the event
 
-    Returns
-    -------
-    beadStim : function
-        The function expects to be passed the event and a decision of ``{1,2, None}``
-        and then return it.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn
     """
 
-    def beadStim(observation, action):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+        stimuliActivity : float or list of float
+
+        """
         return 1, observation
 
-    beadStim.Name = "beadStimDirect"
-    return beadStim
 
-
-def beadStimDualDirect():
+class StimulusBeadDualDirect(Stimulus):
     """
     Processes the beads stimuli for models expecting a tuple of ``[event,1-event]``
 
-    Returns
-    -------
-    beadStim : function
-        The function expects to be passed the event and a decision of {1,2, None}
-        and then return ``[event,1-event]``, where the event is expected to be
-        ``{1,0}``.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.EP
     """
 
-    def beadStim(observation, action):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
+        """
         stimulus = np.array([observation, 1-observation])
         return 1, stimulus
 
-    beadStim.Name = "beadStimDualDirect"
 
-    return beadStim
-
-
-def beadStimDualInfo(oneProb):
+class StimulusBeadDualInfo(Stimulus):
     """
     Processes the beads stimuli for models expecting the reward information
     from two possible actions
@@ -243,56 +229,38 @@ def beadStimDualInfo(oneProb):
         The probability of a 1 from the first jar. This is also the probability
         of a 0 from the second jar. ``event_info`` is calculated as
         ``oneProb*event + (1-oneProb)*(1-event)``
-
-    Returns
-    -------
-    beadStim : function
-        The function expects to be passed the event and a decision of {1,2, None}
-        and then return ``[event_info,1-event_info]``.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.MS, model.MSRev, model.BP
     """
+    oneProb = [0, 1]
 
-    def beadStim(observation, action):
-        stim = oneProb*observation + (1-oneProb)*(1-observation)
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
+        """
+        stim = self.oneProb*observation + (1-self.oneProb)*(1-observation)
         stimulus = np.array([stim, 1-stim])
         return 1, stimulus
 
-    beadStim.Name = "beadStimDualInfo"
-    beadStim.Params = {"oneProb": oneProb}
 
-    return beadStim
-
-def beadRewDirect():
+class RewardBeadDirect(Rewards):
     """
     Processes the beads reward for models expecting just the reward
-
-    Returns
-    -------
-    beadRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2, model.decision.binary.eta
     """
 
-    def beadRew(reward, action, stimuli):
-        return reward
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-    beadRew.Name = "beadRewDirect"
-    return beadRew
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback
+
 

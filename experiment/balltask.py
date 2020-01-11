@@ -11,13 +11,14 @@ import numpy as np
 
 from experiment.experimentTemplate import Experiment
 
+from model.modelTemplate import Stimulus, Rewards
 
 class Balltask(Experiment):
     # TODO: Describe parameters
     # each bag always contains balls of same color
-    def __init__(self, nbr_of_bags=6, bag_colors=['red', 'green', 'blue'], balls_per_bag=3, **kwargs):
+    def __init__(self, nbr_of_bags=6, bag_colors=['red', 'green', 'blue'], balls_per_bag=3):
 
-        super(Balltask, self).__init__(**kwargs)
+        super(Balltask, self).__init__()
 
         # TODO: change nbr_of_bags default to 90
         
@@ -132,28 +133,26 @@ class Balltask(Experiment):
         self.ball_history[self.trial] = self.ballcolor
 
 
-def balltaskStimulusDirect():
+class StimulusBalltaskSimple(Stimulus):
     """
     Processes the stimulus cues for models expecting just the event
 
-    Returns
-    -------
-    basicStim : function
-        The function returns a tuple of ``1`` and the observation.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2
     """
 
     # TODO! change below to work for more colors than 3
 
-    def balltaskStimulus(observation):
+    def processStimulus(self, observation):
+        """
+        Processes the decks stimuli for models expecting just the event
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+            The elements present of the stimulus
+        stimuliActivity : float or list of float
+            The activity of each of the elements
+
+        """
         if observation == "red":
             return (1, 0, 0), (1, 0, 0)
         if observation == "green":
@@ -161,34 +160,17 @@ def balltaskStimulusDirect():
         if observation == "blue":
             return (0, 0, 1), (0, 0, 1)
 
-    balltaskStimulus.Name = "balltaskStimulusDirect"
 
-    return balltaskStimulus
-
-
-def balltaskRewardDirect():
+class RewardBalltaskDirect(Rewards):
     """
     Processes the reward for models expecting just the reward
-
-    Returns
-    -------
-    deckRew : function
-        The function expects to be passed a tuple containing the reward and the
-        last action. The function returns the reward.
-
-    Attributes
-    ----------
-    Name : string
-        The identifier of the function
-
-    See Also
-    --------
-    model.QLearn, model.QLearn2
     """
 
-    def balltaskReward(reward, action, stimuli):
-        return reward
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
 
-    balltaskReward.Name = "balltaskRewardDirect"
-
-    return balltaskReward
+        Returns
+        -------
+        modelFeedback:
+        """
+        return feedback
