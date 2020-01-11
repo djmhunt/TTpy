@@ -7,10 +7,11 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import itertools
 import collections
 import copy
-
-import numpy as np
+import warnings
 
 import utils
+
+from model.modelTemplate import Model, Stimulus, Rewards
 
 
 class ModelGen(object):
@@ -20,27 +21,115 @@ class ModelGen(object):
 
     Parameters
     ----------
-    model :  model.modelTemplate.Model
-    parameters : dictionary containing floats or lists of floats
+    model_name : string
+        The name of the file where a model.modelTemplate.Model class can be found
+    parameters : dictionary containing floats or lists of floats, optional
         Parameters are the options that you are or are likely to change across 
         model instances. When a parameter contains a list, an instance of the 
         model will be created for every combination of this parameter with 
-        all the others.
-    otherOptions : dictionary of float, string or binary valued elements
+        all the others. Default ``None``
+    other_options : dictionary of float, string or binary valued elements, optional
         These contain all the the model options that define the version 
-        of the model being studied.
+        of the model being studied. Default ``None``
     """
 
-    def __init__(self, model, parameters, otherOptions):
+    def __init__(self, model_name, parameters=None, other_options=None):
 
         self.count = -1
 
-        self.modelClass = model
-        self.otherOptions = otherOptions
+        model_class = utils.find_class(model_name,
+                                       class_folder='model',
+                                       inherited_class=Model,
+                                       excluded_files=['modelTemplate', '__init__', 'modelGenerator'])
+        valid_model_args = utils.getClassArgs(model_class)
+        valid_args = copy.copy(valid_model_args)
 
-        self.modelDetailList, self.paramCombList = params(parameters, otherOptions)
+        if 'stimulus_shaper_name' in parameters:
+            raise NotImplementedError(
+                    "This system has not been created for changing stimulus shapers. Please put it in the ``other_options``")
+        stimulus_shaper_name = other_options.pop('stimulus_shaper_name', None)
+        if stimulus_shaper_name:
+            stimFunc = utils.find_class(stimulus_shaper_name,
+                                        class_folder='experiment',
+                                        inherited_class=Stimulus,
+                                        excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+            valid_stimulus_args = utils.getClassArgs(stimFunc)
+            valid_args.extend(valid_stimulus_args)
+        else:
+            stimFunc = None
 
-        self.countLen = len(self.modelDetailList)
+        if 'reward_shaper_name' in parameters:
+            raise NotImplementedError(
+                "This system has not been created for changing reward shapers. Please put it in the ``other_options``")
+        reward_shaper_name = other_options.pop('reward_shaper_name', None)
+        if reward_shaper_name:
+            rewardFunc = utils.find_class(reward_shaper_name,
+                                        class_folder='experiment',
+                                        inherited_class=Rewards,
+                                        excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+            valid_reward_args = utils.getClassArgs(rewardFunc)
+            valid_args.extend(valid_reward_args)
+        else:
+            rewardFunc = None
+
+        if 'decision_function_name' in parameters:
+            raise NotImplementedError(
+                    "This system has not been created for changing decision functions. Please put it in the ``other_options``")
+        decision_function_name = other_options.pop('decision_function_name', None)
+        if decision_function_name:
+            decisionFunc = utils.find_function(decision_function_name, 'model/decision')
+            valid_decision_args = utils.getFuncArgs(decisionFunc)
+            valid_args.extend(valid_decision_args)
+        else:
+            decisionFunc = None
+
+        self.model_class = model_class
+
+        if not parameters:
+            parameters = {}
+
+        parameter_keys = parameters.keys()
+        for p in parameter_keys:
+            if p not in valid_args:
+                raise KeyError(
+                    '{} is not a valid property for model ``{}``. Those available are {}'.format(p, model_name,
+                                                                                                 valid_args))
+
+        parameter_combinations = []
+        for p in utils.listMergeGen(*parameters.values()):
+            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in itertools.izip(parameter_keys, p))
+            parameter_combinations.append(pc)
+        self.parameter_combinations = parameter_combinations
+
+        if other_options:
+            checked_options = collections.OrderedDict()
+            for k, v in other_options.iteritems():
+                if k not in valid_args:
+                    raise KeyError('{} is not a valid property for model ``{}``. Those available are {}'.format(k,
+                                                                                                                model_name,
+                                                                                                                valid_args))
+                elif k in parameter_keys:
+                    warnings.warn("model parameter {} has been defined twice".format(k))
+                else:
+                    checked_options[k] = v
+            self.other_options = checked_options
+            self.other_options['stimulus_shaper_properties'] = valid_stimulus_args
+            self.other_options['reward_shaper_properties'] = valid_reward_args
+            self.other_options['decision_function_properties'] = valid_decision_args
+        else:
+            self.other_options = {}
+
+        if stimFunc:
+            self.other_options['stimulus_shaper'] = stimFunc
+        if rewardFunc:
+            self.other_options['reward_shaper'] = rewardFunc
+        if decisionFunc:
+            self.other_options['decision_function'] = decisionFunc
+
+        if parameter_combinations:
+            self.count_max = len(parameter_combinations)
+        else:
+            self.count_max = 1
 
     def __iter__(self):
         """ 
@@ -61,14 +150,16 @@ class ModelGen(object):
         """
 
         self.count += 1
-        if self.count >= self.countLen:
+        if self.count >= self.count_max:
             raise StopIteration
 
-        record = self.modelDetailList[self.count]
+        properties = copy.copy(self.parameter_combinations[self.count])
+        other_options = copy.copy(self.other_options)
+        properties.update(other_options)
 
-        return self.modelClass(**record)
+        return self.model_class(**properties)
 
-    def iterInitDetails(self):
+    def iter_details(self):
         """ 
         Yields a list containing a model object and parameters to initialise them
         
@@ -78,48 +169,8 @@ class ModelGen(object):
             The model to be initialised
         parameters : ordered dictionary of floats or bools
             The model instance parameters
-        otherOptions : dictionary of floats, strings and binary values
+        other_options : dictionary of floats, strings and binary values
         """
 
-        for p in self.paramCombList:
-            yield (self.modelClass, p, self.otherOptions)
-
-
-def params(parameters, otherOptions):
-    """
-    For the given model returns a list of all that goes in to the model.
-
-    Parameters
-    ----------
-    parameters : dictionary of floats or lists of floats
-        Parameters are the options that you are or are likely to change across model instances. When a parameter contains a list, an instance
-        of the model will be created for every combination of this parameter with all the other parameters.
-    otherOptions : dictionary of float, string or binary valued elements
-        These contain all the the model options that describe the model being studied but do not vary across model instances.
-
-    Returns
-    -------
-    modelDetails : list of dict
-        Each dict contains the full set of arguments needed to initialise the model instance
-    paramCombDicts : list of dicts
-        A list of dictionaries containing the parameter combinations
-    """
-
-    if not parameters:
-        return [otherOptions]
-
-    paramKeys = parameters.keys()
-    paramValues = parameters.values()
-
-    paramCombs = utils.listMergeGen(*paramValues)
-
-    modelDetailList = []
-    paramCombDicts = []
-    for p in paramCombs:
-        paramComb = collections.OrderedDict((k, copy.copy(v)) for k, v in itertools.izip(paramKeys, p))
-        d = copy.copy(otherOptions)
-        d.update(paramComb)
-        paramCombDicts.append(paramComb)
-        modelDetailList.append(d)
-
-    return modelDetailList, paramCombDicts
+        for p in self.parameter_combinations:
+            yield self.model_class, p, self.other_options
