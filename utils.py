@@ -16,6 +16,8 @@ import inspect
 import imp
 import traceback
 
+# TODO: replace imp with importlib when moving to python 3
+
 # For analysing the state of the computer
 # import psutil
 
@@ -235,7 +237,12 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
         file_path = '{}/{}.py'.format(folder_path, potential_file)
         module_info = inspect.getmoduleinfo(file_path)
         with open(file_path) as open_file:
-            potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+            # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+            # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+            if potential_file in sys.modules:
+                potential_module = [(k, v) for k, v in sys.modules.items() if potential_file in k][0][1]
+            else:
+                potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
             module_classes = inspect.getmembers(potential_module,
                                                 lambda x: inspect.isclass(x)
                                                           and issubclass(x, inherited_class)
@@ -280,7 +287,12 @@ def find_function(function_name, function_folder, excluded_files=None):
         file_path = '{}/{}.py'.format(folder_path, potential_file)
         module_info = inspect.getmoduleinfo(file_path)
         with open(file_path) as open_file:
-            potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+            # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+            # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+            if potential_file in sys.modules:
+                potential_module = [(k, v) for k, v in sys.modules.items() if potential_file in k][0][1]
+            else:
+                potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
             module_functions = inspect.getmembers(potential_module,
                                                 lambda x: inspect.isfunction(x)
                                                           and x.__name__ == function_name
@@ -308,6 +320,7 @@ def getClassArgs(inspected_class, arg_ignore=['self']):
     arg_spec = inspect.getargspec(inspected_class.__init__)
     args = arg_spec.args
     if arg_spec.keywords is not None:
+        # TODO: when moving to python 3 replace inspect.getargspec with inspect.getfullargspec or inspect.signature
         base_class_arg_spec = inspect.getargspec(inspected_class.__bases__[0].__init__)
         base_args = base_class_arg_spec.args
         new_base_args = [arg for arg in base_args if arg not in args]
@@ -319,7 +332,7 @@ def getClassArgs(inspected_class, arg_ignore=['self']):
 
 def getFuncArgs(inspected_function):
     """
-    inds the arguments that could be passed into the specified function
+    Finds the arguments that could be passed into the specified function
 
     :param inspected_function:
     :return:
