@@ -15,6 +15,8 @@
 import sys
 import os
 
+from datetime import date
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -59,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pyHPDM'
-copyright = u'2019, Dominic Hunt'
+copyright = u'2014-{}, Dominic Hunt'.format(date.today().year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -101,6 +103,9 @@ exclude_patterns = ['_build', 'pyan', 'Backups', 'testData', 'test', 'setup', 'r
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
+# generate autosummary pages
+autosummary_generate = True
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -267,13 +272,13 @@ texinfo_documents = [
 # texinfo_appendices = []
 
 # If false, no module index is generated.
-# texinfo_domain_indices = True
+texinfo_domain_indices = True
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
-# texinfo_no_detailmenu = False
+texinfo_no_detailmenu = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
