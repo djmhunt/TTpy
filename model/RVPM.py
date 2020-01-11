@@ -49,22 +49,22 @@ class RVPM(Model):
     averaging : int, optional
         The number of stimuli recorded from the beginning and end of each
         training set. Default is 3
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numCues : integer, optional
+    number_cues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
-    numCritics : integer, optional
+    number_critics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numCues
-    actionCodes : dict with string or int as keys and int values, optional
+        Default number_actions*number_cues
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numCues)) / numCritics)``
+        Default ``ones((number_actions, number_cues)) / number_critics)``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -192,11 +192,11 @@ class RVPM(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation, action)
+        activeStimuli, stimuli = self.stimulus_shaper(observation, action)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numCues > 1:
+        if self.number_cues > 1:
             actionExpectations = self.actStimMerge(self.expectation, stimuli)
         else:
             actionExpectations = self.expectation
@@ -225,7 +225,7 @@ class RVPM(Model):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
@@ -233,7 +233,7 @@ class RVPM(Model):
 
     def updateModel(self, delta, action, stimuliFilter):
 
-        for t, c, r in self.stimFunc(event, self.currAction):
+        for t, c, r in self.stimulus_shaper(event, self.currAction):
 
             self.c = c
             self.r = r

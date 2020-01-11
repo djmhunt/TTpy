@@ -9,56 +9,107 @@ import numpy as np
 from types import NoneType
 
 from model.decision.discrete import weightProb
-from utils import callableDetailsString
+
+import utils
 
 
-def blankStim():
+class Stimulus(object):
     """
-    Default stimulus processor. Does nothing.Returns ([1,0], None)
-
-    Returns
-    -------
-    blankStimFunc : function
-        The function expects to be passed the event and then return [1,0].
-    currAction : int
-        The current action chosen by the model. Used to pass participant action
-        to model when fitting
+    Stimulus processor class. This acts as an interface between an observation and . Does nothing.
 
     Attributes
     ----------
     Name : string
         The identifier of the function
-
     """
 
-    def blankStimFunc(event):
-        return [1, 0], None
+    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
-    blankStimFunc.Name = "blankStim"
-    return blankStimFunc
+    @classmethod
+    def get_name(cls):
+
+        name = '{}.{}'.format(cls.__module__, cls.__name__)
+
+        return name
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
+
+        self.Name = self.get_name()
+
+    def details(self):
+
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.iteritems() if k is not "Name"]
+        desc = self.Name + " with " + ", ".join(properties)
+
+        return desc
+
+    def processStimulus(self, observation):
+        """
+        Takes the observation and turns it into a form the model can use
+
+        Parameters
+        ----------
+        observation :
+
+        Returns
+        -------
+        stimuliPresent :  int or list of int
+        stimuliActivity : float or list of float
+
+        """
+        return 1, 1
 
 
-def blankRew():
+class Rewards(object):
     """
-    Default reward processor. Does nothing. Returns reward
-
-    Returns
-    -------
-    blankRewFunc : function
-        The function expects to be passed the reward and then return it.
+    This acts as an interface between the feedback from an experiment and the feedback a model can process
 
     Attributes
     ----------
     Name : string
         The identifier of the function
-
     """
 
-    def blankRewFunc(reward):
-        return reward
+    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
-    blankRewFunc.Name = "blankRew"
-    return blankRewFunc
+    @classmethod
+    def get_name(cls):
+
+        name = '{}.{}'.format(cls.__module__, cls.__name__)
+
+        return name
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
+
+        self.Name = self.get_name()
+
+    def details(self):
+
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.iteritems() if k is not "Name"]
+        desc = self.Name + " with " + ", ".join(properties)
+
+        return desc
+
+    def processFeedback(self, feedback, lastAction, stimuli):
+        """
+        Takes the feedback and turns it into a form to be processed by the model
+
+        Parameters
+        ----------
+        feedback :
+        lastAction :
+        stimuli:
+
+        Returns
+        -------
+        modelFeedback:
+
+        """
+        return feedback
 
 
 class Model(object):
@@ -77,62 +128,87 @@ class Model(object):
 
     Parameters
     ----------
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numCues : integer, optional
+    number_cues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
-    numCritics : integer, optional
+    number_critics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numCues
-    actionCodes : dict with string or int as keys and int values, optional
+        Default number_actions*number_cues
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
     prior : array of floats in ``[0,1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((self.numActions, self.numCues)) / self.numCritics)``
-    stimFunc : function, optional
-        The function that transforms the stimulus into a form the model can
-        understand and a string to identify it later. Default is blankStim
-    rewFunc : function, optional
-        The function that transforms the reward into a form the model can
-        understand. Default is blankRew
-    decFunc : function, optional
-        The function that takes the internal values of the model and turns them
-        in to a decision.
+        Default ``ones((self.number_actions, self.number_cues)) / self.number_critics)``
+    stimulus_shaper_name : string, optional
+        The  name of the function that transforms the stimulus into a form the model can
+        understand and a string to identify it later. ``stimulus_shaper`` takes priority
+    reward_shaper_name : string, optional
+        The  name of the function that transforms the reward into a form the model can
+        understand. ``rewards_shaper`` takes priority
+    decision_function_name : string, optional
+        The name of the function that takes the internal values of the model and turns them
+        in to a decision. ``decision function`` takes priority
+    stimulus_shaper : Stimulus class, optional
+        The class that transforms the stimulus into a form the model can
+        understand and a string to identify it later. Default is Stimulus
+    reward_shaper : Rewards class, optional
+        The class that transforms the reward into a form the model can
+        understand. Default is Rewards
+    decision_function : function, optional
+        The function that takes the internal values of the model and turns them in to a decision.
+        Default is ``weightProb(range(number_actions))``
+    stimulus_shaper_properties : list, optional
+        The valid parameters of the function. Used to filter the unlisted keyword arguments
+        Default is ``None``
+    reward_shaper_properties : list, optional
+        The valid parameters of the function. Used to filter the unlisted keyword arguments
+        Default is ``None``
+    decision_function_properties : list, optional
+        The valid parameters of the function. Used to filter the unlisted keyword arguments
+        Default is ``None``
     """
 
     #Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
     @classmethod
-    def get_Name(cls):
+    def get_name(cls):
         return cls.__name__
 
-    def __init__(self, numActions=2, numCues=1, numCritics=None, actionCodes=None, nonAction=None, prior=None, stimFunc=blankStim(),
-                 rewFunc=blankRew(), decFunc=None, **kwargs):
+    # TODO:  define and start using non_action
+
+    def __init__(self, number_actions=2, number_cues=1, number_critics=None,
+                 action_codes=None, non_action=None,
+                 prior=None,
+                 stimulus_shaper=None, stimulus_shaper_name=None, stimulus_shaper_properties=None,
+                 reward_shaper=None, reward_shaper_name=None, reward_shaper_properties=None,
+                 decision_function=None, decision_function_name=None, decision_function_properties=None,
+                 **kwargs):
         """"""
-        self.Name = self.get_Name()
+        self.Name = self.get_name()
 
-        self.numActions = numActions
-        self.numCues = numCues
-        if numCritics is None:
-            numCritics = self.numActions * self.numCues
-        self.numCritics = numCritics
+        self.number_actions = number_actions
+        self.number_cues = number_cues
+        if number_critics is None:
+            number_critics = self.number_actions * self.number_cues
+        self.number_critics = number_critics
 
-        if actionCodes is None:
-            actionCodes = {k: k for k in xrange(self.numActions)}
-        self.actionCode = actionCodes
+        if action_codes is None:
+            action_codes = {k: k for k in xrange(self.number_actions)}
+        self.actionCode = action_codes
 
-        self.defaultNonAction = nonAction
+        self.defaultNonAction = non_action
 
         if prior is None:
-            prior = np.ones(self.numActions) / self.numActions
+            prior = np.ones(self.number_actions) / self.number_actions
         self.prior = prior
 
-        self.stimuli = np.ones(self.numCues)
-        self.stimuliFilter = np.ones(self.numCues)
+        self.stimuli = np.ones(self.number_cues)
+        self.stimuliFilter = np.ones(self.number_cues)
 
         self.currAction = None
         self.decision = None
@@ -141,27 +217,64 @@ class Model(object):
 
         self.probabilities = np.array(self.prior)
         self.decProbabilities = np.array(self.prior)
-        self.expectedRewards = np.ones(self.numActions)
+        self.expectedRewards = np.ones(self.number_actions)
         self.expectedReward = np.array([1])
 
-        self.stimFunc = stimFunc
-        self.rewFunc = rewFunc
-        if not decFunc:
-            decFunc = weightProb(range(self.numActions))
-        self.decisionFunc = decFunc
-        self.stimFunc = self._eventModifier(self.stimFunc, kwargs)
-        self.rewFunc = self._eventModifier(self.rewFunc, kwargs)
-        self.decisionFunc = self._eventModifier(self.decisionFunc, kwargs)
+        if issubclass(stimulus_shaper, Stimulus):
+            if stimulus_shaper_properties is not None:
+                stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in stimulus_shaper_properties}
+            else:
+                stimulus_shaper_kwargs = kwargs.copy()
+            self.stimulus_shaper = stimulus_shaper(**stimulus_shaper_kwargs)
+        elif isinstance(stimulus_shaper_name, basestring):
+            stimulus_class = utils.find_class(stimulus_shaper_name,
+                                              class_folder='experiment',
+                                              inherited_class=Stimulus,
+                                              excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+            stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(stimulus_class)}
+            self.stimulus_shaper = stimulus_class(**stimulus_shaper_kwargs)
+        else:
+            self.stimulus_shaper = Stimulus()
+
+        if issubclass(reward_shaper, Rewards):
+            if reward_shaper_properties is not None:
+                reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in reward_shaper_properties}
+            else:
+                reward_shaper_kwargs = kwargs.copy()
+            self.reward_shaper = reward_shaper(**reward_shaper_kwargs)
+        elif isinstance(reward_shaper_name, basestring):
+            reward_class = utils.find_class(reward_shaper_name,
+                                            class_folder='experiment',
+                                            inherited_class=Rewards,
+                                            excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+            reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(reward_class)}
+            self.reward_shaper = reward_class.processFeedback(**reward_shaper_kwargs)
+        else:
+            self.reward_shaper = Rewards()
+
+        if callable(decision_function):
+            if decision_function_properties is not None:
+                decision_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in decision_function_properties}
+            else:
+                decision_shaper_kwargs = kwargs.copy()
+            self.decision_function = decision_function(**decision_shaper_kwargs)
+        elif isinstance(decision_function_name, basestring):
+            decision_function = utils.find_function(decision_function_name, 'model/decision')
+            decision_function_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getFuncArgs(decision_function)}
+            self.decision_function = decision_function(**decision_function_kwargs)
+        else:
+            self.decision_function = weightProb(range(self.number_actions))
 
         self.parameters = {"Name": self.Name,
-                           "numActions": self.numActions,
-                           "numCues": self.numCues,
-                           "numCritics": self.numCritics,
+                           "number_actions": self.number_actions,
+                           "number_cues": self.number_cues,
+                           "number_critics": self.number_critics,
                            "prior": self.prior.copy(),
-                           "nonAction": self.defaultNonAction,
+                           "non_action": self.defaultNonAction,
                            "actionCode": self.actionCode.copy(),
-                           "stimFunc": callableDetailsString(self.stimFunc),
-                           "decFunc": callableDetailsString(self.decisionFunc)}
+                           "stimulus_shaper": self.stimulus_shaper.details(),
+                           "reward_shaper": self.reward_shaper.details(),
+                           "decision_function": utils.callableDetailsString(self.decision_function)}
 
         # Recorded information
         self.recAction = []
@@ -340,7 +453,7 @@ class Model(object):
         # Calculate the combined value
         # Return the value
 
-        # stimuli = self.stimFunc(response, action, lastObservation=stimuli)
+        # stimuli = self.stimulus_shaper_name(lastObservation)
         return 0, stimuli, 0
 
     def delta(self, reward, expectation, action, stimuli):
@@ -363,7 +476,7 @@ class Model(object):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         return 0
 
@@ -442,7 +555,7 @@ class Model(object):
 
         if np.isnan(probabilities).any():
             raise ValueError("probabilities contain NaN")
-        decision, decProbabilities = self.decisionFunc(probabilities, lastAction, stimulus=events, validResponses=validActions)
+        decision, decProbabilities = self.decision_function(probabilities, lastAction, validResponses=validActions)
         self.decision = decision
         self.currActionSymbol = decision
         decisionCode = self.actionCode[decision]
@@ -496,7 +609,7 @@ class Model(object):
 
         """
 
-        actionParamSets = np.reshape(actStimuliParam, (self.numActions, self.numCues))
+        actionParamSets = np.reshape(actStimuliParam, (self.number_actions, self.number_cues))
         actionParamSets = actionParamSets * stimFilter
         actionParams = np.sum(actionParamSets, axis=1, keepdims=True)
 
@@ -596,17 +709,3 @@ class Model(object):
         """
 
         self.simID = simID
-
-    @staticmethod
-    def _eventModifier(eFunc, kwargs):
-
-        try:
-            f = eFunc(kwargs)
-            if callable(f):
-                return f
-            else:
-                return eFunc
-        except TypeError:
-            return eFunc
-
-

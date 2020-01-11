@@ -7,13 +7,13 @@
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9.
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
 import numpy as np
 
-from modelTemplate import Model
+from model.modelTemplate import Model
 
 
 class MS(Model):
@@ -39,25 +39,25 @@ class MS(Model):
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
     eta : float, optional
         Decision threshold parameter
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numCues : integer, optional
+    number_cues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
-    numCritics : integer, optional
+    number_critics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numCues
-    actionCodes : dict with string or int as keys and int values, optional
+        Default number_actions*number_cues
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numCues)) / numCritics)``
+        Default ``ones((number_actions, number_cues)) / number_critics)``
     activity : array, optional
         The initialisation of the `activity` of the neurons. The values are between ``[0,1]``
-        Default ``ones((numActions, numCues)) / numCritics``
+        Default ``ones((number_actions, number_cues)) / number_critics``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -79,7 +79,7 @@ class MS(Model):
         self.beta = beta
 
         if expect is None:
-            expect = np.ones((self.numActions, self.numCues)) / self.numCritics
+            expect = np.ones((self.number_actions, self.number_cues)) / self.number_critics
         self.expectations = expect
 
         # The alpha is an activation rate parameter. The paper uses a value of 1.
@@ -134,11 +134,11 @@ class MS(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numCues > 1:
+        if self.number_cues > 1:
             actionExpectations = self.actStimMerge(self.expectations, stimuli)
         else:
             actionExpectations = self.expectations
@@ -165,7 +165,7 @@ class MS(Model):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         delta = modReward * (1-expectation)
 
@@ -177,7 +177,7 @@ class MS(Model):
         self._newActivity(delta)
 
         # Calculate the new probabilities
-        if self.numCues > 1:
+        if self.number_cues > 1:
             # Then we need to combine the expectations before calculating the probabilities
             actExpectations = self.actStimMerge(self.expectations, stimuliFilter)
             self.probabilities = self.calcProbabilities(actExpectations)

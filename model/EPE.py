@@ -5,13 +5,13 @@
 :Notes: In the version this model used the Luce choice algorithm,
         rather than the logistic algorithm used here.
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
 
 import numpy as np
 
-from modelTemplate import Model
+from model.modelTemplate import Model
 
 
 class EPE(Model):
@@ -32,26 +32,26 @@ class EPE(Model):
         Learning rate parameter
     epsilon : float, optional
         Noise parameter. The larger it is the less likely the model is to choose the highest expected reward
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numCues : integer, optional
+    number_cues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
-    numCritics : integer, optional
+    number_critics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numCues
-    actionCodes : dict with string or int as keys and int values, optional
+        Default number_actions*number_cues
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numCues)) / numCritics)``
+        Default ``ones((number_actions, number_cues)) / number_critics)``
     expectations : array, optional
         The initialisation of the `activity` of the neurons.
         The values are between ``[0,1]`
-        Default ``ones((numActions, numCues)) / numCritics```
+        Default ``ones((number_actions, number_cues)) / number_critics```
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -75,7 +75,7 @@ class EPE(Model):
         self.epsilon = epsilon
 
         if expect is None:
-            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+            expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
 
         self.parameters["alpha"] = self.alpha
@@ -126,7 +126,7 @@ class EPE(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -152,7 +152,7 @@ class EPE(Model):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
@@ -189,7 +189,7 @@ class EPE(Model):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numCues > 1:
+        if self.number_cues > 1:
             actionExpectations = self.actStimMerge(expectations, stimuli)
         else:
             actionExpectations = expectations
@@ -212,7 +212,7 @@ class EPE(Model):
         """
 
         cbest = actionValues == max(actionValues)
-        deltaEpsilon = self.epsilon * (1 / self.numActions)
+        deltaEpsilon = self.epsilon * (1 / self.number_actions)
         bestEpsilon = (1 - self.epsilon) / sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 

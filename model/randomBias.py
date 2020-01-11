@@ -30,10 +30,10 @@ class RandomBias(Model):
 
     Parameters
     ----------
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    actionCodes : dict with string or int as keys and int values, optional
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
@@ -56,15 +56,15 @@ class RandomBias(Model):
         pattern = '^prob\d+$'
         actProbLab = sorted([k for k in kwargs if re.match(pattern, k)])
         actionProbs = []
-        if len(actProbLab) != self.numActions:
-            raise IndexError("Wrong number of action weights. Received {} instead of {}".format(len(actProbLab), self.numActions))
+        if len(actProbLab) != self.number_actions:
+            raise IndexError("Wrong number of action weights. Received {} instead of {}".format(len(actProbLab), self.number_actions))
         else:
             for p in actProbLab:
                 actionProbs.append(kwargs.pop(p))
         self.actionProbs = np.array(actionProbs) / np.sum(actionProbs)
 
         if expect is None:
-            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+            expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
 
         for k, v in itertools.izip(actProbLab, self.actionProbs):
@@ -115,7 +115,7 @@ class RandomBias(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
 
         actionExpectations = self.actionProbs
 
@@ -141,7 +141,7 @@ class RandomBias(Model):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         delta = 0
 

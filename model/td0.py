@@ -36,25 +36,25 @@ class TD0(Model):
     invBeta : float, optional
         Inverse of sensitivity parameter.
         Defined as :math:`\\frac{1}{\\beta+1}`. Default ``0.2``
-    numActions : integer, optional
+    number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
-    numCues : integer, optional
+    number_cues : integer, optional
         The initial maximum number of stimuli the model can expect to receive.
          Default 1.
-    numCritics : integer, optional
+    number_critics : integer, optional
         The number of different reaction learning sets.
-        Default numActions*numCues
-    actionCodes : dict with string or int as keys and int values, optional
+        Default number_actions*number_cues
+    action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
         task or dataset and references used in the models to describe the order
         in which the action information is stored.
     prior : array of floats in ``[0, 1]``, optional
         The prior probability of of the states being the correct one.
-        Default ``ones((numActions, numCues)) / numCritics)``
+        Default ``ones((number_actions, number_cues)) / number_critics)``
     expect: array of floats, optional
         The initialisation of the expected reward.
-        Default ``ones((numActions, numCues)) * 5 / numCues``
+        Default ``ones((number_actions, number_cues)) * 5 / number_cues``
     stimFunc : function, optional
         The function that transforms the stimulus into a form the model can
         understand and a string to identify it later. Default is blankStim
@@ -77,11 +77,11 @@ class TD0(Model):
         self.gamma = gamma
         
         if expect is None:
-            expect = np.ones((self.numActions, self.numCues)) / self.numCues
+            expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
 
         self.lastAction = 0
-        self.lastStimuli = np.ones(self.numCues)
+        self.lastStimuli = np.ones(self.number_cues)
 
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
@@ -132,7 +132,7 @@ class TD0(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimFunc(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -158,7 +158,7 @@ class TD0(Model):
         delta
         """
 
-        modReward = self.rewFunc(reward, action, stimuli)
+        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
@@ -206,7 +206,7 @@ class TD0(Model):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.numCues > 1:
+        if self.number_cues > 1:
             actionExpectations = self.actStimMerge(expectations, stimuli)
         else:
             actionExpectations = expectations
