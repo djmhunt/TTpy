@@ -22,7 +22,7 @@ from types import NoneType
 
 
 #%% Folder management
-def saving(label=None, pickleData=False, saveScript=True, logLevel=logging.INFO, npSetErr="log"):
+def saving(label=None, pickle=False, config_file=None, min_log_level=logging.INFO, numpy_error_level="log"):
     """
     Creates the folder structure for the saved data and created the log file as ``log.txt``
 
@@ -30,16 +30,14 @@ def saving(label=None, pickleData=False, saveScript=True, logLevel=logging.INFO,
     ----------
     label : string, optional
         The label for the simulation. Default ``None`` will mean no data is saved to files.
-    pickleData : bool, optional
+    pickle : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
-    saveScript : bool, optional
-        If true a copy of the top level script running the current function
-        will be copied to the log folder. Only works if save is set to ``True``
-        Default ``True``
-    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+    config_file : string, optional
+        The file name and path of a ``.yaml`` configuration file. Default ``None``
+    min_log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default ``logging.INFO``
-    npSetErr : {'log', 'raise'}
+    numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
 
     Returns
@@ -59,24 +57,19 @@ def saving(label=None, pickleData=False, saveScript=True, logLevel=logging.INFO,
     dateStr = date()
     if label:
         saveLabel = label
-        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickleData, basePath=None)
+        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickle, basePath=None)
         fileNameGen = fileNameGenerator(outputFolder)
         logFile = fileNameGen('log', 'txt')
 
-        if saveScript:
-            cwd = os.getcwd().replace("\\", "/")
-            for s in inspect.stack():
-                p = s[1].replace("\\", "/")
-                if ('outputting(' in s[4][0]) or (cwd in p and 'outputting.py' not in p):
-                    shu.copy(p, outputFolder)
-                    break
+        if config_file:
+            shu.copy(config_file, outputFolder)
     else:
         saveLabel = 'Untitled'
         outputFolder = None
         logFile = None
         fileNameGen = None
 
-    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=logLevel, npErrResp=npSetErr)
+    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=min_log_level, npErrResp=numpy_error_level)
 
     logger = logging.getLogger('Framework')
 
@@ -505,7 +498,7 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
     return newStore
 
 
-def newListDict(store, labelPrefix=''):
+def newListDict(store, labelPrefix='', maxListLen=0):
     """
     Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
 
@@ -537,7 +530,7 @@ def newListDict(store, labelPrefix=''):
     OrderedDict([(u'dict_1_3', ['a']), (u'dict_2', ['b'])])
     """
 
-    keySet, maxListLen = dictKeyGen(store, maxListLen=0, returnList=True, abridge=False)
+    keySet, maxListLen = dictKeyGen(store, maxListLen=maxListLen, returnList=True, abridge=False)
 
     newStore = collections.OrderedDict()
 
@@ -549,7 +542,7 @@ def newListDict(store, labelPrefix=''):
         newKey = labelPrefix + str(key)
 
         if isinstance(loc, dict):
-            keyStoreSet = newListDict(store[key], newKey)
+            keyStoreSet = newListDict(store[key], labelPrefix=newKey, maxListLen=maxListLen)
             newStore.update(keyStoreSet)
 
         elif isinstance(loc, (list, np.ndarray)):
