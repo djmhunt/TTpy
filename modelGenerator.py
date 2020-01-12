@@ -53,7 +53,7 @@ class ModelGen(object):
                                         class_folder='experiment',
                                         inherited_class=Stimulus,
                                         excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
-            valid_stimulus_args = utils.getClassArgs(stimFunc)
+            valid_stimulus_args = utils.getClassAttributes(stimFunc, ignore=['processStimulus'])
             valid_args.extend(valid_stimulus_args)
         else:
             stimFunc = None
@@ -64,10 +64,10 @@ class ModelGen(object):
         reward_shaper_name = other_options.pop('reward_shaper_name', None)
         if reward_shaper_name:
             rewardFunc = utils.find_class(reward_shaper_name,
-                                        class_folder='experiment',
-                                        inherited_class=Rewards,
-                                        excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
-            valid_reward_args = utils.getClassArgs(rewardFunc)
+                                          class_folder='experiment',
+                                          inherited_class=Rewards,
+                                          excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+            valid_reward_args = utils.getClassAttributes(rewardFunc, ignore=['processFeedback'])
             valid_args.extend(valid_reward_args)
         else:
             rewardFunc = None

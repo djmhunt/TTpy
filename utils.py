@@ -309,18 +309,19 @@ def find_function(function_name, function_folder, excluded_files=None):
 class ClassNameError(Exception):
     pass
 
+
 class FunctionNameError(Exception):
     pass
+
 
 def getClassArgs(inspected_class, arg_ignore=['self']):
     """
     Finds the arguments that could be passed into the specified class
     """
-
+    # TODO: when moving to python 3 replace inspect.getargspec with inspect.getfullargspec or inspect.signature
     arg_spec = inspect.getargspec(inspected_class.__init__)
     args = arg_spec.args
     if arg_spec.keywords is not None:
-        # TODO: when moving to python 3 replace inspect.getargspec with inspect.getfullargspec or inspect.signature
         base_class_arg_spec = inspect.getargspec(inspected_class.__bases__[0].__init__)
         base_args = base_class_arg_spec.args
         new_base_args = [arg for arg in base_args if arg not in args]
@@ -329,6 +330,17 @@ def getClassArgs(inspected_class, arg_ignore=['self']):
     filtered_args = [arg for arg in args if arg not in arg_ignore]
 
     return filtered_args
+
+
+def getClassAttributes(inspected_class, ignore=['self']):
+    """
+    Finds the public attributes of the specified class
+    """
+
+    attributes = [k for k in inspected_class.__dict__.keys() if not k[0]=='_']
+    filtered_attributes = [attribute for attribute in attributes if attribute not in ignore]
+
+    return filtered_attributes
 
 def getFuncArgs(inspected_function):
     """
