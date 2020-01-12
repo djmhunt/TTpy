@@ -220,12 +220,12 @@ def bayesInv(**kwargs):
         The number of parameters used by the model used for the fitters process. Default 2
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
-    numActions: int or list of ints the length of the number of trials being fitted, optional
+    number_actions: int or list of ints the length of the number of trials being fitted, optional
         The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-        of action choices varies between trials. Default ``1/numActions``
+        of action choices varies between trials. Default ``1/number_actions``
 
     Returns
     -------
@@ -235,8 +235,8 @@ def bayesInv(**kwargs):
     # Set the values that will be fixed for the whole fitters process
     numParams = kwargs.get("numParams", 2)
     qualityThreshold = kwargs.get("qualityThreshold", 20)
-    numActions = kwargs.get("numActions", 2)
-    randActProb = kwargs.get("randActProb", 1/numActions)
+    number_actions = kwargs.get("number_actions", 2)
+    randActProb = kwargs.get("randActProb", 1/number_actions)
 
     BICmodfunc = BIC2(numParams=numParams)
     BICrandfunc = bayesRand(randActProb=randActProb)
@@ -270,7 +270,7 @@ def bayesInv(**kwargs):
     BICfunc.Name = "bayesInv"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
-                      "numActions": numActions,
+                      "number_actions": number_actions,
                       "randActProb": randActProb}
     return BICfunc
 
@@ -306,12 +306,12 @@ def BIC2norm(**kwargs):
         The number of parameters used by the model used for the fits process. Default 2
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
-    numActions: int or list of ints the length of the number of trials being fitted, optional
+    number_actions: int or list of ints the length of the number of trials being fitted, optional
         The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-        of action choices varies between trials. Default ``1/numActions``
+        of action choices varies between trials. Default ``1/number_actions``
 
     Returns
     -------
@@ -321,8 +321,8 @@ def BIC2norm(**kwargs):
     # Set the values that will be fixed for the whole fits process
     numParams = kwargs.get("numParams", 2)
     qualityThreshold = kwargs.get("qualityThreshold", 20)
-    numActions = kwargs.get("numActions", 2)
-    randActProb = kwargs.get("randActProb", 1/numActions)
+    number_actions = kwargs.get("number_actions", 2)
+    randActProb = kwargs.get("randActProb", 1/number_actions)
 
     BICmodfunc = BIC2(numParams=numParams)
     BICrandfunc = bayesRand(randActProb=randActProb)
@@ -357,7 +357,7 @@ def BIC2norm(**kwargs):
     BICfunc.Name = "BIC2norm"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
-                      "numActions": numActions,
+                      "number_actions": number_actions,
                       "randActProb": randActProb}
     return BICfunc
 
@@ -374,12 +374,12 @@ def BIC2normBoot(**kwargs):
         The number of parameters used by the model used for the fits process. Default 2
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
-    numActions: int or list of ints the length of the number of trials being fitted, optional
+    number_actions: int or list of ints the length of the number of trials being fitted, optional
         The number of actions the participant can choose between for each trialstep of the experiment. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-        of action choices varies between trials. Default ``1/numActions``
+        of action choices varies between trials. Default ``1/number_actions``
     numSamples: int, optional
         The number of samples that will be randomly resampled from ``modVals``. Default 100
     sampleLen: int, optional
@@ -393,8 +393,8 @@ def BIC2normBoot(**kwargs):
     # Set the values that will be fixed for the whole fits process
     numParams = kwargs.pop("numParams", 2)
     qualityThreshold = kwargs.pop("qualityThreshold", 20)
-    numActions = kwargs.pop("numActions", 2)
-    randActProb = kwargs.pop("randActProb", 1/numActions)
+    number_actions = kwargs.pop("number_actions", 2)
+    randActProb = kwargs.pop("randActProb", 1/number_actions)
     numSamples = kwargs.pop("numSamples", 100)
     sampleLen = kwargs.pop("sampleLen", 1)
 
@@ -439,7 +439,7 @@ def BIC2normBoot(**kwargs):
     BICfunc.Name = "BIC2normBoot"
     BICfunc.Params = {"numParams": numParams,
                       "qualityThreshold": qualityThreshold,
-                      "numActions": numActions,
+                      "number_actions": number_actions,
                       "randActProb": randActProb,
                       "numSamples": numSamples,
                       "sampleLen": sampleLen}

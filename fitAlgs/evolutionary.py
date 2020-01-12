@@ -39,7 +39,7 @@ class Evolutionary(FitAlg):
     polish : bool, optional
         If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``
         method is used to polish the best population member at the end, which
-        can improve the minimization slightly.
+        can improve the minimization slightly. Default ``False``
     popSize : int, optional
         A multiplier for setting the total population size. The population has
         popsize * len(x) individuals. Default 15

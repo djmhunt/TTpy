@@ -28,26 +28,26 @@ class FitAlg(object):
 
     Parameters
     ----------
-    fitSim : fitAlgs.fitSims.fitSim instance
-        An instance of one of the fitting algorithms
-    fitQualityFunc : string, optional
+    fitSim : fitAlgs.fitSims.FitSim instance, optional
+        An instance of one of the fitting simulation methods. Default ``fitAlgs.fitSims.FitSim``
+    fitMeasure : string, optional
         The name of the function used to calculate the quality of the fit.
-        The value it returns provides the fitter with its fitting guide.
-        Default ``fitAlg.null``
-    qualityFuncArgs : dict, optional
-        The parameters used to initialise fitQualFunc. Default ``{}``
+        The value it returns provides the fitter with its fitting guide. Default ``-loge``
+    fitMeasureArgs : dict, optional
+        The parameters used to initialise fitMeasure and extraFitMeasures. Default ``None``
+    extraFitMeasures : list of strings, optional
+        List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+        measures should be placed in fitMeasureArgs. Default ``None``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
-    boundCostFunc : function, optional
+    boundCostScaling : function, optional
         A function used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound``
-    calcCov : bool, optional
+    calculateCovariance : bool, optional
         Is the covariance calculated. Default ``False``
-    extraFitMeasures : dict of dict, optional
-        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
-        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
+
 
     Attributes
     ----------
@@ -60,7 +60,10 @@ class FitAlg(object):
 
     """
 
-    def __init__(self, fitSim=None, fitQualityFunc=None, qualityFuncArgs={}, bounds=None, boundCostFunc=boundFunc.scalarBound(), extraFitMeasures={}, calcCov=False, boundRatio=0.000001, **kwargs):
+    def __init__(self,
+                 fitSim=None, fitMeasure='-loge', fitMeasureArgs=None, extraFitMeasures=None,
+                 bounds=None, boundCostScaling=boundFunc.scalarBound(), boundRatio=0.000001,
+                 calculateCovariance=False, **kwargs):
 
         if fitSim is None:
             self.fitSim = FitSim()
@@ -74,24 +77,30 @@ class FitAlg(object):
         else:
             self.allBounds = bounds
 
+        if fitMeasureArgs is None:
+            fitMeasureArgs = {}
+
+        if extraFitMeasures is None:
+            extraFitMeasures = []
+
         self.Name = self.findName()
 
-        self.boundCostFunc = boundCostFunc
+        self.boundCostScale = boundCostScaling
 
-        self.fitQualityFunc = qualityFunc.qualFuncIdent(fitQualityFunc, **qualityFuncArgs)
-        self.calcCovariance = calcCov
+        self.fitQualityFunc = qualityFunc.qualFuncIdent(fitMeasure, **fitMeasureArgs.copy())
+        self.calcCovariance = calculateCovariance
         if self.calcCovariance:
             self.hessInc = {k: boundRatio * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
-        self.measures = {k: qualityFunc.qualFuncIdent(k, **v) for k, v in extraFitMeasures.iteritems()}
+        self.measures = {m: qualityFunc.qualFuncIdent(m, **fitMeasureArgs.copy()) for m in extraFitMeasures}
 
         self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitQualityFunc,
-                        'fitQualityArguments': qualityFuncArgs,
-                        'boundaryCostFunction': utils.callableDetailsString(boundCostFunc),
+                        'fitQualityFunction': fitMeasure,
+                        'fitQualityArguments': fitMeasureArgs,
+                        'boundaryCostFunction': utils.callableDetailsString(boundCostScaling),
                         'bounds': self.allBounds,
                         'extraFitMeasures': extraFitMeasures,
-                        'calculateCovariance': calcCov,
+                        'calculateCovariance': calculateCovariance,
                         'boundRatio': boundRatio}
 
         self.boundVals = None
@@ -233,7 +242,7 @@ class FitAlg(object):
 
         # Start by checking that the parameters are valid
         if self.invalidParams(*pms):
-            pseudofitQuality = self.boundCostFunc(pms, self.boundVals, self.fitQualityFunc)
+            pseudofitQuality = self.boundCostScale(pms, self.boundVals, self.fitQualityFunc)
             return pseudofitQuality
 
         # Run the simulation with these parameters
@@ -337,7 +346,7 @@ class FitAlg(object):
 
         Examples
         --------
-        >>> a = FitAlg(bounds = {1: (0, 5), 2: (0, 2), 3: (-1, 1)})
+        >>> a = FitAlg(bounds={1: (0, 5), 2: (0, 2), 3: (-1, 1)})
         >>> a.allBounds
         {1: (0, 5), 2: (0, 2), 3: (-1, 1)}
         >>> a.setBounds([])
@@ -561,7 +570,7 @@ class FitAlg(object):
 
         Examples
         --------
-        >>> a = FitAlg(bounds = {1:(0,5), 2:(0,2), 3:(-1,1)})
+        >>> a = FitAlg(bounds={1:(0,5), 2:(0,2), 3:(-1,1)})
         >>> a.setBounds([3, 1])
         >>> a.invalidParams(0, 0)
         False
