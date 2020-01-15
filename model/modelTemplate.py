@@ -654,7 +654,7 @@ class Model(object):
         results["Stimuli"] = np.array(self.recStimuli).T
         results["Rewards"] = np.array(self.recReward)
         results["Expectations"] = np.array(self.recExpectations).T
-        results["ExpectedReward"] = np.array(self.recExpectedReward).T
+        results["ExpectedReward"] = np.array(self.recExpectedReward).flatten()
         results["ExpectedRewards"] = np.array(self.recExpectedRewards).T
         results["ValidActions"] = np.array(self.recValidActions).T
         results["Decisions"] = np.array(self.recDecision)
