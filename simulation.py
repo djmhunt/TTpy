@@ -24,7 +24,7 @@ def simulation(experiment_name='Basic',
                sim_label=None,
                config_file=None,
                pickle=False,
-               min_log_level=logging.INFO,
+               min_log_level='INFO',
                numpy_error_level="log"):
     """
     A framework for letting models interact with experiments and record the data
@@ -58,8 +58,8 @@ def simulation(experiment_name='Basic',
         Default is ``False``
     sim_label : string, optional
         The label for the simulation. Default ``None``, which means nothing will be saved
-    min_log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
-        Defines the level of the log. Default ``logging.INFO``
+    min_log_level : basestring, optional
+        Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
     numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
 

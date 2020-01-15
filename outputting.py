@@ -22,7 +22,7 @@ from types import NoneType
 
 
 #%% Folder management
-def saving(label=None, pickle=False, config_file=None, min_log_level=logging.INFO, numpy_error_level="log"):
+def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', numpy_error_level="log"):
     """
     Creates the folder structure for the saved data and created the log file as ``log.txt``
 
@@ -35,8 +35,9 @@ def saving(label=None, pickle=False, config_file=None, min_log_level=logging.INF
         Default is ``False``
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Default ``None``
-    min_log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
-        Defines the level of the log. Default ``logging.INFO``
+    min_log_level : basestring, optional
+        Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
+        See https://docs.python.org/3/library/logging.html#levels
     numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
 
@@ -69,7 +70,14 @@ def saving(label=None, pickle=False, config_file=None, min_log_level=logging.INF
         logFile = None
         fileNameGen = None
 
-    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=min_log_level, npErrResp=numpy_error_level)
+    possible_log_levels = {'DEBUG': logging.DEBUG,
+                           'INFO': logging.INFO,
+                           'WARNING': logging.WARNING,
+                           'ERROR': logging.ERROR,
+                           'CRITICAL': logging.CRITICAL}
+    log_level = possible_log_levels[min_log_level]
+
+    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=log_level, npErrResp=numpy_error_level)
 
     logger = logging.getLogger('Framework')
 
