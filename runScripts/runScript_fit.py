@@ -18,88 +18,56 @@ codePath = filePath.split('\\')[:-2]
 sys.path.append("/".join(codePath))  # So code can be found from the main folder
 
 # Other used function
-from numpy import ones
-
-#%% Import all experiments, models and fitting functions
-# The experiments and stimulus processors
-from experiment.probSelect import probSelectStimDirect, probSelectRewDirect
-
-# The model factory
-from modelGenerator import ModelGen
-# The decision methods
-from model.decision.discrete import weightProb
-# The model
-from model.qLearn import QLearn
-
-#%% For importing the data
-from data import data
+import numpy as np
 
 #%%For data fitting
-from dataFitting import dataFitting
-from fitAlgs.fitSims import FitSim
-from fitAlgs.evolutionary import Evolutionary
+from dataFitting import data_fitting
+
 
 #%% Set the model sets
-alphaBounds = (0, 1)
-betaBounds = (0, 30)
-bounds = {'alpha': alphaBounds,
-          'beta': betaBounds}
+number_actions = 6
+number_cues = 1
 
-numActions = 6
-numCues = 1
+modelParameters = {'alpha': (0, 1),
+                   'beta': (0, 30)}
+modelStaticArgs = {'number_actions': number_actions,
+                   'number_cues': number_cues,
+                   'action_codes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
+                   'expect': np.ones((number_actions, number_cues)) / 2,
+                   'prior': np.ones(number_actions) / number_actions,
+                   'stimulus_shaper_name': 'StimulusProbSelectDirect',
+                   'reward_shaper_name': 'RewardProbSelectDirect',
+                   'decision_function_name': 'weightProb',
+                   'expResponses': ["A", "B", "C", "D", "E", "F"]}
 
-modelParameters = {'alpha': sum(alphaBounds)/2,
-                   'beta': sum(betaBounds)/2}
-modelStaticArgs = {'numActions': numActions,
-                   'numCues': numCues,
-                   'actionCodes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
-                   'expect': ones((numActions, numCues)) / 2,
-                   'prior': ones(numActions) / numActions,
-                   'stimFunc': probSelectStimDirect(),
-                   'rewFunc': probSelectRewDirect(),
-                   'decFunc': weightProb(["A", "B", "C", "D", "E", "F"])}
-
-modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
-
-
-#%% Import data
-dat = data("./Outputs/qLearn_probSelectSimSet_2019-10-29/Pickle/", 'pkl', validFiles=["qLearn_modelData_sim-"])
-
-for d in dat:
-    d["validActions"] = d["ValidActions"].T
-
-#%% Set up the fitting
-modSim = FitSim(partChoiceParam='Decisions',
-                partRewardParam='Rewards',
-                modelFitVar='ActionProb',
-                fitSubset=float('Nan'),  # float('Nan'), None, range(0,40)
-                #stimuliParams=["stimCues"],
-                actChoiceParams='validActions'
-                )
-
-# Define the fitting algorithm
-fitAlg = Evolutionary(fitSim=modSim,
-                      fitQualityFunc="BIC2norm",
-                      qualityFuncArgs={"numParams": len(modelParameters),
-                                       "numActions": numActions,
-                                       "qualityThreshold": 20},
-                      # strategy="all",
-                      boundCostFunc=None,  # scalarBound(base=160),
-                      polish=False,
-                      bounds=bounds,
-                      extraFitMeasures={"-2log": {},
-                                        "BIC": {"numParams": len(modelParameters)},
-                                        "r2": {"numParams": len(modelParameters), "randActProb": 1/numActions},
-                                        "bayesFactor": {"numParams": len(modelParameters), "randActProb": 1/numActions}})
+def data_processing(dat):
+    for i, d in enumerate(dat['ValidActions']):
+        dat['ValidActions_{}'.format(i)] = d
+    return dat
 
 #%% Run the data fitter
-dataFitting(modelSet,
-            dat,
-            fitAlg,
-            partLabel='simID',
-            simLabel='qLearn_probSelect_fromSim',
-            save=True,
-            saveFittingProgress=True,
-            saveScript=True,
-            pickleData=True,
-            npSetErr='log')  # 'raise','log'
+data_fitting(data_folder="./Outputs/test_sim_2020-1-10/Pickle/",
+             data_format='pkl',
+             data_file_filter="QLearn_modelData_sim-",
+             data_extra_processing=data_processing,
+             model_name='QLearn',
+             model_changing_properties=modelParameters,
+             model_constant_properties=modelStaticArgs,
+             participantID='simID',
+             participant_choices='Decisions',
+             participant_rewards='Rewards',
+             model_fit_value='ActionProb',
+             fit_subset=float('Nan'),  # float('Nan'), None, range(0,40)
+             task_stimuli=None,  #["stimCues"],
+             participant_action_options=['ValidActions_0', 'ValidActions_1'],
+             fit_method='Evolutionary',
+             fit_measure="BIC2norm",
+             fit_extra_measures=['-2log', 'BIC', 'r2', 'bayesFactor'],
+             fit_measure_args={"numParams": len(modelParameters),
+                               "number_actions": number_actions,
+                               "qualityThreshold": 20,
+                               "randActProb": 1/number_actions},
+             label='qLearn_probSelect_fromSim',
+             save_fitting_progress=True,
+             pickle=True,
+             numpy_error_level='log')  # 'raise','log'
