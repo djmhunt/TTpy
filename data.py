@@ -91,51 +91,53 @@ class Data(list):
         """
 
         if file_type == 'mat':
-            cls.from_mat(folder=folder,
-                         file_name_filter=file_name_filter,
-                         terminal_ID=terminal_ID,
-                         participantID=participantID,
-                         choices=choices,
-                         feedbacks=feedbacks,
-                         stimuli=stimuli,
-                         action_options=action_options,
-                         extra_processing=extra_processing)
+            dat = cls.from_mat(folder=folder,
+                               file_name_filter=file_name_filter,
+                               terminal_ID=terminal_ID,
+                               participantID=participantID,
+                               choices=choices,
+                               feedbacks=feedbacks,
+                               stimuli=stimuli,
+                               action_options=action_options,
+                               extra_processing=extra_processing)
         elif file_type == 'csv':
-            cls.from_csv(folder=folder,
-                         file_name_filter=file_name_filter,
-                         terminal_ID=terminal_ID,
-                         split_by=split_by,
-                         participantID=participantID,
-                         choices=choices,
-                         feedbacks=feedbacks,
-                         stimuli=stimuli,
-                         action_options=action_options,
-                         extra_processing=extra_processing,
-                         csv_read_options=data_read_options)
+            dat = cls.from_csv(folder=folder,
+                               file_name_filter=file_name_filter,
+                               terminal_ID=terminal_ID,
+                               split_by=split_by,
+                               participantID=participantID,
+                               choices=choices,
+                               feedbacks=feedbacks,
+                               stimuli=stimuli,
+                               action_options=action_options,
+                               extra_processing=extra_processing,
+                               csv_read_options=data_read_options)
         elif file_type == 'xlsx':
-            cls.from_xlsx(folder=folder,
-                          file_name_filter=file_name_filter,
-                          terminal_ID=terminal_ID,
-                          split_by=split_by,
-                          participantID=participantID,
-                          choices=choices,
-                          feedbacks=feedbacks,
-                          stimuli=stimuli,
-                          action_options=action_options,
-                          extra_processing=extra_processing,
-                          xlsx_read_options=data_read_options)
+            dat = cls.from_xlsx(folder=folder,
+                                file_name_filter=file_name_filter,
+                                terminal_ID=terminal_ID,
+                                split_by=split_by,
+                                participantID=participantID,
+                                choices=choices,
+                                feedbacks=feedbacks,
+                                stimuli=stimuli,
+                                action_options=action_options,
+                                extra_processing=extra_processing,
+                                xlsx_read_options=data_read_options)
         elif file_type == 'pkl':
-            cls.from_pkl(folder=folder,
-                         file_name_filter=file_name_filter,
-                         terminal_ID=terminal_ID,
-                         participantID=participantID,
-                         choices=choices,
-                         feedbacks=feedbacks,
-                         stimuli=stimuli,
-                         action_options=action_options,
-                         extra_processing=extra_processing)
+            dat = cls.from_pkl(folder=folder,
+                               file_name_filter=file_name_filter,
+                               terminal_ID=terminal_ID,
+                               participantID=participantID,
+                               choices=choices,
+                               feedbacks=feedbacks,
+                               stimuli=stimuli,
+                               action_options=action_options,
+                               extra_processing=extra_processing)
         else:
             raise FileTypeError('{} is not a supported file type. Please use ``mat``, ``csv``, ``xlsx`` or ``pkl``'.format(file_type))
+
+        return dat
 
     @classmethod
     def from_mat(cls,
@@ -691,7 +693,7 @@ class Data(list):
                 action_options_combined_name = "valid_actions_combined"
                 if action_options_combined_name in keys:
                     raise KeyError("Unexpected use of key `{}`. Use other name".format(action_options_combined_name))
-                p[action_options_combined_name] = options_array
+                participant_data[loc][action_options_combined_name] = options_array
                 self.action_options = action_options_combined_name
 
             if action_options and len(p[choices]) != len(p[self.action_options]):
