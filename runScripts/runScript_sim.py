@@ -15,66 +15,54 @@ import sys
 import os
 filePath = os.path.realpath(__file__)
 codePath = filePath.split('\\')[:-2]
-sys.path.append("/".join(codePath))  # So code can be found from the main folder
+sys.path.append('/'.join(codePath))  # So code can be found from the main folder
 
 # Other used function
-from numpy import array, ones, repeat
+import numpy as np
+
 from collections import OrderedDict
-
-#%% Import all experiments, models and interface functions
-# The experiment factory
-from experimentGenerator import ExperimentGen
-# The experiments and stimulus processors
-from experiment.probSelect import ProbSelect, probSelectStimDirect, probSelectRewDirect
-
-# The model factory
-from modelGenerator import ModelGen
-# The decision methods
-from model.decision.discrete import weightProb
-# The model
-from model.qLearn import QLearn
 
 from simulation import simulation
 
 #%% Set the model sets and experiment sets
-numActions = 6
-numCues = 1
+number_actions = 6
+number_cues = 1
 repetitions = 2
-alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
-betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+alphaSet = np.repeat(np.array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
+betaSet = np.array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
 
 expParams = {}
-expStaticArgs = {'numActions': numActions,
+expStaticArgs = {'number_actions': number_actions,
                  'learningLen': 200,
                  'testLen': 100,
                  'rewardSize': 1,
-                 'actRewardProb': OrderedDict([("A", 0.80),
-                                               ("B", 0.20),
-                                               ("C", 0.70),
-                                               ("D", 0.30),
-                                               ("E", 0.60),
-                                               ("F", 0.40)]),
-                 'learningActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
+                 'actRewardProb': OrderedDict([('A', 0.80),
+                                               ('B', 0.20),
+                                               ('C', 0.70),
+                                               ('D', 0.30),
+                                               ('E', 0.60),
+                                               ('F', 0.40)]),
+                 'learningActPairs': [('A', 'B'), ('C', 'D'), ('E', 'F')]}
 
 modelParameters = {'alpha': alphaSet,
                    'beta': betaSet}
-modelStaticArgs = {'numActions': numActions,
-                   'numCues': numCues,
-                   'actionCodes': {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5},
-                   'expect': ones((numActions, numCues)) / 2,
-                   'prior': ones(numActions) / numActions,
-                   'stimFunc': probSelectStimDirect(),
-                   'rewFunc': probSelectRewDirect(),
-                   'decFunc': weightProb(["A", "B", "C", "D", "E", "F"])}
-
-modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
-expSets = ExperimentGen(ProbSelect, expParams, expStaticArgs)
+modelStaticArgs = {'number_actions': number_actions,
+                   'number_cues': number_cues,
+                   'action_codes': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
+                   'expect': np.ones((number_actions, number_cues)) / 2,
+                   'prior': np.ones(number_actions) / number_actions,
+                   'stimulus_shaper_name': 'StimulusProbSelectDirect',
+                   'reward_shaper_name': 'RewardProbSelectDirect',
+                   'decision_function_name': 'weightProb',
+                   'expResponses': ['A', 'B', 'C', 'D', 'E', 'F']}
 
 #%% For simulating experiments
-simulation(expSets,
-           modelSet,
-           simLabel='qLearn_probSelectSimSet',
-           save=True,
-           saveScript=True,
-           pickleData=True,
-           npSetErr="log") # 'raise','log'
+simulation(experiment_name='ProbSelect',
+           experiment_changing_properties=expParams,
+           experiment_constant_properties=expStaticArgs,
+           model_name='QLearn',
+           model_changing_properties=modelParameters,
+           model_constant_properties=modelStaticArgs,
+           sim_label='qLearn_probSelectSimSet',
+           pickle=True,
+           numpy_error_level='log') # 'raise','log'
