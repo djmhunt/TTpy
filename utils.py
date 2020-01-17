@@ -212,7 +212,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
     Parameters
     ----------
     class_name : string
-        The name of the fitting module to be used
+        The name of the class to be used
     class_folder : basestring
         The path where the class is likely to be found
     inherited_class : class
@@ -264,9 +264,9 @@ def find_function(function_name, function_folder, excluded_files=None):
     Parameters
     ----------
     function_name : string
-        The name of the fitting module to be used
+        The name of the function to be used
     function_folder : basestring
-        The path where the class is likely to be found
+        The path where the function is likely to be found
     excluded_files : list, optional
         A list of modules to be excluded from the search. Can be described using portions of file names.
 
@@ -709,14 +709,21 @@ def callableDetails(item):
     ('boo', {'1': '2', '2': '3'})
 
     """
-
+    # TODO : clean up this and the functions calling it. This should be unnecessary now
     if isinstance(item, collections.Callable):
+        if hasattr(item, 'Name'):
+            name = item.Name
+        elif hasattr(item, 'get_name'):
+            name = item.get_name()
+        else:
+            raise AttributeError('{} does not have the attribute ``Name`` or ``get_name``'.format(item))
+
         try:
             details = {str(k): str(v).strip('[]()') for k, v in item.Params.iteritems()}
         except:
             details = None
 
-        return item.Name, details
+        return name, details
 
     else:
         return None, None
