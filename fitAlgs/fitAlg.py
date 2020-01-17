@@ -28,24 +28,25 @@ class FitAlg(object):
 
     Parameters
     ----------
-    fitSim : fitAlgs.fitSims.FitSim instance, optional
+    fit_sim : fitAlgs.fitSims.FitSim instance, optional
         An instance of one of the fitting simulation methods. Default ``fitAlgs.fitSims.FitSim``
-    fitMeasure : string, optional
+    fit_measure : string, optional
         The name of the function used to calculate the quality of the fit.
         The value it returns provides the fitter with its fitting guide. Default ``-loge``
-    fitMeasureArgs : dict, optional
+    fit_measure_args : dict, optional
         The parameters used to initialise fitMeasure and extraFitMeasures. Default ``None``
-    extraFitMeasures : list of strings, optional
+    extra_fit_measures : list of strings, optional
         List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
         measures should be placed in fitMeasureArgs. Default ``None``
     bounds : dictionary of tuples of length two with floats, optional
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0,float('Inf')) for each parameter.
-    boundCostScaling : function, optional
-        A function used to calculate the penalty for exceeding the boundaries.
-        Default is ``boundFunc.scalarBound``
-    calculateCovariance : bool, optional
+    boundary_excess_cost : basestring or callable returning a function, optional
+        The function is used to calculate the penalty for exceeding the boundaries.
+        Default is ``boundFunc.scalarBound()``
+    boundary_excess_cost_properties :
+    calculate_covariance : bool, optional
         Is the covariance calculated. Default ``False``
 
 
@@ -61,47 +62,58 @@ class FitAlg(object):
     """
 
     def __init__(self,
-                 fitSim=None, fitMeasure='-loge', fitMeasureArgs=None, extraFitMeasures=None,
-                 bounds=None, boundCostScaling=boundFunc.scalarBound(), boundRatio=0.000001,
-                 calculateCovariance=False, **kwargs):
+                 fit_sim=None, fit_measure='-loge', fit_measure_args=None, extra_fit_measures=None,
+                 bounds=None, boundary_excess_cost=None, boundary_excess_cost_properties=None, bound_ratio=0.000001,
+                 calculate_covariance=False, **kwargs):
 
-        if fitSim is None:
+        if fit_sim is None:
             self.fitSim = FitSim()
-        elif isinstance(fitSim, FitSim):
-            self.fitSim = fitSim
+        elif isinstance(fit_sim, FitSim):
+            self.fitSim = fit_sim
         else:
-            raise NameError("fitSim type is incorrect: {}".format(type(fitSim)))
+            raise NameError("fitSim type is incorrect: {}".format(type(fit_sim)))
 
         if bounds is None:
             raise NameError("Please specify bounds for your parameters")
         else:
             self.allBounds = bounds
 
-        if fitMeasureArgs is None:
-            fitMeasureArgs = {}
+        if fit_measure_args is None:
+            fit_measure_args = {}
 
-        if extraFitMeasures is None:
-            extraFitMeasures = []
+        if extra_fit_measures is None:
+            extra_fit_measures = []
 
         self.Name = self.findName()
 
-        self.boundCostScale = boundCostScaling
+        if callable(boundary_excess_cost):
+            if boundary_excess_cost_properties is not None:
+                boundary_excess_cost_kwargs = {k: v for k, v in kwargs.iteritems() if k in boundary_excess_cost_properties}
+            else:
+                boundary_excess_cost_kwargs = kwargs.copy()
+            self.boundary_excess_cost = boundary_excess_cost(**boundary_excess_cost_kwargs)
+        elif isinstance(boundary_excess_cost, basestring):
+            boundary_excess_cost_function = utils.find_function(boundary_excess_cost, 'fitAlgs', excluded_files=['fit'])
+            boundary_excess_cost_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getFuncArgs(boundary_excess_cost_function)}
+            self.boundary_excess_cost = boundary_excess_cost_function(**boundary_excess_cost_kwargs)
+        else:
+            self.boundary_excess_cost = boundFunc.scalarBound()
 
-        self.fitQualityFunc = qualityFunc.qualFuncIdent(fitMeasure, **fitMeasureArgs.copy())
-        self.calcCovariance = calculateCovariance
+        self.fitQualityFunc = qualityFunc.qualFuncIdent(fit_measure, **fit_measure_args.copy())
+        self.calcCovariance = calculate_covariance
         if self.calcCovariance:
-            self.hessInc = {k: boundRatio * (u - l) for k, (l, u) in self.allBounds.iteritems()}
+            self.hessInc = {k: bound_ratio * (u - l) for k, (l, u) in self.allBounds.iteritems()}
 
-        self.measures = {m: qualityFunc.qualFuncIdent(m, **fitMeasureArgs.copy()) for m in extraFitMeasures}
+        self.measures = {m: qualityFunc.qualFuncIdent(m, **fit_measure_args.copy()) for m in extra_fit_measures}
 
         self.fitInfo = {'Name': self.Name,
-                        'fitQualityFunction': fitMeasure,
-                        'fitQualityArguments': fitMeasureArgs,
-                        'boundaryCostFunction': utils.callableDetailsString(boundCostScaling),
+                        'fitQualityFunction': fit_measure,
+                        'fitQualityArguments': fit_measure_args,
+                        'boundaryCostFunction': utils.callableDetailsString(boundary_excess_cost),
                         'bounds': self.allBounds,
-                        'extraFitMeasures': extraFitMeasures,
-                        'calculateCovariance': calculateCovariance,
-                        'boundRatio': boundRatio}
+                        'extraFitMeasures': extra_fit_measures,
+                        'calculateCovariance': calculate_covariance,
+                        'boundRatio': bound_ratio}
 
         self.boundVals = None
         self.boundNames = None
@@ -242,7 +254,7 @@ class FitAlg(object):
 
         # Start by checking that the parameters are valid
         if self.invalidParams(*pms):
-            pseudofitQuality = self.boundCostScale(pms, self.boundVals, self.fitQualityFunc)
+            pseudofitQuality = self.boundary_excess_cost(pms, self.boundVals, self.fitQualityFunc)
             return pseudofitQuality
 
         # Run the simulation with these parameters
