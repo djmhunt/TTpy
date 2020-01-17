@@ -1,0 +1,347 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>experiment.probSelect &#8212; pyHPDM 0.9.9 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for experiment.probSelect</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Reference: Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</span>
+<span class="sd">            Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., &amp; Hutchison, K. E. (2007).</span>
+<span class="sd">            Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.</span>
+<span class="sd">            doi:10.1073/pnas.0706111104</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
+
+
+<div class="viewcode-block" id="ProbSelect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect">[docs]</a><span class="k">class</span> <span class="nc">ProbSelect</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</span>
+<span class="sd">                                        Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., &amp; Hutchison, K. E. (2007).</span>
+<span class="sd">                                        Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.</span>
+<span class="sd">                                        doi:10.1073/pnas.0706111104</span>
+
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
+<span class="sd">    Refer to its documentation for missing methods.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rewardProb : float in range [0,1], optional</span>
+<span class="sd">        The probability that a reward is given for choosing action A. Default</span>
+<span class="sd">        is 0.7</span>
+<span class="sd">    actRewardProb : dictionary, optional</span>
+<span class="sd">        A dictionary of the potential actions that can be taken and the</span>
+<span class="sd">        probability of a reward.</span>
+<span class="sd">        Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}</span>
+<span class="sd">    learnActPairs : list of tuples, optional</span>
+<span class="sd">        The pairs of actions shown together in the learning phase.</span>
+<span class="sd">    learningLen : int, optional</span>
+<span class="sd">        The number of trials in the learning phase. Default is 240</span>
+<span class="sd">    testLen : int, optional</span>
+<span class="sd">        The number of trials in the test phase. Default is 60</span>
+<span class="sd">    rewardSize : float, optional</span>
+<span class="sd">        The size of reward given if successful. Default 1</span>
+<span class="sd">    number_actions : int, optional</span>
+<span class="sd">        The number of actions that can be chosen at any given time, chosen at</span>
+<span class="sd">        random from actRewardProb. Default 4</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The experiment is broken up into two sections: a learning phase and a</span>
+<span class="sd">    transfer phase. Participants choose between pairs of four actions: A, B, M1</span>
+<span class="sd">    and M2. Each provides a reward with a different probability: A:P&gt;0.5,</span>
+<span class="sd">    B:1-P&lt;0.5, M1=M2=0.5. The transfer phase has all the action pairs but no</span>
+<span class="sd">    feedback. This class only covers the learning phase, but models are</span>
+<span class="sd">    expected to be implemented as if there is a transfer phase.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewardProb</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                 <span class="n">learningActPairs</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>
+                 <span class="n">actRewardProb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">learningLen</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span>
+                 <span class="n">testLen</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+                 <span class="n">number_actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">rewardSize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">actRewardProb</span><span class="p">:</span>
+            <span class="n">actRewardProb</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="n">rewardProb</span><span class="p">,</span>
+                             <span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">rewardProb</span><span class="p">,</span>
+                             <span class="mi">2</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                             <span class="mi">3</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">number_actions</span><span class="p">:</span>
+            <span class="n">number_actions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ProbSelect</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rewardProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;actRewardProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">actRewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;learningActPairs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">learningActPairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;learningLen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">learningLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;testLen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">testLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;number_actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">number_actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rewardSize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardSize</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardProb</span> <span class="o">=</span> <span class="n">rewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span> <span class="o">=</span> <span class="n">actRewardProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learningActPairs</span> <span class="o">=</span> <span class="n">learningActPairs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learningLen</span> <span class="o">=</span> <span class="n">learningLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span> <span class="o">=</span> <span class="n">rewardSize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">T</span> <span class="o">=</span> <span class="n">learningLen</span> <span class="o">+</span> <span class="n">testLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span> <span class="o">=</span> <span class="n">number_actions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="n">actRewardProb</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">actT</span> <span class="o">=</span> <span class="n">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">)</span>
+
+        <span class="c1"># Recording variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
+
+<div class="viewcode-block" id="ProbSelect.next"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produces the next stimulus for the iterator</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimulus : None</span>
+<span class="sd">        nextValidActions : Tuple of length 2 of ints</span>
+<span class="sd">            The list of valid actions that the model can respond with.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+        <span class="n">nextStim</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actT</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
+
+<div class="viewcode-block" id="ProbSelect.receiveAction"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
+
+<div class="viewcode-block" id="ProbSelect.feedback"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Responds to the action from the participant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The probability of success varies depending on if it is choice</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">learningLen</span><span class="p">:</span>
+            <span class="n">actRewProb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actRewardProb</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">actRewProb</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewardSize</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reward</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;Nan&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span> <span class="o">=</span> <span class="n">reward</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">reward</span></div>
+
+<div class="viewcode-block" id="ProbSelect.proceed"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the experiment after feedback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ProbSelect.returnTaskState"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;Actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;validAct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actT</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="ProbSelect.storeState"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
+<span class="sd">        output later &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span></div></div>
+
+
+<div class="viewcode-block" id="genActSequence"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.genActSequence">[docs]</a><span class="k">def</span> <span class="nf">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
+
+    <span class="n">pairNums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">))</span>
+    <span class="n">actPairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">)</span>
+
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">pairNums</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">learningLen</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">actSeq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">actPairs</span><span class="p">[</span><span class="n">pairs</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">testLen</span><span class="p">):</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">pairNums</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">pair</span> <span class="o">=</span> <span class="p">[</span><span class="n">actPairs</span><span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">elements</span><span class="p">)]</span>
+        <span class="n">actSeq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">actSeq</span></div>
+
+
+<div class="viewcode-block" id="StimulusProbSelectDirect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.StimulusProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusProbSelectDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the selection stimuli for models expecting just the event</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; stim = StimulusProbSelectDirect()</span>
+<span class="sd">    &gt;&gt;&gt; stim.processStimulus(1)</span>
+<span class="sd">    (1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; stim.processStimulus(0)</span>
+<span class="sd">    (1, 1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StimulusProbSelectDirect.processStimulus"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.StimulusProbSelectDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span></div></div>
+
+
+<div class="viewcode-block" id="RewardProbSelectDirect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.RewardProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardProbSelectDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the probabilistic selection reward for models expecting just the reward</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RewardProbSelectDirect.processFeedback"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.RewardProbSelectDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">reward</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2020, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

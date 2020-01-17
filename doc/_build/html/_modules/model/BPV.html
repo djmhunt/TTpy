@@ -1,0 +1,349 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>model.BPV &#8212; pyHPDM 0.9.9 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for model.BPV</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="BPV"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV">[docs]</a><span class="k">class</span> <span class="nc">BPV</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;The Bayesian predictor model</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        Learning rate parameter</span>
+<span class="sd">    number_actions : integer, optional</span>
+<span class="sd">        The maximum number of valid actions the model can expect to receive.</span>
+<span class="sd">        Default 2.</span>
+<span class="sd">    number_cues : integer, optional</span>
+<span class="sd">        The initial maximum number of stimuli the model can expect to receive.</span>
+<span class="sd">         Default 1.</span>
+<span class="sd">    number_critics : integer, optional</span>
+<span class="sd">        The number of different reaction learning sets.</span>
+<span class="sd">        Default number_actions*number_cues</span>
+<span class="sd">    validRewards : list, ndarray, optional</span>
+<span class="sd">        The different reward values that can occur in the task. Default ``array([0, 1])``</span>
+<span class="sd">    action_codes : dict with string or int as keys and int values, optional</span>
+<span class="sd">        A dictionary used to convert between the action references used by the</span>
+<span class="sd">        task or dataset and references used in the models to describe the order</span>
+<span class="sd">        in which the action information is stored.</span>
+<span class="sd">    dirichletInit : float, optional</span>
+<span class="sd">        The initial values for values of the dirichlet distribution.</span>
+<span class="sd">        Normally 0, 1/2 or 1. Default 1</span>
+<span class="sd">    prior : array of floats in ``[0, 1]``, optional</span>
+<span class="sd">        Ignored in this case</span>
+<span class="sd">    stimFunc : function, optional</span>
+<span class="sd">        The function that transforms the stimulus into a form the model can</span>
+<span class="sd">        understand and a string to identify it later. Default is blankStim</span>
+<span class="sd">    rewFunc : function, optional</span>
+<span class="sd">        The function that transforms the reward into a form the model can</span>
+<span class="sd">        understand. Default is blankRew</span>
+<span class="sd">    decFunc : function, optional</span>
+<span class="sd">        The function that takes the internal values of the model and turns them</span>
+<span class="sd">        in to a decision. Default is model.decision.discrete.weightProb</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">dirichletInit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validRewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">BPV</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span> <span class="o">=</span> <span class="n">validRewards</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_cues</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))</span> <span class="o">*</span> <span class="n">dirichletInit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initDirichletVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;dirichletInit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dirichletInit</span>
+
+        <span class="c1"># Recorded information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="BPV.returnTaskState"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns all the relevant data for this model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dict</span>
+<span class="sd">            The dictionary contains a series of keys including Name,</span>
+<span class="sd">            Probabilities, Actions and Events.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;dirichletVals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="BPV.storeState"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the state of all the important variables so that they can be</span>
+<span class="sd">        accessed later</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeStandardResults</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recDirichletVals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="BPV.rewardExpectation"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate the estimated reward based on the action and stimuli</span>
+
+<span class="sd">        This contains parts that are experiment dependent</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observation : {int | float | tuple}</span>
+<span class="sd">            The set of stimuli</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        actionExpectations : array of floats</span>
+<span class="sd">            The expected rewards for each action</span>
+<span class="sd">        stimuli : list of floats</span>
+<span class="sd">            The processed observations</span>
+<span class="sd">        activeStimuli : list of [0, 1] mapping to [False, True]</span>
+<span class="sd">            A list of the stimuli that were or were not present</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimuli</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span><span class="o">.</span><span class="n">processStimulus</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+
+        <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">actionExpectations</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">activeStimuli</span></div>
+
+<div class="viewcode-block" id="BPV.delta"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.delta">[docs]</a>    <span class="k">def</span> <span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">expectation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the comparison between the reward and the expectation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reward : float</span>
+<span class="sd">            The reward value</span>
+<span class="sd">        expectation : float</span>
+<span class="sd">            The expected reward value</span>
+<span class="sd">        action : int</span>
+<span class="sd">            The chosen action</span>
+<span class="sd">        stimuli : {int | float | tuple | None}</span>
+<span class="sd">            The stimuli received</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        delta</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">modReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span><span class="o">.</span><span class="n">processFeedback</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">modReward</span></div>
+
+<div class="viewcode-block" id="BPV.updateModel"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.updateModel">[docs]</a>    <span class="k">def</span> <span class="nf">updateModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">stimuliFilter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        delta : float</span>
+<span class="sd">            The difference between the reward and the expected reward</span>
+<span class="sd">        action : int</span>
+<span class="sd">            The action chosen by the model in this trialstep</span>
+<span class="sd">        stimuli : list of float</span>
+<span class="sd">            The weights of the different stimuli in this trialstep</span>
+<span class="sd">        stimuliFilter : list of bool</span>
+<span class="sd">            A list describing if a stimulus cue is present in this trialstep</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Find the new activities</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_newExpect</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the new probabilities</span>
+        <span class="c1"># We need to combine the expectations before calculating the probabilities</span>
+        <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="n">actionExpectations</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_newExpect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span><span class="p">[</span><span class="n">delta</span><span class="p">]]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">stimuli</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+
+        <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
+        <span class="c1"># calculate the expectations associated with each action.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_cues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">actionExpectations</span><span class="p">,</span> <span class="n">actionUncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">))</span>
+            <span class="n">baselineExpectations</span><span class="p">,</span> <span class="n">baselineUncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initDirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actionExpectations</span><span class="p">,</span> <span class="n">actionUncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="n">dirichletVals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="n">baselineExpectations</span><span class="p">,</span> <span class="n">baselineUncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initDirichletVals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">baselineUncertainty</span> <span class="o">/</span> <span class="n">actionUncertainty</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">actionExpectations</span>
+
+<div class="viewcode-block" id="BPV.calcProbabilities"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.calcProbabilities">[docs]</a>    <span class="k">def</span> <span class="nf">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionValues</span><span class="p">):</span>
+        <span class="c1"># type: (ndarray) -&gt; ndarray</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the probabilities associated with the actions</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        actionValues : 1D ndArray of floats</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        probArray : 1D ndArray of floats</span>
+<span class="sd">            The probabilities associated with the actionValues</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">actionValues</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span>
+
+        <span class="n">probArray</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+
+        <span class="k">return</span> <span class="n">probArray</span></div>
+
+<div class="viewcode-block" id="BPV.actorStimulusProbs"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.actorStimulusProbs">[docs]</a>    <span class="k">def</span> <span class="nf">actorStimulusProbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates in the model-appropriate way the probability of each action.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        probabilities : 1D ndArray of floats</span>
+<span class="sd">            The probabilities associated with the action choices</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcProbabilities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedRewards</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">probabilities</span></div>
+
+<div class="viewcode-block" id="BPV.actStimMerge"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.actStimMerge">[docs]</a>    <span class="k">def</span> <span class="nf">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+
+        <span class="n">dirVals</span> <span class="o">=</span> <span class="n">dirichletVals</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">stimuli</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">actDirVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dirVals</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">actDirVals</span></div>
+
+<div class="viewcode-block" id="BPV.calcActExpectations"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.calcActExpectations">[docs]</a>    <span class="k">def</span> <span class="nf">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">):</span>
+
+        <span class="n">actExpect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">actUncertainty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">())</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">actExpect</span><span class="p">,</span> <span class="n">actUncertainty</span></div>
+
+<div class="viewcode-block" id="BPV.updateExpectations"><a class="viewcode-back" href="../../model.BPV.html#model.BPV.BPV.updateExpectations">[docs]</a>    <span class="k">def</span> <span class="nf">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">):</span>
+
+        <span class="n">expectations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meanFunc</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">expectations</span></div>
+
+    <span class="k">def</span> <span class="nf">_meanFunc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">e</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2020, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
