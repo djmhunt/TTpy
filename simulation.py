@@ -76,11 +76,11 @@ def simulation(experiment_name='Basic',
                       parameters=model_changing_properties,
                       other_options=model_constant_properties)
 
-    outputFolder, fileNameGen, closeLoggers = outputting.saving(label=sim_label,
-                                                                pickle=pickle,
-                                                                config_file=config_file,
-                                                                min_log_level=min_log_level,
-                                                                numpy_error_level=numpy_error_level)
+    output_folder, file_name_generator, close_loggers = outputting.saving(label=sim_label,
+                                                                          pickle=pickle,
+                                                                          config_file=config_file,
+                                                                          min_log_level=min_log_level,
+                                                                          numpy_error_level=numpy_error_level)
 
     logger = logging.getLogger('Overview')
 
@@ -89,21 +89,21 @@ def simulation(experiment_name='Basic',
     message = "Beginning the simulation set"
     logger.debug(message)
 
-    for expNum in experiments.iter_experiment_ID():
+    for experiment_number in experiments.iter_experiment_ID():
 
         for model in models:
 
-            exp = experiments.new_experiment(expNum)
+            exp = experiments.new_experiment(experiment_number)
 
-            logSimParams(exp.params(), model.params(), simID=str(simID))
+            log_sim_parameters(exp.params(), model.params(), simID=str(simID))
 
             message = "Beginning experiment"
             logger.debug(message)
 
             for state in exp:
                 model.observe(state)
-                act = model.action()
-                exp.receiveAction(act)
+                action = model.action()
+                exp.receiveAction(action)
                 response = exp.feedback()
                 model.feedback(response)
                 exp.proceed()
@@ -113,29 +113,29 @@ def simulation(experiment_name='Basic',
             message = "Experiment completed"
             logger.debug(message)
 
-            recordSim(fileNameGen, exp.returnTaskState(), model.returnTaskState(), str(simID), pickleData=pickle)
+            record_sim(file_name_generator, exp.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
 
             simID += 1
 
-    closeLoggers()
+    close_loggers()
 
 
-def recordSim(fileNameGen, expData, modelData, simID, pickleData=False):
+def record_sim(file_name_generator, experiment_data, model_data, simID, pickle=False):
     """
     Records the data from an experiment-model run. Creates a pickled version
 
     Parameters
     ----------
-    fileNameGen : function
+    file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
-    expData : dict
+    experiment_data : dict
         The data from the experiment
-    modelData : dict
+    model_data : dict
         The data from the model
     simID : basestring
         The label identifying the simulation
-    pickleData : bool, optional
+    pickle : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
 
@@ -153,22 +153,22 @@ def recordSim(fileNameGen, expData, modelData, simID, pickleData=False):
     message = "Store data for simulation " + simID
     logger.info(message)
 
-    simModelCSV(modelData, simID, fileNameGen)
+    csv_model_sim(model_data, simID, file_name_generator)
 
-    if pickleData:
-        outputting.pickleLog(expData, fileNameGen, "_expData" + label)
-        outputting.pickleLog(modelData, fileNameGen, "_modelData" + label)
+    if pickle:
+        outputting.pickleLog(experiment_data, file_name_generator, "_expData" + label)
+        outputting.pickleLog(model_data, file_name_generator, "_modelData" + label)
 
 
-def logSimParams(expParams, modelParams, simID):
+def log_sim_parameters(experiment_parameters, model_parameters, simID):
     """
     Writes to the log the description and the label of the experiment and model
 
     Parameters
     ----------
-    expParams : dict
+    experiment_parameters : dict
         The experiment parameters
-    modelParams : dict
+    model_parameters : dict
         The model parameters
     simID : string
         The identifier for each simulation.
@@ -178,22 +178,22 @@ def logSimParams(expParams, modelParams, simID):
     recordSimParams : Records these parameters for later use
     """
 
-    expDesc = expParams.pop('Name') + ": "
-    expDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in expParams.iteritems()]
-    expDesc += ", ".join(expDescriptors)
+    experiment_description = experiment_parameters.pop('Name') + ": "
+    experiment_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in experiment_parameters.iteritems()]
+    experiment_description += ", ".join(experiment_descriptors)
 
-    modelDesc = modelParams.pop('Name') + ": "
-    modelDescriptors = [k + ' = ' + str(v).strip('[]()') for k, v in modelParams.iteritems()]
-    modelDesc += ", ".join(modelDescriptors)
+    model_description = model_parameters.pop('Name') + ": "
+    model_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in model_parameters.iteritems()]
+    model_description += ", ".join(model_descriptors)
 
-    message = "Simulation " + simID + " contains the experiment '" + expDesc + "'."
-    message += "The model used is '" + modelDesc + "'."
+    message = "Simulation " + simID + " contains the experiment '" + experiment_description + "'."
+    message += "The model used is '" + model_description + "'."
 
-    loggerSim = logging.getLogger('Simulation')
-    loggerSim.info(message)
+    logger_sim = logging.getLogger('Simulation')
+    logger_sim.info(message)
 
 
-def simModelCSV(modelData, simID, fileNameGen):
+def csv_model_sim(modelData, simID, file_name_generator):
     # type: (dict, basestring, function) -> None
     """
     Saves the fitting data to a CSV file
@@ -204,7 +204,7 @@ def simModelCSV(modelData, simID, fileNameGen):
         The data from the model
     simID : string
         The identifier for the simulation
-    fileNameGen : function
+    file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
     """
@@ -212,7 +212,7 @@ def simModelCSV(modelData, simID, fileNameGen):
     data = outputting.newListDict(modelData)
     record = pd.DataFrame(data)
     name = "data/modelSim_" + simID
-    outputFile = fileNameGen(name, 'csv')
+    outputFile = file_name_generator(name, 'csv')
     record.to_csv(outputFile)
 
 if __name__ == '__main__':
