@@ -22,7 +22,7 @@ from collections import OrderedDict
 # The experiment factory
 from experimentGenerator import ExperimentGen
 # The experiments and stimulus processors
-from experiment.balltask import Balltask, balltaskStimulusDirect, balltaskRewardDirect
+from experiment.balltask import Balltask, stimulusSimple, rewardSimple
 
 # The model factory
 from modelGenerator import ModelGen
@@ -33,7 +33,7 @@ from model.qLearn import QLearn
 
 #%% Set the outputting, model sets and experiment sets
 expParams = {}
-#expExtraParams = {'numActions': 6,
+#expExtraParams = {'number_actions': 6,
 #                  'learningLen': 200,
 #                  'testLen': 100,
 #                  'rewardSize': 1,
@@ -47,8 +47,8 @@ expParams = {}
 expStaticArgs = {}
 expSets = ExperimentGen(Balltask, expParams, expStaticArgs)
 
-numActions = 3
-numCues = 3
+number_actions = 3
+number_cues = 3
 #repetitions = 30
 #alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
 #betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
@@ -58,14 +58,14 @@ betaSet = array([0.7])
 
 modelParameters = {'alpha': alphaSet,
                    'beta': betaSet}
-modelStaticArgs = {'numActions': numActions,
-                   'numCues': numCues,
-                   'actionCodes': {0: 0, 1: 1, 2: 2},
-                   'expect': ones((numActions, numCues)) / 2,
-                   'prior': ones(numActions) / numActions,
-                   'stimFunc': balltaskStimulusDirect(),
-                   'rewFunc': balltaskRewardDirect(),
-                   'decFunc': weightProb([0, 1, 2])}
+modelStaticArgs = {'number_actions': number_actions,
+                   'number_cues': number_cues,
+                   'action_codes': {0: 0, 1: 1, 2: 2},
+                   'expect': ones((number_actions, number_cues)) / 2,
+                   'prior': ones(number_actions) / number_actions,
+                   'stimulus_shaper_name': stimulusSimple(),
+                   'reward_shaper_name': rewardSimple(),
+                   'decision_function_name': weightProb([0, 1, 2])}
 
 modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 
@@ -75,8 +75,8 @@ from simulation import simulation
 
 simulation(expSets,
            modelSet,
-           simLabel='qLearn_balltask_simulation',
+           sim_label='qLearn_balltask_simulation',
            save=True,
            saveScript=True,
-           pickleData=True,
-           npSetErr="log") # 'raise','log'
+           pickle=True,
+           numpy_error_level="log") # 'raise','log'
