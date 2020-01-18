@@ -12,6 +12,5 @@ Code
    model
    modelGenerator
    outputting
-   outputtingUtils
    simulation
    utils

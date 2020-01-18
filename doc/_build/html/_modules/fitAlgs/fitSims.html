@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>fitAlgs.fitSims &#8212; pyHPDM 0.9 documentation</title>
+    <title>fitAlgs.fitSims &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -45,7 +45,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -57,7 +57,7 @@
 <span class="kn">import</span> <span class="nn">utils</span>
 
 
-<div class="viewcode-block" id="fitSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim">[docs]</a><span class="k">class</span> <span class="nc">fitSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim">[docs]</a><span class="k">class</span> <span class="nc">FitSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for fitting data by passing the participant data through the model.</span>
 
@@ -65,12 +65,12 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    partChoiceParam : string</span>
-<span class="sd">        The participant data key of their action choices</span>
-<span class="sd">    partRewardParam : string</span>
-<span class="sd">        The participant data key of the participant reward data</span>
-<span class="sd">    modelFitVar : string</span>
-<span class="sd">        The key to be compared in the model data</span>
+<span class="sd">    partChoiceParam : string, optional</span>
+<span class="sd">        The participant data key of their action choices. Default ``&#39;Actions&#39;``</span>
+<span class="sd">    partRewardParam : string, optional</span>
+<span class="sd">        The participant data key of the participant reward data. Default ``&#39;Rewards&#39;``</span>
+<span class="sd">    modelFitVar : string, optional</span>
+<span class="sd">        The key to be compared in the model data. Default ``&#39;ActionProb&#39;``</span>
 <span class="sd">    stimuliParams : list of strings or None, optional</span>
 <span class="sd">        The keys containing the observational parameters seen by the</span>
 <span class="sd">        participant before taking a decision on an action. Default ``None``</span>
@@ -81,15 +81,14 @@
 <span class="sd">        of actions that can be taken at each instance. Default ``None``</span>
 <span class="sd">    fpRespVal : float, optional</span>
 <span class="sd">        If a floating point error occurs when running a fit the fitter function</span>
-<span class="sd">        will return a value for each element of fpRespVal.</span>
-<span class="sd">        Default is 1/1e100</span>
-<span class="sd">    fitSubset : ``float(&#39;Nan&#39;)``, ``None``, ``&quot;rewarded&quot;`` or list of int, optional</span>
+<span class="sd">        will return a value for each element of fpRespVal. Default is ``1/1e100``</span>
+<span class="sd">    fitSubset : ``float(&#39;Nan&#39;)``, ``None``, ``&quot;rewarded&quot;``, ``&quot;unrewarded&quot;``, ``&quot;all&quot;`` or list of int, optional</span>
 <span class="sd">        Describes which, if any, subset of trials will be used to evaluate the performance of the model.</span>
-<span class="sd">        This can either be described as a list of trial numbers or, by passing ``float(&#39;Nan&#39;)`` for all those trials whose</span>
-<span class="sd">        feedback was ``float(&#39;Nan&#39;)`` or ``&quot;rewarded&quot;`` for those whose feedback was not ``float(&#39;Nan&#39;)``. Default ``None``, which means all trials</span>
-<span class="sd">        will be used.</span>
-<span class="sd">    calcCov : bool, optional</span>
-<span class="sd">        Estimating the covariance</span>
+<span class="sd">        This can either be described as a list of trial numbers or, by passing</span>
+<span class="sd">        - ``&quot;all&quot;`` for fitting all trials</span>
+<span class="sd">        - ``float(&#39;Nan&#39;)`` or ``&quot;unrewarded&quot;`` for all those trials whose feedback was ``float(&#39;Nan&#39;)``</span>
+<span class="sd">        - ``&quot;rewarded&quot;`` for those who had feedback that was not ``float(&#39;Nan&#39;)``</span>
+<span class="sd">        Default ``None``, which means all trials will be used.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -102,9 +101,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <span class="c1">## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.</span>
 
-    <span class="n">Name</span> <span class="o">=</span> <span class="s1">&#39;fitSim&#39;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partChoiceParam</span><span class="p">,</span> <span class="n">partRewardParam</span><span class="p">,</span> <span class="n">modelFitVar</span><span class="p">,</span> <span class="n">stimuliParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actChoiceParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fpRespVal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">1e100</span><span class="p">,</span> <span class="n">fitSubset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partChoiceParam</span><span class="o">=</span><span class="s1">&#39;Actions&#39;</span><span class="p">,</span>
+                 <span class="n">partRewardParam</span><span class="o">=</span><span class="s1">&#39;Rewards&#39;</span><span class="p">,</span>
+                 <span class="n">modelFitVar</span><span class="o">=</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span>
+                 <span class="n">stimuliParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fitSubset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">actChoiceParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fpRespVal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">1e100</span>
+                 <span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">partChoiceParam</span> <span class="o">=</span> <span class="n">partChoiceParam</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span> <span class="o">=</span> <span class="n">partRewardParam</span>
@@ -113,6 +117,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">partActChoiceParams</span> <span class="o">=</span> <span class="n">actChoiceParams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span> <span class="o">=</span> <span class="n">fpRespVal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fitSubset</span> <span class="o">=</span> <span class="n">fitSubset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findName</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                         <span class="s1">&#39;participantChoiceParam&#39;</span><span class="p">:</span> <span class="n">partChoiceParam</span><span class="p">,</span>
@@ -123,7 +129,7 @@
                         <span class="s1">&#39;fpRespVal&#39;</span><span class="p">:</span> <span class="n">fpRespVal</span><span class="p">,</span>
                         <span class="s1">&#39;fitSubset&#39;</span><span class="p">:</span> <span class="n">fitSubset</span><span class="p">}</span>
 
-<div class="viewcode-block" id="fitSim.fitness"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.fitness"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used by a fitter to generate the list of values characterising how well the model parameters describe the</span>
 <span class="sd">        participants actions.</span>
@@ -193,7 +199,7 @@
 
         <span class="k">return</span> <span class="n">modelPerformance</span></div>
 
-<div class="viewcode-block" id="fitSim.getSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.getSim">[docs]</a>    <span class="k">def</span> <span class="nf">getSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.getSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getSim">[docs]</a>    <span class="k">def</span> <span class="nf">getSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fit participant data to a model for a given task</span>
 
@@ -235,8 +241,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">fitSubset</span>
             <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;rewarded&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;unrewarded&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -244,7 +254,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span></div>
 
-<div class="viewcode-block" id="fitSim.participantMatchResult"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.participantMatchResult">[docs]</a>    <span class="k">def</span> <span class="nf">participantMatchResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.participantMatchResult"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.participantMatchResult">[docs]</a>    <span class="k">def</span> <span class="nf">participantMatchResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the participant data with a model with specified parameters for a given task</span>
 
@@ -278,7 +288,7 @@
 
         <span class="k">return</span> <span class="n">model</span></div>
 
-<div class="viewcode-block" id="fitSim.info"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.info"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The dictionary describing the fitters algorithm chosen</span>
 
@@ -290,7 +300,14 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span></div>
 
-<div class="viewcode-block" id="fitSim.fittedModel"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.fittedModel">[docs]</a>    <span class="k">def</span> <span class="nf">fittedModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.findName"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of the class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+<div class="viewcode-block" id="FitSim.fittedModel"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fittedModel">[docs]</a>    <span class="k">def</span> <span class="nf">fittedModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the model run of the model with specific parameter values</span>
 
@@ -312,7 +329,7 @@
 
         <span class="k">return</span> <span class="n">modelInstance</span></div>
 
-<div class="viewcode-block" id="fitSim.getModInput"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.getModInput">[docs]</a>    <span class="k">def</span> <span class="nf">getModInput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.getModInput"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModInput">[docs]</a>    <span class="k">def</span> <span class="nf">getModInput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles the kwarg model arguments based on the modelParameters and</span>
 <span class="sd">        previously specified other parameters</span>
@@ -336,7 +353,7 @@
 
         <span class="k">return</span> <span class="n">inputs</span></div>
 
-<div class="viewcode-block" id="fitSim.getModParams"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.getModParams">[docs]</a>    <span class="k">def</span> <span class="nf">getModParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.getModParams"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModParams">[docs]</a>    <span class="k">def</span> <span class="nf">getModParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles the kwarg model parameter arguments based on the</span>
 <span class="sd">        modelParameters</span>
@@ -357,7 +374,7 @@
 
         <span class="k">return</span> <span class="n">params</span></div>
 
-<div class="viewcode-block" id="fitSim.formatPartStim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.formatPartStim">[docs]</a>    <span class="k">def</span> <span class="nf">formatPartStim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partData</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.formatPartStim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.formatPartStim">[docs]</a>    <span class="k">def</span> <span class="nf">formatPartStim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partData</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds the stimuli in the participant data and returns formatted observations</span>
 
@@ -480,12 +497,12 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

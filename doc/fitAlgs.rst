@@ -1,6 +1,8 @@
 fitAlgs package
 ===============
 
+.. automodapi:: fitAlgs
+
 .. automodule:: fitAlgs
     :members:
     :undoc-members:
@@ -19,5 +21,4 @@ Submodules
    fitAlgs.leastsq
    fitAlgs.minimize
    fitAlgs.qualityFunc
-   fitAlgs.shgo
 

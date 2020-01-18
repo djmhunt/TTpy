@@ -1,36 +1,28 @@
-fitSim
+FitSim
 ======
 
 .. currentmodule:: fitAlgs.fitSims
 
-.. autoclass:: fitSim
+.. autoclass:: FitSim
    :show-inheritance:
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-
-      ~fitSim.Name
 
    .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~fitSim.fitness
-      ~fitSim.fittedModel
-      ~fitSim.formatPartStim
-      ~fitSim.getModInput
-      ~fitSim.getModParams
-      ~fitSim.getSim
-      ~fitSim.info
-      ~fitSim.participantMatchResult
-
-   .. rubric:: Attributes Documentation
-
-   .. autoattribute:: Name
+      ~FitSim.findName
+      ~FitSim.fitness
+      ~FitSim.fittedModel
+      ~FitSim.formatPartStim
+      ~FitSim.getModInput
+      ~FitSim.getModParams
+      ~FitSim.getSim
+      ~FitSim.info
+      ~FitSim.participantMatchResult
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: findName
    .. automethod:: fitness
    .. automethod:: fittedModel
    .. automethod:: formatPartStim

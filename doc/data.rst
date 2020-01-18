@@ -7,4 +7,3 @@ data module
     :members:
     :undoc-members:
     :show-inheritance:
-

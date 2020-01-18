@@ -5,6 +5,7 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import pytest
+import os
 
 import numpy as np
 
@@ -27,6 +28,14 @@ def listMerTestData():
                        [-1, -1, -1,  0,  0,  0,  1,  1,  1]])
     
     return interSets, answer
+
+#%% For folderSetup
+class TestClass_folderSetup:
+    def test_folderSetup(self, tmpdir):
+        path = tmpdir.mkdir("data")
+        path_str = str(path).replace('\\', '/')
+        folder = utils.folderSetup('test', path=path_str)
+        assert os.path.exists(folder)
 
 #%% For listMergeGen
 class TestClass_listMergeGen:
@@ -66,32 +75,32 @@ class TestClass_movingaverage:
     def test_MA_1(self):
         result = utils.movingaverage([1, 1, 1, 1, 1], 3)
         correct_result = np.array([0.66666667, 1, 1, 1, 0.66666667])
-        assert (result == correct_result).all()
+        np.testing.assert_array_almost_equal(result, correct_result)
 
     def test_MA_2(self):
         result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4)
         correct_result = np.array([0.5, 0.75, 1., 1., 1., 1., 1., 0.75])
-        assert (result == correct_result).all()
+        np.testing.assert_array_equal(result, correct_result)
 
     def test_MA_edge(self):
         result = utils.movingaverage([1, 1, 1, 1, 1], 3, edgeCorrection=True)
         correct_result = np.array([1., 1., 1., 1., 1.])
-        assert (result == correct_result).all()
+        np.testing.assert_array_equal(result, correct_result)
 
     def test_MA_edge2(self):
         result = utils.movingaverage([1, 2, 3, 4, 5], 3, edgeCorrection=True)
         correct_result = np.array([1.5, 2., 3., 4., 4.5])
-        assert (result == correct_result).all()
+        np.testing.assert_array_almost_equal(result, correct_result)
 
     def test_MA_edge3(self):
         result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1], 4, edgeCorrection=True)
         correct_result = np.array([1., 1., 1., 1., 1., 1., 1., 1.])
-        assert (result == correct_result).all()
+        np.testing.assert_array_equal(result, correct_result)
 
     def test_MA_edge4(self):
         result = utils.movingaverage([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 7, edgeCorrection=True)
-        correct_result = np.array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
-        assert (result == correct_result).all()
+        correct_result = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+        np.testing.assert_array_almost_equal(result, correct_result)
 
 
 #%% For errorResp

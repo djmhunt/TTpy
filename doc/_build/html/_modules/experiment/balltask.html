@@ -1,0 +1,261 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>experiment.balltask &#8212; pyHPDM 0.9.9 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for experiment.balltask</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">pyhpdm version of the balltask experiment</span>
+<span class="sd">TODO: describe experiment</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
+
+<div class="viewcode-block" id="Balltask"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask">[docs]</a><span class="k">class</span> <span class="nc">Balltask</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+    <span class="c1"># TODO: Describe parameters</span>
+    <span class="c1"># each bag always contains balls of same color</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbr_of_bags</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">bag_colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">],</span> <span class="n">balls_per_bag</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Balltask</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># TODO: change nbr_of_bags default to 90</span>
+        
+        <span class="c1"># check for counterbalance</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">nbr_of_bags</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">bag_colors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;nbr of bags should be multiple of color count&quot;</span>
+        
+        <span class="n">bag_sequence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">bag_colors</span><span class="p">,</span> <span class="n">nbr_of_bags</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">bag_colors</span><span class="p">))</span>
+        <span class="n">bag_sequence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">bag_sequence</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;nbr_of_bags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbr_of_bags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;bag_colors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bag_colors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;balls_per_bag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">balls_per_bag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;bag_sequence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bag_sequence</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;nbr_of_trials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbr_of_bags</span> <span class="o">*</span> <span class="n">balls_per_bag</span>
+
+        <span class="c1"># variables internal to an experiment instance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bag</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ballcolor</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="c1">#        self.reward = None</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_history</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;nbr_of_trials&#39;</span><span class="p">]</span>
+<span class="c1">#        self.reward_history = [-1] * self.parameters[&#39;nbr_of_trials&#39;]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball_history</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;nbr_of_trials&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Balltask.next"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produces the next stimulus for the iterator</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimulus : None</span>
+<span class="sd">        nextValidActions : (0, 1, 2) representing red, green, blue in default case</span>
+<span class="sd">            but can be many colors. it&#39;s assumed this always goes in same order</span>
+<span class="sd">            left to right as bag_colors parameter</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;nbr_of_trials&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+        <span class="c1"># on first trial, bag is 0, go to next bag when all balls in bag are shown</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bag</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;balls_per_bag&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bag</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">next_stimulus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;bag_sequence&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">bag</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ballcolor</span> <span class="o">=</span> <span class="n">next_stimulus</span>
+        
+        <span class="n">valid_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;bag_colors&#39;</span><span class="p">]))</span>
+        <span class="n">next_valid_actions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">valid_actions</span><span class="p">)</span>  <span class="c1"># (0, 1, 2) for RGB</span>
+<span class="c1">#        next_valid_actions = tuple(self.parameters[&#39;bag_colors&#39;])</span>
+
+        <span class="k">return</span> <span class="n">next_stimulus</span><span class="p">,</span> <span class="n">next_valid_actions</span></div>
+
+<div class="viewcode-block" id="Balltask.receiveAction"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
+
+<div class="viewcode-block" id="Balltask.feedback"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Responds to the action from the participant</span>
+<span class="sd">        balltask has no rewards so we return None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Balltask.proceed"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the experiment after feedback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Balltask.returnTaskState"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        history : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">history</span><span class="p">[</span><span class="s1">&#39;participant_actions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_history</span><span class="p">)</span>
+        <span class="n">history</span><span class="p">[</span><span class="s1">&#39;ballcolor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ball_history</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">history</span></div>
+
+<div class="viewcode-block" id="Balltask.storeState"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
+<span class="sd">        output later</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_history</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ball_history</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ballcolor</span></div></div>
+
+
+<div class="viewcode-block" id="StimulusBalltaskSimple"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.StimulusBalltaskSimple">[docs]</a><span class="k">class</span> <span class="nc">StimulusBalltaskSimple</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the stimulus cues for models expecting just the event</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO! change below to work for more colors than 3</span>
+
+<div class="viewcode-block" id="StimulusBalltaskSimple.processStimulus"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.StimulusBalltaskSimple.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">            The elements present of the stimulus</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+<span class="sd">            The activity of each of the elements</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">observation</span> <span class="o">==</span> <span class="s2">&quot;red&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">observation</span> <span class="o">==</span> <span class="s2">&quot;green&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">observation</span> <span class="o">==</span> <span class="s2">&quot;blue&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RewardBalltaskDirect"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.RewardBalltaskDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardBalltaskDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Processes the reward for models expecting just the reward</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RewardBalltaskDirect.processFeedback"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.RewardBalltaskDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">feedback</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2020, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

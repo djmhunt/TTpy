@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>modelGenerator &#8212; pyHPDM 0.9 documentation</title>
+    <title>modelGenerator &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -45,15 +45,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 
 <div class="viewcode-block" id="ModelGen"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen">[docs]</a><span class="k">class</span> <span class="nc">ModelGen</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -63,29 +64,117 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    model :  model.modelTemplate.Model</span>
-<span class="sd">    parameters : dictionary containing floats or lists of floats</span>
+<span class="sd">    model_name : string</span>
+<span class="sd">        The name of the file where a model.modelTemplate.Model class can be found</span>
+<span class="sd">    parameters : dictionary containing floats or lists of floats, optional</span>
 <span class="sd">        Parameters are the options that you are or are likely to change across </span>
 <span class="sd">        model instances. When a parameter contains a list, an instance of the </span>
 <span class="sd">        model will be created for every combination of this parameter with </span>
-<span class="sd">        all the others.</span>
-<span class="sd">    otherOptions : dictionary of float, string or binary valued elements</span>
+<span class="sd">        all the others. Default ``None``</span>
+<span class="sd">    other_options : dictionary of float, string or binary valued elements, optional</span>
 <span class="sd">        These contain all the the model options that define the version </span>
-<span class="sd">        of the model being studied.</span>
+<span class="sd">        of the model being studied. Default ``None``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelClass</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">otherOptions</span> <span class="o">=</span> <span class="n">otherOptions</span>
+        <span class="n">model_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span>
+                                       <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span>
+                                       <span class="n">inherited_class</span><span class="o">=</span><span class="n">Model</span><span class="p">,</span>
+                                       <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;modelTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;modelGenerator&#39;</span><span class="p">])</span>
+        <span class="n">valid_model_args</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">model_class</span><span class="p">)</span>
+        <span class="n">valid_args</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">valid_model_args</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelDetailList</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramCombList</span> <span class="o">=</span> <span class="n">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;stimulus_shaper_name&#39;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;This system has not been created for changing stimulus shapers. Please put it in the ``other_options``&quot;</span><span class="p">)</span>
+        <span class="n">stimulus_shaper_name</span> <span class="o">=</span> <span class="n">other_options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;stimulus_shaper_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stimulus_shaper_name</span><span class="p">:</span>
+            <span class="n">stimFunc</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span>
+                                        <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;experiment&#39;</span><span class="p">,</span>
+                                        <span class="n">inherited_class</span><span class="o">=</span><span class="n">Stimulus</span><span class="p">,</span>
+                                        <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;experimentTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;experimentGenerator&#39;</span><span class="p">])</span>
+            <span class="n">valid_stimulus_args</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassAttributes</span><span class="p">(</span><span class="n">stimFunc</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;processStimulus&#39;</span><span class="p">])</span>
+            <span class="n">valid_args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">valid_stimulus_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stimFunc</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">countLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelDetailList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;reward_shaper_name&#39;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;This system has not been created for changing reward shapers. Please put it in the ``other_options``&quot;</span><span class="p">)</span>
+        <span class="n">reward_shaper_name</span> <span class="o">=</span> <span class="n">other_options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;reward_shaper_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reward_shaper_name</span><span class="p">:</span>
+            <span class="n">rewardFunc</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span>
+                                          <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;experiment&#39;</span><span class="p">,</span>
+                                          <span class="n">inherited_class</span><span class="o">=</span><span class="n">Rewards</span><span class="p">,</span>
+                                          <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;experimentTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;experimentGenerator&#39;</span><span class="p">])</span>
+            <span class="n">valid_reward_args</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassAttributes</span><span class="p">(</span><span class="n">rewardFunc</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;processFeedback&#39;</span><span class="p">])</span>
+            <span class="n">valid_args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">valid_reward_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rewardFunc</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;decision_function_name&#39;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s2">&quot;This system has not been created for changing decision functions. Please put it in the ``other_options``&quot;</span><span class="p">)</span>
+        <span class="n">decision_function_name</span> <span class="o">=</span> <span class="n">other_options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;decision_function_name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">decision_function_name</span><span class="p">:</span>
+            <span class="n">decisionFunc</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_function</span><span class="p">(</span><span class="n">decision_function_name</span><span class="p">,</span> <span class="s1">&#39;model/decision&#39;</span><span class="p">)</span>
+            <span class="n">valid_decision_args</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getFuncArgs</span><span class="p">(</span><span class="n">decisionFunc</span><span class="p">)</span>
+            <span class="n">valid_args</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">valid_decision_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">decisionFunc</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span> <span class="o">=</span> <span class="n">model_class</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">parameter_keys</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameter_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                    <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid property for model ``</span><span class="si">{}</span><span class="s1">``. Those available are </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span>
+                                                                                                 <span class="n">valid_args</span><span class="p">))</span>
+
+        <span class="n">parameter_combinations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">parameter_keys</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+            <span class="n">parameter_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_combinations</span> <span class="o">=</span> <span class="n">parameter_combinations</span>
+
+        <span class="k">if</span> <span class="n">other_options</span><span class="p">:</span>
+            <span class="n">checked_options</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other_options</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_args</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid property for model ``</span><span class="si">{}</span><span class="s1">``. Those available are </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span>
+                                                                                                                <span class="n">model_name</span><span class="p">,</span>
+                                                                                                                <span class="n">valid_args</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameter_keys</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;model parameter </span><span class="si">{}</span><span class="s2"> has been defined twice&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">checked_options</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span> <span class="o">=</span> <span class="n">checked_options</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;stimulus_shaper_properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_stimulus_args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;reward_shaper_properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_reward_args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;decision_function_properties&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_decision_args</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">stimFunc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;stimulus_shaper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stimFunc</span>
+        <span class="k">if</span> <span class="n">rewardFunc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;reward_shaper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewardFunc</span>
+        <span class="k">if</span> <span class="n">decisionFunc</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">[</span><span class="s1">&#39;decision_function&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decisionFunc</span>
+
+        <span class="k">if</span> <span class="n">parameter_combinations</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_max</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameter_combinations</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count_max</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Returns the iterator for the creation of models</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -104,14 +193,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">countLen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_max</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">StopIteration</span>
 
-        <span class="n">record</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelDetailList</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">]</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_combinations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">])</span>
+        <span class="n">other_options</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">other_options</span><span class="p">)</span>
+        <span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other_options</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modelClass</span><span class="p">(</span><span class="o">**</span><span class="n">record</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">(</span><span class="o">**</span><span class="n">properties</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ModelGen.iterInitDetails"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen.iterInitDetails">[docs]</a>    <span class="k">def</span> <span class="nf">iterInitDetails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ModelGen.iter_details"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.ModelGen.iter_details">[docs]</a>    <span class="k">def</span> <span class="nf">iter_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Yields a list containing a model object and parameters to initialise them</span>
 <span class="sd">        </span>
@@ -121,51 +212,11 @@
 <span class="sd">            The model to be initialised</span>
 <span class="sd">        parameters : ordered dictionary of floats or bools</span>
 <span class="sd">            The model instance parameters</span>
-<span class="sd">        otherOptions : dictionary of floats, strings and binary values</span>
+<span class="sd">        other_options : dictionary of floats, strings and binary values</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramCombList</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelClass</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otherOptions</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="params"><a class="viewcode-back" href="../modelGenerator.html#modelGenerator.params">[docs]</a><span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">otherOptions</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    For the given model returns a list of all that goes in to the model.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    parameters : dictionary of floats or lists of floats</span>
-<span class="sd">        Parameters are the options that you are or are likely to change across model instances. When a parameter contains a list, an instance</span>
-<span class="sd">        of the model will be created for every combination of this parameter with all the other parameters.</span>
-<span class="sd">    otherOptions : dictionary of float, string or binary valued elements</span>
-<span class="sd">        These contain all the the model options that describe the model being studied but do not vary across model instances.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    modelDetails : list of dict</span>
-<span class="sd">        Each dict contains the full set of arguments needed to initialise the model instance</span>
-<span class="sd">    paramCombDicts : list of dicts</span>
-<span class="sd">        A list of dictionaries containing the parameter combinations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">parameters</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">otherOptions</span><span class="p">]</span>
-
-    <span class="n">paramKeys</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-    <span class="n">paramValues</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-
-    <span class="n">paramCombs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="n">paramValues</span><span class="p">)</span>
-
-    <span class="n">modelDetailList</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">paramCombDicts</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paramCombs</span><span class="p">:</span>
-        <span class="n">paramComb</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">paramKeys</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">otherOptions</span><span class="p">)</span>
-        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">paramComb</span><span class="p">)</span>
-        <span class="n">paramCombDicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paramComb</span><span class="p">)</span>
-        <span class="n">modelDetailList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">modelDetailList</span><span class="p">,</span> <span class="n">paramCombDicts</span></div>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_combinations</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_options</span></div></div>
 </pre></div>
 
           </div>
@@ -198,12 +249,12 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

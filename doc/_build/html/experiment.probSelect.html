@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.probSelect module &#8212; pyHPDM 0.9 documentation</title>
+    <title>experiment.probSelect module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="experiment.pavlov.html" title="experiment.pavlov module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="experiment.html" accesskey="U">experiment package</a> &#187;</li> 
       </ul>
     </div>  
@@ -65,7 +65,7 @@ doi:10.1073/pnas.0706111104</td>
 </table>
 <dl class="class">
 <dt id="experiment.probSelect.ProbSelect">
-<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">ProbSelect</code><span class="sig-paren">(</span><em>rewardProb=0.7, learningActPairs=[(0, 1), (2, 3)], actRewardProb=None, learningLen=240, testLen=60, numActions=None, rewardSize=1, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">ProbSelect</code><span class="sig-paren">(</span><em>rewardProb=0.7, learningActPairs=[(0, 1), (2, 3)], actRewardProb=None, learningLen=240, testLen=60, number_actions=None, rewardSize=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#ProbSelect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.ProbSelect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment" title="experiment.experimentTemplate.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">experiment.experimentTemplate.Experiment</span></code></a></p>
 <dl class="docutils">
 <dt>Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</dt>
@@ -103,7 +103,7 @@ Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}</li>
 <li><strong>learningLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of trials in the learning phase. Default is 240</li>
 <li><strong>testLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of trials in the test phase. Default is 60</li>
 <li><strong>rewardSize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The size of reward given if successful. Default 1</li>
-<li><strong>numActions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of actions that can be chosen at any given time, chosen at
+<li><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of actions that can be chosen at any given time, chosen at
 random from actRewardProb. Default 4</li>
 </ul>
 </td>
@@ -188,90 +188,65 @@ output later</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="experiment.probSelect.RewardProbSelectDirect">
+<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">RewardProbSelectDirect</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#RewardProbSelectDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.RewardProbSelectDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Rewards" title="model.modelTemplate.Rewards"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Rewards</span></code></a></p>
+<p>Processes the probabilistic selection reward for models expecting just the reward</p>
+<dl class="method">
+<dt id="experiment.probSelect.RewardProbSelectDirect.processFeedback">
+<code class="descname">processFeedback</code><span class="sig-paren">(</span><em>reward</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#RewardProbSelectDirect.processFeedback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.RewardProbSelectDirect.processFeedback" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">modelFeedback</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="experiment.probSelect.StimulusProbSelectDirect">
+<em class="property">class </em><code class="descclassname">experiment.probSelect.</code><code class="descname">StimulusProbSelectDirect</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#StimulusProbSelectDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.StimulusProbSelectDirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Stimulus" title="model.modelTemplate.Stimulus"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Stimulus</span></code></a></p>
+<p>Processes the selection stimuli for models expecting just the event</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span> <span class="o">=</span> <span class="n">StimulusProbSelectDirect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="o">.</span><span class="n">processStimulus</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(1, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="o">.</span><span class="n">processStimulus</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(1, 1)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="experiment.probSelect.StimulusProbSelectDirect.processStimulus">
+<code class="descname">processStimulus</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#StimulusProbSelectDirect.processStimulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.StimulusProbSelectDirect.processStimulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the decks stimuli for models expecting just the event</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>stimuliPresent</strong> (<em>int or list of int</em>)</li>
+<li><strong>stimuliActivity</strong> (<em>float or list of float</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="experiment.probSelect.genActSequence">
 <code class="descclassname">experiment.probSelect.</code><code class="descname">genActSequence</code><span class="sig-paren">(</span><em>actRewardProb</em>, <em>learningActPairs</em>, <em>learningLen</em>, <em>testLen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#genActSequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.genActSequence" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="function">
-<dt id="experiment.probSelect.probSelectRewDirect">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">probSelectRewDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelectRewDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelectRewDirect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the probabilistic selection reward for models expecting just the reward</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probSelectRew</strong> – The function expects to be passed a tuple containing the reward and the
-last action. The function returns the reward.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt id="experiment.probSelect.Name">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">Name</code><a class="headerlink" href="#experiment.probSelect.Name" title="Permalink to this definition">¶</a></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">model.QLearn2()</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="experiment.probSelect.probSelectStimDirect">
-<code class="descclassname">experiment.probSelect.</code><code class="descname">probSelectStimDirect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/experiment/probSelect.html#probSelectStimDirect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#experiment.probSelect.probSelectStimDirect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processes the selection stimuli for models expecting just the event</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>deckStim</strong> – The function expects to be passed a tuple containing the event and the
-last action. The event is an int and the action is {0,1}. The
-function returns a list of length 2.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">function</td>
-</tr>
-</tbody>
-</table>
-<dl class="attribute">
-<dt>
-<code class="descclassname">experiment.probSelect.</code><code class="descname">Name</code></dt>
-<dd><p>The identifier of the function</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="model.OpAL.html#module-model.OpAL" title="model.OpAL"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.OpAL()</span></code></a></p>
-</div>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">experiment.probSelect</span> <span class="k">import</span> <span class="n">probSelectStimDirect</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span> <span class="o">=</span> <span class="n">probSelectStimDirect</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">(1, 1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stim</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">(1, 1)</span>
-</pre></div>
-</div>
-</dd></dl>
 
 </div>
 
@@ -325,12 +300,12 @@ function returns a list of length 2.</td>
         <li class="right" >
           <a href="experiment.pavlov.html" title="experiment.pavlov module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="experiment.html" >experiment package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

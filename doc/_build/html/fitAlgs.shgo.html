@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>fitAlgs.shgo module &#8212; pyHPDM 0.9 documentation</title>
+    <title>fitAlgs.shgo module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -19,9 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="outputting module" href="outputting.html" />
-    <link rel="prev" title="simpleSum" href="api/fitAlgs.qualityFunc.simpleSum.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,14 +30,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="outputting.html" title="outputting module"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="api/fitAlgs.qualityFunc.simpleSum.html" title="simpleSum"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="fitAlgs.html" accesskey="U">fitAlgs package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -60,18 +51,18 @@
 </table>
 <dl class="class">
 <dt id="fitAlgs.shgo.shgo">
-<em class="property">class </em><code class="descclassname">fitAlgs.shgo.</code><code class="descname">shgo</code><span class="sig-paren">(</span><em>fitSim</em>, <em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#fitAlgs.shgo.shgo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.fitAlg" title="fitAlgs.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></a></p>
+<em class="property">class </em><code class="descclassname">fitAlgs.shgo.</code><code class="descname">shgo</code><span class="sig-paren">(</span><em>strategy=u'simplicial'</em>, <em>localStrategy=u'COBYLA'</em>, <em>constraints=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/shgo.html#shgo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.shgo.shgo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.shgo</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualityFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns provides the fitter with its fitting guide.
 Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>qualFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>qualityFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
 <li><strong>strategy</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting strategy or list of names of fitting strategies or
 name of list of fitting strategies. Valid names found in the notes.
 Default <code class="docutils literal notranslate"><span class="pre">best1bin</span></code></li>
@@ -143,22 +134,17 @@ For all strategies, use ‘all’</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.fitAlg" title="fitAlgs.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></dt>
 <dd>The general fitting strategy class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim" title="fitAlgs.fitSims.fitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></dt>
 <dd>The general fit simulation class</dd>
 <dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.shgo</span></code></dt>
 <dd>The fitter class this wraps around</dd>
 </dl>
 </div>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'shgo'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="fitAlgs.shgo.shgo.callback">
-<code class="descname">callback</code><span class="sig-paren">(</span><em>xk</em>, <em>convergence</em><span class="sig-paren">)</span><a class="headerlink" href="#fitAlgs.shgo.shgo.callback" title="Permalink to this definition">¶</a></dt>
+<code class="descname">callback</code><span class="sig-paren">(</span><em>xk</em>, <em>convergence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/shgo.html#shgo.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.shgo.shgo.callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for storing the state after each stage of fit</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -176,7 +162,7 @@ For all strategies, use ‘all’</p>
 
 <dl class="method">
 <dt id="fitAlgs.shgo.shgo.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="headerlink" href="#fitAlgs.shgo.shgo.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/shgo.html#shgo.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.shgo.shgo.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters and returns the best one.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -228,12 +214,6 @@ iteration, stored in two lists.</li>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="api/fitAlgs.qualityFunc.simpleSum.html"
-                        title="previous chapter">simpleSum</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="outputting.html"
-                        title="next chapter">outputting module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -266,18 +246,11 @@ iteration, stored in two lists.</li>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="outputting.html" title="outputting module"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="api/fitAlgs.qualityFunc.simpleSum.html" title="simpleSum"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="fitAlgs.html" >fitAlgs package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

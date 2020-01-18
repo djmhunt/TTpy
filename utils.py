@@ -97,23 +97,29 @@ def folderSetup(simDescription, path='./'):
 
     Returns
     -------
-    folderName : string
+    folder_name : string
         The path to the folder
     """
 
     # While the folders have already been created, check for the next one
-    folderName = path + 'Outputs/' + date + "_" + simDescription
-    if os.path.exists(folderName):
+    if path[-1] not in ['\\', '/']:
+        outputs = '/Outputs/'
+    else:
+        outputs = 'Outputs/'
+    folder_name = path + outputs + date() + "_" + simDescription
+    if os.path.exists(folder_name):
         i = 1
-        folderName += '_no_'
-        while os.path.exists(folderName + str(i)):
+        folder_name += '_no_'
+        while os.path.exists(folder_name + str(i)):
             i += 1
-        folderName += str(i)
+        folder_name += str(i)
 
-    folderName += "/"
-    os.makedirs(folderName + 'Pickle/')
+    folder_name += "/"
 
-    return folderName
+    # TODO : remove the automatic construction of Pickle and make it dependent on the saving of Pickle data
+    os.makedirs(folder_name + 'Pickle/')
+
+    return folder_name
 
 
 def saving(save, label):
@@ -829,7 +835,7 @@ def unique(seq, idfun=None):
 
 
 def movingaverage(data, windowSize, edgeCorrection=False):
-    # type: (List[float], int, Optional[bool]) -> ndarray
+    # type: (list[float], int, Optional[bool]) -> np.ndarray
     """
     Average over an array
 
