@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>outputting &#8212; pyHPDM 0.9 documentation</title>
+    <title>outputting &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -45,7 +45,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -61,30 +61,27 @@
 
 <span class="kn">import</span> <span class="nn">utils</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
 
 
 <span class="c1">#%% Folder management</span>
-<div class="viewcode-block" id="saving"><a class="viewcode-back" href="../outputting.html#outputting.saving">[docs]</a><span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveScript</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">npSetErr</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="saving"><a class="viewcode-back" href="../outputting.html#outputting.saving">[docs]</a><span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the folder structure for the saved data and created the log file as ``log.txt``</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    label : string, optional</span>
-<span class="sd">        The label for the simulation</span>
-<span class="sd">    save : bool, optional</span>
-<span class="sd">        If true the data will be saved to files. Default ``True``</span>
-<span class="sd">    pickleData : bool, optional</span>
+<span class="sd">        The label for the simulation. Default ``None`` will mean no data is saved to files.</span>
+<span class="sd">    pickle : bool, optional</span>
 <span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
 <span class="sd">        Default is ``False``</span>
-<span class="sd">    saveScript : bool, optional</span>
-<span class="sd">        If true a copy of the top level script running the current function</span>
-<span class="sd">        will be copied to the log folder. Only works if save is set to ``True``</span>
-<span class="sd">        Default ``True``</span>
-<span class="sd">    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}</span>
-<span class="sd">        Defines the level of the log. Default ``logging.INFO``</span>
-<span class="sd">    npSetErr : {&#39;log&#39;, &#39;raise&#39;}</span>
+<span class="sd">    config_file : string, optional</span>
+<span class="sd">        The file name and path of a ``.yaml`` configuration file. Default ``None``</span>
+<span class="sd">    min_log_level : basestring, optional</span>
+<span class="sd">        Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``</span>
+<span class="sd">        See https://docs.python.org/3/library/logging.html#levels</span>
+<span class="sd">    numpy_error_level : {&#39;log&#39;, &#39;raise&#39;}</span>
 <span class="sd">        Defines the response to numpy errors. Default ``log``. See numpy.seterr</span>
 
 <span class="sd">    Returns</span>
@@ -102,28 +99,32 @@
 <span class="sd">    folderSetup : creates the folders</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dateStr</span> <span class="o">=</span> <span class="n">date</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
-        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderSetup</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">dateStr</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickleData</span><span class="p">,</span> <span class="n">basePath</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="n">saveLabel</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderSetup</span><span class="p">(</span><span class="n">saveLabel</span><span class="p">,</span> <span class="n">dateStr</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span> <span class="n">basePath</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">fileNameGen</span> <span class="o">=</span> <span class="n">fileNameGenerator</span><span class="p">(</span><span class="n">outputFolder</span><span class="p">)</span>
         <span class="n">logFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">saveScript</span><span class="p">:</span>
-            <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">():</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;outputting(&quot;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cwd</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s2">&quot;outputting.py&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">p</span><span class="p">):</span>
-                    <span class="n">shu</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">)</span>
-                    <span class="k">break</span>
+        <span class="k">if</span> <span class="n">config_file</span><span class="p">:</span>
+            <span class="n">shu</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">saveLabel</span> <span class="o">=</span> <span class="s1">&#39;Untitled&#39;</span>
         <span class="n">outputFolder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">logFile</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">fileNameGen</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">closeLoggers</span> <span class="o">=</span> <span class="n">fancyLogger</span><span class="p">(</span><span class="n">dateStr</span><span class="p">,</span> <span class="n">logFile</span><span class="o">=</span><span class="n">logFile</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">logLevel</span><span class="p">,</span> <span class="n">npErrResp</span><span class="o">=</span><span class="n">npSetErr</span><span class="p">)</span>
+    <span class="n">possible_log_levels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;DEBUG&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+                           <span class="s1">&#39;INFO&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                           <span class="s1">&#39;WARNING&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+                           <span class="s1">&#39;ERROR&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                           <span class="s1">&#39;CRITICAL&#39;</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">}</span>
+    <span class="n">log_level</span> <span class="o">=</span> <span class="n">possible_log_levels</span><span class="p">[</span><span class="n">min_log_level</span><span class="p">]</span>
+
+    <span class="n">closeLoggers</span> <span class="o">=</span> <span class="n">fancyLogger</span><span class="p">(</span><span class="n">dateStr</span><span class="p">,</span> <span class="n">logFile</span><span class="o">=</span><span class="n">logFile</span><span class="p">,</span> <span class="n">logLevel</span><span class="o">=</span><span class="n">log_level</span><span class="p">,</span> <span class="n">npErrResp</span><span class="o">=</span><span class="n">numpy_error_level</span><span class="p">)</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment labelled: &quot;</span> <span class="o">+</span> <span class="n">label</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Beginning experiment labelled: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">saveLabel</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">closeLoggers</span></div>
@@ -133,12 +134,12 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Identifies and creates the folder the data will be stored in</span>
 
-<span class="sd">    Folder will be created as &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;/&quot;. If that had</span>
+<span class="sd">    Folder will be created as &quot;./Outputs/&lt;sim_label&gt;_&lt;date&gt;/&quot;. If that had</span>
 <span class="sd">    previously been created then it is created as</span>
-<span class="sd">    &quot;./Outputs/&lt;simLabel&gt;_&lt;date&gt;_no_&lt;#&gt;/&quot;, where &quot;&lt;#&gt;&quot; is the first</span>
+<span class="sd">    &quot;./Outputs/&lt;sim_label&gt;_&lt;date&gt;_no_&lt;#&gt;/&quot;, where &quot;&lt;#&gt;&quot; is the first</span>
 <span class="sd">    available integer.</span>
 
-<span class="sd">    A subfolder is also created with the name ``Pickle`` if  pickleData is</span>
+<span class="sd">    A subfolder is also created with the name ``Pickle`` if  pickle is</span>
 <span class="sd">    true.</span>
 
 <span class="sd">    Parameters</span>
@@ -157,12 +158,6 @@
 <span class="sd">    -------</span>
 <span class="sd">    folderName : string</span>
 <span class="sd">        The folder path that has just been created</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; newFolder = outputting.folderSetup(&quot;a&quot;,&quot;today&quot;, basePath=&quot;.&quot;)</span>
-<span class="sd">    &gt;&gt;&gt; newFolder</span>
-<span class="sd">    &#39;./Outputs/a_today/&#39;</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -211,14 +206,14 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; fileNameGen = outputting.fileNameGenerator(&quot;./&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; fileNameGen = fileNameGenerator(&quot;./&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; fileNameGen(&quot;a&quot;, &quot;b&quot;)</span>
 <span class="sd">    &#39;./a.b&#39;</span>
 <span class="sd">    &gt;&gt;&gt; fileNameGen(&quot;a&quot;, &quot;b&quot;)</span>
 <span class="sd">    &#39;./a_1.b&#39;</span>
 <span class="sd">    &gt;&gt;&gt; fileNameGen(&quot;&quot;, &quot;&quot;)</span>
 <span class="sd">    &#39;./&#39;</span>
-<span class="sd">    &gt;&gt;&gt; fileNameGen = outputting.fileNameGenerator()</span>
+<span class="sd">    &gt;&gt;&gt; fileNameGen = fileNameGenerator()</span>
 <span class="sd">    &gt;&gt;&gt; fileName = fileNameGen(&quot;&quot;, &quot;&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; fileName == os.getcwd()</span>
 <span class="sd">    True</span>
@@ -306,7 +301,7 @@
 <span class="sd">        Based on one found at:</span>
 <span class="sd">            http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">linebuf</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
@@ -434,72 +429,7 @@
 
 
 <span class="c1">#%% Utils</span>
-<div class="viewcode-block" id="reframeListDicts"><a class="viewcode-back" href="../outputting.html#outputting.reframeListDicts">[docs]</a><span class="k">def</span> <span class="nf">reframeListDicts</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">keySet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">storeLabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Take a list of dictionaries and turn it into a dictionary of lists</span>
-<span class="sd">    containing only the useful keys</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    store : list of dicts</span>
-<span class="sd">        The dictionaries would be expected to have many of the same keys</span>
-<span class="sd">    keySet : list of strings, optional</span>
-<span class="sd">        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being included</span>
-<span class="sd">    storeLabel : string, optional</span>
-<span class="sd">        An identifier to be added to the beginning of each key string.</span>
-<span class="sd">        Default is &#39;&#39;.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    newStore : dict of 1D lists</span>
-<span class="sd">        Any dictionary keys containing lists in the input have been split</span>
-<span class="sd">        into multiple numbered keys</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    flatDictKeySet, newFlatDict</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">keySet</span> <span class="o">=</span> <span class="n">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">keySet</span><span class="o">=</span><span class="n">keySet</span><span class="p">)</span>
-
-    <span class="c1"># For every key now found</span>
-    <span class="n">newStore</span> <span class="o">=</span> <span class="n">newFlatDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">newStore</span></div>
-
-
-<div class="viewcode-block" id="dictData2Lists"><a class="viewcode-back" href="../outputting.html#outputting.dictData2Lists">[docs]</a><span class="k">def</span> <span class="nf">dictData2Lists</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Take a dictionary of arrays, values and lists and turn it into a dictionary of lists</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    store : list of dicts</span>
-<span class="sd">        The dictionaries would be expected to have many of the same keys</span>
-<span class="sd">    storeLabel : string, optional</span>
-<span class="sd">        An identifier to be added to the beginning of each key string.</span>
-<span class="sd">        Default is &#39;&#39;.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    newStore : dict of 1D lists</span>
-<span class="sd">        Any dictionary keys containing arrays in the input have been split</span>
-<span class="sd">        into multiple numbered keys</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    flatDictKeySet, newFlatDict</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">listDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-
-    <span class="c1"># For every key now found</span>
-    <span class="n">newStore</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">storeLabel</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">newStore</span></div>
-
-
-<div class="viewcode-block" id="flatDictKeySet"><a class="viewcode-back" href="../outputting.html#outputting.flatDictKeySet">[docs]</a><span class="k">def</span> <span class="nf">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="flatDictKeySet"><a class="viewcode-back" href="../outputting.html#outputting.flatDictKeySet">[docs]</a><span class="k">def</span> <span class="nf">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">selectKeys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a dictionary of keys and identifiers for the new dictionary,</span>
 <span class="sd">    including only the keys in the keys list. Any keys with lists  will</span>
@@ -513,8 +443,8 @@
 <span class="sd">        The dictionaries would be expected to have many of the same keys.</span>
 <span class="sd">        Any dictionary keys containing lists in the input have been split</span>
 <span class="sd">        into multiple numbered keys</span>
-<span class="sd">    keys : list of strings, optional</span>
-<span class="sd">        The keys whose data will be included in the return dictionary. Default ``None``, which   results in all keys being returned</span>
+<span class="sd">    selectKeys : list of strings, optional</span>
+<span class="sd">        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -529,8 +459,8 @@
     <span class="n">keySet</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">keys</span><span class="p">:</span>
-            <span class="n">sKeys</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">selectKeys</span><span class="p">:</span>
+            <span class="n">sKeys</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">selectKeys</span><span class="p">)</span>
             <span class="n">abridge</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sKeys</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
@@ -552,54 +482,21 @@
     <span class="k">return</span> <span class="n">keySet</span></div>
 
 
-<div class="viewcode-block" id="listDictKeySet"><a class="viewcode-back" href="../outputting.html#outputting.listDictKeySet">[docs]</a><span class="k">def</span> <span class="nf">listDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generates a dictionary of keys and identifiers for the new dictionary,</span>
-<span class="sd">    splitting any keys with arrays into a set of keys, one for each column</span>
-<span class="sd">    in the original key.</span>
-
-<span class="sd">    These are named &lt;key&gt;&lt;location&gt;</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    store : dict</span>
-<span class="sd">        The dictionary to be split up</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    keySet : OrderedDict with values of OrderedDict, list or None</span>
-<span class="sd">        The dictionary of keys to be extracted</span>
-<span class="sd">    maxListLen : int</span>
-<span class="sd">        The longest list in the dictionary</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    reframeListDicts, newFlatDict</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span></div>
-
-
-<div class="viewcode-block" id="newFlatDict"><a class="viewcode-back" href="../outputting.html#outputting.newFlatDict">[docs]</a><span class="k">def</span> <span class="nf">newFlatDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">labelPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="newFlatDict"><a class="viewcode-back" href="../outputting.html#outputting.newFlatDict">[docs]</a><span class="k">def</span> <span class="nf">newFlatDict</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">selectKeys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">labelPrefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes a list of dictionaries and returns a dictionary of 1D lists.</span>
 
-<span class="sd">    If a dictionary did not have that key or list element, then &#39;None&#39; is</span>
-<span class="sd">    put in its place</span>
+<span class="sd">    If a dictionary did not have that key or list element, then &#39;None&#39; is put in its place</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    keySet : OrderedDict with values of OrderedDict, list or None</span>
-<span class="sd">        The dictionary of keys to be extracted</span>
 <span class="sd">    store : list of dicts</span>
 <span class="sd">        The dictionaries would be expected to have many of the same keys.</span>
-<span class="sd">        Any dictionary keys containing lists in the input have been split</span>
-<span class="sd">        into multiple numbered keys</span>
+<span class="sd">        Any dictionary keys containing lists in the input have been split into multiple numbered keys</span>
+<span class="sd">    selectKeys : list of strings, optional</span>
+<span class="sd">        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned</span>
 <span class="sd">    labelPrefix : string</span>
 <span class="sd">        An identifier to be added to the beginning of each key string.</span>
-
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -610,26 +507,18 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
-<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
-<span class="sd">    &gt;&gt;&gt; from outputting import flatDictKeySet</span>
-<span class="sd">    &gt;&gt;&gt; store = [{&#39;test&#39;: &#39;string&#39;,</span>
-<span class="sd">                 &#39;dict&#39;: {&#39;test&#39;: 1, },</span>
-<span class="sd">                 &#39;OrderedDict&#39;: OrderedDict([(0, 0.5), (1, 0.5)]),</span>
-<span class="sd">                 &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
-<span class="sd">                 &#39;num&#39;: 23.6,</span>
-<span class="sd">                 &#39;array&#39;: array([1, 2, 3])}]</span>
-<span class="sd">    &gt;&gt;&gt; keySet = flatDictKeySet(store)</span>
-<span class="sd">    &gt;&gt;&gt; newFlatDict(keySet, store, &#39;&#39;)</span>
-<span class="sd">    OrderedDict([(&#39;OrderedDict_0&#39;, [&#39;0.5&#39;]), (&#39;OrderedDict_1&#39;, [&#39;0.5&#39;]),</span>
-<span class="sd">                 (&#39;list_(0, 0)&#39;, [1]), (list_(1, 0)&#39;, [7]), (&#39;list_(0, 1)&#39;, [2]), (&#39;list_(1, 1)&#39;, [8]),</span>
-<span class="sd">                 (&#39;list_(0, 2)&#39;, [3]), (&#39;list_(1, 2)&#39;, [9]), (&#39;list_(0, 3)&#39;, [4]), (&#39;list_(1, 3)&#39;, [10]),</span>
-<span class="sd">                 (&#39;list_(0, 4)&#39;, [5]), (&#39;list_(1, 4)&#39;, [11]), (&#39;list_(0, 5)&#39;, [6]), (&#39;list_(1, 5)&#39;, [12]),</span>
-<span class="sd">                 (&#39;num&#39;, [&#39;23.6&#39;]),</span>
-<span class="sd">                 (&#39;dict_test&#39;, [&#39;1&#39;]),</span>
-<span class="sd">                 (&#39;test&#39;, [&quot;&#39;string&#39;&quot;]),</span>
-<span class="sd">                 (&#39;array_[0]&#39;, [array([1])]), (&#39;array_[1]&#39;, [array([2])]), (&#39;array_[2]&#39;, [array([3])])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;list&#39;: [1, 2, 3, 4, 5, 6]}</span>
+<span class="sd">    &gt;&gt;&gt; newFlatDict(store)</span>
+<span class="sd">    OrderedDict([(&#39;list_[0]&#39;, [1]), (&#39;list_[1]&#39;, [2]), (&#39;list_[2]&#39;, [3]), (&#39;list_[3]&#39;, [4]), (&#39;list_[4]&#39;, [5]), (&#39;list_[5]&#39;, [6])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;string&#39;: &#39;string&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; newFlatDict(store)</span>
+<span class="sd">    OrderedDict([(&#39;string&#39;, [&#39;string&#39;])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;dict&#39;: {1: {3: &quot;a&quot;}, 2: &quot;b&quot;}}</span>
+<span class="sd">    &gt;&gt;&gt; newFlatDict(store)</span>
+<span class="sd">    OrderedDict([(&#39;dict_1_3&#39;, [&#39;a&#39;]), (&#39;dict_2&#39;, [&#39;b&#39;])])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keySet</span> <span class="o">=</span> <span class="n">flatDictKeySet</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">selectKeys</span><span class="o">=</span><span class="n">selectKeys</span><span class="p">)</span>
+
     <span class="n">newStore</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">labelPrefix</span><span class="p">:</span>
@@ -641,9 +530,8 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">subStore</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">]</span>
-            <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newFlatDict</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">subStore</span><span class="p">,</span> <span class="n">newKey</span><span class="p">)</span>
+            <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newFlatDict</span><span class="p">(</span><span class="n">subStore</span><span class="p">,</span> <span class="n">labelPrefix</span><span class="o">=</span><span class="n">newKey</span><span class="p">)</span>
             <span class="n">newStore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyStoreSet</span><span class="p">)</span>
-
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">locCo</span> <span class="ow">in</span> <span class="n">loc</span><span class="p">:</span>
                 <span class="n">tempList</span> <span class="o">=</span> <span class="p">[]</span>
@@ -652,12 +540,8 @@
                     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">rawVal</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
                         <span class="n">tempList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">try</span><span class="p">:</span>
-                            <span class="n">tempList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rawVal</span><span class="p">[</span><span class="n">locCo</span><span class="p">])</span>
-                        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                            <span class="n">tempList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listSelection</span><span class="p">(</span><span class="n">rawVal</span><span class="p">,</span> <span class="n">locCo</span><span class="p">))</span>
+                        <span class="n">tempList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listSelection</span><span class="p">(</span><span class="n">rawVal</span><span class="p">,</span> <span class="n">locCo</span><span class="p">))</span>
                 <span class="n">newStore</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">newKey</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">locCo</span><span class="p">),</span> <span class="n">tempList</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
             <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="nb">repr</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">store</span><span class="p">]</span>
             <span class="n">newStore</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">newKey</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
@@ -665,7 +549,7 @@
     <span class="k">return</span> <span class="n">newStore</span></div>
 
 
-<div class="viewcode-block" id="newListDict"><a class="viewcode-back" href="../outputting.html#outputting.newListDict">[docs]</a><span class="k">def</span> <span class="nf">newListDict</span><span class="p">(</span><span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="n">labelPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="newListDict"><a class="viewcode-back" href="../outputting.html#outputting.newListDict">[docs]</a><span class="k">def</span> <span class="nf">newListDict</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">labelPrefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.</span>
 
@@ -673,14 +557,10 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    keySet : OrderedDict with values of OrderedDict, list or None</span>
-<span class="sd">        The dictionary of keys to be extracted</span>
-<span class="sd">    maxListLen : int</span>
-<span class="sd">        The longest list in the dictionary</span>
 <span class="sd">    store : dict</span>
-<span class="sd">        A dictionary of numbers, strings, lists and arrays</span>
+<span class="sd">        A dictionary of numbers, strings, lists, dictionaries and arrays</span>
 <span class="sd">    labelPrefix : string</span>
-<span class="sd">        An identifier to be added to the beginning of each key string.</span>
+<span class="sd">        An identifier to be added to the beginning of each key string. Default empty string</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -690,26 +570,18 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
-<span class="sd">    &gt;&gt;&gt; from collections import OrderedDict</span>
-<span class="sd">    &gt;&gt;&gt; from outputting import listDictKeySet</span>
-<span class="sd">    &gt;&gt;&gt; store = {&#39;test&#39;: &#39;string&#39;,</span>
-<span class="sd">                 &#39;dict&#39;: {&#39;test&#39;: 1, },</span>
-<span class="sd">                 &#39;OrderedDict&#39;: OrderedDict([(0, 0.5), (1, 0.5)]),</span>
-<span class="sd">                 &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
-<span class="sd">                 &#39;num&#39;: 23.6,</span>
-<span class="sd">                 &#39;array&#39;: array([1, 2, 3])}</span>
-<span class="sd">    &gt;&gt;&gt; keySet, maxListLen = listDictKeySet(store)</span>
-<span class="sd">    &gt;&gt;&gt; newListDict(keySet, maxListLen, store, &#39;&#39;)</span>
-<span class="sd">    OrderedDict([(&#39;OrderedDict_0&#39;, [0.5, None, None, None, None, None]),</span>
-<span class="sd">                 (&#39;OrderedDict_1&#39;, [0.5, None, None, None, None, None]),</span>
-<span class="sd">                 (&#39;list_[0]&#39;, [1, 2, 3, 4, 5, 6]),</span>
-<span class="sd">                 (&#39;list_[1]&#39;, [7, 8, 9, 10, 11, 12]),</span>
-<span class="sd">                 (&#39;num&#39;, [23.6, None, None, None, None, None]),</span>
-<span class="sd">                 (&#39;dict_test&#39;, [1, None, None, None, None, None]),</span>
-<span class="sd">                 (&#39;test&#39;, [&#39;string&#39;, None, None, None, None, None]),</span>
-<span class="sd">                 (&#39;array&#39;, [1, 2, 3, None, None, None])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;list&#39;: [1, 2, 3, 4, 5, 6]}</span>
+<span class="sd">    &gt;&gt;&gt; newListDict(store)</span>
+<span class="sd">    OrderedDict([(&#39;list&#39;, [1, 2, 3, 4, 5, 6])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;string&#39;: &#39;string&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; newListDict(store)</span>
+<span class="sd">    OrderedDict([(&#39;string&#39;, [&#39;string&#39;])])</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;dict&#39;: {1: {3: &quot;a&quot;}, 2: &quot;b&quot;}}</span>
+<span class="sd">    &gt;&gt;&gt; newListDict(store)</span>
+<span class="sd">    OrderedDict([(u&#39;dict_1_3&#39;, [&#39;a&#39;]), (u&#39;dict_2&#39;, [&#39;b&#39;])])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="n">maxListLen</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">newStore</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -721,7 +593,7 @@
         <span class="n">newKey</span> <span class="o">=</span> <span class="n">labelPrefix</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">,</span> <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">newKey</span><span class="p">)</span>
+            <span class="n">keyStoreSet</span> <span class="o">=</span> <span class="n">newListDict</span><span class="p">(</span><span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">labelPrefix</span><span class="o">=</span><span class="n">newKey</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="n">maxListLen</span><span class="p">)</span>
             <span class="n">newStore</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyStoreSet</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
@@ -742,99 +614,100 @@
     <span class="k">return</span> <span class="n">newStore</span></div>
 
 
-<div class="viewcode-block" id="pad"><a class="viewcode-back" href="../outputting.html#outputting.pad">[docs]</a><span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">):</span>
-    <span class="n">vLen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+<div class="viewcode-block" id="pad"><a class="viewcode-back" href="../outputting.html#outputting.pad">[docs]</a><span class="k">def</span> <span class="nf">pad</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">maxListLen</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pads a list with None</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : list</span>
+<span class="sd">        The list to be extended</span>
+<span class="sd">    maxListLen : int</span>
+<span class="sd">        The number of elements the list needs to have</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">vLen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">vLen</span> <span class="o">&lt;</span> <span class="n">maxListLen</span><span class="p">:</span>
-        <span class="n">vals</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxListLen</span> <span class="o">-</span> <span class="n">vLen</span><span class="p">)])</span>
-    <span class="k">return</span> <span class="n">vals</span></div>
+        <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxListLen</span> <span class="o">-</span> <span class="n">vLen</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">values</span></div>
 
 
 <div class="viewcode-block" id="listSelection"><a class="viewcode-back" href="../outputting.html#outputting.listSelection">[docs]</a><span class="k">def</span> <span class="nf">listSelection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">loc</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Allows numpy array-like referencing of lists</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    data</span>
-<span class="sd">    loc</span>
+<span class="sd">    data : list</span>
+<span class="sd">        The data to be referenced</span>
+<span class="sd">    loc : tuple of integers</span>
+<span class="sd">        The location to be referenced</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    selection :</span>
+<span class="sd">    selection : list</span>
+<span class="sd">        The referenced subset</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; listSelection([1,2,3], [0])</span>
+<span class="sd">    &gt;&gt;&gt; listSelection([1, 2, 3], (0,))</span>
 <span class="sd">    1</span>
-<span class="sd">    &gt;&gt;&gt; listSelection([[1, 2, 3], [4, 5, 6]], [0])</span>
+<span class="sd">    &gt;&gt;&gt; listSelection([[1, 2, 3], [4, 5, 6]], (0,))</span>
 <span class="sd">    [1, 2, 3]</span>
-<span class="sd">    &gt;&gt;&gt; listSelection([[1, 2, 3], [4, 5, 6]], (0,2))</span>
+<span class="sd">    &gt;&gt;&gt; listSelection([[1, 2, 3], [4, 5, 6]], (0, 2))</span>
 <span class="sd">    3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">listSelection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span></div>
+        <span class="n">subData</span> <span class="o">=</span> <span class="n">listSelection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">subData</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">listSelection</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="dictKeyGen"><a class="viewcode-back" href="../outputting.html#outputting.dictKeyGen">[docs]</a><span class="k">def</span> <span class="nf">dictKeyGen</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identifies the columns necessary to convert a dictionary into a table</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    store : dict</span>
 <span class="sd">        The dictionary to be broken down into keys</span>
 <span class="sd">    maxListLen : int or float with no decimal places or None, optional</span>
-<span class="sd">        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``</span>
-<span class="sd">        this should stay ``None``. Default ``None``</span>
+<span class="sd">        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``</span>
 <span class="sd">    returnList : bool, optional</span>
-<span class="sd">        Defines if the lists will be broken into 1D lists or values. Default ``False``</span>
+<span class="sd">        Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values</span>
 <span class="sd">    abridge : bool, optional</span>
-<span class="sd">        Defines if the final dataset will be a summary or the whole lot. Default ``False``</span>
+<span class="sd">        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.</span>
+<span class="sd">        Default ``False``, not abridged</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    keySet : OrderedDict with values of OrderedDict, list or None</span>
 <span class="sd">        The dictionary of keys to be extracted</span>
-<span class="sd">    maxListLen : int or None</span>
+<span class="sd">    maxListLen : int or float with no decimal places or None, optional</span>
 <span class="sd">        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``</span>
-<span class="sd">        this should stay ``None``.</span>
+<span class="sd">        this should return its original value</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from numpy import array</span>
-<span class="sd">    &gt;&gt;&gt; store = {&#39;test&#39;: &#39;string&#39;,</span>
-<span class="sd">                 &#39;dict&#39;: {&#39;test&#39;: 1},</span>
-<span class="sd">                 &#39;list&#39;: [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]],</span>
-<span class="sd">                 &#39;num&#39;: 23.6,</span>
-<span class="sd">                 &#39;array&#39;: array([1, 2, 3])}</span>
-<span class="sd">    &gt;&gt;&gt; dictKeyGen(store, maxListLen=None, returnList=False, abridge=False)</span>
-<span class="sd">    (OrderedDict([(&#39;test&#39;, None),</span>
-<span class="sd">                  (&#39;list&#39;, [(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)]),</span>
-<span class="sd">                  (&#39;array&#39;, array([[0], [1], [2]])),</span>
-<span class="sd">                  (&#39;num&#39;, None),</span>
-<span class="sd">                  (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
-<span class="sd">    None)</span>
-<span class="sd">    &gt;&gt;&gt; dictKeyGen(store, maxListLen=None, returnList=False, abridge=True)</span>
-<span class="sd">    (OrderedDict([(&#39;test&#39;, None),</span>
-<span class="sd">                  (&#39;list&#39;, None),</span>
-<span class="sd">                  (&#39;array&#39;, array([[0], [1], [2]])),</span>
-<span class="sd">                  (&#39;num&#39;, None),</span>
-<span class="sd">                  (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
-<span class="sd">    None)</span>
-<span class="sd">    &gt;&gt;&gt; dictKeyGen(store, maxListLen=None, returnList=True, abridge=True)</span>
-<span class="sd">    (OrderedDict([(&#39;test&#39;, None),</span>
-<span class="sd">                  (&#39;list&#39;, array([[0], [1]])),</span>
-<span class="sd">                  (&#39;array&#39;, None),</span>
-<span class="sd">                  (&#39;num&#39;, None),</span>
-<span class="sd">                  (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
-<span class="sd">    6L)</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;string&#39;: &#39;string&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; dictKeyGen(store)</span>
+<span class="sd">    (OrderedDict([(&#39;string&#39;, None)]), 1)</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;num&#39;: 23.6}</span>
+<span class="sd">    &gt;&gt;&gt; dictKeyGen(store)</span>
+<span class="sd">    (OrderedDict([(&#39;num&#39;, None)]), 1)</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;array&#39;: np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}</span>
+<span class="sd">    &gt;&gt;&gt; dictKeyGen(store, returnList=True, abridge=True)</span>
+<span class="sd">    (OrderedDict([(&#39;array&#39;, array([[0],</span>
+<span class="sd">           [1]]))]), 6)</span>
+<span class="sd">    &gt;&gt;&gt; store = {&#39;dict&#39;: {1: &quot;a&quot;, 2: &quot;b&quot;}}</span>
 <span class="sd">    &gt;&gt;&gt; dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)</span>
-<span class="sd">    (OrderedDict([(&#39;test&#39;, None),</span>
-<span class="sd">                  (&#39;list&#39;, array([[0], [1]])),</span>
-<span class="sd">                  (&#39;array&#39;, None),</span>
-<span class="sd">                  (&#39;num&#39;, None),</span>
-<span class="sd">                  (&#39;dict&#39;, OrderedDict([(&#39;test&#39;, None)]))]),</span>
-<span class="sd">    7)</span>
+<span class="sd">    (OrderedDict([(&#39;dict&#39;, OrderedDict([(1, None), (2, None)]))]), 7)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">keySet</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -850,84 +723,81 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">keySet</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">maxListLen</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">keySet</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">maxListLen</span> <span class="o">=</span> <span class="mi">1</span>
+
     <span class="k">return</span> <span class="n">keySet</span><span class="p">,</span> <span class="n">maxListLen</span></div>
 
 
 <div class="viewcode-block" id="listKeyGen"><a class="viewcode-back" href="../outputting.html#outputting.listKeyGen">[docs]</a><span class="k">def</span> <span class="nf">listKeyGen</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">maxListLen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnList</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">abridge</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identifies the columns necessary to convert a list into a table</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : numpy.ndarray or list</span>
 <span class="sd">        The list to be broken down</span>
 <span class="sd">    maxListLen : int or float with no decimal places or None, optional</span>
-<span class="sd">        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``</span>
-<span class="sd">        this should stay ``None``. Default ``None``</span>
+<span class="sd">        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``</span>
 <span class="sd">    returnList : bool, optional</span>
-<span class="sd">        Defines if the lists will be broken into 1D lists or values. Default ``False``</span>
+<span class="sd">        Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values</span>
 <span class="sd">    abridge : bool, optional</span>
-<span class="sd">        Defines if the final dataset will be a summary or the whole lot. Default ``False``</span>
+<span class="sd">        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.</span>
+<span class="sd">        Default ``False``, not abridged</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    returnList : None or list of tuples of ints or ints</span>
 <span class="sd">        The list of co-ordinates for the elements to be extracted from the data. If None the list is used as-is.</span>
-<span class="sd">    maxListLen : int or None</span>
+<span class="sd">    maxListLen : int or float with no decimal places or None, optional</span>
 <span class="sd">        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``</span>
-<span class="sd">        this should stay ``None``.</span>
+<span class="sd">        this should return its original value</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([1, 2, 3], maxListLen=None, returnList=False, abridge=False)</span>
-<span class="sd">    (array([[0], [1], [2]]), None)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=False, abridge=False)</span>
-<span class="sd">    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2)], None)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3], [4,5,6]], maxListLen=None, returnList=True, abridge=False)</span>
-<span class="sd">    (array([[0], [1]]), 3L)</span>
 <span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=False)</span>
-<span class="sd">    ([(0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5)], None)</span>
+<span class="sd">    (array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]), 1)</span>
 <span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=True)</span>
 <span class="sd">    (None, None)</span>
 <span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)</span>
-<span class="sd">    (array([[0], [1]]), 6L)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=2, returnList=True, abridge=True)</span>
-<span class="sd">    (array([[0], [1]]), 6L)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=7, returnList=True, abridge=True)</span>
-<span class="sd">    (array([[0], [1]]), 7)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([[1, 2, 3, 4, 5, 6]], maxListLen=None, returnList=True, abridge=True)</span>
-<span class="sd">    (array([[0]]), 6L)</span>
-<span class="sd">    &gt;&gt;&gt; listKeyGen([1, 2, 3, 4, 5, 6], maxListLen=None, returnList=True, abridge=True)</span>
-<span class="sd">    (None, 6L)</span>
+<span class="sd">    (array([[0],</span>
+<span class="sd">           [1]]), 6L)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataShape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maxListLen</span>
 
+    <span class="n">dataShapeList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataShape</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">returnList</span><span class="p">:</span>
-        <span class="n">dataShape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-        <span class="n">dataShapeFirst</span> <span class="o">=</span> <span class="n">dataShape</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">maxListLen</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="n">dataShapeFirst</span> <span class="o">=</span> <span class="n">dataShapeList</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">numberColumns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dataShapeList</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">maxListLen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dataShapeFirst</span>
         <span class="k">elif</span> <span class="n">dataShapeFirst</span> <span class="o">&gt;</span> <span class="n">maxListLen</span><span class="p">:</span>
             <span class="n">maxListLen</span> <span class="o">=</span> <span class="n">dataShapeFirst</span>
-
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataShape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">numberColumns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dataShape</span><span class="p">)</span>
 
     <span class="c1"># If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document</span>
-    <span class="k">if</span> <span class="n">abridge</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dataShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">abridge</span> <span class="ow">and</span> <span class="n">numberColumns</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maxListLen</span>
 
     <span class="c1"># We need to calculate every combination of co-ordinates in the array</span>
-    <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataShape</span><span class="p">]</span>
+    <span class="n">arrSets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dataShapeList</span><span class="p">]</span>
     <span class="c1"># Now record each one</span>
-    <span class="n">locList</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">)]</span>
+    <span class="n">locList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="n">arrSets</span><span class="p">)])</span>
     <span class="n">listItemLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">locList</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">listItemLen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">returnList</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">locList</span><span class="p">)</span><span class="c1">#.flatten()</span>
+        <span class="n">finalList</span> <span class="o">=</span> <span class="n">locList</span> <span class="c1">#.flatten()</span>
     <span class="k">elif</span> <span class="n">listItemLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maxListLen</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">returnList</span> <span class="o">=</span> <span class="n">locList</span>
+        <span class="n">finalList</span> <span class="o">=</span> <span class="n">locList</span>
 
-    <span class="k">return</span> <span class="n">returnList</span><span class="p">,</span> <span class="n">maxListLen</span></div>
+    <span class="k">if</span> <span class="n">maxListLen</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">finalList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">maxListLen</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">finalList</span><span class="p">,</span> <span class="n">maxListLen</span></div>
 
 
 <div class="viewcode-block" id="date"><a class="viewcode-back" href="../outputting.html#outputting.date">[docs]</a><span class="k">def</span> <span class="nf">date</span><span class="p">():</span>
@@ -978,12 +848,12 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

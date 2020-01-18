@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>model.decision.discrete &#8212; pyHPDM 0.9 documentation</title>
+    <title>model.decision.discrete &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -49,7 +49,7 @@
 <span class="sd">number of actions, but they are countable.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
@@ -57,11 +57,11 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">NoneType</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
 
 
 <span class="c1"># TODO: provide default values for expResponses</span>
-<div class="viewcode-block" id="weightProb"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.weightProb">[docs]</a><span class="k">def</span> <span class="nf">weightProb</span><span class="p">(</span><span class="n">expResponses</span><span class="p">):</span>
+<div class="viewcode-block" id="weightProb"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.weightProb">[docs]</a><span class="k">def</span> <span class="nf">weightProb</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Decisions for an arbitrary number of choices</span>
 
 <span class="sd">    Choice made by choosing randomly based on which are valid and what their associated probabilities are</span>
@@ -88,7 +88,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from model.decision.discrete import weightProb</span>
 <span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
 <span class="sd">    &gt;&gt;&gt; d = weightProb([0, 1, 2, 3])</span>
 <span class="sd">    &gt;&gt;&gt; d([0.4, 0.8, 0.3, 0.5])</span>
@@ -112,7 +111,7 @@
 
         <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probArray</span><span class="p">)])</span>
 
-        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
+        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
@@ -133,7 +132,7 @@
     <span class="k">return</span> <span class="n">decisionFunc</span></div>
 
 
-<div class="viewcode-block" id="maxProb"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.maxProb">[docs]</a><span class="k">def</span> <span class="nf">maxProb</span><span class="p">(</span><span class="n">expResponses</span><span class="p">):</span>
+<div class="viewcode-block" id="maxProb"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.maxProb">[docs]</a><span class="k">def</span> <span class="nf">maxProb</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Decisions for an arbitrary number of choices</span>
 
 <span class="sd">    Choice made by choosing the most likely</span>
@@ -160,7 +159,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from model.decision.discrete import maxProb</span>
 <span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
 <span class="sd">    &gt;&gt;&gt; d = maxProb([1,2,3])</span>
 <span class="sd">    &gt;&gt;&gt; d([0.6, 0.3, 0.5])</span>
@@ -182,7 +180,7 @@
 
         <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probArray</span><span class="p">)])</span>
 
-        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
+        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
@@ -201,7 +199,7 @@
     <span class="k">return</span> <span class="n">decisionFunc</span></div>
 
 
-<div class="viewcode-block" id="probThresh"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.probThresh">[docs]</a><span class="k">def</span> <span class="nf">probThresh</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+<div class="viewcode-block" id="probThresh"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.probThresh">[docs]</a><span class="k">def</span> <span class="nf">probThresh</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">eta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
     <span class="c1"># type : (list, float) -&gt; (float, collections.OrderedDict)</span>
     <span class="sd">&quot;&quot;&quot;Decisions for an arbitrary number of choices</span>
 
@@ -227,7 +225,6 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from model.decision.discrete import probThresh</span>
 <span class="sd">    &gt;&gt;&gt; np.random.seed(100)</span>
 <span class="sd">    &gt;&gt;&gt; d = probThresh(expResponses=[0, 1, 2, 3], eta=0.8)</span>
 <span class="sd">    &gt;&gt;&gt; d([0.2, 0.8, 0.3, 0.5])</span>
@@ -249,7 +246,7 @@
 
         <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">expResponses</span><span class="p">,</span> <span class="n">probArray</span><span class="p">)])</span>
 
-        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
+        <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
@@ -270,7 +267,7 @@
     <span class="k">return</span> <span class="n">decisionFunc</span></div>
 
 
-<div class="viewcode-block" id="validProbabilities"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.validProbabilities">[docs]</a><span class="k">def</span> <span class="nf">validProbabilities</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_validProbabilities</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes the list of probabilities, valid responses and possible responses and returns the appropriate probabilities</span>
 <span class="sd">    and responses</span>
@@ -294,8 +291,7 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from model.decision.discrete import validProbabilities</span>
-<span class="sd">    &gt;&gt;&gt; validProbabilities([0.2, 0.1, 0.7], [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [&quot;B&quot;, &quot;C&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; _validProbabilities([0.2, 0.1, 0.7], [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;], [&quot;B&quot;, &quot;C&quot;])</span>
 <span class="sd">    (array([0.1, 0.7]), array([&#39;B&#39;, &#39;C&#39;], dtype=&#39;&lt;U1&#39;))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -313,7 +309,7 @@
             <span class="n">resp</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">prob</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span></div>
+    <span class="k">return</span> <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span>
 
 </pre></div>
 
@@ -347,12 +343,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

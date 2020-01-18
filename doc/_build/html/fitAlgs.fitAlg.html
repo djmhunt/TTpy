@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>fitAlgs.fitAlg module &#8212; pyHPDM 0.9 documentation</title>
+    <title>fitAlgs.fitAlg module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="fitAlgs.evolutionary.html" title="fitAlgs.evolutionary module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" accesskey="U">fitAlgs package</a> &#187;</li> 
       </ul>
     </div>  
@@ -58,17 +58,9 @@
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="fitAlgs.fitAlg.covariance">
-<code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">covariance</code><span class="sig-paren">(</span><em>jac</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.covariance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the covariance based on the estimated jacobian</p>
-<p>Inspired by how this is calculated in scipy.optimise.curve_fit, as found at
-<a class="reference external" href="https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739">https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739</a></p>
-</dd></dl>
-
 <dl class="class">
-<dt id="fitAlgs.fitAlg.fitAlg">
-<em class="property">class </em><code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">fitAlg</code><span class="sig-paren">(</span><em>fitSim</em>, <em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg">
+<em class="property">class </em><code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">FitAlg</code><span class="sig-paren">(</span><em>fit_sim=None</em>, <em>fit_measure=u'-loge'</em>, <em>fit_measure_args=None</em>, <em>extra_fit_measures=None</em>, <em>bounds=None</em>, <em>boundary_excess_cost=None</em>, <em>boundary_excess_cost_properties=None</em>, <em>bound_ratio=1e-06</em>, <em>calculate_covariance=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The abstract class for fitting data</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -76,29 +68,27 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitSim</strong> (<em>fitAlgs.fitSims.fitSim instance</em>) – An instance of one of the fitting algorithms</li>
-<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
-The value it returns provides the fitter with its fitting guide.
-Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>qualFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>fit_sim</strong> (<em>fitAlgs.fitSims.FitSim instance</em><em>, </em><em>optional</em>) – An instance of one of the fitting simulation methods. Default <code class="docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></li>
+<li><strong>fit_measure</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+The value it returns provides the fitter with its fitting guide. Default <code class="docutils literal notranslate"><span class="pre">-loge</span></code></li>
+<li><strong>fit_measure_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitMeasure and extraFitMeasures. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>extra_fit_measures</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+measures should be placed in fitMeasureArgs. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
-<li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter. Only used with some fitting algorithms
-Default 4</li>
-<li><strong>calcCov</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is the covariance calculated. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>extraFitMeasures</strong> (<em>dict of dict</em><em>, </em><em>optional</em>) – Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
-fitQUalFunc used names and the values are the qualFuncArgs. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>boundary_excess_cost</strong> (<em>basestring</em><em> or </em><em>callable returning a function</em><em>, </em><em>optional</em>) – The function is used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound()</span></code></li>
+<li><strong>boundary_excess_cost_properties</strong> – </li>
+<li><strong>calculate_covariance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is the covariance calculated. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="fitAlgs.fitAlg.fitAlg.Name">
-<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.Name">
+<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the fitting method</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -113,18 +103,13 @@ fitQUalFunc used names and the values are the qualFuncArgs. Default <code class=
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim" title="fitAlgs.fitSims.fitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></dt>
 <dd>The general fitting class</dd>
 </dl>
 </div>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'none'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.covariance">
-<code class="descname">covariance</code><span class="sig-paren">(</span><em>mParamNames</em>, <em>paramvals</em>, <em>fitinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.covariance" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.covariance">
+<code class="descname">covariance</code><span class="sig-paren">(</span><em>mParamNames</em>, <em>paramvals</em>, <em>fitinfo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>The covariance at a point</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -147,8 +132,8 @@ fitQUalFunc used names and the values are the qualFuncArgs. Default <code class=
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.extraMeasures">
-<code class="descname">extraMeasures</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.extraMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.extraMeasures" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.extraMeasures">
+<code class="descname">extraMeasures</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.extraMeasures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.extraMeasures" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -164,8 +149,14 @@ fitQUalFunc used names and the values are the qualFuncArgs. Default <code class=
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.findName">
+<code class="descname">findName</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.findName"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.findName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the class</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fitAlgs.fitAlg.FitAlg.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters
 and returns the best one. This is the abstract version that always
 returns <code class="docutils literal notranslate"><span class="pre">(0,0)</span></code></p>
@@ -199,8 +190,8 @@ fit qualities of these parameters.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.fitness">
-<code class="descname">fitness</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.fitness" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.fitness">
+<code class="descname">fitness</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.fitness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a fit quality value used by the fitting function. This is the function passed to the fitting function.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -219,17 +210,17 @@ fit qualities of these parameters.</li>
 <dl class="last docutils">
 <dt><a class="reference internal" href="fitAlgs.qualityFunc.html#module-fitAlgs.qualityFunc" title="fitAlgs.qualityFunc"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.qualityFunc()</span></code></a></dt>
 <dd>the module of fitQualFunc functions</dd>
-<dt><a class="reference internal" href="#fitAlgs.fitAlg.fitAlg.invalidParams" title="fitAlgs.fitAlg.fitAlg.invalidParams"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.invalidParams()</span></code></a></dt>
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.invalidParams()</span></code></dt>
 <dd>Checks if the parameters are valid and if not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></dd>
-<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim.fitness" title="fitAlgs.fitSims.fitSim.fitness"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim.fitness()</span></code></a></dt>
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim.fitness()</span></code></dt>
 <dd>Runs the model simulation and returns the values used to calculate the fitQuality</dd>
 </dl>
 </div>
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.info">
-<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.info" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.info">
+<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>The information relating to the fitting method used</p>
 <p>Includes information on the fitting algorithm used</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -249,8 +240,8 @@ fit qualities of these parameters.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.invalidParams">
-<code class="descname">invalidParams</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.invalidParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.invalidParams" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.invalidParams">
+<code class="descname">invalidParams</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.invalidParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.invalidParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies if the parameters passed are within the bounds provided</p>
 <p>If they are not returns <code class="docutils literal notranslate"><span class="pre">inf</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -268,7 +259,7 @@ fit qualities of these parameters.</li>
 <p class="rubric">Notes</p>
 <p>No note</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">FitAlg</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">invalidParams</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">False</span>
@@ -283,8 +274,8 @@ fit qualities of these parameters.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.participant">
-<code class="descname">participant</code><span class="sig-paren">(</span><em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.participant" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.participant">
+<code class="descname">participant</code><span class="sig-paren">(</span><em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.participant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit participant data to a model for a given task</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -312,8 +303,8 @@ fit qualities of these parameters.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.setBounds">
-<code class="descname">setBounds</code><span class="sig-paren">(</span><em>mParamNames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.setBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.setBounds" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.fitAlg.FitAlg.setBounds">
+<code class="descname">setBounds</code><span class="sig-paren">(</span><em>mParamNames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.setBounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.setBounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the bounds have changed</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -324,45 +315,34 @@ fit qualities of these parameters.</li>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;two&#39;</span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">FitAlg</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
-<span class="go">{&#39;string&#39;: (0, inf), &#39;two&#39;: (0, inf)}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
-<span class="go">[&#39;string&#39;, &#39;two&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
-<span class="go">￼[(0, inf), (0, inf)]</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">(</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">3</span><span class="p">:(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
-<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="go">{1: (0, 5), 2: (0, 2), 3: (-1, 1)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">allBounds</span>
-<span class="go">{1:(0,5),2:(0,2),3:(-1,1)}</span>
+<span class="go">{1: (0, 5), 2: (0, 2), 3: (-1, 1)}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundNames</span>
 <span class="go">[]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
-<span class="go">￼[(-1, 1), (0, 5)]</span>
+<span class="go">[(-1, 1), (0, 5)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">setBounds</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">boundVals</span>
-<span class="go">￼[(0, 2), (0, 5)]</span>
+<span class="go">[(0, 2), (0, 5)]</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.startParamVals">
-<code class="descname">startParamVals</code><span class="sig-paren">(</span><em>initial</em>, <em>bMin=-inf</em>, <em>bMax=inf</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.startParamVals" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="fitAlgs.fitAlg.FitAlg.startParamVals">
+<em class="property">static </em><code class="descname">startParamVals</code><span class="sig-paren">(</span><em>initial</em>, <em>bMin=-inf</em>, <em>bMax=inf</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.startParamVals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.startParamVals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a set of starting points</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>initial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The inital starting value proposed</li>
+<li><strong>initial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The initial starting value proposed</li>
 <li><strong>bMin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The minimum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('-Inf')</span></code></li>
 <li><strong>bMax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum value of the parameter. Default is <code class="docutils literal notranslate"><span class="pre">float('Inf')</span></code></li>
 <li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of starting parameter values to be calculated around the inital
@@ -387,40 +367,27 @@ unless otherwise told, it will be assumed that they can take any
 positive value and will be chosen to be eavenly spaced around the
 provided value.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="go">array([ 0.25,  0.5 ,  0.75])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="go">array([ 2.5,  5. ,  7.5])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
-<span class="go">array([ 2.5,  5. ,  7.5])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
-<span class="go">array([ 4.,  5.,  6.])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
-<span class="go">array([ 1.,  5.,  9.])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
-<span class="go">array([ 2.5,  5. ,  7.5])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
-<span class="go">array([ 3.5,  4. ,  4.5,  5. ,  5.5,  6. ,  6.5])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">array([0.25, 0.5 , 0.75])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([2.5, 5. , 7.5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">array([2.5, 5. , 7.5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([4., 5., 6.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([1., 5., 9.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span>
+<span class="go">array([2.5, 5. , 7.5])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParamVals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">bMin</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">bMax</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">numPoints</span> <span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">array([3.5, 4., 4.5, 5., 5.5, 6., 6.5])</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="fitAlgs.fitAlg.fitAlg.startParams">
-<code class="descname">startParams</code><span class="sig-paren">(</span><em>initialParams</em>, <em>bounds=None</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#fitAlg.startParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.fitAlg.startParams" title="Permalink to this definition">¶</a></dt>
+<dl class="classmethod">
+<dt id="fitAlgs.fitAlg.FitAlg.startParams">
+<em class="property">classmethod </em><code class="descname">startParams</code><span class="sig-paren">(</span><em>initialParams</em>, <em>bounds=None</em>, <em>numPoints=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#FitAlg.startParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.FitAlg.startParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a list of different starting parameters to run the minimization
 over</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -428,12 +395,12 @@ over</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>initialParams</strong> (<em>list of floats</em>) – The inital starting values proposed</li>
+<li><strong>initialParams</strong> (<em>list of floats</em>) – The initial starting values proposed</li>
 <li><strong>bounds</strong> (<em>list of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>numPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The number of starting parameter values to be calculated around
-each inital point</li>
+each initial point</li>
 </ul>
 </td>
 </tr>
@@ -448,21 +415,28 @@ each inital point</li>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="#fitAlgs.fitAlg.fitAlg.startParamVals" title="fitAlgs.fitAlg.fitAlg.startParamVals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlg.startParamVals()</span></code></a></dt>
+<dt><a class="reference internal" href="#fitAlgs.fitAlg.FitAlg.startParamVals" title="fitAlgs.fitAlg.FitAlg.startParamVals"><code class="xref py py-meth docutils literal notranslate"><span class="pre">FitAlg.startParamVals()</span></code></a></dt>
 <dd>Used in this function</dd>
 </dl>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">fitAlg</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="bp">self</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="go">array([[ 0.33333333,  0.33333333],</span>
-<span class="go">       [ 0.66666667,  0.33333333],</span>
-<span class="go">       [ 0.33333333,  0.66666667],</span>
-<span class="go">       [ 0.66666667,  0.66666667]])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">FitAlg</span><span class="o">.</span><span class="n">startParams</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">numPoints</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">array([[0.33333333, 0.33333333],</span>
+<span class="go">       [0.66666667, 0.33333333],</span>
+<span class="go">       [0.33333333, 0.66666667],</span>
+<span class="go">       [0.66666667, 0.66666667]])</span>
 </pre></div>
 </div>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="fitAlgs.fitAlg.covariance">
+<code class="descclassname">fitAlgs.fitAlg.</code><code class="descname">covariance</code><span class="sig-paren">(</span><em>jac</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/fitAlg.html#covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitAlg.covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the covariance based on the estimated jacobian</p>
+<p>Inspired by how this is calculated in scipy.optimise.curve_fit, as found at
+<a class="reference external" href="https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739">https://github.com/scipy/scipy/blob/2526df72e5d4ca8bad6e2f4b3cbdfbc33e805865/scipy/optimize/minpack.py#L739</a></p>
 </dd></dl>
 
 </div>
@@ -517,12 +491,12 @@ each inital point</li>
         <li class="right" >
           <a href="fitAlgs.evolutionary.html" title="fitAlgs.evolutionary module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" >fitAlgs package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

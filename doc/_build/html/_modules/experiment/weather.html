@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.weather &#8212; pyHPDM 0.9 documentation</title>
+    <title>experiment.weather &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -50,13 +50,14 @@
 <span class="sd">            Learning &amp; Memory(Cold Spring Harbor, N.Y.), 1(2), 106–120.</span>
 <span class="sd">            http://doi.org/10.1101/lm.1.2.106</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">nan</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">nan</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 <span class="n">cueSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Pickering&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
@@ -102,7 +103,7 @@
 <span class="sd">    cueProbs : array of int, optional</span>
 <span class="sd">        If generating data, the likelihood of each cue being associated with each actuality. Each row of the array</span>
 <span class="sd">        describes one actuality, with each column representing one cue. Each column is assumed sum to 1</span>
-<span class="sd">    numCues : int, optional</span>
+<span class="sd">    number_cues : int, optional</span>
 <span class="sd">        The number of cues</span>
 <span class="sd">    learningLen : int, optional</span>
 <span class="sd">        The number of trials in the learning phase. Default is 200</span>
@@ -115,14 +116,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">defaultCueProbs</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]]</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cueProbs</span><span class="o">=</span><span class="n">defaultCueProbs</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">testLen</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">numCues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actualities</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cueProbs</span><span class="o">=</span><span class="n">defaultCueProbs</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">testLen</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">number_cues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cues</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">actualities</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">Weather</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Weather</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">numCues</span><span class="p">:</span>
-            <span class="n">numCues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">number_cues</span><span class="p">:</span>
+            <span class="n">number_cues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cues</span><span class="p">:</span>
-            <span class="n">cues</span> <span class="o">=</span> <span class="n">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">+</span><span class="n">testLen</span><span class="p">)</span>
+            <span class="n">cues</span> <span class="o">=</span> <span class="n">genCues</span><span class="p">(</span><span class="n">number_cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="o">+</span><span class="n">testLen</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">actualities</span><span class="p">:</span>
             <span class="n">actualities</span> <span class="o">=</span> <span class="n">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">)</span>
 
@@ -232,7 +233,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
-<div class="viewcode-block" id="genCues"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genCues">[docs]</a><span class="k">def</span> <span class="nf">genCues</span><span class="p">(</span><span class="n">numCues</span><span class="p">,</span> <span class="n">taskLen</span><span class="p">):</span>
+
+<div class="viewcode-block" id="genCues"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genCues">[docs]</a><span class="k">def</span> <span class="nf">genCues</span><span class="p">(</span><span class="n">number_cues</span><span class="p">,</span> <span class="n">taskLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters</span>
@@ -248,11 +250,12 @@
     <span class="n">cues</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">taskLen</span><span class="p">):</span>
         <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numCues</span><span class="p">]:</span>
-            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">numCues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">number_cues</span><span class="p">]:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">number_cues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span>
         <span class="n">cues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cues</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="genActualities"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genActualities">[docs]</a><span class="k">def</span> <span class="nf">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -291,198 +294,81 @@
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="weatherStimDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherStimDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherStimDirect</span><span class="p">():</span>
+
+<div class="viewcode-block" id="StimulusWeatherDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.StimulusWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusWeatherDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather stimuli for models expecting just the event</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    weatherStim : function</span>
-<span class="sd">        The function returns the event</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn, model.QLearn2, model.opal, model.opals, model.decision.binary.eta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
-
-        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">observation</span>
-
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherStimDirect&quot;</span>
-    <span class="k">return</span> <span class="n">weatherStim</span></div>
-
-
-<div class="viewcode-block" id="weatherStimAllAction"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherStimAllAction">[docs]</a><span class="k">def</span> <span class="nf">weatherStimAllAction</span><span class="p">(</span><span class="n">numActions</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Processes the weather stimuli for models expecting feedback from all</span>
-<span class="sd">    possible actions</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    numActions : int</span>
-<span class="sd">        The number of actions the participant can perform. Assumes the lowest</span>
-<span class="sd">        valued action can be represented as 0</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    weatherStim : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the event and the</span>
-<span class="sd">        last action. The event that is a list of {0,1} and action is {0,1}. The</span>
-<span class="sd">        function returns a array of length (len(event))*numActions.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MSRev, model.decision.binary.decEtaSet</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; from experiment.weather import weatherStimAllAction</span>
-<span class="sd">    &gt;&gt;&gt; stim = weatherStimAllAction(2)</span>
-<span class="sd">    &gt;&gt;&gt; stim(np.array([1, 0, 0, 1]), 0)</span>
-<span class="sd">    (np.array([1, 0, 0, 1, 0, 0, 0, 0]), np.array([ 1, 0, 0, 1, 1, 1, 1, 1]))</span>
-<span class="sd">    &gt;&gt;&gt; stim(np.array([1, 0, 0, 1]), 1)</span>
-<span class="sd">    (np.array([0, 0, 0, 0, 1, 0, 0, 1]), np.array([ 1, 1, 1, 1, 1, 0, 0, 1]))</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">weatherStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusWeatherDirect.processStimulus"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.StimulusWeatherDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        For stimuli processing</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        observation :  None or list of ints or floats</span>
-<span class="sd">            The last observation that was recorded</span>
-<span class="sd">        action : int</span>
-<span class="sd">            The action chosen by the participant</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        activeStimuli : tuple of {0,1}</span>
-<span class="sd">        stimulus : tuple of floats</span>
-<span class="sd">            The events processed into a form to be used for updating the expectations</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">            The elements present of the stimulus</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+<span class="sd">            The activity of each of the elements</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">obsSize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-
-        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">numActions</span><span class="p">,</span> <span class="n">obsSize</span><span class="p">))</span>
-
-        <span class="n">s</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
-        <span class="n">a</span><span class="p">[</span><span class="n">action</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">observation</span>
-
-        <span class="n">stimulus</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-        <span class="n">activeStimuli</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-
-        <span class="k">return</span> <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimulus</span>
-
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherStimAllAction&quot;</span>
-    <span class="n">weatherStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;numActions&quot;</span><span class="p">:</span> <span class="n">numActions</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">weatherStim</span></div>
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">observation</span></div></div>
 
 
-<div class="viewcode-block" id="weatherRewDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDirect">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="RewardsWeatherDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardsWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardsWeatherDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather reward for models expecting the reward feedback</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    weatherRew : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the reward the</span>
-<span class="sd">        last action and the last stimuli. The function returns the reward.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardsWeatherDirect.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardsWeatherDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">reward</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">feedback</span></div></div>
 
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherRewDirect&quot;</span>
-    <span class="k">return</span> <span class="n">weatherRew</span></div>
 
-
-<div class="viewcode-block" id="weatherRewDiff"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDiff">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDiff</span><span class="p">():</span>
+<div class="viewcode-block" id="RewardWeatherDiff"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDiff">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDiff</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather reward for models expecting reward corrections</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    weatherRew : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the reward the</span>
-<span class="sd">        last action and the last stimuli. The function returns the reward.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.eta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDiff.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDiff.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">reward</span> <span class="o">==</span> <span class="n">action</span><span class="p">:</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">feedback</span> <span class="o">==</span> <span class="n">lastAction</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mi">0</span>
-
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;weatherRewDiff&quot;</span>
-    <span class="k">return</span> <span class="n">weatherRew</span></div>
+            <span class="k">return</span> <span class="mi">0</span></div></div>
 
 
-<div class="viewcode-block" id="weatherRewDualCorrection"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.weatherRewDualCorrection">[docs]</a><span class="k">def</span> <span class="nf">weatherRewDualCorrection</span><span class="p">(</span><span class="n">epsilon</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDualCorrection"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDualCorrection">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDualCorrection</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting the reward correction</span>
 <span class="sd">    from two possible actions.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    deckRew : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the reward the</span>
-<span class="sd">        last action and the last stimuli. The reward that is a float and</span>
-<span class="sd">        action is {0,1}. The function returns a list of length 2.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.BP, model.EP, model.MS, model.MSRev</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">weatherRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
-        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="n">rewardProc</span><span class="p">[</span><span class="n">reward</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span>
+<div class="viewcode-block" id="RewardWeatherDualCorrection.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDualCorrection.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;deckRewDualInfo&quot;</span>
-    <span class="n">weatherRew</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;epsilon&quot;</span><span class="p">:</span> <span class="n">epsilon</span><span class="p">}</span>
-    <span class="k">return</span> <span class="n">weatherRew</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rewardProc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
+        <span class="n">rewardProc</span><span class="p">[</span><span class="n">feedback</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rewardProc</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -515,12 +401,12 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

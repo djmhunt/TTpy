@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>fitAlgs.leastsq module &#8212; pyHPDM 0.9 documentation</title>
+    <title>fitAlgs.leastsq module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -21,7 +21,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="fitAlgs.minimize module" href="fitAlgs.minimize.html" />
-    <link rel="prev" title="fitSim" href="api/fitAlgs.fitSims.fitSim.html" /> 
+    <link rel="prev" title="fitAlgs.fitSims module" href="fitAlgs.fitSims.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -36,9 +36,9 @@
           <a href="fitAlgs.minimize.html" title="fitAlgs.minimize module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.fitSims.fitSim.html" title="fitSim"
+          <a href="fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" accesskey="U">fitAlgs package</a> &#187;</li> 
       </ul>
     </div>  
@@ -59,9 +59,9 @@
 </tbody>
 </table>
 <dl class="class">
-<dt id="fitAlgs.leastsq.leastsq">
-<em class="property">class </em><code class="descclassname">fitAlgs.leastsq.</code><code class="descname">leastsq</code><span class="sig-paren">(</span><em>fitSim</em>, <em>fitQualFunc=None</em>, <em>qualFuncArgs={}</em>, <em>boundCostFunc=&lt;function cost&gt;</em>, <em>bounds=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/leastsq.html#leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.leastsq.leastsq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.fitAlg" title="fitAlgs.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></a></p>
+<dt id="fitAlgs.leastsq.Leastsq">
+<em class="property">class </em><code class="descclassname">fitAlgs.leastsq.</code><code class="descname">Leastsq</code><span class="sig-paren">(</span><em>method=u'dogbox'</em>, <em>jac=u'3-point'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/leastsq.html#Leastsq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.leastsq.Leastsq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></p>
 <p>Fits data based on the least squared optimizer scipy.optimize.least_squares</p>
 <p>Not properly developed and will not be documented until upgrade</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -69,10 +69,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+<li><strong>fitQualityFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
 The value it returns provides the fitter with its fitting guide.
 Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>qualFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>qualityFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
 <li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
 translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
 <li><strong>method</strong> (<em>{‘trf’</em><em>, </em><em>‘dogbox’</em><em>, </em><em>‘lm’}</em><em>, </em><em>optional</em>) – Algorithm to perform minimization. Default <code class="docutils literal notranslate"><span class="pre">dogbox</span></code></li>
@@ -87,8 +87,8 @@ fitQUalFunc used names and the values are the qualFuncArgs. Default <code class=
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="fitAlgs.leastsq.leastsq.Name">
-<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.leastsq.leastsq.Name" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.leastsq.Leastsq.Name">
+<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.leastsq.Leastsq.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the fitting method</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -103,22 +103,17 @@ fitQUalFunc used names and the values are the qualFuncArgs. Default <code class=
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.fitAlg" title="fitAlgs.fitAlg.fitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></dt>
 <dd>The general fitting method class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.fitSim" title="fitAlgs.fitSims.fitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></a></dt>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.fitSim</span></code></dt>
 <dd>The general fitting class</dd>
 <dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimize.least_squares</span></code></dt>
 <dd>The fitting class this wraps around</dd>
 </dl>
 </div>
-<dl class="attribute">
-<dt>
-<code class="descname">Name</code><em class="property"> = u'leastsq'</em></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="fitAlgs.leastsq.leastsq.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/leastsq.html#leastsq.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.leastsq.leastsq.fit" title="Permalink to this definition">¶</a></dt>
+<dt id="fitAlgs.leastsq.Leastsq.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/leastsq.html#Leastsq.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.leastsq.Leastsq.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters and returns the best one.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -160,8 +155,8 @@ fit qualities of these parameters.</li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api/fitAlgs.fitSims.fitSim.html"
-                        title="previous chapter">fitSim</a></p>
+  <p class="topless"><a href="fitAlgs.fitSims.html"
+                        title="previous chapter">fitAlgs.fitSims module</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="fitAlgs.minimize.html"
                         title="next chapter">fitAlgs.minimize module</a></p>
@@ -201,14 +196,14 @@ fit qualities of these parameters.</li>
           <a href="fitAlgs.minimize.html" title="fitAlgs.minimize module"
              >next</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.fitSims.fitSim.html" title="fitSim"
+          <a href="fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" >fitAlgs package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

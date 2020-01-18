@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>mergeDatasets &#8212; pyHPDM 0.9 documentation</title>
+    <title>mergeDatasets &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="utils.mergeDatasetRepr.html" title="mergeDatasetRepr"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../utils.html" accesskey="U">utils module</a> &#187;</li> 
       </ul>
     </div>  
@@ -74,28 +74,16 @@ data set did not contain a key a value of None will be entered for it.</p>
 </tbody>
 </table>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;a&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span><span class="s1">&#39;b&#39;</span><span class="p">:[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]},</span>
-<span class="go">            {&#39;b&#39;:[4, 5, 6],&#39;c&#39;:&#39;string&#39;,&#39;d&#39;:5}]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;a&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;b&#39;</span><span class="p">:[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">}]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="go">{&#39;a&#39;: [[1, 2, 3], None],</span>
-<span class="go"> &#39;b&#39;: [[7, 8, 9], [4, 5, 6]],</span>
-<span class="go"> &#39;c&#39;: [None, &#39;string&#39;],</span>
-<span class="go"> &#39;d&#39;: [None, 5]}</span>
+<span class="go">{&#39;a&#39;: [[1, 2, 3], None], &#39;c&#39;: [None, &#39;string&#39;], &#39;b&#39;: [[7, 8, 9], [4, 5, 6]], &#39;d&#39;: [None, 5]}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">{&#39;a&#39;: [1, 2, 3, None],</span>
-<span class="go"> &#39;b&#39;: [7, 8, 9, 4, 5, 6],</span>
-<span class="go"> &#39;c&#39;: [None, &#39;string&#39;],</span>
-<span class="go"> &#39;d&#39;: [None, 5]}</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]])},</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span><span class="n">array</span><span class="p">([[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]])}]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">extend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-<span class="go">{&#39;b&#39;: [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mergeDatasets</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="go">{&#39;b&#39;: [array([[7, 8, 9],</span>
-<span class="go">        [1, 2, 3]]), array([[4, 5, 6],</span>
-<span class="go">        [2, 3, 4]])]}</span>
+<span class="go">{&#39;a&#39;: [1, 2, 3, None], &#39;c&#39;: [None, &#39;string&#39;], &#39;b&#39;: [7, 8, 9, 4, 5, 6], &#39;d&#39;: [None, 5]}</span>
+<span class="go"> &gt;&gt;&gt; data = [{&#39;b&#39;: np.array([[7, 8, 9], [1, 2, 3]])}, {&#39;b&#39;: np.array([[4, 5, 6], [2, 3, 4]])}]</span>
+<span class="go"> &gt;&gt;&gt; mergeDatasets(data, extend = True)</span>
+<span class="go"> {&#39;b&#39;: [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}</span>
+<span class="go"> &gt;&gt;&gt; mergeDatasets(data)</span>
+<span class="go"> {&#39;b&#39;: [array([[7, 8, 9], [1, 2, 3]]), array([[4, 5, 6], [2, 3, 4]])]}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -152,12 +140,12 @@ data set did not contain a key a value of None will be entered for it.</p>
         <li class="right" >
           <a href="utils.mergeDatasetRepr.html" title="mergeDatasetRepr"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../utils.html" >utils module</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

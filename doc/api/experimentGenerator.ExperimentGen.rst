@@ -10,12 +10,12 @@ ExperimentGen
 
    .. autosummary::
 
-      ~ExperimentGen.iterExpID
-      ~ExperimentGen.newExp
+      ~ExperimentGen.iter_experiment_ID
+      ~ExperimentGen.new_experiment
       ~ExperimentGen.next
 
    .. rubric:: Methods Documentation
 
-   .. automethod:: iterExpID
-   .. automethod:: newExp
+   .. automethod:: iter_experiment_ID
+   .. automethod:: new_experiment
    .. automethod:: next

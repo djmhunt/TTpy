@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>saving &#8212; pyHPDM 0.9 documentation</title>
+    <title>saving &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -20,8 +20,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="outputtingUtils module" href="../outputtingUtils.html" />
-    <link rel="prev" title="reframeListDicts" href="outputting.reframeListDicts.html" /> 
+    <link rel="next" title="utils module" href="../utils.html" />
+    <link rel="prev" title="pickleRec" href="outputting.pickleRec.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -33,12 +33,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../outputtingUtils.html" title="outputtingUtils module"
+          <a href="../utils.html" title="utils module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="outputting.reframeListDicts.html" title="reframeListDicts"
+          <a href="outputting.pickleRec.html" title="pickleRec"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../outputting.html" accesskey="U">outputting module</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,22 +52,20 @@
 <h1>saving<a class="headerlink" href="#saving" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="outputting.saving">
-<code class="descclassname">outputting.</code><code class="descname">saving</code><span class="sig-paren">(</span><em>label</em>, <em>save=True</em>, <em>pickleData=False</em>, <em>saveScript=True</em>, <em>logLevel=20</em>, <em>npSetErr=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/outputting.html#saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.saving" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">outputting.</code><code class="descname">saving</code><span class="sig-paren">(</span><em>label=None</em>, <em>pickle=False</em>, <em>config_file=None</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/outputting.html#saving"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.saving" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the folder structure for the saved data and created the log file as <code class="docutils literal notranslate"><span class="pre">log.txt</span></code></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation</li>
-<li><strong>save</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data will be saved to files. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation. Default <code class="docutils literal notranslate"><span class="pre">None</span></code> will mean no data is saved to files.</li>
+<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>saveScript</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true a copy of the top level script running the current function
-will be copied to the log folder. Only works if save is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>logLevel</strong> (<em>{logging.DEBUG</em><em>, </em><em>logging.INFO</em><em>, </em><em>logging.WARNING</em><em>, </em><em>logging.ERROR</em><em>, </em><em>logging.CRITICAL}</em>) – Defines the level of the log. Default <code class="docutils literal notranslate"><span class="pre">logging.INFO</span></code></li>
-<li><strong>npSetErr</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
+<li><strong>config_file</strong> (<em>string</em><em>, </em><em>optional</em>) – The file name and path of a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> configuration file. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>min_log_level</strong> (<em>basestring</em><em>, </em><em>optional</em>) – Defines the level of the log from (<code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>). Default <code class="docutils literal notranslate"><span class="pre">INFO</span></code>
+See <a class="reference external" href="https://docs.python.org/3/library/logging.html#levels">https://docs.python.org/3/library/logging.html#levels</a></li>
+<li><strong>numpy_error_level</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
 </ul>
 </td>
 </tr>
@@ -100,11 +98,11 @@ returns one <code class="docutils literal notranslate"><span class="pre">fileNam
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="outputting.reframeListDicts.html"
-                        title="previous chapter">reframeListDicts</a></p>
+  <p class="topless"><a href="outputting.pickleRec.html"
+                        title="previous chapter">pickleRec</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../outputtingUtils.html"
-                        title="next chapter">outputtingUtils module</a></p>
+  <p class="topless"><a href="../utils.html"
+                        title="next chapter">utils module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -138,17 +136,17 @@ returns one <code class="docutils literal notranslate"><span class="pre">fileNam
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../outputtingUtils.html" title="outputtingUtils module"
+          <a href="../utils.html" title="utils module"
              >next</a> |</li>
         <li class="right" >
-          <a href="outputting.reframeListDicts.html" title="reframeListDicts"
+          <a href="outputting.pickleRec.html" title="pickleRec"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../outputting.html" >outputting module</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

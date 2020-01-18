@@ -10,10 +10,10 @@ ModelGen
 
    .. autosummary::
 
-      ~ModelGen.iterInitDetails
+      ~ModelGen.iter_details
       ~ModelGen.next
 
    .. rubric:: Methods Documentation
 
-   .. automethod:: iterInitDetails
+   .. automethod:: iter_details
    .. automethod:: next

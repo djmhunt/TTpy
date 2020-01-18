@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.beads &#8212; pyHPDM 0.9 documentation</title>
+    <title>experiment.beads &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -50,11 +50,13 @@
 <span class="sd">                    Cognitive, Affective &amp; Behavioral Neuroscience, 6(4), 261–9.</span>
 <span class="sd">                    Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 <span class="c1"># Bead Sequences:</span>
 <span class="n">beadSequences</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MooreSellen&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]}</span>
@@ -82,9 +84,9 @@
 <span class="sd">        `MooreSellen`, the default sequence.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beadSequence</span><span class="o">=</span><span class="n">defaultBeads</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">beadSequence</span><span class="o">=</span><span class="n">defaultBeads</span><span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">Beads</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Beads</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">beadSequence</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">beadSequence</span> <span class="ow">in</span> <span class="n">beadSequences</span><span class="p">:</span>
@@ -218,64 +220,48 @@
     <span class="k">return</span> <span class="n">sequence</span></div>
 
 
-<div class="viewcode-block" id="beadStimDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.beadStimDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="StimulusBeadDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusBeadDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the beads stimuli for models expecting just the event</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of ``{1,2, None}``</span>
-<span class="sd">        and then return it.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">observation</span>
+<div class="viewcode-block" id="StimulusBeadDirect.processStimulus"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadStimDirect&quot;</span>
-    <span class="k">return</span> <span class="n">beadStim</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">observation</span></div></div>
 
 
-<div class="viewcode-block" id="beadStimDualDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.beadStimDualDirect">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="StimulusBeadDualDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDualDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusBeadDualDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the beads stimuli for models expecting a tuple of ``[event,1-event]``</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of {1,2, None}</span>
-<span class="sd">        and then return ``[event,1-event]``, where the event is expected to be</span>
-<span class="sd">        ``{1,0}``.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.EP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusBeadDualDirect.processStimulus"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDualDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">            The elements present of the stimulus</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+<span class="sd">            The activity of each of the elements</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">observation</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">])</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span>
-
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadStimDualDirect&quot;</span>
-
-    <span class="k">return</span> <span class="n">beadStim</span></div>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span></div></div>
 
 
-<div class="viewcode-block" id="beadStimDualInfo"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.beadStimDualInfo">[docs]</a><span class="k">def</span> <span class="nf">beadStimDualInfo</span><span class="p">(</span><span class="n">oneProb</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusBeadDualInfo"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDualInfo">[docs]</a><span class="k">class</span> <span class="nc">StimulusBeadDualInfo</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the beads stimuli for models expecting the reward information</span>
 <span class="sd">    from two possible actions</span>
@@ -286,58 +272,40 @@
 <span class="sd">        The probability of a 1 from the first jar. This is also the probability</span>
 <span class="sd">        of a 0 from the second jar. ``event_info`` is calculated as</span>
 <span class="sd">        ``oneProb*event + (1-oneProb)*(1-event)``</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    beadStim : function</span>
-<span class="sd">        The function expects to be passed the event and a decision of {1,2, None}</span>
-<span class="sd">        and then return ``[event_info,1-event_info]``.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.MS, model.MSRev, model.BP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">oneProb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">beadStim</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="n">stim</span> <span class="o">=</span> <span class="n">oneProb</span><span class="o">*</span><span class="n">observation</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">)</span>
+<div class="viewcode-block" id="StimulusBeadDualInfo.processStimulus"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.StimulusBeadDualInfo.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">            The elements present of the stimulus</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+<span class="sd">            The activity of each of the elements</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oneProb</span><span class="o">*</span><span class="n">observation</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">oneProb</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">observation</span><span class="p">)</span>
         <span class="n">stimulus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">stim</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">stim</span><span class="p">])</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stimulus</span></div></div>
 
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadStimDualInfo&quot;</span>
-    <span class="n">beadStim</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;oneProb&quot;</span><span class="p">:</span> <span class="n">oneProb</span><span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">beadStim</span></div>
-
-<div class="viewcode-block" id="beadRewDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.beadRewDirect">[docs]</a><span class="k">def</span> <span class="nf">beadRewDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="RewardBeadDirect"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.RewardBeadDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardBeadDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the beads reward for models expecting just the reward</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    beadRew : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the reward and the</span>
-<span class="sd">        last action. The function returns the reward.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn, model.QLearn2, model.decision.binary.eta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">beadRew</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reward</span>
+<div class="viewcode-block" id="RewardBeadDirect.processFeedback"><a class="viewcode-back" href="../../experiment.beads.html#experiment.beads.RewardBeadDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-    <span class="n">beadRew</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;beadRewDirect&quot;</span>
-    <span class="k">return</span> <span class="n">beadRew</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">feedback</span></div></div>
+
 
 </pre></div>
 
@@ -371,12 +339,12 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

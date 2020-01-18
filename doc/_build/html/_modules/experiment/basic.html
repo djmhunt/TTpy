@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.basic &#8212; pyHPDM 0.9 documentation</title>
+    <title>experiment.basic &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -47,12 +47,13 @@
 
 <span class="sd">:Note: A simple example of an experiment class with all the necessary components</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="k">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
 
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 <div class="viewcode-block" id="Basic"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.Basic">[docs]</a><span class="k">class</span> <span class="nc">Basic</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -69,9 +70,9 @@
 <span class="sd">        The name of the class used when recording what has been used.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trials</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trials</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">Basic</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Basic</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nbr_of_trials</span> <span class="o">=</span> <span class="n">trials</span>
 
@@ -155,57 +156,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">action_history</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
 
-<div class="viewcode-block" id="basicStimulusDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicStimulusDirect">[docs]</a><span class="k">def</span> <span class="nf">basicStimulusDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="StimulusBasicSimple"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.StimulusBasicSimple">[docs]</a><span class="k">class</span> <span class="nc">StimulusBasicSimple</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the stimulus cues for models expecting just the event</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    basicStimulus : function</span>
-<span class="sd">        The function returns a tuple of ``1`` and the observation.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn, model.QLearn2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">basicStimulus</span><span class="p">(</span><span class="n">observation</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<div class="viewcode-block" id="StimulusBasicSimple.processStimulus"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.StimulusBasicSimple.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
-    <span class="n">basicStimulus</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicStimulusDirect&quot;</span>
-    <span class="k">return</span> <span class="n">basicStimulus</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stimuliPresent :  int or list of int</span>
+<span class="sd">            The elements present of the stimulus</span>
+<span class="sd">        stimuliActivity : float or list of float</span>
+<span class="sd">            The activity of each of the elements</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span></div></div>
 
 
-<div class="viewcode-block" id="basicRewardDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.basicRewardDirect">[docs]</a><span class="k">def</span> <span class="nf">basicRewardDirect</span><span class="p">():</span>
+<div class="viewcode-block" id="RewardBasicDirect"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.RewardBasicDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardBasicDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the reward for models expecting just the reward</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    basicReward : function</span>
-<span class="sd">        The function expects to be passed a tuple containing the reward and the</span>
-<span class="sd">        last action. The function returns the reward.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    Name : string</span>
-<span class="sd">        The identifier of the function</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    model.QLearn, model.QLearn2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">basicReward</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">reward</span>
+<div class="viewcode-block" id="RewardBasicDirect.processFeedback"><a class="viewcode-back" href="../../experiment.basic.html#experiment.basic.RewardBasicDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 
-    <span class="n">basicReward</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;basicRewardDirect&quot;</span>
-    <span class="k">return</span> <span class="n">basicReward</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        modelFeedback:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">feedback</span></div></div>
+
 </pre></div>
 
           </div>
@@ -238,12 +223,12 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

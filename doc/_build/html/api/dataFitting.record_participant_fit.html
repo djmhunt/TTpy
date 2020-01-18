@@ -1,0 +1,160 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>record_participant_fit &#8212; pyHPDM 0.9.9 documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="xlsx_fitting_data" href="dataFitting.xlsx_fitting_data.html" />
+    <link rel="prev" title="record_fitting" href="dataFitting.record_fitting.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.xlsx_fitting_data.html" title="xlsx_fitting_data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.record_fitting.html" title="record_fitting"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dataFitting.html" accesskey="U">dataFitting module</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="record-participant-fit">
+<h1>record_participant_fit<a class="headerlink" href="#record-participant-fit" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="dataFitting.record_participant_fit">
+<code class="descclassname">dataFitting.</code><code class="descname">record_participant_fit</code><span class="sig-paren">(</span><em>participant</em>, <em>part_name</em>, <em>model_data</em>, <em>model_name</em>, <em>fitting_data</em>, <em>partModelVars</em>, <em>participantFits</em>, <em>outputFolder=None</em>, <em>fileNameGen=None</em>, <em>pickleData=False</em>, <em>saveFittingProgress=False</em>, <em>expData=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dataFitting.html#record_participant_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dataFitting.record_participant_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record the data relevant to the participant fitting</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The participant data</li>
+<li><strong>part_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>string</em>) – The identifier for each participant</li>
+<li><strong>model_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the model</li>
+<li><strong>model_name</strong> (<em>basestring</em>) – The label given to the model</li>
+<li><strong>fitting_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
+tested, in the order they were tested, and a list of the fit qualities of these parameters</li>
+<li><strong>partModelVars</strong> (<em>dict of string</em>) – A dictionary of model settings whose values should vary from participant to participant based on the
+values found in the imported participant data files. The key is the label given in the participant data file,
+as a string, and the value is the associated label in the model, also as a string.</li>
+<li><strong>participantFits</strong> (<em>defaultdict of lists</em>) – A dictionary to be filled with the summary of the participant fits</li>
+<li><strong>outputFolder</strong> (<em>basestring</em><em>, </em><em>optional</em>) – The folder into which the data will be saved. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>fileNameGen</strong> (<em>function</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
+returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>pickleData</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>saveFittingProgress</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Specifies if the results from each iteration of the fitting process should be returned. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
+<li><strong>expData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The data from the experiment. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>participantFits</strong> – A dictionary to be filled with the summary of the previous and current participant fits</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">defaultdict of lists</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="../outputting.html#outputting.pickleLog" title="outputting.pickleLog"><code class="xref py py-func docutils literal notranslate"><span class="pre">outputting.pickleLog()</span></code></a></dt>
+<dd>records the picked data</dd>
+</dl>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dataFitting.record_fitting.html"
+                        title="previous chapter">record_fitting</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="dataFitting.xlsx_fitting_data.html"
+                        title="next chapter">xlsx_fitting_data</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/dataFitting.record_participant_fit.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.xlsx_fitting_data.html" title="xlsx_fitting_data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dataFitting.record_fitting.html" title="record_fitting"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../dataFitting.html" >dataFitting module</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2020, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>model.BPE &#8212; pyHPDM 0.9 documentation</title>
+    <title>model.BPE &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -30,7 +30,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -46,7 +46,7 @@
 <span class="sd">:Author: Dominic Hunt</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -56,9 +56,9 @@
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">ndarray</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">ndarray</span>
 
-<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="k">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Model</span>
 
 
 <div class="viewcode-block" id="BPE"><a class="viewcode-back" href="../../model.BPE.html#model.BPE.BPE">[docs]</a><span class="k">class</span> <span class="nc">BPE</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
@@ -76,18 +76,18 @@
 <span class="sd">        Learning rate parameter</span>
 <span class="sd">    epsilon : float, optional</span>
 <span class="sd">        Noise parameter. The larger it is the less likely the model is to choose the highest expected reward</span>
-<span class="sd">    numActions : integer, optional</span>
+<span class="sd">    number_actions : integer, optional</span>
 <span class="sd">        The maximum number of valid actions the model can expect to receive.</span>
 <span class="sd">        Default 2.</span>
-<span class="sd">    numCues : integer, optional</span>
+<span class="sd">    number_cues : integer, optional</span>
 <span class="sd">        The initial maximum number of stimuli the model can expect to receive.</span>
 <span class="sd">         Default 1.</span>
-<span class="sd">    numCritics : integer, optional</span>
+<span class="sd">    number_critics : integer, optional</span>
 <span class="sd">        The number of different reaction learning sets.</span>
-<span class="sd">        Default numActions*numCues</span>
+<span class="sd">        Default number_actions*number_cues</span>
 <span class="sd">    validRewards : list, ndarray, optional</span>
 <span class="sd">        The different reward values that can occur in the task. Default ``array([0, 1])``</span>
-<span class="sd">    actionCodes : dict with string or int as keys and int values, optional</span>
+<span class="sd">    action_codes : dict with string or int as keys and int values, optional</span>
 <span class="sd">        A dictionary used to convert between the action references used by the</span>
 <span class="sd">        task or dataset and references used in the models to describe the order</span>
 <span class="sd">        in which the action information is stored.</span>
@@ -111,7 +111,7 @@
 <span class="sd">    model.BP : This model is heavily based on that one</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dirichletInit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validRewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">dirichletInit</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">validRewards</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">BPE</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -121,7 +121,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span> <span class="o">=</span> <span class="n">validRewards</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewLoc</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))</span> <span class="o">*</span> <span class="n">dirichletInit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_cues</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)))</span> <span class="o">*</span> <span class="n">dirichletInit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;epsilon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
@@ -175,7 +175,7 @@
 <span class="sd">            A list of the stimuli that were or were not present</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimuli</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimFunc</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="n">activeStimuli</span><span class="p">,</span> <span class="n">stimuli</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span><span class="o">.</span><span class="n">processStimulus</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
         <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
 
@@ -201,7 +201,7 @@
 <span class="sd">        delta</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">modReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewFunc</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
+        <span class="n">modReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span><span class="o">.</span><span class="n">processFeedback</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">modReward</span></div>
 
@@ -238,7 +238,7 @@
 
         <span class="c1"># If there are multiple possible stimuli, filter by active stimuli and calculate</span>
         <span class="c1"># calculate the expectations associated with each action.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">numCues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_cues</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actStimMerge</span><span class="p">(</span><span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">actionExpectations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calcActExpectations</span><span class="p">(</span><span class="n">dirichletVals</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
@@ -261,7 +261,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">cbest</span> <span class="o">=</span> <span class="n">actionValues</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">actionValues</span><span class="p">)</span>
-        <span class="n">deltaEpsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
+        <span class="n">deltaEpsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)</span>
         <span class="n">bestEpsilon</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cbest</span><span class="p">)</span> <span class="o">+</span> <span class="n">deltaEpsilon</span>
         <span class="n">probArray</span> <span class="o">=</span> <span class="n">bestEpsilon</span> <span class="o">*</span> <span class="n">cbest</span> <span class="o">+</span> <span class="n">deltaEpsilon</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cbest</span><span class="p">)</span>
 
@@ -284,7 +284,7 @@
 
 <div class="viewcode-block" id="BPE.actStimMerge"><a class="viewcode-back" href="../../model.BPE.html#model.BPE.BPE.actStimMerge">[docs]</a>    <span class="k">def</span> <span class="nf">actStimMerge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
 
-        <span class="n">dirVals</span> <span class="o">=</span> <span class="n">dirichletVals</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">stimuli</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">dirVals</span> <span class="o">=</span> <span class="n">dirichletVals</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">([</span><span class="n">stimuli</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="n">actDirVals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dirVals</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -292,7 +292,7 @@
 
 <div class="viewcode-block" id="BPE.calcActExpectations"><a class="viewcode-back" href="../../model.BPE.html#model.BPE.BPE.calcActExpectations">[docs]</a>    <span class="k">def</span> <span class="nf">calcActExpectations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dirichletVals</span><span class="p">):</span>
 
-        <span class="n">actExpect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">numActions</span><span class="p">)</span>
+        <span class="n">actExpect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">validRew</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirichletVals</span><span class="p">),</span> <span class="nb">float</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">actExpect</span></div>
 
@@ -336,12 +336,12 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Dominic Hunt.
+        &#169; Copyright 2014-2020, Dominic Hunt.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
     </div>
   </body>

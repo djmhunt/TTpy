@@ -1,6 +1,8 @@
 experiment package
 ==================
 
+.. automodapi:: experiment
+
 .. automodule:: experiment
     :members:
     :undoc-members:
@@ -11,6 +13,7 @@ Submodules
 
 .. toctree::
 
+   experiment.balltask
    experiment.basic
    experiment.beads
    experiment.decks
