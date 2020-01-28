@@ -341,11 +341,13 @@ class FitSim(object):
             The participant data
         stimuli : list of strings or ``None``
             A list of the keys in partData representing participant stimuli
-        validActions : string or ``None`` or list of ints
+        validActions : string or None or list of strings, ints or None
             The name of the key in partData where the list of valid actions
             can be found. If ``None`` then the action list is considered to
             stay constant. If a list then the list will be taken as the list
-            of actions that can be taken at every trialstep.
+            of actions that can be taken at every trialstep. If the list is
+            shorter than the number of trialsteps, then it will be considered
+            to be a list of valid actions for each trialstep.
 
         Returns
         -------
@@ -354,24 +356,42 @@ class FitSim(object):
             observation instance.
         """
 
-        if type(stimuli) is types.NoneType:
+        partDataShape = None
+        if stimuli is None:
             partDataLen = len(partData[self.partRewardParam])
-            stimuliData = (None for i in xrange(partDataLen))
-        else:
+            stimuliData = [None] * partDataLen
+        elif isinstance(stimuli, basestring):
+            stimuliData = np.array(partData[stimuli])
+            partDataShape = stimuliData.shape
+        elif isinstance(stimuli, list):
             if len(stimuli) > 1:
                 stimuliData = np.array([partData[s] for s in stimuli]).T
             else:
                 stimuliData = np.array(partData[stimuli[0]]).T
-            partDataLen = stimuliData.shape[0]
-
-        if type(validActions) is types.NoneType:
-            actionData = (None for i in xrange(partDataLen))
-        elif isinstance(validActions, basestring):
-            actionData = partData[validActions]
+            partDataShape = stimuliData.shape
         else:
-            actionData = (validActions for i in xrange(partDataLen))
+            raise
+        if partDataShape:
+            if len(partDataShape) > 1:
+                if max(partDataShape) == partDataShape[0]:
+                    partDataLen = partDataShape[0]
+                else:
+                    stimuliData = stimuliData.T
+                    partDataLen = partDataShape[1]
+            else:
+                partDataLen = partDataShape
 
-        observation = [(s, a) for a, s in itertools.izip(actionData, stimuliData)]
+        if validActions in partData:
+            action_data_raw = partData[validActions]
+        else:
+            action_data_raw = validActions
+        partDataLen = len(stimuliData)
+        if len(action_data_raw) != partDataLen:
+            actionData = [action_data_raw] * partDataLen
+        else:
+            actionData = action_data_raw
+
+        observation = [(s, a) for s, a in itertools.izip(stimuliData, actionData)]
 
         return observation
 
@@ -402,6 +422,7 @@ class FitSim(object):
         _simRun(modelInstance, partAct, partReward, partObs)
 
         return modelInstance
+
 
 def _simRun(modelInstance, partAct, partReward, partObs):
     """
