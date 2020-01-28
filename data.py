@@ -501,8 +501,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or None or 1 element list, optional
+            If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+            be found. If None then all trials will use all available actions. If a 1 element list then the element will
+            be treated as the the valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -586,22 +588,27 @@ class Data(list):
             raise TypeError('choices should be a string not a {}'.format(type(choices)))
         if not isinstance(feedbacks, basestring):
             raise TypeError('feedbacks should be a string not a {}'.format(type(feedbacks)))
+
         if stimuli is None or isinstance(stimuli, basestring):
-            combining_stimuli=False
+            combining_stimuli = False
         elif isinstance(stimuli, list):
             combining_stimuli = True
             if not all(isinstance(s, basestring) for s in stimuli):
                 raise TypeError('stimuli in the list should be strings: {}'.format(stimuli))
         else:
             raise TypeError('stimuli should be a string or list of strings not a {}'.format(type(stimuli)))
+
         if action_options is None or isinstance(action_options, basestring):
             combining_action_options = False
-        elif isinstance(action_options, list):
-            combining_action_options = True
-            if not all(isinstance(s, basestring) for s in action_options):
-                raise TypeError('action_options in the list should be strings: {}'.format(action_options))
+        elif isinstance(action_options, (list, np.ndarray)):
+            if all(isinstance(s, basestring) for s in action_options):
+                combining_action_options = True
+            elif len(action_options) == 1:
+                combining_action_options = False
+            else:
+                raise TypeError('The list of action_options should contain strings or one example of trial valid action choices: {}'.format(action_options))
         else:
-            raise TypeError('action_options should be a string or list of strings not a {}'.format(type(action_options)))
+            raise TypeError('action_options should be a string, a list of strings or a list containing one example of trial valid action choices, not a {}'.format(type(action_options)))
 
         self.IDs = {}
         for loc, p in enumerate(participant_data):
@@ -670,6 +677,10 @@ class Data(list):
             if not combining_action_options:
                 if action_options is None:
                     self.action_options = None
+                elif isinstance(action_options, (list, np.ndarray)) and len(action_options) == 1:
+                    action_options_constant_name = 'constant_valid_actions'
+                    participant_data[loc][action_options_constant_name] = action_options[0]
+                    self.action_options = action_options_constant_name
                 elif action_options not in keys:
                     raise KeyError("action_options key not found in participant {} data: `{}`".format(p[participantID], action_options))
                 elif not isinstance(p[action_options], (list, np.ndarray)):
@@ -678,8 +689,7 @@ class Data(list):
                     self.action_options = action_options
             else:
                 if not set(action_options).issubset(set(keys)):
-                    raise KeyError(
-                        "action_options keys not found in participant {} data: {}".format(p[participantID], action_options))
+                    raise KeyError("action_options keys not found in participant {} data: {}".format(p[participantID], action_options))
                 options_list = [np.array(p[a])[:, np.newaxis] for a in action_options]
                 try:
                     options_array = np.hstack(options_list)
@@ -696,7 +706,7 @@ class Data(list):
                 participant_data[loc][action_options_combined_name] = options_array
                 self.action_options = action_options_combined_name
 
-            if action_options and len(p[choices]) != len(p[self.action_options]):
+            if action_options and len(p[choices]) != len(p[self.action_options]) and len(action_options) > 1:
                 raise LengthError('The number of values for choices and valid actions must be the same: {} choices and {} action_options for participant `{}`'.format(len(p[choices]), len(p[self.action_options]), p[participantID]))
 
         super(Data, self).__init__(participant_data)
@@ -895,7 +905,7 @@ class Data(list):
         --------
         >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
         >>> suffixLen = 4
-        >>> get_unique_prefix(dataFiles, suffixLen)
+        >>> data.__get_unique_prefix(dataFiles, suffixLen)
         'subj'
 
         """
@@ -961,12 +971,12 @@ class Data(list):
         >>> dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
         >>> prefix = 'me0'
         >>> suffix = '.mat'
-        >>> int_core(dataFiles, prefix, suffix)
+        >>> data.__int_core(dataFiles, prefix, suffix)
         ([u'me001.mat', u'me002.mat', u'me051.mat', u'me052.mat'], ['1', '2', '51', '52'])
         >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj12.mat', 'subj2.mat']
         >>> prefix = 'subj'
         >>> suffix = 'mat'
-        >>> int_core(dataFiles, prefix, suffix)
+        >>> data.__int_core(dataFiles, prefix, suffix)
         (['subj1.mat', 'subj2.mat', 'subj11.mat', 'subj12.mat'], ['1', '2', '11', '12'])
         """
 
