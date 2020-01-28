@@ -14,8 +14,6 @@ import collections
 
 import numpy as np
 
-from types import NoneType
-
 
 # TODO: provide default values for expResponses
 def weightProb(expResponses=(0, 1)):
@@ -34,7 +32,7 @@ def weightProb(expResponses=(0, 1)):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
-    decision : int or NoneType
+    decision : int or None
         The action to be taken by the model
     probDict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
@@ -70,7 +68,7 @@ def weightProb(expResponses=(0, 1)):
 
         prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
-        if type(prob) is NoneType:
+        if prob is None:
             return None, probDict
 
         normProb = prob / np.sum(prob)
@@ -105,7 +103,7 @@ def maxProb(expResponses=(0, 1)):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
-    decision : int or NoneType
+    decision : int or None
         The action to be taken by the model
     probDict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
@@ -139,7 +137,7 @@ def maxProb(expResponses=(0, 1)):
 
         prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
-        if type(prob) is NoneType:
+        if prob is None:
             return None, probDict
 
         # In case there are multiple choices with the same probability, pick
@@ -175,7 +173,7 @@ def probThresh(expResponses=(0, 1), eta=0.8):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
-    decision : int or NoneType
+    decision : int or None
         The action to be taken by the model
     probDict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
@@ -205,7 +203,7 @@ def probThresh(expResponses=(0, 1), eta=0.8):
 
         prob, resp = _validProbabilities(probArray, expResp, validResponses)
 
-        if type(prob) is NoneType:
+        if prob is None:
             return None, probDict
 
         # If probMax is above a threshold, we pick the best one, otherwise we pick at random
@@ -236,8 +234,8 @@ def _validProbabilities(probabilities, expResp, validResponses):
     expResp : tuple or None
         Provides the action responses expected by the experiment for each
         probability estimate.
-    validResponses : 1D list or array
-        The responses allowed for this trial
+    validResponses : 1D list or array, or ``None``
+        The responses allowed for this trial. If ``None`` all are used.
 
     Returns
     -------
@@ -252,7 +250,7 @@ def _validProbabilities(probabilities, expResp, validResponses):
     (array([0.1, 0.7]), array(['B', 'C'], dtype='<U1'))
     """
 
-    if type(validResponses) is NoneType:
+    if validResponses is None:
         resp = expResp
         prob = probabilities
     else:

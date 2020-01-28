@@ -18,8 +18,6 @@ import numpy as np
 
 import utils
 
-from types import NoneType
-
 
 #%% Folder management
 def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', numpy_error_level="log"):
@@ -428,7 +426,7 @@ def flatDictKeySet(store, selectKeys=None):
             v = s[k]
             if isinstance(v, (list, np.ndarray)):
                 listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
-                if listSet is not NoneType:
+                if listSet is not None:
                     keySet[k] = listSet
             elif isinstance(v, dict):
                 dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
@@ -494,7 +492,7 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
                 tempList = []
                 for s in store:
                     rawVal = s.get(key, None)
-                    if type(rawVal) is NoneType:
+                    if rawVal is None:
                         tempList.append(None)
                     else:
                         tempList.append(listSelection(rawVal, locCo))
@@ -672,7 +670,7 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
         v = store[k]
         if isinstance(v, (list, np.ndarray)):
             listSet, maxListLen = listKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
-            if listSet is not NoneType:
+            if listSet is not None:
                 keySet.setdefault(k, listSet)
         elif isinstance(v, dict):
             dictKeySet, maxListLen = dictKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)

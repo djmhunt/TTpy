@@ -9,8 +9,6 @@ import logging
 import numpy as np
 import scipy as sp
 
-from types import NoneType
-
 from fitAlgs.fitAlg import FitAlg
 
 
@@ -42,7 +40,7 @@ class Evolutionary(FitAlg):
         can improve the minimization slightly. Default ``False``
     popSize : int, optional
         A multiplier for setting the total population size. The population has
-        popsize * len(x) individuals. Default 15
+        popsize * len(x) individuals. Default 20
     tolerance : float, optional
         When the mean of the population energies, multiplied by tol, divided by
         the standard deviation of the population energies is greater than 1 the
@@ -84,7 +82,7 @@ class Evolutionary(FitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, strategy=None, polish=False, popSize=15, tolerance=0.01, **kwargs):
+    def __init__(self, strategy=None, polish=False, popSize=20, tolerance=0.01, **kwargs):
 
         super(Evolutionary, self).__init__(**kwargs)
 
@@ -98,7 +96,7 @@ class Evolutionary(FitAlg):
         self.fitInfo['popSize'] = self.populationSize
         self.fitInfo['tolerance'] = self.tolerance
 
-        if type(self.strategySet) is NoneType:
+        if self.strategySet is None:
             self.fitInfo['strategy'] = self.strategy
         else:
             self.fitInfo['strategy'] = self.strategySet
@@ -150,19 +148,19 @@ class Evolutionary(FitAlg):
         self.setBounds(mParamNames)
         boundVals = self.boundVals
 
-        if type(strategy) is NoneType:
+        if strategy is None:
 
             resultSet = []
             strategySuccessSet = []
 
             for strategy in strategySet:
                 optimizeResult = self._strategyFit(strategy, boundVals)
-                if type(optimizeResult) is not NoneType:
+                if optimizeResult is not None:
                     resultSet.append(optimizeResult)
                     strategySuccessSet.append(strategy)
             bestResult = self._bestfit(resultSet)
 
-            if type(bestResult) is NoneType:
+            if bestResult is None:
                 fitParams = mInitialParams
                 fitVal = float("inf")
             else:
@@ -172,7 +170,7 @@ class Evolutionary(FitAlg):
         else:
             optimizeResult = self._strategyFit(strategy, boundVals)
 
-            if type(optimizeResult) is NoneType:
+            if optimizeResult is None:
                 fitParams = mInitialParams
                 fitVal = float("inf")
             else:
@@ -219,28 +217,27 @@ class Evolutionary(FitAlg):
 
         try:
             optimizeResult = sp.optimize.differential_evolution(self.fitness,
-                                                             bounds,
-                                                             strategy=strategy,
-                                                             popsize=self.populationSize,
-                                                             tol=self.tolerance,
-                                                             polish=self.polish,
-                                                             callback=self.callback,
-                                                             init='latinhypercube'  # 'random'
-                                                             )
+                                                                bounds,
+                                                                strategy=strategy,
+                                                                popsize=self.populationSize,
+                                                                tol=self.tolerance,
+                                                                polish=self.polish,
+                                                                callback=self.callback,
+                                                                init='latinhypercube'  # 'random'
+                                                                )
         except RuntimeError as e:
-            self.logger.warn("{0} in evolutionary fitting. Retrying to run it: {1} - {2}".format(type(e), e.strerror, e.args))
+            self.logger.warn("{} in evolutionary fitting. Retrying to run it: {} - {}".format(type(e), str(e), e.args))
 
             #Try it one last time
             optimizeResult = sp.optimize.differential_evolution(self.fitness,
-                                                             bounds,
-                                                             strategy=strategy,
-                                                             popsize=self.populationSize,
-                                                             tol=self.tolerance,
-                                                             polish=self.polish,
-                                                             callback=self.callback,
-                                                             init='latinhypercube'  # 'random'
-                                                             )
-
+                                                                bounds,
+                                                                strategy=strategy,
+                                                                popsize=self.populationSize,
+                                                                tol=self.tolerance,
+                                                                polish=self.polish,
+                                                                callback=self.callback,
+                                                                init='latinhypercube'  # 'random'
+                                                                )
 
         if optimizeResult.success is True:
             return optimizeResult

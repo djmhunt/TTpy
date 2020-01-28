@@ -12,8 +12,6 @@ import collections
 
 import numpy as np
 
-from types import NoneType
-
 
 def single(expResponses=(0, 1)):
     """Decisions using a switching probability
@@ -28,7 +26,7 @@ def single(expResponses=(0, 1)):
     decisionFunc : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
-    decision : int or NoneType
+    decision : int or None
         The action to be taken by the model
     probabilities : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
@@ -47,7 +45,7 @@ def single(expResponses=(0, 1)):
 
     def decisionFunc(prob, lastAction=0, validResponses=None):
 
-        if type(validResponses) is not NoneType:
+        if validResponses is not None:
             if len(validResponses) == 1:
                 resp = validResponses[0]
                 return resp, collections.OrderedDict([(k, 1) if k == resp else (k, 0) for k in expResponseSet])
