@@ -6,8 +6,6 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import numpy as np
 
-from types import NoneType
-
 from model.decision.discrete import weightProb
 
 import utils
@@ -182,7 +180,7 @@ class Model(object):
     # TODO:  define and start using non_action
 
     def __init__(self, number_actions=2, number_cues=1, number_critics=None,
-                 action_codes=None, non_action=None,
+                 action_codes=None, non_action='None',
                  prior=None,
                  stimulus_shaper=None, stimulus_shaper_name=None, stimulus_shaper_properties=None,
                  reward_shaper=None, reward_shaper_name=None, reward_shaper_properties=None,
@@ -347,9 +345,9 @@ class Model(object):
 
         # If the last observation still has not been processed,
         # and there has been no feedback, then process it.
-        # There may have been an action but feedback was NoneType
+        # There may have been an action but feedback was None
         # Since we have another observation it is time to learn from the previous one
-        if type(lastEvents) is not NoneType:
+        if lastEvents is not None:
             self.processEvent(self.currAction)
             self.storeState()
 
@@ -360,11 +358,10 @@ class Model(object):
 
         expectedProbs = self.actorStimulusProbs()
 
-        # If the model is not expected to act, even for a dummy action,
-        # then the currentAction can be set to the rest value
+        # If the model is not expected to act, use a dummy action,
         # Otherwise choose an action
         lastAction = self.currAction
-        if type(validActions) is NoneType:
+        if validActions is self.defaultNonAction:
             self.currAction = self.defaultNonAction
         else:
             self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, lastAction, events, validActions)
@@ -384,7 +381,7 @@ class Model(object):
         """
 
         # If there is feedback
-        if type(response) is not NoneType:
+        if response is not None:
             self.processEvent(self.currAction, response)
             self.lastObservation = None
             self.storeState()
@@ -410,7 +407,7 @@ class Model(object):
         self.choiceReflection()
 
         # If there was a reward passed but it was empty, there is nothing to update
-        if type(response) is not NoneType and (np.size(response) == 0 or np.isnan(response)):
+        if response is not None and (np.size(response) == 0 or np.isnan(response)):
             return
 
         # Find the reward expectation
@@ -418,7 +415,7 @@ class Model(object):
         self.expectedReward = expectedReward
 
         # If there was no reward, the the stimulus is the learnt 'reward'
-        if type(response) is NoneType:
+        if response is None:
             response = self.stimuli
 
         # Find the significance of the discrepancy between the response and the expected response
