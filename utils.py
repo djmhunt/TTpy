@@ -1029,7 +1029,7 @@ def kendalw(data, ranked=False):
 
     Parameters
     ----------
-    data : list or ndarray
+    data : list or np.ndarray
         The data in the form of an n*m array with n items and m 'judges'
     ranked : bool, optional
         If the data has already been ranked or not. Default ``False``
@@ -1076,7 +1076,7 @@ def kendalwt(data, ranked=False):
     
     Parameters
     ----------
-    data : list or ndarray
+    data : list or np.ndarray
         The data in the form of an n*m array with n items and m 'judges'
     ranked : bool, optional
         If the data has already been ranked or not. Default ``False``

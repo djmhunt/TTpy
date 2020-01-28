@@ -13,8 +13,6 @@ import scipy as sp
 import collections
 import itertools
 
-from numpy import ndarray
-
 from model.modelTemplate import Model
 
 
@@ -40,7 +38,7 @@ class BPV(Model):
     number_critics : integer, optional
         The number of different reaction learning sets.
         Default number_actions*number_cues
-    validRewards : list, ndarray, optional
+    validRewards : list, np.ndarray, optional
         The different reward values that can occur in the task. Default ``array([0, 1])``
     action_codes : dict with string or int as keys and int values, optional
         A dictionary used to convert between the action references used by the
@@ -202,17 +200,17 @@ class BPV(Model):
         return actionExpectations
 
     def calcProbabilities(self, actionValues):
-        # type: (ndarray) -> ndarray
+        # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        actionValues : 1D np.ndarray of floats
 
         Returns
         -------
-        probArray : 1D ndArray of floats
+        probArray : 1D np.ndarray of floats
             The probabilities associated with the actionValues
         """
         numerator = np.exp(self.beta * actionValues)
@@ -228,7 +226,7 @@ class BPV(Model):
 
         Returns
         -------
-        probabilities : 1D ndArray of floats
+        probabilities : 1D np.ndarray of floats
             The probabilities associated with the action choices
 
         """

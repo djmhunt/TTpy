@@ -10,7 +10,6 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import logging
 
 import numpy as np
-from numpy import ndarray
 
 from model.modelTemplate import Model
 
@@ -213,7 +212,7 @@ class ACE(Model):
         return actionExpectations
 
     def calcProbabilities(self, actionValues):
-        # type: (ndarray) -> ndarray
+        # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 

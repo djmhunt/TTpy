@@ -215,7 +215,7 @@ class QLearnCorr(Model):
         return actionExpectations
 
     def calcProbabilities(self, actionValues):
-        # type: (ndarray) -> ndarray
+        # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
