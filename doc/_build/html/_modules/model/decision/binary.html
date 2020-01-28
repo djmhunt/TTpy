@@ -55,8 +55,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
-
 
 <div class="viewcode-block" id="single"><a class="viewcode-back" href="../../../model.decision.binary.html#model.decision.binary.single">[docs]</a><span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Decisions using a switching probability</span>
@@ -71,7 +69,7 @@
 <span class="sd">    decisionFunc : function</span>
 <span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
 <span class="sd">        decision and the probability of that decision</span>
-<span class="sd">    decision : int or NoneType</span>
+<span class="sd">    decision : int or None</span>
 <span class="sd">        The action to be taken by the model</span>
 <span class="sd">    probabilities : OrderedDict of valid responses</span>
 <span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
@@ -90,7 +88,7 @@
 
     <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">validResponses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">resp</span> <span class="k">else</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">expResponseSet</span><span class="p">])</span>

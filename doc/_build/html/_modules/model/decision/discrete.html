@@ -57,8 +57,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
-
 
 <span class="c1"># TODO: provide default values for expResponses</span>
 <div class="viewcode-block" id="weightProb"><a class="viewcode-back" href="../../../model.decision.discrete.html#model.decision.discrete.weightProb">[docs]</a><span class="k">def</span> <span class="nf">weightProb</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
@@ -77,7 +75,7 @@
 <span class="sd">    decisionFunc : function</span>
 <span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
 <span class="sd">        decision and the probability of that decision</span>
-<span class="sd">    decision : int or NoneType</span>
+<span class="sd">    decision : int or None</span>
 <span class="sd">        The action to be taken by the model</span>
 <span class="sd">    probDict : OrderedDict of valid responses</span>
 <span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
@@ -113,7 +111,7 @@
 
         <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
 
         <span class="n">normProb</span> <span class="o">=</span> <span class="n">prob</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
@@ -148,7 +146,7 @@
 <span class="sd">    decisionFunc : function</span>
 <span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
 <span class="sd">        decision and the probability of that decision</span>
-<span class="sd">    decision : int or NoneType</span>
+<span class="sd">    decision : int or None</span>
 <span class="sd">        The action to be taken by the model</span>
 <span class="sd">    probDict : OrderedDict of valid responses</span>
 <span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
@@ -182,7 +180,7 @@
 
         <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
 
         <span class="c1"># In case there are multiple choices with the same probability, pick</span>
@@ -218,7 +216,7 @@
 <span class="sd">    decisionFunc : function</span>
 <span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
 <span class="sd">        decision and the probability of that decision</span>
-<span class="sd">    decision : int or NoneType</span>
+<span class="sd">    decision : int or None</span>
 <span class="sd">        The action to be taken by the model</span>
 <span class="sd">    probDict : OrderedDict of valid responses</span>
 <span class="sd">        A dictionary of considered actions as keys and their associated probabilities as values</span>
@@ -248,7 +246,7 @@
 
         <span class="n">prob</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">_validProbabilities</span><span class="p">(</span><span class="n">probArray</span><span class="p">,</span> <span class="n">expResp</span><span class="p">,</span> <span class="n">validResponses</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probDict</span>
 
         <span class="c1"># If probMax is above a threshold, we pick the best one, otherwise we pick at random</span>
@@ -279,8 +277,8 @@
 <span class="sd">    expResp : tuple or None</span>
 <span class="sd">        Provides the action responses expected by the experiment for each</span>
 <span class="sd">        probability estimate.</span>
-<span class="sd">    validResponses : 1D list or array</span>
-<span class="sd">        The responses allowed for this trial</span>
+<span class="sd">    validResponses : 1D list or array, or ``None``</span>
+<span class="sd">        The responses allowed for this trial. If ``None`` all are used.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -295,7 +293,7 @@
 <span class="sd">    (array([0.1, 0.7]), array([&#39;B&#39;, &#39;C&#39;], dtype=&#39;&lt;U1&#39;))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">validResponses</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="n">expResp</span>
         <span class="n">prob</span> <span class="o">=</span> <span class="n">probabilities</span>
     <span class="k">else</span><span class="p">:</span>

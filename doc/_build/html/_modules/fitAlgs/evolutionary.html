@@ -52,8 +52,6 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
-
 <span class="kn">from</span> <span class="nn">fitAlgs.fitAlg</span> <span class="kn">import</span> <span class="n">FitAlg</span>
 
 
@@ -85,7 +83,7 @@
 <span class="sd">        can improve the minimization slightly. Default ``False``</span>
 <span class="sd">    popSize : int, optional</span>
 <span class="sd">        A multiplier for setting the total population size. The population has</span>
-<span class="sd">        popsize * len(x) individuals. Default 15</span>
+<span class="sd">        popsize * len(x) individuals. Default 20</span>
 <span class="sd">    tolerance : float, optional</span>
 <span class="sd">        When the mean of the population energies, multiplied by tol, divided by</span>
 <span class="sd">        the standard deviation of the population energies is greater than 1 the</span>
@@ -127,7 +125,7 @@
                         <span class="s1">&#39;rand2bin&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;rand1bin&#39;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polish</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">popSize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polish</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">popSize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">Evolutionary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -141,7 +139,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s1">&#39;popSize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">populationSize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s1">&#39;tolerance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s1">&#39;strategy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span><span class="p">[</span><span class="s1">&#39;strategy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategySet</span>
@@ -193,19 +191,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setBounds</span><span class="p">(</span><span class="n">mParamNames</span><span class="p">)</span>
         <span class="n">boundVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundVals</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
             <span class="n">resultSet</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">strategySuccessSet</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">strategySet</span><span class="p">:</span>
                 <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategyFit</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">boundVals</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">optimizeResult</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">resultSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span>
                     <span class="n">strategySuccessSet</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
             <span class="n">bestResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bestfit</span><span class="p">(</span><span class="n">resultSet</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">bestResult</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bestResult</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">fitParams</span> <span class="o">=</span> <span class="n">mInitialParams</span>
                 <span class="n">fitVal</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -215,7 +213,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">optimizeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategyFit</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">boundVals</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">optimizeResult</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">optimizeResult</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">fitParams</span> <span class="o">=</span> <span class="n">mInitialParams</span>
                 <span class="n">fitVal</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -262,28 +260,27 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">differential_evolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span>
-                                                             <span class="n">bounds</span><span class="p">,</span>
-                                                             <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
-                                                             <span class="n">popsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populationSize</span><span class="p">,</span>
-                                                             <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
-                                                             <span class="n">polish</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
-                                                             <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
-                                                             <span class="n">init</span><span class="o">=</span><span class="s1">&#39;latinhypercube&#39;</span>  <span class="c1"># &#39;random&#39;</span>
-                                                             <span class="p">)</span>
+                                                                <span class="n">bounds</span><span class="p">,</span>
+                                                                <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+                                                                <span class="n">popsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populationSize</span><span class="p">,</span>
+                                                                <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                                                <span class="n">polish</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
+                                                                <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
+                                                                <span class="n">init</span><span class="o">=</span><span class="s1">&#39;latinhypercube&#39;</span>  <span class="c1"># &#39;random&#39;</span>
+                                                                <span class="p">)</span>
         <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> in evolutionary fitting. Retrying to run it: </span><span class="si">{1}</span><span class="s2"> - </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="o">.</span><span class="n">strerror</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> in evolutionary fitting. Retrying to run it: </span><span class="si">{}</span><span class="s2"> - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
 
             <span class="c1">#Try it one last time</span>
             <span class="n">optimizeResult</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">differential_evolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitness</span><span class="p">,</span>
-                                                             <span class="n">bounds</span><span class="p">,</span>
-                                                             <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
-                                                             <span class="n">popsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populationSize</span><span class="p">,</span>
-                                                             <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
-                                                             <span class="n">polish</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
-                                                             <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
-                                                             <span class="n">init</span><span class="o">=</span><span class="s1">&#39;latinhypercube&#39;</span>  <span class="c1"># &#39;random&#39;</span>
-                                                             <span class="p">)</span>
-
+                                                                <span class="n">bounds</span><span class="p">,</span>
+                                                                <span class="n">strategy</span><span class="o">=</span><span class="n">strategy</span><span class="p">,</span>
+                                                                <span class="n">popsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">populationSize</span><span class="p">,</span>
+                                                                <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">,</span>
+                                                                <span class="n">polish</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">polish</span><span class="p">,</span>
+                                                                <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span>
+                                                                <span class="n">init</span><span class="o">=</span><span class="s1">&#39;latinhypercube&#39;</span>  <span class="c1"># &#39;random&#39;</span>
+                                                                <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">optimizeResult</span><span class="o">.</span><span class="n">success</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">optimizeResult</span>

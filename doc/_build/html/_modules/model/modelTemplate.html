@@ -49,8 +49,6 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
-
 <span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">weightProb</span>
 
 <span class="kn">import</span> <span class="nn">utils</span>
@@ -225,7 +223,7 @@
     <span class="c1"># TODO:  define and start using non_action</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_actions</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number_cues</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_critics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">action_codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">non_action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">action_codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">non_action</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
                  <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">stimulus_shaper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stimulus_shaper_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stimulus_shaper_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">reward_shaper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reward_shaper_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reward_shaper_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -390,9 +388,9 @@
 
         <span class="c1"># If the last observation still has not been processed,</span>
         <span class="c1"># and there has been no feedback, then process it.</span>
-        <span class="c1"># There may have been an action but feedback was NoneType</span>
+        <span class="c1"># There may have been an action but feedback was None</span>
         <span class="c1"># Since we have another observation it is time to learn from the previous one</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lastEvents</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lastEvents</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span>
 
@@ -403,11 +401,10 @@
 
         <span class="n">expectedProbs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actorStimulusProbs</span><span class="p">()</span>
 
-        <span class="c1"># If the model is not expected to act, even for a dummy action,</span>
-        <span class="c1"># then the currentAction can be set to the rest value</span>
+        <span class="c1"># If the model is not expected to act, use a dummy action,</span>
         <span class="c1"># Otherwise choose an action</span>
         <span class="n">lastAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">validActions</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decProbabilities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chooseAction</span><span class="p">(</span><span class="n">expectedProbs</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">validActions</span><span class="p">)</span>
@@ -427,7 +424,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># If there is feedback</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">processEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currAction</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lastObservation</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span></div>
@@ -453,7 +450,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">choiceReflection</span><span class="p">()</span>
 
         <span class="c1"># If there was a reward passed but it was empty, there is nothing to update</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">response</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">response</span><span class="p">)):</span>
             <span class="k">return</span>
 
         <span class="c1"># Find the reward expectation</span>
@@ -461,7 +458,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">expectedReward</span> <span class="o">=</span> <span class="n">expectedReward</span>
 
         <span class="c1"># If there was no reward, the the stimulus is the learnt &#39;reward&#39;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">response</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimuli</span>
 
         <span class="c1"># Find the significance of the discrepancy between the response and the expected response</span>

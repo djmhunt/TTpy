@@ -384,11 +384,13 @@
 <span class="sd">            The participant data</span>
 <span class="sd">        stimuli : list of strings or ``None``</span>
 <span class="sd">            A list of the keys in partData representing participant stimuli</span>
-<span class="sd">        validActions : string or ``None`` or list of ints</span>
+<span class="sd">        validActions : string or None or list of strings, ints or None</span>
 <span class="sd">            The name of the key in partData where the list of valid actions</span>
 <span class="sd">            can be found. If ``None`` then the action list is considered to</span>
 <span class="sd">            stay constant. If a list then the list will be taken as the list</span>
-<span class="sd">            of actions that can be taken at every trialstep.</span>
+<span class="sd">            of actions that can be taken at every trialstep. If the list is</span>
+<span class="sd">            shorter than the number of trialsteps, then it will be considered</span>
+<span class="sd">            to be a list of valid actions for each trialstep.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -397,24 +399,42 @@
 <span class="sd">            observation instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="ow">is</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
+        <span class="n">partDataShape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">stimuli</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">partDataLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span><span class="p">])</span>
-            <span class="n">stimuliData</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stimuliData</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">partDataLen</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">])</span>
+            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">partData</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stimuli</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">validActions</span><span class="p">)</span> <span class="ow">is</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
-            <span class="n">actionData</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">validActions</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
-            <span class="n">actionData</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="n">validActions</span><span class="p">]</span>
+            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">actionData</span> <span class="o">=</span> <span class="p">(</span><span class="n">validActions</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">partDataLen</span><span class="p">))</span>
+            <span class="k">raise</span>
+        <span class="k">if</span> <span class="n">partDataShape</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partDataShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">partDataShape</span><span class="p">)</span> <span class="o">==</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">T</span>
+                    <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span>
 
-        <span class="n">observation</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">actionData</span><span class="p">,</span> <span class="n">stimuliData</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">validActions</span> <span class="ow">in</span> <span class="n">partData</span><span class="p">:</span>
+            <span class="n">action_data_raw</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="n">validActions</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action_data_raw</span> <span class="o">=</span> <span class="n">validActions</span>
+        <span class="n">partDataLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuliData</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_data_raw</span><span class="p">)</span> <span class="o">!=</span> <span class="n">partDataLen</span><span class="p">:</span>
+            <span class="n">actionData</span> <span class="o">=</span> <span class="p">[</span><span class="n">action_data_raw</span><span class="p">]</span> <span class="o">*</span> <span class="n">partDataLen</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">actionData</span> <span class="o">=</span> <span class="n">action_data_raw</span>
+
+        <span class="n">observation</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">stimuliData</span><span class="p">,</span> <span class="n">actionData</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="n">observation</span></div>
 
@@ -445,6 +465,7 @@
         <span class="n">_simRun</span><span class="p">(</span><span class="n">modelInstance</span><span class="p">,</span> <span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">modelInstance</span></div>
+
 
 <span class="k">def</span> <span class="nf">_simRun</span><span class="p">(</span><span class="n">modelInstance</span><span class="p">,</span> <span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
