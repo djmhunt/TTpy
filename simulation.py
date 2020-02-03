@@ -23,6 +23,7 @@ def simulation(task_name='Basic',
                model_constant_properties=None,
                label=None,
                config_file=None,
+               output_path=None,
                pickle=False,
                min_log_level='INFO',
                numpy_error_level="log"):
@@ -53,6 +54,8 @@ def simulation(task_name='Basic',
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
+    output_path : string, optional
+        The path that will be used for the run output. Default ``None``
     pickle : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
@@ -77,8 +80,9 @@ def simulation(task_name='Basic',
                       other_options=model_constant_properties)
 
     output_folder, file_name_generator, close_loggers = outputting.saving(label=label,
-                                                                          pickle=pickle,
+                                                                          output_path=output_path,
                                                                           config_file=config_file,
+                                                                          pickle=pickle,
                                                                           min_log_level=min_log_level,
                                                                           numpy_error_level=numpy_error_level)
 

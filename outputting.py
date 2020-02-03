@@ -20,7 +20,12 @@ import utils
 
 
 #%% Folder management
-def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', numpy_error_level="log"):
+def saving(label=None,
+           output_path=None,
+           config_file=None,
+           pickle=False,
+           min_log_level='INFO',
+           numpy_error_level="log"):
     """
     Creates the folder structure for the saved data and created the log file as ``log.txt``
 
@@ -28,11 +33,14 @@ def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', num
     ----------
     label : string, optional
         The label for the simulation. Default ``None`` will mean no data is saved to files.
+    output_path : string, optional
+        The path that will be used for the run output. Default ``None``
+    config_file : string, optional
+        The file name and path of a ``.yaml`` configuration file. Default ``None``
     pickle : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
-    config_file : string, optional
-        The file name and path of a ``.yaml`` configuration file. Default ``None``
+
     min_log_level : basestring, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
         See https://docs.python.org/3/library/logging.html#levels
@@ -56,7 +64,13 @@ def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', num
     dateStr = date()
     if label:
         saveLabel = label
-        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickle, basePath=None)
+        if output_path:
+            base_path = output_path
+        elif config_file:
+            base_path = os.path.dirname(os.path.abspath(config_file)).replace('\\', '/')
+        else:
+            base_path = None
+        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickle, basePath=base_path)
         fileNameGen = fileNameGenerator(outputFolder)
         logFile = fileNameGen('log', 'txt')
 

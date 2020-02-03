@@ -44,7 +44,7 @@ def data_fitting(data_folder='./',
                  fit_subset=None,
                  task_stimuli=None,
                  participant_action_options=None,
-                 fit_method='evolutionary',
+                 fit_method='Evolutionary',
                  fit_method_args=None,
                  fit_measure='-loge',
                  fit_measure_args=None,
@@ -53,6 +53,7 @@ def data_fitting(data_folder='./',
                  label=None,
                  save_fitting_progress=False,
                  config_file=None,
+                 output_path=None,
                  pickle=False,
                  boundary_excess_cost_function=None,
                  min_log_level='INFO',
@@ -139,6 +140,8 @@ def data_fitting(data_folder='./',
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
+    output_path : string, optional
+        The path that will be used for the run output. Default ``None``
     pickle : bool, optional
         If true the data for each model, and participant is recorded.
         Default is ``False``
@@ -222,8 +225,9 @@ def data_fitting(data_folder='./',
                             **fit_method_args)
 
     outputFolder, file_name_generator, close_loggers = outputting.saving(label=label,
-                                                                         pickle=pickle,
+                                                                         output_path=output_path,
                                                                          config_file=config_file,
+                                                                         pickle=pickle,
                                                                          min_log_level=min_log_level,
                                                                          numpy_error_level=numpy_error_level)
 
