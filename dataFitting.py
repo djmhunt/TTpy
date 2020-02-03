@@ -7,7 +7,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import logging
 import collections
 import copy
-import fire
+#import fire
 
 import pandas as pd
 
@@ -574,5 +574,5 @@ def xlsx_fitting_data(fitting_data, label, participant, output_folder, file_name
     xlsxT.save()
 
 
-if __name__ == '__main__':
-  fire.Fire(data_fitting)
+#if __name__ == '__main__':
+#    fire.Fire(data_fitting)

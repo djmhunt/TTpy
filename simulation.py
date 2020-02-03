@@ -5,7 +5,7 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
-import fire
+#import fire
 
 import pandas as pd
 
@@ -215,5 +215,5 @@ def csv_model_sim(modelData, simID, file_name_generator):
     outputFile = file_name_generator(name, 'csv')
     record.to_csv(outputFile)
 
-if __name__ == '__main__':
-  fire.Fire(simulation)
+#if __name__ == '__main__':
+#    fire.Fire(simulation)
