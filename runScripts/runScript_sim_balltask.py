@@ -75,7 +75,7 @@ from simulation import simulation
 
 simulation(expSets,
            modelSet,
-           sim_label='qLearn_balltask_simulation',
+           label='qLearn_balltask_simulation',
            save=True,
            saveScript=True,
            pickle=True,

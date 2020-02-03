@@ -21,7 +21,7 @@ def simulation(experiment_name='Basic',
                model_name='QLearn',
                model_changing_properties=None,
                model_constant_properties=None,
-               sim_label=None,
+               label=None,
                config_file=None,
                pickle=False,
                min_log_level='INFO',
@@ -56,7 +56,7 @@ def simulation(experiment_name='Basic',
     pickle : bool, optional
         If true the data for each model, experiment and participant is recorded.
         Default is ``False``
-    sim_label : string, optional
+    label : string, optional
         The label for the simulation. Default ``None``, which means nothing will be saved
     min_log_level : basestring, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
@@ -76,7 +76,7 @@ def simulation(experiment_name='Basic',
                       parameters=model_changing_properties,
                       other_options=model_constant_properties)
 
-    output_folder, file_name_generator, close_loggers = outputting.saving(label=sim_label,
+    output_folder, file_name_generator, close_loggers = outputting.saving(label=label,
                                                                           pickle=pickle,
                                                                           config_file=config_file,
                                                                           min_log_level=min_log_level,

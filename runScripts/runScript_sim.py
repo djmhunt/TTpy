@@ -63,6 +63,6 @@ simulation(experiment_name='ProbSelect',
            model_name='QLearn',
            model_changing_properties=modelParameters,
            model_constant_properties=modelStaticArgs,
-           sim_label='qLearn_probSelectSimSet',
+           label='qLearn_probSelectSimSet',
            pickle=True,
            numpy_error_level='log') # 'raise','log'
