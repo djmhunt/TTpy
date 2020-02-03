@@ -1,7 +1,7 @@
-experiment.probStim module
+tasks.probStim module
 ==========================
 
-.. automodule:: experiment.probStim
+.. automodule:: tasks.probStim
     :members:
     :undoc-members:
     :show-inheritance:

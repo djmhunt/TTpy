@@ -316,12 +316,12 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string. Default ``None``
     pickleData : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, task and participant is recorded.
         Default is ``False``
     saveFittingProgress : bool, optional
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
     expData : dict, optional
-        The data from the experiment. Default ``None``
+        The data from the task. Default ``None``
 
     Returns
     -------
@@ -423,7 +423,7 @@ def record_fitting(fitting_data,
 #%% logging
 def log_model_fitting_parameters(model, model_fit_variables, model_other_args):
     """
-    Logs the model and experiment parameters that used as initial fitting conditions
+    Logs the model and task parameters that used as initial fitting conditions
 
     Parameters
     ----------
@@ -455,7 +455,7 @@ def log_model_fitting_parameters(model, model_fit_variables, model_other_args):
 
 def log_model_fitted_parameters(model_fit_variables, model_parameters, fit_quality, participant_name):
     """
-    Logs the model and experiment parameters that used as initial fitting
+    Logs the model and task parameters that used as initial fitting
     conditions
 
     Parameters

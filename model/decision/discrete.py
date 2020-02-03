@@ -24,7 +24,7 @@ def weightProb(expResponses=(0, 1)):
     Parameters
     ----------
     expResponses : tuple
-        Provides the action responses expected by the experiment for each
+        Provides the action responses expected by the task for each
         probability estimate.
 
     Returns
@@ -95,7 +95,7 @@ def maxProb(expResponses=(0, 1)):
     Parameters
     ----------
     expResponses : tuple
-        Provides the action responses expected by the experiment for each
+        Provides the action responses expected by the tasks for each
         probability estimate.
 
     Returns
@@ -163,7 +163,7 @@ def probThresh(expResponses=(0, 1), eta=0.8):
     Parameters
     ----------
     expResponses : tuple
-        Provides the action responses expected by the experiment for each
+        Provides the action responses expected by the tasks for each
         probability estimate.
     eta : float, optional
         The value above which a non-random decision is made. Default value is 0.8
@@ -232,7 +232,7 @@ def _validProbabilities(probabilities, expResp, validResponses):
     probabilities : 1D list or array
         The probabilities for all possible actions
     expResp : tuple or None
-        Provides the action responses expected by the experiment for each
+        Provides the action responses expected by the tasks for each
         probability estimate.
     validResponses : 1D list or array, or ``None``
         The responses allowed for this trial. If ``None`` all are used.

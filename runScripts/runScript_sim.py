@@ -24,7 +24,7 @@ from collections import OrderedDict
 
 from simulation import simulation
 
-#%% Set the model sets and experiment sets
+#%% Set the model sets and task sets
 number_actions = 6
 number_cues = 1
 repetitions = 2
@@ -56,10 +56,10 @@ modelStaticArgs = {'number_actions': number_actions,
                    'decision_function_name': 'weightProb',
                    'expResponses': ['A', 'B', 'C', 'D', 'E', 'F']}
 
-#%% For simulating experiments
-simulation(experiment_name='ProbSelect',
-           experiment_changing_properties=expParams,
-           experiment_constant_properties=expStaticArgs,
+#%% For simulating tasks
+simulation(task_name='ProbSelect',
+           task_changing_properties=expParams,
+           task_constant_properties=expStaticArgs,
            model_name='QLearn',
            model_changing_properties=modelParameters,
            model_constant_properties=modelStaticArgs,

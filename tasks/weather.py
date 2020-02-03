@@ -13,7 +13,7 @@ import numpy as np
 
 from numpy import nan
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
 
 cueSets = {"Pickering": [[1, 0, 1, 0], [1, 0, 0, 1], [1, 1, 0, 0], [0, 1, 0, 1], [1, 1, 0, 1], [0, 1, 0, 0],
@@ -43,11 +43,11 @@ actualityLists = {"Pickering": [2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 2, 1, 2, 2,
 defaultActualities = actualityLists["Pickering"]
 
 
-class Weather(Experiment):
+class Weather(Task):
     """
     Based on the 1994 paper "Probabilistic classification learning in amnesia."
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -163,14 +163,14 @@ class Weather(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
 
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

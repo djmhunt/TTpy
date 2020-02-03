@@ -29,7 +29,7 @@ def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', num
     label : string, optional
         The label for the simulation. Default ``None`` will mean no data is saved to files.
     pickle : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, task and participant is recorded.
         Default is ``False``
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Default ``None``
@@ -79,7 +79,7 @@ def saving(label=None, pickle=False, config_file=None, min_log_level='INFO', num
 
     logger = logging.getLogger('Framework')
 
-    message = 'Beginning experiment labelled: {}'.format(saveLabel)
+    message = 'Beginning task labelled: {}'.format(saveLabel)
     logger.info(message)
 
     return outputFolder, fileNameGen, closeLoggers
@@ -104,7 +104,7 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
     dateStr : basestring
         The date identifier
     pickleData : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, task and participant is recorded.
         Default is ``False``
     basePath : basestring, optional
         The path into which the new folder will be placed. Default is current working directory
@@ -309,7 +309,7 @@ def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='
         To run once everything has been completed.
         """
 
-        message = "Experiment completed. Shutting down"
+        message = "Task completed. Shutting down"
         logger.info(message)
 
         if logFile:

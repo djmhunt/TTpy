@@ -70,14 +70,14 @@
 <tr class="row-odd"><td><a class="reference internal" href="#simulation.csv_model_sim" title="simulation.csv_model_sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">csv_model_sim</span></code></a>(modelData,&nbsp;simID,&nbsp;…)</td>
 <td>Saves the fitting data to a CSV file</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#simulation.log_sim_parameters" title="simulation.log_sim_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_sim_parameters</span></code></a>(experiment_parameters,&nbsp;…)</td>
-<td>Writes to the log the description and the label of the experiment and model</td>
+<tr class="row-even"><td><a class="reference internal" href="#simulation.log_sim_parameters" title="simulation.log_sim_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_sim_parameters</span></code></a>(task_parameters,&nbsp;…)</td>
+<td>Writes to the log the description and the label of the task and model</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#simulation.record_sim" title="simulation.record_sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">record_sim</span></code></a>(file_name_generator,&nbsp;…[,&nbsp;pickle])</td>
-<td>Records the data from an experiment-model run.</td>
+<td>Records the data from an task-model run.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#simulation.simulation" title="simulation.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a>([experiment_name,&nbsp;…])</td>
-<td>A framework for letting models interact with experiments and record the data</td>
+<tr class="row-even"><td><a class="reference internal" href="#simulation.simulation" title="simulation.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a>([task_name,&nbsp;…])</td>
+<td>A framework for letting models interact with tasks and record the data</td>
 </tr>
 </tbody>
 </table>
@@ -111,14 +111,14 @@ returns one <code class="docutils literal notranslate"><span class="pre">fileNam
 
 <dl class="function">
 <dt id="simulation.log_sim_parameters">
-<code class="descclassname">simulation.</code><code class="descname">log_sim_parameters</code><span class="sig-paren">(</span><em>experiment_parameters</em>, <em>model_parameters</em>, <em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#log_sim_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.log_sim_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes to the log the description and the label of the experiment and model</p>
+<code class="descclassname">simulation.</code><code class="descname">log_sim_parameters</code><span class="sig-paren">(</span><em>task_parameters</em>, <em>model_parameters</em>, <em>simID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#log_sim_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.log_sim_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes to the log the description and the label of the task and model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experiment_parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The experiment parameters</li>
+<li><strong>task_parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The task parameters</li>
 <li><strong>model_parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The model parameters</li>
 <li><strong>simID</strong> (<em>string</em>) – The identifier for each simulation.</li>
 </ul>
@@ -137,8 +137,8 @@ returns one <code class="docutils literal notranslate"><span class="pre">fileNam
 
 <dl class="function">
 <dt id="simulation.record_sim">
-<code class="descclassname">simulation.</code><code class="descname">record_sim</code><span class="sig-paren">(</span><em>file_name_generator</em>, <em>experiment_data</em>, <em>model_data</em>, <em>simID</em>, <em>pickle=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#record_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.record_sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Records the data from an experiment-model run. Creates a pickled version</p>
+<code class="descclassname">simulation.</code><code class="descname">record_sim</code><span class="sig-paren">(</span><em>file_name_generator</em>, <em>task_data</em>, <em>model_data</em>, <em>simID</em>, <em>pickle=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#record_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.record_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Records the data from an task-model run. Creates a pickled version</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -146,10 +146,10 @@ returns one <code class="docutils literal notranslate"><span class="pre">fileNam
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>file_name_generator</strong> (<em>function</em>) – Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (<code class="docutils literal notranslate"><span class="pre">handle</span></code>, <code class="docutils literal notranslate"><span class="pre">extension</span></code>) and
 returns one <code class="docutils literal notranslate"><span class="pre">fileName</span></code> string</li>
-<li><strong>experiment_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the experiment</li>
+<li><strong>task_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the task</li>
 <li><strong>model_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The data from the model</li>
 <li><strong>simID</strong> (<em>basestring</em>) – The label identifying the simulation</li>
-<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
@@ -167,19 +167,19 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
 
 <dl class="function">
 <dt id="simulation.simulation">
-<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>experiment_name=u'Basic'</em>, <em>experiment_changing_properties=None</em>, <em>experiment_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>sim_label=None</em>, <em>config_file=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
-<dd><p>A framework for letting models interact with experiments and record the data</p>
+<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>task_name=u'Basic'</em>, <em>task_changing_properties=None</em>, <em>task_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>sim_label=None</em>, <em>config_file=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A framework for letting models interact with tasks and record the data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experiment_name</strong> (<em>string</em>) – The name of the file where a experiment.experimentTemplate.Experiment class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
-<li><strong>experiment_changing_properties</strong> (<em>dictionary of floats</em><em> or </em><em>lists of floats</em>) – Parameters are the options that you are or are likely to change across experiment instances. When a parameter
-contains a list, an instance of the experiment will be created for every combination of this parameter with all
+<li><strong>task_name</strong> (<em>string</em>) – The name of the file where a task.taskTemplate.Task class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
+<li><strong>task_changing_properties</strong> (<em>dictionary of floats</em><em> or </em><em>lists of floats</em>) – Parameters are the options that you are or are likely to change across task instances. When a parameter
+contains a list, an instance of the task will be created for every combination of this parameter with all
 the others. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>experiment_constant_properties</strong> (<em>dictionary of float</em><em>, </em><em>string</em><em> or </em><em>binary valued elements</em>) – These contain all the the experiment options that describe the experiment being studied but do not vary across
-experiment instances. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>task_constant_properties</strong> (<em>dictionary of float</em><em>, </em><em>string</em><em> or </em><em>binary valued elements</em>) – These contain all the the task options that describe the task being studied but do not vary across
+task instances. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>model_name</strong> (<em>string</em>) – The name of the file where a model.modelTemplate.Model class can be found. Default <code class="docutils literal notranslate"><span class="pre">QLearn</span></code></li>
 <li><strong>model_changing_properties</strong> (<em>dictionary containing floats</em><em> or </em><em>lists of floats</em><em>, </em><em>optional</em>) – Parameters are the options that you are or are likely to change across
 model instances. When a parameter contains a list, an instance of the
@@ -189,7 +189,7 @@ all the others. Default <code class="docutils literal notranslate"><span class="
 of the model being studied. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>config_file</strong> (<em>string</em><em>, </em><em>optional</em>) – The file name and path of a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> configuration file. Overrides all other parameters if found.
 Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 <li><strong>sim_label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means nothing will be saved</li>
 <li><strong>min_log_level</strong> (<em>basestring</em><em>, </em><em>optional</em>) – Defines the level of the log from (<code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>). Default <code class="docutils literal notranslate"><span class="pre">INFO</span></code></li>
@@ -201,7 +201,7 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiments.experiments()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">tasks.tasks()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></p>
 </div>
 </dd></dl>
 

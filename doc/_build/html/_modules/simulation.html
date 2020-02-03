@@ -54,13 +54,13 @@
 
 <span class="kn">import</span> <span class="nn">outputting</span>
 
-<span class="kn">from</span> <span class="nn">experimentGenerator</span> <span class="kn">import</span> <span class="n">ExperimentGen</span>
+<span class="kn">from</span> <span class="nn">taskGenerator</span> <span class="kn">import</span> <span class="n">TaskGeneration</span>
 <span class="kn">from</span> <span class="nn">modelGenerator</span> <span class="kn">import</span> <span class="n">ModelGen</span>
 
 
-<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">experiment_name</span><span class="o">=</span><span class="s1">&#39;Basic&#39;</span><span class="p">,</span>
-               <span class="n">experiment_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">experiment_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;Basic&#39;</span><span class="p">,</span>
+               <span class="n">task_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">task_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
                <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">model_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -70,19 +70,19 @@
                <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
                <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A framework for letting models interact with experiments and record the data</span>
+<span class="sd">    A framework for letting models interact with tasks and record the data</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    experiment_name : string</span>
-<span class="sd">        The name of the file where a experiment.experimentTemplate.Experiment class can be found. Default ``Basic``</span>
-<span class="sd">    experiment_changing_properties : dictionary of floats or lists of floats</span>
-<span class="sd">        Parameters are the options that you are or are likely to change across experiment instances. When a parameter</span>
-<span class="sd">        contains a list, an instance of the experiment will be created for every combination of this parameter with all</span>
+<span class="sd">    task_name : string</span>
+<span class="sd">        The name of the file where a task.taskTemplate.Task class can be found. Default ``Basic``</span>
+<span class="sd">    task_changing_properties : dictionary of floats or lists of floats</span>
+<span class="sd">        Parameters are the options that you are or are likely to change across task instances. When a parameter</span>
+<span class="sd">        contains a list, an instance of the task will be created for every combination of this parameter with all</span>
 <span class="sd">        the others. Default ``None``</span>
-<span class="sd">    experiment_constant_properties : dictionary of float, string or binary valued elements</span>
-<span class="sd">        These contain all the the experiment options that describe the experiment being studied but do not vary across</span>
-<span class="sd">        experiment instances. Default ``None``</span>
+<span class="sd">    task_constant_properties : dictionary of float, string or binary valued elements</span>
+<span class="sd">        These contain all the the task options that describe the task being studied but do not vary across</span>
+<span class="sd">        task instances. Default ``None``</span>
 <span class="sd">    model_name : string</span>
 <span class="sd">        The name of the file where a model.modelTemplate.Model class can be found. Default ``QLearn``</span>
 <span class="sd">    model_changing_properties : dictionary containing floats or lists of floats, optional</span>
@@ -97,7 +97,7 @@
 <span class="sd">        The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.</span>
 <span class="sd">        Default ``None``</span>
 <span class="sd">    pickle : bool, optional</span>
-<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        If true the data for each model, task and participant is recorded.</span>
 <span class="sd">        Default is ``False``</span>
 <span class="sd">    sim_label : string, optional</span>
 <span class="sd">        The label for the simulation. Default ``None``, which means nothing will be saved</span>
@@ -108,12 +108,12 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    experiments.experiments, models.models</span>
+<span class="sd">    tasks.tasks, models.models</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">experiments</span> <span class="o">=</span> <span class="n">ExperimentGen</span><span class="p">(</span><span class="n">experiment_name</span><span class="o">=</span><span class="n">experiment_name</span><span class="p">,</span>
-                                <span class="n">parameters</span><span class="o">=</span><span class="n">experiment_changing_properties</span><span class="p">,</span>
-                                <span class="n">other_options</span><span class="o">=</span><span class="n">experiment_constant_properties</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">TaskGeneration</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
+                                <span class="n">parameters</span><span class="o">=</span><span class="n">task_changing_properties</span><span class="p">,</span>
+                                <span class="n">other_options</span><span class="o">=</span><span class="n">task_constant_properties</span><span class="p">)</span>
 
     <span class="n">models</span> <span class="o">=</span> <span class="n">ModelGen</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
                       <span class="n">parameters</span><span class="o">=</span><span class="n">model_changing_properties</span><span class="p">,</span>
@@ -132,15 +132,15 @@
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the simulation set&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">experiment_number</span> <span class="ow">in</span> <span class="n">experiments</span><span class="o">.</span><span class="n">iter_experiment_ID</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">task_number</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">iter_task_ID</span><span class="p">():</span>
 
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
 
-            <span class="n">exp</span> <span class="o">=</span> <span class="n">experiments</span><span class="o">.</span><span class="n">new_experiment</span><span class="p">(</span><span class="n">experiment_number</span><span class="p">)</span>
+            <span class="n">exp</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="n">new_task</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
 
             <span class="n">log_sim_parameters</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning experiment&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning task&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">exp</span><span class="p">:</span>
@@ -153,7 +153,7 @@
 
             <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Experiment completed&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Task completed&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
             <span class="n">record_sim</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">exp</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">)</span>
@@ -163,23 +163,23 @@
     <span class="n">close_loggers</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="record_sim"><a class="viewcode-back" href="../simulation.html#simulation.record_sim">[docs]</a><span class="k">def</span> <span class="nf">record_sim</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">experiment_data</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="record_sim"><a class="viewcode-back" href="../simulation.html#simulation.record_sim">[docs]</a><span class="k">def</span> <span class="nf">record_sim</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">task_data</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Records the data from an experiment-model run. Creates a pickled version</span>
+<span class="sd">    Records the data from an task-model run. Creates a pickled version</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    file_name_generator : function</span>
 <span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
 <span class="sd">        returns one ``fileName`` string</span>
-<span class="sd">    experiment_data : dict</span>
-<span class="sd">        The data from the experiment</span>
+<span class="sd">    task_data : dict</span>
+<span class="sd">        The data from the task</span>
 <span class="sd">    model_data : dict</span>
 <span class="sd">        The data from the model</span>
 <span class="sd">    simID : basestring</span>
 <span class="sd">        The label identifying the simulation</span>
 <span class="sd">    pickle : bool, optional</span>
-<span class="sd">        If true the data for each model, experiment and participant is recorded.</span>
+<span class="sd">        If true the data for each model, task and participant is recorded.</span>
 <span class="sd">        Default is ``False``</span>
 
 <span class="sd">    See Also</span>
@@ -199,18 +199,18 @@
     <span class="n">csv_model_sim</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">pickle</span><span class="p">:</span>
-        <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">experiment_data</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">task_data</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="s2">&quot;_expData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
         <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_sim_parameters"><a class="viewcode-back" href="../simulation.html#simulation.log_sim_parameters">[docs]</a><span class="k">def</span> <span class="nf">log_sim_parameters</span><span class="p">(</span><span class="n">experiment_parameters</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
+<div class="viewcode-block" id="log_sim_parameters"><a class="viewcode-back" href="../simulation.html#simulation.log_sim_parameters">[docs]</a><span class="k">def</span> <span class="nf">log_sim_parameters</span><span class="p">(</span><span class="n">task_parameters</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Writes to the log the description and the label of the experiment and model</span>
+<span class="sd">    Writes to the log the description and the label of the task and model</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    experiment_parameters : dict</span>
-<span class="sd">        The experiment parameters</span>
+<span class="sd">    task_parameters : dict</span>
+<span class="sd">        The task parameters</span>
 <span class="sd">    model_parameters : dict</span>
 <span class="sd">        The model parameters</span>
 <span class="sd">    simID : string</span>
@@ -221,15 +221,15 @@
 <span class="sd">    recordSimParams : Records these parameters for later use</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">experiment_description</span> <span class="o">=</span> <span class="n">experiment_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
-    <span class="n">experiment_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">experiment_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
-    <span class="n">experiment_description</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">experiment_descriptors</span><span class="p">)</span>
+    <span class="n">task_description</span> <span class="o">=</span> <span class="n">task_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+    <span class="n">task_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">task_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">task_description</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">task_descriptors</span><span class="p">)</span>
 
     <span class="n">model_description</span> <span class="o">=</span> <span class="n">model_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
     <span class="n">model_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
     <span class="n">model_description</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_descriptors</span><span class="p">)</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span> <span class="o">+</span> <span class="s2">&quot; contains the experiment &#39;&quot;</span> <span class="o">+</span> <span class="n">experiment_description</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span> <span class="o">+</span> <span class="s2">&quot; contains the task &#39;&quot;</span> <span class="o">+</span> <span class="n">task_description</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
     <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">model_description</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
 
     <span class="n">logger_sim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>

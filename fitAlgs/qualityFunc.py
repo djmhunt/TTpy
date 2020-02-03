@@ -221,7 +221,7 @@ def bayesInv(**kwargs):
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     number_actions: int or list of ints the length of the number of trials being fitted, optional
-        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
+        The number of actions the participant can choose between for each trialstep of the task. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
@@ -307,7 +307,7 @@ def BIC2norm(**kwargs):
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     number_actions: int or list of ints the length of the number of trials being fitted, optional
-        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
+        The number of actions the participant can choose between for each trialstep of the task. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
@@ -375,7 +375,7 @@ def BIC2normBoot(**kwargs):
     qualityThreshold : float, optional
         The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0
     number_actions: int or list of ints the length of the number of trials being fitted, optional
-        The number of actions the participant can choose between for each trialstep of the experiment. May need to be
+        The number of actions the participant can choose between for each trialstep of the task. May need to be
         specified for each trial if the number of action choices varies between trials. Default 2
     randActProb: float or list of floats the length of the number of trials being fitted. Optional
         The prior probability of an action being randomly chosen. May need to be specified for each trial if the number

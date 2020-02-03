@@ -4,7 +4,7 @@ from __future__ import unicode_literals, absolute_import
 # actually let's test the decks task, we know that works.
 # let's see if we can play that ourselves.
 
-from experiment.decks import Decks
+from tasks.decks import Decks
 
 print("Welcome! We shall now play the Worthy task")
 print("you have two decks to pick cards from, you pick 80 cards")
@@ -26,7 +26,7 @@ for state in decky:
     decky.proceed()  # not actually needed because it's only used if
 
 
-print("experiment complete! you raeched {} points!".format(total_points))
+print("tasks complete! you raeched {} points!".format(total_points))
 
 # counter
 # decky.next()  # next will return (nextstim, nextvalidactions)

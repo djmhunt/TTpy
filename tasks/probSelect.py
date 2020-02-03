@@ -14,18 +14,18 @@ import numpy as np
 
 import itertools
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
 
 
-class ProbSelect(Experiment):
+class ProbSelect(Task):
     """
     Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.
                                         Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., & Hutchison, K. E. (2007).
                                         Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.
                                         doi:10.1073/pnas.0706111104
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -56,7 +56,7 @@ class ProbSelect(Experiment):
 
     Notes
     -----
-    The experiment is broken up into two sections: a learning phase and a
+    The task is broken up into two sections: a learning phase and a
     transfer phase. Participants choose between pairs of four actions: A, B, M1
     and M2. Each provides a reward with a different probability: A:P>0.5,
     B:1-P<0.5, M1=M2=0.5. The transfer phase has all the action pairs but no
@@ -178,14 +178,14 @@ class ProbSelect(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
 
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

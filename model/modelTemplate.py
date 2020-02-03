@@ -62,7 +62,7 @@ class Stimulus(object):
 
 class Rewards(object):
     """
-    This acts as an interface between the feedback from an experiment and the feedback a model can process
+    This acts as an interface between the feedback from a task and the feedback a model can process
 
     Attributes
     ----------
@@ -226,9 +226,9 @@ class Model(object):
             self.stimulus_shaper = stimulus_shaper(**stimulus_shaper_kwargs)
         elif isinstance(stimulus_shaper_name, basestring):
             stimulus_class = utils.find_class(stimulus_shaper_name,
-                                              class_folder='experiment',
+                                              class_folder='tasks',
                                               inherited_class=Stimulus,
-                                              excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+                                              excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
             stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(stimulus_class)}
             self.stimulus_shaper = stimulus_class(**stimulus_shaper_kwargs)
         else:
@@ -242,9 +242,9 @@ class Model(object):
             self.reward_shaper = reward_shaper(**reward_shaper_kwargs)
         elif isinstance(reward_shaper_name, basestring):
             reward_class = utils.find_class(reward_shaper_name,
-                                            class_folder='experiment',
+                                            class_folder='tasks',
                                             inherited_class=Rewards,
-                                            excluded_files=['experimentTemplate', '__init__', 'experimentGenerator'])
+                                            excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
             reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(reward_class)}
             self.reward_shaper = reward_class.processFeedback(**reward_shaper_kwargs)
         else:
@@ -332,7 +332,7 @@ class Model(object):
         Parameters
         ----------
         state : tuple of ({int | float | tuple},{tuple of int | None})
-            The stimulus from the experiment followed by the tuple of valid
+            The stimulus from the task followed by the tuple of valid
             actions. Passes the values onto a processing function,
             self._updateObservation``.
 
@@ -376,7 +376,7 @@ class Model(object):
         Parameters
         ----------
         response : float
-            The response from the experiment after an action. Returns without doing
+            The response from the task after an action. Returns without doing
             anything if the value of response is `None`.
         """
 
@@ -398,7 +398,7 @@ class Model(object):
         action : int, optional
             The chosen action of the model. Default ``None``
         response : float, optional
-            The response from the experiment after an action. Default ``None``
+            The response from the task after an action. Default ``None``
         """
         self.recReward.append(response)
 
@@ -427,7 +427,7 @@ class Model(object):
     def rewardExpectation(self, stimuli):
         """Calculate the expected reward for each action based on the stimuli
 
-        This contains parts that are experiment dependent
+        This contains parts that are task dependent
 
         Parameters
         ----------

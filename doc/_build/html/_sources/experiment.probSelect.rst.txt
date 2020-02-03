@@ -1,7 +1,7 @@
-experiment.probSelect module
+tasks.probSelect module
 ============================
 
-.. automodule:: experiment.probSelect
+.. automodule:: tasks.probSelect
     :members:
     :undoc-members:
     :show-inheritance:

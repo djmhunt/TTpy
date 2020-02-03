@@ -19,7 +19,7 @@ def single(expResponses=(0, 1)):
     Parameters
     ----------
     expResponses : tuple of length two, optional
-        Provides the two action responses expected by the experiment
+        Provides the two action responses expected by the task
 
     Returns
     -------

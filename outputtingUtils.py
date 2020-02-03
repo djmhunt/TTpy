@@ -15,7 +15,7 @@ import utils
 
 def exportClassData(data, parameters, outputFolder="./"):
     """
-    Takes the data returned by a model or experiment class instance and saves
+    Takes the data returned by a model or task class instance and saves
     it to an Excel file
     
     Parameters
@@ -48,7 +48,7 @@ def exportClassData(data, parameters, outputFolder="./"):
 
 def reframeEventDicts(data, parameters, storeLabel=''):
     """
-    Takes the data returned by a model or experiment class instance and 
+    Takes the data returned by a model or task class instance and
     returns a dictionary of 1D lists or single items.
 
     Parameters
@@ -164,7 +164,7 @@ def eventDictKeySet(data, parameters):
 
 def newEventDict(keySet, data, T, dataLabel=''):
     """
-    Takes the data returned by a model or experiment class instance and 
+    Takes the data returned by a model or task class instance and
     returns a dictionary of 1D lists.
 
 

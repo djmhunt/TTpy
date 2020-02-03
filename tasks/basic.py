@@ -2,24 +2,24 @@
 """
 :Author: Dominic Hunt
 
-:Note: A simple example of an experiment class with all the necessary components
+:Note: A simple example of a task class with all the necessary components
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import copy
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
-class Basic(Experiment):
+class Basic(Task):
     """
-    An example of an experiment with all the necessary components, but nothing changing
+    An example of a task with all the necessary components, but nothing changing
 
     Parameters
     ----------
     trials : int
-        The number of trials in the experiment
+        The number of trials in the task
 
     Attributes
     ----------
@@ -42,8 +42,8 @@ class Basic(Experiment):
 
     def next(self):
         """
-        the experiment class is an iterator [link to iterator documentation]
-        this function produces the next stimulus for the experiment iterator
+        the task class is an iterator [link to iterator documentation]
+        this function produces the next stimulus for the task iterator
 
         Returns
         -------
@@ -85,13 +85,13 @@ class Basic(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

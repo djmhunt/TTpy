@@ -5,10 +5,10 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 
-class Experiment(object):
-    """The abstract experiment class from which all others inherit
+class Task(object):
+    """The abstract tasks class from which all others inherit
 
-    Many general methods for experiments are found only here
+    Many general methods for tasks are found only here
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ class Experiment(object):
 
     def __iter__(self):
         """
-        Returns the iterator for the experiment
+        Returns the iterator for the tasks
         """
 
         return self
@@ -96,7 +96,7 @@ class Experiment(object):
 
     def proceed(self):
         """
-        Updates the experiment before the next trialstep
+        Updates the task before the next trialstep
         """
 
         pass
@@ -114,7 +114,7 @@ class Experiment(object):
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------
@@ -144,12 +144,12 @@ class Experiment(object):
 
     def params(self):
         """
-        Returns the parameters of the experiment as a dictionary
+        Returns the parameters of the task as a dictionary
 
         Returns
         -------
         parameters : dict
-            The parameters of the experiment
+            The parameters of the task
         """
 
         return self.parameters.copy()

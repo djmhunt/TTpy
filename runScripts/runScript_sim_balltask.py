@@ -18,11 +18,11 @@ sys.path.append("../")  # So code can be found from the main folder
 from numpy import array, ones, repeat
 from collections import OrderedDict
 
-#%% Import all experiments, models and interface functions
-# The experiment factory
-from experimentGenerator import ExperimentGen
-# The experiments and stimulus processors
-from experiment.balltask import Balltask, stimulusSimple, rewardSimple
+#%% Import all tasks, models and interface functions
+# The task factory
+from taskGenerator import TaskGeneration
+# The tasks and stimulus processors
+from tasks.balltask import Balltask, stimulusSimple, rewardSimple
 
 # The model factory
 from modelGenerator import ModelGen
@@ -31,7 +31,7 @@ from model.decision.discrete import weightProb
 # The model
 from model.qLearn import QLearn
 
-#%% Set the outputting, model sets and experiment sets
+#%% Set the outputting, model sets and task sets
 expParams = {}
 #expExtraParams = {'number_actions': 6,
 #                  'learningLen': 200,
@@ -45,7 +45,7 @@ expParams = {}
 #                                                ("F", 0.40)]),
 #                  'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
 expStaticArgs = {}
-expSets = ExperimentGen(Balltask, expParams, expStaticArgs)
+expSets = TaskGeneration(Balltask, expParams, expStaticArgs)
 
 number_actions = 3
 number_cues = 3
@@ -69,7 +69,7 @@ modelStaticArgs = {'number_actions': number_actions,
 
 modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
 
-#%% For simulating experiments
+#%% For simulating tasks
 
 from simulation import simulation
 

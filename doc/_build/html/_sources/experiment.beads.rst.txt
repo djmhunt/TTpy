@@ -1,7 +1,7 @@
-experiment.beads module
+tasks.beads module
 =======================
 
-.. automodule:: experiment.beads
+.. automodule:: tasks.beads
     :members:
     :undoc-members:
     :show-inheritance:

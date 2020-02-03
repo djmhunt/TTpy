@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.pavlov &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>task.pavlov &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for experiment.pavlov</h1><div class="highlight"><pre>
+  <h1>Source code for task.pavlov</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
@@ -55,20 +55,20 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">task.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
 
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 <span class="c1"># TODO: Update pavlov to work with the current framework</span>
 
-<div class="viewcode-block" id="Pavlov"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov">[docs]</a><span class="k">class</span> <span class="nc">Pavlov</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov">[docs]</a><span class="k">class</span> <span class="nc">Pavlov</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the Silvetti et al 2011 paper `&quot;Value and prediction error in</span>
 <span class="sd">    medial frontal cortex: integrating the single-unit and systems levels of</span>
 <span class="sd">    analysis.&quot;`</span>
 
-<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
+<span class="sd">    Many methods are inherited from the task.task.task class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
 
 <span class="sd">    Attributes</span>
@@ -128,7 +128,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recActions</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="Pavlov.next"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.next"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -160,7 +160,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="Pavlov.receiveAction"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.receiveAction"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -174,7 +174,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Pavlov.feedback"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.feedback"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -183,15 +183,15 @@
 
         <span class="k">return</span> <span class="n">rewSig</span></div>
 
-<div class="viewcode-block" id="Pavlov.proceed"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.proceed"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the experiment after feedback</span>
+<span class="sd">        Updates the task after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Pavlov.returnTaskState"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.returnTaskState"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this experiment run</span>
+<span class="sd">        Returns all the relevant data for this task run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -208,7 +208,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Pavlov.storeState"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.Pavlov.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Pavlov.storeState"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.Pavlov.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
@@ -232,7 +232,7 @@
 
         <span class="k">return</span> <span class="n">rewSigSet</span><span class="p">,</span> <span class="n">rewVals</span></div>
 
-<div class="viewcode-block" id="pavlovStimTemporal"><a class="viewcode-back" href="../../experiment.pavlov.html#experiment.pavlov.pavlovStimTemporal">[docs]</a><span class="k">def</span> <span class="nf">pavlovStimTemporal</span><span class="p">():</span>
+<div class="viewcode-block" id="pavlovStimTemporal"><a class="viewcode-back" href="../../task.pavlov.html#task.pavlov.pavlovStimTemporal">[docs]</a><span class="k">def</span> <span class="nf">pavlovStimTemporal</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Passes the pavlov stimuli to models that cope with stimuli and rewards</span>
 <span class="sd">    that have a duration.</span>

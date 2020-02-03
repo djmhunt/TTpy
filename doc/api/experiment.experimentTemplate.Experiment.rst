@@ -1,24 +1,24 @@
-Experiment
+Task
 ==========
 
-.. currentmodule:: experiment.experimentTemplate
+.. currentmodule:: tasks.taskTemplate
 
-.. autoclass:: Experiment
+.. autoclass:: Task
    :show-inheritance:
 
    .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~Experiment.feedback
-      ~Experiment.findName
-      ~Experiment.next
-      ~Experiment.params
-      ~Experiment.proceed
-      ~Experiment.receiveAction
-      ~Experiment.returnTaskState
-      ~Experiment.standardResultOutput
-      ~Experiment.storeState
+      ~Task.feedback
+      ~Task.findName
+      ~Task.next
+      ~Task.params
+      ~Task.proceed
+      ~Task.receiveAction
+      ~Task.returnTaskState
+      ~Task.standardResultOutput
+      ~Task.storeState
 
    .. rubric:: Methods Documentation
 

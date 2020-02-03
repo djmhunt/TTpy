@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-pyhpdm version of the balltask experiment
-TODO: describe experiment
+pyhpdm version of the balltask task
+TODO: describe tasks
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
@@ -9,11 +9,11 @@ import copy
 
 import numpy as np
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
-class Balltask(Experiment):
+class Balltask(Task):
     # TODO: Describe parameters
     # each bag always contains balls of same color
     def __init__(self, nbr_of_bags=6, bag_colors=['red', 'green', 'blue'], balls_per_bag=3):
@@ -34,7 +34,7 @@ class Balltask(Experiment):
         self.parameters["bag_sequence"] = list(bag_sequence)
         self.parameters["nbr_of_trials"] = nbr_of_bags * balls_per_bag
 
-        # variables internal to an experiment instance
+        # variables internal to a task instance
         self.trial = -1
         self.bag = -1
         self.action = None
@@ -103,13 +103,13 @@ class Balltask(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

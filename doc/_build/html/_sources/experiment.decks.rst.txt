@@ -1,7 +1,7 @@
-experiment.decks module
+tasks.decks module
 =======================
 
-.. automodule:: experiment.decks
+.. automodule:: tasks.decks
     :members:
     :undoc-members:
     :show-inheritance:

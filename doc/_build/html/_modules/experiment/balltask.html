@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>experiment.balltask &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>task.balltask &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,11 +40,11 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for experiment.balltask</h1><div class="highlight"><pre>
+  <h1>Source code for task.balltask</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">pyhpdm version of the balltask experiment</span>
-<span class="sd">TODO: describe experiment</span>
+<span class="sd">pyhpdm version of the balltask task</span>
+<span class="sd">TODO: describe task</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
@@ -52,11 +52,11 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">task.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
 
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
-<div class="viewcode-block" id="Balltask"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask">[docs]</a><span class="k">class</span> <span class="nc">Balltask</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask">[docs]</a><span class="k">class</span> <span class="nc">Balltask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
     <span class="c1"># TODO: Describe parameters</span>
     <span class="c1"># each bag always contains balls of same color</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbr_of_bags</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">bag_colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">],</span> <span class="n">balls_per_bag</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
@@ -77,7 +77,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;bag_sequence&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bag_sequence</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;nbr_of_trials&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbr_of_bags</span> <span class="o">*</span> <span class="n">balls_per_bag</span>
 
-        <span class="c1"># variables internal to an experiment instance</span>
+        <span class="c1"># variables internal to an task instance</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trial</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bag</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
@@ -88,7 +88,7 @@
 <span class="c1">#        self.reward_history = [-1] * self.parameters[&#39;nbr_of_trials&#39;]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ball_history</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;nbr_of_trials&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Balltask.next"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.next"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -124,7 +124,7 @@
 
         <span class="k">return</span> <span class="n">next_stimulus</span><span class="p">,</span> <span class="n">next_valid_actions</span></div>
 
-<div class="viewcode-block" id="Balltask.receiveAction"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.receiveAction"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -135,7 +135,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="Balltask.feedback"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.feedback"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        balltask has no rewards so we return None</span>
@@ -144,15 +144,15 @@
 
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Balltask.proceed"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.proceed"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the experiment after feedback</span>
+<span class="sd">        Updates the task after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Balltask.returnTaskState"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.returnTaskState"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this experiment run</span>
+<span class="sd">        Returns all the relevant data for this task run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -167,7 +167,7 @@
         
         <span class="k">return</span> <span class="n">history</span></div>
 
-<div class="viewcode-block" id="Balltask.storeState"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.Balltask.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Balltask.storeState"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.Balltask.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -176,7 +176,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ball_history</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trial</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ballcolor</span></div></div>
 
 
-<div class="viewcode-block" id="StimulusBalltaskSimple"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.StimulusBalltaskSimple">[docs]</a><span class="k">class</span> <span class="nc">StimulusBalltaskSimple</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusBalltaskSimple"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.StimulusBalltaskSimple">[docs]</a><span class="k">class</span> <span class="nc">StimulusBalltaskSimple</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the stimulus cues for models expecting just the event</span>
 
@@ -184,7 +184,7 @@
 
     <span class="c1"># TODO! change below to work for more colors than 3</span>
 
-<div class="viewcode-block" id="StimulusBalltaskSimple.processStimulus"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.StimulusBalltaskSimple.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusBalltaskSimple.processStimulus"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.StimulusBalltaskSimple.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
@@ -204,12 +204,12 @@
             <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="RewardBalltaskDirect"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.RewardBalltaskDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardBalltaskDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardBalltaskDirect"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.RewardBalltaskDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardBalltaskDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the reward for models expecting just the reward</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RewardBalltaskDirect.processFeedback"><a class="viewcode-back" href="../../experiment.balltask.html#experiment.balltask.RewardBalltaskDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardBalltaskDirect.processFeedback"><a class="viewcode-back" href="../../task.balltask.html#task.balltask.RewardBalltaskDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>

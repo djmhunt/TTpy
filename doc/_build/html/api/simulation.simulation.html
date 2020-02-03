@@ -52,19 +52,19 @@
 <h1>simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="simulation.simulation">
-<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>experiment_name=u'Basic'</em>, <em>experiment_changing_properties=None</em>, <em>experiment_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>sim_label=None</em>, <em>config_file=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
-<dd><p>A framework for letting models interact with experiments and record the data</p>
+<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>task_name=u'Basic'</em>, <em>task_changing_properties=None</em>, <em>task_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>sim_label=None</em>, <em>config_file=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A framework for letting models interact with tasks and record the data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>experiment_name</strong> (<em>string</em>) – The name of the file where a experiment.experimentTemplate.Experiment class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
-<li><strong>experiment_changing_properties</strong> (<em>dictionary of floats</em><em> or </em><em>lists of floats</em>) – Parameters are the options that you are or are likely to change across experiment instances. When a parameter
-contains a list, an instance of the experiment will be created for every combination of this parameter with all
+<li><strong>task_name</strong> (<em>string</em>) – The name of the file where a task.taskTemplate.Task class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
+<li><strong>task_changing_properties</strong> (<em>dictionary of floats</em><em> or </em><em>lists of floats</em>) – Parameters are the options that you are or are likely to change across task instances. When a parameter
+contains a list, an instance of the task will be created for every combination of this parameter with all
 the others. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>experiment_constant_properties</strong> (<em>dictionary of float</em><em>, </em><em>string</em><em> or </em><em>binary valued elements</em>) – These contain all the the experiment options that describe the experiment being studied but do not vary across
-experiment instances. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>task_constant_properties</strong> (<em>dictionary of float</em><em>, </em><em>string</em><em> or </em><em>binary valued elements</em>) – These contain all the the task options that describe the task being studied but do not vary across
+task instances. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>model_name</strong> (<em>string</em>) – The name of the file where a model.modelTemplate.Model class can be found. Default <code class="docutils literal notranslate"><span class="pre">QLearn</span></code></li>
 <li><strong>model_changing_properties</strong> (<em>dictionary containing floats</em><em> or </em><em>lists of floats</em><em>, </em><em>optional</em>) – Parameters are the options that you are or are likely to change across
 model instances. When a parameter contains a list, an instance of the
@@ -74,7 +74,7 @@ all the others. Default <code class="docutils literal notranslate"><span class="
 of the model being studied. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>config_file</strong> (<em>string</em><em>, </em><em>optional</em>) – The file name and path of a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> configuration file. Overrides all other parameters if found.
 Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, experiment and participant is recorded.
+<li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 <li><strong>sim_label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means nothing will be saved</li>
 <li><strong>min_log_level</strong> (<em>basestring</em><em>, </em><em>optional</em>) – Defines the level of the log from (<code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>). Default <code class="docutils literal notranslate"><span class="pre">INFO</span></code></li>
@@ -86,7 +86,7 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">experiments.experiments()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></p>
+<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">tasks.tasks()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></p>
 </div>
 </dd></dl>
 

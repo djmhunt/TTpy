@@ -1,7 +1,7 @@
-experiment.basic module
+tasks.basic module
 =======================
 
-.. automodule:: experiment.basic
+.. automodule:: tasks.basic
     :members:
     :undoc-members:
     :show-inheritance:

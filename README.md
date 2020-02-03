@@ -11,7 +11,7 @@ For now this is just Python code that you download and use, not a package.
 The framework can been run with a run script, live in a terminal or Python command-line (or [jupyter notebook](http://jupyter.org/)).
 
 ### Usage examples ###
-Example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` experiment and ``runScript.py`` for fitting the data generated from ``runScript_sim.py``. A visual display of the interactions in one of these scripts will soon be created.
+Example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` task and ``runScript.py`` for fitting the data generated from ``runScript_sim.py``. A visual display of the interactions in one of these scripts will soon be created.
 
 ### Documentation ###
 [![Documentation Status](https://readthedocs.org/projects/pyhpdm/badge/?version=latest)](https://pyhpdm.readthedocs.io/en/latest/?badge=latest)

@@ -1,9 +1,9 @@
-experimentGenerator module
+taskGenerator module
 ==========================
 
-.. automodapi:: experimentGenerator
+.. automodapi:: taskGenerator
 
-.. automodule:: experimentGenerator
+.. automodule:: taskGenerator
     :members:
     :undoc-members:
     :show-inheritance:

@@ -223,7 +223,7 @@ class OpALS(Model):
     def rewardExpectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
-        This contains parts that are experiment dependent
+        This contains parts that are task dependent
 
         Parameters
         ----------

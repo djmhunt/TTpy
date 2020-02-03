@@ -93,7 +93,7 @@ def folderSetup(simDescription, path='./'):
     Parameters
     ----------
     simDescription : string
-        A description of the experiment
+        A description of the task
 
     Returns
     -------
@@ -504,7 +504,7 @@ def listMergeGen(*args):
 
 def varyingParams(intObjects, params):
     """
-    Takes a list of models or experiments and returns a dictionary with only the parameters
+    Takes a list of models or tasks and returns a dictionary with only the parameters
     which vary and their values
     """
 

@@ -1,9 +1,9 @@
-experiment.experimentTemplate module
+tasks.taskTemplate module
 ====================================
 
-.. automodapi:: experiment.experimentTemplate
+.. automodapi:: tasks.taskTemplate
 
-.. automodule:: experiment.experimentTemplate
+.. automodule:: tasks.taskTemplate
     :members:
     :undoc-members:
     :show-inheritance:

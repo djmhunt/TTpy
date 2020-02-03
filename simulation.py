@@ -11,13 +11,13 @@ import pandas as pd
 
 import outputting
 
-from experimentGenerator import ExperimentGen
+from taskGenerator import TaskGeneration
 from modelGenerator import ModelGen
 
 
-def simulation(experiment_name='Basic',
-               experiment_changing_properties=None,
-               experiment_constant_properties=None,
+def simulation(task_name='Basic',
+               task_changing_properties=None,
+               task_constant_properties=None,
                model_name='QLearn',
                model_changing_properties=None,
                model_constant_properties=None,
@@ -27,19 +27,19 @@ def simulation(experiment_name='Basic',
                min_log_level='INFO',
                numpy_error_level="log"):
     """
-    A framework for letting models interact with experiments and record the data
+    A framework for letting models interact with tasks and record the data
 
     Parameters
     ----------
-    experiment_name : string
-        The name of the file where a experiment.experimentTemplate.Experiment class can be found. Default ``Basic``
-    experiment_changing_properties : dictionary of floats or lists of floats
-        Parameters are the options that you are or are likely to change across experiment instances. When a parameter
-        contains a list, an instance of the experiment will be created for every combination of this parameter with all
+    task_name : string
+        The name of the file where a tasks.taskTemplate.Task class can be found. Default ``Basic``
+    task_changing_properties : dictionary of floats or lists of floats
+        Parameters are the options that you are or are likely to change across task instances. When a parameter
+        contains a list, an instance of the task will be created for every combination of this parameter with all
         the others. Default ``None``
-    experiment_constant_properties : dictionary of float, string or binary valued elements
-        These contain all the the experiment options that describe the experiment being studied but do not vary across
-        experiment instances. Default ``None``
+    task_constant_properties : dictionary of float, string or binary valued elements
+        These contain all the the task options that describe the task being studied but do not vary across
+        task instances. Default ``None``
     model_name : string
         The name of the file where a model.modelTemplate.Model class can be found. Default ``QLearn``
     model_changing_properties : dictionary containing floats or lists of floats, optional
@@ -54,7 +54,7 @@ def simulation(experiment_name='Basic',
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
     pickle : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, task and participant is recorded.
         Default is ``False``
     label : string, optional
         The label for the simulation. Default ``None``, which means nothing will be saved
@@ -65,12 +65,12 @@ def simulation(experiment_name='Basic',
 
     See Also
     --------
-    experiments.experiments, models.models
+    tasks.taskTemplate, model.modelTemplate
     """
 
-    experiments = ExperimentGen(experiment_name=experiment_name,
-                                parameters=experiment_changing_properties,
-                                other_options=experiment_constant_properties)
+    tasks = TaskGeneration(task_name=task_name,
+                                 parameters=task_changing_properties,
+                                 other_options=task_constant_properties)
 
     models = ModelGen(model_name=model_name,
                       parameters=model_changing_properties,
@@ -89,54 +89,54 @@ def simulation(experiment_name='Basic',
     message = "Beginning the simulation set"
     logger.debug(message)
 
-    for experiment_number in experiments.iter_experiment_ID():
+    for task_number in tasks.iter_task_ID():
 
         for model in models:
 
-            exp = experiments.new_experiment(experiment_number)
+            tsk = tasks.new_task(task_number)
 
-            log_sim_parameters(exp.params(), model.params(), simID=str(simID))
+            log_sim_parameters(tsk.params(), model.params(), simID=str(simID))
 
-            message = "Beginning experiment"
+            message = "Beginning task"
             logger.debug(message)
 
-            for state in exp:
+            for state in tsk:
                 model.observe(state)
                 action = model.action()
-                exp.receiveAction(action)
-                response = exp.feedback()
+                tsk.receiveAction(action)
+                response = tsk.feedback()
                 model.feedback(response)
-                exp.proceed()
+                tsk.proceed()
 
             model.setsimID(str(simID))
 
-            message = "Experiment completed"
+            message = "Task completed"
             logger.debug(message)
 
-            record_sim(file_name_generator, exp.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
+            record_sim(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
 
             simID += 1
 
     close_loggers()
 
 
-def record_sim(file_name_generator, experiment_data, model_data, simID, pickle=False):
+def record_sim(file_name_generator, task_data, model_data, simID, pickle=False):
     """
-    Records the data from an experiment-model run. Creates a pickled version
+    Records the data from an task-model run. Creates a pickled version
 
     Parameters
     ----------
     file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
-    experiment_data : dict
-        The data from the experiment
+    task_data : dict
+        The data from the task
     model_data : dict
         The data from the model
     simID : basestring
         The label identifying the simulation
     pickle : bool, optional
-        If true the data for each model, experiment and participant is recorded.
+        If true the data for each model, task and participant is recorded.
         Default is ``False``
 
     See Also
@@ -156,18 +156,18 @@ def record_sim(file_name_generator, experiment_data, model_data, simID, pickle=F
     csv_model_sim(model_data, simID, file_name_generator)
 
     if pickle:
-        outputting.pickleLog(experiment_data, file_name_generator, "_expData" + label)
+        outputting.pickleLog(task_data, file_name_generator, "_taskData" + label)
         outputting.pickleLog(model_data, file_name_generator, "_modelData" + label)
 
 
-def log_sim_parameters(experiment_parameters, model_parameters, simID):
+def log_sim_parameters(task_parameters, model_parameters, simID):
     """
-    Writes to the log the description and the label of the experiment and model
+    Writes to the log the description and the label of the task and model
 
     Parameters
     ----------
-    experiment_parameters : dict
-        The experiment parameters
+    task_parameters : dict
+        The task parameters
     model_parameters : dict
         The model parameters
     simID : string
@@ -178,15 +178,15 @@ def log_sim_parameters(experiment_parameters, model_parameters, simID):
     recordSimParams : Records these parameters for later use
     """
 
-    experiment_description = experiment_parameters.pop('Name') + ": "
-    experiment_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in experiment_parameters.iteritems()]
-    experiment_description += ", ".join(experiment_descriptors)
+    task_description = task_parameters.pop('Name') + ": "
+    task_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in task_parameters.iteritems()]
+    task_description += ", ".join(task_descriptors)
 
     model_description = model_parameters.pop('Name') + ": "
     model_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in model_parameters.iteritems()]
     model_description += ", ".join(model_descriptors)
 
-    message = "Simulation " + simID + " contains the experiment '" + experiment_description + "'."
+    message = "Simulation " + simID + " contains the task '" + task_description + "'."
     message += "The model used is '" + model_description + "'."
 
     logger_sim = logging.getLogger('Simulation')

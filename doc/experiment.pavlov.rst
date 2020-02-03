@@ -1,7 +1,7 @@
-experiment.pavlov module
+tasks.pavlov module
 ========================
 
-.. automodule:: experiment.pavlov
+.. automodule:: tasks.pavlov
     :members:
     :undoc-members:
     :show-inheritance:

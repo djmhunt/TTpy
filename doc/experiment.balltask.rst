@@ -1,7 +1,7 @@
-experiment.balltask module
+tasks.balltask module
 ==========================
 
-.. automodule:: experiment.balltask
+.. automodule:: tasks.balltask
     :members:
     :undoc-members:
     :show-inheritance:

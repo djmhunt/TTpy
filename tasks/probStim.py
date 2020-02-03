@@ -12,7 +12,7 @@ from numpy import nan
 from numpy import float as npfloat
 
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
 
 # TODO: Create a set of test cues
@@ -22,11 +22,11 @@ defaultCues = cueSets["Test"]
 actualityLists = {}
 
 
-class Probstim(Experiment):
+class Probstim(Task):
     """
     Basic probabilistic
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -51,11 +51,18 @@ class Probstim(Experiment):
         If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0 for
         each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStimuli//2) + [corrProb] * (numStimuli%2)``
     rewardlessT: int, optional
-        If no actualities provided, it is the number of actualities at the end of the experiment that will have a
+        If no actualities provided, it is the number of actualities at the end of the tasks that will have a
         ``None`` reward. Default ``2*numStimuli``
     """
 
-    def __init__(self, cues=None, actualities=None, trialsteps=100, numStimuli=4, correctProb=0.8, correctProbabilities=None, rewardlessT=None):
+    def __init__(self,
+                 cues=None,
+                 actualities=None,
+                 trialsteps=100,
+                 numStimuli=4,
+                 correctProb=0.8,
+                 correctProbabilities=None,
+                 rewardlessT=None):
 
         super(Probstim, self).__init__()
 
@@ -161,14 +168,14 @@ class Probstim(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
 
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

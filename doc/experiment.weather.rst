@@ -1,7 +1,7 @@
-experiment.weather module
+tasks.weather module
 =========================
 
-.. automodule:: experiment.weather
+.. automodule:: tasks.weather
     :members:
     :undoc-members:
     :show-inheritance:

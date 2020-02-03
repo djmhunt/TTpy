@@ -6,8 +6,8 @@ Code
 
    data
    dataFitting
-   experiment
-   experimentGenerator
+   tasks
+   taskGenerator
    fitAlgs
    model
    modelGenerator

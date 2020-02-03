@@ -1,9 +1,9 @@
-experiment package
+tasks package
 ==================
 
-.. automodapi:: experiment
+.. automodapi:: tasks
 
-.. automodule:: experiment
+.. automodule:: tasks
     :members:
     :undoc-members:
     :show-inheritance:
@@ -13,13 +13,13 @@ Submodules
 
 .. toctree::
 
-   experiment.balltask
-   experiment.basic
-   experiment.beads
-   experiment.decks
-   experiment.experimentTemplate
-   experiment.pavlov
-   experiment.probSelect
-   experiment.probStim
-   experiment.weather
+   tasks.balltask
+   tasks.basic
+   tasks.beads
+   tasks.decks
+   tasks.taskTemplate
+   tasks.pavlov
+   tasks.probSelect
+   tasks.probStim
+   tasks.weather
 

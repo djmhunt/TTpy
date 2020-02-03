@@ -11,7 +11,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import numpy as np
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
@@ -20,10 +20,10 @@ beadSequences = {"MooreSellen": [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0,
 defaultBeads = beadSequences["MooreSellen"]
 
 
-class Beads(Experiment):
+class Beads(Task):
     """Based on the Moore & Sellen Beads task
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -113,7 +113,7 @@ class Beads(Experiment):
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

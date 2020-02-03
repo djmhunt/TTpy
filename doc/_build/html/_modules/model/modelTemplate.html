@@ -105,7 +105,7 @@
 
 <div class="viewcode-block" id="Rewards"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Rewards">[docs]</a><span class="k">class</span> <span class="nc">Rewards</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This acts as an interface between the feedback from an experiment and the feedback a model can process</span>
+<span class="sd">    This acts as an interface between the feedback from an task and the feedback a model can process</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -269,9 +269,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">stimulus_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">stimulus_shaper_kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">stimulus_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span>
-                                              <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;experiment&#39;</span><span class="p">,</span>
+                                              <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">,</span>
                                               <span class="n">inherited_class</span><span class="o">=</span><span class="n">Stimulus</span><span class="p">,</span>
-                                              <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;experimentTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;experimentGenerator&#39;</span><span class="p">])</span>
+                                              <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
             <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">stimulus_class</span><span class="p">)}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">stimulus_class</span><span class="p">(</span><span class="o">**</span><span class="n">stimulus_shaper_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -285,9 +285,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">reward_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">reward_shaper_kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">reward_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span>
-                                            <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;experiment&#39;</span><span class="p">,</span>
+                                            <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">,</span>
                                             <span class="n">inherited_class</span><span class="o">=</span><span class="n">Rewards</span><span class="p">,</span>
-                                            <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;experimentTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;experimentGenerator&#39;</span><span class="p">])</span>
+                                            <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
             <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">reward_class</span><span class="p">)}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">reward_class</span><span class="o">.</span><span class="n">processFeedback</span><span class="p">(</span><span class="o">**</span><span class="n">reward_shaper_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -375,7 +375,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        state : tuple of ({int | float | tuple},{tuple of int | None})</span>
-<span class="sd">            The stimulus from the experiment followed by the tuple of valid</span>
+<span class="sd">            The stimulus from the task followed by the tuple of valid</span>
 <span class="sd">            actions. Passes the values onto a processing function,</span>
 <span class="sd">            self._updateObservation``.</span>
 
@@ -419,7 +419,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        response : float</span>
-<span class="sd">            The response from the experiment after an action. Returns without doing</span>
+<span class="sd">            The response from the task after an action. Returns without doing</span>
 <span class="sd">            anything if the value of response is `None`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -441,7 +441,7 @@
 <span class="sd">        action : int, optional</span>
 <span class="sd">            The chosen action of the model. Default ``None``</span>
 <span class="sd">        response : float, optional</span>
-<span class="sd">            The response from the experiment after an action. Default ``None``</span>
+<span class="sd">            The response from the task after an action. Default ``None``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recReward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
@@ -470,7 +470,7 @@
 <div class="viewcode-block" id="Model.rewardExpectation"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Model.rewardExpectation">[docs]</a>    <span class="k">def</span> <span class="nf">rewardExpectation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the expected reward for each action based on the stimuli</span>
 
-<span class="sd">        This contains parts that are experiment dependent</span>
+<span class="sd">        This contains parts that are task dependent</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

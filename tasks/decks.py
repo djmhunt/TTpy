@@ -11,7 +11,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import numpy as np
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
@@ -28,11 +28,11 @@ deckSets = {"WorthyMaddox": np.array([[2,  2,  1,  1,  2,  1,  1,  3,  2,  6,  2
 defaultDecks = deckSets["WorthyMaddox"]
 
 
-class Decks(Experiment):
+class Decks(Task):
     """
     Based on the Worthy&Maddox 2007 paper "Regulatory fit effects in a choice task.
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -146,14 +146,14 @@ class Decks(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
 
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------

@@ -12,20 +12,20 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import numpy as np
 
-from experiment.experimentTemplate import Experiment
+from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
 # TODO: Update pavlov to work with the current framework
 
-class Pavlov(Experiment):
+class Pavlov(Task):
 
     """
     Based on the Silvetti et al 2011 paper `"Value and prediction error in
     medial frontal cortex: integrating the single-unit and systems levels of
     analysis."`
 
-    Many methods are inherited from the experiment.experiment.experiment class.
+    Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
     Attributes
@@ -142,13 +142,13 @@ class Pavlov(Experiment):
 
     def proceed(self):
         """
-        Updates the experiment after feedback
+        Updates the task after feedback
         """
         pass
 
     def returnTaskState(self):
         """
-        Returns all the relevant data for this experiment run
+        Returns all the relevant data for this task run
 
         Returns
         -------
