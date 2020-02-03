@@ -17,16 +17,28 @@ import re
 
 import utils
 
+
 class LengthError(Exception):
     pass
+
 
 class IDError(Exception):
     pass
 
+
 class DimentionError(Exception):
     pass
 
+
 class FileTypeError(Exception):
+    pass
+
+
+class FoldersError(Exception):
+    pass
+
+
+class ProcessingError(Exception):
     pass
 
 DATA_KEYWORDS = {"filename": "filename",
@@ -39,7 +51,7 @@ class Data(list):
     @classmethod
     def load_data(cls,
                   file_type='csv',
-                  folder='./',
+                  folders='./',
                   file_name_filter=None,
                   terminal_ID=True,
                   split_by=None,
@@ -57,8 +69,8 @@ class Data(list):
         ----------
         file_type : string, optional
             The file type of the data, from ``mat``, ``csv``, ``xlsx`` and ``pkl``. Default is ``csv``
-        folder : string, optional
-            The folder where the data can be found. Default is the current folder.
+        folders : string or list of strings, optional
+            The folder or folders where the data can be found. Default is the current folder.
         file_name_filter : callable, string, list of strings or None, optional
             A function to process the file names or a list of possible prefixes as strings or a single string.
             Default ``None``, no file names removed
@@ -77,8 +89,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or None or one element list with a list, optional
+            If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+            be found. If None then all trials will use all available actions. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -89,53 +103,66 @@ class Data(list):
         -------
         Data : Data class instance
         """
-
-        if file_type == 'mat':
-            dat = cls.from_mat(folder=folder,
-                               file_name_filter=file_name_filter,
-                               terminal_ID=terminal_ID,
-                               participantID=participantID,
-                               choices=choices,
-                               feedbacks=feedbacks,
-                               stimuli=stimuli,
-                               action_options=action_options,
-                               extra_processing=extra_processing)
-        elif file_type == 'csv':
-            dat = cls.from_csv(folder=folder,
-                               file_name_filter=file_name_filter,
-                               terminal_ID=terminal_ID,
-                               split_by=split_by,
-                               participantID=participantID,
-                               choices=choices,
-                               feedbacks=feedbacks,
-                               stimuli=stimuli,
-                               action_options=action_options,
-                               extra_processing=extra_processing,
-                               csv_read_options=data_read_options)
-        elif file_type == 'xlsx':
-            dat = cls.from_xlsx(folder=folder,
-                                file_name_filter=file_name_filter,
-                                terminal_ID=terminal_ID,
-                                split_by=split_by,
-                                participantID=participantID,
-                                choices=choices,
-                                feedbacks=feedbacks,
-                                stimuli=stimuli,
-                                action_options=action_options,
-                                extra_processing=extra_processing,
-                                xlsx_read_options=data_read_options)
-        elif file_type == 'pkl':
-            dat = cls.from_pkl(folder=folder,
-                               file_name_filter=file_name_filter,
-                               terminal_ID=terminal_ID,
-                               participantID=participantID,
-                               choices=choices,
-                               feedbacks=feedbacks,
-                               stimuli=stimuli,
-                               action_options=action_options,
-                               extra_processing=extra_processing)
+        if isinstance(folders, basestring):
+            folder_list = [folders]
+        elif isinstance(folders, list):
+            folder_list = folders
         else:
-            raise FileTypeError('{} is not a supported file type. Please use ``mat``, ``csv``, ``xlsx`` or ``pkl``'.format(file_type))
+            raise FoldersError('``folders`` must be a string or a list of strings. Found {}'.format(type(folders)))
+
+        dat = None
+        for folder in folder_list:
+            if file_type == 'mat':
+                subdat = cls.from_mat(folder=folder,
+                                      file_name_filter=file_name_filter,
+                                      terminal_ID=terminal_ID,
+                                      participantID=participantID,
+                                      choices=choices,
+                                      feedbacks=feedbacks,
+                                      stimuli=stimuli,
+                                      action_options=action_options,
+                                      extra_processing=extra_processing)
+            elif file_type == 'csv':
+                subdat = cls.from_csv(folder=folder,
+                                      file_name_filter=file_name_filter,
+                                      terminal_ID=terminal_ID,
+                                      split_by=split_by,
+                                      participantID=participantID,
+                                      choices=choices,
+                                      feedbacks=feedbacks,
+                                      stimuli=stimuli,
+                                      action_options=action_options,
+                                      extra_processing=extra_processing,
+                                      csv_read_options=data_read_options)
+            elif file_type == 'xlsx':
+                subdat = cls.from_xlsx(folder=folder,
+                                       file_name_filter=file_name_filter,
+                                       terminal_ID=terminal_ID,
+                                       split_by=split_by,
+                                       participantID=participantID,
+                                       choices=choices,
+                                       feedbacks=feedbacks,
+                                       stimuli=stimuli,
+                                       action_options=action_options,
+                                       extra_processing=extra_processing,
+                                       xlsx_read_options=data_read_options)
+            elif file_type == 'pkl':
+                subdat = cls.from_pkl(folder=folder,
+                                      file_name_filter=file_name_filter,
+                                      terminal_ID=terminal_ID,
+                                      participantID=participantID,
+                                      choices=choices,
+                                      feedbacks=feedbacks,
+                                      stimuli=stimuli,
+                                      action_options=action_options,
+                                      extra_processing=extra_processing)
+            else:
+                raise FileTypeError('{} is not a supported file type. Please use ``mat``, ``csv``, ``xlsx`` or ``pkl``'.format(file_type))
+
+            if dat is None:
+                dat = subdat
+            else:
+                dat.extend(subdat)
 
         return dat
 
@@ -172,8 +199,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or None or one element list with a list, optional
+            If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+            be found. If None then all trials will use all available actions. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -190,15 +219,13 @@ class Data(list):
 
         files, file_IDs = cls.__locate_files(folder_path, "mat", file_name_filter=file_name_filter, terminal_ID=terminal_ID)
 
-        if participantID is None:
-            participantID = DATA_KEYWORDS['ID']
-
         participant_data = []
         for f, i in itertools.izip(files, file_IDs):
 
             file_data = {DATA_KEYWORDS['filename']: f,
-                         DATA_KEYWORDS['ID']: i,
                          DATA_KEYWORDS['folder']: folder_path}
+            if participantID is None:
+                file_data[DATA_KEYWORDS['ID']] = i
 
             mat = io.loadmat(folder_path + f, struct_as_record=False, squeeze_me=True)
             for key, value in mat.iteritems():
@@ -212,8 +239,13 @@ class Data(list):
 
             if extra_processing:
                 file_data = extra_processing(file_data)
+                if file_data is None:
+                    raise ProcessingError('The extra_processing function must return the data')
 
             participant_data.append(file_data)
+
+        if participantID is None:
+            participantID = DATA_KEYWORDS['ID']
 
         return cls(participant_data,
                    participantID=participantID,
@@ -260,8 +292,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or None or one element list with a list, optional
+            If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+            be found. If None then all trials will use all available actions. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -297,6 +331,7 @@ class Data(list):
 
         participant_data = []
 
+        participantID_simplified = False
         for filename, fileID in itertools.izip(files, file_IDs):
 
             dat = pd.read_csv(folder_path + filename, **csv_read_options)
@@ -312,9 +347,15 @@ class Data(list):
                     sub_dat_dict[DATA_KEYWORDS['filename']] = filename
                     sub_dat_dict['fileID'] = fileID
                     sub_dat_dict[DATA_KEYWORDS['folder']] = folder_path
-                    sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join(p)
+                    if participantID is None:
+                        if len(p) > 1:
+                            sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
+                        else:
+                            sub_dat_dict[DATA_KEYWORDS['ID']] = p[0]
                     if extra_processing:
                         sub_dat_dict = extra_processing(sub_dat_dict)
+                        if sub_dat_dict is None:
+                            raise ProcessingError('The extra_processing function must return the data')
                     participant_data.append(sub_dat_dict)
             else:
                 dat_dict = dat.to_dict(orient='list')
@@ -324,16 +365,22 @@ class Data(list):
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
                 elif isinstance(dat_dict[participantID], (list, np.ndarray)) and utils.list_all_equal(dat_dict[participantID]):
                     dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
+                    participantID_simplified = True
                 else:
                     raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 if extra_processing:
                     dat_dict = extra_processing(dat_dict)
+                    if dat_dict is None:
+                        raise ProcessingError('The extra_processing function must return the data')
 
                 participant_data.append(dat_dict)
 
+        if participantID is None or participantID_simplified:
+            participantID = DATA_KEYWORDS['ID']
+
         return cls(participant_data,
-                   participantID= DATA_KEYWORDS['ID'],
+                   participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
                    stimuli=stimuli,
@@ -377,8 +424,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or None or one element list with a list, optional
+            If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+            be found. If None then all trials will use all available actions. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -422,6 +471,7 @@ class Data(list):
 
             dat = pd.read_excel(folder_path + filename, **xlsx_read_options)
 
+            participantID_simplified = False
             if len(split_by) > 0:
                 # The data must be split
                 classifier_list = []
@@ -440,9 +490,15 @@ class Data(list):
                     sub_dat_dict[DATA_KEYWORDS['filename']] = filename
                     sub_dat_dict["fileID"] = fileID
                     sub_dat_dict[DATA_KEYWORDS['folder']] = folder_path
-                    sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
+                    if participantID is None:
+                        if len(p) > 1:
+                            sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
+                        else:
+                            sub_dat_dict[DATA_KEYWORDS['ID']] = p[0]
                     if extra_processing:
                         sub_dat_dict = extra_processing(sub_dat_dict)
+                        if sub_dat_dict is None:
+                            raise ProcessingError('The extra_processing function must return the data')
                     participant_data.append(sub_dat_dict)
             else:
                 dat_dict = dat.to_dict(orient='list')
@@ -452,16 +508,22 @@ class Data(list):
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
                 elif isinstance(dat_dict[participantID], (list, np.ndarray)) and utils.list_all_equal(dat_dict[participantID]):
                     dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
+                    participantID_simplified = True
                 else:
                     raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 if extra_processing:
                     dat_dict = extra_processing(dat_dict)
+                    if dat_dict is None:
+                        raise ProcessingError('The extra_processing function must return the data')
 
                 participant_data.append(dat_dict)
 
+        if participantID is None or participantID_simplified:
+            participantID = DATA_KEYWORDS['ID']
+
         return cls(participant_data,
-                   participantID=DATA_KEYWORDS['ID'],
+                   participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
                    stimuli=stimuli,
@@ -501,10 +563,10 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings or None or 1 element list, optional
+        action_options : string or list of strings or None or one element list with a list, optional
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
-            be found. If None then all trials will use all available actions. If a 1 element list then the element will
-            be treated as the the valid actions for each trialstep. Default ``'None'``
+            be found. If None then all trials will use all available actions. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -517,9 +579,6 @@ class Data(list):
 
         files, file_IDs = cls.__locate_files(folder_path, "pkl", file_name_filter=file_name_filter,
                                              terminal_ID=terminal_ID)
-
-        if participantID is None:
-            participantID = DATA_KEYWORDS['ID']
 
         participant_data = []
         for filename, fileID in itertools.izip(files, file_IDs):
@@ -535,12 +594,18 @@ class Data(list):
 
                 file_data = {k: v for k, v in dat.iteritems()}
 
-            file_data[DATA_KEYWORDS['ID']] = fileID
+            if participantID is None:
+                file_data[DATA_KEYWORDS['ID']] = fileID
 
             if extra_processing:
                 file_data = extra_processing(file_data)
+                if file_data is None:
+                    raise ProcessingError('The extra_processing function must return the data')
 
             participant_data.append(file_data)
+
+        if participantID is None:
+            participantID = DATA_KEYWORDS['ID']
 
         return cls(participant_data,
                    participantID=participantID,
@@ -571,10 +636,13 @@ class Data(list):
             The dict key where the feedbacks the participant received can be found. Default ``'feedbacks'``
         stimuli : string or list of strings, optional
             The dict keys where the stimulus cues for each trial can be found. Default ``'None'``
-        action_options : string or list of strings, optional
-            The dict keys where the valid actions for each trial can be found. Default ``'None'``
+        action_options : string or list of strings or one element list with a list, optional
+            The dict keys where the valid actions for each trial can be found as a single key or list of keys.
+            If ``None`` then the action list is considered to stay constant. If the list contains one list then it will
+            be treated as a list of valid actions for each trialstep. Default ``'None'``
 
         """
+        self.process_function = process_data_function
         if callable(process_data_function):
             participant_data = process_data_function(participants)
         elif isinstance(process_data_function, basestring):
@@ -711,6 +779,53 @@ class Data(list):
 
         super(Data, self).__init__(participant_data)
 
+    def extend(self, iterable):
+        """Combines two Data instances into one
+
+        Parameters
+        ----------
+        iterable : Data instance or list of participant dicts
+
+        """
+
+        if isinstance(iterable, Data):
+            if self.participantID != iterable.participantID:
+                raise AttributeError('participantID ``{}`` cannot be extended with ``{}``'.format(self.participantID, iterable.participantID))
+            if self.choices != iterable.choices:
+                raise AttributeError('choices ``{}`` cannot be extended with ``{}``'.format(self.choices, iterable.choices))
+            if self.feedbacks != iterable.feedbacks:
+                raise AttributeError('feedbacks ``{}`` cannot be extended with ``{}``'.format(self.feedbacks, iterable.feedbacks))
+            if self.stimuli != iterable.stimuli:
+                raise AttributeError('stimuli ``{}`` cannot be extended with ``{}``'.format(self.stimuli, iterable.stimuli))
+            if self.action_options != iterable.action_options:
+                raise AttributeError('action_options ``{}`` cannot be extended with ``{}``'.format(self.action_options, iterable.action_options))
+            if self.process_function != iterable.process_function:
+                raise AttributeError('process_function ``{}`` cannot be extended with ``{}``'.format(self.process_function, iterable.process_function))
+
+            IDs = self.IDs.copy()
+            number_IDs = len(IDs)
+            for i, (id_key, id_val) in enumerate(iterable.IDs.iteritems()):
+                if id_key in IDs:
+                    raise IDError("participantID must be unique. Found more than one instance of `{}`".format(id_key))
+                else:
+                    self.IDs[id_key] = number_IDs + id_val
+
+            super(Data, self).extend(iterable)
+        else:
+            dat = Data(iterable,
+                       participantID=self.participantID,
+                       choices=self.choices,
+                       feedbacks=self.feedbacks,
+                       stimuli=self.stimuli,
+                       action_options=self.action_options,
+                       process_data_function=self.process_function
+                       )
+            self.extend(dat)
+
+    def __add__(self, y):
+
+        self.extend(y)
+
     def __eq__(self, other):
 
         if not isinstance(other, Data):
@@ -738,7 +853,7 @@ class Data(list):
     def __folder_path_cleaning(folder):
 
         folder_path = folder.replace('\\', '/')
-        if folder_path[-1] is not '/':
+        if folder_path[-1] != '/':
             folder_path += '/'
         return folder_path
 

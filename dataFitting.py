@@ -66,7 +66,7 @@ def data_fitting(data_folder='./',
 
     Parameters
     ----------
-    data_folder : string, optional
+    data_folder : string or list of strings, optional
         The folder where the data can be found. Default is the current folder.
     data_format : string, optional
         The file type of the data, from ``mat``, ``csv``, ``xlsx`` and ``pkl``. Default is ``csv``
@@ -111,11 +111,10 @@ def data_fitting(data_folder='./',
     task_stimuli : list of strings or None, optional
         The keys containing the observational parameters seen by the
         participant before taking a decision on an action. Default ``None``
-    participant_action_options : string or None or list of ints, optional
-        The name of the key in partData where the list of valid actions
-        can be found. If ``None`` then the action list is considered to
-        stay constant. If a list then the list will be taken as the list
-        of actions that can be taken at each instance. Default ``None``
+    participant_action_options : string or list of strings or None or one element list with a list, optional
+        If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+        be found. If None then all trials will use all available actions. If the list contains one list then it will
+        be treated as a list of valid actions for each trialstep. Default ``'None'``
     fit_method : string, optional
         The fitting method to be used. The names accepted are those of the modules in the folder fitAlgs containing a
         FitAlg class. Default ``'evolutionary'``
@@ -166,7 +165,7 @@ def data_fitting(data_folder='./',
     """
 
     participants = data.Data.load_data(file_type=data_format,
-                                       folder=data_folder,
+                                       folders=data_folder,
                                        file_name_filter=data_file_filter,
                                        terminal_ID=data_file_terminal_ID,
                                        split_by=data_split_by,

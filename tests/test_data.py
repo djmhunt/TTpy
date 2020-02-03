@@ -79,7 +79,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Decisions': np.array(['D', 'F', 'C', 'C', 'B', 'F', 'D', 'D', 'C'], dtype='<U1'),
              'ExpectedReward': np.array([0.35, 0.65, 0.65, 0.755, 0.35, 0.455, 0.455, 0.455, 0.455]),
              'Name': 'QLearn',
-             'Rewards': np.array([ 0.0,  1.0,  1.0,  1.0,  0.0,  0.0, np.nan, np.nan, np.nan]),
+             'Rewards': np.array([0.0,  1.0,  1.0,  1.0,  0.0,  0.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['E', 'F'], ['C', 'D'], ['C', 'D'], ['A', 'B'], ['E', 'F'], ['B', 'D'], ['D', 'A'], ['E', 'C']], dtype='<U1'),
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
@@ -100,7 +100,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Decisions': np.array(['C', 'D', 'C', 'E', 'B', 'E', 'B', 'D', 'B'], dtype='<U1'),
              'ExpectedReward': np.array([0.9265, 0.805, 0.97795, 0.15, 0.105, 0.745, 0.745, 0.745, 0.745]),
              'Name': 'QLearn',
-             'Rewards': np.array([ 1.0,  1.0,  1.0,  0.0,  0.0,  1.0, np.nan, np.nan, np.nan]),
+             'Rewards': np.array([1.0,  1.0,  1.0,  0.0,  0.0,  1.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['C', 'D'], ['C', 'D'], ['E', 'F'], ['A', 'B'], ['E', 'F'], ['F', 'B'], ['D', 'F'], ['B', 'C']], dtype='<U1'),
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
@@ -121,7 +121,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Decisions': np.array(['D', 'D', 'B', 'A', 'A', 'A', 'C', 'C', 'F'], dtype='<U1'),
              'ExpectedReward': np.array([0.5635, 0.39445, 0.0735, 0.35, 0.245, 0.4715, 0.4715, 0.4715, 0.4715]),
              'Name': 'QLearn',
-             'Rewards': np.array([ 0.0, 0.0, 0.0, 0.0,  0.0, 1.0, np.nan, np.nan, np.nan]),
+             'Rewards': np.array([0.0, 0.0, 0.0, 0.0,  0.0, 1.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['C', 'D'], ['A', 'B'], ['A', 'B'], ['A', 'B'], ['A', 'B'], ['F', 'C'], ['C', 'A'], ['A', 'F']], dtype='<U1'),
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
@@ -213,6 +213,26 @@ def multi_files(tmpdir_factory):
 
     return str(folder_name), file_names
 
+
+@pytest.fixture(scope='session')
+def multi_folders(tmpdir_factory):
+    folder_name = tmpdir_factory.mktemp("data", numbered=False)
+    folder_name_str = str(folder_name).replace('\\', '/')
+
+    file_names = []
+    for i, (cumulative_points, subject_choices) in enumerate(itertools.izip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
+        mat_file_name = 'subj{}.mat'.format(i)
+        MAT_DATA['dfile'] = mat_file_name
+        folder_path = '{}/subj{}'.format(folder_name_str, i)
+        folder_sub_path = tmpdir_factory.mktemp("data/subj{}".format(i), numbered=False)
+        file_path = '{}/{}'.format(folder_path, mat_file_name)
+        file_names.append(mat_file_name)
+
+        MAT_DATA['cumpts'] = cumulative_points
+        MAT_DATA['subchoice'] = subject_choices
+        sp.io.savemat(str(file_path), MAT_DATA)
+
+    return folder_name_str, file_names
 
 #%% For Data generally
 class TestClass_Data:
@@ -483,7 +503,36 @@ class TestClass_Mat:
                                  feedbacks='cumpts')
         result = dat
         correct_result = data.Data([], participantID='dfile', choices='subchoice', feedbacks='cumpts')
-        assert dat == correct_result
+        assert result == correct_result
+
+#%% For importing multiple folders into Data
+class TestClass_Folders:
+    def test_folders(self, multi_folders):
+        folder_name, file_names = multi_folders
+        dat_folders = ['{}/{}/'.format(folder_name, f[:-4]) for f in file_names]
+        dat = data.Data.load_data(file_type='mat',
+                                  folders=dat_folders,
+                                  participantID='dfile',
+                                  choices='subchoice',
+                                  feedbacks='cumpts')
+        for result, folder, file_name, points, choices in itertools.izip(dat, dat_folders, file_names, MAT_POINTS_SETS,
+                                                                         MAT_CHOICE_SETS):
+            correct_result = {'filename': file_name,
+                              'participant_ID': file_name.split('.')[0][-1],
+                              'folder': folder,
+                              'bonuscrit': 450,
+                              'choiceRT': np.array([0, 0, 0]),
+                              'cumpts': np.array(points),
+                              'dfile': file_name,
+                              'subchoice': np.array(choices),
+                              'taskver': 1.05
+                              }
+
+            for key, value in result.iteritems():
+                try:
+                    assert all(value == correct_result[key])
+                except TypeError:
+                    assert value == correct_result[key]
 
 class TestClass_csv:
     def test_csv_single(self, single_files):
