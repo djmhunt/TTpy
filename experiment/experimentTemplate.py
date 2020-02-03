@@ -28,7 +28,7 @@ class Experiment(object):
         self.parameters = {"Name": self.Name
                            }
 
-        self.recAction = []
+        self.record_actions = []
 
     def __iter__(self):
         """
@@ -92,7 +92,7 @@ class Experiment(object):
             The action taken by the model
         """
 
-        self.recAction.append(action)
+        self.record_actions.append(action)
 
     def proceed(self):
         """
@@ -124,7 +124,7 @@ class Experiment(object):
 
         results = self.standardResultOutput()
 
-        results["Actions"] = self.recAction
+        results["Actions"] = self.record_actions
 
         return results
 

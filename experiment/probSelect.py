@@ -35,20 +35,20 @@ class ProbSelect(Experiment):
 
     Parameters
     ----------
-    rewardProb : float in range [0,1], optional
+    reward_probability : float in range [0,1], optional
         The probability that a reward is given for choosing action A. Default
         is 0.7
-    actRewardProb : dictionary, optional
+    action_reward_probabilities : dictionary, optional
         A dictionary of the potential actions that can be taken and the
         probability of a reward.
         Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}
     learnActPairs : list of tuples, optional
         The pairs of actions shown together in the learning phase.
-    learningLen : int, optional
+    learning_length : int, optional
         The number of trials in the learning phase. Default is 240
-    testLen : int, optional
+    test_length : int, optional
         The number of trials in the test phase. Default is 60
-    rewardSize : float, optional
+    reward_size : float, optional
         The size of reward given if successful. Default 1
     number_actions : int, optional
         The number of actions that can be chosen at any given time, chosen at
@@ -65,50 +65,57 @@ class ProbSelect(Experiment):
 
     """
 
-    def __init__(self, rewardProb=0.7,
-                 learningActPairs=[(0, 1), (2, 3)],
-                 actRewardProb=None,
-                 learningLen=240,
-                 testLen=60,
+    def __init__(self,
+                 reward_probability=0.7,
+                 learning_action_pairs=None,
+                 action_reward_probabilities=None,
+                 learning_length=240,
+                 test_length=60,
                  number_actions=None,
-                 rewardSize=1):
+                 reward_size=1):
 
-        if not actRewardProb:
-            actRewardProb = {0: rewardProb,
-                             1: 1-rewardProb,
-                             2: 0.5,
-                             3: 0.5}
+        if learning_action_pairs is None:
+            learning_action_pairs = [(0, 1), (2, 3)]
+
+        if not action_reward_probabilities:
+            action_reward_probabilities = {0: reward_probability,
+                                           1: 1 - reward_probability,
+                                           2: 0.5,
+                                           3: 0.5}
 
         if not number_actions:
-            number_actions = len(actRewardProb)
+            number_actions = len(action_reward_probabilities)
 
         super(ProbSelect, self).__init__()
 
-        self.parameters["rewardProb"] = rewardProb
-        self.parameters["actRewardProb"] = actRewardProb
-        self.parameters["learningActPairs"] = learningActPairs
-        self.parameters["learningLen"] = learningLen
-        self.parameters["testLen"] = testLen
+        self.parameters["reward_probability"] = reward_probability
+        self.parameters["action_reward_probabilities"] = action_reward_probabilities
+        self.parameters["learning_action_pairs"] = learning_action_pairs
+        self.parameters["learning_length"] = learning_length
+        self.parameters["test_length"] = test_length
         self.parameters["number_actions"] = number_actions
-        self.parameters["rewardSize"] = rewardSize
+        self.parameters["reward_size"] = reward_size
 
         self.t = -1
-        self.rewardProb = rewardProb
-        self.actRewardProb = actRewardProb
-        self.learningActPairs = learningActPairs
-        self.learningLen = learningLen
-        self.rewardSize = rewardSize
-        self.T = learningLen + testLen
+        self.reward_probability = reward_probability
+        self.action_reward_probabilities = action_reward_probabilities
+        self.learning_action_pairs = learning_action_pairs
+        self.learning_length = learning_length
+        self.reward_size = reward_size
+        self.task_length = learning_length + test_length
         self.action = None
-        self.rewVal = -1
+        self.reward_value = -1
         self.number_actions = number_actions
-        self.choices = actRewardProb.keys()
+        self.choices = action_reward_probabilities.keys()
 
-        self.actT = genActSequence(actRewardProb, learningActPairs, learningLen, testLen)
+        self.action_sequence = self.__generate_action_sequence(action_reward_probabilities,
+                                                               learning_action_pairs,
+                                                               learning_length,
+                                                               test_length)
 
         # Recording variables
-        self.recRewVal = [-1] * self.T
-        self.recAction = [-1] * self.T
+        self.record_reward_values = [-1] * self.task_length
+        self.record_actions = [-1] * self.task_length
 
     def next(self):
         """
@@ -117,7 +124,7 @@ class ProbSelect(Experiment):
         Returns
         -------
         stimulus : None
-        nextValidActions : Tuple of length 2 of ints
+        next_valid_actions : Tuple of length 2 of ints
             The list of valid actions that the model can respond with.
 
         Raises
@@ -127,13 +134,13 @@ class ProbSelect(Experiment):
 
         self.t += 1
 
-        if self.t == self.T:
+        if self.t == self.task_length:
             raise StopIteration
 
-        nextStim = None
-        nextValidActions = self.actT[self.t]
+        next_stimulus = None
+        next_valid_actions = self.action_sequence[self.t]
 
-        return nextStim, nextValidActions
+        return next_stimulus, next_valid_actions
 
     def receiveAction(self, action):
         """
@@ -153,17 +160,17 @@ class ProbSelect(Experiment):
         """
         # The probability of success varies depending on if it is choice
 
-        if self.t < self.learningLen:
-            actRewProb = self.actRewardProb[self.action]
+        if self.t < self.learning_length:
+            action_reward_probabilities = self.action_reward_probabilities[self.action]
 
-            if actRewProb >= np.random.rand(1):
-                reward = self.rewardSize
+            if action_reward_probabilities >= np.random.rand(1):
+                reward = self.reward_size
             else:
                 reward = 0
         else:
             reward = float('Nan')
 
-        self.rewVal = reward
+        self.reward_value = reward
 
         self.storeState()
 
@@ -188,9 +195,9 @@ class ProbSelect(Experiment):
 
         results = self.standardResultOutput()
 
-        results["rewVals"] = np.array(self.recRewVal)
-        results["Actions"] = np.array(self.recAction)
-        results["validAct"] = np.array(self.actT)
+        results["rewVals"] = np.array(self.record_reward_values)
+        results["Actions"] = np.array(self.record_actions)
+        results["validAct"] = np.array(self.action_sequence)
 
         return results
 
@@ -198,26 +205,29 @@ class ProbSelect(Experiment):
         """ Stores the state of all the important variables so that they can be
         output later """
 
-        self.recAction[self.t] = self.action
-        self.recRewVal[self.t] = self.rewVal
+        self.record_actions[self.t] = self.action
+        self.record_reward_values[self.t] = self.reward_value
 
+    @staticmethod
+    def __generate_action_sequence(action_reward_probability,
+                                   learning_action_pairs,
+                                   learning_length,
+                                   test_length):
 
-def genActSequence(actRewardProb, learningActPairs, learningLen, testLen):
+        pair_nums = range(len(learning_action_pairs))
+        action_pairs = np.array(learning_action_pairs)
 
-    pairNums = range(len(learningActPairs))
-    actPairs = np.array(learningActPairs)
+        pairs = np.random.choice(pair_nums, size=learning_length, replace=True)
+        action_sequence = list(action_pairs[pairs])
 
-    pairs = np.random.choice(pairNums, size=learningLen, replace=True)
-    actSeq = list(actPairs[pairs])
+        for t in xrange(test_length):
+            pairs = np.random.choice(pair_nums, size=2, replace=False)
+            elements = np.random.choice([0, 1], size=2, replace=True)
 
-    for t in xrange(testLen):
-        pairs = np.random.choice(pairNums, size=2, replace=False)
-        elements = np.random.choice([0, 1], size=2, replace=True)
+            pair = [action_pairs[p, e] for p, e in itertools.izip(pairs, elements)]
+            action_sequence.append(pair)
 
-        pair = [actPairs[p, e] for p, e in itertools.izip(pairs, elements)]
-        actSeq.append(pair)
-
-    return actSeq
+        return action_sequence
 
 
 class StimulusProbSelectDirect(Stimulus):
