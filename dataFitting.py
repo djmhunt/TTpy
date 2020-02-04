@@ -167,6 +167,13 @@ def data_fitting(data_folder='./',
     data.Data : Data import class
     """
 
+    if participant_varying_model_parameters is None:
+        model_changing_variables = {}
+    else:
+        model_changing_variables = participant_varying_model_parameters
+
+    # TODO : Validate model_changing_variables with the data and the model
+    # TODO : Change the name of model_changing_variables to something clearer
     participants = data.Data.load_data(file_type=data_format,
                                        folders=data_folder,
                                        file_name_filter=data_file_filter,
@@ -232,11 +239,6 @@ def data_fitting(data_folder='./',
                                                                          numpy_error_level=numpy_error_level)
 
     logger = logging.getLogger('Overview')
-
-    if participant_varying_model_parameters is None:
-        model_changing_variables = {}
-    else:
-        model_changing_variables = participant_varying_model_parameters
 
     log_fitting_parameters(fitter.info())
 
@@ -518,14 +520,13 @@ def fit_record(participant_fits, file_name_generator):
 
     Parameters
     ----------
-    participant_fits :
+    participant_fits : dict
         A summary of the recovered parameters
     file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
 
     """
-    # TODO: Update the function documentation here when the datatype is known
     participant_fit = pd.DataFrame.from_dict(participant_fits)
     output_file = file_name_generator("participantFits", 'csv')
     participant_fit.to_csv(output_file)
