@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>task.weather &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>experiment.weather &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for task.weather</h1><div class="highlight"><pre>
+  <h1>Source code for experiment.weather</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
@@ -56,7 +56,7 @@
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">nan</span>
 
-<span class="kn">from</span> <span class="nn">task.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 <span class="n">cueSets</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Pickering&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -86,11 +86,11 @@
 <span class="n">defaultActualities</span> <span class="o">=</span> <span class="n">actualityLists</span><span class="p">[</span><span class="s2">&quot;Pickering&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather">[docs]</a><span class="k">class</span> <span class="nc">Weather</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the 1994 paper &quot;Probabilistic classification learning in amnesia.&quot;</span>
 
-<span class="sd">    Many methods are inherited from the task.task.task class.</span>
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
 
 <span class="sd">    Attributes</span>
@@ -155,7 +155,7 @@
         <span class="c1"># Recording variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
 
-<div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.next"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -181,7 +181,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="Weather.receiveAction"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.receiveAction"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -193,7 +193,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="Weather.feedback"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.feedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Feedback to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -204,16 +204,16 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
-<div class="viewcode-block" id="Weather.proceed"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.proceed"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the task after feedback</span>
+<span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Weather.returnTaskState"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.returnTaskState"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this task run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -227,14 +227,14 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Weather.storeState"><a class="viewcode-back" href="../../task.weather.html#task.weather.Weather.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Weather.storeState"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.Weather.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span></div></div>
 
 
-<div class="viewcode-block" id="genCues"><a class="viewcode-back" href="../../task.weather.html#task.weather.genCues">[docs]</a><span class="k">def</span> <span class="nf">genCues</span><span class="p">(</span><span class="n">number_cues</span><span class="p">,</span> <span class="n">taskLen</span><span class="p">):</span>
+<div class="viewcode-block" id="genCues"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genCues">[docs]</a><span class="k">def</span> <span class="nf">genCues</span><span class="p">(</span><span class="n">number_cues</span><span class="p">,</span> <span class="n">taskLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters</span>
@@ -257,7 +257,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cues</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="genActualities"><a class="viewcode-back" href="../../task.weather.html#task.weather.genActualities">[docs]</a><span class="k">def</span> <span class="nf">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
+<div class="viewcode-block" id="genActualities"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.genActualities">[docs]</a><span class="k">def</span> <span class="nf">genActualities</span><span class="p">(</span><span class="n">cueProbs</span><span class="p">,</span> <span class="n">cues</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters</span>
@@ -295,13 +295,13 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="StimulusWeatherDirect"><a class="viewcode-back" href="../../task.weather.html#task.weather.StimulusWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusWeatherDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusWeatherDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.StimulusWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusWeatherDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather stimuli for models expecting just the event</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="StimulusWeatherDirect.processStimulus"><a class="viewcode-back" href="../../task.weather.html#task.weather.StimulusWeatherDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusWeatherDirect.processStimulus"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.StimulusWeatherDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
@@ -317,13 +317,13 @@
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">observation</span></div></div>
 
 
-<div class="viewcode-block" id="RewardsWeatherDirect"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardsWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardsWeatherDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardsWeatherDirect"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardsWeatherDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardsWeatherDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather reward for models expecting the reward feedback</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RewardsWeatherDirect.processFeedback"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardsWeatherDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardsWeatherDirect.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardsWeatherDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>
@@ -333,12 +333,12 @@
         <span class="k">return</span> <span class="n">feedback</span></div></div>
 
 
-<div class="viewcode-block" id="RewardWeatherDiff"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardWeatherDiff">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDiff</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDiff"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDiff">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDiff</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the weather reward for models expecting reward corrections</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RewardWeatherDiff.processFeedback"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardWeatherDiff.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDiff.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDiff.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>
@@ -352,14 +352,14 @@
             <span class="k">return</span> <span class="mi">0</span></div></div>
 
 
-<div class="viewcode-block" id="RewardWeatherDualCorrection"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardWeatherDualCorrection">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDualCorrection</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDualCorrection"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDualCorrection">[docs]</a><span class="k">class</span> <span class="nc">RewardWeatherDualCorrection</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting the reward correction</span>
 <span class="sd">    from two possible actions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="RewardWeatherDualCorrection.processFeedback"><a class="viewcode-back" href="../../task.weather.html#task.weather.RewardWeatherDualCorrection.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardWeatherDualCorrection.processFeedback"><a class="viewcode-back" href="../../experiment.weather.html#experiment.weather.RewardWeatherDualCorrection.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>

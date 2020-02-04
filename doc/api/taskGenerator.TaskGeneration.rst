@@ -1,5 +1,5 @@
 TaskGeneration
-=============
+==============
 
 .. currentmodule:: taskGenerator
 

@@ -21,22 +21,15 @@ Submodules
    model.ACBasic
    model.ACE
    model.ACES
-   model.BHMM
    model.BP
    model.BPE
-   model.BPMS
    model.BPV
-   model.EP
-   model.EPE
-   model.MS
-   model.MS_rev
    model.OpAL
    model.OpALE
    model.OpALS
    model.OpALSE
    model.OpAL_H
    model.OpAL_HE
-   model.RVPM
    model.modelTemplate
    model.qLearn
    model.qLearn2
@@ -47,7 +40,6 @@ Submodules
    model.qLearnF
    model.qLearnK
    model.qLearnMeta
-   model.qLearnSP
    model.randomBias
    model.td0
    model.tdE

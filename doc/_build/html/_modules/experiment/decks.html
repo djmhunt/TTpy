@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>task.decks &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>experiment.decks &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for task.decks</h1><div class="highlight"><pre>
+  <h1>Source code for experiment.decks</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
@@ -54,7 +54,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">task.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
 
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
@@ -71,11 +71,11 @@
 <span class="n">defaultDecks</span> <span class="o">=</span> <span class="n">deckSets</span><span class="p">[</span><span class="s2">&quot;WorthyMaddox&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Decks"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks">[docs]</a><span class="k">class</span> <span class="nc">Decks</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks">[docs]</a><span class="k">class</span> <span class="nc">Decks</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Based on the Worthy&amp;Maddox 2007 paper &quot;Regulatory fit effects in a choice task.</span>
 
-<span class="sd">    Many methods are inherited from the task.task.task class.</span>
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
 
 <span class="sd">    Attributes</span>
@@ -130,7 +130,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">T</span>
 
-<div class="viewcode-block" id="Decks.next"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.next"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -155,7 +155,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="Decks.receiveAction"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.receiveAction"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -167,7 +167,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="Decks.feedback"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.feedback"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -187,16 +187,16 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span></div>
 
-<div class="viewcode-block" id="Decks.proceed"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.proceed"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the task after feedback</span>
+<span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Decks.returnTaskState"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.returnTaskState"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this task run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -212,7 +212,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Decks.storeState"><a class="viewcode-back" href="../../task.decks.html#task.decks.Decks.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Decks.storeState"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.Decks.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -221,9 +221,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recCardVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cardValue</span></div></div>
 
 
-<div class="viewcode-block" id="StimulusDecksLinear"><a class="viewcode-back" href="../../task.decks.html#task.decks.StimulusDecksLinear">[docs]</a><span class="k">class</span> <span class="nc">StimulusDecksLinear</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusDecksLinear"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.StimulusDecksLinear">[docs]</a><span class="k">class</span> <span class="nc">StimulusDecksLinear</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
 
-<div class="viewcode-block" id="StimulusDecksLinear.processStimulus"><a class="viewcode-back" href="../../task.decks.html#task.decks.StimulusDecksLinear.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusDecksLinear.processStimulus"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.StimulusDecksLinear.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
@@ -238,13 +238,13 @@
         <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span></div></div>
 
 
-<div class="viewcode-block" id="RewardDecksLinear"><a class="viewcode-back" href="../../task.decks.html#task.decks.RewardDecksLinear">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksLinear</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksLinear"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksLinear">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksLinear</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting just the reward</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RewardDecksLinear.processFeedback"><a class="viewcode-back" href="../../task.decks.html#task.decks.RewardDecksLinear.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksLinear.processFeedback"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksLinear.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>
@@ -254,7 +254,7 @@
         <span class="k">return</span> <span class="n">feedback</span></div></div>
 
 
-<div class="viewcode-block" id="RewardDecksNormalised"><a class="viewcode-back" href="../../task.decks.html#task.decks.RewardDecksNormalised">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksNormalised</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksNormalised"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksNormalised">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksNormalised</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting just the reward, but in range [0,1]</span>
 
@@ -269,7 +269,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">maxReward</span> <span class="o">=</span> <span class="mi">10</span>
 
-<div class="viewcode-block" id="RewardDecksNormalised.processFeedback"><a class="viewcode-back" href="../../task.decks.html#task.decks.RewardDecksNormalised.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksNormalised.processFeedback"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksNormalised.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>
@@ -279,7 +279,7 @@
         <span class="k">return</span> <span class="n">feedback</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxReward</span></div></div>
 
 
-<div class="viewcode-block" id="RewardDecksPhi"><a class="viewcode-back" href="../../task.decks.html#task.decks.RewardDecksPhi">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksPhi</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksPhi"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksPhi">[docs]</a><span class="k">class</span> <span class="nc">RewardDecksPhi</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the decks reward for models expecting just the reward, but in range [0, 1]</span>
 
@@ -291,7 +291,7 @@
 
     <span class="n">phi</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="RewardDecksPhi.processFeedback"><a class="viewcode-back" href="../../task.decks.html#experiment.decks.RewardDecksPhi.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardDecksPhi.processFeedback"><a class="viewcode-back" href="../../experiment.decks.html#experiment.decks.RewardDecksPhi.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feedback</span><span class="p">,</span> <span class="n">lastAction</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>

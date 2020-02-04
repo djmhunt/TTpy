@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>task.probSelect &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>experiment.probSelect &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for task.probSelect</h1><div class="highlight"><pre>
+  <h1>Source code for experiment.probSelect</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
@@ -57,18 +57,18 @@
 
 <span class="kn">import</span> <span class="nn">itertools</span>
 
-<span class="kn">from</span> <span class="nn">task.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">experiment.experimentTemplate</span> <span class="kn">import</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
 
 
-<div class="viewcode-block" id="ProbSelect"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect">[docs]</a><span class="k">class</span> <span class="nc">ProbSelect</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect">[docs]</a><span class="k">class</span> <span class="nc">ProbSelect</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Probabilistic selection task based on Genetic triple dissociation reveals multiple roles for dopamine in reinforcement learning.</span>
 <span class="sd">                                        Frank, M. J., Moustafa, A. a, Haughey, H. M., Curran, T., &amp; Hutchison, K. E. (2007).</span>
 <span class="sd">                                        Proceedings of the National Academy of Sciences of the United States of America, 104(41), 16311–16316.</span>
 <span class="sd">                                        doi:10.1073/pnas.0706111104</span>
 
-<span class="sd">    Many methods are inherited from the task.task.task class.</span>
+<span class="sd">    Many methods are inherited from the experiment.experiment.experiment class.</span>
 <span class="sd">    Refer to its documentation for missing methods.</span>
 
 <span class="sd">    Attributes</span>
@@ -99,7 +99,7 @@
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    The task is broken up into two sections: a learning phase and a</span>
+<span class="sd">    The experiment is broken up into two sections: a learning phase and a</span>
 <span class="sd">    transfer phase. Participants choose between pairs of four actions: A, B, M1</span>
 <span class="sd">    and M2. Each provides a reward with a different probability: A:P&gt;0.5,</span>
 <span class="sd">    B:1-P&lt;0.5, M1=M2=0.5. The transfer phase has all the action pairs but no</span>
@@ -153,7 +153,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T</span>
 
-<div class="viewcode-block" id="ProbSelect.next"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.next"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -178,7 +178,7 @@
 
         <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
 
-<div class="viewcode-block" id="ProbSelect.receiveAction"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.receiveAction"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -190,7 +190,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span></div>
 
-<div class="viewcode-block" id="ProbSelect.feedback"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.feedback"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -212,16 +212,16 @@
 
         <span class="k">return</span> <span class="n">reward</span></div>
 
-<div class="viewcode-block" id="ProbSelect.proceed"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.proceed"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the task after feedback</span>
+<span class="sd">        Updates the experiment after feedback</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="ProbSelect.returnTaskState"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.returnTaskState"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this task run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -237,7 +237,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="ProbSelect.storeState"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.ProbSelect.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProbSelect.storeState"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.ProbSelect.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later &quot;&quot;&quot;</span>
 
@@ -245,7 +245,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">recRewVal</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewVal</span></div></div>
 
 
-<div class="viewcode-block" id="genActSequence"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.genActSequence">[docs]</a><span class="k">def</span> <span class="nf">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
+<div class="viewcode-block" id="genActSequence"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.genActSequence">[docs]</a><span class="k">def</span> <span class="nf">genActSequence</span><span class="p">(</span><span class="n">actRewardProb</span><span class="p">,</span> <span class="n">learningActPairs</span><span class="p">,</span> <span class="n">learningLen</span><span class="p">,</span> <span class="n">testLen</span><span class="p">):</span>
 
     <span class="n">pairNums</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">))</span>
     <span class="n">actPairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">learningActPairs</span><span class="p">)</span>
@@ -263,7 +263,7 @@
     <span class="k">return</span> <span class="n">actSeq</span></div>
 
 
-<div class="viewcode-block" id="StimulusProbSelectDirect"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.StimulusProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusProbSelectDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusProbSelectDirect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.StimulusProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">StimulusProbSelectDirect</span><span class="p">(</span><span class="n">Stimulus</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the selection stimuli for models expecting just the event</span>
 
@@ -276,7 +276,7 @@
 <span class="sd">    (1, 1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="StimulusProbSelectDirect.processStimulus"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.StimulusProbSelectDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<div class="viewcode-block" id="StimulusProbSelectDirect.processStimulus"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.StimulusProbSelectDirect.processStimulus">[docs]</a>    <span class="k">def</span> <span class="nf">processStimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Processes the decks stimuli for models expecting just the event</span>
 
@@ -289,13 +289,13 @@
         <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span></div></div>
 
 
-<div class="viewcode-block" id="RewardProbSelectDirect"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.RewardProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardProbSelectDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardProbSelectDirect"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.RewardProbSelectDirect">[docs]</a><span class="k">class</span> <span class="nc">RewardProbSelectDirect</span><span class="p">(</span><span class="n">Rewards</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Processes the probabilistic selection reward for models expecting just the reward</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RewardProbSelectDirect.processFeedback"><a class="viewcode-back" href="../../task.probSelect.html#task.probSelect.RewardProbSelectDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
+<div class="viewcode-block" id="RewardProbSelectDirect.processFeedback"><a class="viewcode-back" href="../../experiment.probSelect.html#experiment.probSelect.RewardProbSelectDirect.processFeedback">[docs]</a>    <span class="k">def</span> <span class="nf">processFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns</span>

@@ -1,0 +1,321 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>tasks.pavlov &#8212; pyHPDM 0.9.9 documentation</title>
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for tasks.pavlov</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">:Author: Dominic Hunt</span>
+
+<span class="sd">:Reference: Value and prediction error in medial frontal cortex: integrating the single-unit and systems levels of analysis.</span>
+<span class="sd">                `Silvetti, M., Seurinck, R., &amp; Verguts, T. (2011)`.</span>
+<span class="sd">                Frontiers in Human Neuroscience, 5(August), 75.</span>
+<span class="sd">                doi:10.3389/fnhum.2011.00075</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">tasks.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
+
+<span class="kn">from</span> <span class="nn">model.modelTemplate</span> <span class="kn">import</span> <span class="n">Stimulus</span><span class="p">,</span> <span class="n">Rewards</span>
+
+<span class="c1"># TODO: Update pavlov to work with the current framework</span>
+
+<div class="viewcode-block" id="Pavlov"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov">[docs]</a><span class="k">class</span> <span class="nc">Pavlov</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Based on the Silvetti et al 2011 paper `&quot;Value and prediction error in</span>
+<span class="sd">    medial frontal cortex: integrating the single-unit and systems levels of</span>
+<span class="sd">    analysis.&quot;`</span>
+
+<span class="sd">    Many methods are inherited from the tasks.taskTemplate.Task class.</span>
+<span class="sd">    Refer to its documentation for missing methods.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The name of the class used when recording what has been used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rewMag : float, optional</span>
+<span class="sd">        The size of the stimulus. Default 4</span>
+<span class="sd">    rewProb : array of floats, optional</span>
+<span class="sd">        The probabilities of each stimulus producing a reward.</span>
+<span class="sd">        Default [0.85,0.33]</span>
+<span class="sd">    stimMag : float, optional</span>
+<span class="sd">        The size of the stimulus. Default 1</span>
+<span class="sd">    stimDur : int, optional</span>
+<span class="sd">        The duration, in tens of ms, that the stimulus is produced for. This</span>
+<span class="sd">        should be longer than rewDur since rewDur is set to end when stimDur</span>
+<span class="sd">        ends. Default 200</span>
+<span class="sd">    rewDur : int, optional</span>
+<span class="sd">        The duration, in tens of ms, that the reward is produced for.</span>
+<span class="sd">        Default 40</span>
+<span class="sd">    simDur : int, optional</span>
+<span class="sd">        The duration, in tens of ms, that each stimulus event is run for.</span>
+<span class="sd">        Default 300</span>
+<span class="sd">    stimRepeats : int, optional</span>
+<span class="sd">        The number of times a stimulus is introduced. Default 72</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewMag</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">rewProb</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.87</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">]),</span> <span class="n">stimMag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stimDur</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">rewDur</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">simDur</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">stimRepeats</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Pavlov</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewMag</span> <span class="o">=</span> <span class="n">rewMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewProb</span> <span class="o">=</span> <span class="n">rewProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimMag</span> <span class="o">=</span> <span class="n">stimMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimDur</span> <span class="o">=</span> <span class="n">stimDur</span>  <span class="c1"># Stimulus duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewDur</span> <span class="o">=</span> <span class="n">rewDur</span>  <span class="c1"># duration of reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simLen</span> <span class="o">=</span> <span class="n">simDur</span>  <span class="c1"># the length of the simulation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimRepeats</span> <span class="o">=</span> <span class="n">stimRepeats</span>  <span class="c1"># The number of learning runs</span>
+<span class="c1">#        simLoop = kwargs.pop(&#39;simLoopLen&#39;,100) #The number of learning loops are run</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rewMag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rewProb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewProb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;stimMag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimMag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;stimDur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimDur</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rewDur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewDur</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;simLen&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simLen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;stimRepeats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimRepeats</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cSet</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimChoice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getStim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimMag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewSigSet</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewVals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getRew</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimChoice</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">simLen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimDur</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewDur</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewMag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewProb</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActions</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Pavlov.next"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Produces the next stimulus for the iterator</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nextStim : tuple of c, rewSig and stimDur, described below</span>
+<span class="sd">        c : list of floats</span>
+<span class="sd">            Contains the inputs for each of the stimuli</span>
+<span class="sd">        rewSig : list of lists of floats</span>
+<span class="sd">            Each list contains the rewards at each time</span>
+<span class="sd">        stimDur : int</span>
+<span class="sd">        nextValidActions : Tuple of ints</span>
+<span class="sd">            The list of valid actions that the model can respond with. Set to</span>
+<span class="sd">            ``None``, as there are no actions.</span>
+
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StopIteration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimRepeats</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+        <span class="n">nextStim</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cSet</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimDur</span><span class="p">)</span>
+        <span class="n">nextValidActions</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">nextStim</span><span class="p">,</span> <span class="n">nextValidActions</span></div>
+
+<div class="viewcode-block" id="Pavlov.receiveAction"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Receives the next action from the participant</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        action : int or string</span>
+<span class="sd">            The action taken by the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">storeState</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pavlov.feedback"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Responds to the action from the participant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rewSig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewSigSet</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">rewSig</span></div>
+
+<div class="viewcode-block" id="Pavlov.proceed"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Updates the task after feedback</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Pavlov.returnTaskState"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the relevant data for this task run</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : dictionary</span>
+<span class="sd">            A dictionary containing the class parameters  as well as the other useful data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standardResultOutput</span><span class="p">()</span>
+
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cSet</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;stimuli&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimChoice</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewVals</span>
+        <span class="n">results</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recActions</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="Pavlov.storeState"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.Pavlov.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stores the state of all the important variables so that they can be</span>
+<span class="sd">        output later</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recActions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_getStim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimRepeats</span><span class="p">,</span> <span class="n">stimMag</span><span class="p">):</span>
+        <span class="n">stimChoice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">cSet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="o">-</span><span class="n">sc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">sc</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">stimChoice</span><span class="p">])</span><span class="o">*</span><span class="n">stimMag</span>
+
+        <span class="k">return</span> <span class="n">cSet</span><span class="p">,</span> <span class="n">stimChoice</span>
+
+    <span class="k">def</span> <span class="nf">_getRew</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stimChoice</span><span class="p">,</span> <span class="n">simLen</span><span class="p">,</span> <span class="n">stimRepeats</span><span class="p">,</span> <span class="n">stimDur</span><span class="p">,</span> <span class="n">rewDur</span><span class="p">,</span> <span class="n">rewMag</span><span class="p">,</span> <span class="n">rewProb</span><span class="p">):</span>
+
+        <span class="n">rewVals</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">rewProb</span><span class="p">[</span><span class="n">stimChoice</span><span class="p">])</span><span class="o">*</span><span class="n">rewMag</span>
+        <span class="n">rewSig1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="n">stimDur</span><span class="o">-</span><span class="n">rewDur</span><span class="p">))</span>
+        <span class="n">rewSig2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="n">rewDur</span><span class="p">))</span><span class="o">*</span><span class="n">rewVals</span>
+        <span class="n">rewSig3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">stimRepeats</span><span class="p">,</span> <span class="n">simLen</span><span class="o">-</span><span class="n">stimDur</span><span class="p">))</span>
+        <span class="n">rewSigSet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">rewSig1</span><span class="p">,</span> <span class="n">rewSig2</span><span class="p">,</span> <span class="n">rewSig3</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rewSigSet</span><span class="p">,</span> <span class="n">rewVals</span></div>
+
+<div class="viewcode-block" id="pavlovStimTemporal"><a class="viewcode-back" href="../../tasks.pavlov.html#tasks.pavlov.pavlovStimTemporal">[docs]</a><span class="k">def</span> <span class="nf">pavlovStimTemporal</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Passes the pavlov stimuli to models that cope with stimuli and rewards</span>
+<span class="sd">    that have a duration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pavlovStim : function</span>
+<span class="sd">        The function expects to be passed an event with three components:</span>
+<span class="sd">        ``(stim,rew,stimDur)``and an action (unused) and yield a series of</span>
+<span class="sd">        events ``t,c,r```.</span>
+<span class="sd">        ``stim`` is the value of the stimulus. It is expected to be a list-like</span>
+<span class="sd">        object. ``rew`` is a list containing the reward for each trialstep.</span>
+<span class="sd">        The reward is expected to be a float. ``stimDur`` is the duration of</span>
+<span class="sd">        the stimulus, an ``int``. This should be less than the length of ``rew``.</span>
+<span class="sd">        ``c`` the stimulus. ``r`` the reward. ``t`` is the time</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Name : string</span>
+<span class="sd">        The identifier of the function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">pavlovStim</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">lastObservation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">cStim</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rewSig</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">stimDur</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">cStimZeros</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">cStim</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rewSig</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">stimDur</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">cStim</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">cStimZeros</span>
+
+            <span class="k">yield</span> <span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span>
+
+    <span class="n">pavlovStim</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;pavlovStimTemporal&quot;</span>
+
+    <span class="k">return</span> <span class="n">pavlovStim</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2014-2020, Dominic Hunt.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>

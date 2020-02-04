@@ -73,7 +73,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#simulation.log_sim_parameters" title="simulation.log_sim_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_sim_parameters</span></code></a>(task_parameters,&nbsp;…)</td>
 <td>Writes to the log the description and the label of the task and model</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#simulation.record_sim" title="simulation.record_sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">record_sim</span></code></a>(file_name_generator,&nbsp;…[,&nbsp;pickle])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#simulation.record_sim" title="simulation.record_sim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">record_sim</span></code></a>(file_name_generator,&nbsp;task_data,&nbsp;…)</td>
 <td>Records the data from an task-model run.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#simulation.simulation" title="simulation.simulation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simulation</span></code></a>([task_name,&nbsp;…])</td>
@@ -167,14 +167,14 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
 
 <dl class="function">
 <dt id="simulation.simulation">
-<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>task_name=u'Basic'</em>, <em>task_changing_properties=None</em>, <em>task_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>sim_label=None</em>, <em>config_file=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">simulation.</code><code class="descname">simulation</code><span class="sig-paren">(</span><em>task_name=u'Basic'</em>, <em>task_changing_properties=None</em>, <em>task_constant_properties=None</em>, <em>model_name=u'QLearn'</em>, <em>model_changing_properties=None</em>, <em>model_constant_properties=None</em>, <em>label=None</em>, <em>config_file=None</em>, <em>output_path=None</em>, <em>pickle=False</em>, <em>min_log_level=u'INFO'</em>, <em>numpy_error_level=u'log'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/simulation.html#simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>A framework for letting models interact with tasks and record the data</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>task_name</strong> (<em>string</em>) – The name of the file where a task.taskTemplate.Task class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
+<li><strong>task_name</strong> (<em>string</em>) – The name of the file where a tasks.taskTemplate.Task class can be found. Default <code class="docutils literal notranslate"><span class="pre">Basic</span></code></li>
 <li><strong>task_changing_properties</strong> (<em>dictionary of floats</em><em> or </em><em>lists of floats</em>) – Parameters are the options that you are or are likely to change across task instances. When a parameter
 contains a list, an instance of the task will be created for every combination of this parameter with all
 the others. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
@@ -189,9 +189,10 @@ all the others. Default <code class="docutils literal notranslate"><span class="
 of the model being studied. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>config_file</strong> (<em>string</em><em>, </em><em>optional</em>) – The file name and path of a <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> configuration file. Overrides all other parameters if found.
 Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>output_path</strong> (<em>string</em><em>, </em><em>optional</em>) – The path that will be used for the run output. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>pickle</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>sim_label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means nothing will be saved</li>
+<li><strong>label</strong> (<em>string</em><em>, </em><em>optional</em>) – The label for the simulation. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means nothing will be saved</li>
 <li><strong>min_log_level</strong> (<em>basestring</em><em>, </em><em>optional</em>) – Defines the level of the log from (<code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">CRITICAL</span></code>). Default <code class="docutils literal notranslate"><span class="pre">INFO</span></code></li>
 <li><strong>numpy_error_level</strong> (<em>{'log'</em><em>, </em><em>'raise'}</em>) – Defines the response to numpy errors. Default <code class="docutils literal notranslate"><span class="pre">log</span></code>. See numpy.seterr</li>
 </ul>
@@ -201,7 +202,7 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-func docutils literal notranslate"><span class="pre">tasks.tasks()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">models.models()</span></code></p>
+<p class="last"><a class="reference internal" href="tasks.taskTemplate.html#module-tasks.taskTemplate" title="tasks.taskTemplate"><code class="xref py py-func docutils literal notranslate"><span class="pre">tasks.taskTemplate()</span></code></a>, <a class="reference internal" href="model.modelTemplate.html#module-model.modelTemplate" title="model.modelTemplate"><code class="xref py py-func docutils literal notranslate"><span class="pre">model.modelTemplate()</span></code></a></p>
 </div>
 </dd></dl>
 

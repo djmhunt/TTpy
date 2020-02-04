@@ -105,7 +105,7 @@
 
 <div class="viewcode-block" id="Rewards"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Rewards">[docs]</a><span class="k">class</span> <span class="nc">Rewards</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This acts as an interface between the feedback from an task and the feedback a model can process</span>
+<span class="sd">    This acts as an interface between the feedback from a task and the feedback a model can process</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -269,7 +269,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">stimulus_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">stimulus_shaper_kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">stimulus_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span>
-                                              <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">,</span>
+                                              <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span>
                                               <span class="n">inherited_class</span><span class="o">=</span><span class="n">Stimulus</span><span class="p">,</span>
                                               <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
             <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">stimulus_class</span><span class="p">)}</span>
@@ -285,7 +285,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">reward_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">reward_shaper_kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">reward_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span>
-                                            <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">,</span>
+                                            <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span>
                                             <span class="n">inherited_class</span><span class="o">=</span><span class="n">Rewards</span><span class="p">,</span>
                                             <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
             <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">reward_class</span><span class="p">)}</span>

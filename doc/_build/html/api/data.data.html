@@ -73,7 +73,7 @@
 <tr class="row-even"><td><a class="reference internal" href="../data.html#data.Data.from_xlsx" title="data.Data.from_xlsx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_xlsx</span></code></a>([folder,&nbsp;file_name_filter,&nbsp;…])</td>
 <td>Import data from a folder full of .xlsx files, where each file contains the information of one participant</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../data.html#data.Data.load_data" title="data.Data.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>([file_type,&nbsp;folder,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../data.html#data.Data.load_data" title="data.Data.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>([file_type,&nbsp;folders,&nbsp;…])</td>
 <td>Import data from a folder.</td>
 </tr>
 </tbody>
@@ -100,7 +100,9 @@ used.</li>
 <li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
 <li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
 <li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the valid actions for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+be found. If None then all trials will use all available actions. If the list contains one list then it will
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>csv_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_csv. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
@@ -140,7 +142,9 @@ used.</li>
 <li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
 <li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
 <li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the valid actions for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+be found. If None then all trials will use all available actions. If the list contains one list then it will
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 </ul>
@@ -180,9 +184,9 @@ used.</li>
 <li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
 <li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
 <li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>1 element list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
-be found. If None then all trials will use all available actions. If a 1 element list then the element will
-be treated as the the valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+be found. If None then all trials will use all available actions. If the list contains one list then it will
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 </ul>
@@ -219,7 +223,9 @@ used.</li>
 <li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
 <li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
 <li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the valid actions for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+be found. If None then all trials will use all available actions. If the list contains one list then it will
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>xlsx_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
@@ -242,7 +248,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 
 <dl class="classmethod">
 <dt id="data.Data.load_data">
-<em class="property">classmethod </em><code class="descname">load_data</code><span class="sig-paren">(</span><em>file_type=u'csv'</em>, <em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em>, <em>data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_data</code><span class="sig-paren">(</span><em>file_type=u'csv'</em>, <em>folders=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em>, <em>data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder. This is a wrapper function for the other import methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -250,7 +256,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>file_type</strong> (<em>string</em><em>, </em><em>optional</em>) – The file type of the data, from <code class="docutils literal notranslate"><span class="pre">mat</span></code>, <code class="docutils literal notranslate"><span class="pre">csv</span></code>, <code class="docutils literal notranslate"><span class="pre">xlsx</span></code> and <code class="docutils literal notranslate"><span class="pre">pkl</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">csv</span></code></li>
-<li><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</li>
+<li><strong>folders</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The folder or folders where the data can be found. Default is the current folder.</li>
 <li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
 Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
 <li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
@@ -262,7 +268,9 @@ used.</li>
 <li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
 <li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
 <li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the valid actions for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+be found. If None then all trials will use all available actions. If the list contains one list then it will
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>data_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for the data importing method chosen</li>

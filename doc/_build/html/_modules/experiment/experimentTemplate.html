@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>task.taskTemplate &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>experiment.experimentTemplate &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -40,7 +40,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for task.taskTemplate</h1><div class="highlight"><pre>
+  <h1>Source code for experiment.experimentTemplate</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic</span>
@@ -48,10 +48,10 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 
-<div class="viewcode-block" id="Task"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task">[docs]</a><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The abstract task class from which all others inherit</span>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The abstract experiment class from which all others inherit</span>
 
-<span class="sd">    Many general methods for tasks are found only here</span>
+<span class="sd">    Many general methods for experiments are found only here</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -75,12 +75,12 @@
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the iterator for the task</span>
+<span class="sd">        Returns the iterator for the experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="Task.next"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.next"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next stimulus for the iterator</span>
 
@@ -118,14 +118,14 @@
 
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Task.findName"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.findName"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the class</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
 
-<div class="viewcode-block" id="Task.receiveAction"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.receiveAction"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.receiveAction">[docs]</a>    <span class="k">def</span> <span class="nf">receiveAction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">action</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Receives the next action from the participant</span>
 
@@ -137,14 +137,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Task.proceed"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.proceed"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.proceed">[docs]</a>    <span class="k">def</span> <span class="nf">proceed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the task before the next trialstep</span>
+<span class="sd">        Updates the experiment before the next trialstep</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Task.feedback"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.feedback"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.feedback">[docs]</a>    <span class="k">def</span> <span class="nf">feedback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Responds to the action from the participant</span>
 
@@ -155,9 +155,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Task.returnTaskState"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.returnTaskState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.returnTaskState">[docs]</a>    <span class="k">def</span> <span class="nf">returnTaskState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns all the relevant data for this task run</span>
+<span class="sd">        Returns all the relevant data for this experiment run</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -171,7 +171,7 @@
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Task.storeState"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.storeState"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.storeState">[docs]</a>    <span class="k">def</span> <span class="nf">storeState</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stores the state of all the important variables so that they can be</span>
 <span class="sd">        output later</span>
@@ -179,20 +179,20 @@
 
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Task.standardResultOutput"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.standardResultOutput">[docs]</a>    <span class="k">def</span> <span class="nf">standardResultOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.standardResultOutput"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.standardResultOutput">[docs]</a>    <span class="k">def</span> <span class="nf">standardResultOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Task.params"><a class="viewcode-back" href="../../task.taskTemplate.html#task.taskTemplate.Task.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment.params"><a class="viewcode-back" href="../../experiment.experimentTemplate.html#experiment.experimentTemplate.Experiment.params">[docs]</a>    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the parameters of the task as a dictionary</span>
+<span class="sd">        Returns the parameters of the experiment as a dictionary</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        parameters : dict</span>
-<span class="sd">            The parameters of the task</span>
+<span class="sd">            The parameters of the experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div></div>

@@ -50,7 +50,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">fire</span>
+<span class="c1">#import fire</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -87,7 +87,7 @@
                  <span class="n">fit_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">task_stimuli</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">participant_action_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fit_method</span><span class="o">=</span><span class="s1">&#39;evolutionary&#39;</span><span class="p">,</span>
+                 <span class="n">fit_method</span><span class="o">=</span><span class="s1">&#39;Evolutionary&#39;</span><span class="p">,</span>
                  <span class="n">fit_method_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">fit_measure</span><span class="o">=</span><span class="s1">&#39;-loge&#39;</span><span class="p">,</span>
                  <span class="n">fit_measure_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -96,6 +96,7 @@
                  <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">save_fitting_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">boundary_excess_cost_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
@@ -109,7 +110,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    data_folder : string, optional</span>
+<span class="sd">    data_folder : string or list of strings, optional</span>
 <span class="sd">        The folder where the data can be found. Default is the current folder.</span>
 <span class="sd">    data_format : string, optional</span>
 <span class="sd">        The file type of the data, from ``mat``, ``csv``, ``xlsx`` and ``pkl``. Default is ``csv``</span>
@@ -154,11 +155,10 @@
 <span class="sd">    task_stimuli : list of strings or None, optional</span>
 <span class="sd">        The keys containing the observational parameters seen by the</span>
 <span class="sd">        participant before taking a decision on an action. Default ``None``</span>
-<span class="sd">    participant_action_options : string or None or list of ints, optional</span>
-<span class="sd">        The name of the key in partData where the list of valid actions</span>
-<span class="sd">        can be found. If ``None`` then the action list is considered to</span>
-<span class="sd">        stay constant. If a list then the list will be taken as the list</span>
-<span class="sd">        of actions that can be taken at each instance. Default ``None``</span>
+<span class="sd">    participant_action_options : string or list of strings or None or one element list with a list, optional</span>
+<span class="sd">        If a string or list of strings these are treated as dict keys where the valid actions for each trial can</span>
+<span class="sd">        be found. If None then all trials will use all available actions. If the list contains one list then it will</span>
+<span class="sd">        be treated as a list of valid actions for each trialstep. Default ``&#39;None&#39;``</span>
 <span class="sd">    fit_method : string, optional</span>
 <span class="sd">        The fitting method to be used. The names accepted are those of the modules in the folder fitAlgs containing a</span>
 <span class="sd">        FitAlg class. Default ``&#39;evolutionary&#39;``</span>
@@ -183,6 +183,8 @@
 <span class="sd">    config_file : string, optional</span>
 <span class="sd">        The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.</span>
 <span class="sd">        Default ``None``</span>
+<span class="sd">    output_path : string, optional</span>
+<span class="sd">        The path that will be used for the run output. Default ``None``</span>
 <span class="sd">    pickle : bool, optional</span>
 <span class="sd">        If true the data for each model, and participant is recorded.</span>
 <span class="sd">        Default is ``False``</span>
@@ -208,8 +210,15 @@
 <span class="sd">    data.Data : Data import class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="k">if</span> <span class="n">participant_varying_model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="n">participant_varying_model_parameters</span>
+
+    <span class="c1"># TODO : Validate model_changing_variables with the data and the model</span>
+    <span class="c1"># TODO : Change the name of model_changing_variables to something clearer</span>
     <span class="n">participants</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">file_type</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span>
-                                       <span class="n">folder</span><span class="o">=</span><span class="n">data_folder</span><span class="p">,</span>
+                                       <span class="n">folders</span><span class="o">=</span><span class="n">data_folder</span><span class="p">,</span>
                                        <span class="n">file_name_filter</span><span class="o">=</span><span class="n">data_file_filter</span><span class="p">,</span>
                                        <span class="n">terminal_ID</span><span class="o">=</span><span class="n">data_file_terminal_ID</span><span class="p">,</span>
                                        <span class="n">split_by</span><span class="o">=</span><span class="n">data_split_by</span><span class="p">,</span>
@@ -266,17 +275,13 @@
                             <span class="o">**</span><span class="n">fit_method_args</span><span class="p">)</span>
 
     <span class="n">outputFolder</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="n">close_loggers</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                                                                         <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span>
+                                                                         <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
                                                                          <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">,</span>
+                                                                         <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span>
                                                                          <span class="n">min_log_level</span><span class="o">=</span><span class="n">min_log_level</span><span class="p">,</span>
                                                                          <span class="n">numpy_error_level</span><span class="o">=</span><span class="n">numpy_error_level</span><span class="p">)</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">participant_varying_model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="n">participant_varying_model_parameters</span>
 
     <span class="n">log_fitting_parameters</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 
@@ -558,14 +563,13 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    participant_fits :</span>
+<span class="sd">    participant_fits : dict</span>
 <span class="sd">        A summary of the recovered parameters</span>
 <span class="sd">    file_name_generator : function</span>
 <span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
 <span class="sd">        returns one ``fileName`` string</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO: Update the function documentation here when the datatype is known</span>
     <span class="n">participant_fit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">participant_fits</span><span class="p">)</span>
     <span class="n">output_file</span> <span class="o">=</span> <span class="n">file_name_generator</span><span class="p">(</span><span class="s2">&quot;participantFits&quot;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
     <span class="n">participant_fit</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span></div>
@@ -618,8 +622,8 @@
     <span class="n">xlsxT</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-  <span class="n">fire</span><span class="o">.</span><span class="n">Fire</span><span class="p">(</span><span class="n">data_fitting</span><span class="p">)</span>
+<span class="c1">#if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#    fire.Fire(data_fitting)</span>
 </pre></div>
 
           </div>

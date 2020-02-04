@@ -63,7 +63,12 @@
 
 
 <span class="c1">#%% Folder management</span>
-<div class="viewcode-block" id="saving"><a class="viewcode-back" href="../outputting.html#outputting.saving">[docs]</a><span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="saving"><a class="viewcode-back" href="../outputting.html#outputting.saving">[docs]</a><span class="k">def</span> <span class="nf">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+           <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+           <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+           <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the folder structure for the saved data and created the log file as ``log.txt``</span>
 
@@ -71,11 +76,14 @@
 <span class="sd">    ----------</span>
 <span class="sd">    label : string, optional</span>
 <span class="sd">        The label for the simulation. Default ``None`` will mean no data is saved to files.</span>
+<span class="sd">    output_path : string, optional</span>
+<span class="sd">        The path that will be used for the run output. Default ``None``</span>
+<span class="sd">    config_file : string, optional</span>
+<span class="sd">        The file name and path of a ``.yaml`` configuration file. Default ``None``</span>
 <span class="sd">    pickle : bool, optional</span>
 <span class="sd">        If true the data for each model, task and participant is recorded.</span>
 <span class="sd">        Default is ``False``</span>
-<span class="sd">    config_file : string, optional</span>
-<span class="sd">        The file name and path of a ``.yaml`` configuration file. Default ``None``</span>
+
 <span class="sd">    min_log_level : basestring, optional</span>
 <span class="sd">        Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``</span>
 <span class="sd">        See https://docs.python.org/3/library/logging.html#levels</span>
@@ -99,7 +107,13 @@
     <span class="n">dateStr</span> <span class="o">=</span> <span class="n">date</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
         <span class="n">saveLabel</span> <span class="o">=</span> <span class="n">label</span>
-        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderSetup</span><span class="p">(</span><span class="n">saveLabel</span><span class="p">,</span> <span class="n">dateStr</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span> <span class="n">basePath</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">output_path</span>
+        <span class="k">elif</span> <span class="n">config_file</span><span class="p">:</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_file</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">base_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">outputFolder</span> <span class="o">=</span> <span class="n">folderSetup</span><span class="p">(</span><span class="n">saveLabel</span><span class="p">,</span> <span class="n">dateStr</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span> <span class="n">basePath</span><span class="o">=</span><span class="n">base_path</span><span class="p">)</span>
         <span class="n">fileNameGen</span> <span class="o">=</span> <span class="n">fileNameGenerator</span><span class="p">(</span><span class="n">outputFolder</span><span class="p">)</span>
         <span class="n">logFile</span> <span class="o">=</span> <span class="n">fileNameGen</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="s1">&#39;txt&#39;</span><span class="p">)</span>
 
