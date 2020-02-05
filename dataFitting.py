@@ -33,6 +33,7 @@ def data_fitting(data_folder='./',
                  data_file_terminal_ID=True,
                  data_read_options=None,
                  data_split_by=None,
+                 data_group_by=None,
                  data_extra_processing=None,
                  model_name='QLearn',
                  model_changing_properties=None,
@@ -82,6 +83,10 @@ def data_fitting(data_folder='./',
     data_split_by : string or list of strings, optional
         If multiple participant datasets are in one file sheet, this specifies the column or columns that can
         distinguish and identify the rows for each participant. Default ``None``
+    data_group_by : list of strings, optional
+        A list of parts of filenames that are repeated across participants, identifying all the files that should
+        be grouped together to form one participants data. The rest of the filename is assumed to identify the
+        participant. Default is ``None``
     data_extra_processing : callable, optional
         A function that modifies the dictionary of data read for each participant in such that it is appropriate
         for fitting. Default is ``None``
@@ -184,6 +189,7 @@ def data_fitting(data_folder='./',
                                        feedbacks=participant_rewards,
                                        stimuli=task_stimuli,
                                        action_options=participant_action_options,
+                                       group_by=data_group_by,
                                        extra_processing=data_extra_processing,
                                        data_read_options=data_read_options)
 
@@ -256,6 +262,7 @@ def data_fitting(data_folder='./',
 
         log_model_fitting_parameters(model, model_parameter_variables, model_static_args)
 
+        participantID = participants.participantID
         for participant in participants:
 
             participant_name = participant[participantID]

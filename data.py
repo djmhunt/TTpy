@@ -14,6 +14,7 @@ import pandas as pd
 import os
 import itertools
 import re
+import collections
 
 import utils
 
@@ -60,6 +61,7 @@ class Data(list):
                   feedbacks='feedbacks',
                   stimuli=None,
                   action_options=None,
+                  group_by=None,
                   extra_processing=None,
                   data_read_options=None):
         """
@@ -93,6 +95,10 @@ class Data(list):
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
             be found. If None then all trials will use all available actions. If the list contains one list then it will
             be treated as a list of valid actions for each trialstep. Default ``'None'``
+        group_by : list of strings, optional
+            A list of parts of filenames that are repeated across participants, identifying all the files that should
+            be grouped together to form one participants data. The rest of the filename is assumed to identify the
+            participant. Default is ``None``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -121,6 +127,7 @@ class Data(list):
                                       feedbacks=feedbacks,
                                       stimuli=stimuli,
                                       action_options=action_options,
+                                      group_by=group_by,
                                       extra_processing=extra_processing)
             elif file_type == 'csv':
                 subdat = cls.from_csv(folder=folder,
@@ -132,6 +139,7 @@ class Data(list):
                                       feedbacks=feedbacks,
                                       stimuli=stimuli,
                                       action_options=action_options,
+                                      group_by=group_by,
                                       extra_processing=extra_processing,
                                       csv_read_options=data_read_options)
             elif file_type == 'xlsx':
@@ -144,6 +152,7 @@ class Data(list):
                                        feedbacks=feedbacks,
                                        stimuli=stimuli,
                                        action_options=action_options,
+                                       group_by=group_by,
                                        extra_processing=extra_processing,
                                        xlsx_read_options=data_read_options)
             elif file_type == 'pkl':
@@ -155,6 +164,7 @@ class Data(list):
                                       feedbacks=feedbacks,
                                       stimuli=stimuli,
                                       action_options=action_options,
+                                      group_by=group_by,
                                       extra_processing=extra_processing)
             else:
                 raise FileTypeError('{} is not a supported file type. Please use ``mat``, ``csv``, ``xlsx`` or ``pkl``'.format(file_type))
@@ -176,6 +186,7 @@ class Data(list):
                  feedbacks='feedbacks',
                  stimuli=None,
                  action_options=None,
+                 group_by=None,
                  extra_processing=None):
         """
         Import data from a folder full of .mat files, where each file contains the information of one participant
@@ -203,6 +214,10 @@ class Data(list):
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
             be found. If None then all trials will use all available actions. If the list contains one list then it will
             be treated as a list of valid actions for each trialstep. Default ``'None'``
+        group_by : list of strings, optional
+            A list of parts of filenames that are repeated across participants, identifying all the files that should
+            be grouped together to form one participants data. The rest of the filename is assumed to identify the
+            participant. Default is ``None``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -237,17 +252,16 @@ class Data(list):
                 else:
                     file_data[key] = value
 
-            if extra_processing:
-                file_data = extra_processing(file_data)
-                if file_data is None:
-                    raise ProcessingError('The extra_processing function must return the data')
-
             participant_data.append(file_data)
 
         if participantID is None:
             participantID = DATA_KEYWORDS['ID']
 
-        return cls(participant_data,
+        participant_processed_data = cls.__clean_data(participant_data,
+                                                      extra_processing=extra_processing,
+                                                      group_by=group_by)
+
+        return cls(participant_processed_data,
                    participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
@@ -265,6 +279,7 @@ class Data(list):
                  feedbacks='feedbacks',
                  stimuli=None,
                  action_options=None,
+                 group_by=None,
                  extra_processing=None,
                  csv_read_options=None):
         """
@@ -296,6 +311,10 @@ class Data(list):
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
             be found. If None then all trials will use all available actions. If the list contains one list then it will
             be treated as a list of valid actions for each trialstep. Default ``'None'``
+        group_by : list of strings, optional
+            A list of parts of filenames that are repeated across participants, identifying all the files that should
+            be grouped together to form one participants data. The rest of the filename is assumed to identify the
+            participant. Default is ``None``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -352,10 +371,7 @@ class Data(list):
                             sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
                         else:
                             sub_dat_dict[DATA_KEYWORDS['ID']] = p[0]
-                    if extra_processing:
-                        sub_dat_dict = extra_processing(sub_dat_dict)
-                        if sub_dat_dict is None:
-                            raise ProcessingError('The extra_processing function must return the data')
+
                     participant_data.append(sub_dat_dict)
             else:
                 dat_dict = dat.to_dict(orient='list')
@@ -363,23 +379,23 @@ class Data(list):
                 dat_dict[DATA_KEYWORDS['folder']] = folder_path
                 if participantID is None:
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
-                elif isinstance(dat_dict[participantID], (list, np.ndarray)) and utils.list_all_equal(dat_dict[participantID]):
-                    dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
-                    participantID_simplified = True
-                else:
-                    raise TypeError("participantID's column, {}, had more than one value".format(participantID))
-
-                if extra_processing:
-                    dat_dict = extra_processing(dat_dict)
-                    if dat_dict is None:
-                        raise ProcessingError('The extra_processing function must return the data')
+                if participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
+                    if utils.list_all_equal(dat_dict[participantID]):
+                        dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
+                        participantID_simplified = True
+                    else:
+                        raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 participant_data.append(dat_dict)
 
         if participantID is None or participantID_simplified:
             participantID = DATA_KEYWORDS['ID']
 
-        return cls(participant_data,
+        participant_processed_data = cls.__clean_data(participant_data,
+                                                      extra_processing=extra_processing,
+                                                      group_by=group_by)
+
+        return cls(participant_processed_data,
                    participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
@@ -397,6 +413,7 @@ class Data(list):
                   feedbacks='feedbacks',
                   stimuli=None,
                   action_options=None,
+                  group_by=None,
                   extra_processing=None,
                   xlsx_read_options=None):
         """
@@ -428,6 +445,10 @@ class Data(list):
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
             be found. If None then all trials will use all available actions. If the list contains one list then it will
             be treated as a list of valid actions for each trialstep. Default ``'None'``
+        group_by : list of strings, optional
+            A list of parts of filenames that are repeated across participants, identifying all the files that should
+            be grouped together to form one participants data. The rest of the filename is assumed to identify the
+            participant. Default is ``None``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -495,10 +516,6 @@ class Data(list):
                             sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
                         else:
                             sub_dat_dict[DATA_KEYWORDS['ID']] = p[0]
-                    if extra_processing:
-                        sub_dat_dict = extra_processing(sub_dat_dict)
-                        if sub_dat_dict is None:
-                            raise ProcessingError('The extra_processing function must return the data')
                     participant_data.append(sub_dat_dict)
             else:
                 dat_dict = dat.to_dict(orient='list')
@@ -506,23 +523,23 @@ class Data(list):
                 dat_dict[DATA_KEYWORDS['folder']] = folder_path
                 if participantID is None:
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
-                elif isinstance(dat_dict[participantID], (list, np.ndarray)) and utils.list_all_equal(dat_dict[participantID]):
-                    dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
-                    participantID_simplified = True
-                else:
-                    raise TypeError("participantID's column, {}, had more than one value".format(participantID))
-
-                if extra_processing:
-                    dat_dict = extra_processing(dat_dict)
-                    if dat_dict is None:
-                        raise ProcessingError('The extra_processing function must return the data')
+                if participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
+                    if utils.list_all_equal(dat_dict[participantID]):
+                        dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
+                        participantID_simplified = True
+                    else:
+                        raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 participant_data.append(dat_dict)
 
         if participantID is None or participantID_simplified:
             participantID = DATA_KEYWORDS['ID']
 
-        return cls(participant_data,
+        participant_processed_data = cls.__clean_data(participant_data,
+                                                      extra_processing=extra_processing,
+                                                      group_by=group_by)
+
+        return cls(participant_processed_data,
                    participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
@@ -539,6 +556,7 @@ class Data(list):
                  feedbacks='feedbacks',
                  stimuli=None,
                  action_options=None,
+                 group_by=None,
                  extra_processing=None):
         """
         Import data from a folder full of .pkl files, where each file contains the information of one participant.
@@ -567,6 +585,10 @@ class Data(list):
             If a string or list of strings these are treated as dict keys where the valid actions for each trial can
             be found. If None then all trials will use all available actions. If the list contains one list then it will
             be treated as a list of valid actions for each trialstep. Default ``'None'``
+        group_by : list of strings, optional
+            A list of parts of filenames that are repeated across participants, identifying all the files that should
+            be grouped together to form one participants data. The rest of the filename is assumed to identify the
+            participant. Default is ``None``
         extra_processing : callable, optional
             A function that modifies the dictionary of data read for each participant in such that it is appropriate
             for fitting. Default is ``None``
@@ -597,17 +619,16 @@ class Data(list):
             if participantID is None:
                 file_data[DATA_KEYWORDS['ID']] = fileID
 
-            if extra_processing:
-                file_data = extra_processing(file_data)
-                if file_data is None:
-                    raise ProcessingError('The extra_processing function must return the data')
-
             participant_data.append(file_data)
 
         if participantID is None:
             participantID = DATA_KEYWORDS['ID']
 
-        return cls(participant_data,
+        participant_processed_data = cls.__clean_data(participant_data,
+                                                      extra_processing=extra_processing,
+                                                      group_by=group_by)
+
+        return cls(participant_processed_data,
                    participantID=participantID,
                    choices=choices,
                    feedbacks=feedbacks,
@@ -1142,6 +1163,51 @@ class Data(list):
 
         return valid_file_list
 
+    @staticmethod
+    def __clean_data(participant_data, extra_processing=None, group_by=None):
+
+        if isinstance(group_by, list):
+            grouped_data = collections.OrderedDict()
+            for dat in participant_data:
+                filename = dat[DATA_KEYWORDS['filename']]
+                for group in group_by:
+                    if group in filename:
+                        id_label = filename.replace(group, '')
+                        if id_label not in grouped_data:
+                            grouped_data[id_label] = {}
+                        #grouped_data[id_label].update({'{}_{}'.format(k, group): v for k, v in dat.iteritems()})
+                        grouped_data[id_label][group] = dat
+
+            merged_data = []
+            for id_label, group_data in grouped_data.iteritems():
+                group_merged_data = {'merge_id': id_label}
+                keyset = set().union(*[v.keys() for v in grouped_data[id_label].itervalues()])
+                for key in keyset:
+                    key_values = [group_data[group][key] for group in group_by if group in group_data
+                                                                                  and key in group_data[group]]
+                    if utils.list_all_equal(key_values):
+                        group_merged_data[key] = key_values[0]
+                    else:
+                        for group in group_by:
+                            if group in group_data and key in group_data[group]:
+                                group_merged_data['{}_{}'.format(group, key)] = key_values.pop(0)
+
+                merged_data.append(group_merged_data)
+        else:
+            merged_data = participant_data
+
+        if extra_processing:
+            processed_data = []
+            for file_data in merged_data:
+                dat_dict = extra_processing(file_data)
+                if dat_dict is None:
+                    raise ProcessingError('The extra_processing function must return the data')
+                else:
+                    processed_data.append(dat_dict)
+        else:
+            processed_data = merged_data
+
+        return processed_data
 
 # TODO work out how you want to integrate this into getFiles
 def sort_by_last_number(dataFiles):

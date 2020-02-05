@@ -124,6 +124,7 @@ def run_script(script_file, trusted_file=False):
             data_file_terminal_ID = data_info.pop('file_terminal_ID', True)
             data_read_options = data_info.pop('read_options', None)
             data_split_by = data_info.pop('split_by', None)
+            data_group_by = data_info.pop('group_by', None)
             data_extra_processing = data_info.pop('extra_processing', None)
 
         data_fitting(data_folder=data_folder,
@@ -132,6 +133,7 @@ def run_script(script_file, trusted_file=False):
                      data_file_terminal_ID=data_file_terminal_ID,
                      data_read_options=data_read_options,
                      data_split_by=data_split_by,
+                     data_group_by=data_group_by,
                      data_extra_processing=data_extra_processing,
                      model_name=model_name,
                      model_changing_properties=model_changing_properties,
