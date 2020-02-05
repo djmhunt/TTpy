@@ -200,10 +200,10 @@ class FitSim(object):
                 self.fitSubsetChosen = ~np.isnan(self.partRewards)
             elif fitSubset == "unrewarded":
                 self.fitSubsetChosen = ~np.isnan(self.partRewards)
-            elif np.isnan(fitSubset):
-                self.fitSubsetChosen = np.isnan(self.partRewards)
             elif fitSubset == "all":
                 self.fitSubsetChosen = None
+            elif isinstance(fitSubset, float) and np.isnan(fitSubset):
+                self.fitSubsetChosen = np.isnan(self.partRewards)
             else:
                 self.fitSubsetChosen = None
         else:
