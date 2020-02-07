@@ -35,6 +35,10 @@ class FileTypeError(Exception):
     pass
 
 
+class FileError(Exception):
+    pass
+
+
 class FoldersError(Exception):
     pass
 
@@ -350,23 +354,32 @@ class Data(list):
 
         participant_data = []
 
-        participantID_simplified = False
+        participantID_changed = False
         for filename, fileID in itertools.izip(files, file_IDs):
 
             dat = pd.read_csv(folder_path + filename, **csv_read_options)
 
             if split_by:
-                # The data must be split
-                classifier_list = (cls.__sort_strings(list(set(dat[s])), '') for s in split_by)
+                classifier_list = []
+                for s in split_by:
+                    try:
+                        dat[s].fillna(method='ffill', inplace=True)
+                    except KeyError as err:
+                        raise KeyError('Data split by contains a column that does not exist: ``{}``'.format(s))
+                    if dat[s].dtype in [np.dtype('int64'), np.dtype('float64')]:
+                        sSorted = sorted(list(set(dat[s])))
+                        classifier_list.append(sSorted)
+                    else:
+                        classifier_list.append(cls.__sort_strings(list(set(dat[s])), ''))
                 participants = utils.listMerge(*classifier_list)
 
                 for p in participants:
                     sub_dat = dat[(dat[split_by] == p).all(axis=1)]
                     sub_dat_dict = sub_dat.to_dict(orient='list')
                     sub_dat_dict[DATA_KEYWORDS['filename']] = filename
-                    sub_dat_dict['fileID'] = fileID
                     sub_dat_dict[DATA_KEYWORDS['folder']] = folder_path
-                    if participantID is None:
+                    if participantID is None or participantID == split_by[0]:
+                        participantID_changed = True
                         if len(p) > 1:
                             sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
                         else:
@@ -379,16 +392,17 @@ class Data(list):
                 dat_dict[DATA_KEYWORDS['folder']] = folder_path
                 if participantID is None:
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
-                if participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
+                    participantID_changed = True
+                elif participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
                     if utils.list_all_equal(dat_dict[participantID]):
                         dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
-                        participantID_simplified = True
+                        participantID_changed = True
                     else:
                         raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 participant_data.append(dat_dict)
 
-        if participantID is None or participantID_simplified:
+        if participantID_changed:
             participantID = DATA_KEYWORDS['ID']
 
         participant_processed_data = cls.__clean_data(participant_data,
@@ -484,6 +498,7 @@ class Data(list):
 
         participant_data = []
 
+        participantID_changed = False
         for filename, fileID in itertools.izip(files, file_IDs):
 
             # In case the file is open, this will in fact be a temporary file and not a valid file.
@@ -492,16 +507,18 @@ class Data(list):
 
             dat = pd.read_excel(folder_path + filename, **xlsx_read_options)
 
-            participantID_simplified = False
-            if len(split_by) > 0:
-                # The data must be split
+            if split_by:
                 classifier_list = []
                 for s in split_by:
+                    try:
+                        dat[s].fillna(method='ffill', inplace=True)
+                    except KeyError as err:
+                        raise KeyError('Data split by contains a column that does not exist: ``{}``'.format(s))
                     if dat[s].dtype in [np.dtype('int64'), np.dtype('float64')]:
                         sSorted = sorted(list(set(dat[s])))
                         classifier_list.append(sSorted)
                     else:
-                        classifier_list.append(cls.__sort_strings(list(set(dat[s])), '')[0])
+                        classifier_list.append(cls.__sort_strings(list(set(dat[s])), ''))
 
                 participants = utils.listMerge(*classifier_list)
 
@@ -509,9 +526,9 @@ class Data(list):
                     sub_dat = dat[(dat[split_by] == p).all(axis=1)]
                     sub_dat_dict = sub_dat.to_dict(orient='list')
                     sub_dat_dict[DATA_KEYWORDS['filename']] = filename
-                    sub_dat_dict["fileID"] = fileID
                     sub_dat_dict[DATA_KEYWORDS['folder']] = folder_path
-                    if participantID is None:
+                    if participantID is None or participantID == split_by[0]:
+                        participantID_changed = True
                         if len(p) > 1:
                             sub_dat_dict[DATA_KEYWORDS['ID']] = "-".join([str(pi) for pi in p])
                         else:
@@ -523,16 +540,17 @@ class Data(list):
                 dat_dict[DATA_KEYWORDS['folder']] = folder_path
                 if participantID is None:
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
-                if participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
+                    participantID_changed = True
+                elif participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
                     if utils.list_all_equal(dat_dict[participantID]):
                         dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
-                        participantID_simplified = True
+                        participantID_changed = True
                     else:
                         raise TypeError("participantID's column, {}, had more than one value".format(participantID))
 
                 participant_data.append(dat_dict)
 
-        if participantID is None or participantID_simplified:
+        if participantID_changed:
             participantID = DATA_KEYWORDS['ID']
 
         participant_processed_data = cls.__clean_data(participant_data,
@@ -908,15 +926,19 @@ class Data(list):
         sortStrings : sorts the files found
         """
 
-        # TODO: Implement groupby
-
         files = os.listdir(folder)
 
         data_files = [f for f in files if f.endswith(file_type)]
 
         valid_file_names = cls.__valid_files(data_files, file_name_filter=file_name_filter)
 
-        sorted_files, file_IDs = cls.__sort_strings(valid_file_names, "." + file_type, terminalID=terminal_ID)
+        if not valid_file_names:
+            raise FileError('No data files found')
+
+        sorted_files, file_IDs = cls.__sort_strings(valid_file_names,
+                                                    "." + file_type,
+                                                    terminalID=terminal_ID,
+                                                    return_IDs=True)
 
         return sorted_files, file_IDs
 
@@ -951,7 +973,7 @@ class Data(list):
         return valid_file_list
 
     @classmethod
-    def __sort_strings(cls, unordered_list, suffix, terminalID=True):
+    def __sort_strings(cls, unordered_list, suffix, terminalID=True, return_IDs=False):
         """
         Takes an unordered list of strings and sorts them if possible and necessary
 
@@ -963,13 +985,15 @@ class Data(list):
             A known suffix for the string
         terminalID : bool, optional
             Is there an ID number at the end of the filename? If not then a more general search will be performed. Default ``True``
+        return_IDs : bool, optional
+            Specify if the fileIDs should be returned. Default ``False``
 
         Returns
         -------
         sortedList : list of strings
             A sorted list of the the strings
         fileIDs : list of strings
-            A list of unique parts of the filenames, in the order of dataFiles
+            A list of unique parts of the filenames, in the order of dataFiles. Only returned if ``return_IDs=True``
 
         See Also
         --------
@@ -990,7 +1014,10 @@ class Data(list):
         if not sortedList:
             sortedList, fileIDs = cls.__str_core(unordered_list, len(prefix), suffixLen)
 
-        return sortedList, fileIDs
+        if return_IDs:
+            return sortedList, fileIDs
+        else:
+            return sortedList
 
     @staticmethod
     def __get_unique_suffix(unorderedList, knownSuffixLen):

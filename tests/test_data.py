@@ -36,6 +36,7 @@ SINGLE_DATA = {'Phase': ['Training', 'Training', 'Training'],
                'right_symbol': ['B', 'B', 'D'],
                'Left_PRESSED_0no_1yes': [0, 1, 0],
                'name': ['AB', 'AB', 'CD_inv'],
+               'subno': ['s1', 's1', 's1'],
                'corr_resp': ['A', 'A', 'D']}
 
 MULTI_DATA_PART_ORDER = {0: 0, 2: 1, 3: 2, 4: 3, 1: 4}
@@ -85,7 +86,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 0.5,
-             'decision_function': u"discrete.weightProb with expResponses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.5], [0.5], [0.5], [0.5], [0.5]]),
              'non_action': None,
              'number_actions': 6,
@@ -106,7 +107,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.7,
              'beta': 0.5,
-             'decision_function': u"discrete.weightProb with expResponses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.35], [0.755], [0.35], [0.5], [0.455]]),
              'non_action': None,
              'number_actions': 6,
@@ -127,7 +128,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 4.0,
-             'decision_function': u"discrete.weightProb with expResponses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.105], [0.97795], [0.805], [0.745], [0.455]]),
              'non_action': None,
              'number_actions': 6,
@@ -158,10 +159,10 @@ def single_files(tmpdir_factory):
 
     multi_df = pd.DataFrame(MULTI_DATA).set_index(['subno', 'trialnum'])
     csv_file_name = folder_name.join('multisubject.csv')
-    file_names['csv_multi'] = csv_file_name
+    file_names['csv_multi'] = str(csv_file_name).split('\\')[-1]
     multi_df.to_csv(csv_file_name)
     xlsx_file_name = folder_name.join('multisubject.xlsx')
-    file_names['xlsx_multi'] = xlsx_file_name
+    file_names['xlsx_multi'] = str(xlsx_file_name).split('\\')[-1]
     multi_df.to_excel(xlsx_file_name)
 
     pkl_data = SIM_DATA[0]
@@ -496,14 +497,13 @@ class TestClass_Mat:
 
     def test_mat_filtered2(self, multi_files):
         folder_name, file_names = multi_files
-        dat = data.Data.from_mat(folder=folder_name,
-                                 file_name_filter='boo',
-                                 participantID='dfile',
-                                 choices='subchoice',
-                                 feedbacks='cumpts')
-        result = dat
-        correct_result = data.Data([], participantID='dfile', choices='subchoice', feedbacks='cumpts')
-        assert result == correct_result
+        with pytest.raises(data.FileError):
+            dat = data.Data.from_mat(folder=folder_name,
+                                     file_name_filter='boo',
+                                     participantID='dfile',
+                                     choices='subchoice',
+                                     feedbacks='cumpts')
+
 
 #%% For importing multiple folders into Data
 class TestClass_Folders:
@@ -559,8 +559,32 @@ class TestClass_csv:
             else:
                 assert value == correct_result[key]
 
-    def test_csv_single_multi(self, multi_files):
-        folder_name, file_names = multi_files
+    def test_csv_single_subj_col(self, single_files):
+        folder_name, file_names = single_files
+        dat = data.Data.from_csv(folder=folder_name, file_name_filter='subj1', participantID='subno', feedbacks='corr_resp',
+                                 stimuli=['left_symbol', 'right_symbol'], choices='Left_PRESSED_0no_1yes')
+        result = dat[0]
+        correct_result = SINGLE_DATA
+        correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.csv'
+        correct_result[data.DATA_KEYWORDS['ID']] = 's1'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+
+        for key, value in result.iteritems():
+            if isinstance(value, (list, np.ndarray)):
+                if len(np.shape(value)) == 2:
+                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                        assert all(v1 == v2)
+                elif isinstance(value[-1], float) and np.isnan(value[-1]):
+                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                else:
+                    assert value == correct_result[key]
+            else:
+                assert value == correct_result[key]
+
+    def test_csv_single_multi(self, single_files):
+        folder_name, file_names = single_files
         dat = data.Data.from_csv(folder=folder_name, file_name_filter='multisubject', split_by='subno',
                                  choices='response', feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
@@ -587,6 +611,43 @@ class TestClass_csv:
                         assert value == correct_result[key]
                 else:
                     assert value == correct_result[key]
+
+    def test_csv_single_multi2(self, single_files):
+        folder_name, file_names = single_files
+        dat = data.Data.from_csv(folder=folder_name, file_name_filter='multisubject', split_by='subno',
+                                 participantID='subno', choices='response', feedbacks='resp_rew',
+                                 stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
+        for i, result in enumerate(dat):
+            loc = MULTI_DATA_PART_ORDER[i]
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result[data.DATA_KEYWORDS['filename']] = file_names["csv_multi"]
+            correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
+                                               itertools.izip(correct_result['cue1'],
+                                                              correct_result['cue2'],
+                                                              correct_result['cue3'],
+                                                              correct_result['cue4'])]
+
+            for key, value in result.iteritems():
+                if isinstance(value, (list, np.ndarray)):
+                    if len(np.shape(value)) == 2:
+                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                            assert all(v1 == v2)
+                    elif isinstance(value[-1], float) and np.isnan(value[-1]):
+                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    else:
+                        assert value == correct_result[key]
+                else:
+                    assert value == correct_result[key]
+
+    def test_csv_single_multi3(self, single_files):
+        folder_name, file_names = single_files
+        with pytest.raises(KeyError):
+            dat = data.Data.from_csv(folder=folder_name, file_name_filter='multisubject', split_by='false_column',
+                                     participantID='subno', choices='response', feedbacks='resp_rew',
+                                     stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
 
     def test_csv_multi_files(self, multi_files):
         folder_name, file_names = multi_files
@@ -643,8 +704,32 @@ class TestClass_xlsx:
             else:
                 assert value == correct_result[key]
 
-    def test_xlsx_single_multi(self, multi_files):
-        folder_name, file_names = multi_files
+    def test_xlsx_single_subj_col(self, single_files):
+        folder_name, file_names = single_files
+        dat = data.Data.from_xlsx(folder=folder_name, file_name_filter='subj1', participantID='subno', feedbacks='corr_resp',
+                                  stimuli=['left_symbol', 'right_symbol'], choices='Left_PRESSED_0no_1yes')
+        result = dat[0]
+        correct_result = SINGLE_DATA
+        correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.xlsx'
+        correct_result[data.DATA_KEYWORDS['ID']] = 's1'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+
+        for key, value in result.iteritems():
+            if isinstance(value, (list, np.ndarray)):
+                if len(np.shape(value)) == 2:
+                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                        assert all(v1 == v2)
+                elif isinstance(value[-1], float) and np.isnan(value[-1]):
+                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                else:
+                    assert value == correct_result[key]
+            else:
+                assert value == correct_result[key]
+
+    def test_xlsx_single_multi(self, single_files):
+        folder_name, file_names = single_files
         dat = data.Data.from_xlsx(folder=folder_name, file_name_filter='multisubject', split_by='subno',
                                  choices='response', feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
@@ -671,6 +756,43 @@ class TestClass_xlsx:
                         assert value == correct_result[key]
                 else:
                     assert value == correct_result[key]
+
+    def test_xlsx_single_multi2(self, single_files):
+        folder_name, file_names = single_files
+        dat = data.Data.from_xlsx(folder=folder_name, file_name_filter='multisubject', split_by='subno',
+                                  participantID='subno', choices='response', feedbacks='resp_rew',
+                                  stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
+        for i, result in enumerate(dat):
+            loc = MULTI_DATA_PART_ORDER[i]
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result[data.DATA_KEYWORDS['filename']] = file_names["xlsx_multi"]
+            correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
+                                               itertools.izip(correct_result['cue1'],
+                                                              correct_result['cue2'],
+                                                              correct_result['cue3'],
+                                                              correct_result['cue4'])]
+
+            for key, value in result.iteritems():
+                if isinstance(value, (list, np.ndarray)):
+                    if len(np.shape(value)) == 2:
+                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                            assert all(v1 == v2)
+                    elif isinstance(value[-1], float) and np.isnan(value[-1]):
+                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    else:
+                        assert value == correct_result[key]
+                else:
+                    assert value == correct_result[key]
+
+    def test_xlsx_single_multi3(self, single_files):
+        folder_name, file_names = single_files
+        with pytest.raises(KeyError):
+            dat = data.Data.from_xlsx(folder=folder_name, file_name_filter='multisubject', split_by='false_column',
+                                      participantID='subno', choices='response', feedbacks='resp_rew',
+                                      stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
 
     def test_xlsx_multi_files(self, multi_files):
         folder_name, file_names = multi_files
