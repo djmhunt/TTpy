@@ -56,12 +56,12 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="single"><a class="viewcode-back" href="../../../model.decision.binary.html#model.decision.binary.single">[docs]</a><span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="n">expResponses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+<div class="viewcode-block" id="single"><a class="viewcode-back" href="../../../model.decision.binary.html#model.decision.binary.single">[docs]</a><span class="k">def</span> <span class="nf">single</span><span class="p">(</span><span class="n">task_responses</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Decisions using a switching probability</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    expResponses : tuple of length two, optional</span>
+<span class="sd">    task_responses : tuple of length two, optional</span>
 <span class="sd">        Provides the two action responses expected by the task</span>
 
 <span class="sd">    Returns</span>
@@ -84,7 +84,7 @@
 <span class="sd">    (0, OrderedDict([(0, 0.77), (1, 0.23)]))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">expResponses</span><span class="p">)</span>
+    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">task_responses</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
@@ -113,7 +113,7 @@
         <span class="n">pSet</span> <span class="o">=</span> <span class="p">{</span><span class="n">lastNotAction</span><span class="p">:</span> <span class="n">prob</span><span class="p">,</span>
                 <span class="n">lastAction</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">}</span>
 
-        <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">pSet</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">expResponses</span><span class="p">])</span>
+        <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">pSet</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">task_responses</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
 

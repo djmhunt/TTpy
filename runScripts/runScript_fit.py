@@ -38,7 +38,7 @@ modelStaticArgs = {'number_actions': number_actions,
                    'stimulus_shaper_name': 'StimulusProbSelectDirect',
                    'reward_shaper_name': 'RewardProbSelectDirect',
                    'decision_function_name': 'weightProb',
-                   'expResponses': ["A", "B", "C", "D", "E", "F"]}
+                   'task_responses': ["A", "B", "C", "D", "E", "F"]}
 
 def data_processing(dat):
     for i, d in enumerate(dat['ValidActions']):
@@ -46,7 +46,7 @@ def data_processing(dat):
     return dat
 
 #%% Run the data fitter
-data_fitting(data_folder="./Outputs/test_sim_2020-1-10/Pickle/",
+data_fitting(data_folder="./Outputs/qLearn_probSelectSimSet_2020-2-5/Pickle/",
              data_format='pkl',
              data_file_filter="QLearn_modelData_sim-",
              data_extra_processing=data_processing,

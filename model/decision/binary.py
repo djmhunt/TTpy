@@ -13,17 +13,17 @@ import collections
 import numpy as np
 
 
-def single(expResponses=(0, 1)):
+def single(task_responses=(0, 1)):
     """Decisions using a switching probability
 
     Parameters
     ----------
-    expResponses : tuple of length two, optional
+    task_responses : tuple of length two, optional
         Provides the two action responses expected by the task
 
     Returns
     -------
-    decisionFunc : function
+    decision_function : function
         Calculates the decisions based on the probabilities and returns the
         decision and the probability of that decision
     decision : int or None
@@ -41,40 +41,38 @@ def single(expResponses=(0, 1)):
     (0, OrderedDict([(0, 0.77), (1, 0.23)]))
     """
 
-    expResponseSet = set(expResponses)
+    def decision_function(prob, last_action=0, trial_responses=None):
 
-    def decisionFunc(prob, lastAction=0, validResponses=None):
-
-        if validResponses is not None:
-            if len(validResponses) == 1:
-                resp = validResponses[0]
-                return resp, collections.OrderedDict([(k, 1) if k == resp else (k, 0) for k in expResponseSet])
-            elif len(validResponses) == 0:
-                return None, collections.OrderedDict([(k, 1-prob) if k == lastAction else (k, prob) for k in expResponseSet])
-            elif set(validResponses) != expResponseSet:
-                warnings.warn("Bad validResponses: " + str(validResponses))
+        if trial_responses is not None:
+            if len(trial_responses) == 1:
+                resp = trial_responses[0]
+                return resp, collections.OrderedDict([(k, 1) if k == resp else (k, 0) for k in task_responses])
+            elif len(trial_responses) == 0:
+                return None, collections.OrderedDict([(k, 1-prob) if k == last_action else (k, prob) for k in task_responses])
+            elif set(trial_responses) != task_responses:
+                warnings.warn("Bad trial_responses: " + str(trial_responses))
             else:
-                warnings.warn("Bad number of validResponses: " + str(validResponses))
+                warnings.warn("Bad number of trial_responses: " + str(trial_responses))
 
         randNum = np.random.rand()
 
-        lastNotAction = list(expResponseSet.difference([lastAction]))[0]
+        lastNotAction = [action for action in task_responses if action != last_action][0]
 
         if prob >= randNum:
             # The decision is to switch
             decision = lastNotAction
         else:
             # Keep the same decision
-            decision = lastAction
+            decision = last_action
 
         pSet = {lastNotAction: prob,
-                lastAction: 1-prob}
+                last_action: 1-prob}
 
-        probDict = collections.OrderedDict([(k, pSet[k]) for k in expResponses])
+        probDict = collections.OrderedDict([(k, pSet[k]) for k in task_responses])
 
         return decision, probDict
 
-    decisionFunc.Name = "binary.single"
-    decisionFunc.Params = {}
+    decision_function.Name = "binary.single"
+    decision_function.Params = {}
 
-    return decisionFunc
+    return decision_function

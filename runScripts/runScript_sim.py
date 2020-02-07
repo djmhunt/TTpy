@@ -54,7 +54,7 @@ modelStaticArgs = {'number_actions': number_actions,
                    'stimulus_shaper_name': 'StimulusProbSelectDirect',
                    'reward_shaper_name': 'RewardProbSelectDirect',
                    'decision_function_name': 'weightProb',
-                   'expResponses': ['A', 'B', 'C', 'D', 'E', 'F']}
+                   'task_responses': ['A', 'B', 'C', 'D', 'E', 'F']}
 
 #%% For simulating tasks
 simulation(task_name='ProbSelect',
