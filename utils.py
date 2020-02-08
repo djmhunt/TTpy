@@ -22,6 +22,14 @@ import traceback
 # import psutil
 
 
+class ClassNameError(Exception):
+    pass
+
+
+class FunctionNameError(Exception):
+    pass
+
+
 def fancyLogger(logLevel, fileName=""):
     """
     Sets up the style of logging for all the simulations
@@ -240,23 +248,29 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
 
     sought_class = None
     for potential_file in potential_files_filtered:
-        file_path = '{}/{}.py'.format(folder_path, potential_file)
-        module_info = inspect.getmoduleinfo(file_path)
-        with open(file_path) as open_file:
-            # This is necessary to deal with imp.load_module reloading modules and changing class signatures
-            # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
-            if potential_file in sys.modules:
-                potential_module = [(k, v) for k, v in sys.modules.items() if potential_file in k][0][1]
-            else:
-                potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+        # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+        # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+        if potential_file in sys.modules:
+            potential_modules = [(k, v) for k, v in sys.modules.items() if potential_file in k]
+        else:
+            file_path = '{}/{}.py'.format(folder_path, potential_file)
+            module_info = inspect.getmoduleinfo(file_path)
+            with open(file_path) as open_file:
+                potential_module = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
+
+        for potential_module in potential_modules:
             module_classes = inspect.getmembers(potential_module,
                                                 lambda x: inspect.isclass(x)
                                                           and issubclass(x, inherited_class)
                                                           and x.__name__ == class_name
                                                 )
-            if module_classes:
+
+            if module_classes and len(module_classes) == 1:
                 sought_class = module_classes[0][1]
                 break
+            elif len(module_classes) > 1:
+                raise Exception('This should not have happened.')
+
     if sought_class:
         return sought_class
     else:
@@ -290,34 +304,30 @@ def find_function(function_name, function_folder, excluded_files=None):
 
     sought_function = None
     for potential_file in potential_files_filtered:
-        file_path = '{}/{}.py'.format(folder_path, potential_file)
-        module_info = inspect.getmoduleinfo(file_path)
-        with open(file_path) as open_file:
-            # This is necessary to deal with imp.load_module reloading modules and changing class signatures
-            # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
-            if potential_file in sys.modules:
-                potential_module = [(k, v) for k, v in sys.modules.items() if potential_file in k][0][1]
-            else:
-                potential_module = imp.load_module(potential_file, open_file, file_path, module_info[1:])
+        # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+        # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
+        if potential_file in sys.modules:
+            potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
+        else:
+            file_path = '{}/{}.py'.format(folder_path, potential_file)
+            module_info = inspect.getmoduleinfo(file_path)
+            with open(file_path) as open_file:
+                potential_modules = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
+
+        for potential_module in potential_modules:
             module_functions = inspect.getmembers(potential_module,
-                                                lambda x: inspect.isfunction(x)
-                                                          and x.__name__ == function_name
-                                                )
-            if module_functions:
+                                                  lambda x: inspect.isfunction(x)
+                                                             and x.__name__ == function_name
+                                                 )
+            if module_functions and len(module_functions) == 1:
                 sought_function = module_functions[0][1]
                 break
+            elif len(module_functions) > 1:
+                raise Exception('This should not have happened.')
     if sought_function:
         return sought_function
     else:
         raise FunctionNameError('Unknown function {}'.format(function_name))
-
-
-class ClassNameError(Exception):
-    pass
-
-
-class FunctionNameError(Exception):
-    pass
 
 
 def getClassArgs(inspected_class, arg_ignore=['self']):
@@ -348,6 +358,7 @@ def getClassAttributes(inspected_class, ignore=['self']):
 
     return filtered_attributes
 
+
 def getFuncArgs(inspected_function):
     """
     Finds the arguments that could be passed into the specified function
@@ -359,6 +370,7 @@ def getFuncArgs(inspected_function):
     args = arg_spec.args
 
     return args
+
 
 def list_all_equal(data):
     """
@@ -382,6 +394,7 @@ def list_all_equal(data):
     equivalence = data.count(data[0]) == len(data)
 
     return equivalence
+
 
 def listMerge(*args):
     """For merging lists with objects that are not solely numbers
