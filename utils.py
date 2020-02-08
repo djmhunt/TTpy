@@ -248,15 +248,17 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
 
     sought_class = None
     for potential_file in potential_files_filtered:
+        if sought_class:
+            break
         # This is necessary to deal with imp.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
         if potential_file in sys.modules:
-            potential_modules = [(k, v) for k, v in sys.modules.items() if potential_file in k]
+            potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
         else:
             file_path = '{}/{}.py'.format(folder_path, potential_file)
             module_info = inspect.getmoduleinfo(file_path)
             with open(file_path) as open_file:
-                potential_module = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
+                potential_modules = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
 
         for potential_module in potential_modules:
             module_classes = inspect.getmembers(potential_module,
@@ -304,6 +306,8 @@ def find_function(function_name, function_folder, excluded_files=None):
 
     sought_function = None
     for potential_file in potential_files_filtered:
+        if sought_function:
+            break
         # This is necessary to deal with imp.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
         if potential_file in sys.modules:
