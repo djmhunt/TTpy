@@ -77,7 +77,7 @@ class ModelGen(object):
                     "This system has not been created for changing decision functions. Please put it in the ``other_options``")
         decision_function_name = other_options.pop('decision_function_name', None)
         if decision_function_name:
-            decisionFunc = utils.find_function(decision_function_name, 'model/decision')
+            decisionFunc = utils.find_function(decision_function_name, 'model/decision', excluded_files=['__init__'])
             valid_decision_args = utils.getFuncArgs(decisionFunc)
             valid_args.extend(valid_decision_args)
         else:
