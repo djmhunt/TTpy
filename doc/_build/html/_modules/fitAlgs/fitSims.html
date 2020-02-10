@@ -57,7 +57,19 @@
 <span class="kn">import</span> <span class="nn">utils</span>
 
 
-<div class="viewcode-block" id="FitSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim">[docs]</a><span class="k">class</span> <span class="nc">FitSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSubsetError"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSubsetError">[docs]</a><span class="k">class</span> <span class="nc">FitSubsetError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ActionError"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.ActionError">[docs]</a><span class="k">class</span> <span class="nc">ActionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="StimuliError"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.StimuliError">[docs]</a><span class="k">class</span> <span class="nc">StimuliError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="FitSim"><a class="viewcode-back" href="../../api/fitAlgs.fitSims.FitSim.html#fitAlgs.fitSims.FitSim">[docs]</a><span class="k">class</span> <span class="nc">FitSim</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for fitting data by passing the participant data through the model.</span>
 
@@ -65,24 +77,24 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    partChoiceParam : string, optional</span>
+<span class="sd">    participant_choice_property : string, optional</span>
 <span class="sd">        The participant data key of their action choices. Default ``&#39;Actions&#39;``</span>
-<span class="sd">    partRewardParam : string, optional</span>
+<span class="sd">    participant_reward_property : string, optional</span>
 <span class="sd">        The participant data key of the participant reward data. Default ``&#39;Rewards&#39;``</span>
-<span class="sd">    modelFitVar : string, optional</span>
+<span class="sd">    model_fitting_variable : string, optional</span>
 <span class="sd">        The key to be compared in the model data. Default ``&#39;ActionProb&#39;``</span>
-<span class="sd">    stimuliParams : list of strings or None, optional</span>
-<span class="sd">        The keys containing the observational parameters seen by the</span>
+<span class="sd">    task_stimuli_property : list of strings or None, optional</span>
+<span class="sd">        The keys containing the stimuli seen by the</span>
 <span class="sd">        participant before taking a decision on an action. Default ``None``</span>
-<span class="sd">    actChoiceParams : string or None or list of ints, optional</span>
+<span class="sd">    action_options_property : string or None or list of ints, optional</span>
 <span class="sd">        The name of the key in partData where the list of valid actions</span>
 <span class="sd">        can be found. If ``None`` then the action list is considered to</span>
 <span class="sd">        stay constant. If a list then the list will be taken as the list</span>
 <span class="sd">        of actions that can be taken at each instance. Default ``None``</span>
-<span class="sd">    fpRespVal : float, optional</span>
+<span class="sd">    float_error_response_value : float, optional</span>
 <span class="sd">        If a floating point error occurs when running a fit the fitter function</span>
 <span class="sd">        will return a value for each element of fpRespVal. Default is ``1/1e100``</span>
-<span class="sd">    fitSubset : ``float(&#39;Nan&#39;)``, ``None``, ``&quot;rewarded&quot;``, ``&quot;unrewarded&quot;``, ``&quot;all&quot;`` or list of int, optional</span>
+<span class="sd">    fit_subset : ``float(&#39;Nan&#39;)``, ``None``, ``&quot;rewarded&quot;``, ``&quot;unrewarded&quot;``, ``&quot;all&quot;`` or list of int, optional</span>
 <span class="sd">        Describes which, if any, subset of trials will be used to evaluate the performance of the model.</span>
 <span class="sd">        This can either be described as a list of trial numbers or, by passing</span>
 <span class="sd">        - ``&quot;all&quot;`` for fitting all trials</span>
@@ -97,294 +109,171 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    fitAlgs.fitAlg.fitAlg : The general fitting class</span>
+<span class="sd">    fitAlgs.fitAlg.FitAlg : The general fitting class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<span class="c1">## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partChoiceParam</span><span class="o">=</span><span class="s1">&#39;Actions&#39;</span><span class="p">,</span>
-                 <span class="n">partRewardParam</span><span class="o">=</span><span class="s1">&#39;Rewards&#39;</span><span class="p">,</span>
-                 <span class="n">modelFitVar</span><span class="o">=</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span>
-                 <span class="n">stimuliParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fitSubset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">actChoiceParams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fpRespVal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mf">1e100</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">participant_choice_property</span><span class="o">=</span><span class="s1">&#39;Actions&#39;</span><span class="p">,</span>
+                 <span class="n">participant_reward_property</span><span class="o">=</span><span class="s1">&#39;Rewards&#39;</span><span class="p">,</span>
+                 <span class="n">model_fitting_variable</span><span class="o">=</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span>
+                 <span class="n">task_stimuli_property</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">fit_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">action_options_property</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">float_error_response_value</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">1e100</span>
                  <span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">partChoiceParam</span> <span class="o">=</span> <span class="n">partChoiceParam</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span> <span class="o">=</span> <span class="n">partRewardParam</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modelFitVar</span> <span class="o">=</span> <span class="n">modelFitVar</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partStimuliParams</span> <span class="o">=</span> <span class="n">stimuliParams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">partActChoiceParams</span> <span class="o">=</span> <span class="n">actChoiceParams</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span> <span class="o">=</span> <span class="n">fpRespVal</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitSubset</span> <span class="o">=</span> <span class="n">fitSubset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_choice_property</span> <span class="o">=</span> <span class="n">participant_choice_property</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_reward_property</span> <span class="o">=</span> <span class="n">participant_reward_property</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_fitting_variable</span> <span class="o">=</span> <span class="n">model_fitting_variable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_stimuli_property</span> <span class="o">=</span> <span class="n">task_stimuli_property</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_options_property</span> <span class="o">=</span> <span class="n">action_options_property</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span> <span class="o">=</span> <span class="n">float_error_response_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset</span> <span class="o">=</span> <span class="n">fit_subset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_fit_subset</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findName</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
-                        <span class="s1">&#39;participantChoiceParam&#39;</span><span class="p">:</span> <span class="n">partChoiceParam</span><span class="p">,</span>
-                        <span class="s1">&#39;participantRewardParam&#39;</span><span class="p">:</span> <span class="n">partRewardParam</span><span class="p">,</span>
-                        <span class="s1">&#39;participantStimuliParams&#39;</span><span class="p">:</span> <span class="n">stimuliParams</span><span class="p">,</span>
-                        <span class="s1">&#39;participantActChoiceParams&#39;</span><span class="p">:</span> <span class="n">actChoiceParams</span><span class="p">,</span>
-                        <span class="s1">&#39;modelFitVar&#39;</span><span class="p">:</span> <span class="n">modelFitVar</span><span class="p">,</span>
-                        <span class="s1">&#39;fpRespVal&#39;</span><span class="p">:</span> <span class="n">fpRespVal</span><span class="p">,</span>
-                        <span class="s1">&#39;fitSubset&#39;</span><span class="p">:</span> <span class="n">fitSubset</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
+                         <span class="s1">&#39;participant_choice_property&#39;</span><span class="p">:</span> <span class="n">participant_choice_property</span><span class="p">,</span>
+                         <span class="s1">&#39;participant_reward_property&#39;</span><span class="p">:</span> <span class="n">participant_reward_property</span><span class="p">,</span>
+                         <span class="s1">&#39;task_stimuli_property&#39;</span><span class="p">:</span> <span class="n">task_stimuli_property</span><span class="p">,</span>
+                         <span class="s1">&#39;action_options_property&#39;</span><span class="p">:</span> <span class="n">action_options_property</span><span class="p">,</span>
+                         <span class="s1">&#39;model_fitting_variable&#39;</span><span class="p">:</span> <span class="n">model_fitting_variable</span><span class="p">,</span>
+                         <span class="s1">&#39;float_error_response_value&#39;</span><span class="p">:</span> <span class="n">float_error_response_value</span><span class="p">,</span>
+                         <span class="s1">&#39;fit_subset&#39;</span><span class="p">:</span> <span class="n">fit_subset</span><span class="p">}</span>
 
-<div class="viewcode-block" id="FitSim.fitness"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_parameter_values</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_other_properties</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_observations</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_actions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="FitSim.fitness"><a class="viewcode-back" href="../../api/fitAlgs.fitSims.FitSim.html#fitAlgs.fitSims.FitSim.fitness">[docs]</a>    <span class="k">def</span> <span class="nf">fitness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">model_parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used by a fitter to generate the list of values characterising how well the model parameters describe the</span>
 <span class="sd">        participants actions.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        modelParameters : list of floats</span>
-<span class="sd">            A list of the parameters used by the model in the order previously</span>
-<span class="sd">            defined</span>
+<span class="sd">        model_parameters : list of floats</span>
+<span class="sd">            A list of the parameters used by the model in the order previously defined</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        modelPerformance : list of floats</span>
+<span class="sd">        model_performance : list of floats</span>
 <span class="sd">            The choices made by the model that will be used to characterise the quality of the fit.</span>
-<span class="sd">            In this case defined as ``[0]``</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        fitAlgs.fitSim.fitSim.participant : Fits participant data</span>
+<span class="sd">        fitAlgs.fitSims.FitSim.participant : Fits participant data</span>
 <span class="sd">        fitAlgs.fitAlg.fitAlg : The general fitting class</span>
 <span class="sd">        fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Run model with given parameters</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fittedModel</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
+            <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="p">(</span><span class="o">*</span><span class="n">model_parameters</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">errorResp</span><span class="p">()</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">u</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">. Abandoning fitting with parameters: </span><span class="si">{1}</span><span class="s2"> Returning an action choice probability for each trialstep of </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span>
                                                                                                                                               <span class="nb">repr</span><span class="p">(</span>
-                                                                                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span>
-                                                                                                                                                      <span class="o">*</span><span class="n">modelParameters</span><span class="p">)),</span>
+                                                                                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">get_model_parameters</span><span class="p">(</span>
+                                                                                                                                                      <span class="o">*</span><span class="n">model_parameters</span><span class="p">)),</span>
                                                                                                                                               <span class="nb">repr</span><span class="p">(</span>
-                                                                                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+                                                                                                                                                  <span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> in fitted model. Abandoning fitting with parameters: </span><span class="si">{1}</span><span class="s2">  Returning an action choice probability for each trialstep of </span><span class="si">{2}</span><span class="s2"> - </span><span class="si">{3}</span><span class="s2">, - </span><span class="si">{4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
-                    <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)),</span>
-                    <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">),</span>
+                    <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_model_parameters</span><span class="p">(</span><span class="o">*</span><span class="n">model_parameters</span><span class="p">)),</span>
+                    <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span><span class="p">),</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
                     <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span>
 
         <span class="c1"># Pull out the values to be compared</span>
+        <span class="n">model_data</span> <span class="o">=</span> <span class="n">model_instance</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">()</span>
+        <span class="n">model_choice_probabilities</span> <span class="o">=</span> <span class="n">model_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">model_fitting_variable</span><span class="p">]</span>
 
-        <span class="n">modelData</span> <span class="o">=</span> <span class="n">modelInstance</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">()</span>
-        <span class="n">modelChoices</span> <span class="o">=</span> <span class="n">modelData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">modelFitVar</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">types</span><span class="o">.</span><span class="n">NoneType</span><span class="p">:</span>
-            <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">modelChoices</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_performance</span> <span class="o">=</span> <span class="n">model_choice_probabilities</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">modelPerformance</span> <span class="o">=</span> <span class="n">modelChoices</span>
+            <span class="n">model_performance</span> <span class="o">=</span> <span class="n">model_choice_probabilities</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">modelPerformance</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">model_performance</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitter&#39;</span><span class="p">)</span>
             <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;model performance values contain NaN&quot;</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s2">&quot;.</span><span class="se">\n</span><span class="s2"> Abandoning fitting with parameters: &quot;</span>
-                           <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">))</span>
+                           <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_model_parameters</span><span class="p">(</span><span class="o">*</span><span class="n">model_parameters</span><span class="p">))</span>
                            <span class="o">+</span> <span class="s2">&quot; Returning an action choice probability for each trialstep of &quot;</span>
-                           <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fpRespVal</span>
+                           <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">float_error_response_value</span>
 
-        <span class="k">return</span> <span class="n">modelPerformance</span></div>
+        <span class="k">return</span> <span class="n">model_performance</span></div>
 
-<div class="viewcode-block" id="FitSim.getSim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getSim">[docs]</a>    <span class="k">def</span> <span class="nf">getSim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.prepare_sim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.prepare_sim">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_setup</span><span class="p">,</span> <span class="n">participant_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fit participant data to a model for a given task</span>
+<span class="sd">        Set up the simulation of a model following the behaviour of a participant</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        model : model.model.model inherited class</span>
+<span class="sd">        model : model.modelTemplate.Model inherited class</span>
 <span class="sd">            The model you wish to try and fit values to</span>
-<span class="sd">        modelSetup : (dict,dict)</span>
+<span class="sd">        model_setup : (dict,dict)</span>
 <span class="sd">            The first dictionary is the model initial parameters. The second</span>
-<span class="sd">            are the other model parameters</span>
-<span class="sd">        partData : dict</span>
+<span class="sd">            are the other model properties</span>
+<span class="sd">        participant_data : dict</span>
 <span class="sd">            The participant data</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        model : model.model.model inherited class instance</span>
-<span class="sd">            The model with the best fit parameters</span>
-<span class="sd">        fitQuality : float</span>
-<span class="sd">            Specifies the fit quality for this participant to the model</span>
-<span class="sd">        testedParams : tuple of OrderedDict and list</span>
-<span class="sd">            They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the</span>
-<span class="sd">            fit qualities of these parameters.</span>
+<span class="sd">        fitness</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fitSubset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSubset</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mInitialParams</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>  <span class="c1"># These are passed separately to define at this point the order of the parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_parameter_values</span> <span class="o">=</span> <span class="n">model_setup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter_names</span> <span class="o">=</span> <span class="n">model_setup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_other_properties</span> <span class="o">=</span> <span class="n">model_setup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">partChoices</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partChoiceParam</span><span class="p">]</span>
+        <span class="n">participant_sequence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">participant_sequence_generation</span><span class="p">(</span><span class="n">participant_data</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">participant_choice_property</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">participant_reward_property</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">task_stimuli_property</span><span class="p">,</span>
+                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">action_options_property</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant_observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">participant_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span> <span class="o">=</span> <span class="n">participant_sequence</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">partObs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatPartStim</span><span class="p">(</span><span class="n">partData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partStimuliParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partActChoiceParams</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">fitSubset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">fitSubset</span>
-            <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;rewarded&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;unrewarded&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fitSubset</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">fitSubset</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fitSubsetChosen</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_subset_described</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_fit_subset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitness</span></div>
 
-<div class="viewcode-block" id="FitSim.participantMatchResult"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.participantMatchResult">[docs]</a>    <span class="k">def</span> <span class="nf">participantMatchResult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run the participant data with a model with specified parameters for a given task</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model : model.model.model inherited class</span>
-<span class="sd">            The model you wish to try and fit values to</span>
-<span class="sd">        modelSetup : (dict,dict)</span>
-<span class="sd">            The first dictionary is the model varying parameters. The second</span>
-<span class="sd">            are the other model parameters</span>
-<span class="sd">        partData : dict</span>
-<span class="sd">            The participant data</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        model : model.model.model inherited class instance</span>
-<span class="sd">            The model with the best fit parameters</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="n">fitVals</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>  <span class="c1"># These are passed seperately to define at this point the order of the parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mParamNames</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mOtherParams</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">partChoices</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partChoiceParam</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">partObs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formatPartStim</span><span class="p">(</span><span class="n">partData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partStimuliParams</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partActChoiceParams</span><span class="p">)</span>
-
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fittedModel</span><span class="p">(</span><span class="o">*</span><span class="n">fitVals</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">model</span></div>
-
-<div class="viewcode-block" id="FitSim.info"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The dictionary describing the fitters algorithm chosen</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        fitInfo : dict</span>
-<span class="sd">            The dictionary of fitters class information</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitInfo</span></div>
-
-<div class="viewcode-block" id="FitSim.findName"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the name of the class</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
-
-<div class="viewcode-block" id="FitSim.fittedModel"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fittedModel">[docs]</a>    <span class="k">def</span> <span class="nf">fittedModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the model run of the model with specific parameter values</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        *modelParameters : floats</span>
-<span class="sd">            The model parameters provided in the order defined in the model setup</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        modelInstance : model class instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">partAct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partChoices</span>
-        <span class="n">partReward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partRewards</span>
-        <span class="n">partObs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partObs</span>
-
-        <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simSetup</span><span class="p">(</span><span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">modelInstance</span></div>
-
-<div class="viewcode-block" id="FitSim.getModInput"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModInput">[docs]</a>    <span class="k">def</span> <span class="nf">getModInput</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compiles the kwarg model arguments based on the modelParameters and</span>
-<span class="sd">        previously specified other parameters</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        modelParameters : list of floats</span>
-<span class="sd">            The parameter values in the order extracted from the modelSetup</span>
-<span class="sd">            parameter dictionary</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        inputs : dict</span>
-<span class="sd">            The kwarg model arguments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getModParams</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mOtherParams</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">inputs</span></div>
-
-<div class="viewcode-block" id="FitSim.getModParams"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModParams">[docs]</a>    <span class="k">def</span> <span class="nf">getModParams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compiles the kwarg model parameter arguments based on the</span>
-<span class="sd">        modelParameters</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        modelParameters : list of floats</span>
-<span class="sd">            The parameter values in the order extracted from the modelSetup</span>
-<span class="sd">            parameter dictionary</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        params : dict</span>
-<span class="sd">            The kwarg model parameter arguments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mParamNames</span><span class="p">,</span> <span class="n">modelParameters</span><span class="p">)}</span>
-
-        <span class="k">return</span> <span class="n">params</span></div>
-
-<div class="viewcode-block" id="FitSim.formatPartStim"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.formatPartStim">[docs]</a>    <span class="k">def</span> <span class="nf">formatPartStim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partData</span><span class="p">,</span> <span class="n">stimuli</span><span class="p">,</span> <span class="n">validActions</span><span class="p">):</span>
+<div class="viewcode-block" id="FitSim.participant_sequence_generation"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.participant_sequence_generation">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">participant_sequence_generation</span><span class="p">(</span><span class="n">participant_data</span><span class="p">,</span>
+                                        <span class="n">choice_property</span><span class="p">,</span>
+                                        <span class="n">reward_property</span><span class="p">,</span>
+                                        <span class="n">stimuli_property</span><span class="p">,</span>
+                                        <span class="n">action_options_property</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds the stimuli in the participant data and returns formatted observations</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        partData : dict</span>
+<span class="sd">        participant_data : dict</span>
 <span class="sd">            The participant data</span>
-<span class="sd">        stimuli : list of strings or ``None``</span>
+<span class="sd">        choice_property : string</span>
+<span class="sd">            The participant data key of their action choices.</span>
+<span class="sd">        reward_property : string</span>
+<span class="sd">            The participant data key of the participant reward data</span>
+<span class="sd">        stimuli_property : string or None or list of strings</span>
 <span class="sd">            A list of the keys in partData representing participant stimuli</span>
-<span class="sd">        validActions : string or None or list of strings, ints or None</span>
+<span class="sd">        action_options_property : string or None or list of strings, ints or None</span>
 <span class="sd">            The name of the key in partData where the list of valid actions</span>
 <span class="sd">            can be found. If ``None`` then the action list is considered to</span>
 <span class="sd">            stay constant. If a list then the list will be taken as the list</span>
@@ -394,98 +283,243 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        observation : list of tuples</span>
-<span class="sd">            The tuples contain the stimuli and the valid actions for each</span>
-<span class="sd">            observation instance.</span>
+<span class="sd">        participant_sequence : list of three element tuples</span>
+<span class="sd">            Each list element contains the observation, action and feedback for each trial taken</span>
+<span class="sd">            by the participant</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">participant_data</span><span class="p">[</span><span class="n">choice_property</span><span class="p">]</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="n">participant_data</span><span class="p">[</span><span class="n">reward_property</span><span class="p">]</span>
+
+        <span class="n">participant_data_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+
         <span class="n">partDataShape</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">stimuli</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">partDataLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">partRewardParam</span><span class="p">])</span>
-            <span class="n">stimuliData</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">partDataLen</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
-            <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">])</span>
-            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">partData</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stimuli</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">stimuli_property</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stimuli_data</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">participant_data_length</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli_property</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="n">stimuli_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">participant_data</span><span class="p">[</span><span class="n">stimuli_property</span><span class="p">])</span>
+            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuli_data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimuli_property</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli_property</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">stimuli_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">participant_data</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stimuli_property</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">partData</span><span class="p">[</span><span class="n">stimuli</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
-            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">shape</span>
+                <span class="n">stimuli_data</span> <span class="o">=</span> <span class="n">participant_data</span><span class="p">[</span><span class="n">stimuli_property</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">partDataShape</span> <span class="o">=</span> <span class="n">stimuli_data</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span>
+            <span class="k">raise</span> <span class="n">StimuliError</span><span class="p">(</span><span class="s1">&#39;Unknown representation of stimuli&#39;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">partDataShape</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partDataShape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">partDataShape</span><span class="p">)</span> <span class="o">==</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">stimuliData</span> <span class="o">=</span> <span class="n">stimuliData</span><span class="o">.</span><span class="n">T</span>
-                    <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">partDataLen</span> <span class="o">=</span> <span class="n">partDataShape</span>
+            <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">partDataShape</span><span class="p">)</span> <span class="o">!=</span> <span class="n">partDataShape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">stimuli_data</span> <span class="o">=</span> <span class="n">stimuli_data</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="k">if</span> <span class="n">validActions</span> <span class="ow">in</span> <span class="n">partData</span><span class="p">:</span>
-            <span class="n">action_data_raw</span> <span class="o">=</span> <span class="n">partData</span><span class="p">[</span><span class="n">validActions</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_options_property</span><span class="p">,</span> <span class="n">basestring</span><span class="p">)</span> <span class="ow">and</span> <span class="n">action_options_property</span> <span class="ow">in</span> <span class="n">participant_data</span><span class="p">:</span>
+            <span class="n">available_actions</span> <span class="o">=</span> <span class="n">participant_data</span><span class="p">[</span><span class="n">action_options_property</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">action_options_property</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_options_property</span><span class="p">)</span> <span class="o">!=</span> <span class="n">participant_data_length</span><span class="p">:</span>
+            <span class="n">available_actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">action_options_property</span><span class="p">]</span> <span class="o">*</span> <span class="n">participant_data_length</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">action_data_raw</span> <span class="o">=</span> <span class="n">validActions</span>
-        <span class="n">partDataLen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuliData</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">action_data_raw</span><span class="p">)</span> <span class="o">!=</span> <span class="n">partDataLen</span><span class="p">:</span>
-            <span class="n">actionData</span> <span class="o">=</span> <span class="p">[</span><span class="n">action_data_raw</span><span class="p">]</span> <span class="o">*</span> <span class="n">partDataLen</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">actionData</span> <span class="o">=</span> <span class="n">action_data_raw</span>
+            <span class="n">available_actions</span> <span class="o">=</span> <span class="n">action_options_property</span>
 
-        <span class="n">observation</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">stimuliData</span><span class="p">,</span> <span class="n">actionData</span><span class="p">)]</span>
+        <span class="n">mismatches</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span> <span class="k">if</span> <span class="p">(</span><span class="n">trial_available_actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">trial_action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trial_available_actions</span><span class="p">)</span>
+                           <span class="k">else</span> <span class="kc">False</span>
+                      <span class="k">for</span> <span class="n">trial_action</span><span class="p">,</span> <span class="n">trial_available_actions</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">available_actions</span><span class="p">)]</span>
 
-        <span class="k">return</span> <span class="n">observation</span></div>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mismatches</span><span class="p">):</span>
+            <span class="n">mismatch_actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">mismatches</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
+            <span class="n">mismatch_available_actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">available_actions</span><span class="p">,</span> <span class="n">mismatches</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="n">ActionError</span><span class="p">(</span><span class="s1">&#39;An action is chosen that is not listed as available for the trial </span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mismatch_actions</span><span class="p">,</span>
+                                                                                                               <span class="n">mismatch_available_actions</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_simSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">,</span> <span class="o">*</span><span class="n">modelParameters</span><span class="p">):</span>
+        <span class="n">observations</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">stimuli_data</span><span class="p">,</span> <span class="n">available_actions</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span></div>
+
+<div class="viewcode-block" id="FitSim.info"><a class="viewcode-back" href="../../api/fitAlgs.fitSims.FitSim.html#fitAlgs.fitSims.FitSim.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialises the model for the running of the &#39;simulation&#39;</span>
+<span class="sd">        The dictionary describing the fitters algorithm chosen</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fitInfo : dict</span>
+<span class="sd">            The dictionary of fitters class information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_info</span></div>
+
+<div class="viewcode-block" id="FitSim.findName"><a class="viewcode-back" href="../../api/fitAlgs.fitSims.FitSim.html#fitAlgs.fitSims.FitSim.findName">[docs]</a>    <span class="k">def</span> <span class="nf">findName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of the class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+<div class="viewcode-block" id="FitSim.fitted_model"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fitted_model">[docs]</a>    <span class="k">def</span> <span class="nf">fitted_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">model_parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulating a model run with specific parameter values</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        partAct : list</span>
-<span class="sd">            The list of actions taken by the participant</span>
-<span class="sd">        partReward : list</span>
-<span class="sd">            The feedback received by the participant</span>
-<span class="sd">        partObs : list</span>
-<span class="sd">            The observations received by the participant</span>
-<span class="sd">        *modelParameters : floats</span>
+<span class="sd">        *model_parameters : floats</span>
 <span class="sd">            The model parameters provided in the order defined in the model setup</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        modelInstance : model.modelTemplate.modelTemplate class instance</span>
+<span class="sd">        model_instance : model.modelTemplate.Model class instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getModInput</span><span class="p">(</span><span class="o">*</span><span class="n">modelParameters</span><span class="p">)</span>
+        <span class="n">model_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_properties</span><span class="p">(</span><span class="o">*</span><span class="n">model_parameters</span><span class="p">)</span>
 
-        <span class="n">modelInstance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">model_arguments</span><span class="p">)</span>
 
-        <span class="n">_simRun</span><span class="p">(</span><span class="n">modelInstance</span><span class="p">,</span> <span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">)</span>
+        <span class="n">model_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simulation_run</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">participant_observations</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">participant_actions</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">participant_rewards</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">modelInstance</span></div>
+        <span class="k">return</span> <span class="n">model_instance</span></div>
 
+<div class="viewcode-block" id="FitSim.get_model_properties"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.get_model_properties">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">model_parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compiles the kwarg model arguments based on the model_parameters and</span>
+<span class="sd">        previously specified other parameters</span>
 
-<span class="k">def</span> <span class="nf">_simRun</span><span class="p">(</span><span class="n">modelInstance</span><span class="p">,</span> <span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simulates the events of a simulation from the perspective of a model</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_parameters : list of floats</span>
+<span class="sd">            The parameter values in the order extracted from the modelSetup parameter dictionary</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    modelInstance : model.modelTemplate.modelTemplate class instance</span>
-<span class="sd">    partAct : list</span>
-<span class="sd">        The list of actions taken by the participant</span>
-<span class="sd">    partReward : list</span>
-<span class="sd">        The feedback received by the participant</span>
-<span class="sd">    partObs : list</span>
-<span class="sd">        The observations received by the participant</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        model_properties : dict</span>
+<span class="sd">            The kwarg model arguments</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">partAct</span><span class="p">,</span> <span class="n">partReward</span><span class="p">,</span> <span class="n">partObs</span><span class="p">):</span>
-        <span class="n">modelInstance</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-        <span class="n">modelInstance</span><span class="o">.</span><span class="n">overrideActionChoice</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="n">modelInstance</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+        <span class="n">model_properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_parameters</span><span class="p">(</span><span class="o">*</span><span class="n">model_parameters</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_other_properties</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">model_properties</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model_properties</span></div>
+
+<div class="viewcode-block" id="FitSim.get_model_parameters"><a class="viewcode-back" href="../../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.get_model_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">model_parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compiles the model parameter arguments based on the model parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_parameters : list of floats</span>
+<span class="sd">            The parameter values in the order extracted from the modelSetup parameter dictionary</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            The kwarg model parameter arguments</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_parameter_names</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">)}</span>
+
+        <span class="k">return</span> <span class="n">parameters</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_simulation_run</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span> <span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simulates the events of a simulation from the perspective of a model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_instance : model.modelTemplate.modelTemplate class instance</span>
+<span class="sd">        observations : list of tuples</span>
+<span class="sd">            The sequence of (stimuli, valid actions) for each trial</span>
+<span class="sd">        actions : list</span>
+<span class="sd">            The sequence of participant actions for each trial</span>
+<span class="sd">        rewards : list</span>
+<span class="sd">            The sequence of participant rewards for each trial</span>
+<span class="sd">        model_instance : model.modelTemplate.Model class instance</span>
+<span class="sd">            The same instance that is returned</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        model_instance : model.modelTemplate.Model class instance</span>
+<span class="sd">            The same instance that was passed in</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">):</span>
+            <span class="n">model_instance</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+            <span class="n">model_instance</span><span class="o">.</span><span class="n">overrideActionChoice</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">model_instance</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model_instance</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_preprocess_fit_subset</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prepare as many possible combinations of fit_subset as possible.</span>
+<span class="sd">        If it needs knowledge of the rewards, return ``[]``</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fit_subset : ``float(&#39;Nan&#39;)``, ``None``, ``&quot;rewarded&quot;``, ``&quot;unrewarded&quot;``, ``&quot;all&quot;`` or list of int</span>
+<span class="sd">        Describes which, if any, subset of trials will be used to evaluate the performance of the model.</span>
+<span class="sd">        This can either be described as a list of trial numbers or, by passing</span>
+<span class="sd">        - ``&quot;all&quot;`` or ``None`` for fitting all trials</span>
+<span class="sd">        - ``float(&#39;Nan&#39;)`` or ``&quot;unrewarded&quot;`` for all those trials whose feedback was ``float(&#39;Nan&#39;)``</span>
+<span class="sd">        - ``&quot;rewarded&quot;`` for those who had feedback that was not ``float(&#39;Nan&#39;)``</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fit_subset_described : None, or list of ints</span>
+<span class="sd">            A description of the trials to be used, with ``None`` being all of them.</span>
+<span class="sd">            If more information was needed ``[]`` was returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">fit_subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="n">fit_subset</span>
+        <span class="k">elif</span> <span class="n">fit_subset</span> <span class="o">==</span> <span class="s2">&quot;rewarded&quot;</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">fit_subset</span> <span class="o">==</span> <span class="s2">&quot;unrewarded&quot;</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">fit_subset</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">):</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FitSubsetError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a known fit_subset&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">fit_subset_described</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_set_fit_subset</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">,</span> <span class="n">part_rewards</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identify any fit_subset options that required part_rewards, i.e. subsets of trials where there was or was not</span>
+<span class="sd">        ``np.nan`` as the feedback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fit_subset : ``float(&#39;Nan&#39;)``, ``&quot;rewarded&quot;``, ``&quot;unrewarded&quot;``</span>
+<span class="sd">        Describes which, subset of trials will be used to evaluate the performance of the model.</span>
+<span class="sd">        This can either be described by passing</span>
+<span class="sd">        - ``float(&#39;Nan&#39;)`` or ``&quot;unrewarded&quot;`` for all those trials whose feedback was ``float(&#39;Nan&#39;)``</span>
+<span class="sd">        - ``&quot;rewarded&quot;`` for those who had feedback that was not ``float(&#39;Nan&#39;)``</span>
+<span class="sd">        part_rewards: list of float</span>
+<span class="sd">            The rewards received by the participant</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fit_subset_described : list of bool the length of part_reward</span>
+<span class="sd">            A description of the trials to be used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">fit_subset</span> <span class="o">==</span> <span class="s2">&quot;rewarded&quot;</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">part_rewards</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fit_subset</span> <span class="o">==</span> <span class="s2">&quot;unrewarded&quot;</span><span class="p">:</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">part_rewards</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">):</span>
+            <span class="n">fit_subset_described</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">part_rewards</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">FitSubsetError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a known fit_subset&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit_subset</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">fit_subset_described</span></div>
 </pre></div>
 
           </div>

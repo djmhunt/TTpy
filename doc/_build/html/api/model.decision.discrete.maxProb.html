@@ -65,7 +65,7 @@
 probability estimate.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>decisionFunc</strong> (<em>function</em>) – Calculates the decisions based on the probabilities and returns the
+<li><strong>decision_function</strong> (<em>function</em>) – Calculates the decisions based on the probabilities and returns the
 decision and the probability of that decision</li>
 <li><strong>decision</strong> (<em>int or None</em>) – The action to be taken by the model</li>
 <li><strong>probDict</strong> (<em>OrderedDict of valid responses</em>) – A dictionary of considered actions as keys and their associated probabilities as values</li>
@@ -83,12 +83,12 @@ decision and the probability of that decision</li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">maxProb</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 <span class="go">(1, OrderedDict([(1, 0.6), (2, 0.3), (3, 0.5)]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">trial_responses</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 <span class="go">(2, OrderedDict([(1, 0.2), (2, 0.3), (3, 0.5)]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">trial_responses</span><span class="o">=</span><span class="p">[])</span>
 <span class="go">(None, OrderedDict([(1, 0.2), (2, 0.3), (3, 0.5)]))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">maxProb</span><span class="p">([</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">validResponses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">([</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">trial_responses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">])</span>
 <span class="go">(&#39;A&#39;, OrderedDict([(&#39;A&#39;, 0.6), (&#39;B&#39;, 0.3), (&#39;C&#39;, 0.5)]))</span>
 </pre></div>
 </div>

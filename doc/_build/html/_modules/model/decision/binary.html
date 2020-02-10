@@ -66,7 +66,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    decisionFunc : function</span>
+<span class="sd">    decision_function : function</span>
 <span class="sd">        Calculates the decisions based on the probabilities and returns the</span>
 <span class="sd">        decision and the probability of that decision</span>
 <span class="sd">    decision : int or None</span>
@@ -84,43 +84,41 @@
 <span class="sd">    (0, OrderedDict([(0, 0.77), (1, 0.23)]))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">expResponseSet</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">task_responses</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">decision_function</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">last_action</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">trial_responses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">decisionFunc</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">lastAction</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validResponses</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="n">validResponses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">resp</span> <span class="o">=</span> <span class="n">validResponses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">resp</span> <span class="k">else</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">expResponseSet</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">lastAction</span> <span class="k">else</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">expResponseSet</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">validResponses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">expResponseSet</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">trial_responses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trial_responses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">trial_responses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">resp</span> <span class="k">else</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">task_responses</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">trial_responses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">last_action</span> <span class="k">else</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">task_responses</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">trial_responses</span><span class="p">)</span> <span class="o">!=</span> <span class="n">task_responses</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad trial_responses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">trial_responses</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of validResponses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">validResponses</span><span class="p">))</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Bad number of trial_responses: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">trial_responses</span><span class="p">))</span>
 
         <span class="n">randNum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
 
-        <span class="n">lastNotAction</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expResponseSet</span><span class="o">.</span><span class="n">difference</span><span class="p">([</span><span class="n">lastAction</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">lastNotAction</span> <span class="o">=</span> <span class="p">[</span><span class="n">action</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">task_responses</span> <span class="k">if</span> <span class="n">action</span> <span class="o">!=</span> <span class="n">last_action</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">prob</span> <span class="o">&gt;=</span> <span class="n">randNum</span><span class="p">:</span>
             <span class="c1"># The decision is to switch</span>
             <span class="n">decision</span> <span class="o">=</span> <span class="n">lastNotAction</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep the same decision</span>
-            <span class="n">decision</span> <span class="o">=</span> <span class="n">lastAction</span>
+            <span class="n">decision</span> <span class="o">=</span> <span class="n">last_action</span>
 
         <span class="n">pSet</span> <span class="o">=</span> <span class="p">{</span><span class="n">lastNotAction</span><span class="p">:</span> <span class="n">prob</span><span class="p">,</span>
-                <span class="n">lastAction</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">}</span>
+                <span class="n">last_action</span><span class="p">:</span> <span class="mi">1</span><span class="o">-</span><span class="n">prob</span><span class="p">}</span>
 
         <span class="n">probDict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">pSet</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">task_responses</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">decision</span><span class="p">,</span> <span class="n">probDict</span>
 
-    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.single&quot;</span>
-    <span class="n">decisionFunc</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">decision_function</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;binary.single&quot;</span>
+    <span class="n">decision_function</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">return</span> <span class="n">decisionFunc</span></div>
+    <span class="k">return</span> <span class="n">decision_function</span></div>
 </pre></div>
 
           </div>

@@ -202,14 +202,14 @@
 <span class="sd">            fit qualities of these parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSim</span><span class="o">.</span><span class="n">getSim</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">)</span>
+        <span class="n">sim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSim</span><span class="o">.</span><span class="n">prepare_sim</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">modelSetup</span><span class="p">,</span> <span class="n">partData</span><span class="p">)</span>
 
         <span class="n">mInitialParams</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="c1"># These are passed separately to define at this point the order of the parameters</span>
         <span class="n">mParamNames</span> <span class="o">=</span> <span class="n">modelSetup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
         <span class="n">fitVals</span><span class="p">,</span> <span class="n">fitQuality</span><span class="p">,</span> <span class="n">fitInfo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">sim</span><span class="p">,</span> <span class="n">mParamNames</span><span class="p">,</span> <span class="n">mInitialParams</span><span class="p">[:])</span>
 
-        <span class="n">modelRun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSim</span><span class="o">.</span><span class="n">fittedModel</span><span class="p">(</span><span class="o">*</span><span class="n">fitVals</span><span class="p">)</span>
+        <span class="n">modelRun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitSim</span><span class="o">.</span><span class="n">fitted_model</span><span class="p">(</span><span class="o">*</span><span class="n">fitVals</span><span class="p">)</span>
 
         <span class="n">fitMeasures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extraMeasures</span><span class="p">(</span><span class="o">*</span><span class="n">fitVals</span><span class="p">)</span>
 

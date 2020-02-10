@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PyHPDM! &#8212; pyHPDM 0.9.9 documentation</title>
+    <title>pyHPDM! &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
@@ -44,16 +44,34 @@
           <div class="body" role="main">
             
   <div class="section" id="pyhpdm">
-<h1>PyHPDM!<a class="headerlink" href="#pyhpdm" title="Permalink to this headline">¶</a></h1>
-<p>This code has been tested using <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">2.7</span></code>. Apart from the standard Python libraries it also depends on the <a class="reference external" href="http://www.scipy.org/">SciPy</a> libraries. For those installing Python for the first time I would recommend the <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">Anaconda Python distribution</a>.</p>
+<h1>pyHPDM!<a class="headerlink" href="#pyhpdm" title="Permalink to this headline">¶</a></h1>
+<p>python Human Probabilistic Decision-Modelling (pyHPDM) is a framework for modelling and fitting the responses of people to probabilistic decision making tasks.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>This code has been tested using <code class="docutils literal notranslate"><span class="pre">Python</span> <span class="pre">2.7</span></code>. Apart from the standard Python libraries it also depends on the <a class="reference external" href="http://www.scipy.org/">SciPy</a> librariesand a few others listed in <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>. For those installing Python for the first time I would recommend the <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">Anaconda Python distribution</a>.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>For now this is just Python code that you download and use, not a package.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>The framework has until now either been run with a run script or live in a command-line (or <a class="reference external" href="http://jupyter.org/">jupyter notebook</a>).</p>
-<div class="section" id="running-scripts">
-<h2>Running scripts<a class="headerlink" href="#running-scripts" title="Permalink to this headline">¶</a></h2>
-<p>Example running scripts can be found in <code class="docutils literal notranslate"><span class="pre">./runScripts/</span></code>. Here, a number of scripts have been created as templates: <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code> for simulating the <code class="docutils literal notranslate"><span class="pre">probSelect</span></code> task and <code class="docutils literal notranslate"><span class="pre">runScript_fit.py</span></code> for fitting the data generated from <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code>. A visual display of the interactions in one of these scripts will soon be created.</p>
+<p>A task simulation can be simply created by running <code class="docutils literal notranslate"><span class="pre">simulation.simulation()</span></code>. Equally, for fitting participant data, the function is <code class="docutils literal notranslate"><span class="pre">dataFitting.data_fitting</span></code>. For now, no example data has been provided.</p>
+<p>More complex example running scripts can be found in <code class="docutils literal notranslate"><span class="pre">./runScripts/</span></code>. Here, a number of scripts have been created as templates: <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code> for simulating the <code class="docutils literal notranslate"><span class="pre">probSelect</span></code> task and <code class="docutils literal notranslate"><span class="pre">runScript_fit.py</span></code> for fitting the data generated from <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code>. A visual display of the interactions in one of these scripts will soon be created.</p>
+<p>A new method of passing in the fitting or simulation configuration is to use a YAML configuration file. This is done, for both simulations and data fitting, using the function <code class="docutils literal notranslate"><span class="pre">start.run_script</span></code> For example, to run the YAML configuration equivalent to the <code class="docutils literal notranslate"><span class="pre">runScript_sim.py</span></code> from a command line would be :<code class="docutils literal notranslate"><span class="pre">start.run_script('./runScripts/runScripts_sim.yaml')</span></code>.</p>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>Testing is done using <a class="reference external" href="https://pytest.org">pytest</a>.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>This project is licenced under the <a class="reference external" href="https://choosealicense.com/licenses/mit/">MIT license</a>.</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>The documentation can be found in <code class="docutils literal notranslate"><span class="pre">./doc/_build/html</span></code>, with the top level file being <code class="docutils literal notranslate"><span class="pre">index.html</span></code></p>
+<p>The documentation can be found on <a class="reference external" href="https://pyhpdm.readthedocs.io">readthedocs</a> or in <code class="docutils literal notranslate"><span class="pre">./doc/_build/html</span></code>, with the top level file being <code class="docutils literal notranslate"><span class="pre">index.html</span></code></p>
 <p>To update the documentation you will need to install Sphinx and a set of extensions. The list of extensions can be found in <code class="docutils literal notranslate"><span class="pre">./doc/conf.py</span></code>. To update the documentation follow the instruction in <code class="docutils literal notranslate"><span class="pre">./doc/readme.md</span></code></p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
@@ -103,6 +121,7 @@
 <li class="toctree-l3"><a class="reference internal" href="data.html#classes">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/data.Data.html">Data</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.DimentionError.html">DimentionError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.FileError.html">FileError</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.FileTypeError.html">FileTypeError</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.FoldersError.html">FoldersError</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.IDError.html">IDError</a></li>
@@ -315,8 +334,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">PyHPDM!</a><ul>
-<li><a class="reference internal" href="#running-scripts">Running scripts</a></li>
+<li><a class="reference internal" href="#">pyHPDM!</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
 </ul>
 </li>

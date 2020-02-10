@@ -76,6 +76,7 @@
                  <span class="n">data_file_terminal_ID</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">data_read_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">data_split_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">data_group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">data_extra_processing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
                  <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -125,6 +126,10 @@
 <span class="sd">    data_split_by : string or list of strings, optional</span>
 <span class="sd">        If multiple participant datasets are in one file sheet, this specifies the column or columns that can</span>
 <span class="sd">        distinguish and identify the rows for each participant. Default ``None``</span>
+<span class="sd">    data_group_by : list of strings, optional</span>
+<span class="sd">        A list of parts of filenames that are repeated across participants, identifying all the files that should</span>
+<span class="sd">        be grouped together to form one participants data. The rest of the filename is assumed to identify the</span>
+<span class="sd">        participant. Default is ``None``</span>
 <span class="sd">    data_extra_processing : callable, optional</span>
 <span class="sd">        A function that modifies the dictionary of data read for each participant in such that it is appropriate</span>
 <span class="sd">        for fitting. Default is ``None``</span>
@@ -227,6 +232,7 @@
                                        <span class="n">feedbacks</span><span class="o">=</span><span class="n">participant_rewards</span><span class="p">,</span>
                                        <span class="n">stimuli</span><span class="o">=</span><span class="n">task_stimuli</span><span class="p">,</span>
                                        <span class="n">action_options</span><span class="o">=</span><span class="n">participant_action_options</span><span class="p">,</span>
+                                       <span class="n">group_by</span><span class="o">=</span><span class="n">data_group_by</span><span class="p">,</span>
                                        <span class="n">extra_processing</span><span class="o">=</span><span class="n">data_extra_processing</span><span class="p">,</span>
                                        <span class="n">data_read_options</span><span class="o">=</span><span class="n">data_read_options</span><span class="p">)</span>
 
@@ -248,13 +254,13 @@
                       <span class="n">parameters</span><span class="o">=</span><span class="n">model_parameters</span><span class="p">,</span>
                       <span class="n">other_options</span><span class="o">=</span><span class="n">model_constant_properties</span><span class="p">)</span>
 
-    <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">FitSim</span><span class="p">(</span><span class="n">partChoiceParam</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
-                             <span class="n">partRewardParam</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">feedbacks</span><span class="p">,</span>
-                             <span class="n">modelFitVar</span><span class="o">=</span><span class="n">model_fit_value</span><span class="p">,</span>
-                             <span class="n">fitSubset</span><span class="o">=</span><span class="n">fit_subset</span><span class="p">,</span>
-                             <span class="n">stimuliParams</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">stimuli</span><span class="p">,</span>
-                             <span class="n">actChoiceParams</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">action_options</span><span class="p">,</span>
-                             <span class="n">fpRespVal</span><span class="o">=</span><span class="n">fit_float_error_response_value</span>
+    <span class="n">model_simulator</span> <span class="o">=</span> <span class="n">FitSim</span><span class="p">(</span><span class="n">participant_choice_property</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
+                             <span class="n">participant_reward_property</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">feedbacks</span><span class="p">,</span>
+                             <span class="n">model_fitting_variable</span><span class="o">=</span><span class="n">model_fit_value</span><span class="p">,</span>
+                             <span class="n">fit_subset</span><span class="o">=</span><span class="n">fit_subset</span><span class="p">,</span>
+                             <span class="n">task_stimuli_property</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">stimuli</span><span class="p">,</span>
+                             <span class="n">action_options_property</span><span class="o">=</span><span class="n">participants</span><span class="o">.</span><span class="n">action_options</span><span class="p">,</span>
+                             <span class="n">float_error_response_value</span><span class="o">=</span><span class="n">fit_float_error_response_value</span>
                              <span class="p">)</span>
 
     <span class="n">fitting_method</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">fit_method</span><span class="p">,</span>
@@ -299,6 +305,7 @@
 
         <span class="n">log_model_fitting_parameters</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span><span class="p">)</span>
 
+        <span class="n">participantID</span> <span class="o">=</span> <span class="n">participants</span><span class="o">.</span><span class="n">participantID</span>
         <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
 
             <span class="n">participant_name</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">participantID</span><span class="p">]</span>

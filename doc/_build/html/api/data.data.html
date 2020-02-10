@@ -81,7 +81,7 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="classmethod">
 <dt id="data.Data.from_csv">
-<em class="property">classmethod </em><code class="descname">from_csv</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em>, <em>csv_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_csv" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_csv</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>csv_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .csv files, where each file contains the information of one participant</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -103,6 +103,9 @@ used.</li>
 <li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
 be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be grouped together to form one participants data. The rest of the filename is assumed to identify the
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>csv_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_csv. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
@@ -125,7 +128,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 
 <dl class="classmethod">
 <dt id="data.Data.from_mat">
-<em class="property">classmethod </em><code class="descname">from_mat</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_mat" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_mat</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .mat files, where each file contains the information of one participant</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,6 +148,9 @@ used.</li>
 <li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
 be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be grouped together to form one participants data. The rest of the filename is assumed to identify the
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 </ul>
@@ -166,7 +172,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 
 <dl class="classmethod">
 <dt id="data.Data.from_pkl">
-<em class="property">classmethod </em><code class="descname">from_pkl</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_pkl" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_pkl</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_pkl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .pkl files, where each file contains the information of one participant.
 This will principally be used to import data stored by task simulations</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -187,6 +193,9 @@ used.</li>
 <li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
 be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be grouped together to form one participants data. The rest of the filename is assumed to identify the
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 </ul>
@@ -204,7 +213,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 
 <dl class="classmethod">
 <dt id="data.Data.from_xlsx">
-<em class="property">classmethod </em><code class="descname">from_xlsx</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em>, <em>xlsx_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_xlsx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_xlsx" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_xlsx</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>xlsx_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.from_xlsx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_xlsx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .xlsx files, where each file contains the information of one participant</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -226,6 +235,9 @@ used.</li>
 <li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
 be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be grouped together to form one participants data. The rest of the filename is assumed to identify the
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>xlsx_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
@@ -248,7 +260,7 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
 
 <dl class="classmethod">
 <dt id="data.Data.load_data">
-<em class="property">classmethod </em><code class="descname">load_data</code><span class="sig-paren">(</span><em>file_type=u'csv'</em>, <em>folders=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>extra_processing=None</em>, <em>data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">load_data</code><span class="sig-paren">(</span><em>file_type=u'csv'</em>, <em>folders=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder. This is a wrapper function for the other import methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -271,6 +283,9 @@ used.</li>
 <li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
 be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
+<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be grouped together to form one participants data. The rest of the filename is assumed to identify the
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
 for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
 <li><strong>data_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for the data importing method chosen</li>

@@ -20,8 +20,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="fitAlgs.leastsq module" href="../fitAlgs.leastsq.html" />
-    <link rel="prev" title="fitAlgs.fitSims module" href="../fitAlgs.fitSims.html" /> 
+    <link rel="next" title="FitSubsetError" href="fitAlgs.fitSims.FitSubsetError.html" />
+    <link rel="prev" title="ActionError" href="fitAlgs.fitSims.ActionError.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -33,10 +33,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../fitAlgs.leastsq.html" title="fitAlgs.leastsq module"
+          <a href="fitAlgs.fitSims.FitSubsetError.html" title="FitSubsetError"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
+          <a href="fitAlgs.fitSims.ActionError.html" title="ActionError"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../fitAlgs.html" >fitAlgs package</a> &#187;</li>
@@ -53,7 +53,7 @@
 <h1>FitSim<a class="headerlink" href="#fitsim" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="fitAlgs.fitSims.FitSim">
-<em class="property">class </em><code class="descclassname">fitAlgs.fitSims.</code><code class="descname">FitSim</code><span class="sig-paren">(</span><em>partChoiceParam=u'Actions'</em>, <em>partRewardParam=u'Rewards'</em>, <em>modelFitVar=u'ActionProb'</em>, <em>stimuliParams=None</em>, <em>fitSubset=None</em>, <em>actChoiceParams=None</em>, <em>fpRespVal=1e-100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitAlgs.fitSims.</code><code class="descname">FitSim</code><span class="sig-paren">(</span><em>participant_choice_property=u'Actions'</em>, <em>participant_reward_property=u'Rewards'</em>, <em>model_fitting_variable=u'ActionProb'</em>, <em>task_stimuli_property=None</em>, <em>fit_subset=None</em>, <em>action_options_property=None</em>, <em>float_error_response_value=1e-100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class for fitting data by passing the participant data through the model.</p>
 <p>This has been setup for fitting action-response models</p>
@@ -62,18 +62,18 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>partChoiceParam</strong> (<em>string</em><em>, </em><em>optional</em>) – The participant data key of their action choices. Default <code class="docutils literal notranslate"><span class="pre">'Actions'</span></code></li>
-<li><strong>partRewardParam</strong> (<em>string</em><em>, </em><em>optional</em>) – The participant data key of the participant reward data. Default <code class="docutils literal notranslate"><span class="pre">'Rewards'</span></code></li>
-<li><strong>modelFitVar</strong> (<em>string</em><em>, </em><em>optional</em>) – The key to be compared in the model data. Default <code class="docutils literal notranslate"><span class="pre">'ActionProb'</span></code></li>
-<li><strong>stimuliParams</strong> (<em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – The keys containing the observational parameters seen by the
+<li><strong>participant_choice_property</strong> (<em>string</em><em>, </em><em>optional</em>) – The participant data key of their action choices. Default <code class="docutils literal notranslate"><span class="pre">'Actions'</span></code></li>
+<li><strong>participant_reward_property</strong> (<em>string</em><em>, </em><em>optional</em>) – The participant data key of the participant reward data. Default <code class="docutils literal notranslate"><span class="pre">'Rewards'</span></code></li>
+<li><strong>model_fitting_variable</strong> (<em>string</em><em>, </em><em>optional</em>) – The key to be compared in the model data. Default <code class="docutils literal notranslate"><span class="pre">'ActionProb'</span></code></li>
+<li><strong>task_stimuli_property</strong> (<em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – The keys containing the stimuli seen by the
 participant before taking a decision on an action. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>actChoiceParams</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>list of ints</em><em>, </em><em>optional</em>) – The name of the key in partData where the list of valid actions
+<li><strong>action_options_property</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>list of ints</em><em>, </em><em>optional</em>) – The name of the key in partData where the list of valid actions
 can be found. If <code class="docutils literal notranslate"><span class="pre">None</span></code> then the action list is considered to
 stay constant. If a list then the list will be taken as the list
 of actions that can be taken at each instance. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>fpRespVal</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – If a floating point error occurs when running a fit the fitter function
+<li><strong>float_error_response_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – If a floating point error occurs when running a fit the fitter function
 will return a value for each element of fpRespVal. Default is <code class="docutils literal notranslate"><span class="pre">1/1e100</span></code></li>
-<li><strong>fitSubset</strong> (<code class="docutils literal notranslate"><span class="pre">float('Nan')</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rewarded&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;unrewarded&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> or list of int, optional) – Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+<li><strong>fit_subset</strong> (<code class="docutils literal notranslate"><span class="pre">float('Nan')</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rewarded&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;unrewarded&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> or list of int, optional) – Describes which, if any, subset of trials will be used to evaluate the performance of the model.
 This can either be described as a list of trial numbers or, by passing
 - <code class="docutils literal notranslate"><span class="pre">&quot;all&quot;</span></code> for fitting all trials
 - <code class="docutils literal notranslate"><span class="pre">float('Nan')</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;unrewarded&quot;</span></code> for all those trials whose feedback was <code class="docutils literal notranslate"><span class="pre">float('Nan')</span></code>
@@ -101,7 +101,7 @@ Default <code class="docutils literal notranslate"><span class="pre">None</span>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg</span></code></dt>
+<dt><a class="reference internal" href="../fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></dt>
 <dd>The general fitting class</dd>
 </dl>
 </div>
@@ -112,32 +112,32 @@ Default <code class="docutils literal notranslate"><span class="pre">None</span>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.findName" title="fitAlgs.fitSims.FitSim.findName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">findName</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.fitSims.FitSim.findName" title="fitAlgs.fitSims.FitSim.findName"><code class="xref py py-obj docutils literal notranslate"><span class="pre">findName</span></code></a>()</td>
 <td>Returns the name of the class</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fitness" title="fitAlgs.fitSims.FitSim.fitness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fitness</span></code></a>(*modelParameters)</td>
+<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.fitSims.FitSim.fitness" title="fitAlgs.fitSims.FitSim.fitness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fitness</span></code></a>(*model_parameters)</td>
 <td>Used by a fitter to generate the list of values characterising how well the model parameters describe the participants actions.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.fittedModel" title="fitAlgs.fitSims.FitSim.fittedModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fittedModel</span></code></a>(*modelParameters)</td>
-<td>Return the model run of the model with specific parameter values</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.fittedModel</span></code></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.formatPartStim" title="fitAlgs.fitSims.FitSim.formatPartStim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formatPartStim</span></code></a>(partData,&nbsp;stimuli,&nbsp;validActions)</td>
-<td>Finds the stimuli in the participant data and returns formatted observations</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.formatPartStim</span></code></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModInput" title="fitAlgs.fitSims.FitSim.getModInput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getModInput</span></code></a>(*modelParameters)</td>
-<td>Compiles the kwarg model arguments based on the modelParameters and previously specified other parameters</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.getModInput</span></code></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getModParams" title="fitAlgs.fitSims.FitSim.getModParams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getModParams</span></code></a>(*modelParameters)</td>
-<td>Compiles the kwarg model parameter arguments based on the modelParameters</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.getModParams</span></code></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.getSim" title="fitAlgs.fitSims.FitSim.getSim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSim</span></code></a>(model,&nbsp;modelSetup,&nbsp;partData)</td>
-<td>Fit participant data to a model for a given task</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.getSim</span></code></td>
+<td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.info" title="fitAlgs.fitSims.FitSim.info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.fitSims.FitSim.info" title="fitAlgs.fitSims.FitSim.info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">info</span></code></a>()</td>
 <td>The dictionary describing the fitters algorithm chosen</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim.participantMatchResult" title="fitAlgs.fitSims.FitSim.participantMatchResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">participantMatchResult</span></code></a>(model,&nbsp;modelSetup,&nbsp;…)</td>
-<td>Run the participant data with a model with specified parameters for a given task</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">FitSim.participantMatchResult</span></code></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -150,18 +150,16 @@ Default <code class="docutils literal notranslate"><span class="pre">None</span>
 
 <dl class="method">
 <dt id="fitAlgs.fitSims.FitSim.fitness">
-<code class="descname">fitness</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.fitness" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fitness</code><span class="sig-paren">(</span><em>*model_parameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.fitness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.fitness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used by a fitter to generate the list of values characterising how well the model parameters describe the
 participants actions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelParameters</strong> (<em>list of floats</em>) – A list of the parameters used by the model in the order previously
-defined</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model_parameters</strong> (<em>list of floats</em>) – A list of the parameters used by the model in the order previously defined</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelPerformance</strong> – The choices made by the model that will be used to characterise the quality of the fit.
-In this case defined as <code class="docutils literal notranslate"><span class="pre">[0]</span></code></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>model_performance</strong> – The choices made by the model that will be used to characterise the quality of the fit.</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of floats</td>
 </tr>
@@ -170,7 +168,7 @@ In this case defined as <code class="docutils literal notranslate"><span class="
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <dl class="last docutils">
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitSim.fitSim.participant()</span></code></dt>
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim.participant()</span></code></dt>
 <dd>Fits participant data</dd>
 <dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitAlg()</span></code></dt>
 <dd>The general fitting class</dd>
@@ -178,124 +176,6 @@ In this case defined as <code class="docutils literal notranslate"><span class="
 <dd>The function that this one is called by</dd>
 </dl>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.fittedModel">
-<code class="descname">fittedModel</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.fittedModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.fittedModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the model run of the model with specific parameter values</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*modelParameters</strong> (<em>floats</em>) – The model parameters provided in the order defined in the model setup</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>modelInstance</strong></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">model class instance</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.formatPartStim">
-<code class="descname">formatPartStim</code><span class="sig-paren">(</span><em>partData</em>, <em>stimuli</em>, <em>validActions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.formatPartStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.formatPartStim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the stimuli in the participant data and returns formatted observations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>partData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The participant data</li>
-<li><strong>stimuli</strong> (list of strings or <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A list of the keys in partData representing participant stimuli</li>
-<li><strong>validActions</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>list of strings</em><em>, </em><em>ints</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a>) – The name of the key in partData where the list of valid actions
-can be found. If <code class="docutils literal notranslate"><span class="pre">None</span></code> then the action list is considered to
-stay constant. If a list then the list will be taken as the list
-of actions that can be taken at every trialstep. If the list is
-shorter than the number of trialsteps, then it will be considered
-to be a list of valid actions for each trialstep.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>observation</strong> – The tuples contain the stimuli and the valid actions for each
-observation instance.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of tuples</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.getModInput">
-<code class="descname">getModInput</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.getModInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.getModInput" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles the kwarg model arguments based on the modelParameters and
-previously specified other parameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelParameters</strong> (<em>list of floats</em>) – The parameter values in the order extracted from the modelSetup
-parameter dictionary</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>inputs</strong> – The kwarg model arguments</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.getModParams">
-<code class="descname">getModParams</code><span class="sig-paren">(</span><em>*modelParameters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.getModParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.getModParams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles the kwarg model parameter arguments based on the
-modelParameters</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>modelParameters</strong> (<em>list of floats</em>) – The parameter values in the order extracted from the modelSetup
-parameter dictionary</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>params</strong> – The kwarg model parameter arguments</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.getSim">
-<code class="descname">getSim</code><span class="sig-paren">(</span><em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.getSim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.getSim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit participant data to a model for a given task</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>model.model.model inherited class</em>) – The model you wish to try and fit values to</li>
-<li><strong>modelSetup</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>)</em>) – The first dictionary is the model initial parameters. The second
-are the other model parameters</li>
-<li><strong>partData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The participant data</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>model</strong> (<em>model.model.model inherited class instance</em>) – The model with the best fit parameters</li>
-<li><strong>fitQuality</strong> (<em>float</em>) – Specifies the fit quality for this participant to the model</li>
-<li><strong>testedParams</strong> (<em>tuple of OrderedDict and list</em>) – They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-fit qualities of these parameters.</li>
-</ul>
-</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -314,32 +194,6 @@ fit qualities of these parameters.</li>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="fitAlgs.fitSims.FitSim.participantMatchResult">
-<code class="descname">participantMatchResult</code><span class="sig-paren">(</span><em>model</em>, <em>modelSetup</em>, <em>partData</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/fitAlgs/fitSims.html#FitSim.participantMatchResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.fitSims.FitSim.participantMatchResult" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the participant data with a model with specified parameters for a given task</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>model.model.model inherited class</em>) – The model you wish to try and fit values to</li>
-<li><strong>modelSetup</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>)</em>) – The first dictionary is the model varying parameters. The second
-are the other model parameters</li>
-<li><strong>partData</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The participant data</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> – The model with the best fit parameters</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">model.model.model inherited class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -351,11 +205,11 @@ are the other model parameters</li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../fitAlgs.fitSims.html"
-                        title="previous chapter">fitAlgs.fitSims module</a></p>
+  <p class="topless"><a href="fitAlgs.fitSims.ActionError.html"
+                        title="previous chapter">ActionError</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../fitAlgs.leastsq.html"
-                        title="next chapter">fitAlgs.leastsq module</a></p>
+  <p class="topless"><a href="fitAlgs.fitSims.FitSubsetError.html"
+                        title="next chapter">FitSubsetError</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -389,10 +243,10 @@ are the other model parameters</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../fitAlgs.leastsq.html" title="fitAlgs.leastsq module"
+          <a href="fitAlgs.fitSims.FitSubsetError.html" title="FitSubsetError"
              >next</a> |</li>
         <li class="right" >
-          <a href="../fitAlgs.fitSims.html" title="fitAlgs.fitSims module"
+          <a href="fitAlgs.fitSims.ActionError.html" title="ActionError"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../fitAlgs.html" >fitAlgs package</a> &#187;</li>
