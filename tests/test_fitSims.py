@@ -5,163 +5,209 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import sys
-sys.path.append("../../")
+sys.path.append("../")
 
 import pytest
+import itertools
 
-from numpy import array
+import numpy as np
 
 from modelGenerator import ModelGen
-from model.qLearn import QLearn
-from fitAlgs.fitSims import FitSim
-from fitAlgs.minimize import Minimize
 
-#def test_an_exception():
-#    with raises(IndexError):
-#        # Indexing the 30th item in a 3 item list
-#        [5, 10, 15][30]
+import fitAlgs.fitSims as fitSims
 
-      
+
 @pytest.fixture(scope="function")
-def modelSets():
-    
-    beta = 0.15
-    alpha = 0.2
-    theta = 1.5
-    parameters = {'alpha': alpha,
-    #                 'beta': beta,
-                  'theta': theta}
-    paramExtras = {'prior': array([0.5,0.5])}
-    
-    modelSet = ModelGen((QLearn, parameters, paramExtras))
-    modelInfos = [m for m in modelSet.iterInitDetails()]
+def model_setup():
+    number_actions = 2
+    number_cues = 1
+
+    model_parameters = {'alpha': (0, 1),
+                        'beta': (0, 30)}
+    model_static_args = {'number_actions': number_actions,
+                         'number_cues': number_cues,
+                         'action_codes': {0: 0, 1: 1},
+                         'expect': np.full(number_actions, 0.5, float),
+                         'prior': np.full(number_actions, 1 / number_actions, float),
+                         'stimulus_shaper_name': 'StimulusDecksLinear',
+                         'reward_shaper_name': 'RewardDecksNormalised',
+                         'decision_function_name': 'weightProb',
+                         'task_responses': [1, 2]}
+
+    models = ModelGen(model_name='QLearn',
+                      parameters=model_parameters,
+                      other_options=model_static_args)
+
+    modelInfos = [m for m in models.iter_details()]
     modelInfo = modelInfos[0]
     model = modelInfo[0]
     modelSetup = modelInfo[1:]
-    
+
     return model, modelSetup
-    
-@pytest.fixture(scope="module")
-def participant():
-    
-    data = {'subchoice': array([2, 1, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 
-                                2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2,
-                                2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,
-                                2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1,
-                                2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 1]),
-             'subreward': array([7,  2,  2, 10,  5, 10,  6,  1,  6, 10, 10, 10,  1,
-                                 8,  4,  8, 10, 4,  9, 10,  8,  2,  1,  1,  3,  2,  
-                                 6,  2,  8,  6,  1,  6, 10, 10, 10,  4,  7, 10,  5,  
-                                 2,  1,  1,  5,  8,  5, 10,  4, 10, 10,  9,  2,  9,  
-                                 8, 10,  7,  7,  1, 10, 10,  8,  3, 10,  2, 10,  7, 
-                                 10,  8,  3,  6,  4,  4,  9, 10,  3,  7,  2,  6,  3,  
-                                 1,  5]), 
-             'cumpts': array([7,   9,  11,  21,  26,  36,  42,  43,  49,  59,  69,
-                              79,  80,  88,  92, 100, 110, 114, 123, 133, 141, 143, 
-                              144, 145, 148, 150, 156, 158, 166, 172, 173, 179, 189, 
-                              199, 209, 213, 220, 230, 235, 237, 238, 239, 244, 252, 
-                              257, 267, 271, 281, 291, 300, 302, 311, 319, 329, 336, 
-                              343, 344, 354, 364, 372, 375, 385, 387, 397, 404, 414, 
-                              422, 425, 431, 435, 439, 448, 458, 461, 468, 470, 476, 
-                              479, 480, 485])}
-                              
-    return data
-    
-@pytest.fixture(scope="module")
-def probabilities():
-    
-    prob = array([5.000e-01,   3.543e-01,   1.824e-01,   9.020e-01,   9.734e-01,
-                  9.610e-01,   9.877e-01,   1.577e-02,   9.934e-01,   9.919e-01,
-                  9.971e-01,   9.987e-01,   6.491e-04,   9.997e-01,   9.997e-01,
-                  9.988e-01,   9.990e-01,   9.995e-01,   9.985e-01,   9.991e-01,
-                  9.996e-01,   4.335e-04,   3.341e-04,   2.009e-04,   1.338e-04,
-                  1.760e-04,   1.625e-04,   5.056e-04,   3.778e-04,   9.982e-01,
-                  3.320e-03,   1.427e-03,   9.968e-01,   9.984e-01,   9.991e-01,
-                  9.994e-01,   9.976e-01,   9.969e-01,   9.985e-01,   3.886e-03,
-                  2.265e-03,   1.089e-03,   6.058e-04,   1.257e-03,   5.524e-03,
-                  9.926e-01,   9.965e-01,   9.885e-01,   9.950e-01,   9.974e-01,
-                  9.980e-01,   9.865e-01,   9.923e-01,   9.934e-01,   9.968e-01,
-                  9.956e-01,   9.944e-01,   4.040e-02,   1.919e-01,   4.866e-01,
-                  6.115e-01,   6.549e-01,   8.503e-01,   4.466e-01,   7.331e-01,
-                  7.484e-01,   8.863e-01,   9.025e-01,   2.970e-01,   2.932e-01,
-                  8.168e-01,   6.691e-01,   8.280e-01,   9.286e-01,   2.208e-01,
-                  2.989e-01,   8.835e-01,   8.678e-01,   2.959e-01,   8.914e-01])
-                  
-    return prob
-                              
-@pytest.fixture(scope="function")
-def fitting():
-    
-    def scaleFunc(x):
-        return x - 1
-        
-    fitAlg = Minimize(fitQualityFunc="-2log", method='constrained', bounds={'alpha': (0, 1), 'theta': (0, 40)})
-
-    fit = FitSim('subchoice', 'subreward', 'ActionProb', fitAlg, scaleFunc)
-    
-    return fit, fitAlg
 
 
-class TestClass: 
-    
-    def test_complete(self, fitting, participant, modelSets):
-        model, modelSetup = modelSets
-        fit, fitAlg = fitting
-        
-        modelFitted, fitQuality = fit.participant(None, model, modelSetup, participant)
-        params = modelFitted.params()
-        
-        assert abs(params['alpha'] - 0.038898802) < 0.01	
-        assert abs(params['theta'] - 0.220813253) < 0.01
-        
-    def test_modelInputs(self,fitting, modelSets):
-        
-        fit, fitAlg = fitting
-        model, modelSetup = modelSets
-        modelParams, modelOtherParams = modelSetup
-        
-        paramNames = ['alpha', 'theta']
-        paramInputs = [modelParams[n] for n in paramNames]
-        
-        fit.mParamNames = paramNames
-        fit.mOtherParams = modelOtherParams
-        inputs = fit._getModInput(*paramInputs)
-        
-        answer = {'alpha': 0.2, 'prior': array([0.5,  0.5]), 'theta': 1.5}
-        
-        for k,v in answer.iteritems():
-            assert (abs(inputs[k] - v) < 0.01).all()
-        
-    def test_simSetup(self, fitting, participant, modelSets, probabilities):
-        
-        fit, fitAlg = fitting
-        model, modelSetup = modelSets
-        modelParams, modelOtherParams = modelSetup
-        
-        paramNames = ['alpha', 'theta']
-        paramInputs = [modelParams[n] for n in paramNames]
-        
-        fit.model = model
-        fit.mParamNames = paramNames
-        fit.mOtherParams = modelOtherParams
-        fit.partChoices = fit.scaler(participant['subchoice'])
-        fit.partRewards = participant['subreward']
-        
-        model = fit._simSetup(*paramInputs)
-        
-        results = model.returnTaskState()
+@pytest.fixture(scope='session')
+def participant_data_setup():
 
-        probs = results["Probabilities"]
-        act = results["Actions"]
-        actProb = results['ActionProb']
-        
-        for i, a in enumerate(act):
-            assert probs[i, a] == actProb[i]
-            
-        assert (abs(actProb - probabilities) < 0.01).all()
+    participant_data = {'Rewards': [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+                        'Stimuli': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        'non_action': u'None',
+                        'valid_actions_combined': [['E', 'F'], ['E', 'F'], ['A', 'B'], ['E', 'F'], ['E', 'F'],
+                                                   ['E', 'F'], ['D', 'B'], ['E', 'D'], ['C', 'B'], ['E', 'C'],
+                                                   ['A', 'D'], ['A', 'F']],
+                        'simID': '0',
+                        'Decisions': ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A']}
+
+    return participant_data
 
 
-if __name__ == '__main__':
-    pytest.main()
-    
-#    pytest.set_trace()
+class TestClass_basic:
+
+    def test_FS_info(self):
+        fit_sim = fitSims.FitSim()
+        result = fit_sim.info()
+        correct_result = {'Name': 'FitSim',
+                          'participant_choice_property': 'Actions',
+                          'participant_reward_property': 'Rewards',
+                          'task_stimuli_property': None,
+                          'action_options_property': None,
+                          'model_fitting_variable': 'ActionProb',
+                          'float_error_response_value': 1 / 1e100,
+                          'fit_subset': None}
+        for k in result.iterkeys():
+            assert result[k] == correct_result[k]
+
+    def test_FS_subset(self):
+        fit_sim = fitSims.FitSim()
+        subset_values = [np.nan, 'all', 'unrewarded', 'rewarded', [1, 2, 3], None]
+        subset_returns = [[], None, [], [], [1, 2, 3], None]
+        for values, returns in itertools.izip(subset_values, subset_returns):
+            results = fit_sim._preprocess_fit_subset(values)
+            assert results == returns
+
+    def test_FS_subset2(self):
+        fit_sim = fitSims.FitSim()
+        subset_values = ['boo', 1, {}]
+        for values in subset_values:
+            with pytest.raises(fitSims.FitSubsetError, match='{} is not a known fit_subset'.format(values)):
+                assert fit_sim._preprocess_fit_subset(values)
+
+    def test_FS_subset3(self):
+        fit_sim = fitSims.FitSim()
+        part_rewards = [1, 2, np.nan, np.nan, 5]
+        subset_values = [np.nan, 'unrewarded', 'rewarded']
+        subset_returns = [[False, False, True, True, False],
+                          [False, False, True, True, False],
+                          [True, True, False, False, True]]
+        for values, returns in itertools.izip(subset_values, subset_returns):
+            results = fit_sim._set_fit_subset(values, part_rewards)
+            assert all(results == returns)
+
+    def test_FS_subset4(self):
+        fit_sim = fitSims.FitSim()
+        part_rewards = [1, 2, np.nan, np.nan, 5]
+        subset_values = ['all', None]
+        for values in subset_values:
+            with pytest.raises(fitSims.FitSubsetError, match='{} is not a known fit_subset'.format(values)):
+                assert fit_sim._set_fit_subset(values, part_rewards)
+
+class TestClass_participant:
+
+    def test_participant_processing(self, participant_data_setup):
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim()
+        result = fit_sim.participant_sequence_generation(participant_data,
+                                                         'Decisions',
+                                                         'Rewards',
+                                                         None,
+                                                         'valid_actions_combined')
+        correct_result = [[(None, ['E', 'F']), (None, ['E', 'F']), (None, ['A', 'B']), (None, ['E', 'F']),
+                           (None, ['E', 'F']), (None, ['E', 'F']), (None, ['D', 'B']), (None, ['E', 'D']),
+                           (None, ['C', 'B']), (None, ['E', 'C']), (None, ['A', 'D']), (None, ['A', 'F'])],
+                          ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
+                          [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
+        for row, correct_row in itertools.izip(result, correct_result):
+            assert row == correct_row
+
+    def test_participant_processing2(self, participant_data_setup):
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim()
+        result = fit_sim.participant_sequence_generation(participant_data,
+                                                         'Decisions',
+                                                         'Rewards',
+                                                         None,
+                                                         None)
+        correct_result = [[(None, None), (None, None), (None, None), (None, None), (None, None), (None, None),
+                           (None, None), (None, None), (None, None), (None, None), (None, None), (None, None)],
+                          ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
+                          [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
+        for row, correct_row in itertools.izip(result, correct_result):
+            assert row == correct_row
+
+    def test_participant_processing3(self, participant_data_setup):
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim()
+        result = fit_sim.participant_sequence_generation(participant_data,
+                                                         'Decisions',
+                                                         'Rewards',
+                                                         None,
+                                                         ['A', 'B', 'C', 'D', 'E', 'F'])
+        correct_result = [[(None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F']),
+                           (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F']),
+                           (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F']),
+                           (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F']),
+                           (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F']),
+                           (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F'])],
+                          ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
+                          [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
+        for row, correct_row in itertools.izip(result, correct_result):
+            assert row == correct_row
+
+    def test_participant_processing4(self, participant_data_setup):
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim()
+        with pytest.raises(fitSims.ActionError):
+            fit_sim.participant_sequence_generation(participant_data,
+                                                             'Decisions',
+                                                             'Rewards',
+                                                             None,
+                                                             ['A', 'C', 'D', 'E', 'F'])
+
+
+class TestClass_model:
+
+    def test_model_parameters(self, model_setup):
+        model, (model_parameters, model_properties) = model_setup
+
+        fit_sim = fitSims.FitSim()
+        fit_sim.model_parameter_names = model_parameters.keys()
+        results = fit_sim.get_model_parameters(*model_parameters.values())
+        correct_results = model_parameters
+        for k in results:
+            assert results[k] == correct_results[k]
+
+    def test_model_properties(self, model_setup):
+        model, (model_parameters, model_properties) = model_setup
+
+        fit_sim = fitSims.FitSim()
+        fit_sim.model_parameter_names = model_parameters.keys()
+        fit_sim.model_other_properties = model_properties
+        results = fit_sim.get_model_properties(*model_parameters.values())
+
+        correct_results = model_parameters.copy()
+        correct_results.update(model_properties)
+
+        for k in results:
+            result = results[k]
+            if isinstance(result, np.ndarray):
+                assert all(result == correct_results[k])
+            else:
+                assert result == correct_results[k]
+
+    def test_simulation(self, model_setup, participant_data_setup):
+        model, (model_parameters, model_properties) = model_setup
+        participant_data = participant_data_setup

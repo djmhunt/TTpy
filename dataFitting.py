@@ -211,13 +211,13 @@ def data_fitting(data_folder='./',
                       parameters=model_parameters,
                       other_options=model_constant_properties)
 
-    model_simulator = FitSim(partChoiceParam=participants.choices,
-                             partRewardParam=participants.feedbacks,
-                             modelFitVar=model_fit_value,
-                             fitSubset=fit_subset,
-                             stimuliParams=participants.stimuli,
-                             actChoiceParams=participants.action_options,
-                             fpRespVal=fit_float_error_response_value
+    model_simulator = FitSim(participant_choice_property=participants.choices,
+                             participant_reward_property=participants.feedbacks,
+                             model_fitting_variable=model_fit_value,
+                             fit_subset=fit_subset,
+                             task_stimuli_property=participants.stimuli,
+                             action_options_property=participants.action_options,
+                             float_error_response_value=fit_float_error_response_value
                              )
 
     fitting_method = utils.find_class(fit_method,

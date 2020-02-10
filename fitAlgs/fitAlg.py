@@ -159,14 +159,14 @@ class FitAlg(object):
             fit qualities of these parameters.
         """
 
-        sim = self.fitSim.getSim(model, modelSetup, partData)
+        sim = self.fitSim.prepare_sim(model, modelSetup, partData)
 
         mInitialParams = modelSetup[0].values() # These are passed separately to define at this point the order of the parameters
         mParamNames = modelSetup[0].keys()
 
         fitVals, fitQuality, fitInfo = self.fit(sim, mParamNames, mInitialParams[:])
 
-        modelRun = self.fitSim.fittedModel(*fitVals)
+        modelRun = self.fitSim.fitted_model(*fitVals)
 
         fitMeasures = self.extraMeasures(*fitVals)
 

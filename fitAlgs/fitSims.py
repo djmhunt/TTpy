@@ -14,6 +14,18 @@ import types
 import utils
 
 
+class FitSubsetError(Exception):
+    pass
+
+
+class ActionError(Exception):
+    pass
+
+
+class StimuliError(Exception):
+    pass
+
+
 class FitSim(object):
     """
     A class for fitting data by passing the participant data through the model.
@@ -22,24 +34,24 @@ class FitSim(object):
 
     Parameters
     ----------
-    partChoiceParam : string, optional
+    participant_choice_property : string, optional
         The participant data key of their action choices. Default ``'Actions'``
-    partRewardParam : string, optional
+    participant_reward_property : string, optional
         The participant data key of the participant reward data. Default ``'Rewards'``
-    modelFitVar : string, optional
+    model_fitting_variable : string, optional
         The key to be compared in the model data. Default ``'ActionProb'``
-    stimuliParams : list of strings or None, optional
-        The keys containing the observational parameters seen by the
+    task_stimuli_property : list of strings or None, optional
+        The keys containing the stimuli seen by the
         participant before taking a decision on an action. Default ``None``
-    actChoiceParams : string or None or list of ints, optional
+    action_options_property : string or None or list of ints, optional
         The name of the key in partData where the list of valid actions
         can be found. If ``None`` then the action list is considered to
         stay constant. If a list then the list will be taken as the list
         of actions that can be taken at each instance. Default ``None``
-    fpRespVal : float, optional
+    float_error_response_value : float, optional
         If a floating point error occurs when running a fit the fitter function
         will return a value for each element of fpRespVal. Default is ``1/1e100``
-    fitSubset : ``float('Nan')``, ``None``, ``"rewarded"``, ``"unrewarded"``, ``"all"`` or list of int, optional
+    fit_subset : ``float('Nan')``, ``None``, ``"rewarded"``, ``"unrewarded"``, ``"all"`` or list of int, optional
         Describes which, if any, subset of trials will be used to evaluate the performance of the model.
         This can either be described as a list of trial numbers or, by passing
         - ``"all"`` for fitting all trials
@@ -54,196 +66,229 @@ class FitSim(object):
 
     See Also
     --------
-    fitAlgs.fitAlg.fitAlg : The general fitting class
+    fitAlgs.fitAlg.FitAlg : The general fitting class
     """
-## TODO: Change the way in which the fitSubset parameter refers to reward trials with no feedback to be more consistent.
 
-    def __init__(self, partChoiceParam='Actions',
-                 partRewardParam='Rewards',
-                 modelFitVar='ActionProb',
-                 stimuliParams=None,
-                 fitSubset=None,
-                 actChoiceParams=None,
-                 fpRespVal=1/1e100
+    def __init__(self,
+                 participant_choice_property='Actions',
+                 participant_reward_property='Rewards',
+                 model_fitting_variable='ActionProb',
+                 task_stimuli_property=None,
+                 fit_subset=None,
+                 action_options_property=None,
+                 float_error_response_value=1 / 1e100
                  ):
 
-        self.partChoiceParam = partChoiceParam
-        self.partRewardParam = partRewardParam
-        self.modelFitVar = modelFitVar
-        self.partStimuliParams = stimuliParams
-        self.partActChoiceParams = actChoiceParams
-        self.fpRespVal = fpRespVal
-        self.fitSubset = fitSubset
+        self.participant_choice_property = participant_choice_property
+        self.participant_reward_property = participant_reward_property
+        self.model_fitting_variable = model_fitting_variable
+        self.task_stimuli_property = task_stimuli_property
+        self.action_options_property = action_options_property
+        self.float_error_response_value = float_error_response_value
+        self.fit_subset = fit_subset
+        self.fit_subset_described = self._preprocess_fit_subset(fit_subset)
 
         self.Name = self.findName()
 
-        self.fitInfo = {'Name': self.Name,
-                        'participantChoiceParam': partChoiceParam,
-                        'participantRewardParam': partRewardParam,
-                        'participantStimuliParams': stimuliParams,
-                        'participantActChoiceParams': actChoiceParams,
-                        'modelFitVar': modelFitVar,
-                        'fpRespVal': fpRespVal,
-                        'fitSubset': fitSubset}
+        self.sim_info = {'Name': self.Name,
+                         'participant_choice_property': participant_choice_property,
+                         'participant_reward_property': participant_reward_property,
+                         'task_stimuli_property': task_stimuli_property,
+                         'action_options_property': action_options_property,
+                         'model_fitting_variable': model_fitting_variable,
+                         'float_error_response_value': float_error_response_value,
+                         'fit_subset': fit_subset}
 
-    def fitness(self, *modelParameters):
+        self.model = None
+        self.initial_parameter_values = None
+        self.model_parameter_names = None
+        self.model_other_properties = None
+
+        self.participant_observations = None
+        self.participant_actions = None
+        self.participant_rewards = None
+
+    def fitness(self, *model_parameters):
         """
         Used by a fitter to generate the list of values characterising how well the model parameters describe the
         participants actions.
 
         Parameters
         ----------
-        modelParameters : list of floats
-            A list of the parameters used by the model in the order previously
-            defined
+        model_parameters : list of floats
+            A list of the parameters used by the model in the order previously defined
 
         Returns
         -------
-        modelPerformance : list of floats
+        model_performance : list of floats
             The choices made by the model that will be used to characterise the quality of the fit.
-            In this case defined as ``[0]``
 
         See Also
         --------
-        fitAlgs.fitSim.fitSim.participant : Fits participant data
+        fitAlgs.fitSims.FitSim.participant : Fits participant data
         fitAlgs.fitAlg.fitAlg : The general fitting class
         fitAlgs.fitAlg.fitAlg.fitness : The function that this one is called by
         """
 
-        # Run model with given parameters
         try:
-            modelInstance = self.fittedModel(*modelParameters)
+            model_instance = self.fitted_model(*model_parameters)
         except FloatingPointError:
             message = utils.errorResp()
             logger = logging.getLogger('Fitter')
             logger.warning(
                     u"{0}\n. Abandoning fitting with parameters: {1} Returning an action choice probability for each trialstep of {2}".format(message,
                                                                                                                                               repr(
-                                                                                                                                                  self.getModParams(
-                                                                                                                                                      *modelParameters)),
+                                                                                                                                                  self.get_model_parameters(
+                                                                                                                                                      *model_parameters)),
                                                                                                                                               repr(
-                                                                                                                                                  self.fpRespVal)))
-            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
+                                                                                                                                                  self.float_error_response_value)))
+            return np.ones(np.array(self.participant_rewards).shape) * self.float_error_response_value
         except ValueError as e:
             logger = logging.getLogger('Fitter')
             logger.warn(
                 "{0} in fitted model. Abandoning fitting with parameters: {1}  Returning an action choice probability for each trialstep of {2} - {3}, - {4}".format(
                     type(e),
-                    repr(self.getModParams(*modelParameters)),
-                    repr(self.fpRespVal),
+                    repr(self.get_model_parameters(*model_parameters)),
+                    repr(self.float_error_response_value),
                     e.message,
                     e.args))
-            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
+            return np.ones(np.array(self.participant_rewards).shape) * self.float_error_response_value
 
         # Pull out the values to be compared
+        model_data = model_instance.returnTaskState()
+        model_choice_probabilities = model_data[self.model_fitting_variable]
 
-        modelData = modelInstance.returnTaskState()
-        modelChoices = modelData[self.modelFitVar]
-
-        if self.fitSubsetChosen is not types.NoneType:
-            modelPerformance = modelChoices[self.fitSubsetChosen]
+        if self.fit_subset_described is None:
+            model_performance = model_choice_probabilities
         else:
-            modelPerformance = modelChoices
+            model_performance = model_choice_probabilities[self.fit_subset_described]
 
-        if np.isnan(modelPerformance).any():
+        if np.isnan(model_performance).any():
             logger = logging.getLogger('Fitter')
             message = "model performance values contain NaN"
             logger.warning(message + ".\n Abandoning fitting with parameters: "
-                           + repr(self.getModParams(*modelParameters))
+                           + repr(self.get_model_parameters(*model_parameters))
                            + " Returning an action choice probability for each trialstep of "
-                           + repr(self.fpRespVal))
-            return np.ones(np.array(self.partRewards).shape) * self.fpRespVal
+                           + repr(self.float_error_response_value))
+            return np.ones(np.array(self.participant_rewards).shape) * self.float_error_response_value
 
-        return modelPerformance
+        return model_performance
 
-    def getSim(self, model, modelSetup, partData):
+    def prepare_sim(self, model, model_setup, participant_data):
         """
-        Fit participant data to a model for a given task
+        Set up the simulation of a model following the behaviour of a participant
 
         Parameters
         ----------
-        model : model.model.model inherited class
+        model : model.modelTemplate.Model inherited class
             The model you wish to try and fit values to
-        modelSetup : (dict,dict)
+        model_setup : (dict,dict)
             The first dictionary is the model initial parameters. The second
-            are the other model parameters
-        partData : dict
+            are the other model properties
+        participant_data : dict
             The participant data
 
         Returns
         -------
-        model : model.model.model inherited class instance
-            The model with the best fit parameters
-        fitQuality : float
-            Specifies the fit quality for this participant to the model
-        testedParams : tuple of OrderedDict and list
-            They are an ordered dictionary containing the parameter values tested, in the order they were tested, and the
-            fit qualities of these parameters.
+        fitness
         """
-        fitSubset = self.fitSubset
 
         self.model = model
-        self.mInitialParams = modelSetup[0].values()  # These are passed separately to define at this point the order of the parameters
-        self.mParamNames = modelSetup[0].keys()
-        self.mOtherParams = modelSetup[1]
+        self.initial_parameter_values = model_setup[0].values()
+        self.model_parameter_names = model_setup[0].keys()
+        self.model_other_properties = model_setup[1]
 
-        self.partChoices = partData[self.partChoiceParam]
+        participant_sequence = self.participant_sequence_generation(participant_data,
+                                                                    self.participant_choice_property,
+                                                                    self.participant_reward_property,
+                                                                    self.task_stimuli_property,
+                                                                    self.action_options_property)
 
-        self.partRewards = partData[self.partRewardParam]
+        self.participant_observations, self.participant_actions, self.participant_rewards = participant_sequence
 
-        self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
-
-        if fitSubset is not None:
-            if isinstance(fitSubset, (list, np.ndarray)):
-                self.fitSubsetChosen = fitSubset
-            elif fitSubset == "rewarded":
-                self.fitSubsetChosen = ~np.isnan(self.partRewards)
-            elif fitSubset == "unrewarded":
-                self.fitSubsetChosen = ~np.isnan(self.partRewards)
-            elif fitSubset == "all":
-                self.fitSubsetChosen = None
-            elif isinstance(fitSubset, float) and np.isnan(fitSubset):
-                self.fitSubsetChosen = np.isnan(self.partRewards)
-            else:
-                self.fitSubsetChosen = None
-        else:
-            self.fitSubsetChosen = None
+        if not self.fit_subset_described and self.fit_subset_described is not None:
+            self.fit_subset_described = self._set_fit_subset(self.fit_subset, self.participant_rewards)
 
         return self.fitness
 
-    def participantMatchResult(self, model, modelSetup, partData):
+    @staticmethod
+    def participant_sequence_generation(participant_data,
+                                        choice_property,
+                                        reward_property,
+                                        stimuli_property,
+                                        action_options_property):
         """
-        Run the participant data with a model with specified parameters for a given task
+        Finds the stimuli in the participant data and returns formatted observations
 
         Parameters
         ----------
-        model : model.model.model inherited class
-            The model you wish to try and fit values to
-        modelSetup : (dict,dict)
-            The first dictionary is the model varying parameters. The second
-            are the other model parameters
-        partData : dict
+        participant_data : dict
             The participant data
+        choice_property : string
+            The participant data key of their action choices.
+        reward_property : string
+            The participant data key of the participant reward data
+        stimuli_property : string or None or list of strings
+            A list of the keys in partData representing participant stimuli
+        action_options_property : string or None or list of strings, ints or None
+            The name of the key in partData where the list of valid actions
+            can be found. If ``None`` then the action list is considered to
+            stay constant. If a list then the list will be taken as the list
+            of actions that can be taken at every trialstep. If the list is
+            shorter than the number of trialsteps, then it will be considered
+            to be a list of valid actions for each trialstep.
 
         Returns
         -------
-        model : model.model.model inherited class instance
-            The model with the best fit parameters
+        participant_sequence : list of three element tuples
+            Each list element contains the observation, action and feedback for each trial taken
+            by the participant
         """
-        self.model = model
-        fitVals = modelSetup[0].values()  # These are passed seperately to define at this point the order of the parameters
-        self.mParamNames = modelSetup[0].keys()
-        self.mOtherParams = modelSetup[1]
 
-        self.partChoices = partData[self.partChoiceParam]
+        actions = participant_data[choice_property]
+        rewards = participant_data[reward_property]
 
-        self.partRewards = partData[self.partRewardParam]
+        participant_data_length = len(actions)
 
-        self.partObs = self.formatPartStim(partData, self.partStimuliParams, self.partActChoiceParams)
+        partDataShape = None
+        if stimuli_property is None:
+            stimuli_data = [None] * participant_data_length
+        elif isinstance(stimuli_property, basestring):
+            stimuli_data = np.array(participant_data[stimuli_property])
+            partDataShape = stimuli_data.shape
+        elif isinstance(stimuli_property, list):
+            if len(stimuli_property) > 1:
+                stimuli_data = np.array([participant_data[s] for s in stimuli_property]).T
+            else:
+                stimuli_data = participant_data[stimuli_property[0]]
+            partDataShape = stimuli_data.shape
+        else:
+            raise StimuliError('Unknown representation of stimuli')
 
-        model = self.fittedModel(*fitVals)
+        if partDataShape:
+            if max(partDataShape) != partDataShape[0]:
+                stimuli_data = stimuli_data.T
 
-        return model
+        if isinstance(action_options_property, basestring) and action_options_property in participant_data:
+            available_actions = participant_data[action_options_property]
+        elif action_options_property is None or len(action_options_property) != participant_data_length:
+            available_actions = [action_options_property] * participant_data_length
+        else:
+            available_actions = action_options_property
+
+        mismatches = [True if (trial_available_actions is not None and trial_action not in trial_available_actions)
+                           else False
+                      for trial_action, trial_available_actions in itertools.izip(actions, available_actions)]
+
+        if any(mismatches):
+            mismatch_actions = [a for a, m in itertools.izip(actions, mismatches) if m is True]
+            mismatch_available_actions = [a for a, m in itertools.izip(available_actions, mismatches) if m is True]
+            raise ActionError('An action is chosen that is not listed as available for the trial \n{}\n {}'.format(mismatch_actions,
+                                                                                                               mismatch_available_actions))
+
+        observations = [(s, a) for s, a in itertools.izip(stimuli_data, available_actions)]
+
+        return observations, actions, rewards
 
     def info(self):
         """
@@ -255,7 +300,7 @@ class FitSim(object):
             The dictionary of fitters class information
         """
 
-        return self.fitInfo
+        return self.sim_info
 
     def findName(self):
         """
@@ -264,182 +309,171 @@ class FitSim(object):
 
         return self.__class__.__name__
 
-    def fittedModel(self, *modelParameters):
+    def fitted_model(self, *model_parameters):
         """
-        Return the model run of the model with specific parameter values
+        Simulating a model run with specific parameter values
 
         Parameters
         ----------
-        *modelParameters : floats
+        *model_parameters : floats
             The model parameters provided in the order defined in the model setup
 
         Returns
         -------
-        modelInstance : model class instance
+        model_instance : model.modelTemplate.Model class instance
         """
 
-        partAct = self.partChoices
-        partReward = self.partRewards
-        partObs = self.partObs
+        model_arguments = self.get_model_properties(*model_parameters)
 
-        modelInstance = self._simSetup(partAct, partReward, partObs, *modelParameters)
+        model_instance = self.model(**model_arguments)
 
-        return modelInstance
+        model_instance = self._simulation_run(model_instance,
+                                              self.participant_observations,
+                                              self.participant_actions,
+                                              self.participant_rewards)
 
-    def getModInput(self, *modelParameters):
+        return model_instance
+
+    def get_model_properties(self, *model_parameters):
         """
-        Compiles the kwarg model arguments based on the modelParameters and
+        Compiles the kwarg model arguments based on the model_parameters and
         previously specified other parameters
 
         Parameters
         ----------
-        modelParameters : list of floats
-            The parameter values in the order extracted from the modelSetup
-            parameter dictionary
+        model_parameters : list of floats
+            The parameter values in the order extracted from the modelSetup parameter dictionary
 
         Returns
         -------
-        inputs : dict
+        model_properties : dict
             The kwarg model arguments
         """
 
-        inputs = self.getModParams(*modelParameters)
+        model_properties = self.get_model_parameters(*model_parameters)
 
-        for k, v in self.mOtherParams.iteritems():
-            inputs[k] = copy.deepcopy(v)
+        for k, v in self.model_other_properties.iteritems():
+            model_properties[k] = copy.deepcopy(v)
 
-        return inputs
+        return model_properties
 
-    def getModParams(self, *modelParameters):
+    def get_model_parameters(self, *model_parameters):
         """
-        Compiles the kwarg model parameter arguments based on the
-        modelParameters
+        Compiles the model parameter arguments based on the model parameters
 
         Parameters
         ----------
-        modelParameters : list of floats
-            The parameter values in the order extracted from the modelSetup
-            parameter dictionary
+        model_parameters : list of floats
+            The parameter values in the order extracted from the modelSetup parameter dictionary
 
         Returns
         -------
-        params : dict
+        parameters : dict
             The kwarg model parameter arguments
         """
 
-        params = {k: v for k, v in itertools.izip(self.mParamNames, modelParameters)}
+        parameters = {k: v for k, v in itertools.izip(self.model_parameter_names, model_parameters)}
 
-        return params
+        return parameters
 
-    def formatPartStim(self, partData, stimuli, validActions):
+    @staticmethod
+    def _simulation_run(model_instance, observations, actions, rewards):
         """
-        Finds the stimuli in the participant data and returns formatted observations
+        Simulates the events of a simulation from the perspective of a model
 
         Parameters
         ----------
-        partData : dict
-            The participant data
-        stimuli : list of strings or ``None``
-            A list of the keys in partData representing participant stimuli
-        validActions : string or None or list of strings, ints or None
-            The name of the key in partData where the list of valid actions
-            can be found. If ``None`` then the action list is considered to
-            stay constant. If a list then the list will be taken as the list
-            of actions that can be taken at every trialstep. If the list is
-            shorter than the number of trialsteps, then it will be considered
-            to be a list of valid actions for each trialstep.
+        model_instance : model.modelTemplate.modelTemplate class instance
+        observations : list of tuples
+            The sequence of (stimuli, valid actions) for each trial
+        actions : list
+            The sequence of participant actions for each trial
+        rewards : list
+            The sequence of participant rewards for each trial
+        model_instance : model.modelTemplate.Model class instance
+            The same instance that is returned
 
         Returns
         -------
-        observation : list of tuples
-            The tuples contain the stimuli and the valid actions for each
-            observation instance.
+        model_instance : model.modelTemplate.Model class instance
+            The same instance that was passed in
         """
 
-        partDataShape = None
-        if stimuli is None:
-            partDataLen = len(partData[self.partRewardParam])
-            stimuliData = [None] * partDataLen
-        elif isinstance(stimuli, basestring):
-            stimuliData = np.array(partData[stimuli])
-            partDataShape = stimuliData.shape
-        elif isinstance(stimuli, list):
-            if len(stimuli) > 1:
-                stimuliData = np.array([partData[s] for s in stimuli]).T
-            else:
-                stimuliData = np.array(partData[stimuli[0]]).T
-            partDataShape = stimuliData.shape
-        else:
-            raise
-        if partDataShape:
-            if len(partDataShape) > 1:
-                if max(partDataShape) == partDataShape[0]:
-                    partDataLen = partDataShape[0]
-                else:
-                    stimuliData = stimuliData.T
-                    partDataLen = partDataShape[1]
-            else:
-                partDataLen = partDataShape
+        for observation, action, reward in itertools.izip(observations, actions, rewards):
+            model_instance.observe(observation)
+            model_instance.overrideActionChoice(action)
+            model_instance.feedback(reward)
 
-        if validActions in partData:
-            action_data_raw = partData[validActions]
-        else:
-            action_data_raw = validActions
-        partDataLen = len(stimuliData)
-        if len(action_data_raw) != partDataLen:
-            actionData = [action_data_raw] * partDataLen
-        else:
-            actionData = action_data_raw
+        return model_instance
 
-        observation = [(s, a) for s, a in itertools.izip(stimuliData, actionData)]
-
-        return observation
-
-    def _simSetup(self, partAct, partReward, partObs, *modelParameters):
+    @staticmethod
+    def _preprocess_fit_subset(fit_subset):
         """
-        Initialises the model for the running of the 'simulation'
+        Prepare as many possible combinations of fit_subset as possible.
+        If it needs knowledge of the rewards, return ``[]``
 
         Parameters
         ----------
-        partAct : list
-            The list of actions taken by the participant
-        partReward : list
-            The feedback received by the participant
-        partObs : list
-            The observations received by the participant
-        *modelParameters : floats
-            The model parameters provided in the order defined in the model setup
+        fit_subset : ``float('Nan')``, ``None``, ``"rewarded"``, ``"unrewarded"``, ``"all"`` or list of int
+        Describes which, if any, subset of trials will be used to evaluate the performance of the model.
+        This can either be described as a list of trial numbers or, by passing
+        - ``"all"`` or ``None`` for fitting all trials
+        - ``float('Nan')`` or ``"unrewarded"`` for all those trials whose feedback was ``float('Nan')``
+        - ``"rewarded"`` for those who had feedback that was not ``float('Nan')``
 
         Returns
         -------
-        modelInstance : model.modelTemplate.modelTemplate class instance
+        fit_subset_described : None, or list of ints
+            A description of the trials to be used, with ``None`` being all of them.
+            If more information was needed ``[]`` was returned
         """
 
-        args = self.getModInput(*modelParameters)
+        if fit_subset is None:
+            fit_subset_described = None
+        elif isinstance(fit_subset, (list, np.ndarray)):
+            fit_subset_described = fit_subset
+        elif fit_subset == "rewarded":
+            fit_subset_described = []
+        elif fit_subset == "unrewarded":
+            fit_subset_described = []
+        elif fit_subset == "all":
+            fit_subset_described = None
+        elif isinstance(fit_subset, float) and np.isnan(fit_subset):
+            fit_subset_described = []
+        else:
+            raise FitSubsetError('{} is not a known fit_subset'.format(fit_subset))
 
-        modelInstance = self.model(**args)
+        return fit_subset_described
 
-        _simRun(modelInstance, partAct, partReward, partObs)
+    @staticmethod
+    def _set_fit_subset(fit_subset, part_rewards):
+        """
+        Identify any fit_subset options that required part_rewards, i.e. subsets of trials where there was or was not
+        ``np.nan`` as the feedback.
 
-        return modelInstance
+        Parameters
+        ----------
+        fit_subset : ``float('Nan')``, ``"rewarded"``, ``"unrewarded"``
+        Describes which, subset of trials will be used to evaluate the performance of the model.
+        This can either be described by passing
+        - ``float('Nan')`` or ``"unrewarded"`` for all those trials whose feedback was ``float('Nan')``
+        - ``"rewarded"`` for those who had feedback that was not ``float('Nan')``
+        part_rewards: list of float
+            The rewards received by the participant
 
+        Returns
+        -------
+        fit_subset_described : list of bool the length of part_reward
+            A description of the trials to be used
+        """
 
-def _simRun(modelInstance, partAct, partReward, partObs):
-    """
-    Simulates the events of a simulation from the perspective of a model
+        if fit_subset == "rewarded":
+            fit_subset_described = ~np.isnan(part_rewards)
+        elif fit_subset == "unrewarded":
+            fit_subset_described = np.isnan(part_rewards)
+        elif isinstance(fit_subset, float) and np.isnan(fit_subset):
+            fit_subset_described = np.isnan(part_rewards)
+        else:
+            raise FitSubsetError('{} is not a known fit_subset'.format(fit_subset))
 
-    Parameters
-    ----------
-    modelInstance : model.modelTemplate.modelTemplate class instance
-    partAct : list
-        The list of actions taken by the participant
-    partReward : list
-        The feedback received by the participant
-    partObs : list
-        The observations received by the participant
-    """
-
-    for action, reward, observation in itertools.izip(partAct, partReward, partObs):
-        modelInstance.observe(observation)
-        modelInstance.overrideActionChoice(action)
-        modelInstance.feedback(reward)
+        return fit_subset_described
