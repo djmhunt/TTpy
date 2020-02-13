@@ -21,47 +21,50 @@ from fitAlgs.fitSims import FitSim
 from fitAlgs.fitAlg import FitAlg
 from modelGenerator import ModelGen
 
+
 class LengthError(Exception):
     pass
+
 
 class OrderError(Exception):
     pass
 
-def data_fitting(data_folder='./',
-                 data_format='csv',
-                 data_file_filter=None,
-                 data_file_terminal_ID=True,
-                 data_read_options=None,
-                 data_split_by=None,
-                 data_group_by=None,
-                 data_extra_processing=None,
-                 model_name='QLearn',
-                 model_changing_properties=None,
-                 model_constant_properties=None,
-                 participantID="Name",
-                 participant_choices='Actions',
-                 participant_rewards='Rewards',
-                 model_fit_value='ActionProb',
-                 fit_subset=None,
-                 task_stimuli=None,
-                 participant_action_options=None,
-                 fit_method='Evolutionary',
-                 fit_method_args=None,
-                 fit_measure='-loge',
-                 fit_measure_args=None,
-                 fit_extra_measures=None,
-                 participant_varying_model_parameters=None,
-                 label=None,
-                 save_fitting_progress=False,
-                 config_file=None,
-                 output_path=None,
-                 pickle=False,
-                 boundary_excess_cost_function=None,
-                 min_log_level='INFO',
-                 numpy_error_level="log",
-                 fit_float_error_response_value=1 / 1e100,
-                 calculate_covariance=False
-                 ):
+
+def run(data_folder='./',
+        data_format='csv',
+        data_file_filter=None,
+        data_file_terminal_ID=True,
+        data_read_options=None,
+        data_split_by=None,
+        data_group_by=None,
+        data_extra_processing=None,
+        model_name='QLearn',
+        model_changing_properties=None,
+        model_constant_properties=None,
+        participantID="Name",
+        participant_choices='Actions',
+        participant_rewards='Rewards',
+        model_fit_value='ActionProb',
+        fit_subset=None,
+        task_stimuli=None,
+        participant_action_options=None,
+        fit_method='Evolutionary',
+        fit_method_args=None,
+        fit_measure='-loge',
+        fit_measure_args=None,
+        fit_extra_measures=None,
+        participant_varying_model_parameters=None,
+        label=None,
+        save_fitting_progress=False,
+        config_file=None,
+        output_path=None,
+        pickle=False,
+        boundary_excess_cost_function=None,
+        min_log_level='INFO',
+        numpy_error_level="log",
+        fit_float_error_response_value=1 / 1e100,
+        calculate_covariance=False
+        ):
     """
     A framework for fitting models to data for tasks, along with
     recording the data associated with the fits.
@@ -177,8 +180,7 @@ def data_fitting(data_folder='./',
     else:
         model_changing_variables = participant_varying_model_parameters
 
-    # TODO : Validate model_changing_variables with the data and the model
-    # TODO : Change the name of model_changing_variables to something clearer
+    # TODO : Validate model_changing_properties with the data and the model
     participants = data.Data.load_data(file_type=data_format,
                                        folders=data_folder,
                                        file_name_filter=data_file_filter,
@@ -277,7 +279,7 @@ def data_fitting(data_folder='./',
             logger.info(message)
 
             model_fitted, fit_quality, fitting_data = fitter.participant(model,
-                                                                         (model_parameter_variables, model_static_args),
+                                                                         model_parameter_variables,
                                                                          participant)
 
             message = "Participant fitted"

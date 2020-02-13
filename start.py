@@ -11,7 +11,7 @@ import copy
 import numpy as np
 
 import simulation
-from dataFitting import data_fitting
+import dataFitting
 
 class MissingScriptSection(Exception):
     pass
@@ -127,45 +127,45 @@ def run_script(script_file, trusted_file=False):
             data_group_by = data_info.pop('group_by', None)
             data_extra_processing = data_info.pop('extra_processing', None)
 
-        data_fitting(data_folder=data_folder,
-                     data_format=data_format,
-                     data_file_filter=data_file_filter,
-                     data_file_terminal_ID=data_file_terminal_ID,
-                     data_read_options=data_read_options,
-                     data_split_by=data_split_by,
-                     data_group_by=data_group_by,
-                     data_extra_processing=data_extra_processing,
-                     model_name=model_name,
-                     model_changing_properties=model_changing_properties,
-                     model_constant_properties=model_constant_properties,
-                     participantID=data_participantID,
-                     participant_choices=data_choices,
-                     participant_rewards=data_rewards,
-                     model_fit_value=fitting_variable,
-                     fit_subset=fitting_subset,
-                     task_stimuli=data_stimuli,
-                     participant_action_options=data_action_options,
-                     fit_method=fitting_method,
-                     fit_method_args=fitting_method_args,
-                     fit_measure=fitting_measure,
-                     fit_measure_args=fitting_measure_args,
-                     fit_extra_measures=fitting_extra_measures,
-                     participant_varying_model_parameters=data_varying_model_parameters,
-                     label=label,
-                     save_fitting_progress=save_fitting_progress,
-                     config_file=script_file,
-                     output_path=output_path,
-                     pickle=pickle,
-                     boundary_excess_cost_function=bound_cost_function,
-                     min_log_level=min_log_level,
-                     numpy_error_level=numpy_error_level,
-                     fit_float_error_response_value=fitting_float_error_response_value,
-                     calculate_covariance=fitting_calculate_covariance
-                     )
+        dataFitting.run(data_folder=data_folder,
+                        data_format=data_format,
+                        data_file_filter=data_file_filter,
+                        data_file_terminal_ID=data_file_terminal_ID,
+                        data_read_options=data_read_options,
+                        data_split_by=data_split_by,
+                        data_group_by=data_group_by,
+                        data_extra_processing=data_extra_processing,
+                        model_name=model_name,
+                        model_changing_properties=model_changing_properties,
+                        model_constant_properties=model_constant_properties,
+                        participantID=data_participantID,
+                        participant_choices=data_choices,
+                        participant_rewards=data_rewards,
+                        model_fit_value=fitting_variable,
+                        fit_subset=fitting_subset,
+                        task_stimuli=data_stimuli,
+                        participant_action_options=data_action_options,
+                        fit_method=fitting_method,
+                        fit_method_args=fitting_method_args,
+                        fit_measure=fitting_measure,
+                        fit_measure_args=fitting_measure_args,
+                        fit_extra_measures=fitting_extra_measures,
+                        participant_varying_model_parameters=data_varying_model_parameters,
+                        label=label,
+                        save_fitting_progress=save_fitting_progress,
+                        config_file=script_file,
+                        output_path=output_path,
+                        pickle=pickle,
+                        boundary_excess_cost_function=bound_cost_function,
+                        min_log_level=min_log_level,
+                        numpy_error_level=numpy_error_level,
+                        fit_float_error_response_value=fitting_float_error_response_value,
+                        calculate_covariance=fitting_calculate_covariance
+                        )
 
     else:
         raise MissingScriptSection('A ``simulation`` or ``fitting`` section is necessary for this script to be understood')
 
 if __name__ == '__main__':
-    run_script('./runScripts/runScripts_fit.yaml')
+    run_script('./runScripts/runScripts_sim.yaml')
 #    fire.Fire(run_script)

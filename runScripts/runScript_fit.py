@@ -21,7 +21,7 @@ sys.path.append("/".join(codePath))  # So code can be found from the main folder
 import numpy as np
 
 #%%For data fitting
-from dataFitting import data_fitting
+from dataFitting import run
 
 
 #%% Set the model sets
@@ -46,28 +46,28 @@ def data_processing(dat):
     return dat
 
 #%% Run the data fitter
-data_fitting(data_folder="./Outputs/qLearn_probSelectSimSet_2020-2-5/Pickle/",
-             data_format='pkl',
-             data_file_filter="QLearn_modelData_sim-",
-             data_extra_processing=data_processing,
-             model_name='QLearn',
-             model_changing_properties=modelParameters,
-             model_constant_properties=modelStaticArgs,
-             participantID='simID',
-             participant_choices='Decisions',
-             participant_rewards='Rewards',
-             model_fit_value='ActionProb',
-             fit_subset='all',  # 'rewarded', 'unrewarded', 'all', np.nan, None, range(60, 120)
-             task_stimuli=None,  #["stimCues"],
-             participant_action_options=['ValidActions_0', 'ValidActions_1'],
-             fit_method='Evolutionary',
-             fit_measure='-loge',
-             fit_extra_measures=['-2log', 'BIC', 'r2', 'bayesFactor', 'BIC2norm'],
-             fit_measure_args={"numParams": len(modelParameters),
+run(data_folder="./Outputs/qLearn_probSelectSimSet_2020-2-5/Pickle/",
+    data_format='pkl',
+    data_file_filter="QLearn_modelData_sim-",
+    data_extra_processing=data_processing,
+    model_name='QLearn',
+    model_changing_properties=modelParameters,
+    model_constant_properties=modelStaticArgs,
+    participantID='simID',
+    participant_choices='Decisions',
+    participant_rewards='Rewards',
+    model_fit_value='ActionProb',
+    fit_subset='all',  # 'rewarded', 'unrewarded', 'all', np.nan, None, range(60, 120)
+    task_stimuli=None,  #["stimCues"],
+    participant_action_options=['ValidActions_0', 'ValidActions_1'],
+    fit_method='Evolutionary',
+    fit_measure='-loge',
+    fit_extra_measures=['-2log', 'BIC', 'r2', 'bayesFactor', 'BIC2norm'],
+    fit_measure_args={"numParams": len(modelParameters),
                                "number_actions": number_actions,
                                "qualityThreshold": 20,
                                "randActProb": 1/2},
-             label='qLearn_probSelect_fromSim',
-             save_fitting_progress=True,
-             pickle=True,
-             numpy_error_level='log')  # 'raise','log'
+    label='qLearn_probSelect_fromSim',
+    save_fitting_progress=True,
+    pickle=True,
+    numpy_error_level='log')  # 'raise','log'
