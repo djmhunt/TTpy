@@ -15,18 +15,18 @@ from taskGenerator import TaskGeneration
 from modelGenerator import ModelGen
 
 
-def simulation(task_name='Basic',
-               task_changing_properties=None,
-               task_constant_properties=None,
-               model_name='QLearn',
-               model_changing_properties=None,
-               model_constant_properties=None,
-               label=None,
-               config_file=None,
-               output_path=None,
-               pickle=False,
-               min_log_level='INFO',
-               numpy_error_level="log"):
+def run(task_name='Basic',
+        task_changing_properties=None,
+        task_constant_properties=None,
+        model_name='QLearn',
+        model_changing_properties=None,
+        model_constant_properties=None,
+        label=None,
+        config_file=None,
+        output_path=None,
+        pickle=False,
+        min_log_level='INFO',
+        numpy_error_level="log"):
     """
     A framework for letting models interact with tasks and record the data
 
@@ -70,10 +70,11 @@ def simulation(task_name='Basic',
     --------
     tasks.taskTemplate, model.modelTemplate
     """
+    function_parameters = locals()
 
     tasks = TaskGeneration(task_name=task_name,
-                                 parameters=task_changing_properties,
-                                 other_options=task_constant_properties)
+                           parameters=task_changing_properties,
+                           other_options=task_constant_properties)
 
     models = ModelGen(model_name=model_name,
                       parameters=model_changing_properties,
@@ -99,7 +100,7 @@ def simulation(task_name='Basic',
 
             tsk = tasks.new_task(task_number)
 
-            log_sim_parameters(tsk.params(), model.params(), simID=str(simID))
+            log_simulation_parameters(tsk.params(), model.params(), simID=str(simID))
 
             message = "Beginning task"
             logger.debug(message)
@@ -117,14 +118,14 @@ def simulation(task_name='Basic',
             message = "Task completed"
             logger.debug(message)
 
-            record_sim(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
+            record_simulation(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
 
             simID += 1
 
     close_loggers()
 
 
-def record_sim(file_name_generator, task_data, model_data, simID, pickle=False):
+def record_simulation(file_name_generator, task_data, model_data, simID, pickle=False):
     """
     Records the data from an task-model run. Creates a pickled version
 
@@ -157,14 +158,14 @@ def record_sim(file_name_generator, task_data, model_data, simID, pickle=False):
     message = "Store data for simulation " + simID
     logger.info(message)
 
-    csv_model_sim(model_data, simID, file_name_generator)
+    csv_model_simulation(model_data, simID, file_name_generator)
 
     if pickle:
         outputting.pickleLog(task_data, file_name_generator, "_taskData" + label)
         outputting.pickleLog(model_data, file_name_generator, "_modelData" + label)
 
 
-def log_sim_parameters(task_parameters, model_parameters, simID):
+def log_simulation_parameters(task_parameters, model_parameters, simID):
     """
     Writes to the log the description and the label of the task and model
 
@@ -197,7 +198,7 @@ def log_sim_parameters(task_parameters, model_parameters, simID):
     logger_sim.info(message)
 
 
-def csv_model_sim(modelData, simID, file_name_generator):
+def csv_model_simulation(modelData, simID, file_name_generator):
     # type: (dict, basestring, function) -> None
     """
     Saves the fitting data to a CSV file

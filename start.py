@@ -10,7 +10,7 @@ import copy
 
 import numpy as np
 
-from simulation import simulation
+import simulation
 from dataFitting import data_fitting
 
 class MissingScriptSection(Exception):
@@ -82,18 +82,18 @@ def run_script(script_file, trusted_file=False):
             else:
                 task_constant_properties = None
 
-        simulation(task_name=task_name,
-                   task_changing_properties=task_changing_properties,
-                   task_constant_properties=task_constant_properties,
-                   model_name=model_name,
-                   model_changing_properties=model_changing_properties,
-                   model_constant_properties=model_constant_properties,
-                   label=label,
-                   config_file=script_file,
-                   output_path=output_path,
-                   pickle=pickle,
-                   min_log_level=min_log_level,
-                   numpy_error_level=numpy_error_level)
+        simulation.run(task_name=task_name,
+                       task_changing_properties=task_changing_properties,
+                       task_constant_properties=task_constant_properties,
+                       model_name=model_name,
+                       model_changing_properties=model_changing_properties,
+                       model_constant_properties=model_constant_properties,
+                       label=label,
+                       config_file=script_file,
+                       output_path=output_path,
+                       pickle=pickle,
+                       min_log_level=min_log_level,
+                       numpy_error_level=numpy_error_level)
 
     elif 'fitting' in script_sections:
         fitting_info = script['fitting']
@@ -167,5 +167,5 @@ def run_script(script_file, trusted_file=False):
         raise MissingScriptSection('A ``simulation`` or ``fitting`` section is necessary for this script to be understood')
 
 if __name__ == '__main__':
-    run_script('./runScripts/runScripts_sim.yaml')
+    run_script('./runScripts/runScripts_fit.yaml')
 #    fire.Fire(run_script)

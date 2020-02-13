@@ -15,68 +15,45 @@ import sys
 sys.path.append("../")  # So code can be found from the main folder
 
 # Other used function
-from numpy import array, ones, repeat
-from collections import OrderedDict
+import numpy as np
 
-#%% Import all tasks, models and interface functions
-# The task factory
-from taskGenerator import TaskGeneration
-# The tasks and stimulus processors
-from tasks.balltask import Balltask, stimulusSimple, rewardSimple
+import collections
 
-# The model factory
-from modelGenerator import ModelGen
-# The decision methods
-from model.decision.discrete import weightProb
-# The model
-from model.qLearn import QLearn
+import simulation
 
-#%% Set the outputting, model sets and task sets
-expParams = {}
-#expExtraParams = {'number_actions': 6,
-#                  'learningLen': 200,
-#                  'testLen': 100,
-#                  'rewardSize': 1,
-#                  'actRewardProb': OrderedDict([("A", 0.80),
-#                                                ("B", 0.20),
-#                                                ("C", 0.70),
-#                                                ("D", 0.30),
-#                                                ("E", 0.60),
-#                                                ("F", 0.40)]),
-#                  'learnActPairs': [("A", "B"), ("C", "D"), ("E", "F")]}
-expStaticArgs = {}
-expSets = TaskGeneration(Balltask, expParams, expStaticArgs)
+#%% Set the model sets and task sets
 
 number_actions = 3
 number_cues = 3
 #repetitions = 30
-#alphaSet = repeat(array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
-#betaSet = array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+#alphaSet = np.repeat(np.array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
+#betaSet = np.array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
 repetitions = 1
-alphaSet = repeat(array([0.5]), repetitions)
-betaSet = array([0.7])
+alphaSet = np.repeat(np.array([0.5]), repetitions)
+betaSet = np.array([0.7])
 
-modelParameters = {'alpha': alphaSet,
-                   'beta': betaSet}
-modelStaticArgs = {'number_actions': number_actions,
-                   'number_cues': number_cues,
-                   'action_codes': {0: 0, 1: 1, 2: 2},
-                   'expect': ones((number_actions, number_cues)) / 2,
-                   'prior': ones(number_actions) / number_actions,
-                   'stimulus_shaper_name': stimulusSimple(),
-                   'reward_shaper_name': rewardSimple(),
-                   'decision_function_name': weightProb([0, 1, 2])}
+task_parameters = {}
+task_static_properties = {}
 
-modelSet = ModelGen(QLearn, modelParameters, modelStaticArgs)
+model_parameters = {'alpha': alphaSet,
+                    'beta': betaSet}
+model_static_properties = {'number_actions': number_actions,
+                           'number_cues': number_cues,
+                           'action_codes': {0: 0, 1: 1, 2: 2},
+                           'expect': np.ones((number_actions, number_cues)) / 2,
+                           'prior': np.ones(number_actions) / number_actions,
+                           'stimulus_shaper_name': 'StimulusBalltaskSimple',
+                           'reward_shaper_name': 'RewardBalltaskDirect',
+                           'decision_function_name': 'weightProb',
+                           'task_responses': ([0, 1, 2])}
 
 #%% For simulating tasks
-
-from simulation import simulation
-
-simulation(expSets,
-           modelSet,
-           label='qLearn_balltask_simulation',
-           save=True,
-           saveScript=True,
-           pickle=True,
-           numpy_error_level="log") # 'raise','log'
+simulation.run(task_name='Balltask',
+               task_changing_properties=task_parameters,
+               task_constant_properties=task_static_properties,
+               model_name='QLearn',
+               model_changing_properties=model_parameters,
+               model_constant_properties=model_static_properties,
+               label='qLearn_balltask_simulation',
+               pickle=True,
+               numpy_error_level='log') # 'raise','log'
