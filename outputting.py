@@ -686,6 +686,8 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
             listSet, maxListLen = listKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
             if listSet is not None:
                 keySet.setdefault(k, listSet)
+            else:
+                keySet.setdefault(k, None)
         elif isinstance(v, dict):
             dictKeySet, maxListLen = dictKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
             keySet.setdefault(k, dictKeySet)
