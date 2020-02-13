@@ -88,7 +88,7 @@ class FitSim(object):
         self.fit_subset = fit_subset
         self.fit_subset_described = self._preprocess_fit_subset(fit_subset)
 
-        self.Name = self.findName()
+        self.Name = self.find_name()
 
         self.sim_info = {'Name': self.Name,
                          'participant_choice_property': participant_choice_property,
@@ -165,7 +165,7 @@ class FitSim(object):
 
         if np.isnan(model_performance).any():
             logger = logging.getLogger('Fitter')
-            message = "model performance values contain NaN"
+            message = "model performance values contain ``Not a Number`` (NaN), i.e. the model had a problem."
             logger.warning(message + ".\n Abandoning fitting with parameters: "
                            + repr(self.get_model_parameters(*model_parameters))
                            + " Returning an action choice probability for each trialstep of "
@@ -302,7 +302,7 @@ class FitSim(object):
 
         return self.sim_info
 
-    def findName(self):
+    def find_name(self):
         """
         Returns the name of the class
         """
