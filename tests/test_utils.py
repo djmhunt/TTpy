@@ -12,12 +12,6 @@ import numpy as np
 import utils
 
 
-def test_an_exception():
-    with pytest.raises(IndexError):
-        # Indexing the 30th item in a 3 item list
-        [5, 10, 15][30]
-
-
 @pytest.fixture(scope="module")
 def listMerTestData():
     
@@ -29,6 +23,7 @@ def listMerTestData():
     
     return interSets, answer
 
+
 #%% For folderSetup
 class TestClass_folderSetup:
     def test_folderSetup(self, tmpdir):
@@ -36,6 +31,7 @@ class TestClass_folderSetup:
         path_str = str(path).replace('\\', '/')
         folder = utils.folderSetup('test', path=path_str)
         assert os.path.exists(folder)
+
 
 #%% For listMergeGen
 class TestClass_listMergeGen:

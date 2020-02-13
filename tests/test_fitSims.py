@@ -26,7 +26,7 @@ def model_setup():
                         'beta': (0, 30)}
     model_static_args = {'number_actions': number_actions,
                          'number_cues': number_cues,
-                         'action_codes': {0: 0, 1: 1},
+                         'action_codes': {1: 0, 2: 1},
                          'expect': np.full(number_actions, 0.5, float),
                          'prior': np.full(number_actions, 1 / number_actions, float),
                          'stimulus_shaper_name': 'StimulusDecksLinear',
@@ -56,7 +56,8 @@ def participant_data_setup():
                                                    ['E', 'F'], ['D', 'B'], ['E', 'D'], ['C', 'B'], ['E', 'C'],
                                                    ['A', 'D'], ['A', 'F']],
                         'simID': '0',
-                        'Decisions': ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A']}
+                        'Decisions': ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
+                        'Choices': [1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2]}
 
     return participant_data
 
@@ -208,6 +209,56 @@ class TestClass_model:
             else:
                 assert result == correct_results[k]
 
-    def test_simulation(self, model_setup, participant_data_setup):
-        model, (model_parameters, model_properties) = model_setup
+    def test_prepare_sim(self, model_setup, participant_data_setup):
+        model, model_other = model_setup
         participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim(participant_choice_property='Decisions',
+                                 participant_reward_property='Rewards',
+                                 model_fitting_variable='ActionProb',
+                                 task_stimuli_property=None,
+                                 fit_subset=None,
+                                 action_options_property='valid_actions_combined')
+
+        fitting = fit_sim.prepare_sim(model, model_other, participant_data)
+
+        assert fitting == fit_sim.fitness
+
+    def test_simulation(self, model_setup, participant_data_setup):
+        model, model_other = model_setup
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim(participant_choice_property='Choices',
+                                 participant_reward_property='Rewards',
+                                 model_fitting_variable='ActionProb',
+                                 task_stimuli_property=None,
+                                 fit_subset=None,
+                                 action_options_property=[1, 2])
+
+        fitting = fit_sim.prepare_sim(model, model_other, participant_data)
+
+        model_instance = fit_sim.fitted_model(0.5, 3)
+        model_data = model_instance.returnTaskState()
+        result = model_data['ActionProb']
+        correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
+                                   0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])
+
+        np.testing.assert_array_almost_equal(result, correct_result)
+
+    def test_fitness(self, model_setup, participant_data_setup):
+        model, model_other = model_setup
+        participant_data = participant_data_setup
+
+        fit_sim = fitSims.FitSim(participant_choice_property='Choices',
+                                 participant_reward_property='Rewards',
+                                 model_fitting_variable='ActionProb',
+                                 task_stimuli_property=None,
+                                 fit_subset=None,
+                                 action_options_property=[1, 2])
+
+        fitness = fit_sim.prepare_sim(model, model_other, participant_data)
+        result = fitness(0.5, 3)
+        correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
+                                   0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])
+
+        np.testing.assert_array_almost_equal(result, correct_result)
