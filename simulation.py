@@ -118,7 +118,8 @@ def run(task_name='Basic',
             message = "Task completed"
             logger.debug(message)
 
-            record_simulation(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
+            if file_name_generator is not None:
+                record_simulation(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
 
             simID += 1
 

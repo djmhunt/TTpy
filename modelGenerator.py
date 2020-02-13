@@ -37,6 +37,11 @@ class ModelGen(object):
 
         self.count = -1
 
+        if parameters is None:
+            parameters = {}
+        if other_options is None:
+            other_options = {}
+
         model_class = utils.find_class(model_name,
                                        class_folder='model',
                                        inherited_class=Model,

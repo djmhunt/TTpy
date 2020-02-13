@@ -218,7 +218,7 @@ class Model(object):
         self.expectedRewards = np.ones(self.number_actions)
         self.expectedReward = np.array([1])
 
-        if issubclass(stimulus_shaper, Stimulus):
+        if stimulus_shaper is not None and issubclass(stimulus_shaper, Stimulus):
             if stimulus_shaper_properties is not None:
                 stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in stimulus_shaper_properties}
             else:
@@ -234,7 +234,7 @@ class Model(object):
         else:
             self.stimulus_shaper = Stimulus()
 
-        if issubclass(reward_shaper, Rewards):
+        if reward_shaper is not None and issubclass(reward_shaper, Rewards):
             if reward_shaper_properties is not None:
                 reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in reward_shaper_properties}
             else:
