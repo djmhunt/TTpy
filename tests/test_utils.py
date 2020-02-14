@@ -24,15 +24,6 @@ def listMerTestData():
     return interSets, answer
 
 
-#%% For folderSetup
-class TestClass_folderSetup:
-    def test_folderSetup(self, tmpdir):
-        path = tmpdir.mkdir("data")
-        path_str = str(path).replace('\\', '/')
-        folder = utils.folderSetup('test', path=path_str)
-        assert os.path.exists(folder)
-
-
 #%% For listMergeGen
 class TestClass_listMergeGen:
     def test_listMergeGen(self, listMerTestData):
