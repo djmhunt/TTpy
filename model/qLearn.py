@@ -78,8 +78,8 @@ class QLearn(Model):
         self.beta = beta
 
         if expect is None:
-            expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
-        self.expectations = expect
+            expect = np.ones((self.number_actions, self.number_cues)) / self.number_critics
+        self.expectations = np.array(expect)
 
         self.parameters["alpha"] = self.alpha
         self.parameters["beta"] = self.beta
