@@ -33,16 +33,16 @@ betaSet = np.array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
 
 task_parameters = {}
 task_static_properties = {'number_actions': number_actions,
-                          'learningLen': 200,
-                          'testLen': 100,
-                          'rewardSize': 1,
-                          'actRewardProb': collections.OrderedDict([('A', 0.80),
-                                                                    ('B', 0.20),
-                                                                    ('C', 0.70),
-                                                                    ('D', 0.30),
-                                                                    ('E', 0.60),
-                                                                    ('F', 0.40)]),
-                          'learningActPairs': [('A', 'B'), ('C', 'D'), ('E', 'F')]}
+                          'learning_length': 200,
+                          'test_length': 100,
+                          'reward_size': 1,
+                          'action_reward_probabilities': collections.OrderedDict([('A', 0.80),
+                                                                                  ('B', 0.20),
+                                                                                  ('C', 0.70),
+                                                                                  ('D', 0.30),
+                                                                                  ('E', 0.60),
+                                                                                  ('F', 0.40)]),
+                          'learning_action_pairs': [('A', 'B'), ('C', 'D'), ('E', 'F')]}
 
 model_parameters = {'alpha': alphaSet,
                     'beta': betaSet}

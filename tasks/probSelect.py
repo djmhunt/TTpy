@@ -42,7 +42,7 @@ class ProbSelect(Task):
         A dictionary of the potential actions that can be taken and the
         probability of a reward.
         Default {0:rewardProb, 1:1-rewardProb, 2:0.5, 3:0.5}
-    learnActPairs : list of tuples, optional
+    learning_action_pairs : list of tuples, optional
         The pairs of actions shown together in the learning phase.
     learning_length : int, optional
         The number of trials in the learning phase. Default is 240
