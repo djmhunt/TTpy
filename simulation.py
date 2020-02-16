@@ -80,50 +80,46 @@ def run(task_name='Basic',
                       parameters=model_changing_properties,
                       other_options=model_constant_properties)
 
-    output_folder, file_name_generator, close_loggers = outputting.saving(label=label,
-                                                                          output_path=output_path,
-                                                                          config_file=config_file,
-                                                                          pickle=pickle,
-                                                                          min_log_level=min_log_level,
-                                                                          numpy_error_level=numpy_error_level)
+    with outputting.Saving(label=label, output_path=output_path, config_file=config_file, pickle_store=pickle,
+                           min_log_level=min_log_level, numpy_error_level=numpy_error_level) as file_name_generator:
+        logger = logging.getLogger('Overview')
 
-    logger = logging.getLogger('Overview')
+        simID = 0
 
-    simID = 0
+        message = "Beginning the simulation set"
+        logger.debug(message)
 
-    message = "Beginning the simulation set"
-    logger.debug(message)
+        for task_number in tasks.iter_task_ID():
 
-    for task_number in tasks.iter_task_ID():
+            for model in models:
 
-        for model in models:
+                task = tasks.new_task(task_number)
 
-            tsk = tasks.new_task(task_number)
+                log_simulation_parameters(task.params(), model.params(), simID=str(simID))
 
-            log_simulation_parameters(tsk.params(), model.params(), simID=str(simID))
+                message = "Beginning task"
+                logger.debug(message)
 
-            message = "Beginning task"
-            logger.debug(message)
+                for state in task:
+                    model.observe(state)
+                    action = model.action()
+                    task.receiveAction(action)
+                    response = task.feedback()
+                    model.feedback(response)
+                    task.proceed()
 
-            for state in tsk:
-                model.observe(state)
-                action = model.action()
-                tsk.receiveAction(action)
-                response = tsk.feedback()
-                model.feedback(response)
-                tsk.proceed()
+                model.setsimID(str(simID))
 
-            model.setsimID(str(simID))
+                message = "Task completed"
+                logger.debug(message)
 
-            message = "Task completed"
-            logger.debug(message)
+                if file_name_generator is not None:
+                    record_simulation(file_name_generator,
+                                      task.returnTaskState(),
+                                      model.returnTaskState(),
+                                      str(simID), pickle=pickle)
 
-            if file_name_generator is not None:
-                record_simulation(file_name_generator, tsk.returnTaskState(), model.returnTaskState(), str(simID), pickle=pickle)
-
-            simID += 1
-
-    close_loggers()
+                simID += 1
 
 
 def record_simulation(file_name_generator, task_data, model_data, simID, pickle=False):
@@ -185,15 +181,15 @@ def log_simulation_parameters(task_parameters, model_parameters, simID):
     """
 
     task_description = task_parameters.pop('Name') + ": "
-    task_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in task_parameters.iteritems()]
+    task_descriptors = [k + ' = ' + repr(v) for k, v in task_parameters.iteritems()]
     task_description += ", ".join(task_descriptors)
 
     model_description = model_parameters.pop('Name') + ": "
-    model_descriptors = [k + ' = ' + str(v).strip('[]()') for k, v in model_parameters.iteritems()]
+    model_descriptors = [k + ' = ' + repr(v) for k, v in model_parameters.iteritems()]
     model_description += ", ".join(model_descriptors)
 
-    message = "Simulation " + simID + " contains the task '" + task_description + "'."
-    message += "The model used is '" + model_description + "'."
+    message = "Simulation " + simID + " contains the task " + task_description + "."
+    message += "The model used is " + model_description + "."
 
     logger_sim = logging.getLogger('Simulation')
     logger_sim.info(message)

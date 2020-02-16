@@ -20,12 +20,34 @@ import utils
 
 
 #%% Folder management
-def saving(label=None,
-           output_path=None,
-           config_file=None,
-           pickle=False,
-           min_log_level='INFO',
-           numpy_error_level="log"):
+class LoggerWriter(object):
+    """
+    Fake file-like stream object that redirects writes to a logger instance. Taken from
+    https://stackoverflow.com/a/51612402
+
+    Parameters
+    ----------
+    writer : logging function
+    """
+    #
+    def __init__(self, writer):
+        self._writer = writer
+        self._message = ''
+
+    def write(self, message):
+        self._message = self._message + message
+        while '\n' in self._message:
+            pos = self._message.find('\n')
+            self._writer(self._message[:pos])
+            self._message = self._message[pos + 1:]
+
+    def flush(self):
+        if self._message != '':
+            self._writer(self._message)
+            self._message = ''
+
+
+class Saving(object):
     """
     Creates the folder structure for the saved data and created the log file as ``log.txt``
 
@@ -37,10 +59,9 @@ def saving(label=None,
         The path that will be used for the run output. Default ``None``
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Default ``None``
-    pickle : bool, optional
+    pickle_store : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
-
     min_log_level : basestring, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
         See https://docs.python.org/3/library/logging.html#levels
@@ -49,57 +70,81 @@ def saving(label=None,
 
     Returns
     -------
-    outputFolder : basestring
-        The folder into which the data will be saved
-    fileNameGen : function
+    file_name_gen : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
-    closeLoggers : function
-        Closes the logging systems that have been set up
 
     See Also
     --------
     folderSetup : creates the folders
     """
-    dateStr = date()
-    if label:
-        saveLabel = label
-        if output_path:
-            base_path = output_path
-        elif config_file:
-            base_path = os.path.dirname(os.path.abspath(config_file)).replace('\\', '/')
+
+    def __init__(self,
+                 label=None,
+                 output_path=None,
+                 config_file=None,
+                 pickle_store=False,
+                 min_log_level='INFO',
+                 numpy_error_level="log"):
+
+        self.date_string = date()
+        self.label = label
+        self.config_file = config_file
+        self.pickle_store = pickle_store
+        self.numpy_error_level = numpy_error_level
+        if label:
+            self.save_label = label
+            if output_path:
+                self.base_path = output_path
+            elif config_file:
+                self.base_path = folder_path_cleaning(os.path.dirname(os.path.abspath(config_file)))
+            else:
+                self.base_path = None
         else:
-            base_path = None
-        outputFolder = folderSetup(saveLabel, dateStr, pickleData=pickle, basePath=base_path)
-        fileNameGen = fileNameGenerator(outputFolder)
-        logFile = fileNameGen('log', 'txt')
+            self.save_label = 'Untitled'
 
-        if config_file:
-            shu.copy(config_file, outputFolder)
-    else:
-        saveLabel = 'Untitled'
-        outputFolder = None
-        logFile = None
-        fileNameGen = None
+        possible_log_levels = {'DEBUG': logging.DEBUG,
+                               'INFO': logging.INFO,
+                               'WARNING': logging.WARNING,
+                               'ERROR': logging.ERROR,
+                               'CRITICAL': logging.CRITICAL}
+        self.log_level = possible_log_levels[min_log_level]
 
-    possible_log_levels = {'DEBUG': logging.DEBUG,
-                           'INFO': logging.INFO,
-                           'WARNING': logging.WARNING,
-                           'ERROR': logging.ERROR,
-                           'CRITICAL': logging.CRITICAL}
-    log_level = possible_log_levels[min_log_level]
+    def __enter__(self):
+        if self.label:
+            output_folder = folder_setup(self.save_label,
+                                         self.date_string,
+                                         pickle_data=self.pickle_store,
+                                         base_path=self.base_path)
+            file_name_gen = file_name_generator(output_folder)
+            log_file = file_name_gen('log', 'txt')
 
-    closeLoggers = fancyLogger(dateStr, logFile=logFile, logLevel=log_level, npErrResp=numpy_error_level)
+            if self.config_file:
+                shu.copy(self.config_file, output_folder)
+        else:
+            output_folder = None
+            log_file = None
+            file_name_gen = None
 
-    logger = logging.getLogger('Framework')
+        self.close_loggers = fancy_logger(log_file=log_file,
+                                          log_level=self.log_level,
+                                          numpy_error_level=self.numpy_error_level)
 
-    message = 'Beginning task labelled: {}'.format(saveLabel)
-    logger.info(message)
+        logger = logging.getLogger('Framework')
 
-    return outputFolder, fileNameGen, closeLoggers
+        message = 'Beginning task labelled: {}'.format(self.save_label)
+        logger.info(message)
+
+        return file_name_gen
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if exc_type is not None and issubclass(exc_type, Exception):
+            logger = logging.getLogger('Fatal')
+            logger.error("Logging an uncaught fatal exception", exc_info=(exc_type, exc_value, exc_traceback))
+        self.close_loggers()
 
 
-def folderSetup(label, dateStr, pickleData=False, basePath=None):
+def folder_setup(label, date_string, pickle_data=False, base_path=None):
     """
     Identifies and creates the folder the data will be stored in
 
@@ -115,17 +160,17 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
     ----------
     label : basestring
         The label for the simulation
-    dateStr : basestring
+    date_string : basestring
         The date identifier
-    pickleData : bool, optional
+    pickle_data : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
-    basePath : basestring, optional
+    base_path : basestring, optional
         The path into which the new folder will be placed. Default is current working directory
 
     Returns
     -------
-    folderName : string
+    folder_name : string
         The folder path that has just been created
 
     See Also
@@ -134,66 +179,69 @@ def folderSetup(label, dateStr, pickleData=False, basePath=None):
     saving : Creates the log system
 
     """
-    if not basePath:
-        basePath = os.getcwd().replace("\\", "/")
+    if not base_path:
+        base_path = folder_path_cleaning(os.getcwd())
+    else:
+        base_path = folder_path_cleaning(base_path)
 
     # While the folders have already been created, check for the next one
-    folderName = "{}/Outputs/{}_{}".format(basePath, label, dateStr)
-    if os.path.exists(folderName):
+    folder_name = "{}Outputs/{}_{}".format(base_path, label, date_string)
+    if os.path.exists(folder_name):
         i = 1
-        folderName += '_no_'
-        while os.path.exists(folderName + str(i)):
+        folder_name += '_no_'
+        while os.path.exists(folder_name + str(i)):
             i += 1
-        folderName += str(i)
+        folder_name += str(i)
 
-    folderName += "/"
-    os.makedirs(folderName)
+    folder_name += "/"
+    os.makedirs(folder_name)
 
-    os.makedirs(folderName + 'data/')
+    os.makedirs(folder_name + 'data/')
 
-    if pickleData:
-        os.makedirs(folderName + 'Pickle/')
+    if pickle_data:
+        os.makedirs(folder_name + 'Pickle/')
 
-    return folderName
+    return folder_name
 
 
 #%% File management
-def fileNameGenerator(outputFolder=None):
+def file_name_generator(output_folder=None):
     """
     Keeps track of filenames that have been used and generates the next unused one
 
     Parameters
     ----------
-    outputFolder : string, optional
+    output_folder : string, optional
         The folder into which the new file will be placed. Default is the current working directory
 
     Returns
     -------
-    newFileName : function
+    new_file_name : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
 
     Examples
     --------
-    >>> fileNameGen = fileNameGenerator("./")
-    >>> fileNameGen("a", "b")
+    >>> file_name_gen = file_name_generator("./")
+    >>> file_name_gen("a", "b")
     './a.b'
-    >>> fileNameGen("a", "b")
+    >>> file_name_gen("a", "b")
     './a_1.b'
-    >>> fileNameGen("", "")
+    >>> file_name_gen("", "")
     './'
-    >>> fileNameGen = fileNameGenerator()
-    >>> fileName = fileNameGen("", "")
+    >>> file_name_gen = file_name_generator()
+    >>> fileName = file_name_gen("", "")
     >>> fileName == os.getcwd()
     True
     """
+    if not output_folder:
+        output_path = folder_path_cleaning(os.getcwd())
+    else:
+        output_path = folder_path_cleaning(output_folder)
 
-    if not outputFolder:
-        outputFolder = os.getcwd()
+    output_file_counts = collections.defaultdict(int)
 
-    outputFileCounts = collections.defaultdict(int)
-
-    def newFileName(handle, extension):
+    def new_file_name(handle, extension):
         """
         Creates a new unused file name with the <handle> and the extension <extension>
 
@@ -206,56 +254,75 @@ def fileNameGenerator(outputFolder=None):
 
         Returns
         -------
-        fileName : string
-            The filename allowed for the file
+        file_name : string
+            The file name allowed for the file
         """
-
-        if not outputFolder:
-            return ''
 
         if extension == '':
             end = ''
         else:
             end = "." + extension
 
-        fileName = outputFolder + handle
-        fileNameForm = fileName + end
+        file_name = output_path + handle
+        file_name_form = file_name + end
 
-        lastCount = outputFileCounts[fileNameForm]
-        outputFileCounts[fileNameForm] += 1
-        if lastCount > 0:
-            fileName += "_" + str(lastCount)
+        last_count = output_file_counts[file_name_form]
+        output_file_counts[file_name_form] += 1
+        if last_count > 0:
+            file_name += "_" + str(last_count)
         # if os.path.exists(fileName + end):
         #     i = 1
         #     while os.path.exists(fileName + "_" + str(i) + end):
         #         i += 1
         #     fileName += "_" + str(i)
-        fileName += end
+        file_name += end
 
-        return fileName
+        return file_name
 
-    return newFileName
+    return new_file_name
+
+
+def folder_path_cleaning(folder):
+    """
+    Modifies string file names from Windows format to Unix format if necessary
+    and makes sure there is a ``/`` at the end.
+
+    Parameters
+    ----------
+    folder : string
+        The folder path
+
+    Returns
+    -------
+    folder_path : basestring
+        The folder path
+    """
+
+    folder_path = folder.replace('\\', '/')
+    if folder_path[-1] != '/':
+        folder_path += '/'
+    return folder_path
 
 
 #%% Logging
-def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='log'):
+def fancy_logger(log_file=None, log_level=logging.INFO, numpy_error_level='log'):
     """
     Sets up the style of logging for all the simulations
 
     Parameters
     ----------
-    dateStr : basestring
+    date_string : basestring
         The date the log will start at
-    logFile : string, optional
+    log_file : string, optional
         Provides the path the log will be written to. Default "./log.txt"
-    logLevel : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
+    log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
         Defines the level of the log. Default logging.INFO
-    npErrResp : {'log', 'raise'}
+    numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
 
     Returns
     -------
-    closeLoggers : function
+    close_loggers : function
         Closes the logging systems that have been set up
 
     See Also
@@ -264,88 +331,54 @@ def fancyLogger(dateStr, logFile="./log.txt", logLevel=logging.INFO, npErrResp='
     numpy.seterr : The function npErrResp is passed to for defining the response to numpy errors
     """
 
-    class streamLoggerSim(object):
-        """
-        Fake file-like stream object that redirects writes to a logger instance.
-        Based on one found at:
-            http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
-        """
-        def __init__(self, logger, log_level=logging.INFO):
-            self.logger = logger
-            self.log_level = log_level
-            self.linebuf = ''
+    old_stdout = sys.stdout
+    logging.basicConfig(stream=sys.stdout,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%H:%M',
+                        level=log_level)
+    core_logger = logging.getLogger('')
 
-        def write(self, buf):
-            for line in buf.rstrip().splitlines():
-                self.logger.log(self.log_level, line.rstrip())
+    if log_file:
+        file_handler = logging.FileHandler(log_file, mode='w')
+        file_handler.setLevel(log_level)
+        file_format = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s', datefmt='%y-%m-%d %H:%M')
+        file_handler.setFormatter(file_format)
+        core_logger.addHandler(file_handler)
 
-        # See for why this next bit is needed http://stackoverflow.com/questions/20525587/python-logging-in-multiprocessing-attributeerror-logger-object-has-no-attrib
-        def flush(self):
-            try:
-                self.logger.flush()
-            except AttributeError:
-                pass
+    logging.captureWarnings(True)
 
-    if logFile:
-        logging.basicConfig(filename=logFile,
-                            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                            datefmt='%m-%d %H:%M',
-                            level=logLevel,
-                            filemode='w')
+    np.seterr(all=numpy_error_level)
+    old_np_error_call = np.seterrcall(LoggerWriter(logging.getLogger('NPSTDERR').error))
+    old_stderr = sys.stderr
+    sys.stderr = LoggerWriter(logging.getLogger('STDERR').error)
 
-        consoleFormat = logging.Formatter('%(name)-12s %(levelname)-8s %(message)s')
-        console = logging.StreamHandler()
-        console.setLevel(logLevel)
-        console.setFormatter(consoleFormat)
-        consoleHandler = console
-        # add the handler to the root logger
-        logging.getLogger('').addHandler(console)
-    else:
-        logging.basicConfig(datefmt='%m-%d %H:%M',
-                            format='%(name)-12s %(levelname)-8s %(message)s',
-                            level=logLevel)
+    setup_logger = logging.getLogger('Setup')
+    setup_logger.info(date())
+    setup_logger.info('Log initialised')
+    if log_file:
+        setup_logger.info("The log you are reading was written to " + str(log_file))
 
-    # Set the standard error output
-    sys.stderr = streamLoggerSim(logging.getLogger('STDERR'), logging.ERROR)
-    # Set the numpy error output and save the old one
-    oldnperrcall = np.seterrcall(streamLoggerSim(logging.getLogger('NPSTDERR'), logging.ERROR))
-    np.seterr(all=npErrResp)
-
-    logger = logging.getLogger("Setup")
-    logger.info(dateStr)
-    logger.info("Log initialised")
-    if logFile:
-        logger.info("The log you are reading was written to " + str(logFile))
-
-    # Finally, return a function that closes the loggers when necessary
-    def closeLoggers():
+    def close_loggers():
         """
         To run once everything has been completed.
         """
 
-        message = "Task completed. Shutting down"
-        logger.info(message)
+        message = "Shutting down program"
+        setup_logger.info(message)
+        logging.shutdown()
+        np.seterrcall(old_np_error_call)
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
 
-        if logFile:
-            logger.removeHandler(consoleHandler)
+        for h in core_logger.handlers[:]:
+            h.close()
+            core_logger.removeHandler(h)
 
-            logging.shutdown()
-            sys.stderr = sys.__stdout__
-            np.seterrcall(oldnperrcall)
-
-            root = logging.getLogger()
-            for h in root.handlers[:]:
-                h.close()
-                root.removeHandler(h)
-            for f in root.filters[:]:
-                f.close()
-                root.removeFilter(f)
-
-    return closeLoggers
+    return close_loggers
 
 
 #%% Pickle
-def pickleRec(data, handle, fileNameGen):
+def pickle_write(data, handle, file_name_gen):
     """
     Writes the data to a pickle file
 
@@ -355,18 +388,17 @@ def pickleRec(data, handle, fileNameGen):
         Data to be written to the file
     handle : string
         The name of the file
-    fileNameGen : function
+    file_name_gen : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
     """
+    output_file = file_name_gen(handle, 'pkl')
 
-    outputFile = fileNameGen(handle, 'pkl')
-
-    with open(outputFile, 'w') as w:
+    with open(output_file, 'w') as w:
         pickle.dump(data, w)
 
 
-def pickleLog(results, fileNameGen, label="", save=True):
+def pickleLog(results, file_name_gen, label=""):
     """
     Stores the data in the appropriate pickle file in a Pickle subfolder of the outputting folder
 
@@ -374,14 +406,14 @@ def pickleLog(results, fileNameGen, label="", save=True):
     ----------
     results : dict
         The data to be stored
-    fileNameGen : function
+    file_name_gen : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
     label : string, optional
         A label for the results file
     """
 
-    if not fileNameGen:
+    if not file_name_gen:
         return
 
     # TODO: remove the pulling out of ``Name`` from inside this method and make it more explicit higher up
@@ -394,7 +426,7 @@ def pickleLog(results, fileNameGen, label="", save=True):
     if label:
         handle += label
 
-    pickleRec(results, handle, fileNameGen)
+    pickle_write(results, handle, file_name_gen)
 
 
 #%% Utils
@@ -782,7 +814,7 @@ def date():
         The current date in the format <year>-<month>-<day>
 
     """
-    d = dt.datetime(1987, 1, 1)
+    d = dt.datetime(2000, 1, 1)
     d = d.today()
     todayDate = "{}-{}-{}".format(d.year, d.month, d.day)
 

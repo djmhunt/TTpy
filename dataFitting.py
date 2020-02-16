@@ -239,70 +239,63 @@ def run(data_folder='./',
                             calculate_covariance=calculate_covariance,
                             **fit_method_args)
 
-    outputFolder, file_name_generator, close_loggers = outputting.saving(label=label,
-                                                                         output_path=output_path,
-                                                                         config_file=config_file,
-                                                                         pickle=pickle,
-                                                                         min_log_level=min_log_level,
-                                                                         numpy_error_level=numpy_error_level)
+    with outputting.Saving(label=label, output_path=output_path, config_file=config_file, pickle_store=pickle,
+                           min_log_level=min_log_level, numpy_error_level=numpy_error_level) as file_name_generator:
 
-    logger = logging.getLogger('Overview')
+        logger = logging.getLogger('Overview')
 
-    log_fitting_parameters(fitter.info())
+        log_fitting_parameters(fitter.info())
 
-    message = 'Beginning the data fitting'
-    logger.info(message)
+        message = 'Beginning the data fitting'
+        logger.info(message)
 
-    model_ID = 0
-    # Initialise the stores of information
-    participant_fits = collections.defaultdict(list)  # type: defaultdict[Any, list]
+        model_ID = 0
+        # Initialise the stores of information
+        participant_fits = collections.defaultdict(list)  # type: collections.defaultdict[Any, list]
 
-    for model, model_parameter_variables, model_static_args in models.iter_details():
+        for model, model_parameter_variables, model_static_args in models.iter_details():
 
-        for v in model_changing_variables.itervalues():
-            model_static_args[v] = "<Varies for each participant>"
+            for v in model_changing_variables.itervalues():
+                model_static_args[v] = "<Varies for each participant>"
 
-        log_model_fitting_parameters(model, model_parameter_variables, model_static_args)
+            log_model_fitting_parameters(model, model_parameter_variables, model_static_args)
 
-        participantID = participants.participantID
-        for participant in participants:
+            participantID = participants.participantID
+            for participant in participants:
 
-            participant_name = participant[participantID]
-            if isinstance(participant_name, (list, tuple)):
-                participant_name = participant_name[0]
+                participant_name = participant[participantID]
+                if isinstance(participant_name, (list, tuple)):
+                    participant_name = participant_name[0]
 
-            for k, v in model_changing_variables.iteritems():
-                model_static_args[v] = participant[k]
+                for k, v in model_changing_variables.iteritems():
+                    model_static_args[v] = participant[k]
 
-            # Find the best model values from those proposed
-            message = "Beginning participant fit for participant {}".format(participant_name)
-            logger.info(message)
+                # Find the best model values from those proposed
+                message = "Beginning participant fit for participant {}".format(participant_name)
+                logger.info(message)
 
-            model_fitted, fit_quality, fitting_data = fitter.participant(model,
-                                                                         model_parameter_variables,
-                                                                         participant)
+                model_fitted, fit_quality, fitting_data = fitter.participant(model,
+                                                                             model_parameter_variables,
+                                                                             participant)
 
-            message = "Participant fitted"
-            logger.debug(message)
+                message = "Participant fitted"
+                logger.debug(message)
 
-            log_model_fitted_parameters(model_parameter_variables, model_fitted.params(), fit_quality, participant_name)
+                log_model_fitted_parameters(model_parameter_variables, model_fitted.params(), fit_quality, participant_name)
 
-            participant_fits = record_participant_fit(participant, participant_name, model_fitted.returnTaskState(),
-                                                      str(model_ID), fitting_data, model_changing_variables,
-                                                      participant_fits, outputFolder=outputFolder,
-                                                      fileNameGen=file_name_generator, pickleData=pickle,
-                                                      saveFittingProgress=save_fitting_progress)
+                participant_fits = record_participant_fit(participant, participant_name, model_fitted.returnTaskState(),
+                                                          str(model_ID), fitting_data, model_changing_variables,
+                                                          participant_fits, fileNameGen=file_name_generator,
+                                                          pickleData=pickle, saveFittingProgress=save_fitting_progress)
 
-        model_ID += 1
+            model_ID += 1
 
-    fit_record(participant_fits, file_name_generator)
-    close_loggers()
+        fit_record(participant_fits, file_name_generator)
 
 
 # %% Data record functions  
 def record_participant_fit(participant, part_name, model_data, model_name, fitting_data, partModelVars, participantFits,
-                           outputFolder=None, fileNameGen=None, pickleData=False, saveFittingProgress=False,
-                           expData=None):
+                           fileNameGen=None, pickleData=False, saveFittingProgress=False, expData=None):
     """
     Record the data relevant to the participant fitting
 
@@ -325,8 +318,6 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
         as a string, and the value is the associated label in the model, also as a string.
     participantFits : defaultdict of lists
         A dictionary to be filled with the summary of the participant fits
-    outputFolder : basestring, optional
-        The folder into which the data will be saved. Default ``None``
     fileNameGen : function or None
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string. Default ``None``
@@ -365,7 +356,8 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
         message = "Store data for " + participantName
         logger.info(message)
 
-        participantFits = record_fitting(fitting_data, label, participant, partModelVars, participantFits, outputFolder, fileNameGen, save_fitting_progress=saveFittingProgress)
+        participantFits = record_fitting(fitting_data, label, participant, partModelVars, participantFits, fileNameGen,
+                                         save_fitting_progress=saveFittingProgress)
 
         if pickleData:
             if expData is not None:
@@ -378,13 +370,7 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
 
 
 # %% Recording
-def record_fitting(fitting_data,
-                   label,
-                   participant,
-                   participant_model_variables,
-                   participant_fits,
-                   output_folder,
-                   file_name_generator,
+def record_fitting(fitting_data, label, participant, participant_model_variables, participant_fits, file_name_generator,
                    save_fitting_progress=False):
     """
     Records formatted versions of the fitting data
@@ -404,8 +390,6 @@ def record_fitting(fitting_data,
         as a string, and the value is the associated label in the model, also as a string.
     participant_fits : defaultdict of lists
         A dictionary to be filled with the summary of the participant fits
-    output_folder : basestring
-        The folder into which the data will be saved
     file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
@@ -430,7 +414,7 @@ def record_fitting(fitting_data,
         participant_fits[v] = participant[k]
 
     if save_fitting_progress:
-        xlsx_fitting_data(fitting_data.copy(), extendedLabel, participant, output_folder, file_name_generator)
+        xlsx_fitting_data(fitting_data.copy(), extendedLabel, participant, file_name_generator)
 
     return participant_fits
 
@@ -542,7 +526,7 @@ def fit_record(participant_fits, file_name_generator):
 
 
 #%% Excel
-def xlsx_fitting_data(fitting_data, label, participant, output_folder, file_name_generator):
+def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     """
     Saves the fitting data to an XLSX file
 
@@ -555,8 +539,6 @@ def xlsx_fitting_data(fitting_data, label, participant, output_folder, file_name
         The label used to identify the fit in the file names
     participant : dict
         The participant data
-    output_folder : basestring
-        The path of the output folder
     file_name_generator : function
         Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
         returns one ``fileName`` string
@@ -564,7 +546,6 @@ def xlsx_fitting_data(fitting_data, label, participant, output_folder, file_name
     """
 
     data = collections.OrderedDict()
-    data['folder'] = output_folder
     partData = outputting.newListDict(participant, 'part')
     data.update(partData)
 
