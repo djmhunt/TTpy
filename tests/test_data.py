@@ -142,7 +142,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
 @pytest.fixture(scope="session")
 def single_files(tmpdir_factory):
 
-    folder_name = tmpdir_factory.mktemp("data")
+    folder_name = tmpdir_factory.mktemp("single_data", numbered=False)
     file_names = {}
 
     mat_file_name = folder_name.join(MAT_DATA['dfile'])
@@ -175,7 +175,7 @@ def single_files(tmpdir_factory):
 
 @pytest.fixture(scope="session")
 def multi_files(tmpdir_factory):
-    folder_name = tmpdir_factory.mktemp("data")
+    folder_name = tmpdir_factory.mktemp("multi_data", numbered=False)
     file_names = {}
 
     mat_file_names = []
@@ -217,7 +217,7 @@ def multi_files(tmpdir_factory):
 
 @pytest.fixture(scope='session')
 def multi_folders(tmpdir_factory):
-    folder_name = tmpdir_factory.mktemp("data", numbered=False)
+    folder_name = tmpdir_factory.mktemp("multi_folder_data", numbered=False)
     folder_name_str = str(folder_name).replace('\\', '/')
 
     file_names = []

@@ -7,16 +7,271 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import numpy as np
 
 import pytest
+import os
+import itertools
 
 import collections
 
 import outputting
+@pytest.fixture(scope="session")
+def output_folder(tmpdir_factory):
+
+    folder_name = tmpdir_factory.mktemp("data", numbered=False)
+
+    return folder_name
 
 
 #%% For saving
 class TestClass_saving:
-    def test_S(self):
-        assert 1 == 1
+    def test_S_none(self, capsys):
+
+        with outputting.Saving() as saving:
+            captured = capsys.readouterr()
+            standard_captured = [c[6:] for c in captured[0].splitlines()]
+            error_captured = captured[1]
+            assert saving is None
+
+        correct = ['Setup        INFO     {}'.format(outputting.date()),
+                   'Setup        INFO     Log initialised',
+                   'Framework    INFO     Beginning task labelled: Untitled']
+
+        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+    def test_S_close(self, capsys):
+
+        with outputting.Saving() as saving:
+            assert saving is None
+
+        captured = capsys.readouterr()
+        standard_captured = [c[6:] for c in captured[0].splitlines()]
+        error_captured = captured[1]
+
+        correct = ['Setup        INFO     {}'.format(outputting.date()),
+                   'Setup        INFO     Log initialised',
+                   'Framework    INFO     Beginning task labelled: Untitled',
+                   'Setup        INFO     Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+
+#%% For folderSetup
+class TestClass_folderSetup:
+    def test_FS_basic(self, tmpdir):
+        path_str = str(tmpdir)
+        result = outputting.folder_setup('test', '20-2-2020', base_path=path_str)
+        correct_result = path_str.replace('\\', '/') + '/Outputs/test_20-2-2020/'
+        assert os.path.exists(result)
+        assert result == correct_result
+        assert os.path.exists(correct_result + 'data/')
+        assert not os.path.exists(correct_result + 'Pickle/')
+
+    def test_FS_double(self, tmpdir):
+        path_str = str(tmpdir)
+        result1 = outputting.folder_setup('test', '20-2-2020', base_path=path_str)
+        result2 = outputting.folder_setup('test', '20-2-2020', base_path=path_str)
+        correct_result = path_str.replace('\\', '/') + '/Outputs/test_20-2-2020_no_1/'
+        assert os.path.exists(result2)
+        assert result2 == correct_result
+
+    def test_FS_pickle(self, tmpdir):
+        path_str = str(tmpdir)
+        result = outputting.folder_setup('test', '20-2-2020', base_path=path_str, pickle_data=True)
+        correct_result = path_str.replace('\\', '/') + '/Outputs/test_20-2-2020/'
+        assert os.path.exists(correct_result + 'Pickle/')
+
+
+#%% For fileNameGenerator
+class TestClass_fileNameGenerator:
+    def test_FNG_none(self):
+
+        file_name_generator = outputting.file_name_generator()
+        assert callable(file_name_generator)
+
+    def test_FNG_none2(self):
+
+        file_name_generator = outputting.file_name_generator()
+        result = file_name_generator("", "")
+        correct_result = os.getcwd().replace('\\', '/') + '/'
+        assert result == correct_result
+
+    def test_FNG_none3(self, output_folder):
+        output_path = str(output_folder)
+
+        file_name_generator = outputting.file_name_generator(output_folder=output_path)
+        result = file_name_generator("", "")
+        correct_result = output_path.replace('\\', '/') + '/'
+        assert result == correct_result
+
+    def test_FNG_typeless(self, output_folder):
+        output_path = str(output_folder)
+
+        file_name_generator = outputting.file_name_generator(output_folder=output_path)
+        result = file_name_generator("a", "")
+        correct_result = output_path.replace('\\', '/') + '/a'
+
+        assert result == correct_result
+
+    def test_FNG_nameless(self, output_folder):
+        output_path = str(output_folder)
+
+        file_name_generator = outputting.file_name_generator(output_folder=output_path)
+        result = file_name_generator("", "a")
+        correct_result = output_path.replace('\\', '/') + '/.a'
+
+        assert result == correct_result
+
+    def test_FNG_basic(self, output_folder):
+        output_path = str(output_folder)
+
+        file_name_generator = outputting.file_name_generator(output_folder=output_path)
+        result = file_name_generator("a", "b")
+        correct_result = output_path.replace('\\', '/') + '/a.b'
+        assert result == correct_result
+
+    def test_FNG_basic2(self):
+        file_name_generator = outputting.file_name_generator(output_folder='./')
+        result = file_name_generator("a", "b")
+        correct_result = './a.b'
+        assert result == correct_result
+
+        result = file_name_generator("a", "b")
+        correct_result = './a_1.b'
+        assert result == correct_result
+
+
+#%% For fancy_logger
+class TestClass_fancy_logger:
+    def test_FL_none(self, capsys):
+        close_loggers = outputting.fancy_logger()
+
+        captured = capsys.readouterr()
+        standard_captured = [c[6:] for c in captured[0].splitlines()]
+        error_captured = captured[1]
+
+        correct = ['Setup        INFO     {}'.format(outputting.date()),
+                   'Setup        INFO     Log initialised']
+
+        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+            assert standard_captured_line == correct_line
+        close_loggers()
+
+    def test_FL_file(self, capsys, tmpdir):
+        path_str = str(tmpdir).replace('\\', '/')
+        log_path = '{}/log.txt'.format(path_str)
+        close_loggers = outputting.fancy_logger(log_file=log_path)
+
+        captured = capsys.readouterr()
+        standard_captured = [c[6:] for c in captured[0].splitlines()]
+        error_captured = captured[1]
+
+        date = outputting.date()
+
+        correct = ['Setup        INFO     {}'.format(date),
+                   'Setup        INFO     Log initialised',
+                   'Setup        INFO     The log you are reading was written to {}'.format(log_path)]
+
+        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+        with open(log_path) as log:
+            cleaned_log = [l[15:].strip() for l in log.readlines()]
+        for correct_line, standard_captured_line in itertools.izip(correct, cleaned_log):
+            assert standard_captured_line == correct_line
+
+        close_loggers()
+
+    def test_FL_close(self, capsys):
+        close_loggers = outputting.fancy_logger()
+        close_loggers()
+
+        captured = capsys.readouterr()
+        standard_captured = [c[6:] for c in captured[0].splitlines()]
+        error_captured = captured[1]
+
+        correct = ['Setup        INFO     {}'.format(outputting.date()),
+                   'Setup        INFO     Log initialised',
+                   'Setup        INFO     Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+
+#%% For flatDictKeySet
+class TestClass_flatDictKeySet:
+    def test_FDKS_none(self):
+        store = []
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict()
+        assert result == correct_result
+
+    def test_FDKS_string(self):
+        store = [{'string': 'string'}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('string', None)])
+        assert result == correct_result
+
+    def test_FDKS_list1(self):
+        store = [{'list': [1, 2, 3, 4, 5, 6]}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('list', np.array([[0], [1], [2], [3], [4], [5]]))])
+        assert (result['list'] == correct_result['list']).all()
+
+    def test_FDKS_num(self):
+        store = [{'num': 23.6}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('num', None)])
+        assert result == correct_result
+
+    def test_FDKS_array(self):
+        store = [{'array': np.array([1, 2, 3])}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('array', np.array([[0], [1], [2]]))])
+        assert (result['array'] == correct_result['array']).all()
+
+    def test_FDKS_array2(self):
+        store = [{'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4],
+                                                                       [0, 5], [1, 5]]))])
+        assert (result['array'] == correct_result['array']).all()
+
+    def test_FDKS_array3(self):
+        store = [{'array': np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [0, 1], [1, 1], [2, 1], [3, 1],
+                                                                       [4, 1], [5, 1]]))])
+        assert (result['array'] == correct_result['array']).all()
+
+    def test_FDKS_dict(self):
+        store = [{'dict': {1: "a", 2: "b"}}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, None), (2, None)]))])
+        assert result['dict'] == correct_result['dict']
+
+    def test_FDKS_dict2(self):
+        store = [{'dict': {1: [1, 2, 3], 2: [[1, 2], [3, 4]]}}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, np.array([[0], [1], [2]])),
+                                                                                     (2, [[0, 0], [1, 0],
+                                                                                          [0, 1], [1, 1]])]))])
+        assert (result['dict'][1] == correct_result['dict'][1]).all()
+        assert (result['dict'][2] == correct_result['dict'][2]).all()
+
+    def test_FDKS_dict3(self):
+        store = [{'dict': {1: {3: "a"}, 2: "b"}}]
+        result = outputting.flatDictKeySet(store)
+        correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, collections.OrderedDict([(3, None)])),
+                                                                                     (2, None)]))])
+        assert result['dict'] == correct_result['dict']
+
+    # TODO: Upgrade flatDictKeySet to cope with this
+    #def test_FDKS_list_dict(self):
+    #    store = [{'list': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}]
+    #    result = outputting.flatDictKeySet(store)
+    #    correct_result = collections.OrderedDict([('list', np.array([[0, "A"], [0, "B"], [1, 1], [1, 2]]))])
+    #    assert (result['list'] == correct_result['list']).all()
 
 
 #%% For newFlatDict

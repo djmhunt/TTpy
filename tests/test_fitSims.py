@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-:Author: Dominic
+:Author: Dominic Hunt
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 

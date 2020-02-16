@@ -24,7 +24,11 @@ def output_folder(tmpdir_factory):
 
     return folder_name
 
+
 class TestClass_basic:
+    def test_DF_none(self):
+        with pytest.raises(data.FileError, match='No data files found'):
+            dataFitting.run()
 
     def test_DF_1(self, output_folder, capsys):
         output_path = str(output_folder)
