@@ -6,6 +6,8 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import numpy as np
 
+import copy
+
 from model.decision.discrete import weightProb
 
 import utils
@@ -267,9 +269,9 @@ class Model(object):
                            "number_actions": self.number_actions,
                            "number_cues": self.number_cues,
                            "number_critics": self.number_critics,
-                           "prior": self.prior.copy(),
+                           "prior": copy.copy(self.prior),
                            "non_action": self.defaultNonAction,
-                           "actionCode": self.actionCode.copy(),
+                           "actionCode": copy.copy(self.actionCode),
                            "stimulus_shaper": self.stimulus_shaper.details(),
                            "reward_shaper": self.reward_shaper.details(),
                            "decision_function": utils.callableDetailsString(self.decision_function)}
@@ -291,6 +293,7 @@ class Model(object):
 
     def __eq__(self, other):
 
+        # TODO: Expand this to cover the parameters properly
         if self.Name == other.Name:
             return True
         else:
@@ -691,7 +694,16 @@ class Model(object):
 
     def __repr__(self):
 
-        return self.params()
+        params = self.params()
+        name = params.pop('Name')
+
+        label = ["{}(".format(name)]
+        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.iteritems()])
+        label.append(")")
+
+        representation = ' '.join(label)
+
+        return representation
 
     def setsimID(self, simID):
         """
