@@ -18,27 +18,34 @@ class Evolutionary(FitAlg):
 
     Parameters
     ----------
-    fitQualityFunc : string, optional
+    fit_sim : fitAlgs.fitSims.FitSim instance, optional
+        An instance of one of the fitting simulation methods. Default ``fitAlgs.fitSims.FitSim``
+    fit_measure : string, optional
         The name of the function used to calculate the quality of the fit.
-        The value it returns provides the fitter with its fitting guide.
-        Default ``fitAlg.null``
-    qualityFuncArgs : dict, optional
-        The parameters used to initialise fitQualFunc. Default ``{}``
+        The value it returns provides the fitter with its fitting guide. Default ``-loge``
+    fit_measure_args : dict, optional
+        The parameters used to initialise fit_measure and extra_fit_measures. Default ``None``
+    extra_fit_measures : list of strings, optional
+        List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+        measures should be placed in fit_measure_args. Default ``None``
+    bounds : dictionary of tuples of length two with floats, optional
+        The boundaries for methods that use bounds. If unbounded methods are
+        specified then the bounds will be ignored. Default is ``None``, which
+        translates to boundaries of (0, np.inf) for each parameter.
+    boundary_excess_cost : basestring or callable returning a function, optional
+        The function is used to calculate the penalty for exceeding the boundaries.
+        Default is ``boundFunc.scalarBound()``
+    boundary_excess_cost_properties : dict, optional
+        The parameters for the boundary_excess_cost function. Default {}
     strategy : string or list of strings, optional
         The name of the fitting strategy or list of names of fitting strategies or
         name of a list of fitting strategies. Valid names found in the notes.
         Default ``best1bin``
-    bounds : dictionary of tuples of length two with floats, optional
-        The boundaries for fitting. Default is ``None``, which
-        translates to boundaries of (0,float('Inf')) for each parameter.
-    boundCostFunc : function, optional
-        A function used to calculate the penalty for exceeding the boundaries.
-        Default is ``boundFunc.scalarBound``
     polish : bool, optional
         If True (default), then scipy.optimize.minimize with the ``L-BFGS-B``
         method is used to polish the best population member at the end, which
         can improve the minimization slightly. Default ``False``
-    popSize : int, optional
+    population_size : int, optional
         A multiplier for setting the total population size. The population has
         popsize * len(x) individuals. Default 20
     tolerance : float, optional
@@ -46,11 +53,6 @@ class Evolutionary(FitAlg):
         the standard deviation of the population energies is greater than 1 the
         solving process terminates: convergence = mean(pop) * tol / stdev(pop) > 1
         Default 0.01
-    calcCov : bool, optional
-        Is the covariance calculated. Default ``False``
-    extraFitMeasures : dict of dict, optional
-        Dictionary of fitting measures not used to fitting the model, but to provide more information. The keys are the
-        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
 
     Attributes
     ----------
@@ -82,48 +84,48 @@ class Evolutionary(FitAlg):
                         'rand2bin',
                         'rand1bin']
 
-    def __init__(self, strategy=None, polish=False, popSize=20, tolerance=0.01, **kwargs):
+    def __init__(self, strategy=None, polish=False, population_size=20, tolerance=0.01, **kwargs):
 
         super(Evolutionary, self).__init__(**kwargs)
 
         self.polish = polish
-        self.populationSize = popSize
+        self.population_size = population_size
         self.tolerance = tolerance
 
         self._setType(strategy)
 
-        self.fitInfo['polish'] = self.polish
-        self.fitInfo['popSize'] = self.populationSize
-        self.fitInfo['tolerance'] = self.tolerance
+        self.fit_info['polish'] = self.polish
+        self.fit_info['population_size'] = self.population_size
+        self.fit_info['tolerance'] = self.tolerance
 
         if self.strategySet is None:
-            self.fitInfo['strategy'] = self.strategy
+            self.fit_info['strategy'] = self.strategy
         else:
-            self.fitInfo['strategy'] = self.strategySet
+            self.fit_info['strategy'] = self.strategySet
 
         self.iterbestParams = []
         self.iterConvergence = []
 
-    def fit(self, sim, mParamNames, mInitialParams):
+    def fit(self, simulator, model_parameter_names, model_initial_parameters):
         """
         Runs the model through the fitting algorithms and starting parameters
         and returns the best one.
 
         Parameters
         ----------
-        sim : function
+        simulator : function
             The function used by a fitting algorithm to generate a fit for
-            given model parameters. One example is fitAlgs.fitAlg.fitness
-        mParamNames : list of strings
+            given model parameters. One example is fitAlgs.fitSim.fitness
+        model_parameter_names : list of strings
             The list of initial parameter names
-        mInitialParams : list of floats
+        model_initial_parameters : list of floats
             The list of the initial parameters
 
         Returns
         -------
-        fitParams : list of floats
+        best_fit_parameters : list of floats
             The best fitting parameters
-        fitQuality : float
+        fit_quality : float
             The quality of the fit as defined by the quality function chosen.
         testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
@@ -136,17 +138,17 @@ class Evolutionary(FitAlg):
 
         """
 
-        self.sim = sim
-        self.testedParams = []
-        self.testedParamQualities = []
+        self.simulator = simulator
+        self.tested_parameters = []
+        self.tested_parameter_qualities = []
         self.iterbestParams = []
         self.iterConvergence = []
 
         strategy = self.strategy
         strategySet = self.strategySet
 
-        self.setBounds(mParamNames)
-        boundVals = self.boundVals
+        self.set_bounds(model_parameter_names)
+        boundVals = self.boundary_values
 
         if strategy is None:
 
@@ -161,27 +163,27 @@ class Evolutionary(FitAlg):
             bestResult = self._bestfit(resultSet)
 
             if bestResult is None:
-                fitParams = mInitialParams
-                fitVal = float("inf")
+                best_fit_parameters = model_initial_parameters
+                fit_quality = np.inf
             else:
-                fitParams = bestResult.x
-                fitVal = bestResult.fun
+                best_fit_parameters = bestResult.x
+                fit_quality = bestResult.fun
 
         else:
             optimizeResult = self._strategyFit(strategy, boundVals)
 
             if optimizeResult is None:
-                fitParams = mInitialParams
-                fitVal = float("inf")
+                best_fit_parameters = model_initial_parameters
+                fit_quality = np.inf
             else:
-                fitParams = optimizeResult.x
-                fitVal = optimizeResult.fun
+                best_fit_parameters = optimizeResult.x
+                fit_quality = optimizeResult.fun
 
         fitDetails = dict(optimizeResult)
         fitDetails['bestParams'] = np.array(self.iterbestParams).T
         fitDetails['convergence'] = self.iterConvergence
 
-        return fitParams, fitVal, (self.testedParams, self.testedParamQualities, fitDetails)
+        return best_fit_parameters, fit_quality, (self.tested_parameters, self.tested_parameter_qualities, fitDetails)
 
     def callback(self, xk, convergence):
         """
@@ -219,7 +221,7 @@ class Evolutionary(FitAlg):
             optimizeResult = sp.optimize.differential_evolution(self.fitness,
                                                                 bounds,
                                                                 strategy=strategy,
-                                                                popsize=self.populationSize,
+                                                                popsize=self.population_size,
                                                                 tol=self.tolerance,
                                                                 polish=self.polish,
                                                                 callback=self.callback,
@@ -232,7 +234,7 @@ class Evolutionary(FitAlg):
             optimizeResult = sp.optimize.differential_evolution(self.fitness,
                                                                 bounds,
                                                                 strategy=strategy,
-                                                                popsize=self.populationSize,
+                                                                popsize=self.population_size,
                                                                 tol=self.tolerance,
                                                                 polish=self.polish,
                                                                 callback=self.callback,

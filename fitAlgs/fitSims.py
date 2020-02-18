@@ -174,7 +174,7 @@ class FitSim(object):
 
         return model_performance
 
-    def prepare_sim(self, model, model_setup, participant_data):
+    def prepare_sim(self, model, model_parameters, model_properties, participant_data):
         """
         Set up the simulation of a model following the behaviour of a participant
 
@@ -182,9 +182,10 @@ class FitSim(object):
         ----------
         model : model.modelTemplate.Model inherited class
             The model you wish to try and fit values to
-        model_setup : (dict,dict)
-            The first dictionary is the model initial parameters. The second
-            are the other model properties
+        model_parameters : dict
+            The model initial parameters
+        model_properties : dict
+            The model static properties
         participant_data : dict
             The participant data
 
@@ -194,9 +195,9 @@ class FitSim(object):
         """
 
         self.model = model
-        self.initial_parameter_values = model_setup[0].values()
-        self.model_parameter_names = model_setup[0].keys()
-        self.model_other_properties = model_setup[1]
+        self.initial_parameter_values = model_parameters.values()
+        self.model_parameter_names = model_parameters.keys()
+        self.model_other_properties = model_properties
 
         participant_sequence = self.participant_sequence_generation(participant_data,
                                                                     self.participant_choice_property,

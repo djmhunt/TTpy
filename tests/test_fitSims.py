@@ -220,7 +220,7 @@ class TestClass_model:
                                  fit_subset=None,
                                  action_options_property='valid_actions_combined')
 
-        fitting = fit_sim.prepare_sim(model, model_other, participant_data)
+        fitting = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
 
         assert fitting == fit_sim.fitness
 
@@ -235,7 +235,7 @@ class TestClass_model:
                                  fit_subset=None,
                                  action_options_property=[1, 2])
 
-        fitting = fit_sim.prepare_sim(model, model_other, participant_data)
+        fitting = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
 
         model_instance = fit_sim.fitted_model(0.5, 3)
         model_data = model_instance.returnTaskState()
@@ -256,7 +256,7 @@ class TestClass_model:
                                  fit_subset=None,
                                  action_options_property=[1, 2])
 
-        fitness = fit_sim.prepare_sim(model, model_other, participant_data)
+        fitness = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
         result = fitness(0.5, 3)
         correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
                                    0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])

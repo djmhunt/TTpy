@@ -242,7 +242,7 @@ def run(data_folder='./',
     with outputting.Saving(label=label, output_path=output_path, config_file=config_file, pickle_store=pickle,
                            min_log_level=min_log_level, numpy_error_level=numpy_error_level) as file_name_generator:
 
-        logger = logging.getLogger('Overview')
+        logger = logging.getLogger('Fitting')
 
         log_fitting_parameters(fitter.info())
 
@@ -276,6 +276,7 @@ def run(data_folder='./',
 
                 model_fitted, fit_quality, fitting_data = fitter.participant(model,
                                                                              model_parameter_variables,
+                                                                             model_static_args,
                                                                              participant)
 
                 message = "Participant fitted"
@@ -338,7 +339,7 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
     --------
     outputting.pickleLog : records the picked data
     """
-    logger = logging.getLogger('Framework')
+    logger = logging.getLogger('Logging')
     partNameStr = str(part_name)
 
     message = "Recording participant " + partNameStr + " model fit"
@@ -349,7 +350,7 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
     participantName = "Participant " + partNameStr
 
     participant.setdefault("Name", participantName)
-    participant.setdefault("assignedName", participantName)
+    participant.setdefault("assigned_name", participantName)
     fitting_data.setdefault("Name", participantName)
 
     if fileNameGen:
@@ -405,10 +406,10 @@ def record_fitting(fitting_data, label, participant, participant_model_variables
     extendedLabel = "ParameterFits" + label
 
     participant_fits["Name"].append(participant["Name"])
-    participant_fits["assignedName"].append(participant["assignedName"])
-    for k in filter(lambda x: 'fitQuality' in x, fitting_data.keys()):
+    participant_fits["assigned_name"].append(participant["assigned_name"])
+    for k in filter(lambda x: 'fit_quality' in x, fitting_data.keys()):
         participant_fits[k].append(fitting_data[k])
-    for k, v in fitting_data["finalParameters"].iteritems():
+    for k, v in fitting_data["final_parameters"].iteritems():
         participant_fits[k].append(v)
     for k, v in participant_model_variables.iteritems():
         participant_fits[v] = participant[k]
@@ -475,7 +476,7 @@ def log_model_fitted_parameters(model_fit_variables, model_parameters, fit_quali
 
     message += " with a fit quality of " + str(fit_quality) + "."
 
-    logger_sim = logging.getLogger('Simulation')
+    logger_sim = logging.getLogger('Fitting')
     logger_sim.info(message)
 
 
@@ -489,7 +490,7 @@ def log_fitting_parameters(fit_info):
         The details of the fitting
     """
 
-    log = logging.getLogger('Framework')
+    log = logging.getLogger('Fitting')
 
     message = "Fitting information:"
     log.info(message)
@@ -549,11 +550,11 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     partData = outputting.newListDict(participant, 'part')
     data.update(partData)
 
-    parameter_fitting_dict = copy.copy(fitting_data["testedParameters"])
-    parameter_fitting_dict['partFitName'] = fitting_data.pop("Name")
-    #parameter_fitting_dict['fitQuality'] = fittingData.pop("fitQuality")
+    parameter_fitting_dict = copy.copy(fitting_data["tested_parameters"])
+    parameter_fitting_dict['participant_fitting_name'] = fitting_data.pop("Name")
+    #parameter_fitting_dict['fit_quality'] = fittingData.pop("fit_quality")
     #parameter_fitting_dict["fitQualities"] = fittingData.pop("fitQualities")
-    for k, v in fitting_data.pop("finalParameters").iteritems():
+    for k, v in fitting_data.pop("final_parameters").iteritems():
         parameter_fitting_dict[k + "final"] = v
     parameter_fitting_dict.update(fitting_data)
     data.update(parameter_fitting_dict)

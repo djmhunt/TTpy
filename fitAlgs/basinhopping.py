@@ -20,39 +20,40 @@ class Basinhopping(FitAlg):
 
     Parameters
     ----------
-    fitQualityFunc : string, optional
+    fit_sim : fitAlgs.fitSims.FitSim instance, optional
+        An instance of one of the fitting simulation methods. Default ``fitAlgs.fitSims.FitSim``
+    fit_measure : string, optional
         The name of the function used to calculate the quality of the fit.
-        The value it returns provides the fitter with its fit guide.
-        Default ``fitAlg.null``
-    qualityFuncArgs : dict, optional
-        The parameters used to initialise fitQualFunc. Default ``{}``
+        The value it returns provides the fitter with its fitting guide. Default ``-loge``
+    fit_measure_args : dict, optional
+        The parameters used to initialise fit_measure and extra_fit_measures. Default ``None``
+    extra_fit_measures : list of strings, optional
+        List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+        measures should be placed in fit_measure_args. Default ``None``
+    bounds : dictionary of tuples of length two with floats, optional
+        The boundaries for methods that use bounds. If unbounded methods are
+        specified then the bounds will be ignored. Default is ``None``, which
+        translates to boundaries of (0, np.inf) for each parameter.
+    boundary_excess_cost : basestring or callable returning a function, optional
+        The function is used to calculate the penalty for exceeding the boundaries.
+        Default is ``boundFunc.scalarBound()``
+    boundary_excess_cost_properties : dict, optional
+        The parameters for the boundary_excess_cost function. Default {}
     method : string or list of strings, optional
         The name of the fitting method or list of names of fitting methods or
         name of list of fitting methods. Valid names found in the notes.
         Default ``unconstrained``
-    bounds : dictionary of tuples of length two with floats, optional
-        The boundaries for methods that use bounds. If unbounded methods are
-        specified then the bounds will be ignored. Default is ``None``, which
-        translates to boundaries of (0,float('Inf')) for each parameter.
-    boundCostFunc : function, optional
-        A function used to calculate the penalty for exceeding the boundaries.
-        Default is ``boundFunc.scalarBound``
-    numStartPoints : int, optional
+    number_start_points : int, optional
         The number of starting points generated for each parameter.
         Default 4
-    boundFit : bool, optional
+    allow_boundary_fits : bool, optional
         Defines if fits that reach a boundary should be considered the same way
         as those that do not. Default is True
     boundSensitivity : int, optional
         Defines the smallest number of decimal places difference (so the
         minimal difference) between a fit value and its related boundaries
         before a fit value is considered different from a boundary. The default
-        is `5`. This is only valid if ``boundFit`` is ``False``
-    calcCov : bool, optional
-        Is the covariance calculated. Default ``True``
-    extraFitMeasures : dict of dict, optional
-        Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
-        fitQUalFunc used names and the values are the qualFuncArgs. Default ``{}``
+        is `5`. This is only valid if ``allow_boundary_fits`` is ``False``
 
     Attributes
     ----------
@@ -73,7 +74,7 @@ class Basinhopping(FitAlg):
 
     For each fitting function a set of different starting parameters will be
     tried. These are the combinations of all the values of the different
-    parameters. For each starting parameter provided a set of numStartPoints
+    parameters. For each starting parameter provided a set of number_start_points
     starting points will be chosen, surrounding the starting point provided. If
     the starting point provided is less than one it will be assumed that the
     values cannot exceed 1, otherwise, unless otherwise told, it will be
@@ -90,24 +91,28 @@ class Basinhopping(FitAlg):
     unconstrained = ['Nelder-Mead', 'Powell', 'CG', 'BFGS']
     constrained = ['L-BFGS-B', 'TNC', 'SLSQP']
 
-    def __init__(self, method=None, numStartPoints=4, boundFit=True, boundSensitivity=5, **kwargs):
+    def __init__(self, method=None,
+                 number_start_points=4,
+                 allow_boundary_fits=True,
+                 boundary_fit_sensitivity=5,
+                 **kwargs):
 
         super(Basinhopping, self).__init__(**kwargs)
 
-        self.numStartPoints = numStartPoints
-        self.boundFit = boundFit
-        self.boundSensitivity = boundSensitivity
+        self.number_start_points = number_start_points
+        self.allow_boundary_fits = allow_boundary_fits
+        self.boundary_fit_sensitivity = boundary_fit_sensitivity
 
-        self._setType(method, self.allBounds)
+        self._setType(method, self.boundaries)
 
-        self.fitInfo['numStartPoints'] = self.numStartPoints
-        self.fitInfo['boundFit'] = self.boundFit
-        self.fitInfo['boundSensitivity'] = self.boundSensitivity
+        self.fit_info['number_start_points'] = self.number_start_points
+        self.fit_info['allow_boundary_fits'] = self.allow_boundary_fits
+        self.fit_info['boundary_fit_sensitivity'] = self.boundary_fit_sensitivity
 
         if self.methodSet is None:
-            self.fitInfo['method'] = self.method
+            self.fit_info['method'] = self.method
         else:
-            self.fitInfo['method'] = self.methodSet
+            self.fit_info['method'] = self.methodSet
 
         self.iterBestParams = []
         self.iterFuncValueMin = []
@@ -128,26 +133,26 @@ class Basinhopping(FitAlg):
         self.iterFuncValueMin.append(f)
         self.iterParameterAccept.append(accept)
 
-    def fit(self, sim, mParamNames, mInitialParams):
+    def fit(self, simulator, model_parameter_names, model_initial_parameters):
         """
         Runs the model through the fitting algorithms and starting parameters
         and returns the best one.
 
         Parameters
         ----------
-        sim : function
+        simulator : function
             The function used by a fitting algorithm to generate a fit for
             given model parameters. One example is fitAlgs.fitAlg.fitness
-        mParamNames : list of strings
+        model_parameter_names : list of strings
             The list of initial parameter names
-        mInitialParams : list of floats
+        model_initial_parameters : list of floats
             The list of the intial parameters
 
         Returns
         -------
-        fitParams : list of floats
+        best_fit_parameters : list of floats
             The best fitting parameters
-        fitQuality : float
+        fit_quality : float
             The quality of the fit as defined by the quality function chosen.
         testedParams : tuple of two lists and a dictionary
             The two lists are a list containing the parameter values tested, in the order they were tested, and the
@@ -159,9 +164,9 @@ class Basinhopping(FitAlg):
         fitAlgs.fitAlg.fitness
         """
 
-        self.sim = sim
-        self.testedParams = []
-        self.testedParamQualities = []
+        self.simulator = simulator
+        self.tested_parameters = []
+        self.tested_parameter_qualities = []
         self.iterBestParams = []
         self.iterFuncValueMin = []
         self.iterParameterAccept = []
@@ -170,21 +175,21 @@ class Basinhopping(FitAlg):
         methodSet = self.methodSet
         bounds = self.bounds
         boundVals = self.boundVals
-        boundFit = self.boundFit
-        boundSensitivity = self.boundSensitivity
-        numStartPoints = self.numStartPoints
+        allow_boundary_fits = self.allow_boundary_fits
+        boundary_fit_sensitivity = self.boundary_fit_sensitivity
+        number_start_points = self.number_start_points
 
         if bounds is None:
-            boundVals = [(0, float('Inf')) for i in mInitialParams]
-            bounds = {k: v for k, v in itertools.izip(mParamNames, boundVals)}
+            boundVals = [(0, float('Inf')) for i in model_initial_parameters]
+            bounds = {k: v for k, v in itertools.izip(model_parameter_names, boundVals)}
             self.bounds = bounds
             self.boundVals = np.array(boundVals)
 
         if boundVals is None:
-            boundVals = np.array([bounds[k] for k in mParamNames])
+            boundVals = np.array([bounds[k] for k in model_parameter_names])
             self.boundVals = boundVals
 
-        initParamSets = self.startParams(mInitialParams, bounds=boundVals, numPoints=numStartPoints)
+        initParamSets = self.startParams(model_initial_parameters, bounds=boundVals, number_starting_points=number_start_points)
 
         if method is None:
 
@@ -193,33 +198,33 @@ class Basinhopping(FitAlg):
 
             for method in methodSet:
 
-                optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
+                optimizeResult = self._methodFit(method, initParamSets, boundVals, allow_boundary_fits=allow_boundary_fits)
 
                 if optimizeResult is not None:
                     resultSet.append(optimizeResult)
                     methodSuccessSet.append(method)
 
-            bestResult = self._bestfit(resultSet, boundVals, boundFit=boundFit, boundSensitivity=boundSensitivity)
+            bestResult = self._bestfit(resultSet, boundVals, allow_boundary_fits=allow_boundary_fits, boundary_fit_sensitivity=boundary_fit_sensitivity)
 
             if bestResult is None:
-                return mInitialParams, float("inf")
+                return model_initial_parameters, float("inf")
             else:
-                fitParams = bestResult.x
-                fitVal = bestResult.fun
+                best_fit_parameters = bestResult.x
+                fit_quality = bestResult.fun
 
-                return fitParams, fitVal
+                return best_fit_parameters, fit_quality
 
         else:
-            optimizeResult = self._methodFit(method, initParamSets, boundVals, boundFit=boundFit)
+            optimizeResult = self._methodFit(method, initParamSets, boundVals, allow_boundary_fits=allow_boundary_fits)
 
-            fitParams = optimizeResult.x
-            fitVal = optimizeResult.fun
+            best_fit_parameters = optimizeResult.x
+            fit_quality = optimizeResult.fun
 
             iterDetails = dict(bestParams=self.iterBestParams, funcVal=self.iterFuncValueMin, paramAccept=self.iterParameterAccept)
 
-            return fitParams, fitVal, (self.testedParams, self.testedParamQualities, iterDetails)
+            return best_fit_parameters, fit_quality, (self.tested_parameters, self.tested_parameter_qualities, iterDetails)
 
-    def _methodFit(self, method, initParamSets, bounds, boundFit=True, boundSensitivity=5):
+    def _methodFit(self, method, initParamSets, bounds, allow_boundary_fits=True, boundary_fit_sensitivity=5):
 
         resultSet = []
 
@@ -237,11 +242,11 @@ class Basinhopping(FitAlg):
 
             resultSet.append(optimizeResult)
 
-        bestResult = self._bestfit(resultSet, bounds, boundFit=boundFit, boundSensitivity=boundSensitivity)
+        bestResult = self._bestfit(resultSet, bounds, allow_boundary_fits=allow_boundary_fits, boundary_fit_sensitivity=boundary_fit_sensitivity)
 
         return bestResult
 
-    def _bestfit(self, resultSet, bounds, boundFit=True, boundSensitivity=5):
+    def _bestfit(self, resultSet, bounds, allow_boundary_fits=True, boundary_fit_sensitivity=5):
 
         # Check that there are fits
         if len(resultSet) == 0:
@@ -261,13 +266,13 @@ class Basinhopping(FitAlg):
 #        pytest.set_trace()
 
         # If boundary fits are acceptable
-        if boundFit:
+        if allow_boundary_fits:
             return resultSet[genFitid]
 
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in itertools.izip(r.x, bounds) if any(np.around(fitVal-boundVals, boundSensitivity) == 0)]
+                invalid = [1 for fitVal, boundVals in itertools.izip(r.x, bounds) if any(np.around(fitVal-boundVals, boundary_fit_sensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)
