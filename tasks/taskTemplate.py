@@ -23,7 +23,7 @@ class Task(object):
 
     def __init__(self):
 
-        self.Name = self.findName()
+        self.Name = self.get_name()
 
         self.parameters = {"Name": self.Name
                            }
@@ -75,14 +75,28 @@ class Task(object):
 
         return hash(self.Name)
 
-    def findName(self):
+    @classmethod
+    def get_name(self):
         """
         Returns the name of the class
         """
 
         return self.__class__.__name__
 
-    def receiveAction(self,action):
+    def __repr__(self):
+
+        params = self.params()
+        name = params.pop('Name')
+
+        label = ["{}(".format(name)]
+        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.iteritems()])
+        label.append(")")
+
+        representation = ' '.join(label)
+
+        return representation
+
+    def receiveAction(self, action):
         """
         Receives the next action from the participant
 
