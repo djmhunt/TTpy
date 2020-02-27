@@ -62,7 +62,11 @@ def participant_data_setup():
     return participant_data
 
 
-class TestClass_basic:
+class TestClass_fitSims:
+
+    def test_FS_basic(self):
+        fit_sim = fitSims.FitSim()
+        assert isinstance(fit_sim, fitSims.FitSim)
 
     def test_FS_info(self):
         fit_sim = fitSims.FitSim()
