@@ -110,13 +110,14 @@ class FitAlg(object):
         self.measures = {m: qualityFunc.qualFuncIdent(m, **fit_measure_args.copy()) for m in extra_fit_measures}
 
         self.fit_info = {'Name': self.Name,
-                        'fit_measure_function': fit_measure,
-                        'fit_measure_arguments': fit_measure_args,
-                        'boundary_cost_function': utils.callableDetailsString(boundary_excess_cost),
-                        'bounds': self.boundaries,
-                        'extra_fit_measures': extra_fit_measures,
-                        'calculate_covariance': calculate_covariance,
-                        'bound_ratio': bound_ratio}
+                         'fit_measure_function': fit_measure,
+                         'fit_measure_arguments': fit_measure_args,
+                         'boundary_cost_function': utils.callableDetailsString(boundary_excess_cost),
+                         'bounds': self.boundaries,
+                         'extra_fit_measures': extra_fit_measures,
+                         'calculate_covariance': calculate_covariance,
+                         'bound_ratio': bound_ratio,
+                         'FitSim': self.fit_sim.info()}
 
         self.boundary_values = None
         self.boundary_names = None
@@ -350,9 +351,7 @@ class FitAlg(object):
         fitAlg.fitSims.fitSim.info
         """
 
-        fit_sim_info = self.fit_sim.info()
-
-        return self.fit_info, fit_sim_info
+        return self.fit_info
 
     def set_bounds(self, model_parameter_names):
         """

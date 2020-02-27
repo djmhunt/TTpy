@@ -17,6 +17,7 @@ import shutil as shu
 import numpy as np
 
 import utils
+import start
 
 
 #%% Folder management
@@ -57,6 +58,9 @@ class Saving(object):
         The label for the simulation. Default ``None`` will mean no data is saved to files.
     output_path : string, optional
         The path that will be used for the run output. Default ``None``
+    config : dict, optional
+        The parameters of the running simulation/fitting. This is used to create a YAML configuration file.
+        Default ``None``
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Default ``None``
     pickle_store : bool, optional
@@ -82,13 +86,23 @@ class Saving(object):
     def __init__(self,
                  label=None,
                  output_path=None,
+                 config=None,
                  config_file=None,
                  pickle_store=False,
                  min_log_level='INFO',
                  numpy_error_level="log"):
 
+        if config is not None:
+            label = config['label']
+            output_path = config['output_path']
+            config_file = config['config_file']
+            pickle_store = config['pickle']
+            min_log_level = config['min_log_level']
+            numpy_error_level = config['numpy_error_level']
+
         self.date_string = date()
         self.label = label
+        self.config = config
         self.config_file = config_file
         self.pickle_store = pickle_store
         self.numpy_error_level = numpy_error_level
@@ -121,6 +135,10 @@ class Saving(object):
 
             if self.config_file:
                 shu.copy(self.config_file, output_folder)
+
+            if self.config is not None:
+                config_file = file_name_gen('config', 'yaml')
+                start.write_script(config_file, self.config)
         else:
             output_folder = None
             log_file = None
