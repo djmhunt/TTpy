@@ -495,16 +495,12 @@ def log_fitting_parameters(fit_info):
     message = "Fitting information:"
     log.info(message)
 
-    for f in fit_info:
-        message = "For " + f['Name'] + ":"
+    name = fit_info.pop('Name')
+    message = "For " + name + ":"
+    log.info(message)
+    for k, v in fit_info.iteritems():
+        message = k + ": " + repr(v)
         log.info(message)
-
-        for k, v in f.iteritems():
-            if k == "Name":
-                continue
-
-            message = k + ": " + repr(v)
-            log.info(message)
 
 
 #%% CSV
