@@ -217,7 +217,8 @@ def multi_files(tmpdir_factory):
 
 @pytest.fixture(scope='session')
 def multi_folders(tmpdir_factory):
-    folder_name = tmpdir_factory.mktemp("multi_folder_data", numbered=False)
+    folder_grouping = "multi_folder_data"
+    folder_name = tmpdir_factory.mktemp(folder_grouping, numbered=False)
     folder_name_str = str(folder_name).replace('\\', '/')
 
     file_names = []
@@ -225,7 +226,7 @@ def multi_folders(tmpdir_factory):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
         folder_path = '{}/subj{}'.format(folder_name_str, i)
-        folder_sub_path = tmpdir_factory.mktemp("data/subj{}".format(i), numbered=False)
+        folder_sub_path = tmpdir_factory.mktemp("{}/subj{}/".format(folder_grouping, i), numbered=False)
         file_path = '{}/{}'.format(folder_path, mat_file_name)
         file_names.append(mat_file_name)
 
