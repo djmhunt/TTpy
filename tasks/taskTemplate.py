@@ -76,12 +76,12 @@ class Task(object):
         return hash(self.Name)
 
     @classmethod
-    def get_name(self):
+    def get_name(cls):
         """
         Returns the name of the class
         """
 
-        return self.__class__.__name__
+        return cls.__name__
 
     def __repr__(self):
 
