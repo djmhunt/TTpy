@@ -27,7 +27,6 @@ import dataFitting
 number_actions = 6
 number_cues = 1
 
-
 modelParameters = {'alpha': (0, 1),
                    'beta': (0, 30)}
 modelStaticArgs = {'number_actions': number_actions,
@@ -39,6 +38,8 @@ modelStaticArgs = {'number_actions': number_actions,
                    'reward_shaper_name': 'RewardProbSelectDirect',
                    'decision_function_name': 'weightProb',
                    'task_responses': ["A", "B", "C", "D", "E", "F"]}
+
+
 def data_processing(dat):
     for i, d in enumerate(dat['ValidActions']):
         dat['ValidActions_{}'.format(i)] = d
@@ -47,7 +48,7 @@ def data_processing(dat):
 #%% Run the data fitter
 dataFitting.run(data_folder="./Outputs/qLearn_probSelectSimSet_2020-2-5/Pickle/",
                 data_format='pkl',
-                data_file_filter="QLearn_modelData_sim-",
+                data_file_filter='QLearn_modelData_sim-',
                 data_extra_processing=data_processing,
                 model_name='QLearn',
                 model_changing_properties=modelParameters,
