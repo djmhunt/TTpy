@@ -46,6 +46,11 @@ class FoldersError(Exception):
 class ProcessingError(Exception):
     pass
 
+
+class FileFilterError(Exception):
+    pass
+
+
 DATA_KEYWORDS = {"filename": "filename",
                  "ID": "participant_ID",
                  "folder": "folder"}
@@ -891,7 +896,7 @@ class Data(list):
     @staticmethod
     def __folder_path_cleaning(folder):
 
-        folder_path = folder.replace('\\', '/')
+        folder_path = os.path.abspath(folder).replace('\\', '/')
         if folder_path[-1] != '/':
             folder_path += '/'
         return folder_path
@@ -961,14 +966,16 @@ class Data(list):
             A subset of the data_files
         """
 
-        if callable(file_name_filter):
+        if file_name_filter is None:
+            valid_file_list = data_files
+        elif callable(file_name_filter):
             valid_file_list = file_name_filter(data_files)
-        elif isinstance(file_name_filter, unicode):
+        elif isinstance(file_name_filter, basestring):
             valid_file_list = cls.__file_prefix_filter(data_files, [file_name_filter])
         elif isinstance(file_name_filter, (list, np.ndarray)):
             valid_file_list = cls.__file_prefix_filter(data_files, file_name_filter)
         else:
-            valid_file_list = data_files
+            raise FileFilterError('Unrecognised data file filter {}', file_name_filter)
 
         return valid_file_list
 
