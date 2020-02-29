@@ -12,6 +12,7 @@ from tasks.taskTemplate import Task
 
 from model.modelTemplate import Stimulus, Rewards
 
+
 class Basic(Task):
     """
     An example of a task with all the necessary components, but nothing changing

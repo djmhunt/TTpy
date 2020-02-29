@@ -5,14 +5,12 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
-
-import numpy as np
-import scipy as sp
-
 import math
 import collections
 import itertools
 
+import numpy as np
+import scipy as sp
 #import numdifftools as nd
 
 from fitAlgs.fitSims import FitSim
