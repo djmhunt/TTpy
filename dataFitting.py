@@ -174,6 +174,7 @@ def run(data_folder='./',
     fitAlgs.fitSims.fitSim : General class for a method of simulating the fitting of data
     data.Data : Data import class
     """
+    config = copy.deepcopy(locals())
 
     if participant_varying_model_parameters is None:
         model_changing_variables = {}
@@ -239,8 +240,7 @@ def run(data_folder='./',
                             calculate_covariance=calculate_covariance,
                             **fit_method_args)
 
-    with outputting.Saving(label=label, output_path=output_path, config_file=config_file, pickle_store=pickle,
-                           min_log_level=min_log_level, numpy_error_level=numpy_error_level) as file_name_generator:
+    with outputting.Saving(config=config) as file_name_generator:
 
         logger = logging.getLogger('Fitting')
 

@@ -5,9 +5,11 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import logging
+import copy
 #import fire
 
 import pandas as pd
+import numpy as np
 
 import outputting
 
@@ -21,6 +23,7 @@ def run(task_name='Basic',
         model_name='QLearn',
         model_changing_properties=None,
         model_constant_properties=None,
+        model_changing_properties_repetition=1,
         label=None,
         config_file=None,
         output_path=None,
@@ -51,6 +54,8 @@ def run(task_name='Basic',
     model_constant_properties : dictionary of float, string or binary valued elements, optional
         These contain all the the model options that define the version
         of the model being studied. Default ``None``
+    model_changing_properties_repetition : int, optional
+        The number of times each parameter combination is repeated.
     config_file : string, optional
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
@@ -70,18 +75,22 @@ def run(task_name='Basic',
     --------
     tasks.taskTemplate, model.modelTemplate
     """
-    function_parameters = locals()
+    config = copy.deepcopy(locals())
 
     tasks = TaskGeneration(task_name=task_name,
                            parameters=task_changing_properties,
                            other_options=task_constant_properties)
 
+    if model_changing_properties_repetition > 1:
+        repeated_key = model_changing_properties.keys()[0]
+        repeated_values = np.repeat(model_changing_properties[repeated_key], model_changing_properties_repetition)
+        model_changing_properties[repeated_key] = repeated_values.tolist()
+
     models = ModelGen(model_name=model_name,
                       parameters=model_changing_properties,
                       other_options=model_constant_properties)
 
-    with outputting.Saving(label=label, output_path=output_path, config_file=config_file, pickle_store=pickle,
-                           min_log_level=min_log_level, numpy_error_level=numpy_error_level) as file_name_generator:
+    with outputting.Saving(config=config) as file_name_generator:
         logger = logging.getLogger('Overview')
 
         simID = 0
