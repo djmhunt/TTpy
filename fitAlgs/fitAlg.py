@@ -363,18 +363,18 @@ class FitAlg(object):
         Examples
         --------
         >>> a = FitAlg(bounds={1: (0, 5), 2: (0, 2), 3: (-1, 1)})
-        >>> a.allBounds
+        >>> a.boundaries
         {1: (0, 5), 2: (0, 2), 3: (-1, 1)}
         >>> a.set_bounds([])
-        >>> a.allBounds
+        >>> a.boundaries
         {1: (0, 5), 2: (0, 2), 3: (-1, 1)}
-        >>> a.boundNames
+        >>> a.boundary_names
         []
         >>> a.set_bounds([3,1])
-        >>> a.boundVals
+        >>> a.boundary_values
         [(-1, 1), (0, 5)]
         >>> a.set_bounds([2,1])
-        >>> a.boundVals
+        >>> a.boundary_values
         [(0, 2), (0, 5)]
         """
 
@@ -507,7 +507,7 @@ class FitAlg(object):
         >>> FitAlg.start_parameter_values(5, boundary_min = 0, boundary_max = 30)
         array([2.5, 5. , 7.5])
         >>> FitAlg.start_parameter_values(5, boundary_min = 3, boundary_max = 30, number_starting_points = 7)
-        array([3.5, 4., 4.5, 5., 5.5, 6., 6.5])
+        array([3.5, 4. , 4.5, 5. , 5.5, 6. , 6.5])
         """
 
 #        initialAbs = abs(initial)

@@ -11,8 +11,9 @@ import os
 import itertools
 
 import collections
-
 import outputting
+
+
 @pytest.fixture(scope="session")
 def output_folder(tmpdir_factory):
 

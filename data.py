@@ -1070,14 +1070,6 @@ class Data(list):
         prefix : string
             The initial part of the strings that is identical for all strings in
             the list
-
-        Examples
-        --------
-        >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
-        >>> suffixLen = 4
-        >>> data.__get_unique_prefix(dataFiles, suffixLen)
-        'subj'
-
         """
 
         for i in xrange(1, len(unorderedList[0]) - suffixLen + 2):  # Assuming the prefix might be the string-suffix
@@ -1134,20 +1126,6 @@ class Data(list):
         -------
         sortedStrings : list of strings
             The strings now sorted
-
-
-        Examples
-        --------
-        >>> dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
-        >>> prefix = 'me0'
-        >>> suffix = '.mat'
-        >>> data.__int_core(dataFiles, prefix, suffix)
-        ([u'me001.mat', u'me002.mat', u'me051.mat', u'me052.mat'], ['1', '2', '51', '52'])
-        >>> dataFiles = ['subj1.mat', 'subj11.mat', 'subj12.mat', 'subj2.mat']
-        >>> prefix = 'subj'
-        >>> suffix = 'mat'
-        >>> data.__int_core(dataFiles, prefix, suffix)
-        (['subj1.mat', 'subj2.mat', 'subj11.mat', 'subj12.mat'], ['1', '2', '11', '12'])
         """
 
         try:

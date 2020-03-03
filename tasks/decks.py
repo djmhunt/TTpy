@@ -287,7 +287,7 @@ class RewardDecksAllInfo(Rewards):
 
     Examples
     --------
-    >>> rew = RewardDecksAllInfo(10, 1, 2)
+    >>> rew = RewardDecksAllInfo(maxRewardVal=10, minRewardVal=1, number_actions=2)
     >>> rew.processFeedback(6, 0, 1)
     array([1., 1., 1., 1., 1., 2., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
     >>> rew.processFeedback(6, 1, 1)

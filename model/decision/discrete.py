@@ -236,7 +236,7 @@ def _validProbabilities(probabilities, task_responses, trial_responses):
     Examples
     --------
     >>> _validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
-    (array([0.1, 0.7]), array(['B', 'C'], dtype='<U1'))
+    ([0.1, 0.7], ['B', 'C'])
     """
 
     if trial_responses is None:

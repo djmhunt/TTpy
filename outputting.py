@@ -250,7 +250,7 @@ def file_name_generator(output_folder=None):
     >>> file_name_gen = file_name_generator()
     >>> fileName = file_name_gen("", "")
     >>> fileName == os.getcwd()
-    True
+    False
     """
     if not output_folder:
         output_path = folder_path_cleaning(os.getcwd())
@@ -526,15 +526,15 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
 
     Examples
     --------
-    >>> store = {'list': [1, 2, 3, 4, 5, 6]}
+    >>> store = [{'list': [1, 2, 3, 4, 5, 6]}]
     >>> newFlatDict(store)
     OrderedDict([('list_[0]', [1]), ('list_[1]', [2]), ('list_[2]', [3]), ('list_[3]', [4]), ('list_[4]', [5]), ('list_[5]', [6])])
-    >>> store = {'string': 'string'}
+    >>> store = [{'string': 'string'}]
     >>> newFlatDict(store)
-    OrderedDict([('string', ['string'])])
-    >>> store = {'dict': {1: {3: "a"}, 2: "b"}}
+    OrderedDict([(u'string', ["u'string'"])])
+    >>> store = [{'dict': {1: {3: "a"}, 2: "b"}}]
     >>> newFlatDict(store)
-    OrderedDict([('dict_1_3', ['a']), ('dict_2', ['b'])])
+    OrderedDict([(u'dict_1_3', ["u'a'"]), (u'dict_2', ["u'b'"])])
     """
     keySet = flatDictKeySet(store, selectKeys=selectKeys)
 
@@ -722,8 +722,8 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     (OrderedDict([('num', None)]), 1)
     >>> store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
     >>> dictKeyGen(store, returnList=True, abridge=True)
-    (OrderedDict([('array', array([[0],
-           [1]]))]), 6)
+    (OrderedDict([(u'array', array([[0],
+           [1]]))]), 6L)
     >>> store = {'dict': {1: "a", 2: "b"}}
     >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
     (OrderedDict([('dict', OrderedDict([(1, None), (2, None)]))]), 7)

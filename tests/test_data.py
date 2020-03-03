@@ -427,6 +427,25 @@ class TestClass_Data:
         with pytest.raises(data.DimentionError, match='If you are using separate keys for each action option, they must all be 1D lists'):
             assert data.Data([dat1, dat2], action_options=['act1', 'act2'])
 
+    def test_D_int_core(self):
+        dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
+        result = data.Data._Data__int_core(dataFiles, 'me0', '.mat')
+        expected_result = ([u'me001.mat', u'me002.mat', u'me051.mat', u'me052.mat'], ['1', '2', '51', '52'])
+        assert result == expected_result
+
+    def test_D_int_core2(self):
+        dataFiles = ['subj1.mat', 'subj11.mat', 'subj12.mat', 'subj2.mat']
+        result = data.Data._Data__int_core(dataFiles, 'subj', '.mat')
+        expected_result = (['subj1.mat', 'subj2.mat', 'subj11.mat', 'subj12.mat'], ['1', '2', '11', '12'])
+        assert result == expected_result
+
+    def test_D_get_unique_prefix(self):
+        dataFiles = ['subj1.mat', 'subj11.mat', 'subj2.mat']
+        result = data.Data._Data__get_unique_prefix(dataFiles, 4)
+        expected_result = 'subj'
+        assert result == expected_result
+
+
 #%% For importing mat into Data
 class TestClass_Mat:
     def test_mat_single(self, single_files):
