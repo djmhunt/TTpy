@@ -268,7 +268,7 @@ class FitAlg(object):
 
         fit_quality = self.fit_quality_function(modVals)
 
-        self.tested_parameters.append(params)
+        self.tested_parameters.append(pms)
         self.tested_parameter_qualities.append(fit_quality)
 
         return fit_quality
