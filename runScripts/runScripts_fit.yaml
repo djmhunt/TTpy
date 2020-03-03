@@ -30,17 +30,18 @@ data:
 fitting:
     method: Evolutionary
     measures:
-        main: 'BIC2norm'
+        main: '-loge'
         extras:
             - '-2log'
             - 'BIC'
             - 'r2'
             - 'bayesFactor'
+            - 'BIC2norm'
         parameters:
             numParams: 2
             number_actions: 6
             qualityThreshold: 20
-            randActProb: 1/2
+            randActProb: 0.5
     trial_subset: 'all'
     fitting_variable: 'ActionProb'
 
@@ -49,5 +50,5 @@ saving:
     name: 'qLearn_probSelect_fromSim'
     save_fitting_progress: True
     pickle: True
-    bound_cost_function: None
+    bound_cost_function: ~
 
