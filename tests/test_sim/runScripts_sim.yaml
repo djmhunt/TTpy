@@ -1,0 +1,41 @@
+---
+task:
+    name: ProbSelect
+    number_actions: 6
+    learning_length: 200
+    test_length: 100
+    reward_size: 1
+    action_reward_probabilities:
+        A: 0.8
+        B: 0.2
+        C: 0.7
+        D: 0.3
+        E: 0.6
+        F: 0.4
+    learning_action_pairs:
+        - ['A', 'B']
+        - ['C', 'D']
+        - ['E', 'F']
+
+model:
+    name: QLearn
+    parameters:
+        alpha: [0.1, 0.5, 0.9]
+        beta: [0.1, 0.5, 1, 2, 4, 8, 16]
+    number_actions: 6
+    number_cues: 1
+    action_codes: {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5}
+    stimulus_shaper_name: StimulusProbSelectDirect
+    reward_shaper_name: RewardProbSelectDirect
+    decision_function_name: weightProb
+    task_responses: ['A', 'B', 'C', 'D', 'E', 'F']
+
+simulation:
+    parameter_repetition: 2
+
+saving:
+    name: qLearn_probSelectSimSet
+    pickle: True
+
+
+

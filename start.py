@@ -404,5 +404,5 @@ def run_script(script_file, trusted_file=False):
         raise MissingScriptSection('A ``simulation`` or ``fitting`` section is necessary for this script to be understood')
 
 if __name__ == '__main__':
-    run_config('./runScripts/runScripts_fit.yaml', trusted_file=True)
+    run_config('./runScripts/runScripts_sim.yaml', trusted_file=True)
 #    fire.Fire(run_config)

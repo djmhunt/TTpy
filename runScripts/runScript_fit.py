@@ -46,7 +46,7 @@ def data_processing(dat):
     return dat
 
 #%% Run the data fitter
-dataFitting.run(data_folder="./Outputs/qLearn_probSelectSimSet_2020-2-5/Pickle/",
+dataFitting.run(data_folder='../tests/test_sim/Pickle/',
                 data_format='pkl',
                 data_file_filter='QLearn_modelData_sim-',
                 data_extra_processing=data_processing,
