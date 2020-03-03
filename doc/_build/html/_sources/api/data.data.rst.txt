@@ -10,6 +10,7 @@ Data
 
    .. autosummary::
 
+      ~Data.extend
       ~Data.from_csv
       ~Data.from_mat
       ~Data.from_pkl
@@ -18,6 +19,7 @@ Data
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: extend
    .. automethod:: from_csv
    .. automethod:: from_mat
    .. automethod:: from_pkl

@@ -64,47 +64,50 @@
 <span class="kn">from</span> <span class="nn">fitAlgs.fitAlg</span> <span class="kn">import</span> <span class="n">FitAlg</span>
 <span class="kn">from</span> <span class="nn">modelGenerator</span> <span class="kn">import</span> <span class="n">ModelGen</span>
 
+
 <div class="viewcode-block" id="LengthError"><a class="viewcode-back" href="../dataFitting.html#dataFitting.LengthError">[docs]</a><span class="k">class</span> <span class="nc">LengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
+
 
 <div class="viewcode-block" id="OrderError"><a class="viewcode-back" href="../dataFitting.html#dataFitting.OrderError">[docs]</a><span class="k">class</span> <span class="nc">OrderError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="data_fitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.data_fitting">[docs]</a><span class="k">def</span> <span class="nf">data_fitting</span><span class="p">(</span><span class="n">data_folder</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span>
-                 <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;csv&#39;</span><span class="p">,</span>
-                 <span class="n">data_file_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_file_terminal_ID</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">data_read_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_split_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">data_extra_processing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
-                 <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">model_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">participantID</span><span class="o">=</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span>
-                 <span class="n">participant_choices</span><span class="o">=</span><span class="s1">&#39;Actions&#39;</span><span class="p">,</span>
-                 <span class="n">participant_rewards</span><span class="o">=</span><span class="s1">&#39;Rewards&#39;</span><span class="p">,</span>
-                 <span class="n">model_fit_value</span><span class="o">=</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span>
-                 <span class="n">fit_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">task_stimuli</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">participant_action_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fit_method</span><span class="o">=</span><span class="s1">&#39;Evolutionary&#39;</span><span class="p">,</span>
-                 <span class="n">fit_method_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fit_measure</span><span class="o">=</span><span class="s1">&#39;-loge&#39;</span><span class="p">,</span>
-                 <span class="n">fit_measure_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">fit_extra_measures</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">participant_varying_model_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">save_fitting_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">boundary_excess_cost_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
-                 <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-                 <span class="n">fit_float_error_response_value</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">1e100</span><span class="p">,</span>
-                 <span class="n">calculate_covariance</span><span class="o">=</span><span class="kc">False</span>
-                 <span class="p">):</span>
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../dataFitting.html#dataFitting.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data_folder</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span>
+        <span class="n">data_format</span><span class="o">=</span><span class="s1">&#39;csv&#39;</span><span class="p">,</span>
+        <span class="n">data_file_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_file_terminal_ID</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">data_read_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_split_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_group_by</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_extra_processing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
+        <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">participantID</span><span class="o">=</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span>
+        <span class="n">participant_choices</span><span class="o">=</span><span class="s1">&#39;Actions&#39;</span><span class="p">,</span>
+        <span class="n">participant_rewards</span><span class="o">=</span><span class="s1">&#39;Rewards&#39;</span><span class="p">,</span>
+        <span class="n">model_fit_value</span><span class="o">=</span><span class="s1">&#39;ActionProb&#39;</span><span class="p">,</span>
+        <span class="n">fit_subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">task_stimuli</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">participant_action_options</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fit_method</span><span class="o">=</span><span class="s1">&#39;Evolutionary&#39;</span><span class="p">,</span>
+        <span class="n">fit_method_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fit_measure</span><span class="o">=</span><span class="s1">&#39;-loge&#39;</span><span class="p">,</span>
+        <span class="n">fit_measure_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fit_extra_measures</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">participant_varying_model_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_fitting_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">boundary_excess_cost_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+        <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
+        <span class="n">fit_float_error_response_value</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mf">1e100</span><span class="p">,</span>
+        <span class="n">calculate_covariance</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A framework for fitting models to data for tasks, along with</span>
 <span class="sd">    recording the data associated with the fits.</span>
@@ -214,14 +217,14 @@
 <span class="sd">    fitAlgs.fitSims.fitSim : General class for a method of simulating the fitting of data</span>
 <span class="sd">    data.Data : Data import class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
 
     <span class="k">if</span> <span class="n">participant_varying_model_parameters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">model_changing_variables</span> <span class="o">=</span> <span class="n">participant_varying_model_parameters</span>
 
-    <span class="c1"># TODO : Validate model_changing_variables with the data and the model</span>
-    <span class="c1"># TODO : Change the name of model_changing_variables to something clearer</span>
+    <span class="c1"># TODO : Validate model_changing_properties with the data and the model</span>
     <span class="n">participants</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">file_type</span><span class="o">=</span><span class="n">data_format</span><span class="p">,</span>
                                        <span class="n">folders</span><span class="o">=</span><span class="n">data_folder</span><span class="p">,</span>
                                        <span class="n">file_name_filter</span><span class="o">=</span><span class="n">data_file_filter</span><span class="p">,</span>
@@ -280,70 +283,63 @@
                             <span class="n">calculate_covariance</span><span class="o">=</span><span class="n">calculate_covariance</span><span class="p">,</span>
                             <span class="o">**</span><span class="n">fit_method_args</span><span class="p">)</span>
 
-    <span class="n">outputFolder</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="n">close_loggers</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                                                                         <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
-                                                                         <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">,</span>
-                                                                         <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span>
-                                                                         <span class="n">min_log_level</span><span class="o">=</span><span class="n">min_log_level</span><span class="p">,</span>
-                                                                         <span class="n">numpy_error_level</span><span class="o">=</span><span class="n">numpy_error_level</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">outputting</span><span class="o">.</span><span class="n">Saving</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_name_generator</span><span class="p">:</span>
 
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitting&#39;</span><span class="p">)</span>
 
-    <span class="n">log_fitting_parameters</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+        <span class="n">log_fitting_parameters</span><span class="p">(</span><span class="n">fitter</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Beginning the data fitting&#39;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;Beginning the data fitting&#39;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="n">model_ID</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="c1"># Initialise the stores of information</span>
-    <span class="n">participant_fits</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: defaultdict[Any, list]</span>
+        <span class="n">model_ID</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Initialise the stores of information</span>
+        <span class="n">participant_fits</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># type: collections.defaultdict[Any, list]</span>
 
-    <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iter_details</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">iter_details</span><span class="p">():</span>
 
-        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_changing_variables</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
-            <span class="n">model_static_args</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Varies for each participant&gt;&quot;</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_changing_variables</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+                <span class="n">model_static_args</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Varies for each participant&gt;&quot;</span>
 
-        <span class="n">log_model_fitting_parameters</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span><span class="p">)</span>
+            <span class="n">log_model_fitting_parameters</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span><span class="p">)</span>
 
-        <span class="n">participantID</span> <span class="o">=</span> <span class="n">participants</span><span class="o">.</span><span class="n">participantID</span>
-        <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
+            <span class="n">participantID</span> <span class="o">=</span> <span class="n">participants</span><span class="o">.</span><span class="n">participantID</span>
+            <span class="k">for</span> <span class="n">participant</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
 
-            <span class="n">participant_name</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">participantID</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">participant_name</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                <span class="n">participant_name</span> <span class="o">=</span> <span class="n">participant_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">participant_name</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">participantID</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">participant_name</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                    <span class="n">participant_name</span> <span class="o">=</span> <span class="n">participant_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_changing_variables</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="n">model_static_args</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_changing_variables</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                    <span class="n">model_static_args</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-            <span class="c1"># Find the best model values from those proposed</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning participant fit for participant </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">participant_name</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="c1"># Find the best model values from those proposed</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning participant fit for participant </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">participant_name</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">model_fitted</span><span class="p">,</span> <span class="n">fit_quality</span><span class="p">,</span> <span class="n">fitting_data</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
-                                                                         <span class="p">(</span><span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_static_args</span><span class="p">),</span>
-                                                                         <span class="n">participant</span><span class="p">)</span>
+                <span class="n">model_fitted</span><span class="p">,</span> <span class="n">fit_quality</span><span class="p">,</span> <span class="n">fitting_data</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">participant</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
+                                                                             <span class="n">model_parameter_variables</span><span class="p">,</span>
+                                                                             <span class="n">model_static_args</span><span class="p">,</span>
+                                                                             <span class="n">participant</span><span class="p">)</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Participant fitted&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Participant fitted&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">log_model_fitted_parameters</span><span class="p">(</span><span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_fitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fit_quality</span><span class="p">,</span> <span class="n">participant_name</span><span class="p">)</span>
+                <span class="n">log_model_fitted_parameters</span><span class="p">(</span><span class="n">model_parameter_variables</span><span class="p">,</span> <span class="n">model_fitted</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">fit_quality</span><span class="p">,</span> <span class="n">participant_name</span><span class="p">)</span>
 
-            <span class="n">participant_fits</span> <span class="o">=</span> <span class="n">record_participant_fit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">participant_name</span><span class="p">,</span> <span class="n">model_fitted</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span>
-                                                      <span class="nb">str</span><span class="p">(</span><span class="n">model_ID</span><span class="p">),</span> <span class="n">fitting_data</span><span class="p">,</span> <span class="n">model_changing_variables</span><span class="p">,</span>
-                                                      <span class="n">participant_fits</span><span class="p">,</span> <span class="n">outputFolder</span><span class="o">=</span><span class="n">outputFolder</span><span class="p">,</span>
-                                                      <span class="n">fileNameGen</span><span class="o">=</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span>
-                                                      <span class="n">saveFittingProgress</span><span class="o">=</span><span class="n">save_fitting_progress</span><span class="p">)</span>
+                <span class="n">participant_fits</span> <span class="o">=</span> <span class="n">record_participant_fit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">participant_name</span><span class="p">,</span> <span class="n">model_fitted</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span>
+                                                          <span class="nb">str</span><span class="p">(</span><span class="n">model_ID</span><span class="p">),</span> <span class="n">fitting_data</span><span class="p">,</span> <span class="n">model_changing_variables</span><span class="p">,</span>
+                                                          <span class="n">participant_fits</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="o">=</span><span class="n">file_name_generator</span><span class="p">,</span>
+                                                          <span class="n">pickleData</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="n">save_fitting_progress</span><span class="p">)</span>
 
-        <span class="n">model_ID</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">model_ID</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">fit_record</span><span class="p">(</span><span class="n">participant_fits</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
-    <span class="n">close_loggers</span><span class="p">()</span></div>
+        <span class="n">fit_record</span><span class="p">(</span><span class="n">participant_fits</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span></div>
 
 
 <span class="c1"># %% Data record functions  </span>
 <div class="viewcode-block" id="record_participant_fit"><a class="viewcode-back" href="../dataFitting.html#dataFitting.record_participant_fit">[docs]</a><span class="k">def</span> <span class="nf">record_participant_fit</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">part_name</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">fitting_data</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span>
-                           <span class="n">outputFolder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                           <span class="n">expData</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                           <span class="n">fileNameGen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pickleData</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">saveFittingProgress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">expData</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Record the data relevant to the participant fitting</span>
 
@@ -366,8 +362,6 @@
 <span class="sd">        as a string, and the value is the associated label in the model, also as a string.</span>
 <span class="sd">    participantFits : defaultdict of lists</span>
 <span class="sd">        A dictionary to be filled with the summary of the participant fits</span>
-<span class="sd">    outputFolder : basestring, optional</span>
-<span class="sd">        The folder into which the data will be saved. Default ``None``</span>
 <span class="sd">    fileNameGen : function or None</span>
 <span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
 <span class="sd">        returns one ``fileName`` string. Default ``None``</span>
@@ -388,7 +382,7 @@
 <span class="sd">    --------</span>
 <span class="sd">    outputting.pickleLog : records the picked data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Logging&#39;</span><span class="p">)</span>
     <span class="n">partNameStr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">part_name</span><span class="p">)</span>
 
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Recording participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span> <span class="o">+</span> <span class="s2">&quot; model fit&quot;</span>
@@ -399,14 +393,15 @@
     <span class="n">participantName</span> <span class="o">=</span> <span class="s2">&quot;Participant &quot;</span> <span class="o">+</span> <span class="n">partNameStr</span>
 
     <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
-    <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;assignedName&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
+    <span class="n">participant</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;assigned_name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
     <span class="n">fitting_data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="n">participantName</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fileNameGen</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for &quot;</span> <span class="o">+</span> <span class="n">participantName</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="n">participantFits</span> <span class="o">=</span> <span class="n">record_fitting</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span> <span class="n">outputFolder</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span> <span class="n">save_fitting_progress</span><span class="o">=</span><span class="n">saveFittingProgress</span><span class="p">)</span>
+        <span class="n">participantFits</span> <span class="o">=</span> <span class="n">record_fitting</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">partModelVars</span><span class="p">,</span> <span class="n">participantFits</span><span class="p">,</span> <span class="n">fileNameGen</span><span class="p">,</span>
+                                         <span class="n">save_fitting_progress</span><span class="o">=</span><span class="n">saveFittingProgress</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">pickleData</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">expData</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -419,13 +414,7 @@
 
 
 <span class="c1"># %% Recording</span>
-<div class="viewcode-block" id="record_fitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.record_fitting">[docs]</a><span class="k">def</span> <span class="nf">record_fitting</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span>
-                   <span class="n">label</span><span class="p">,</span>
-                   <span class="n">participant</span><span class="p">,</span>
-                   <span class="n">participant_model_variables</span><span class="p">,</span>
-                   <span class="n">participant_fits</span><span class="p">,</span>
-                   <span class="n">output_folder</span><span class="p">,</span>
-                   <span class="n">file_name_generator</span><span class="p">,</span>
+<div class="viewcode-block" id="record_fitting"><a class="viewcode-back" href="../dataFitting.html#dataFitting.record_fitting">[docs]</a><span class="k">def</span> <span class="nf">record_fitting</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">participant_model_variables</span><span class="p">,</span> <span class="n">participant_fits</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span>
                    <span class="n">save_fitting_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Records formatted versions of the fitting data</span>
@@ -445,8 +434,6 @@
 <span class="sd">        as a string, and the value is the associated label in the model, also as a string.</span>
 <span class="sd">    participant_fits : defaultdict of lists</span>
 <span class="sd">        A dictionary to be filled with the summary of the participant fits</span>
-<span class="sd">    output_folder : basestring</span>
-<span class="sd">        The folder into which the data will be saved</span>
 <span class="sd">    file_name_generator : function</span>
 <span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
 <span class="sd">        returns one ``fileName`` string</span>
@@ -462,16 +449,16 @@
     <span class="n">extendedLabel</span> <span class="o">=</span> <span class="s2">&quot;ParameterFits&quot;</span> <span class="o">+</span> <span class="n">label</span>
 
     <span class="n">participant_fits</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">])</span>
-    <span class="n">participant_fits</span><span class="p">[</span><span class="s2">&quot;assignedName&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s2">&quot;assignedName&quot;</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;fitQuality&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">participant_fits</span><span class="p">[</span><span class="s2">&quot;assigned_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">participant</span><span class="p">[</span><span class="s2">&quot;assigned_name&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;fit_quality&#39;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">,</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="n">participant_fits</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fitting_data</span><span class="p">[</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fitting_data</span><span class="p">[</span><span class="s2">&quot;final_parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="n">participant_fits</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">participant_model_variables</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="n">participant_fits</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">participant</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">save_fitting_progress</span><span class="p">:</span>
-        <span class="n">xlsx_fitting_data</span><span class="p">(</span><span class="n">fitting_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">output_folder</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
+        <span class="n">xlsx_fitting_data</span><span class="p">(</span><span class="n">fitting_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">extendedLabel</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">participant_fits</span></div>
 
@@ -532,7 +519,7 @@
 
     <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot; with a fit quality of &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">fit_quality</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
-    <span class="n">logger_sim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
+    <span class="n">logger_sim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitting&#39;</span><span class="p">)</span>
     <span class="n">logger_sim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
@@ -546,21 +533,17 @@
 <span class="sd">        The details of the fitting</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Framework&#39;</span><span class="p">)</span>
+    <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Fitting&#39;</span><span class="p">)</span>
 
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Fitting information:&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fit_info</span><span class="p">:</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;For &quot;</span> <span class="o">+</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;Name&quot;</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">message</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">fit_info</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;For &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fit_info</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <span class="c1">#%% CSV</span>
@@ -583,7 +566,7 @@
 
 
 <span class="c1">#%% Excel</span>
-<div class="viewcode-block" id="xlsx_fitting_data"><a class="viewcode-back" href="../dataFitting.html#dataFitting.xlsx_fitting_data">[docs]</a><span class="k">def</span> <span class="nf">xlsx_fitting_data</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">output_folder</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">):</span>
+<div class="viewcode-block" id="xlsx_fitting_data"><a class="viewcode-back" href="../dataFitting.html#dataFitting.xlsx_fitting_data">[docs]</a><span class="k">def</span> <span class="nf">xlsx_fitting_data</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">participant</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Saves the fitting data to an XLSX file</span>
 
@@ -596,8 +579,6 @@
 <span class="sd">        The label used to identify the fit in the file names</span>
 <span class="sd">    participant : dict</span>
 <span class="sd">        The participant data</span>
-<span class="sd">    output_folder : basestring</span>
-<span class="sd">        The path of the output folder</span>
 <span class="sd">    file_name_generator : function</span>
 <span class="sd">        Creates a new file with the name &lt;handle&gt; and the extension &lt;extension&gt;. It takes two string parameters: (``handle``, ``extension``) and</span>
 <span class="sd">        returns one ``fileName`` string</span>
@@ -605,15 +586,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
-    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;folder&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_folder</span>
     <span class="n">partData</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">newListDict</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="s1">&#39;part&#39;</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">partData</span><span class="p">)</span>
 
-    <span class="n">parameter_fitting_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">[</span><span class="s2">&quot;testedParameters&quot;</span><span class="p">])</span>
-    <span class="n">parameter_fitting_dict</span><span class="p">[</span><span class="s1">&#39;partFitName&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span>
-    <span class="c1">#parameter_fitting_dict[&#39;fitQuality&#39;] = fittingData.pop(&quot;fitQuality&quot;)</span>
+    <span class="n">parameter_fitting_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">[</span><span class="s2">&quot;tested_parameters&quot;</span><span class="p">])</span>
+    <span class="n">parameter_fitting_dict</span><span class="p">[</span><span class="s1">&#39;participant_fitting_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span>
+    <span class="c1">#parameter_fitting_dict[&#39;fit_quality&#39;] = fittingData.pop(&quot;fit_quality&quot;)</span>
     <span class="c1">#parameter_fitting_dict[&quot;fitQualities&quot;] = fittingData.pop(&quot;fitQualities&quot;)</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;finalParameters&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fitting_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;final_parameters&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="n">parameter_fitting_dict</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;final&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="n">parameter_fitting_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fitting_data</span><span class="p">)</span>
     <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameter_fitting_dict</span><span class="p">)</span>

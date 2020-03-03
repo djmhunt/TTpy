@@ -10,24 +10,22 @@ FitSim
 
    .. autosummary::
 
-      ~FitSim.findName
+      ~FitSim.find_name
       ~FitSim.fitness
-      ~FitSim.fittedModel
-      ~FitSim.formatPartStim
-      ~FitSim.getModInput
-      ~FitSim.getModParams
-      ~FitSim.getSim
+      ~FitSim.fitted_model
+      ~FitSim.get_model_parameters
+      ~FitSim.get_model_properties
       ~FitSim.info
-      ~FitSim.participantMatchResult
+      ~FitSim.participant_sequence_generation
+      ~FitSim.prepare_sim
 
    .. rubric:: Methods Documentation
 
-   .. automethod:: findName
+   .. automethod:: find_name
    .. automethod:: fitness
-   .. automethod:: fittedModel
-   .. automethod:: formatPartStim
-   .. automethod:: getModInput
-   .. automethod:: getModParams
-   .. automethod:: getSim
+   .. automethod:: fitted_model
+   .. automethod:: get_model_parameters
+   .. automethod:: get_model_properties
    .. automethod:: info
-   .. automethod:: participantMatchResult
+   .. automethod:: participant_sequence_generation
+   .. automethod:: prepare_sim

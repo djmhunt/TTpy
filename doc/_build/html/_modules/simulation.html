@@ -48,9 +48,11 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="c1">#import fire</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">outputting</span>
 
@@ -58,18 +60,19 @@
 <span class="kn">from</span> <span class="nn">modelGenerator</span> <span class="kn">import</span> <span class="n">ModelGen</span>
 
 
-<div class="viewcode-block" id="simulation"><a class="viewcode-back" href="../simulation.html#simulation.simulation">[docs]</a><span class="k">def</span> <span class="nf">simulation</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;Basic&#39;</span><span class="p">,</span>
-               <span class="n">task_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">task_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
-               <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">model_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-               <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
-               <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../simulation.html#simulation.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;Basic&#39;</span><span class="p">,</span>
+        <span class="n">task_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">task_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;QLearn&#39;</span><span class="p">,</span>
+        <span class="n">model_changing_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_constant_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">model_changing_properties_repetition</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">min_log_level</span><span class="o">=</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+        <span class="n">numpy_error_level</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A framework for letting models interact with tasks and record the data</span>
 
@@ -94,6 +97,8 @@
 <span class="sd">    model_constant_properties : dictionary of float, string or binary valued elements, optional</span>
 <span class="sd">        These contain all the the model options that define the version</span>
 <span class="sd">        of the model being studied. Default ``None``</span>
+<span class="sd">    model_changing_properties_repetition : int, optional</span>
+<span class="sd">        The number of times each parameter combination is repeated.</span>
 <span class="sd">    config_file : string, optional</span>
 <span class="sd">        The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.</span>
 <span class="sd">        Default ``None``</span>
@@ -113,62 +118,63 @@
 <span class="sd">    --------</span>
 <span class="sd">    tasks.taskTemplate, model.modelTemplate</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">function_parameters</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
 
     <span class="n">tasks</span> <span class="o">=</span> <span class="n">TaskGeneration</span><span class="p">(</span><span class="n">task_name</span><span class="o">=</span><span class="n">task_name</span><span class="p">,</span>
                            <span class="n">parameters</span><span class="o">=</span><span class="n">task_changing_properties</span><span class="p">,</span>
                            <span class="n">other_options</span><span class="o">=</span><span class="n">task_constant_properties</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">model_changing_properties_repetition</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">repeated_key</span> <span class="o">=</span> <span class="n">model_changing_properties</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">repeated_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">model_changing_properties</span><span class="p">[</span><span class="n">repeated_key</span><span class="p">],</span> <span class="n">model_changing_properties_repetition</span><span class="p">)</span>
+        <span class="n">model_changing_properties</span><span class="p">[</span><span class="n">repeated_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">repeated_values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
     <span class="n">models</span> <span class="o">=</span> <span class="n">ModelGen</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
                       <span class="n">parameters</span><span class="o">=</span><span class="n">model_changing_properties</span><span class="p">,</span>
                       <span class="n">other_options</span><span class="o">=</span><span class="n">model_constant_properties</span><span class="p">)</span>
 
-    <span class="n">output_folder</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="n">close_loggers</span> <span class="o">=</span> <span class="n">outputting</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
-                                                                          <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
-                                                                          <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">,</span>
-                                                                          <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">,</span>
-                                                                          <span class="n">min_log_level</span><span class="o">=</span><span class="n">min_log_level</span><span class="p">,</span>
-                                                                          <span class="n">numpy_error_level</span><span class="o">=</span><span class="n">numpy_error_level</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">outputting</span><span class="o">.</span><span class="n">Saving</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_name_generator</span><span class="p">:</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
 
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Overview&#39;</span><span class="p">)</span>
+        <span class="n">simID</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="n">simID</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the simulation set&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning the simulation set&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">task_number</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">iter_task_ID</span><span class="p">():</span>
 
-    <span class="k">for</span> <span class="n">task_number</span> <span class="ow">in</span> <span class="n">tasks</span><span class="o">.</span><span class="n">iter_task_ID</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
 
-        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+                <span class="n">task</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="n">new_task</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
 
-            <span class="n">tsk</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="n">new_task</span><span class="p">(</span><span class="n">task_number</span><span class="p">)</span>
+                <span class="n">log_simulation_parameters</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-            <span class="n">log_sim_parameters</span><span class="p">(</span><span class="n">tsk</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">(),</span> <span class="n">simID</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning task&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Beginning task&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">task</span><span class="p">:</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                    <span class="n">action</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
+                    <span class="n">task</span><span class="o">.</span><span class="n">receiveAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">feedback</span><span class="p">()</span>
+                    <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+                    <span class="n">task</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
 
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">tsk</span><span class="p">:</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-                <span class="n">action</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">action</span><span class="p">()</span>
-                <span class="n">tsk</span><span class="o">.</span><span class="n">receiveAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-                <span class="n">response</span> <span class="o">=</span> <span class="n">tsk</span><span class="o">.</span><span class="n">feedback</span><span class="p">()</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">feedback</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-                <span class="n">tsk</span><span class="o">.</span><span class="n">proceed</span><span class="p">()</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
 
-            <span class="n">model</span><span class="o">.</span><span class="n">setsimID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">))</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Task completed&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Task completed&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">file_name_generator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">record_simulation</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span>
+                                      <span class="n">task</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span>
+                                      <span class="n">model</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span>
+                                      <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">)</span>
 
-            <span class="n">record_sim</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">tsk</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="n">model</span><span class="o">.</span><span class="n">returnTaskState</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">simID</span><span class="p">),</span> <span class="n">pickle</span><span class="o">=</span><span class="n">pickle</span><span class="p">)</span>
-
-            <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span>
-
-    <span class="n">close_loggers</span><span class="p">()</span></div>
+                <span class="n">simID</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="record_sim"><a class="viewcode-back" href="../simulation.html#simulation.record_sim">[docs]</a><span class="k">def</span> <span class="nf">record_sim</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">task_data</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="record_simulation"><a class="viewcode-back" href="../simulation.html#simulation.record_simulation">[docs]</a><span class="k">def</span> <span class="nf">record_simulation</span><span class="p">(</span><span class="n">file_name_generator</span><span class="p">,</span> <span class="n">task_data</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Records the data from an task-model run. Creates a pickled version</span>
 
@@ -201,14 +207,14 @@
     <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Store data for simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="n">csv_model_sim</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
+    <span class="n">csv_model_simulation</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">pickle</span><span class="p">:</span>
         <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">task_data</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="s2">&quot;_taskData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span>
         <span class="n">outputting</span><span class="o">.</span><span class="n">pickleLog</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">,</span> <span class="s2">&quot;_modelData&quot;</span> <span class="o">+</span> <span class="n">label</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_sim_parameters"><a class="viewcode-back" href="../simulation.html#simulation.log_sim_parameters">[docs]</a><span class="k">def</span> <span class="nf">log_sim_parameters</span><span class="p">(</span><span class="n">task_parameters</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
+<div class="viewcode-block" id="log_simulation_parameters"><a class="viewcode-back" href="../simulation.html#simulation.log_simulation_parameters">[docs]</a><span class="k">def</span> <span class="nf">log_simulation_parameters</span><span class="p">(</span><span class="n">task_parameters</span><span class="p">,</span> <span class="n">model_parameters</span><span class="p">,</span> <span class="n">simID</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes to the log the description and the label of the task and model</span>
 
@@ -227,21 +233,21 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">task_description</span> <span class="o">=</span> <span class="n">task_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
-    <span class="n">task_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">task_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">task_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">task_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
     <span class="n">task_description</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">task_descriptors</span><span class="p">)</span>
 
     <span class="n">model_description</span> <span class="o">=</span> <span class="n">model_parameters</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
-    <span class="n">model_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="n">model_descriptors</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; = &#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
     <span class="n">model_description</span> <span class="o">+=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_descriptors</span><span class="p">)</span>
 
-    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span> <span class="o">+</span> <span class="s2">&quot; contains the task &#39;&quot;</span> <span class="o">+</span> <span class="n">task_description</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
-    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;The model used is &#39;&quot;</span> <span class="o">+</span> <span class="n">model_description</span> <span class="o">+</span> <span class="s2">&quot;&#39;.&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Simulation &quot;</span> <span class="o">+</span> <span class="n">simID</span> <span class="o">+</span> <span class="s2">&quot; contains the task &quot;</span> <span class="o">+</span> <span class="n">task_description</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
+    <span class="n">message</span> <span class="o">+=</span> <span class="s2">&quot;The model used is &quot;</span> <span class="o">+</span> <span class="n">model_description</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span>
 
     <span class="n">logger_sim</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;Simulation&#39;</span><span class="p">)</span>
     <span class="n">logger_sim</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="csv_model_sim"><a class="viewcode-back" href="../simulation.html#simulation.csv_model_sim">[docs]</a><span class="k">def</span> <span class="nf">csv_model_sim</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">):</span>
+<div class="viewcode-block" id="csv_model_simulation"><a class="viewcode-back" href="../simulation.html#simulation.csv_model_simulation">[docs]</a><span class="k">def</span> <span class="nf">csv_model_simulation</span><span class="p">(</span><span class="n">modelData</span><span class="p">,</span> <span class="n">simID</span><span class="p">,</span> <span class="n">file_name_generator</span><span class="p">):</span>
     <span class="c1"># type: (dict, basestring, function) -&gt; None</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Saves the fitting data to a CSV file</span>

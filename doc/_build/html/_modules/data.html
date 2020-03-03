@@ -89,6 +89,11 @@
 <div class="viewcode-block" id="ProcessingError"><a class="viewcode-back" href="../data.html#data.ProcessingError">[docs]</a><span class="k">class</span> <span class="nc">ProcessingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
+
+<div class="viewcode-block" id="FileFilterError"><a class="viewcode-back" href="../data.html#data.FileFilterError">[docs]</a><span class="k">class</span> <span class="nc">FileFilterError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
 <span class="n">DATA_KEYWORDS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;filename&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="s2">&quot;participant_ID&quot;</span><span class="p">,</span>
                  <span class="s2">&quot;folder&quot;</span><span class="p">:</span> <span class="s2">&quot;folder&quot;</span><span class="p">}</span>
@@ -934,7 +939,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__folder_path_cleaning</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
 
-        <span class="n">folder_path</span> <span class="o">=</span> <span class="n">folder</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">folder_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">folder_path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
             <span class="n">folder_path</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
         <span class="k">return</span> <span class="n">folder_path</span>
@@ -1004,14 +1009,16 @@
 <span class="sd">            A subset of the data_files</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">file_name_filter</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file_name_filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">valid_file_list</span> <span class="o">=</span> <span class="n">data_files</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">file_name_filter</span><span class="p">):</span>
             <span class="n">valid_file_list</span> <span class="o">=</span> <span class="n">file_name_filter</span><span class="p">(</span><span class="n">data_files</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name_filter</span><span class="p">,</span> <span class="n">unicode</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name_filter</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
             <span class="n">valid_file_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__file_prefix_filter</span><span class="p">(</span><span class="n">data_files</span><span class="p">,</span> <span class="p">[</span><span class="n">file_name_filter</span><span class="p">])</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name_filter</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
             <span class="n">valid_file_list</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__file_prefix_filter</span><span class="p">(</span><span class="n">data_files</span><span class="p">,</span> <span class="n">file_name_filter</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">valid_file_list</span> <span class="o">=</span> <span class="n">data_files</span>
+            <span class="k">raise</span> <span class="n">FileFilterError</span><span class="p">(</span><span class="s1">&#39;Unrecognised data file filter </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">file_name_filter</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">valid_file_list</span>
 
@@ -1106,14 +1113,6 @@
 <span class="sd">        prefix : string</span>
 <span class="sd">            The initial part of the strings that is identical for all strings in</span>
 <span class="sd">            the list</span>
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; dataFiles = [&#39;subj1.mat&#39;, &#39;subj11.mat&#39;, &#39;subj2.mat&#39;]</span>
-<span class="sd">        &gt;&gt;&gt; suffixLen = 4</span>
-<span class="sd">        &gt;&gt;&gt; data.__get_unique_prefix(dataFiles, suffixLen)</span>
-<span class="sd">        &#39;subj&#39;</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unorderedList</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">suffixLen</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>  <span class="c1"># Assuming the prefix might be the string-suffix</span>
@@ -1170,20 +1169,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        sortedStrings : list of strings</span>
 <span class="sd">            The strings now sorted</span>
-
-
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; dataFiles = [&#39;me001.mat&#39;, &#39;me051.mat&#39;, &#39;me002.mat&#39;, &#39;me052.mat&#39;]</span>
-<span class="sd">        &gt;&gt;&gt; prefix = &#39;me0&#39;</span>
-<span class="sd">        &gt;&gt;&gt; suffix = &#39;.mat&#39;</span>
-<span class="sd">        &gt;&gt;&gt; data.__int_core(dataFiles, prefix, suffix)</span>
-<span class="sd">        ([u&#39;me001.mat&#39;, u&#39;me002.mat&#39;, u&#39;me051.mat&#39;, u&#39;me052.mat&#39;], [&#39;1&#39;, &#39;2&#39;, &#39;51&#39;, &#39;52&#39;])</span>
-<span class="sd">        &gt;&gt;&gt; dataFiles = [&#39;subj1.mat&#39;, &#39;subj11.mat&#39;, &#39;subj12.mat&#39;, &#39;subj2.mat&#39;]</span>
-<span class="sd">        &gt;&gt;&gt; prefix = &#39;subj&#39;</span>
-<span class="sd">        &gt;&gt;&gt; suffix = &#39;mat&#39;</span>
-<span class="sd">        &gt;&gt;&gt; data.__int_core(dataFiles, prefix, suffix)</span>
-<span class="sd">        ([&#39;subj1.mat&#39;, &#39;subj2.mat&#39;, &#39;subj11.mat&#39;, &#39;subj12.mat&#39;], [&#39;1&#39;, &#39;2&#39;, &#39;11&#39;, &#39;12&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>

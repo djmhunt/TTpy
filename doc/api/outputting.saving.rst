@@ -1,6 +1,7 @@
-saving
+Saving
 ======
 
 .. currentmodule:: outputting
 
-.. autofunction:: saving
+.. autoclass:: Saving
+   :show-inheritance:

@@ -60,7 +60,7 @@
 </table>
 <dl class="class">
 <dt id="fitAlgs.minimize.Minimize">
-<em class="property">class </em><code class="descclassname">fitAlgs.minimize.</code><code class="descname">Minimize</code><span class="sig-paren">(</span><em>method=None</em>, <em>numStartPoints=4</em>, <em>boundFit=True</em>, <em>boundSensitivity=5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/minimize.html#Minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.minimize.Minimize" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">fitAlgs.minimize.</code><code class="descname">Minimize</code><span class="sig-paren">(</span><em>method=None</em>, <em>number_start_points=4</em>, <em>allow_boundary_fits=True</em>, <em>boundary_fit_sensitivity=5</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/minimize.html#Minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.minimize.Minimize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.minimize</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -68,29 +68,29 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fitQualityFunc</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
-The value it returns provides the fitter with its fit guide.
-Default <code class="docutils literal notranslate"><span class="pre">fitAlg.null</span></code></li>
-<li><strong>qualityFuncArgs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fitQualFunc. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+<li><strong>fit_sim</strong> (<em>fitAlgs.fitSims.FitSim instance</em><em>, </em><em>optional</em>) – An instance of one of the fitting simulation methods. Default <code class="docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></li>
+<li><strong>fit_measure</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+The value it returns provides the fitter with its fitting guide. Default <code class="docutils literal notranslate"><span class="pre">-loge</span></code></li>
+<li><strong>fit_measure_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fit_measure and extra_fit_measures. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>extra_fit_measures</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+measures should be placed in fit_measure_args. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
+specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
+translates to boundaries of (0, np.inf) for each parameter.</li>
+<li><strong>boundary_excess_cost</strong> (<em>basestring</em><em> or </em><em>callable returning a function</em><em>, </em><em>optional</em>) – The function is used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound()</span></code></li>
+<li><strong>boundary_excess_cost_properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters for the boundary_excess_cost function. Default {}</li>
 <li><strong>method</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting method or list of names of fitting methods or
 name of list of fitting methods. Valid names found in the notes.
 Default <code class="docutils literal notranslate"><span class="pre">unconstrained</span></code></li>
-<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
-specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
-translates to boundaries of (0,float(‘Inf’)) for each parameter.</li>
-<li><strong>boundCostFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – A function used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound</span></code></li>
-<li><strong>numStartPoints</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
+<li><strong>number_start_points</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of starting points generated for each parameter.
 Default 4</li>
-<li><strong>boundFit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
+<li><strong>allow_boundary_fits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Defines if fits that reach a boundary should be considered the same way
 as those that do not. Default is True</li>
-<li><strong>boundSensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
+<li><strong>boundary_fit_sensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – Defines the smallest number of decimal places difference (so the
 minimal difference) between a parameter value and its related boundaries
 before a parameter value is considered different from a boundary. The default
-is <cite>5</cite>. This is only valid if <code class="docutils literal notranslate"><span class="pre">boundFit</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>calcCov</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is the covariance calculated. Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>extraFitMeasures</strong> (<em>dict of dict</em><em>, </em><em>optional</em>) – Dictionary of fit measures not used to fit the model, but to provide more information. The keys are the
-fitQUalFunc used names and the values are the qualFuncArgs. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+is <cite>5</cite>. This is only valid if <code class="docutils literal notranslate"><span class="pre">allow_boundary_fits</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
 </ul>
 </td>
 </tr>
@@ -145,7 +145,7 @@ Custom fitting algorithms are also allowed in theory, but it has yet to be
 implemented.</p>
 <p>For each fitting function a set of different starting parameters will be
 tried. These are the combinations of all the values of the different
-parameters. For each starting parameter provided a set of numStartPoints
+parameters. For each starting parameter provided a set of number_start_points
 starting points will be chosen, surrounding the starting point provided. If
 the starting point provided is less than one it will be assumed that the
 values cannot exceed 1, otherwise, unless otherwise told, it will be
@@ -169,7 +169,7 @@ spaced around the provided value.</p>
 
 <dl class="method">
 <dt id="fitAlgs.minimize.Minimize.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>sim</em>, <em>mParamNames</em>, <em>mInitialParams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/minimize.html#Minimize.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.minimize.Minimize.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>simulator</em>, <em>model_parameter_names</em>, <em>model_initial_parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/minimize.html#Minimize.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.minimize.Minimize.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters
 and returns the best one.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -177,16 +177,16 @@ and returns the best one.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>sim</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
+<li><strong>simulator</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
 given model parameters. One example is fitAlgs.fitAlg.fitness</li>
-<li><strong>mParamNames</strong> (<em>list of strings</em>) – The list of initial parameter names</li>
-<li><strong>mInitialParams</strong> (<em>list of floats</em>) – The list of the initial parameters</li>
+<li><strong>model_parameter_names</strong> (<em>list of strings</em>) – The list of initial parameter names</li>
+<li><strong>model_initial_parameters</strong> (<em>list of floats</em>) – The list of the initial parameters</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>fitParams</strong> (<em>list of floats</em>) – The best fitting parameters</li>
-<li><strong>fitQuality</strong> (<em>float</em>) – The quality of the fit as defined by the quality function chosen.</li>
+<li><strong>best_fit_parameters</strong> (<em>list of floats</em>) – The best fitting parameters</li>
+<li><strong>fit_quality</strong> (<em>float</em>) – The quality of the fit as defined by the quality function chosen.</li>
 <li><strong>testedParams</strong> (<em>tuple of two lists</em>) – The two lists are a list containing the parameter values tested, in the order they were tested, and the
 fit qualities of these parameters.</li>
 </ul>

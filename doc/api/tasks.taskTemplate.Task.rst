@@ -11,7 +11,7 @@ Task
    .. autosummary::
 
       ~Task.feedback
-      ~Task.findName
+      ~Task.get_name
       ~Task.next
       ~Task.params
       ~Task.proceed
@@ -23,7 +23,7 @@ Task
    .. rubric:: Methods Documentation
 
    .. automethod:: feedback
-   .. automethod:: findName
+   .. automethod:: get_name
    .. automethod:: next
    .. automethod:: params
    .. automethod:: proceed
