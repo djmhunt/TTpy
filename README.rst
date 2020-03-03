@@ -14,11 +14,11 @@ Usage
 *****
 The framework has until now either been run with a run script or live in a command-line (or `jupyter notebook <http://jupyter.org/>`_).
 
-A task simulation can be simply created by running ``simulation.simulation()``. Equally, for fitting participant data, the function is ``dataFitting.data_fitting``. For now, no example data has been provided.
+A task simulation can be simply created by running ``simulation.simulation()``. Equally, for fitting participant data, the function is ``dataFitting.data_fitting``.
 
-More complex example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` task and ``runScript_fit.py`` for fitting the data generated from ``runScript_sim.py``. A visual display of the interactions in one of these scripts will soon be created.
+More complex example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` task and ``runScript_fit.py`` for fitting the data generated from ``runScript_sim.py``, stored in the ``tests folder``.``
 
-A new method of passing in the fitting or simulation configuration is to use a YAML configuration file. This is done, for both simulations and data fitting, using the function ``start.run_script`` For example, to run the YAML configuration equivalent to the ``runScript_sim.py`` from a command line would be :``start.run_script('./runScripts/runScripts_sim.yaml')``.
+A new method of passing in the fitting or simulation configuration is to use a YAML configuration file. This is done, for both simulations and data fitting, using the function ``start.run_config`` For example, to run the YAML configuration equivalent to the ``runScript_sim.py`` from a command line would be :``start.run_config('./runScripts/runScripts_sim.yaml')``. For the fitting example, the configuration equivalent to ``runScript_fit.py`` would be :``start.run_config('./runScripts/runScripts_fit.yaml')``.
 
 Testing
 *******
