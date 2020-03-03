@@ -102,10 +102,12 @@ def run_config(script_file, trusted_file=False):
                     compiled_value = compile(value, '<string>', 'exec')
                     eval(compiled_value)
                     function_name = compiled_value.co_names[0]
-                    value = [v for k, v in copy.copy(locals()).iteritems() if k == function_name][0]
-                    args = utils.getFuncArgs(value)
+                    function = [v for k, v in copy.copy(locals()).iteritems() if k == function_name][0]
+                    args = utils.getFuncArgs(function)
                     if len(args) != 1:
                         raise ArgumentError('The data extra_processing function must have only one argument. Found {}'.format(args))
+                    function.func_code_string = value
+                    value = function
                 else:
                     raise TypeError('data extra_processing must provide a function')
             run_properties[label] = value
@@ -189,7 +191,10 @@ def symplify_dtypes(struct):
         for key, value in struct.iteritems():
             clean_struct[key] = symplify_dtypes(value)
     elif callable(struct):
-        clean_struct = inspect.getsource(struct)
+        try:
+            clean_struct = inspect.getsource(struct)
+        except IOError as err:
+            clean_struct = struct.func_code_string
     else:
         raise TypeError('Unexpected parameter type {}'.format(struct))
     return clean_struct
