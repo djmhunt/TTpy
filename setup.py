@@ -19,22 +19,22 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 setup(
-    name='pyHPDM',
+    name='Tinker Taylor py',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.9',
+    version='1.0.0-alpha',
 
-    description='python Human Probabilistic Decision-Modelling is a framework for modelling and fitting the responses of people to probabilistic decison making tasks. ',
+    description='Tinker Taylor py is a probabilistic decision-modelling framework for simulating and fitting the responses of people to probabilistic decison making tasks. ',
     long_description=long_description,
 
     # The project's main homepage.
-    url='https://bitbucket.org/djhunt/pyHPDM',
+    url='https://github.com/djmhunt/TTpy',
 
     # Author details
     author='Dominic Hunt',
-    author_email='psp01dh@gold.ac.uk',
+    author_email='d.hunt@gold.ac.uk',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -44,13 +44,13 @@ setup(
 
         'Intended Audience :: Science/Research'
 
-        'License :: Free for non-commercial use'
+        'License :: MIT'
 
         'Natural Language :: English'
 
         'Operating System :: OS Independent'
 
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3.7'
 
         'Topic :: Scientific/Engineering :: Medical Science Apps'
     ],
