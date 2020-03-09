@@ -7,6 +7,8 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import numpy as np
 
 import copy
+import re
+import collections
 
 from model.decision.discrete import weightProb
 
@@ -180,6 +182,8 @@ class Model(object):
         return cls.__name__
 
     # TODO:  define and start using non_action
+    
+    parameter_patterns = []
 
     def __init__(self, number_actions=2, number_cues=1, number_critics=None,
                  action_codes=None, non_action='None',
@@ -190,6 +194,10 @@ class Model(object):
                  **kwargs):
         """"""
         self.Name = self.get_name()
+        
+        self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
+        for k, v in self.pattern_parameters.iteritems():
+            setattr(self, k, v)
 
         self.number_actions = number_actions
         self.number_cues = number_cues
@@ -275,6 +283,7 @@ class Model(object):
                            "stimulus_shaper": self.stimulus_shaper.details(),
                            "reward_shaper": self.reward_shaper.details(),
                            "decision_function": utils.callableDetailsString(self.decision_function)}
+        self.parameters.update(self.pattern_parameters)
 
         # Recorded information
         self.recAction = []
@@ -718,3 +727,48 @@ class Model(object):
         """
 
         self.simID = simID
+    
+    @classmethod
+    def pattern_parameters_match(cls, *args):
+        """
+        Validates if the parameters are described by the model patterns
+
+        Parameters
+        ----------
+        *args : strings
+            The potential parameter names
+
+        Returns
+        -------
+        pattern_parameters : list
+            The args that match the patterns in parameter_patterns
+        """
+
+        pattern_parameters = []
+        for pattern in cls.parameter_patterns:
+            pattern_parameters.extend(sorted([k for k in args if re.match(pattern, k)]))
+
+        return pattern_parameters
+
+    def kwarg_pattern_parameters(self, kwargs):
+        """
+        Extracts the kwarg parameters that are described by the model patterns
+
+        Parameters
+        ----------
+        kwargs : dict
+            The class initialisation kwargs
+
+        Returns
+        -------
+        pattern_parameter_dict : dict
+            A subset of kwargs that match the patterns in parameter_patterns
+        """
+
+        pattern_parameter_keys = self.pattern_parameters_match(*kwargs.keys())
+
+        pattern_parameter_dict = collections.OrderedDict()
+        for k in pattern_parameter_keys:
+            pattern_parameter_dict[k] = kwargs.pop(k)
+
+        return pattern_parameter_dict
