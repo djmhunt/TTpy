@@ -95,7 +95,7 @@ class ModelGen(object):
 
         parameter_keys = parameters.keys()
         for p in parameter_keys:
-            if p not in valid_args:
+            if p not in valid_args and len(model_class.pattern_parameters_match(p)) == 0:
                 raise KeyError(
                     '{} is not a valid property for model ``{}``. Those available are {}'.format(p, model_name,
                                                                                                  valid_args))
