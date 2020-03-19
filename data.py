@@ -791,7 +791,7 @@ class Data(list):
                     self.action_options = None
                 elif isinstance(action_options, (list, np.ndarray)) and len(action_options) == 1:
                     action_options_constant_name = 'constant_valid_actions'
-                    participant_data[loc][action_options_constant_name] = action_options[0]
+                    participant_data[loc][action_options_constant_name] = [action_options[0]] * len(p[choices])
                     self.action_options = action_options_constant_name
                 elif action_options not in keys:
                     raise KeyError("action_options key not found in participant {} data: `{}`".format(p[participantID], action_options))
