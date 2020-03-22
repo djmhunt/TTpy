@@ -43,7 +43,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.inheritance_diagram',
               'sphinx.ext.autosummary',
               'sphinx.ext.napoleon',
-              'sphinx_automodapi.automodapi',
               #'numpydoc',
               ]
 
