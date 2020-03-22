@@ -100,12 +100,12 @@ class ModelGen(object):
 
         parameter_combinations = []
         for p in utils.listMergeGen(*list(parameters.values())):
-            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in zip(parameter_keys, p))
+            pc = {k: copy.copy(v) for k, v in zip(parameter_keys, p)}
             parameter_combinations.append(pc)
         self.parameter_combinations = parameter_combinations
 
         if other_options:
-            checked_options = collections.OrderedDict()
+            checked_options = {}
             for k, v in other_options.items():
                 if k not in valid_args:
                     raise KeyError('{} is not a valid property for model ``{}``. Those available are {}'.format(k,
