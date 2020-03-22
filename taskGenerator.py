@@ -2,9 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import itertools
 import copy
 import collections
 import warnings
@@ -40,14 +37,14 @@ class TaskGeneration(object):
                                       class_folder='tasks',
                                       inherited_class=Task,
                                       excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-        valid_task_args = utils.getClassArgs(task_class)
+        valid_task_args = utils.get_class_args(task_class)
 
         self.task_class = task_class
 
         if not parameters:
             parameters = {}
 
-        parameter_keys = parameters.keys()
+        parameter_keys = list(parameters.keys())
         for p in parameter_keys:
             if p not in valid_task_args:
                 raise KeyError(
@@ -55,14 +52,14 @@ class TaskGeneration(object):
                                                                                      valid_task_args))
 
         parameter_combinations = []
-        for p in utils.listMergeGen(*parameters.values()):
-            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in itertools.izip(parameter_keys, p))
+        for p in utils.listMergeGen(*list(parameters.values())):
+            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in zip(parameter_keys, p))
             parameter_combinations.append(pc)
         self.parameter_combinations = parameter_combinations
 
         if other_options:
             checked_options = collections.OrderedDict()
-            for k, v in other_options.iteritems():
+            for k, v in other_options.items():
                 if k not in valid_task_args:
                     raise KeyError('{} is not a valid property for task ``{}``. Use {}'.format(k,
                                                                                                task_name,
@@ -89,7 +86,7 @@ class TaskGeneration(object):
 
         return self
 
-    def next(self):
+    def __next__(self):
         """ 
         Produces the next task instance for the iterator
 

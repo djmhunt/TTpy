@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
@@ -34,7 +32,7 @@ class Basinhopping(FitAlg):
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0, np.inf) for each parameter.
-    boundary_excess_cost : basestring or callable returning a function, optional
+    boundary_excess_cost : str or callable returning a function, optional
         The function is used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound()``
     boundary_excess_cost_properties : dict, optional
@@ -181,7 +179,7 @@ class Basinhopping(FitAlg):
 
         if bounds is None:
             boundVals = [(0, float('Inf')) for i in model_initial_parameters]
-            bounds = {k: v for k, v in itertools.izip(model_parameter_names, boundVals)}
+            bounds = {k: v for k, v in zip(model_parameter_names, boundVals)}
             self.bounds = bounds
             self.boundVals = np.array(boundVals)
 
@@ -272,7 +270,7 @@ class Basinhopping(FitAlg):
         else:
             reducedResults = []
             for r in resultSet:
-                invalid = [1 for fitVal, boundVals in itertools.izip(r.x, bounds) if any(np.around(fitVal-boundVals, boundary_fit_sensitivity) == 0)]
+                invalid = [1 for fitVal, boundVals in zip(r.x, bounds) if any(np.around(fitVal-boundVals, boundary_fit_sensitivity) == 0)]
 
                 if 1 not in invalid:
                     reducedResults.append(r)

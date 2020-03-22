@@ -5,11 +5,6 @@
 A collection of decision making functions where there are no limits on the
 number of actions, but they are countable.
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import warnings
-import itertools
 import collections
 
 import numpy as np
@@ -64,13 +59,13 @@ def weightProb(task_responses=(0, 1)):
         trial_probabilities, valid_responses = _validProbabilities(probArray, task_responses, trial_responses)
 
         if trial_probabilities is None:
-            return None, collections.OrderedDict([(k, v) for k, v in itertools.izip(task_responses, probArray)])
+            return None, collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
 
         normalised_trial_probabilities = trial_probabilities / np.sum(trial_probabilities)
 
         decision = np.random.choice(valid_responses, p=normalised_trial_probabilities)
 
-        abridged_probability_dict = {k: v for k, v in itertools.izip(valid_responses, normalised_trial_probabilities)}
+        abridged_probability_dict = {k: v for k, v in zip(valid_responses, normalised_trial_probabilities)}
         probability_list = [(k, abridged_probability_dict[k]) if k in valid_responses else (k, 0) for k in task_responses]
         probDict = collections.OrderedDict(probability_list)
 
@@ -126,7 +121,7 @@ def maxProb(task_responses=(0, 1)):
 
         probArray = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(task_responses, probArray)])
+        probDict = collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
 
         trial_probabilities, responses = _validProbabilities(probArray, task_responses, trial_responses)
 
@@ -134,7 +129,7 @@ def maxProb(task_responses=(0, 1)):
             return None, probDict
 
         max_probability = np.amax(trial_probabilities)
-        max_responses = [r for r, p in itertools.izip(responses, trial_probabilities) if p == max_probability]
+        max_responses = [r for r, p in zip(responses, trial_probabilities) if p == max_probability]
         decision = np.random.choice(max_responses)
 
         return decision, probDict
@@ -188,7 +183,7 @@ def probThresh(task_responses=(0, 1), eta=0.8):
 
         probArray = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict([(k, v) for k, v in itertools.izip(task_responses, probArray)])
+        probDict = collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
 
         trial_probabilities, responses = _validProbabilities(probArray, task_responses, trial_responses)
 
@@ -196,7 +191,7 @@ def probThresh(task_responses=(0, 1), eta=0.8):
             return None, probDict
 
         # If probMax is above a threshold, we pick the best one, otherwise we pick at random
-        eta_responses = [r for r, p in itertools.izip(responses, trial_probabilities) if p >= eta]
+        eta_responses = [r for r, p in zip(responses, trial_probabilities) if p >= eta]
         if eta_responses:
             decision = np.random.choice(eta_responses)
         else:

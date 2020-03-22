@@ -9,14 +9,6 @@ recommend making a copy of this for each successful investigation and storing it
 with the data.
 """
 #%% Import useful functions
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import sys
-import os
-filePath = os.path.realpath(__file__)
-codePath = filePath.split('\\')[:-2]
-sys.path.append("/".join(codePath))  # So code can be found from the main folder
-
 # Other used function
 import numpy as np
 
@@ -57,7 +49,7 @@ dataFitting.run(data_folder='../tests/test_sim/Pickle/',
                 participant_choices='Decisions',
                 participant_rewards='Rewards',
                 model_fit_value='ActionProb',
-                fit_subset='all',  # 'rewarded', 'unrewarded', 'all', np.nan, None, range(60, 120)
+                fit_subset='all',  # 'rewarded', 'unrewarded', 'all', np.nan, None, list(range(60, 120))
                 task_stimuli=None,  #["stimCues"],
                 participant_action_options=['ValidActions_0', 'ValidActions_1'],
                 fit_method='Evolutionary',
@@ -69,5 +61,5 @@ dataFitting.run(data_folder='../tests/test_sim/Pickle/',
                                   "randActProb": 1/2},
                 label='qLearn_probSelect_fromSim',
                 save_fitting_progress=True,
-                pickle=True,
+                pickle=False,
                 numpy_error_level='log')  # 'raise','log'

@@ -3,8 +3,6 @@
 :Author: Dominic Hunt
 """
 
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import collections
 
 import numpy as np
@@ -43,7 +41,7 @@ def qualFuncIdent(value, **kwargs):
 
 
 def simpleSum(modVals):
-    """
+    r"""
     Generates a fit quality value based on :math:`\sum {\\vec x}`
 
     Returns
@@ -57,7 +55,7 @@ def simpleSum(modVals):
 
 def logprob(modVals):
     # type: (Union[ndarray, list]) -> float
-    """
+    r"""
     Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -2\mathrm{log}_2(\\vec x)`
 
     Returns
@@ -77,7 +75,7 @@ def logprob(modVals):
 
 def logeprob(modVals):
     # type: (Union[ndarray, list]) -> float
-    """
+    r"""
     Generates a fit quality value based on :math:`f_{\mathrm{mod}}\left(\\vec x\right) = \sum -\mathrm{log}_e(\\vec x)`
 
     Returns
@@ -97,7 +95,7 @@ def logeprob(modVals):
 
 def logAverageProb(modVals):
     # type: (Union[ndarray, list]) -> float
-    """
+    r"""
     Generates a fit quality value based on :math:`\sum -2\mathrm{log}_2(\\vec x)`
 
     Returns
@@ -119,7 +117,7 @@ def logAverageProb(modVals):
 
 def maxprob(modVals):
     # type: (Union[ndarray, list]) -> float
-    """
+    r"""
     Generates a fit quality value based on :math:`\sum 1-{\\vec x}`
 
     Returns
@@ -135,7 +133,7 @@ def maxprob(modVals):
 
 def BIC2(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
-    """
+    r"""
     Generates a function that calculates the Bayesian Information Criterion (BIC)
 
     :math:`\lambda \mathrm{log}_2(T)+ f_{\mathrm{mod}}\left(\\vec x\right)`
@@ -178,7 +176,7 @@ def bayesRand(**kwargs):
 
 def bayesFactor(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
-    """
+    r"""
 
     :math:`2^{\frac{x}{2}}`
 
@@ -212,7 +210,7 @@ def bayesFactor(**kwargs):
 
 def bayesInv(**kwargs):
     # type : (**Union[int, float]) -> Callable[[Union[ndarray, list]], float]
-    """
+    r"""
 
     Parameters
     ----------
@@ -243,7 +241,7 @@ def bayesInv(**kwargs):
 
     def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
-        """
+        r"""
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Information Criterion
 
@@ -329,7 +327,7 @@ def BIC2norm(**kwargs):
 
     def BICfunc(modVals, **kwargs):
         # type: (Union[ndarray, list]) -> float
-        """
+        r"""
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Information Criterion
 
@@ -400,7 +398,7 @@ def BIC2normBoot(**kwargs):
 
     def BICfunc(modVals):
         # type: (Union[ndarray, list]) -> float
-        """
+        r"""
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Informaiton Criterion
 
@@ -418,7 +416,7 @@ def BIC2normBoot(**kwargs):
         numVals = sample.shape
         T = max(numVals)
         probdist = np.linspace(2 / (T * (T + 1)), 2 / (T + 1), T)
-        choices = np.random.choice(range(T), size=numSamples, p=probdist)
+        choices = np.random.choice(list(range(T)), size=numSamples, p=probdist)
         modValsExtra = np.array([sample[i: i + sampleLen] for i in choices]).squeeze()
 
         extendedSample = np.concatenate((sample, modValsExtra))
@@ -462,7 +460,7 @@ def WBIC2(**kwargs):
 
     def WBICfunc(modVals):
         # type: (Union[ndarray, list]) -> float
-        """
+        r"""
         Generates a fit quality value based on :math:`\mathrm{exp}^{\frac{\mathrm{numParams}\mathrm{log2}\left(\mathrm{numSamples}\right) + \mathrm{BICval}}{\mathrm{BICrandom}} - 1}`
         The function is a modified version of the Bayesian Information Criterion
 

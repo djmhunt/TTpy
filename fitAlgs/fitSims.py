@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 import logging
@@ -195,8 +193,8 @@ class FitSim(object):
         """
 
         self.model = model
-        self.initial_parameter_values = model_parameters.values()
-        self.model_parameter_names = model_parameters.keys()
+        self.initial_parameter_values = list(model_parameters.values())
+        self.model_parameter_names = list(model_parameters.keys())
         self.model_other_properties = model_properties
 
         participant_sequence = self.participant_sequence_generation(participant_data,
@@ -254,7 +252,7 @@ class FitSim(object):
         partDataShape = None
         if stimuli_property is None:
             stimuli_data = [None] * participant_data_length
-        elif isinstance(stimuli_property, basestring):
+        elif isinstance(stimuli_property, str):
             stimuli_data = np.array(participant_data[stimuli_property])
             partDataShape = stimuli_data.shape
         elif isinstance(stimuli_property, list):
@@ -270,7 +268,7 @@ class FitSim(object):
             if max(partDataShape) != partDataShape[0]:
                 stimuli_data = stimuli_data.T
 
-        if isinstance(action_options_property, basestring) and action_options_property in participant_data:
+        if isinstance(action_options_property, str) and action_options_property in participant_data:
             available_actions = participant_data[action_options_property]
         elif action_options_property is None or len(action_options_property) != participant_data_length:
             available_actions = [action_options_property] * participant_data_length
@@ -279,15 +277,15 @@ class FitSim(object):
 
         mismatches = [True if (trial_available_actions is not None and trial_action not in trial_available_actions)
                            else False
-                      for trial_action, trial_available_actions in itertools.izip(actions, available_actions)]
+                      for trial_action, trial_available_actions in zip(actions, available_actions)]
 
         if any(mismatches):
-            mismatch_actions = [a for a, m in itertools.izip(actions, mismatches) if m is True]
-            mismatch_available_actions = [a for a, m in itertools.izip(available_actions, mismatches) if m is True]
+            mismatch_actions = [a for a, m in zip(actions, mismatches) if m is True]
+            mismatch_available_actions = [a for a, m in zip(available_actions, mismatches) if m is True]
             raise ActionError('An action is chosen that is not listed as available for the trial \n{}\n {}'.format(mismatch_actions,
                                                                                                                mismatch_available_actions))
 
-        observations = [(s, a) for s, a in itertools.izip(stimuli_data, available_actions)]
+        observations = [(s, a) for s, a in zip(stimuli_data, available_actions)]
 
         return observations, actions, rewards
 
@@ -353,7 +351,7 @@ class FitSim(object):
 
         model_properties = self.get_model_parameters(*model_parameters)
 
-        for k, v in self.model_other_properties.iteritems():
+        for k, v in self.model_other_properties.items():
             model_properties[k] = copy.deepcopy(v)
 
         return model_properties
@@ -373,7 +371,7 @@ class FitSim(object):
             The kwarg model parameter arguments
         """
 
-        parameters = {k: v for k, v in itertools.izip(self.model_parameter_names, model_parameters)}
+        parameters = {k: v for k, v in zip(self.model_parameter_names, model_parameters)}
 
         return parameters
 
@@ -400,7 +398,7 @@ class FitSim(object):
             The same instance that was passed in
         """
 
-        for observation, action, reward in itertools.izip(observations, actions, rewards):
+        for observation, action, reward in zip(observations, actions, rewards):
             model_instance.observe(observation)
             model_instance.overrideActionChoice(action)
             model_instance.feedback(reward)

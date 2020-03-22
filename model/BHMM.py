@@ -14,8 +14,6 @@
         DOI:10.1142/S0218001401000836
 
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
@@ -190,7 +188,7 @@ class BHMM(Model):
 
         self.storeStandardResults()
         self.recSwitchProb.append(self.switchProb)
-        self.recActionLoc.append(self.actionLoc.values())
+        self.recActionLoc.append(list(self.actionLoc.values()))
         self.recPosteriorProb.append(self.posteriorProb.copy())
 
     def rewardExpectation(self, observation):

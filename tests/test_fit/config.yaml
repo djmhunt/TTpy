@@ -1,0 +1,87 @@
+data:
+    action_options:
+    - ValidActions_0
+    - ValidActions_1
+    choices: Decisions
+    extra_processing: "def data_processing(dat):\n    for i, d in enumerate(dat['ValidActions']):\n\
+        \        dat['ValidActions_{}'.format(i)] = d\n    return dat\n"
+    file_terminal_ID: true
+    format: pkl
+    group_by: null
+    name: simID
+    path: ../tests/test_sim/Pickle/
+    read_options: null
+    rewards: Rewards
+    split_by: null
+    stimuli: null
+    valid_files: QLearn_modelData_sim-
+    varying_model_parameters: null
+fitting:
+    calculate_covariance: false
+    measures:
+        extras:
+        - -2log
+        - BIC
+        - r2
+        - bayesFactor
+        - BIC2norm
+        fitting_variable: ActionProb
+        float_error_response_value: 1.0e-100
+        main: -loge
+        parameters:
+            numParams: 2
+            number_actions: 6
+            qualityThreshold: 20
+            randActProb: 0.5
+        trial_subset: all
+    method: Evolutionary
+model:
+    action_codes:
+        A: 0
+        B: 1
+        C: 2
+        D: 3
+        E: 4
+        F: 5
+    decision_function_name: weightProb
+    expect:
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    name: QLearn
+    number_actions: 6
+    number_cues: 1
+    parameters:
+        alpha:
+        - 0
+        - 1
+        beta:
+        - 0
+        - 30
+    prior:
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    reward_shaper_name: RewardProbSelectDirect
+    stimulus_shaper_name: StimulusProbSelectDirect
+    task_responses:
+    - A
+    - B
+    - C
+    - D
+    - E
+    - F
+saving:
+    bound_cost_function: null
+    min_log_level: INFO
+    name: qLearn_probSelect_fromSim
+    numpy_error_level: log
+    output_path: null
+    pickle: false
+    save_fitting_progress: true

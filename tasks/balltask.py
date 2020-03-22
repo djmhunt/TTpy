@@ -3,8 +3,6 @@
 pyhpdm version of the balltask task
 TODO: describe tasks
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import copy
 
 import numpy as np
@@ -45,7 +43,7 @@ class Balltask(Task):
 #        self.reward_history = [-1] * self.parameters['nbr_of_trials']
         self.ball_history = [""] * self.parameters['nbr_of_trials']
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 

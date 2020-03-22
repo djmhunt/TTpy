@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
@@ -36,7 +34,7 @@ class Leastsq(FitAlg):
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0, np.inf) for each parameter.
-    boundary_excess_cost : basestring or callable returning a function, optional
+    boundary_excess_cost : str or callable returning a function, optional
         The function is used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound()``
     boundary_excess_cost_properties : dict, optional
@@ -100,7 +98,7 @@ class Leastsq(FitAlg):
         self.tested_parameters = []
         self.tested_parameter_qualities = []
 
-        bounds = [i for i in itertools.izip(*self.boundary_values)]
+        bounds = [i for i in zip(*self.boundary_values)]
 
         optimizeResult = sp.optimize.least_squares(self.fitness,
                                                    model_initial_parameters[:],

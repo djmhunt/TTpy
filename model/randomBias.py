@@ -3,21 +3,14 @@
 :Author: Dominic Hunt
 
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
-
-import re
-import itertools
 
 from model.modelTemplate import Model
 
 
 class RandomBias(Model):
-
     """A model replicating a participant who chooses randomly, but with a bias towards certain actions
 
     Attributes
@@ -30,6 +23,9 @@ class RandomBias(Model):
 
     Parameters
     ----------
+    prob* : float, optional
+        The probabilities for each action. Can be un-normalised. The parameter names are ``prob`` followed by a number
+        e.g. ``prob1``, ``prob2``. It is expected that there will be same number as ``number_actions``.
     number_actions : integer, optional
         The maximum number of valid actions the model can expect to receive.
         Default 2.
@@ -48,27 +44,26 @@ class RandomBias(Model):
         in to a decision. Default is model.decision.discrete.weightProb
     """
 
+    parameter_patterns = ['^prob\d+$']
 
     def __init__(self, expect=None, **kwargs):
 
         super(RandomBias, self).__init__(**kwargs)
 
-        pattern = '^prob\d+$'
-        actProbLab = sorted([k for k in kwargs if re.match(pattern, k)])
-        actionProbs = []
-        if len(actProbLab) != self.number_actions:
-            raise IndexError("Wrong number of action weights. Received {} instead of {}".format(len(actProbLab), self.number_actions))
-        else:
-            for p in actProbLab:
-                actionProbs.append(kwargs.pop(p))
-        self.actionProbs = np.array(actionProbs) / np.sum(actionProbs)
+        number_pattern_parameters = len(self.pattern_parameters)
+
+        if number_pattern_parameters != self.number_actions:
+            raise IndexError(
+                "Wrong number of action weights. Received {} instead of {}".format(number_pattern_parameters,
+                                                                                   self.number_actions))
+
+        action_probabilities = self.pattern_parameters.values()
+        self.actionProbs = np.array(action_probabilities) / np.sum(action_probabilities)
 
         if expect is None:
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
 
-        for k, v in itertools.izip(actProbLab, self.actionProbs):
-            self.parameters[k] = v
         self.parameters["expectation"] = self.expectations.copy()
 
         # Recorded information

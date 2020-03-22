@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import itertools
 import collections
 import copy
@@ -46,7 +44,7 @@ class ModelGen(object):
                                        class_folder='model',
                                        inherited_class=Model,
                                        excluded_files=['modelTemplate', '__init__', 'modelGenerator'])
-        valid_model_args = utils.getClassArgs(model_class)
+        valid_model_args = utils.get_class_args(model_class)
         valid_args = copy.copy(valid_model_args)
 
         if 'stimulus_shaper_name' in parameters:
@@ -58,7 +56,7 @@ class ModelGen(object):
                                         class_folder='tasks',
                                         inherited_class=Stimulus,
                                         excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            valid_stimulus_args = utils.getClassAttributes(stimFunc, ignore=['processStimulus'])
+            valid_stimulus_args = utils.get_class_attributes(stimFunc, ignore=['processStimulus'])
             valid_args.extend(valid_stimulus_args)
         else:
             stimFunc = None
@@ -72,7 +70,7 @@ class ModelGen(object):
                                           class_folder='tasks',
                                           inherited_class=Rewards,
                                           excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            valid_reward_args = utils.getClassAttributes(rewardFunc, ignore=['processFeedback'])
+            valid_reward_args = utils.get_class_attributes(rewardFunc, ignore=['processFeedback'])
             valid_args.extend(valid_reward_args)
         else:
             rewardFunc = None
@@ -83,7 +81,7 @@ class ModelGen(object):
         decision_function_name = other_options.pop('decision_function_name', None)
         if decision_function_name:
             decisionFunc = utils.find_function(decision_function_name, 'model/decision', excluded_files=['__init__'])
-            valid_decision_args = utils.getFuncArgs(decisionFunc)
+            valid_decision_args = utils.get_function_args(decisionFunc)
             valid_args.extend(valid_decision_args)
         else:
             decisionFunc = None
@@ -93,22 +91,22 @@ class ModelGen(object):
         if not parameters:
             parameters = {}
 
-        parameter_keys = parameters.keys()
+        parameter_keys = list(parameters.keys())
         for p in parameter_keys:
-            if p not in valid_args:
+            if p not in valid_args and len(model_class.pattern_parameters_match(p)) == 0:
                 raise KeyError(
                     '{} is not a valid property for model ``{}``. Those available are {}'.format(p, model_name,
                                                                                                  valid_args))
 
         parameter_combinations = []
-        for p in utils.listMergeGen(*parameters.values()):
-            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in itertools.izip(parameter_keys, p))
+        for p in utils.listMergeGen(*list(parameters.values())):
+            pc = collections.OrderedDict((k, copy.copy(v)) for k, v in zip(parameter_keys, p))
             parameter_combinations.append(pc)
         self.parameter_combinations = parameter_combinations
 
         if other_options:
             checked_options = collections.OrderedDict()
-            for k, v in other_options.iteritems():
+            for k, v in other_options.items():
                 if k not in valid_args:
                     raise KeyError('{} is not a valid property for model ``{}``. Those available are {}'.format(k,
                                                                                                                 model_name,
@@ -145,7 +143,7 @@ class ModelGen(object):
 
         return self
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next item for the iterator
         

@@ -1,7 +1,4 @@
 # coding=utf-8
-from __future__ import division, print_function
-from __future__ import unicode_literals, absolute_import
-
 from tasks.balltask import Balltask
 
 print("Welcome! We shall now play the balltask")

@@ -2,11 +2,6 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import pytest
-import collections
-
 import fitAlgs.boundFunc as boundFunc
 
 import numpy as np

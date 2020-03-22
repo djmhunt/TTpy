@@ -2,12 +2,8 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import pytest
-import itertools
-
-import cPickle as pickle
+import pickle
 
 import scipy as sp
 import numpy as np
@@ -86,7 +82,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 0.5,
-             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.5], [0.5], [0.5], [0.5], [0.5]]),
              'non_action': None,
              'number_actions': 6,
@@ -107,7 +103,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.7,
              'beta': 0.5,
-             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.35], [0.755], [0.35], [0.5], [0.455]]),
              'non_action': None,
              'number_actions': 6,
@@ -128,7 +124,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 4.0,
-             'decision_function': u"discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
+             'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
              'expectation': np.array([[0.5], [0.105], [0.97795], [0.805], [0.745], [0.455]]),
              'non_action': None,
              'number_actions': 6,
@@ -168,7 +164,7 @@ def single_files(tmpdir_factory):
     pkl_data = SIM_DATA[0]
     pkl_file_name = folder_name.join('QLearn_modelData_sim-0.pkl')
     file_names['pkl'] = str(pkl_file_name)
-    with open(str(pkl_file_name), 'w') as w:
+    with open(str(pkl_file_name), 'wb') as w:
         pickle.dump(pkl_data, w)
 
     return str(folder_name), file_names
@@ -179,7 +175,7 @@ def multi_files(tmpdir_factory):
     file_names = {}
 
     mat_file_names = []
-    for i, (cumulative_points, subject_choices) in enumerate(itertools.izip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
+    for i, (cumulative_points, subject_choices) in enumerate(zip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
         file_path = folder_name.join(mat_file_name)
@@ -208,7 +204,7 @@ def multi_files(tmpdir_factory):
     for i, pkl_data in enumerate(SIM_DATA):
         pkl_file_name = folder_name.join('QLearn_modelData_sim-{}.pkl'.format(i))
         pkl_file_names.append(str(pkl_file_name).split('\\')[-1])
-        with open(str(pkl_file_name), 'w') as w:
+        with open(str(pkl_file_name), 'wb') as w:
             pickle.dump(pkl_data, w)
     file_names['pkl'] = pkl_file_names
 
@@ -222,7 +218,7 @@ def multi_folders(tmpdir_factory):
     folder_name_str = str(folder_name).replace('\\', '/')
 
     file_names = []
-    for i, (cumulative_points, subject_choices) in enumerate(itertools.izip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
+    for i, (cumulative_points, subject_choices) in enumerate(zip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
         folder_path = '{}/subj{}'.format(folder_name_str, i)
@@ -263,7 +259,7 @@ class TestClass_Data:
         dat2 = dat1.copy()
         dat2['ID'] = '2'
         result = repr(data.Data([dat1, dat2]))
-        correct_result = """[{u'ID': u'1', u'actions': [], u'feedbacks': []}, {u'ID': u'2', u'actions': [], u'feedbacks': []}]"""
+        correct_result = """[{'ID': '1', 'actions': [], 'feedbacks': []}, {'ID': '2', 'actions': [], 'feedbacks': []}]"""
         assert result == correct_result
 
     def test_D_minimal2(self):
@@ -400,7 +396,7 @@ class TestClass_Data:
         result_dat = data.Data([dat1, dat2], stimuli=['cue1', 'cue2'])
         result = result_dat[0][result_dat.stimuli]
         correct_result = np.array([[1, 4], [2, 5], [3, 6]])
-        for r, cr in itertools.izip(result, correct_result):
+        for r, cr in zip(result, correct_result):
             assert all(r == cr)
 
     def test_D_combining2(self):
@@ -417,7 +413,7 @@ class TestClass_Data:
         result_dat = data.Data([dat1, dat2], action_options=['act1', 'act2'])
         result = result_dat[0][result_dat.action_options]
         correct_result = np.array([[1, 4], [2, 5], [3, 6]])
-        for r, cr in itertools.izip(result, correct_result):
+        for r, cr in zip(result, correct_result):
             assert all(r == cr)
 
     def test_D_combining4(self):
@@ -430,7 +426,7 @@ class TestClass_Data:
     def test_D_int_core(self):
         dataFiles = ['me001.mat', 'me051.mat', 'me002.mat', 'me052.mat']
         result = data.Data._Data__int_core(dataFiles, 'me0', '.mat')
-        expected_result = ([u'me001.mat', u'me002.mat', u'me051.mat', u'me052.mat'], ['1', '2', '51', '52'])
+        expected_result = (['me001.mat', 'me002.mat', 'me051.mat', 'me052.mat'], ['1', '2', '51', '52'])
         assert result == expected_result
 
     def test_D_int_core2(self):
@@ -463,7 +459,7 @@ class TestClass_Mat:
                           'taskver': 1.05
                           }
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             try:
                 assert all(value == correct_result[key])
             except TypeError:
@@ -472,7 +468,7 @@ class TestClass_Mat:
     def test_mat_triple(self, multi_files):
         folder_name, file_names = multi_files
         dat = data.Data.from_mat(folder=folder_name, participantID='dfile', choices='subchoice', feedbacks='cumpts')
-        for result, file_name, points, choices in itertools.izip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
+        for result, file_name, points, choices in zip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
                               'folder': folder_name.replace('\\', '/') + '/',
@@ -484,7 +480,7 @@ class TestClass_Mat:
                               'taskver': 1.05
                               }
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 try:
                     assert all(value == correct_result[key])
                 except TypeError:
@@ -497,7 +493,7 @@ class TestClass_Mat:
                                  participantID='dfile',
                                  choices='subchoice',
                                  feedbacks='cumpts')
-        for result, file_name, points, choices in itertools.izip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
+        for result, file_name, points, choices in zip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
                               'folder': folder_name.replace('\\', '/') + '/',
@@ -509,7 +505,7 @@ class TestClass_Mat:
                               'taskver': 1.05
                               }
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 try:
                     assert all(value == correct_result[key])
                 except TypeError:
@@ -535,7 +531,7 @@ class TestClass_Folders:
                                   participantID='dfile',
                                   choices='subchoice',
                                   feedbacks='cumpts')
-        for result, folder, file_name, points, choices in itertools.izip(dat, dat_folders, file_names, MAT_POINTS_SETS,
+        for result, folder, file_name, points, choices in zip(dat, dat_folders, file_names, MAT_POINTS_SETS,
                                                                          MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
@@ -548,7 +544,7 @@ class TestClass_Folders:
                               'taskver': 1.05
                               }
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 try:
                     assert all(value == correct_result[key])
                 except TypeError:
@@ -564,16 +560,16 @@ class TestClass_csv:
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.csv'
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
         correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
-        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
                 if len(np.shape(value)) == 2:
-                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                    for v1, v2 in zip(value, correct_result[key]):
                         assert all(v1 == v2)
                 elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                 else:
                     assert value == correct_result[key]
             else:
@@ -588,16 +584,16 @@ class TestClass_csv:
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.csv'
         correct_result[data.DATA_KEYWORDS['ID']] = 's1'
         correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
-        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
                 if len(np.shape(value)) == 2:
-                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                    for v1, v2 in zip(value, correct_result[key]):
                         assert all(v1 == v2)
                 elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                 else:
                     assert value == correct_result[key]
             else:
@@ -609,24 +605,24 @@ class TestClass_csv:
                                  choices='response', feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["csv_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -639,24 +635,24 @@ class TestClass_csv:
                                  stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["csv_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -673,26 +669,26 @@ class TestClass_csv:
         folder_name, file_names = multi_files
         dat = data.Data.from_csv(folder=folder_name, file_name_filter='subj', participantID='subno', choices='response',
                                  feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
-        for i, (f, result) in enumerate(itertools.izip(file_names["csv"], dat)):
+        for i, (f, result) in enumerate(zip(file_names["csv"], dat)):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -709,16 +705,16 @@ class TestClass_xlsx:
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.xlsx'
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
         correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
-        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
                 if len(np.shape(value)) == 2:
-                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                    for v1, v2 in zip(value, correct_result[key]):
                         assert all(v1 == v2)
                 elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                 else:
                     assert value == correct_result[key]
             else:
@@ -733,16 +729,16 @@ class TestClass_xlsx:
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.xlsx'
         correct_result[data.DATA_KEYWORDS['ID']] = 's1'
         correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
-        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in itertools.izip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
+        correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
                 if len(np.shape(value)) == 2:
-                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                    for v1, v2 in zip(value, correct_result[key]):
                         assert all(v1 == v2)
                 elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                 else:
                     assert value == correct_result[key]
             else:
@@ -754,24 +750,24 @@ class TestClass_xlsx:
                                  choices='response', feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["xlsx_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -784,24 +780,24 @@ class TestClass_xlsx:
                                   stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
         for i, result in enumerate(dat):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["xlsx_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -818,26 +814,26 @@ class TestClass_xlsx:
         folder_name, file_names = multi_files
         dat = data.Data.from_xlsx(folder=folder_name, file_name_filter='subj', participantID='subno', choices='response',
                                  feedbacks='resp_rew', stimuli=['cue1', 'cue2', 'cue3', 'cue4'])
-        for i, (f, result) in enumerate(itertools.izip(file_names["xlsx"], dat)):
+        for i, (f, result) in enumerate(zip(file_names["xlsx"], dat)):
             loc = MULTI_DATA_PART_ORDER[i]
-            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.iteritems()}
+            correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
-                                               itertools.izip(correct_result['cue1'],
+                                               zip(correct_result['cue1'],
                                                               correct_result['cue2'],
                                                               correct_result['cue3'],
                                                               correct_result['cue4'])]
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         assert value == correct_result[key]
                 else:
@@ -855,14 +851,14 @@ class TestClass_pkl:
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
         correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
 
-        for key, value in result.iteritems():
+        for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
                 if len(np.shape(value)) == 2:
-                    for v1, v2 in itertools.izip(value, correct_result[key]):
+                    for v1, v2 in zip(value, correct_result[key]):
                         assert all(v1 == v2)
                 elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                    assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                    assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                    assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                    assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                 else:
                     try:
                         assert value == correct_result[key]
@@ -875,19 +871,19 @@ class TestClass_pkl:
         folder_name, file_names = multi_files
         dat = data.Data.from_pkl(folder=folder_name, file_name_filter=None, participantID='simID',
                                  feedbacks='Rewards', stimuli=None, choices='Decisions')
-        for f, result, correct_result in itertools.izip(file_names["pkl"], dat, SIM_DATA):
+        for f, result, correct_result in zip(file_names["pkl"], dat, SIM_DATA):
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['simID']
             correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
 
-            for key, value in result.iteritems():
+            for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
                     if len(np.shape(value)) == 2:
-                        for v1, v2 in itertools.izip(value, correct_result[key]):
+                        for v1, v2 in zip(value, correct_result[key]):
                             assert all(v1 == v2)
                     elif isinstance(value[-1], float) and np.isnan(value[-1]):
-                        assert all([i == j for i, j in itertools.izip(value, correct_result[key]) if not np.isnan(i)])
-                        assert all([np.isnan(j) for i, j in itertools.izip(value, correct_result[key]) if np.isnan(i)])
+                        assert all([i == j for i, j in zip(value, correct_result[key]) if not np.isnan(i)])
+                        assert all([np.isnan(j) for i, j in zip(value, correct_result[key]) if np.isnan(i)])
                     else:
                         try:
                             assert value == correct_result[key]

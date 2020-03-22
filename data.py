@@ -4,15 +4,12 @@ This module allows for the importing of participant data for use in fitting
 
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import cPickle as pickle
+import pickle
 import scipy.io as io
 import numpy as np
 import pandas as pd
 
 import os
-import itertools
 import re
 import collections
 
@@ -118,7 +115,7 @@ class Data(list):
         -------
         Data : Data class instance
         """
-        if isinstance(folders, basestring):
+        if isinstance(folders, str):
             folder_list = [folders]
         elif isinstance(folders, list):
             folder_list = folders
@@ -244,7 +241,7 @@ class Data(list):
         files, file_IDs = cls.__locate_files(folder_path, "mat", file_name_filter=file_name_filter, terminal_ID=terminal_ID)
 
         participant_data = []
-        for f, i in itertools.izip(files, file_IDs):
+        for f, i in zip(files, file_IDs):
 
             file_data = {DATA_KEYWORDS['filename']: f,
                          DATA_KEYWORDS['folder']: folder_path}
@@ -252,7 +249,7 @@ class Data(list):
                 file_data[DATA_KEYWORDS['ID']] = i
 
             mat = io.loadmat(folder_path + f, struct_as_record=False, squeeze_me=True)
-            for key, value in mat.iteritems():
+            for key, value in mat.items():
                 if key[0:2] == "__":
                     continue
                 elif type(value) == io.matlab.mio5_params.mat_struct:
@@ -345,11 +342,11 @@ class Data(list):
 
         if split_by is None:
             split_by = []
-        elif isinstance(split_by, basestring):
+        elif isinstance(split_by, str):
             split_by = [split_by]
         elif isinstance(split_by, (list, np.ndarray)):
             for s in split_by:
-                if not isinstance(s, basestring):
+                if not isinstance(s, str):
                     raise TypeError('A split_by list should only contain strings. Found {}'.format(type(s)))
         else:
             raise TypeError('split_by should be a string or a list of strings. Found {}'.format(type(split_by)))
@@ -360,7 +357,7 @@ class Data(list):
         participant_data = []
 
         participantID_changed = False
-        for filename, fileID in itertools.izip(files, file_IDs):
+        for filename, fileID in zip(files, file_IDs):
 
             dat = pd.read_csv(folder_path + filename, **csv_read_options)
 
@@ -489,11 +486,11 @@ class Data(list):
 
         if split_by is None:
             split_by = []
-        elif isinstance(split_by, basestring):
+        elif isinstance(split_by, str):
             split_by = [split_by]
         elif isinstance(split_by, (list, np.ndarray)):
             for s in split_by:
-                if not isinstance(s, basestring):
+                if not isinstance(s, str):
                     raise TypeError('A split_by list should only contain strings. Found {}'.format(type(s)))
         else:
             raise TypeError('split_by should be a string or a list of strings. Found {}'.format(type(split_by)))
@@ -504,7 +501,7 @@ class Data(list):
         participant_data = []
 
         participantID_changed = False
-        for filename, fileID in itertools.izip(files, file_IDs):
+        for filename, fileID in zip(files, file_IDs):
 
             # In case the file is open, this will in fact be a temporary file and not a valid file.
             if filename.startswith('~$'):
@@ -626,9 +623,9 @@ class Data(list):
                                              terminal_ID=terminal_ID)
 
         participant_data = []
-        for filename, fileID in itertools.izip(files, file_IDs):
+        for filename, fileID in zip(files, file_IDs):
 
-            with open(folder_path + filename) as o:
+            with open(folder_path + filename, 'rb') as o:
                 dat = pickle.load(o)
 
                 if not isinstance(dat, dict):
@@ -637,7 +634,7 @@ class Data(list):
                 dat[DATA_KEYWORDS['filename']] = filename
                 dat[DATA_KEYWORDS['folder']] = folder_path
 
-                file_data = {k: v for k, v in dat.iteritems()}
+                file_data = {k: v for k, v in dat.items()}
 
             if participantID is None:
                 file_data[DATA_KEYWORDS['ID']] = fileID
@@ -689,31 +686,31 @@ class Data(list):
         self.process_function = process_data_function
         if callable(process_data_function):
             participant_data = process_data_function(participants)
-        elif isinstance(process_data_function, basestring):
+        elif isinstance(process_data_function, str):
             pass
         else:
             participant_data = participants
 
-        if not isinstance(participantID, basestring):
+        if not isinstance(participantID, str):
             raise TypeError('participantID should be a string not a {}'.format(type(participantID)))
-        if not isinstance(choices, basestring):
+        if not isinstance(choices, str):
             raise TypeError('choices should be a string not a {}'.format(type(choices)))
-        if not isinstance(feedbacks, basestring):
+        if not isinstance(feedbacks, str):
             raise TypeError('feedbacks should be a string not a {}'.format(type(feedbacks)))
 
-        if stimuli is None or isinstance(stimuli, basestring):
+        if stimuli is None or isinstance(stimuli, str):
             combining_stimuli = False
         elif isinstance(stimuli, list):
             combining_stimuli = True
-            if not all(isinstance(s, basestring) for s in stimuli):
+            if not all(isinstance(s, str) for s in stimuli):
                 raise TypeError('stimuli in the list should be strings: {}'.format(stimuli))
         else:
             raise TypeError('stimuli should be a string or list of strings not a {}'.format(type(stimuli)))
 
-        if action_options is None or isinstance(action_options, basestring):
+        if action_options is None or isinstance(action_options, str):
             combining_action_options = False
         elif isinstance(action_options, (list, np.ndarray)):
-            if all(isinstance(s, basestring) for s in action_options):
+            if all(isinstance(s, str) for s in action_options):
                 combining_action_options = True
             elif len(action_options) == 1:
                 combining_action_options = False
@@ -727,11 +724,11 @@ class Data(list):
             if not isinstance(p, dict):
                 raise TypeError("participants must be in the form of a dict, not {}".format(type(p)))
 
-            keys = p.keys()
+            keys = list(p.keys())
 
             if participantID not in keys:
                 raise KeyError("participantID key not found in participant data: `{}`".format(participantID))
-            elif not isinstance(p[participantID], basestring):
+            elif not isinstance(p[participantID], str):
                 raise TypeError("participantID value must be a string. Found {}".format(type(p[participantID])))
             elif p[participantID] in self.IDs:
                 raise IDError("participantID must be unique. Found more than one instance of `{}`".format(p[participantID]))
@@ -791,7 +788,7 @@ class Data(list):
                     self.action_options = None
                 elif isinstance(action_options, (list, np.ndarray)) and len(action_options) == 1:
                     action_options_constant_name = 'constant_valid_actions'
-                    participant_data[loc][action_options_constant_name] = action_options[0]
+                    participant_data[loc][action_options_constant_name] = [action_options[0]] * len(p[choices])
                     self.action_options = action_options_constant_name
                 elif action_options not in keys:
                     raise KeyError("action_options key not found in participant {} data: `{}`".format(p[participantID], action_options))
@@ -848,7 +845,7 @@ class Data(list):
 
             IDs = self.IDs.copy()
             number_IDs = len(IDs)
-            for i, (id_key, id_val) in enumerate(iterable.IDs.iteritems()):
+            for i, (id_key, id_val) in enumerate(iterable.IDs.items()):
                 if id_key in IDs:
                     raise IDError("participantID must be unique. Found more than one instance of `{}`".format(id_key))
                 else:
@@ -876,7 +873,7 @@ class Data(list):
             return False
 
         eq_list = []
-        for item1, item2 in itertools.izip(self, other):
+        for item1, item2 in zip(self, other):
             if any(item1.keys() != item2.keys()):
                 eq_list.append(False)
             elif any(item1.values() != item2.values()):
@@ -970,7 +967,7 @@ class Data(list):
             valid_file_list = data_files
         elif callable(file_name_filter):
             valid_file_list = file_name_filter(data_files)
-        elif isinstance(file_name_filter, basestring):
+        elif isinstance(file_name_filter, str):
             valid_file_list = cls.__file_prefix_filter(data_files, [file_name_filter])
         elif isinstance(file_name_filter, (list, np.ndarray)):
             valid_file_list = cls.__file_prefix_filter(data_files, file_name_filter)
@@ -1043,7 +1040,7 @@ class Data(list):
             The length of the discovered suffix
         """
 
-        for i in xrange(knownSuffixLen, len(unorderedList[0])):  # Starting with the known string-suffix
+        for i in range(knownSuffixLen, len(unorderedList[0])):  # Starting with the known string-suffix
             sec = unorderedList[0][-i:]
             if all((sec == d[-i:] for d in unorderedList)):
                 continue
@@ -1072,7 +1069,7 @@ class Data(list):
             the list
         """
 
-        for i in xrange(1, len(unorderedList[0]) - suffixLen + 2):  # Assuming the prefix might be the string-suffix
+        for i in range(1, len(unorderedList[0]) - suffixLen + 2):  # Assuming the prefix might be the string-suffix
             sec = unorderedList[0][:i]
             if all((sec == d[:i] for d in unorderedList)):
                 continue
@@ -1187,13 +1184,13 @@ class Data(list):
                         id_label = filename.replace(group, '')
                         if id_label not in grouped_data:
                             grouped_data[id_label] = {}
-                        #grouped_data[id_label].update({'{}_{}'.format(k, group): v for k, v in dat.iteritems()})
+                        #grouped_data[id_label].update({'{}_{}'.format(k, group): v for k, v in dat.items()})
                         grouped_data[id_label][group] = dat
 
             merged_data = []
-            for id_label, group_data in grouped_data.iteritems():
+            for id_label, group_data in grouped_data.items():
                 group_merged_data = {'merge_id': id_label}
-                keyset = set().union(*[v.keys() for v in grouped_data[id_label].itervalues()])
+                keyset = set().union(*[list(v.keys()) for v in grouped_data[id_label].values()])
                 for key in keyset:
                     key_values = [group_data[group][key] for group in group_by if group in group_data
                                                                                   and key in group_data[group]]
@@ -1226,7 +1223,7 @@ def sort_by_last_number(dataFiles):
 
     # sort by the last number on the filename
     footSplit = [re.search(r"\.(?:[a-zA-Z]+)$", f).start() for f in dataFiles]
-    numsplit = [re.search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in itertools.izip(footSplit, dataFiles)]
+    numsplit = [re.search(r"\d+(\.\d+|$)?$", f[:n]).start() for n, f in zip(footSplit, dataFiles)]
 
     # check if number part is a float or an int (assuming the same for all) and use the appropriate conversion
     if "." in dataFiles[0][numsplit[0]:footSplit[0]]:
@@ -1234,7 +1231,7 @@ def sort_by_last_number(dataFiles):
     else:
         numRepr = int
 
-    fileNameSections = [(f[:n], numRepr(f[n:d]), f[d:]) for n, d, f in itertools.izip(numsplit, footSplit, dataFiles)]
+    fileNameSections = [(f[:n], numRepr(f[n:d]), f[d:]) for n, d, f in zip(numsplit, footSplit, dataFiles)]
 
     # Sort the keys for groupFiles
     sortedFileNames = sorted(fileNameSections, key=lambda fileGroup: fileGroup[1])

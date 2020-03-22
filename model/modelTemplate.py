@@ -2,11 +2,11 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 import copy
+import re
+import collections
 
 from model.decision.discrete import weightProb
 
@@ -33,14 +33,14 @@ class Stimulus(object):
         return name
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         self.Name = self.get_name()
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.iteritems() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
@@ -82,14 +82,14 @@ class Rewards(object):
         return name
 
     def __init__(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
         self.Name = self.get_name()
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.iteritems() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
@@ -161,7 +161,7 @@ class Model(object):
         understand. Default is Rewards
     decision_function : function, optional
         The function that takes the internal values of the model and turns them in to a decision.
-        Default is ``weightProb(range(number_actions))``
+        Default is ``weightProb(list(range(number_actions)))``
     stimulus_shaper_properties : list, optional
         The valid parameters of the function. Used to filter the unlisted keyword arguments
         Default is ``None``
@@ -181,6 +181,8 @@ class Model(object):
 
     # TODO:  define and start using non_action
 
+    parameter_patterns = []
+
     def __init__(self, number_actions=2, number_cues=1, number_critics=None,
                  action_codes=None, non_action='None',
                  prior=None,
@@ -191,6 +193,10 @@ class Model(object):
         """"""
         self.Name = self.get_name()
 
+        self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
+        for k, v in self.pattern_parameters.items():
+            setattr(self, k, v)
+
         self.number_actions = number_actions
         self.number_cues = number_cues
         if number_critics is None:
@@ -198,7 +204,7 @@ class Model(object):
         self.number_critics = number_critics
 
         if action_codes is None:
-            action_codes = {k: k for k in xrange(self.number_actions)}
+            action_codes = {k: k for k in range(self.number_actions)}
         self.actionCode = action_codes
 
         self.defaultNonAction = non_action
@@ -222,48 +228,48 @@ class Model(object):
 
         if stimulus_shaper is not None and issubclass(stimulus_shaper, Stimulus):
             if stimulus_shaper_properties is not None:
-                stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in stimulus_shaper_properties}
+                stimulus_shaper_kwargs = {k: v for k, v in kwargs.items() if k in stimulus_shaper_properties}
             else:
                 stimulus_shaper_kwargs = kwargs.copy()
             self.stimulus_shaper = stimulus_shaper(**stimulus_shaper_kwargs)
-        elif isinstance(stimulus_shaper_name, basestring):
+        elif isinstance(stimulus_shaper_name, str):
             stimulus_class = utils.find_class(stimulus_shaper_name,
                                               class_folder='tasks',
                                               inherited_class=Stimulus,
                                               excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            stimulus_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(stimulus_class)}
+            stimulus_shaper_kwargs = {k: v for k, v in kwargs.items() if k in utils.get_class_args(stimulus_class)}
             self.stimulus_shaper = stimulus_class(**stimulus_shaper_kwargs)
         else:
             self.stimulus_shaper = Stimulus()
 
         if reward_shaper is not None and issubclass(reward_shaper, Rewards):
             if reward_shaper_properties is not None:
-                reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in reward_shaper_properties}
+                reward_shaper_kwargs = {k: v for k, v in kwargs.items() if k in reward_shaper_properties}
             else:
                 reward_shaper_kwargs = kwargs.copy()
             self.reward_shaper = reward_shaper(**reward_shaper_kwargs)
-        elif isinstance(reward_shaper_name, basestring):
+        elif isinstance(reward_shaper_name, str):
             reward_class = utils.find_class(reward_shaper_name,
                                             class_folder='tasks',
                                             inherited_class=Rewards,
                                             excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            reward_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getClassArgs(reward_class)}
+            reward_shaper_kwargs = {k: v for k, v in kwargs.items() if k in utils.get_class_args(reward_class)}
             self.reward_shaper = reward_class.processFeedback(**reward_shaper_kwargs)
         else:
             self.reward_shaper = Rewards()
 
         if callable(decision_function):
             if decision_function_properties is not None:
-                decision_shaper_kwargs = {k: v for k, v in kwargs.iteritems() if k in decision_function_properties}
+                decision_shaper_kwargs = {k: v for k, v in kwargs.items() if k in decision_function_properties}
             else:
                 decision_shaper_kwargs = kwargs.copy()
             self.decision_function = decision_function(**decision_shaper_kwargs)
-        elif isinstance(decision_function_name, basestring):
+        elif isinstance(decision_function_name, str):
             decision_function = utils.find_function(decision_function_name, 'model/decision')
-            decision_function_kwargs = {k: v for k, v in kwargs.iteritems() if k in utils.getFuncArgs(decision_function)}
+            decision_function_kwargs = {k: v for k, v in kwargs.items() if k in utils.get_function_args(decision_function)}
             self.decision_function = decision_function(**decision_function_kwargs)
         else:
-            self.decision_function = weightProb(range(self.number_actions))
+            self.decision_function = weightProb(list(range(self.number_actions)))
 
         self.parameters = {"Name": self.Name,
                            "number_actions": self.number_actions,
@@ -275,6 +281,7 @@ class Model(object):
                            "stimulus_shaper": self.stimulus_shaper.details(),
                            "reward_shaper": self.reward_shaper.details(),
                            "decision_function": utils.callableDetailsString(self.decision_function)}
+        self.parameters.update(self.pattern_parameters)
 
         # Recorded information
         self.recAction = []
@@ -698,7 +705,7 @@ class Model(object):
         name = params.pop('Name')
 
         label = ["{}(".format(name)]
-        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.iteritems()])
+        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.items()])
         label.append(")")
 
         representation = ' '.join(label)
@@ -718,3 +725,48 @@ class Model(object):
         """
 
         self.simID = simID
+
+    @classmethod
+    def pattern_parameters_match(cls, *args):
+        """
+        Validates if the parameters are described by the model patterns
+
+        Parameters
+        ----------
+        *args : strings
+            The potential parameter names
+
+        Returns
+        -------
+        pattern_parameters : list
+            The args that match the patterns in parameter_patterns
+        """
+
+        pattern_parameters = []
+        for pattern in cls.parameter_patterns:
+            pattern_parameters.extend(sorted([k for k in args if re.match(pattern, k)]))
+
+        return pattern_parameters
+
+    def kwarg_pattern_parameters(self, kwargs):
+        """
+        Extracts the kwarg parameters that are described by the model patterns
+
+        Parameters
+        ----------
+        kwargs : dict
+            The class initialisation kwargs
+
+        Returns
+        -------
+        pattern_parameter_dict : dict
+            A subset of kwargs that match the patterns in parameter_patterns
+        """
+
+        pattern_parameter_keys = self.pattern_parameters_match(*kwargs.keys())
+
+        pattern_parameter_dict = collections.OrderedDict()
+        for k in pattern_parameter_keys:
+            pattern_parameter_dict[k] = kwargs.pop(k)
+
+        return pattern_parameter_dict

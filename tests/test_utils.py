@@ -2,10 +2,9 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import pytest
 import os
+import itertools
 
 import numpy as np
 
@@ -23,6 +22,35 @@ def listMerTestData():
     
     return interSets, answer
 
+
+#%% For mergeDatasets
+class TestClass_mergeDatasets:
+    def test_mergeDatasets(self):
+        data = [{'a': [1, 2, 3], 'b': [7, 8, 9]}, {'b': [4, 5, 6], 'c': 'string', 'd': 5}]
+        results = utils.mergeDatasets(data)
+        correct_result = {'a': [[1, 2, 3], None], 'd': [None, 5], 'c': [None, 'string'], 'b': [[7, 8, 9], [4, 5, 6]]}
+        assert results == correct_result
+
+    def test_mergeDatasets2(self):
+        data = [{'a': [1, 2, 3], 'b': [7, 8, 9]}, {'b': [4, 5, 6], 'c': 'string', 'd': 5}]
+        results = utils.mergeDatasets(data, extend=True)
+        correct_result = {'a': [1, 2, 3, None], 'c': [None, 'string'], 'b': [7, 8, 9, 4, 5, 6], 'd': [None, 5]}
+        assert results == correct_result
+
+    def test_mergeDatasets3(self):
+        data = [{'b': np.array([[7, 8, 9], [1, 2, 3]])}, {'b': np.array([[4, 5, 6], [2, 3, 4]])}]
+        results = utils.mergeDatasets(data, extend=True)
+        correct_result = {'b': [np.array([7, 8, 9]), np.array([1, 2, 3]), np.array([4, 5, 6]), np.array([2, 3, 4])]}
+        for r, c in itertools.zip_longest(results['b'], correct_result['b']):
+            assert all(r == c)
+
+    def test_mergeDatasets4(self):
+        data = [{'b': np.array([[7, 8, 9], [1, 2, 3]])}, {'b': np.array([[4, 5, 6], [2, 3, 4]])}]
+        results = utils.mergeDatasets(data)
+        correct_result = {'b': [np.array([[7, 8, 9], [1, 2, 3]]), np.array([[4, 5, 6], [2, 3, 4]])]}
+        for r, c in itertools.zip_longest(results['b'], correct_result['b']):
+            for rp, cp in itertools.zip_longest(r, c):
+                assert all(rp == cp)
 
 #%% For listMergeGen
 class TestClass_listMergeGen:
@@ -97,16 +125,16 @@ class TestClass_errorResp:
             a = 1 / 0.0
         except:
             result = utils.errorResp()
-        correct_result = '''A <type 'exceptions.ZeroDivisionError'> : "float division by zero" in'''
-        assert result[:69] == correct_result
+        correct_result = '''A <class 'ZeroDivisionError'> : "float division by zero" in'''
+        assert result[:59] == correct_result
 
     def test_ER_Name(self):
         try:
             a = b()
         except:
             result = utils.errorResp()
-        correct_result = '''A <type 'exceptions.NameError'> : "global name 'b' is not defined" in'''
-        assert result[:69] == correct_result
+        correct_result = '''A <class 'NameError'> : "name 'b' is not defined" in'''
+        assert result[:52] == correct_result
 
 
 #%% For kendalwts
