@@ -2,11 +2,9 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import yaml
 import copy
-#import fire
+import fire
 import collections
 import inspect
 
@@ -87,14 +85,14 @@ def run_config(script_file, trusted_file=False):
     with open(script_file) as file_stream:
         script = yaml.load(file_stream, Loader=loader)
 
-    script_sections = script.keys()
+    script_sections = list(script.keys())
 
     if 'model' not in script_sections:
         raise MissingScriptSection('A ``model`` should be described in the script')
 
     run_properties = {'config_file': script_file}
 
-    for label, location in SCRIPT_PARAMETERS.iteritems():
+    for label, location in SCRIPT_PARAMETERS.items():
         try:
             value = key_find(script, location)
             if label == 'data_extra_processing':
@@ -102,8 +100,8 @@ def run_config(script_file, trusted_file=False):
                     compiled_value = compile(value, '<string>', 'exec')
                     eval(compiled_value)
                     function_name = compiled_value.co_names[0]
-                    function = [v for k, v in copy.copy(locals()).iteritems() if k == function_name][0]
-                    args = utils.getFuncArgs(function)
+                    function = [v for k, v in copy.copy(locals()).items() if k == function_name][0]
+                    args = utils.get_function_args(function)
                     if len(args) != 1:
                         raise ArgumentError('The data extra_processing function must have only one argument. Found {}'.format(args))
                     function.func_code_string = value
@@ -114,7 +112,7 @@ def run_config(script_file, trusted_file=False):
         except MissingKeyError:
             continue
 
-    for label, location in SCRIPT_PARAMETER_GROUPS.iteritems():
+    for label, location in SCRIPT_PARAMETER_GROUPS.items():
         try:
             value = key_find(script, location)
             run_properties[label] = value
@@ -180,7 +178,7 @@ def simplify_dtypes(struct):
     value : object
         The cleaned up value. Can be a NoneType, bool, int, float, string, list, dict or function
     """
-    if isinstance(struct, (bool, int, float, basestring)) or struct is None:
+    if isinstance(struct, (bool, int, float, str)) or struct is None:
         clean_struct = struct
     elif isinstance(struct, (list, tuple)):
         clean_struct = [simplify_dtypes(s) for s in struct]
@@ -188,7 +186,7 @@ def simplify_dtypes(struct):
         clean_struct = struct.tolist()
     elif isinstance(struct, (dict, collections.OrderedDict, collections.defaultdict)):
         clean_struct = {}
-        for key, value in struct.iteritems():
+        for key, value in struct.items():
             clean_struct[key] = simplify_dtypes(value)
     elif callable(struct):
         try:
@@ -237,14 +235,14 @@ def write_script(file_path, config):
     config_file = config.pop('config_file', None)
 
     prepared_dict = {}
-    for label, location in SCRIPT_PARAMETER_GROUPS.iteritems():
+    for label, location in SCRIPT_PARAMETER_GROUPS.items():
         if label in config:
             if config[label] is None:
                 config.pop(label)
             else:
                 key_set(prepared_dict, location, config.pop(label))
 
-    for label, value in config.iteritems():
+    for label, value in config.items():
         location = SCRIPT_PARAMETERS[label]
         key_set(prepared_dict, location, value)
 

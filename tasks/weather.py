@@ -7,8 +7,6 @@
             Learning & Memory(Cold Spring Harbor, N.Y.), 1(2), 106–120.
             http://doi.org/10.1101/lm.1.2.106
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 from numpy import nan
@@ -84,7 +82,7 @@ class Weather(Task):
         if not actualities:
             actualities = genActualities(cueProbs, cues, learningLen, testLen)
 
-        if isinstance(cues, basestring):
+        if isinstance(cues, str):
             if cues in cueSets:
                 self.cues = cueSets[cues]
             else:
@@ -92,7 +90,7 @@ class Weather(Task):
         else:
             self.cues = cues
 
-        if isinstance(actualities, basestring):
+        if isinstance(actualities, str):
             if actualities in actualityLists:
                 self.actualities = actualityLists[actualities]
             else:
@@ -112,7 +110,7 @@ class Weather(Task):
         # Recording variables
         self.recAction = [-1] * self.T
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 
@@ -205,7 +203,7 @@ def genCues(number_cues, taskLen):
     """
 
     cues = []
-    for t in xrange(taskLen):
+    for t in range(taskLen):
         c = []
         while np.sum(c) in [0, number_cues]:
             c = (np.random.rand(number_cues) > 0.5) * 1
@@ -232,7 +230,7 @@ def genActualities(cueProbs, cues, learningLen, testLen):
 
     if cueProbs is None:
         probs = {1: {0: 0.75}, 2: {0: 1, 1: 0.5}, 3: {2: 0.75}}
-        for t in xrange(learningLen):
+        for t in range(learningLen):
             c = cues[t]
             s = np.sum(c.reshape([2, 2]), 1)
             prob = probs[np.sum(s)][np.prod(s)]
@@ -241,7 +239,7 @@ def genActualities(cueProbs, cues, learningLen, testLen):
             action = np.random.choice([0, 1], p=p)
             actions.append(action)
     else:
-        for t in xrange(learningLen):
+        for t in range(learningLen):
             visibleCueProbs = cues[t] * cueProbs
             actProb = np.sum(visibleCueProbs, 1)
             action = np.random.choice([0, 1], p=actProb / np.sum(actProb))

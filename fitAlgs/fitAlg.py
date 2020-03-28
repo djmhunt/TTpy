@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 import math
 import collections
@@ -40,7 +38,7 @@ class FitAlg(object):
         The boundaries for methods that use bounds. If unbounded methods are
         specified then the bounds will be ignored. Default is ``None``, which
         translates to boundaries of (0, np.inf) for each parameter.
-    boundary_excess_cost : basestring or callable returning a function, optional
+    boundary_excess_cost : str or callable returning a function, optional
         The function is used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound()``
     boundary_excess_cost_properties : dict, optional
@@ -87,15 +85,15 @@ class FitAlg(object):
 
         if callable(boundary_excess_cost):
             if boundary_excess_cost_properties is not None:
-                boundary_excess_cost_kwargs = {k: v for k, v in kwargs.iteritems()
+                boundary_excess_cost_kwargs = {k: v for k, v in kwargs.items()
                                                     if k in boundary_excess_cost_properties}
             else:
                 boundary_excess_cost_kwargs = kwargs.copy()
             self.boundary_excess_cost = boundary_excess_cost(**boundary_excess_cost_kwargs)
-        elif isinstance(boundary_excess_cost, basestring):
+        elif isinstance(boundary_excess_cost, str):
             boundary_excess_cost_function = utils.find_function(boundary_excess_cost, 'fitAlgs', excluded_files=['fit'])
-            boundary_excess_cost_kwargs = {k: v for k, v in kwargs.iteritems()
-                                                if k in utils.getFuncArgs(boundary_excess_cost_function)}
+            boundary_excess_cost_kwargs = {k: v for k, v in kwargs.items()
+                                           if k in utils.get_function_args(boundary_excess_cost_function)}
             self.boundary_excess_cost = boundary_excess_cost_function(**boundary_excess_cost_kwargs)
         else:
             self.boundary_excess_cost = boundFunc.scalarBound()
@@ -103,7 +101,7 @@ class FitAlg(object):
         self.fit_quality_function = qualityFunc.qualFuncIdent(fit_measure, **fit_measure_args.copy())
         self.calculate_covariance = calculate_covariance
         if self.calculate_covariance:
-            self.hessInc = {k: bound_ratio * (u - l) for k, (l, u) in self.boundaries.iteritems()}
+            self.hessInc = {k: bound_ratio * (u - l) for k, (l, u) in self.boundaries.items()}
 
         self.measures = {m: qualityFunc.qualFuncIdent(m, **fit_measure_args.copy()) for m in extra_fit_measures}
 
@@ -164,8 +162,8 @@ class FitAlg(object):
 
         sim = self.fit_sim.prepare_sim(model, model_parameters, model_properties, participant_data)
 
-        model_initial_parameters = model_parameters.values()
-        model_parameter_names = model_parameters.keys()
+        model_initial_parameters = list(model_parameters.values())
+        model_parameter_names = list(model_parameters.keys())
 
         best_fit_parameters, fit_quality, fit_info = self.fit(sim, model_parameter_names, model_initial_parameters[:])
 
@@ -173,19 +171,19 @@ class FitAlg(object):
 
         fit_measures = self.extra_measures(*best_fit_parameters)
 
-        testedParamDict = collections.OrderedDict([(key, val[0]) for key, val in itertools.izip(model_parameter_names, np.array(fit_info[0]).T)])
+        testedParamDict = collections.OrderedDict([(key, val[0]) for key, val in zip(model_parameter_names, np.array(fit_info[0]).T)])
 
         fitting_data = {"tested_parameters": testedParamDict,
                         "fit_qualities": fit_info[1],
                         "fit_quality": fit_quality,
-                        "final_parameters": collections.OrderedDict([(key, val) for key, val in itertools.izip(model_parameter_names, best_fit_parameters)])}
+                        "final_parameters": collections.OrderedDict([(key, val) for key, val in zip(model_parameter_names, best_fit_parameters)])}
 
-        fitting_data.update({"fit_quality_" + k: v for k, v in fit_measures.iteritems()})
+        fitting_data.update({"fit_quality_" + k: v for k, v in fit_measures.items()})
 
         if self.calculate_covariance:
             covariance = self.covariance(model_parameter_names, best_fit_parameters, fit_info[2])
-            covdict = ({"fit_quality_cov_{}_{}".format(p1, p2): c for p1, cr in itertools.izip(model_parameter_names, covariance)
-                                                                 for p2, c in itertools.izip(model_parameter_names, cr)})
+            covdict = ({"fit_quality_cov_{}_{}".format(p1, p2): c for p1, cr in zip(model_parameter_names, covariance)
+                                                                 for p2, c in zip(model_parameter_names, cr)})
             fitting_data.update(covdict)
 
         try:
@@ -291,7 +289,7 @@ class FitAlg(object):
         modVals = self.simulator(*model_parameter_values)
 
         measureVals = {}
-        for m, f in self.measures.iteritems():
+        for m, f in self.measures.items():
 
             fit_quality = f(modVals)
             measureVals[m] = fit_quality
@@ -385,7 +383,7 @@ class FitAlg(object):
         # Check if the bounds have changed or should be added
         if boundNames:
             changed = False
-            for m, b in itertools.izip(model_parameter_names, boundNames):
+            for m, b in zip(model_parameter_names, boundNames):
                 if m != b:
                     changed = True
                     break
@@ -400,7 +398,7 @@ class FitAlg(object):
         # If no bounds were defined
         if not bounds:
             boundVals = [(0, float('Inf')) for i in model_parameter_names]
-            self.boundaries = {k: v for k, v in itertools.izip(model_parameter_names, boundVals)}
+            self.boundaries = {k: v for k, v in zip(model_parameter_names, boundVals)}
             self.boundary_names = model_parameter_names
             self.boundary_values = boundVals
         else:
@@ -454,7 +452,7 @@ class FitAlg(object):
                 raise ValueError('Bounds do not fit the number of initial parameters', str(len(bounds)), str(len(initial_parameters)))
 
             startLists = (cls.start_parameter_values(i, boundary_min=bMin, boundary_max=bMax, number_starting_points=number_starting_points)
-                          for i, (bMin, bMax) in itertools.izip(initial_parameters, bounds))
+                          for i, (bMin, bMax) in zip(initial_parameters, bounds))
 
         startSets = utils.listMergeNP(*startLists)
 
@@ -599,7 +597,7 @@ class FitAlg(object):
         True
         """
 
-        for p, (mi, ma) in itertools.izip(params, self.boundary_values):
+        for p, (mi, ma) in zip(params, self.boundary_values):
 
             if p < mi or p > ma:
                 return True

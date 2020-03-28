@@ -7,8 +7,6 @@
                 Psychonomic Bulletin & Review, 14(6), 1125–32.
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 from tasks.taskTemplate import Task
@@ -56,7 +54,7 @@ class Decks(Task):
 
         self.discard = discard
 
-        if isinstance(decks, basestring):
+        if isinstance(decks, str):
             if decks in deckSets:
                 self.decks = deckSets[decks]
             else:
@@ -87,7 +85,7 @@ class Decks(Task):
         self.recCardVal = [-1]*self.T
         self.recAction = [-1]*self.T
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 

@@ -2,9 +2,6 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import pytest
 import collections
 
 import model.decision.binary as binary

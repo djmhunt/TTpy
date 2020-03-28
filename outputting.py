@@ -2,15 +2,13 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 import sys
 import os
 import inspect
 import collections
 
-import cPickle as pickle
+import pickle
 import pandas as pd
 import datetime as dt
 import shutil as shu
@@ -66,7 +64,7 @@ class Saving(object):
     pickle_store : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
-    min_log_level : basestring, optional
+    min_log_level : str, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
         See https://docs.python.org/3/library/logging.html#levels
     numpy_error_level : {'log', 'raise'}
@@ -176,14 +174,14 @@ def folder_setup(label, date_string, pickle_data=False, base_path=None):
 
     Parameters
     ----------
-    label : basestring
+    label : str
         The label for the simulation
-    date_string : basestring
+    date_string : str
         The date identifier
     pickle_data : bool, optional
         If true the data for each model, task and participant is recorded.
         Default is ``False``
-    base_path : basestring, optional
+    base_path : str, optional
         The path into which the new folder will be placed. Default is current working directory
 
     Returns
@@ -312,7 +310,7 @@ def folder_path_cleaning(folder):
 
     Returns
     -------
-    folder_path : basestring
+    folder_path : str
         The folder path
     """
 
@@ -329,7 +327,7 @@ def fancy_logger(log_file=None, log_level=logging.INFO, numpy_error_level='log')
 
     Parameters
     ----------
-    date_string : basestring
+    date_string : str
         The date the log will start at
     log_file : string, optional
         Provides the path the log will be written to. Default "./log.txt"
@@ -412,7 +410,7 @@ def pickle_write(data, handle, file_name_gen):
     """
     output_file = file_name_gen(handle, 'pkl')
 
-    with open(output_file, 'w') as w:
+    with open(output_file, 'wb') as w:
         pickle.dump(data, w)
 
 
@@ -436,7 +434,7 @@ def pickleLog(results, file_name_gen, label=""):
 
     # TODO: remove the pulling out of ``Name`` from inside this method and make it more explicit higher up
     name = results["Name"]
-    if isinstance(name, basestring):
+    if isinstance(name, str):
         handle = 'Pickle/{}'.format(name)
     else:
         raise TypeError("The ``Name`` in the participant data is of type {} and not str".format(type(name)))
@@ -479,10 +477,10 @@ def flatDictKeySet(store, selectKeys=None):
 
     for s in store:
         if selectKeys:
-            sKeys = (k for k in s.iterkeys() if k in selectKeys)
+            sKeys = (k for k in s.keys() if k in selectKeys)
             abridge = True
         else:
-            sKeys = s.iterkeys()
+            sKeys = s.keys()
             abridge = False
         for k in sKeys:
             if k in keySet:
@@ -543,7 +541,7 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
     if labelPrefix:
         labelPrefix += "_"
 
-    for key, loc in keySet.iteritems():
+    for key, loc in keySet.items():
 
         newKey = labelPrefix + str(key)
 
@@ -607,7 +605,7 @@ def newListDict(store, labelPrefix='', maxListLen=0):
     if labelPrefix:
         labelPrefix += "_"
 
-    for key, loc in keySet.iteritems():
+    for key, loc in keySet.items():
 
         newKey = labelPrefix + str(key)
 
@@ -723,7 +721,7 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     >>> store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
     >>> dictKeyGen(store, returnList=True, abridge=True)
     (OrderedDict([(u'array', array([[0],
-           [1]]))]), 6L)
+           [1]]))]), 6)
     >>> store = {'dict': {1: "a", 2: "b"}}
     >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
     (OrderedDict([('dict', OrderedDict([(1, None), (2, None)]))]), 7)
@@ -782,7 +780,7 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     (None, None)
     >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)
     (array([[0],
-           [1]]), 6L)
+           [1]]), 6)
     """
     dataShape = np.shape(data)
     if dataShape[-1] == 0:
@@ -804,7 +802,7 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
         return None, maxListLen
 
     # We need to calculate every combination of co-ordinates in the array
-    arrSets = [range(0, i) for i in dataShapeList]
+    arrSets = [list(range(0, i)) for i in dataShapeList]
     # Now record each one
     locList = np.array([tuple(loc) for loc in utils.listMergeGen(*arrSets)])
     listItemLen = len(locList[0])
@@ -828,7 +826,7 @@ def date():
 
     Returns
     -------
-    todayDate : basestring
+    todayDate : str
         The current date in the format <year>-<month>-<day>
 
     """

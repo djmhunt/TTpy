@@ -2,13 +2,7 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import sys
-sys.path.append("../")
-
 import pytest
-import itertools
 
 import numpy as np
 
@@ -79,14 +73,14 @@ class TestClass_fitSims:
                           'model_fitting_variable': 'ActionProb',
                           'float_error_response_value': 1 / 1e100,
                           'fit_subset': None}
-        for k in result.iterkeys():
+        for k in result.keys():
             assert result[k] == correct_result[k]
 
     def test_FS_subset(self):
         fit_sim = fitSims.FitSim()
         subset_values = [np.nan, 'all', 'unrewarded', 'rewarded', [1, 2, 3], None]
         subset_returns = [[], None, [], [], [1, 2, 3], None]
-        for values, returns in itertools.izip(subset_values, subset_returns):
+        for values, returns in zip(subset_values, subset_returns):
             results = fit_sim._preprocess_fit_subset(values)
             assert results == returns
 
@@ -104,7 +98,7 @@ class TestClass_fitSims:
         subset_returns = [[False, False, True, True, False],
                           [False, False, True, True, False],
                           [True, True, False, False, True]]
-        for values, returns in itertools.izip(subset_values, subset_returns):
+        for values, returns in zip(subset_values, subset_returns):
             results = fit_sim._set_fit_subset(values, part_rewards)
             assert all(results == returns)
 
@@ -132,7 +126,7 @@ class TestClass_participant:
                            (None, ['C', 'B']), (None, ['E', 'C']), (None, ['A', 'D']), (None, ['A', 'F'])],
                           ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
                           [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
-        for row, correct_row in itertools.izip(result, correct_result):
+        for row, correct_row in zip(result, correct_result):
             assert row == correct_row
 
     def test_participant_processing2(self, participant_data_setup):
@@ -148,7 +142,7 @@ class TestClass_participant:
                            (None, None), (None, None), (None, None), (None, None), (None, None), (None, None)],
                           ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
                           [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
-        for row, correct_row in itertools.izip(result, correct_result):
+        for row, correct_row in zip(result, correct_result):
             assert row == correct_row
 
     def test_participant_processing3(self, participant_data_setup):
@@ -168,7 +162,7 @@ class TestClass_participant:
                            (None, ['A', 'B', 'C', 'D', 'E', 'F']), (None, ['A', 'B', 'C', 'D', 'E', 'F'])],
                           ['E', 'F', 'B', 'E', 'E', 'F', 'D', 'E', 'C', 'C', 'A', 'A'],
                           [1.0, 0.0, 0.0, 1.0, 0.0, 1.0, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]]
-        for row, correct_row in itertools.izip(result, correct_result):
+        for row, correct_row in zip(result, correct_result):
             assert row == correct_row
 
     def test_participant_processing4(self, participant_data_setup):
@@ -189,8 +183,8 @@ class TestClass_model:
         model, (model_parameters, model_properties) = model_setup
 
         fit_sim = fitSims.FitSim()
-        fit_sim.model_parameter_names = model_parameters.keys()
-        results = fit_sim.get_model_parameters(*model_parameters.values())
+        fit_sim.model_parameter_names = list(model_parameters.keys())
+        results = fit_sim.get_model_parameters(*list(model_parameters.values()))
         correct_results = model_parameters
         for k in results:
             assert results[k] == correct_results[k]
@@ -199,9 +193,9 @@ class TestClass_model:
         model, (model_parameters, model_properties) = model_setup
 
         fit_sim = fitSims.FitSim()
-        fit_sim.model_parameter_names = model_parameters.keys()
+        fit_sim.model_parameter_names = list(model_parameters.keys())
         fit_sim.model_other_properties = model_properties
-        results = fit_sim.get_model_properties(*model_parameters.values())
+        results = fit_sim.get_model_properties(*list(model_parameters.values()))
 
         correct_results = model_parameters.copy()
         correct_results.update(model_properties)

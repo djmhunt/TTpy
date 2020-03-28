@@ -9,12 +9,6 @@ recommend making a copy of this for each successful investigation and storing it
 with the data.
 """
 #%% Import useful functions
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import sys
-sys.path.append("../")  # So code can be found from the main folder
-
-# Other used function
 import numpy as np
 
 import collections

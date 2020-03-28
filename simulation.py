@@ -2,11 +2,9 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 import copy
-#import fire
+import fire
 
 import pandas as pd
 import numpy as np
@@ -66,7 +64,7 @@ def run(task_name='Basic',
         Default is ``False``
     label : string, optional
         The label for the simulation. Default ``None``, which means nothing will be saved
-    min_log_level : basestring, optional
+    min_log_level : str, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
     numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
@@ -144,7 +142,7 @@ def record_simulation(file_name_generator, task_data, model_data, simID, pickle=
         The data from the task
     model_data : dict
         The data from the model
-    simID : basestring
+    simID : str
         The label identifying the simulation
     pickle : bool, optional
         If true the data for each model, task and participant is recorded.
@@ -190,11 +188,11 @@ def log_simulation_parameters(task_parameters, model_parameters, simID):
     """
 
     task_description = task_parameters.pop('Name') + ": "
-    task_descriptors = [k + ' = ' + repr(v) for k, v in task_parameters.iteritems()]
+    task_descriptors = [k + ' = ' + repr(v) for k, v in task_parameters.items()]
     task_description += ", ".join(task_descriptors)
 
     model_description = model_parameters.pop('Name') + ": "
-    model_descriptors = [k + ' = ' + repr(v) for k, v in model_parameters.iteritems()]
+    model_descriptors = [k + ' = ' + repr(v) for k, v in model_parameters.items()]
     model_description += ", ".join(model_descriptors)
 
     message = "Simulation " + simID + " contains the task " + task_description + "."
@@ -205,7 +203,7 @@ def log_simulation_parameters(task_parameters, model_parameters, simID):
 
 
 def csv_model_simulation(modelData, simID, file_name_generator):
-    # type: (dict, basestring, function) -> None
+    # type: (dict, str, function) -> None
     """
     Saves the fitting data to a CSV file
 
@@ -226,5 +224,6 @@ def csv_model_simulation(modelData, simID, file_name_generator):
     outputFile = file_name_generator(name, 'csv')
     record.to_csv(outputFile)
 
-#if __name__ == '__main__':
-#    fire.Fire(simulation)
+
+if __name__ == '__main__':
+    fire.Fire(run)

@@ -14,9 +14,6 @@
         rather than the logistic algorithm used here. This generalisation has
         meant that the variable nu is no longer possible to use.
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np

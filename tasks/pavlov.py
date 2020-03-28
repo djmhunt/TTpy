@@ -7,9 +7,6 @@
                 Frontiers in Human Neuroscience, 5(August), 75.
                 doi:10.3389/fnhum.2011.00075
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 from tasks.taskTemplate import Task
@@ -85,7 +82,7 @@ class Pavlov(Task):
 
         self.recActions = []
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 

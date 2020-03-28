@@ -3,8 +3,6 @@
 :Author: Dominic Hunt
 
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 from numpy import nan
@@ -66,7 +64,7 @@ class Probstim(Task):
 
         super(Probstim, self).__init__()
 
-        if isinstance(cues, basestring):
+        if isinstance(cues, str):
             if cues in cueSets:
                 self.cues = cueSets[cues]
                 self.T = len(self.cues)
@@ -81,7 +79,7 @@ class Probstim(Task):
             self.T = trialsteps
             numStimuli = numStimuli
             stimuli = np.zeros((self.T, numStimuli))
-            stimuli[range(self.T), np.random.randint(numStimuli, size=self.T)] = 1
+            stimuli[list(range(self.T)), np.random.randint(numStimuli, size=self.T)] = 1
             self.cues = stimuli
 
         if isinstance(actualities, str):
@@ -117,7 +115,7 @@ class Probstim(Task):
         # Recording variables
         self.recAction = [-1] * self.T
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 

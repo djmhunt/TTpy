@@ -1,6 +1,3 @@
-from __future__ import division, print_function
-from __future__ import unicode_literals, absolute_import
-
 # actually let's test the decks task, we know that works.
 # let's see if we can play that ourselves.
 

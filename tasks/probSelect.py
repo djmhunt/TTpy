@@ -8,11 +8,7 @@
             doi:10.1073/pnas.0706111104
 
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
-
-import itertools
 
 from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
@@ -106,7 +102,7 @@ class ProbSelect(Task):
         self.action = None
         self.reward_value = -1
         self.number_actions = number_actions
-        self.choices = action_reward_probabilities.keys()
+        self.choices = list(action_reward_probabilities.keys())
 
         self.action_sequence = self.__generate_action_sequence(action_reward_probabilities,
                                                                learning_action_pairs,
@@ -117,7 +113,7 @@ class ProbSelect(Task):
         self.record_reward_values = [-1] * self.task_length
         self.record_actions = [-1] * self.task_length
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 
@@ -214,17 +210,17 @@ class ProbSelect(Task):
                                    learning_length,
                                    test_length):
 
-        pair_nums = range(len(learning_action_pairs))
+        pair_nums = list(range(len(learning_action_pairs)))
         action_pairs = np.array(learning_action_pairs)
 
         pairs = np.random.choice(pair_nums, size=learning_length, replace=True)
         action_sequence = list(action_pairs[pairs])
 
-        for t in xrange(test_length):
+        for t in range(test_length):
             pairs = np.random.choice(pair_nums, size=2, replace=False)
             elements = np.random.choice([0, 1], size=2, replace=True)
 
-            pair = [action_pairs[p, e] for p, e in itertools.izip(pairs, elements)]
+            pair = [action_pairs[p, e] for p, e in zip(pairs, elements)]
             action_sequence.append(pair)
 
         return action_sequence

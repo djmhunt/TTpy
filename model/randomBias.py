@@ -3,20 +3,14 @@
 :Author: Dominic Hunt
 
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
-
-import itertools
 
 from model.modelTemplate import Model
 
 
 class RandomBias(Model):
-
     """A model replicating a participant who chooses randomly, but with a bias towards certain actions
 
     Attributes
@@ -59,8 +53,9 @@ class RandomBias(Model):
         number_pattern_parameters = len(self.pattern_parameters)
 
         if number_pattern_parameters != self.number_actions:
-            raise IndexError("Wrong number of action weights. Received {} instead of {}".format(number_pattern_parameters,
-                                                                                         self.number_actions))
+            raise IndexError(
+                "Wrong number of action weights. Received {} instead of {}".format(number_pattern_parameters,
+                                                                                   self.number_actions))
 
         action_probabilities = self.pattern_parameters.values()
         self.actionProbs = np.array(action_probabilities) / np.sum(action_probabilities)

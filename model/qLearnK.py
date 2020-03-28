@@ -6,9 +6,6 @@
                 Daw, N. D., O’Doherty, J. P., Dayan, P., Dolan, R. J., & Seymour, B. (2006).
                 Nature, 441(7095), 876–9. https://doi.org/10.1038/nature04766
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np

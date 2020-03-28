@@ -2,12 +2,10 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 import collections
 import copy
-#import fire
+import fire
 
 import pandas as pd
 
@@ -102,7 +100,7 @@ def run(data_folder='./',
     model_constant_properties : dictionary of float, string or binary valued elements, optional
         These contain all the the model options that define the version
         of the model being studied. Default ``None``
-    participantID : basestring, optional
+    participantID : str, optional
         The key (label) used to identify each participant. Default ``Name``
     participant_choices : string, optional
         The participant data key of their action choices. Default ``'Actions'``
@@ -153,10 +151,10 @@ def run(data_folder='./',
     pickle : bool, optional
         If true the data for each model, and participant is recorded.
         Default is ``False``
-    boundary_excess_cost_function : basestring or callable returning a function, optional
+    boundary_excess_cost_function : str or callable returning a function, optional
         The function is used to calculate the penalty for exceeding the boundaries.
         Default is ``boundFunc.scalarBound()``
-    min_log_level : basestring, optional
+    min_log_level : str, optional
         Defines the level of the log from (``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``, ``CRITICAL``). Default ``INFO``
     numpy_error_level : {'log', 'raise'}
         Defines the response to numpy errors. Default ``log``. See numpy.seterr
@@ -198,7 +196,7 @@ def run(data_folder='./',
 
     if model_changing_properties:
         model_parameters = collections.OrderedDict()
-        for key, value in model_changing_properties.iteritems():
+        for key, value in model_changing_properties.items():
             if len(value) == 2:
                 v1, v2 = value
                 if v2 < v1:
@@ -255,7 +253,7 @@ def run(data_folder='./',
 
         for model, model_parameter_variables, model_static_args in models.iter_details():
 
-            for v in model_changing_variables.itervalues():
+            for v in model_changing_variables.values():
                 model_static_args[v] = "<Varies for each participant>"
 
             log_model_fitting_parameters(model, model_parameter_variables, model_static_args)
@@ -267,7 +265,7 @@ def run(data_folder='./',
                 if isinstance(participant_name, (list, tuple)):
                     participant_name = participant_name[0]
 
-                for k, v in model_changing_variables.iteritems():
+                for k, v in model_changing_variables.items():
                     model_static_args[v] = participant[k]
 
                 # Find the best model values from those proposed
@@ -308,7 +306,7 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
         The identifier for each participant
     model_data : dict
         The data from the model
-    model_name : basestring
+    model_name : str
         The label given to the model
     fitting_data : dict
         Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
@@ -381,7 +379,7 @@ def record_fitting(fitting_data, label, participant, participant_model_variables
     fitting_data : dict, optional
         Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
         tested, in the order they were tested, and a list of the fit qualities of these parameters.
-    label : basestring
+    label : str
         The label used to identify the fit in the file names
     participant : dict
         The participant data
@@ -409,9 +407,9 @@ def record_fitting(fitting_data, label, participant, participant_model_variables
     participant_fits["assigned_name"].append(participant["assigned_name"])
     for k in filter(lambda x: 'fit_quality' in x, fitting_data.keys()):
         participant_fits[k].append(fitting_data[k])
-    for k, v in fitting_data["final_parameters"].iteritems():
+    for k, v in fitting_data["final_parameters"].items():
         participant_fits[k].append(v)
-    for k, v in participant_model_variables.iteritems():
+    for k, v in participant_model_variables.items():
         participant_fits[v] = participant[k]
 
     if save_fitting_progress:
@@ -442,10 +440,10 @@ def log_model_fitting_parameters(model, model_fit_variables, model_other_args):
 
     message = "The fit will use the model ``{}``".format(model_properties['Name'])
 
-    modelFitParams = [k + ' around ' + str(v) for k, v in model_fit_variables.iteritems()]
+    modelFitParams = [k + ' around ' + str(v) for k, v in model_fit_variables.items()]
     message += " fitted with the parameters " + ", ".join(modelFitParams)
 
-    model_parameters = [k + ' = ' + str(v).replace('\n', '').strip('[](){}<>') for k, v in model_other_args.iteritems()
+    model_parameters = [k + ' = ' + str(v).replace('\n', '').strip('[](){}<>') for k, v in model_other_args.items()
                                                                                if k not in model_fit_variables.keys()]
     message += " and using the other user specified parameters " + ", ".join(model_parameters)
 
@@ -469,9 +467,9 @@ def log_model_fitted_parameters(model_fit_variables, model_parameters, fit_quali
     participant_name : int or string
         The identifier for each participant
     """
-    parameters = model_fit_variables.keys()
+    parameters = list(model_fit_variables.keys())
 
-    model_fit_parameters = [k + ' = ' + str(v).strip('[]()') for k, v in model_parameters.iteritems() if k in parameters]
+    model_fit_parameters = [k + ' = ' + str(v).strip('[]()') for k, v in model_parameters.items() if k in parameters]
     message = "The fitted values for participant " + str(participant_name) + " are " + ", ".join(model_fit_parameters)
 
     message += " with a fit quality of " + str(fit_quality) + "."
@@ -498,7 +496,7 @@ def log_fitting_parameters(fit_info):
     name = fit_info.pop('Name')
     message = "For " + name + ":"
     log.info(message)
-    for k, v in fit_info.iteritems():
+    for k, v in fit_info.items():
         message = k + ": " + repr(v)
         log.info(message)
 
@@ -532,7 +530,7 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     fitting_data : dict, optional
         Dictionary of details of the different fits, including an ordered dictionary containing the parameter values
         tested, in the order they were tested, and a list of the fit qualities of these parameters.
-    label : basestring
+    label : str
         The label used to identify the fit in the file names
     participant : dict
         The participant data
@@ -550,7 +548,7 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     parameter_fitting_dict['participant_fitting_name'] = fitting_data.pop("Name")
     #parameter_fitting_dict['fit_quality'] = fittingData.pop("fit_quality")
     #parameter_fitting_dict["fitQualities"] = fittingData.pop("fitQualities")
-    for k, v in fitting_data.pop("final_parameters").iteritems():
+    for k, v in fitting_data.pop("final_parameters").items():
         parameter_fitting_dict[k + "final"] = v
     parameter_fitting_dict.update(fitting_data)
     data.update(parameter_fitting_dict)
@@ -561,10 +559,9 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     name = "data/" + label
     output_file = file_name_generator(name, 'xlsx')
     xlsxT = pd.ExcelWriter(output_file)
-    # TODO: Remove the engine specification when moving to Python 3
-    record.to_excel(xlsxT, sheet_name='ParameterFits', engine='XlsxWriter')
+    record.to_excel(xlsxT, sheet_name='ParameterFits')
     xlsxT.save()
 
 
-#if __name__ == '__main__':
-#    fire.Fire(data_fitting)
+if __name__ == '__main__':
+    fire.Fire(run)

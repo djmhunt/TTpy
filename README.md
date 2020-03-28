@@ -4,7 +4,7 @@ TTpy is a framework for modelling and fitting the responses of people to probabi
 Any questions can either be submitted as issues or e-mailed to d.hunt (at) gold.ac.uk
 
 ### Prerequisites ###
-This code has been tested using ``Python 2.7``, with a ``Python 3.7`` branch on its way. Apart from the standard Python libraries it also depends on the [SciPy](http://www.scipy.org/) libraries and a few others listed in ``requirements.txt``. For those installing Python for the first time I would recommend the [Anaconda Python distribution](https://store.continuum.io/cshop/anaconda/).
+This code has been tested using ``Python 3.7``. Apart from the standard Python libraries it also depends on the [SciPy](http://www.scipy.org/) libraries and a few others listed in ``requirements.txt``. For those installing Python for the first time I would recommend the [Anaconda Python distribution](https://store.continuum.io/cshop/anaconda/).
 
 ### Installation ###
 For now this is just Python code that you download and use, not a package.

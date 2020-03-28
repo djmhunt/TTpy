@@ -2,8 +2,6 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import datetime as dt
 import numpy as np
 import scipy.stats as stats
@@ -13,10 +11,8 @@ import sys
 import collections
 import os
 import inspect
-import imp
+import importlib
 import traceback
-
-# TODO: replace imp with importlib when moving to python 3
 
 # For analysing the state of the computer
 # import psutil
@@ -35,7 +31,7 @@ def argProcess(**kwargs):
     modelArgs = dict()
     expArgs = dict()
     otherArgs = dict()
-    for k in kwargs.iterkeys():
+    for k in kwargs.keys():
         if k.startswith("m_"):
             modelArgs[k[2:]] = kwargs.get(k)
         elif k.startswith("e_"):
@@ -54,7 +50,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
     ----------
     class_name : string
         The name of the class to be used
-    class_folder : basestring
+    class_folder : str
         The path where the class is likely to be found
     inherited_class : class
         The class that the searched for class inherits from
@@ -77,15 +73,13 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
     for potential_file in potential_files_filtered:
         if sought_class:
             break
-        # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+        # This is necessary to deal with importlib.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
         if potential_file in sys.modules:
             potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
         else:
-            file_path = '{}/{}.py'.format(folder_path, potential_file)
-            module_info = inspect.getmoduleinfo(file_path)
-            with open(file_path) as open_file:
-                potential_modules = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
+            module_parent = class_folder.replace('/', '.').replace('\\', '.')
+            potential_modules = [importlib.import_module(module_parent + '.' + potential_file)]
 
         for potential_module in potential_modules:
             module_classes = inspect.getmembers(potential_module,
@@ -116,7 +110,7 @@ def find_function(function_name, function_folder, excluded_files=None):
     ----------
     function_name : string
         The name of the function to be used
-    function_folder : basestring
+    function_folder : str
         The path where the function is likely to be found
     excluded_files : list, optional
         A list of modules to be excluded from the search. Can be described using portions of file names.
@@ -137,15 +131,13 @@ def find_function(function_name, function_folder, excluded_files=None):
     for potential_file in potential_files_filtered:
         if sought_function:
             break
-        # This is necessary to deal with imp.load_module reloading modules and changing class signatures
+        # This is necessary to deal with importlib.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
         if potential_file in sys.modules:
             potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
         else:
-            file_path = '{}/{}.py'.format(folder_path, potential_file)
-            module_info = inspect.getmoduleinfo(file_path)
-            with open(file_path) as open_file:
-                potential_modules = [imp.load_module(potential_file, open_file, file_path, module_info[1:])]
+            module_parent = function_folder.replace('/', '.').replace('\\', '.')
+            potential_modules = [importlib.import_module(module_parent + '.' + potential_file)]
 
         for potential_module in potential_modules:
             module_functions = inspect.getmembers(potential_module,
@@ -163,16 +155,16 @@ def find_function(function_name, function_folder, excluded_files=None):
         raise FunctionNameError('Unknown function {}'.format(function_name))
 
 
-def getClassArgs(inspected_class, arg_ignore=['self']):
+def get_class_args(inspected_class, arg_ignore=['self']):
     """
     Finds the arguments that could be passed into the specified class
     """
-    # TODO: when moving to python 3 replace inspect.getargspec with inspect.getfullargspec or inspect.signature
-    arg_spec = inspect.getargspec(inspected_class.__init__)
-    args = arg_spec.args
-    if arg_spec.keywords is not None:
-        base_class_arg_spec = inspect.getargspec(inspected_class.__bases__[0].__init__)
-        base_args = base_class_arg_spec.args
+    sig = inspect.signature(inspected_class.__init__)
+    args = list(sig.parameters.keys())
+    if 'kwargs' in args:
+        arg_ignore.append('kwargs')
+        base_class_arg_spec = inspect.signature(inspected_class.__bases__[0].__init__)
+        base_args = base_class_arg_spec.parameters.keys()
         new_base_args = [arg for arg in base_args if arg not in args]
         args.extend(new_base_args)
 
@@ -181,7 +173,7 @@ def getClassArgs(inspected_class, arg_ignore=['self']):
     return filtered_args
 
 
-def getClassAttributes(inspected_class, ignore=['self']):
+def get_class_attributes(inspected_class, ignore=['self']):
     """
     Finds the public attributes of the specified class
     """
@@ -192,15 +184,15 @@ def getClassAttributes(inspected_class, ignore=['self']):
     return filtered_attributes
 
 
-def getFuncArgs(inspected_function):
+def get_function_args(inspected_function):
     """
     Finds the arguments that could be passed into the specified function
 
     :param inspected_function:
     :return:
     """
-    arg_spec = inspect.getargspec(inspected_function)
-    args = arg_spec.args
+    arg_spec = inspect.signature(inspected_function)
+    args = list(arg_spec.parameters.keys())
 
     return args
 
@@ -355,7 +347,7 @@ def varyingParams(intObjects, params):
     """
 
     initDataSet = {param: [i[param] for i in intObjects] for param in params}
-    dataSet = {param: val for param, val in initDataSet.iteritems() if val.count(val[0]) != len(val)}
+    dataSet = {param: val for param, val in initDataSet.items() if val.count(val[0]) != len(val)}
 
     return dataSet
 
@@ -391,7 +383,7 @@ def mergeDatasetRepr(data, dataLabel=''):
             v = repr(s.get(key, None))
             partStore[key].append(v)
 
-    newStore = {dataLabel + k: v for k, v in partStore.iteritems()}
+    newStore = {dataLabel + k: v for k, v in partStore.items()}
 
     return newStore
 
@@ -411,19 +403,6 @@ def mergeDatasets(data, extend=False):
     newStore : dictionary of lists of objects
         For each key a list will be formed of the former key values. If a
         data set did not contain a key a value of None will be entered for it.
-
-    Examples
-    --------
-    >>> data = [{'a':[1, 2, 3], 'b':[7, 8, 9]}, {'b':[4, 5, 6], 'c':'string', 'd':5}]
-    >>> mergeDatasets(data)
-    {'a': [[1, 2, 3], None], 'c': [None, 'string'], 'b': [[7, 8, 9], [4, 5, 6]], 'd': [None, 5]}
-    >>> mergeDatasets(data, extend=True)
-    {'a': [1, 2, 3, None], 'c': [None, 'string'], 'b': [7, 8, 9, 4, 5, 6], 'd': [None, 5]}
-     >>> data = [{'b': np.array([[7, 8, 9], [1, 2, 3]])}, {'b': np.array([[4, 5, 6], [2, 3, 4]])}]
-     >>> mergeDatasets(data, extend = True)
-     {'b': [array([7, 8, 9]), array([1, 2, 3]), array([4, 5, 6]), array([2, 3, 4])]}
-     >>> mergeDatasets(data)
-     {'b': [array([[7, 8, 9], [1, 2, 3]]), array([[4, 5, 6], [2, 3, 4]])]}
     """
 
     # Find all the keys
@@ -434,7 +413,7 @@ def mergeDatasets(data, extend=False):
     for key in keySet:
         for d in data:
             dv = d.get(key, None)
-            if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, basestring):
+            if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, str):
                 newStore[key].extend(dv)
             else:
                 newStore[key].append(dv)
@@ -483,7 +462,7 @@ def flatten(data):
 
     """
     for i, v in enumerate(data):
-        if isinstance(v, collections.Iterable) and not isinstance(v, basestring):
+        if isinstance(v, collections.abc.Iterable) and not isinstance(v, str):
             for sub, loc in flatten(v):
                 yield sub, [i] + loc
         else:
@@ -571,7 +550,7 @@ def callableDetails(item):
             raise AttributeError('{} does not have the attribute ``Name`` or ``get_name``'.format(item))
 
         try:
-            details = {str(k): str(v).strip('[]()') for k, v in item.Params.iteritems()}
+            details = {str(k): str(v).strip('[]()') for k, v in item.Params.items()}
         except:
             details = None
 
@@ -612,7 +591,7 @@ def callableDetailsString(item):
     Name, details = callableDetails(item)
 
     if details:
-        properties = [k + ' : ' + str(v).strip('[]()') for k, v in details.iteritems()]
+        properties = [k + ' : ' + str(v).strip('[]()') for k, v in details.items()]
 
         desc = Name + " with " + ", ".join(properties)
     else:

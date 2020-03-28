@@ -4,8 +4,6 @@
 
 :Note: A simple example of a task class with all the necessary components
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import copy
 
 from tasks.taskTemplate import Task
@@ -41,7 +39,7 @@ class Basic(Task):
 
         self.action_history = [-1] * self.nbr_of_trials
 
-    def next(self):
+    def __next__(self):
         """
         the task class is an iterator [link to iterator documentation]
         this function produces the next stimulus for the task iterator

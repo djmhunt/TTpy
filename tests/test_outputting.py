@@ -2,8 +2,6 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 import pytest
@@ -17,7 +15,7 @@ import outputting
 @pytest.fixture(scope="session")
 def output_folder(tmpdir_factory):
 
-    folder_name = tmpdir_factory.mktemp("data", numbered=False)
+    folder_name = tmpdir_factory.mktemp("data", numbered=True)
 
     return folder_name
 
@@ -36,7 +34,7 @@ class TestClass_saving:
                    'Setup        INFO     Log initialised',
                    'Framework    INFO     Beginning task labelled: Untitled']
 
-        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+        for correct_line, standard_captured_line in zip(correct, standard_captured):
             assert standard_captured_line == correct_line
 
     def test_S_close(self, capsys):
@@ -53,7 +51,7 @@ class TestClass_saving:
                    'Framework    INFO     Beginning task labelled: Untitled',
                    'Setup        INFO     Shutting down program']
 
-        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+        for correct_line, standard_captured_line in zip(correct, standard_captured):
             assert standard_captured_line == correct_line
 
 
@@ -154,7 +152,7 @@ class TestClass_fancy_logger:
         correct = ['Setup        INFO     {}'.format(outputting.date()),
                    'Setup        INFO     Log initialised']
 
-        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+        for correct_line, standard_captured_line in zip(correct, standard_captured):
             assert standard_captured_line == correct_line
         close_loggers()
 
@@ -173,12 +171,12 @@ class TestClass_fancy_logger:
                    'Setup        INFO     Log initialised',
                    'Setup        INFO     The log you are reading was written to {}'.format(log_path)]
 
-        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+        for correct_line, standard_captured_line in zip(correct, standard_captured):
             assert standard_captured_line == correct_line
 
         with open(log_path) as log:
             cleaned_log = [l[15:].strip() for l in log.readlines()]
-        for correct_line, standard_captured_line in itertools.izip(correct, cleaned_log):
+        for correct_line, standard_captured_line in zip(correct, cleaned_log):
             assert standard_captured_line == correct_line
 
         close_loggers()
@@ -195,7 +193,7 @@ class TestClass_fancy_logger:
                    'Setup        INFO     Log initialised',
                    'Setup        INFO     Shutting down program']
 
-        for correct_line, standard_captured_line in itertools.izip(correct, standard_captured):
+        for correct_line, standard_captured_line in zip(correct, standard_captured):
             assert standard_captured_line == correct_line
 
 
@@ -292,7 +290,7 @@ class TestClass_newFlatDict:
     def test_NFD_string(self):
         store = [{'string': 'string'}]
         result = outputting.newFlatDict(store)
-        correct_result = collections.OrderedDict([('string', ["u'string'"])])
+        correct_result = collections.OrderedDict([('string', ["'string'"])])
         assert result == correct_result
 
     def test_NFD_list1(self):
@@ -343,7 +341,7 @@ class TestClass_newFlatDict:
     def test_NFD_dict(self):
         store = [{'dict': {1: "a", 2: "b"}}]
         result = outputting.newFlatDict(store)
-        correct_result = collections.OrderedDict([('dict_1', ["u'a'"]), ('dict_2', ["u'b'"])])
+        correct_result = collections.OrderedDict([('dict_1', ["'a'"]), ('dict_2', ["'b'"])])
         assert result == correct_result
 
     def test_NFD_dict2(self):
@@ -363,7 +361,7 @@ class TestClass_newFlatDict:
     def test_NFD_dict3(self):
         store = [{'dict': {1: {3: "a"}, 2: "b"}}]
         result = outputting.newFlatDict(store)
-        correct_result = collections.OrderedDict([('dict_1_3', ["u'a'"]), ('dict_2', ["u'b'"])])
+        correct_result = collections.OrderedDict([('dict_1_3', ["'a'"]), ('dict_2', ["'b'"])])
         assert result == correct_result
 
     # TODO: Upgrade newFlatDict to cope with this
@@ -438,7 +436,7 @@ class TestClass_newListDict:
     def test_NLD_dict3(self):
         store = {'dict': {1: {3: "a"}, 2: "b"}}
         result = outputting.newListDict(store)
-        correct_result = collections.OrderedDict([(u'dict_1_3', ['a']), (u'dict_2', ['b'])])
+        correct_result = collections.OrderedDict([('dict_1_3', ['a']), ('dict_2', ['b'])])
         assert result == correct_result
 
     def test_NLD_dict4(self):

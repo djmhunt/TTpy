@@ -2,24 +2,18 @@
 """
 :Author: Dominic Hunt
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
-import sys
-sys.path.append("../")
-
 import pytest
-import itertools
 import os
-
-import numpy as np
+import itertools
 
 import simulation
 import outputting
 
+
 @pytest.fixture(scope="session")
 def output_folder(tmpdir_factory):
 
-    folder_name = tmpdir_factory.mktemp("data", numbered=False)
+    folder_name = tmpdir_factory.mktemp("data", numbered=True)
 
     return folder_name
 
@@ -30,8 +24,8 @@ class TestClass_basic:
         simulation.run()
 
         captured = capsys.readouterr()
-        standard_captured = [c[6:] for c in captured[0].splitlines()]
-        error_captured = captured[1]
+        standard_captured = [c[6:] for c in captured.out.splitlines()]
+        error_captured = captured.err
 
         correct = ['Setup        INFO     {}'.format(outputting.date()),
                    'Setup        INFO     Log initialised',
@@ -40,7 +34,7 @@ class TestClass_basic:
                    " [0.5]]), decision_function = u'discrete.weightProb with task_responses : 0, 1', beta = 4, actionCode = {0: 0, 1: 1}, non_action = u'None', alpha = 0.3, number_actions = 2.",
                    'Setup        INFO     Shutting down program']
 
-        for correct_line, standard_captured_line in itertools.izip_longest(correct, standard_captured):
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
     def test_S_folder(self, output_folder, capsys):
@@ -58,7 +52,7 @@ class TestClass_basic:
                    " [0.5]]), decision_function = u'discrete.weightProb with task_responses : 0, 1', beta = 4, actionCode = {0: 0, 1: 1}, non_action = u'None', alpha = 0.3, number_actions = 2.",
                    'Setup        INFO     Shutting down program']
 
-        for correct_line, standard_captured_line in itertools.izip_longest(correct, standard_captured):
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
         assert os.listdir(output_path) == []
@@ -82,7 +76,7 @@ class TestClass_basic:
                    'Framework    INFO     Store data for simulation 0',
                    'Setup        INFO     Shutting down program']
 
-        for correct_line, standard_captured_line in itertools.izip_longest(correct, standard_captured):
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
         assert os.path.exists(output_path)
@@ -94,7 +88,7 @@ class TestClass_basic:
 
         with open(folder_path + 'log.txt') as log:
             cleaned_log = [l[6:].strip() if l[0] == ' ' else l[15:].strip() for l in log.readlines()]
-        for correct_line, standard_captured_line in itertools.izip_longest(correct, cleaned_log):
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, cleaned_log):
             assert standard_captured_line == correct_line
 
 

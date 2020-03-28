@@ -7,9 +7,6 @@
                 Psychonomic Bulletin & Review, 14(6), 1125–32.
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np

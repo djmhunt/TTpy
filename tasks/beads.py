@@ -7,8 +7,6 @@
                     Cognitive, Affective & Behavioral Neuroscience, 6(4), 261–9.
                     Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/17458441
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 from tasks.taskTemplate import Task
@@ -45,7 +43,7 @@ class Beads(Task):
 
         super(Beads, self).__init__()
 
-        if isinstance(beadSequence, basestring):
+        if isinstance(beadSequence, str):
             if beadSequence in beadSequences:
                 self.beads = beadSequences[beadSequence]
             else:
@@ -70,7 +68,7 @@ class Beads(Task):
         self.recAction = [-1]*self.T
         self.firstDecision = 0
 
-    def next(self):
+    def __next__(self):
         """ Produces the next bead for the iterator
 
         Returns

@@ -3,8 +3,6 @@
 :Author: Dominic Hunt
 
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np
@@ -68,7 +66,7 @@ class BPV(Model):
 
         self.validRew = validRewards
 
-        self.rewLoc = collections.OrderedDict(((k, v) for k, v in itertools.izip(self.validRew, range(len(self.validRew)))))
+        self.rewLoc = collections.OrderedDict(((k, v) for k, v in zip(self.validRew, range(len(self.validRew)))))
 
         self.dirichletVals = np.ones((self.number_actions, self.number_cues, len(self.validRew))) * dirichletInit
         self.initDirichletVals = self.dirichletVals.copy()

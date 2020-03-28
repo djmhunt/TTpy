@@ -8,9 +8,6 @@
                 Decision Making, Affect, and Learning: Attention and Performance XXIII (pp. 3–38).
                 http://doi.org/10.1093/acprof:oso/9780199600434.003.0001
 """
-
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import logging
 
 import numpy as np

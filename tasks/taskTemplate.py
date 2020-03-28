@@ -2,7 +2,6 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
 
 
 class Task(object):
@@ -37,7 +36,7 @@ class Task(object):
 
         return self
 
-    def next(self):
+    def __next__(self):
         """
         Produces the next stimulus for the iterator
 
@@ -89,7 +88,7 @@ class Task(object):
         name = params.pop('Name')
 
         label = ["{}(".format(name)]
-        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.iteritems()])
+        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.items()])
         label.append(")")
 
         representation = ' '.join(label)

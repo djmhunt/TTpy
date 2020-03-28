@@ -2,8 +2,6 @@
 """
 :Author: Dominic
 """
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import sys
 sys.path.append("../")
 
@@ -104,9 +102,9 @@ class TestClass_fitAlg:
                                'float_error_response_value': 10 ** -100,
                                'fit_subset': None}
 
-        for res_key, res_val in results.iteritems():
+        for res_key, res_val in results.items():
             if res_key == 'FitSim':
-                for sim_key, sim_val in results[res_key].iteritems():
+                for sim_key, sim_val in results[res_key].items():
                     assert sim_val == correct_results_sim[sim_key]
             else:
                 assert res_val == correct_results_alg[res_key]

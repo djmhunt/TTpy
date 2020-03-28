@@ -3,8 +3,6 @@
 :Author: Dominic Hunt
 """
 
-from __future__ import division, print_function, unicode_literals, absolute_import
-
 import numpy as np
 
 

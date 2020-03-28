@@ -24,7 +24,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.9.9',
+    version='1.0.0-alpha',
 
     description='Tinker Taylor py is a probabilistic decision-modelling framework for simulating and fitting the responses of people to probabilistic decison making tasks. ',
     long_description=long_description,
@@ -50,7 +50,7 @@ setup(
 
         'Operating System :: OS Independent'
 
-        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3.7'
 
         'Topic :: Scientific/Engineering :: Medical Science Apps'
     ],
@@ -69,5 +69,3 @@ setup(
     install_requires='requirements.txt',
 
 )
-
-
