@@ -69,5 +69,3 @@ setup(
     install_requires='requirements.txt',
 
 )
-
-

@@ -33,4 +33,3 @@ This repository first began as a clone of the original repository from [Bitbucke
 
 ### Testing ###
 Testing is done using [pytest](https://pytest.org). The tests can be found in ``./tests/``
-

@@ -180,6 +180,8 @@ class Model(object):
         return cls.__name__
 
     # TODO:  define and start using non_action
+    
+    parameter_patterns = []
 
     parameter_patterns = []
 
@@ -192,6 +194,10 @@ class Model(object):
                  **kwargs):
         """"""
         self.Name = self.get_name()
+        
+        self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
+        for k, v in self.pattern_parameters.iteritems():
+            setattr(self, k, v)
 
         self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
         for k, v in self.pattern_parameters.items():
@@ -725,6 +731,7 @@ class Model(object):
         """
 
         self.simID = simID
+
 
     @classmethod
     def pattern_parameters_match(cls, *args):
