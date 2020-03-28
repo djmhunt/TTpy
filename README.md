@@ -14,7 +14,7 @@ The framework can been run with a run script, live in a terminal or Python comma
 
 A task simulation can be simply created by running ``simulation.run()``. Equally, for fitting participant data, the function is ``dataFitting.run('./path/to/data/')``.
 
-More complex example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` task and ``runScript_fit.py`` for fitting the data generated from ``runScript_sim.py``, stored in the ``tests folder``.
+More complex example running scripts can be found in ``./runScripts/``. Here, a number of scripts have been created as templates: ``runScript_sim.py`` for simulating the ``probSelect`` task and ``runScript_fit.py`` for fitting the data generated from ``runScript_sim.py``, stored in the ``./tests/test_sim`` folder. The output of this fit can also be found ``./tests/test_fit`` folder.
 
 A new method of passing in the fitting or simulation configuration is to use a YAML configuration file. This is done, for both simulations and data fitting, using the function ``start.run_config`` For example, to run the YAML configuration equivalent to the ``runScript_sim.py`` from a command line would be :``start.run_config('./runScripts/runScripts_sim.yaml')``. For the fitting example, the configuration equivalent to ``runScript_fit.py`` would be :``start.run_config('./runScripts/runScripts_fit.yaml')``.
 

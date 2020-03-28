@@ -465,7 +465,7 @@ def flatDictKeySet(store, selectKeys=None):
 
     Returns
     -------
-    keySet : OrderedDict with values of OrderedDict, list or None
+    keySet : dict with values of dict, list or None
         The dictionary of keys to be extracted
 
     See Also
@@ -473,7 +473,7 @@ def flatDictKeySet(store, selectKeys=None):
     reframeListDicts, newFlatDict
     """
 
-    keySet = collections.OrderedDict()
+    keySet = {}
 
     for s in store:
         if selectKeys:
@@ -526,17 +526,17 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
     --------
     >>> store = [{'list': [1, 2, 3, 4, 5, 6]}]
     >>> newFlatDict(store)
-    OrderedDict([('list_[0]', [1]), ('list_[1]', [2]), ('list_[2]', [3]), ('list_[3]', [4]), ('list_[4]', [5]), ('list_[5]', [6])])
+    {'list_[0]': [1], 'list_[1]': [2], 'list_[2]': [3], 'list_[3]': [4], 'list_[4]': [5], 'list_[5]': [6]}
     >>> store = [{'string': 'string'}]
     >>> newFlatDict(store)
-    OrderedDict([(u'string', ["u'string'"])])
+    {'string': ["u'string'"]}
     >>> store = [{'dict': {1: {3: "a"}, 2: "b"}}]
     >>> newFlatDict(store)
-    OrderedDict([(u'dict_1_3', ["u'a'"]), (u'dict_2', ["u'b'"])])
+    {'dict_1_3': ["'a'"], 'dict_2': ["'b'"]}
     """
     keySet = flatDictKeySet(store, selectKeys=selectKeys)
 
-    newStore = collections.OrderedDict()
+    newStore = {}
 
     if labelPrefix:
         labelPrefix += "_"
@@ -589,18 +589,18 @@ def newListDict(store, labelPrefix='', maxListLen=0):
     --------
     >>> store = {'list': [1, 2, 3, 4, 5, 6]}
     >>> newListDict(store)
-    OrderedDict([('list', [1, 2, 3, 4, 5, 6])])
+    {'list': [1, 2, 3, 4, 5, 6]}
     >>> store = {'string': 'string'}
     >>> newListDict(store)
-    OrderedDict([('string', ['string'])])
+    {'string': ['string']}
     >>> store = {'dict': {1: {3: "a"}, 2: "b"}}
     >>> newListDict(store)
-    OrderedDict([(u'dict_1_3', ['a']), (u'dict_2', ['b'])])
+    {'dict_1_3': ['a'], 'dict_2': ['b']}
     """
 
     keySet, maxListLen = dictKeyGen(store, maxListLen=maxListLen, returnList=True, abridge=False)
 
-    newStore = collections.OrderedDict()
+    newStore = {}
 
     if labelPrefix:
         labelPrefix += "_"
@@ -704,7 +704,7 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
 
     Returns
     -------
-    keySet : OrderedDict with values of OrderedDict, list or None
+    keySet : dict with values of dict, list or None
         The dictionary of keys to be extracted
     maxListLen : int or float with no decimal places or None, optional
         If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
@@ -714,19 +714,19 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     --------
     >>> store = {'string': 'string'}
     >>> dictKeyGen(store)
-    (OrderedDict([('string', None)]), 1)
+    ({'string': None}, 1)
     >>> store = {'num': 23.6}
     >>> dictKeyGen(store)
-    (OrderedDict([('num', None)]), 1)
+    ({'num': None}, 1)
     >>> store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
     >>> dictKeyGen(store, returnList=True, abridge=True)
-    (OrderedDict([(u'array', array([[0],
-           [1]]))]), 6)
+    ({'array': array([[0],
+           [1]])}, 6)
     >>> store = {'dict': {1: "a", 2: "b"}}
     >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
-    (OrderedDict([('dict', OrderedDict([(1, None), (2, None)]))]), 7)
+    ({'dict': {1: None, 2: None}}, 7)
     """
-    keySet = collections.OrderedDict()
+    keySet = {}
 
     for k in store.keys():
         v = store[k]
@@ -826,12 +826,12 @@ def date():
 
     Returns
     -------
-    todayDate : str
+    date_today : str
         The current date in the format <year>-<month>-<day>
 
     """
     d = dt.datetime(2000, 1, 1)
     d = d.today()
-    todayDate = "{}-{}-{}".format(d.year, d.month, d.day)
+    date_today = "{}-{}-{}".format(d.year, d.month, d.day)
 
-    return todayDate
+    return date_today

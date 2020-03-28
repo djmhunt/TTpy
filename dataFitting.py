@@ -195,7 +195,7 @@ def run(data_folder='./',
                                        data_read_options=data_read_options)
 
     if model_changing_properties:
-        model_parameters = collections.OrderedDict()
+        model_parameters = {}
         for key, value in model_changing_properties.items():
             if len(value) == 2:
                 v1, v2 = value
@@ -540,7 +540,7 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
 
     """
 
-    data = collections.OrderedDict()
+    data = {}
     partData = outputting.newListDict(participant, 'part')
     data.update(partData)
 

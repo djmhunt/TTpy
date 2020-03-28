@@ -1176,7 +1176,7 @@ class Data(list):
     def __clean_data(participant_data, extra_processing=None, group_by=None):
 
         if isinstance(group_by, list):
-            grouped_data = collections.OrderedDict()
+            grouped_data = {}
             for dat in participant_data:
                 filename = dat[DATA_KEYWORDS['filename']]
                 for group in group_by:
