@@ -3,6 +3,9 @@ TTpy is a framework for modelling and fitting the responses of people to probabi
 
 Any questions can either be submitted as issues or e-mailed to d.hunt (at) gold.ac.uk
 
+[![Build Status](https://travis-ci.org/djmhunt/TTpy.svg?branch=master)](https://travis-ci.org/djmhunt/TTpy)
+[![codecov](https://codecov.io/gh/djmhunt/TTpy/branch/master/graph/badge.svg)](https://codecov.io/gh/djmhunt/TTpy)
+
 ### Prerequisites ###
 This code has been tested using ``Python 3.7``. Apart from the standard Python libraries it also depends on the [SciPy](http://www.scipy.org/) libraries and a few others listed in ``requirements.txt``. For those installing Python for the first time I would recommend the [Anaconda Python distribution](https://store.continuum.io/cshop/anaconda/).
 
