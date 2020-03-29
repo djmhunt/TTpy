@@ -1,27 +1,23 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>folder_setup &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="listKeyGen" href="outputting.listKeyGen.html" />
-    <link rel="prev" title="folder_path_cleaning" href="outputting.folder_path_cleaning.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,14 +28,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="outputting.listKeyGen.html" title="listKeyGen"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="outputting.folder_path_cleaning.html" title="folder_path_cleaning"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../outputting.html" accesskey="U">outputting module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -52,7 +41,7 @@
 <h1>folder_setup<a class="headerlink" href="#folder-setup" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="outputting.folder_setup">
-<code class="descclassname">outputting.</code><code class="descname">folder_setup</code><span class="sig-paren">(</span><em>label</em>, <em>date_string</em>, <em>pickle_data=False</em>, <em>base_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/outputting.html#folder_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.folder_setup" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">outputting.</code><code class="sig-name descname">folder_setup</code><span class="sig-paren">(</span><em class="sig-param">label</em>, <em class="sig-param">date_string</em>, <em class="sig-param">pickle_data=False</em>, <em class="sig-param">base_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/outputting.html#folder_setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#outputting.folder_setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identifies and creates the folder the data will be stored in</p>
 <p>Folder will be created as “./Outputs/&lt;sim_label&gt;_&lt;date&gt;/”. If that had
 previously been created then it is created as
@@ -60,34 +49,30 @@ previously been created then it is created as
 available integer.</p>
 <p>A subfolder is also created with the name <code class="docutils literal notranslate"><span class="pre">Pickle</span></code> if  pickle is
 true.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>label</strong> (<em>basestring</em>) – The label for the simulation</li>
-<li><strong>date_string</strong> (<em>basestring</em>) – The date identifier</li>
-<li><strong>pickle_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
-Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>base_path</strong> (<em>basestring</em><em>, </em><em>optional</em>) – The path into which the new folder will be placed. Default is current working directory</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The label for the simulation</p></li>
+<li><p><strong>date_string</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – The date identifier</p></li>
+<li><p><strong>pickle_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If true the data for each model, task and participant is recorded.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>base_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em>, </em><em>optional</em>) – The path into which the new folder will be placed. Default is current working directory</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>folder_name</strong> – The folder path that has just been created</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">string</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>folder_name</strong> – The folder path that has just been created</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">newFile()</span></code></dt>
-<dd>Creates a new file</dd>
-<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">saving()</span></code></dt>
-<dd>Creates the log system</dd>
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">newFile()</span></code></dt><dd><p>Creates a new file</p>
+</dd>
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">saving()</span></code></dt><dd><p>Creates the log system</p>
+</dd>
 </dl>
 </div>
 </dd></dl>
@@ -100,12 +85,6 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="outputting.folder_path_cleaning.html"
-                        title="previous chapter">folder_path_cleaning</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="outputting.listKeyGen.html"
-                        title="next chapter">listKeyGen</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -114,17 +93,15 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -138,19 +115,12 @@ Default is <code class="docutils literal notranslate"><span class="pre">False</s
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="outputting.listKeyGen.html" title="listKeyGen"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="outputting.folder_path_cleaning.html" title="folder_path_cleaning"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../outputting.html" >outputting module</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

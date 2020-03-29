@@ -1,27 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>data module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sort_by_last_number" href="api/data.sort_by_last_number.html" />
-    <link rel="prev" title="OrderError" href="api/dataFitting.OrderError.html" /> 
+    <link rel="next" title="taskGenerator module" href="taskGenerator.html" />
+    <link rel="prev" title="dataFitting module" href="dataFitting.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -33,10 +31,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/data.sort_by_last_number.html" title="sort_by_last_number"
+          <a href="taskGenerator.html" title="taskGenerator module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api/dataFitting.OrderError.html" title="OrderError"
+          <a href="dataFitting.html" title="dataFitting module"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
@@ -49,389 +47,285 @@
             
   <div class="section" id="data-module">
 <h1>data module<a class="headerlink" href="#data-module" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>data Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-data"></span><p>This module allows for the importing of participant data for use in fitting</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#data.sort_by_last_number" title="data.sort_by_last_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_by_last_number</span></code></a>(dataFiles)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#data.Data" title="data.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>(participants[,&nbsp;participantID,&nbsp;choices,&nbsp;…])</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#data.DimentionError" title="data.DimentionError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimentionError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#data.FileError" title="data.FileError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#data.FileFilterError" title="data.FileFilterError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileFilterError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#data.FileTypeError" title="data.FileTypeError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileTypeError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#data.FoldersError" title="data.FoldersError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FoldersError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#data.IDError" title="data.IDError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IDError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#data.LengthError" title="data.LengthError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LengthError</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#data.ProcessingError" title="data.ProcessingError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProcessingError</span></code></a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="class-inheritance-diagram">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h3>
-<div class="graphviz"><img src="_images/inheritance-79f0b91939614467f8c18a93c8891a0baf8cebe8.png" alt="Inheritance diagram of data.Data, data.DimentionError, data.FileError, data.FileFilterError, data.FileTypeError, data.FoldersError, data.IDError, data.LengthError, data.ProcessingError" usemap="#inheritance6cf13cdbc5" class="inheritance graphviz" /></div>
-<map id="inheritance6cf13cdbc5" name="inheritance6cf13cdbc5">
-<area shape="rect" id="node1" href="#data.Data" target="_top" title="Data" alt="" coords="31,400,103,425"/>
-<area shape="rect" id="node2" href="#data.DimentionError" target="_top" title="DimentionError" alt="" coords="7,351,126,376"/>
-<area shape="rect" id="node3" href="#data.FileError" target="_top" title="FileError" alt="" coords="29,301,104,327"/>
-<area shape="rect" id="node4" href="#data.FileFilterError" target="_top" title="FileFilterError" alt="" coords="14,252,119,277"/>
-<area shape="rect" id="node5" href="#data.FileTypeError" target="_top" title="FileTypeError" alt="" coords="15,203,119,228"/>
-<area shape="rect" id="node6" href="#data.FoldersError" target="_top" title="FoldersError" alt="" coords="17,153,116,179"/>
-<area shape="rect" id="node7" href="#data.IDError" target="_top" title="IDError" alt="" coords="31,104,103,129"/>
-<area shape="rect" id="node8" href="#data.LengthError" target="_top" title="LengthError" alt="" coords="18,55,115,80"/>
-<area shape="rect" id="node9" href="#data.ProcessingError" target="_top" title="ProcessingError" alt="" coords="5,5,128,31"/>
-</map><span class="target" id="module-data"></span><p>This module allows for the importing of participant data for use in fitting</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Dominic Hunt</p>
+</dd>
+</dl>
 <dl class="class">
 <dt id="data.Data">
-<em class="property">class </em><code class="descclassname">data.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>participants</em>, <em>participantID=u'ID'</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>process_data_function=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">Data</code><span class="sig-paren">(</span><em class="sig-param">participants</em>, <em class="sig-param">participantID='ID'</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">process_data_function=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
 <dl class="method">
 <dt id="data.Data.extend">
-<code class="descname">extend</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.extend" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param">iterable</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.extend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combines two Data instances into one</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>iterable</strong> (<em>Data instance</em><em> or </em><em>list of participant dicts</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> (<em>Data instance</em><em> or </em><em>list of participant dicts</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="data.Data.from_csv">
-<em class="property">classmethod </em><code class="descname">from_csv</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>csv_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_csv" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_csv</code><span class="sig-paren">(</span><em class="sig-param">folder='./'</em>, <em class="sig-param">file_name_filter=None</em>, <em class="sig-param">terminal_ID=True</em>, <em class="sig-param">split_by=None</em>, <em class="sig-param">participantID=None</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">extra_processing=None</em>, <em class="sig-param">csv_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .csv files, where each file contains the information of one participant</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</li>
-<li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
-Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
-<li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies the column or columns that can
-distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
-used.</li>
-<li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
-<li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
-<li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</p></li>
+<li><p><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
+Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</p></li>
+<li><p><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies the column or columns that can
+distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
+used.</p></li>
+<li><p><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></p></li>
+<li><p><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></p></li>
+<li><p><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
-be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
 be grouped together to form one participants data. The rest of the filename is assumed to identify the
-participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
-for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>csv_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_csv. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></li>
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
+for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>csv_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_csv. Default <code class="docutils literal notranslate"><span class="pre">{}</span></code></p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Data</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Data class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data class instance</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code></p>
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.read_csv()</span></code></p>
 </div>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="data.Data.from_mat">
-<em class="property">classmethod </em><code class="descname">from_mat</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_mat" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_mat</code><span class="sig-paren">(</span><em class="sig-param">folder='./'</em>, <em class="sig-param">file_name_filter=None</em>, <em class="sig-param">terminal_ID=True</em>, <em class="sig-param">participantID=None</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .mat files, where each file contains the information of one participant</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</li>
-<li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
-Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
-<li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
-used.</li>
-<li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
-<li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
-<li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</p></li>
+<li><p><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
+Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</p></li>
+<li><p><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
+used.</p></li>
+<li><p><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></p></li>
+<li><p><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></p></li>
+<li><p><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
-be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
 be grouped together to form one participants data. The rest of the filename is assumed to identify the
-participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
-for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
+for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Data</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Data class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data class instance</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.io.loadmat()</span></code></p>
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">scipy.io.loadmat()</span></code></p>
 </div>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="data.Data.from_pkl">
-<em class="property">classmethod </em><code class="descname">from_pkl</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_pkl" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_pkl</code><span class="sig-paren">(</span><em class="sig-param">folder='./'</em>, <em class="sig-param">file_name_filter=None</em>, <em class="sig-param">terminal_ID=True</em>, <em class="sig-param">participantID=None</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">extra_processing=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_pkl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .pkl files, where each file contains the information of one participant.
 This will principally be used to import data stored by task simulations</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</li>
-<li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
-Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
-<li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
-used.</li>
-<li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
-<li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
-<li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</p></li>
+<li><p><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
+Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</p></li>
+<li><p><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
+used.</p></li>
+<li><p><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></p></li>
+<li><p><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></p></li>
+<li><p><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
-be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
 be grouped together to form one participants data. The rest of the filename is assumed to identify the
-participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
-for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
+for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Data</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Data class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data class instance</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="data.Data.from_xlsx">
-<em class="property">classmethod </em><code class="descname">from_xlsx</code><span class="sig-paren">(</span><em>folder=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>xlsx_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_xlsx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_xlsx" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_xlsx</code><span class="sig-paren">(</span><em class="sig-param">folder='./'</em>, <em class="sig-param">file_name_filter=None</em>, <em class="sig-param">terminal_ID=True</em>, <em class="sig-param">split_by=None</em>, <em class="sig-param">participantID=None</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">extra_processing=None</em>, <em class="sig-param">xlsx_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.from_xlsx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.from_xlsx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder full of .xlsx files, where each file contains the information of one participant</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</li>
-<li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
-Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
-<li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies the column or columns that can
-distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
-used.</li>
-<li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
-<li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
-<li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folder</strong> (<em>string</em><em>, </em><em>optional</em>) – The folder where the data can be found. Default is the current folder.</p></li>
+<li><p><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
+Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</p></li>
+<li><p><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participants datasets are in one file sheet, this specifies the column or columns that can
+distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
+used.</p></li>
+<li><p><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></p></li>
+<li><p><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></p></li>
+<li><p><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
-be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
 be grouped together to form one participants data. The rest of the filename is assumed to identify the
-participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
-for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>xlsx_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</li>
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
+for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>xlsx_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for pandas.read_excel</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Data</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Data class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data class instance</p>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.read_excel()</span></code></p>
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.read_excel()</span></code></p>
 </div>
 </dd></dl>
 
-<dl class="classmethod">
+<dl class="method">
 <dt id="data.Data.load_data">
-<em class="property">classmethod </em><code class="descname">load_data</code><span class="sig-paren">(</span><em>file_type=u'csv'</em>, <em>folders=u'./'</em>, <em>file_name_filter=None</em>, <em>terminal_ID=True</em>, <em>split_by=None</em>, <em>participantID=None</em>, <em>choices=u'actions'</em>, <em>feedbacks=u'feedbacks'</em>, <em>stimuli=None</em>, <em>action_options=None</em>, <em>group_by=None</em>, <em>extra_processing=None</em>, <em>data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">load_data</code><span class="sig-paren">(</span><em class="sig-param">file_type='csv'</em>, <em class="sig-param">folders='./'</em>, <em class="sig-param">file_name_filter=None</em>, <em class="sig-param">terminal_ID=True</em>, <em class="sig-param">split_by=None</em>, <em class="sig-param">participantID=None</em>, <em class="sig-param">choices='actions'</em>, <em class="sig-param">feedbacks='feedbacks'</em>, <em class="sig-param">stimuli=None</em>, <em class="sig-param">action_options=None</em>, <em class="sig-param">group_by=None</em>, <em class="sig-param">extra_processing=None</em>, <em class="sig-param">data_read_options=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#Data.load_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.Data.load_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import data from a folder. This is a wrapper function for the other import methods</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>file_type</strong> (<em>string</em><em>, </em><em>optional</em>) – The file type of the data, from <code class="docutils literal notranslate"><span class="pre">mat</span></code>, <code class="docutils literal notranslate"><span class="pre">csv</span></code>, <code class="docutils literal notranslate"><span class="pre">xlsx</span></code> and <code class="docutils literal notranslate"><span class="pre">pkl</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">csv</span></code></li>
-<li><strong>folders</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The folder or folders where the data can be found. Default is the current folder.</li>
-<li><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
-Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</li>
-<li><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
-Default <code class="docutils literal notranslate"><span class="pre">True</span></code></li>
-<li><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participant datasets are in one file sheet, this specifies the column or columns that can
-distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
-used.</li>
-<li><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></li>
-<li><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></li>
-<li><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_type</strong> (<em>string</em><em>, </em><em>optional</em>) – The file type of the data, from <code class="docutils literal notranslate"><span class="pre">mat</span></code>, <code class="docutils literal notranslate"><span class="pre">csv</span></code>, <code class="docutils literal notranslate"><span class="pre">xlsx</span></code> and <code class="docutils literal notranslate"><span class="pre">pkl</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">csv</span></code></p></li>
+<li><p><strong>folders</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The folder or folders where the data can be found. Default is the current folder.</p></li>
+<li><p><strong>file_name_filter</strong> (<em>callable</em><em>, </em><em>string</em><em>, </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em>, </em><em>optional</em>) – A function to process the file names or a list of possible prefixes as strings or a single string.
+Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, no file names removed</p></li>
+<li><p><strong>terminal_ID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – Is there an ID number at the end of the filename? If not then a more general search will be performed.
+Default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><strong>split_by</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – If multiple participant datasets are in one file sheet, this specifies the column or columns that can
+distinguish and identify the rows for each participant. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>participantID</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant ID can be found. Default <code class="docutils literal notranslate"><span class="pre">None</span></code>, which results in the file name being
+used.</p></li>
+<li><p><strong>choices</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the participant choices can be found. Default <code class="docutils literal notranslate"><span class="pre">'actions'</span></code></p></li>
+<li><p><strong>feedbacks</strong> (<em>string</em><em>, </em><em>optional</em>) – The dict key where the feedbacks the participant received can be found. Default <code class="docutils literal notranslate"><span class="pre">'feedbacks'</span></code></p></li>
+<li><p><strong>stimuli</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The dict keys where the stimulus cues for each trial can be found. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>action_options</strong> (<em>string</em><em> or </em><em>list of strings</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><em>None</em></a><em> or </em><em>one element list with a list</em><em>, </em><em>optional</em>) – If a string or list of strings these are treated as dict keys where the valid actions for each trial can
 be found. If None then all trials will use all available actions. If the list contains one list then it will
-be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></li>
-<li><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
+be treated as a list of valid actions for each trialstep. Default <code class="docutils literal notranslate"><span class="pre">'None'</span></code></p></li>
+<li><p><strong>group_by</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – A list of parts of filenames that are repeated across participants, identifying all the files that should
 be grouped together to form one participants data. The rest of the filename is assumed to identify the
-participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
-for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>data_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for the data importing method chosen</li>
+participant. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_processing</strong> (<em>callable</em><em>, </em><em>optional</em>) – A function that modifies the dictionary of data read for each participant in such that it is appropriate
+for fitting. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>data_read_options</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The keyword arguments for the data importing method chosen</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Data</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Data class instance</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Data</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Data class instance</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.DimentionError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">DimentionError</code><a class="reference internal" href="_modules/data.html#DimentionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.DimentionError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">DimentionError</code><a class="reference internal" href="_modules/data.html#DimentionError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.DimentionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.FileError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">FileError</code><a class="reference internal" href="_modules/data.html#FileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">FileError</code><a class="reference internal" href="_modules/data.html#FileError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.FileFilterError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">FileFilterError</code><a class="reference internal" href="_modules/data.html#FileFilterError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileFilterError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">FileFilterError</code><a class="reference internal" href="_modules/data.html#FileFilterError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileFilterError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.FileTypeError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">FileTypeError</code><a class="reference internal" href="_modules/data.html#FileTypeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileTypeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">FileTypeError</code><a class="reference internal" href="_modules/data.html#FileTypeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FileTypeError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.FoldersError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">FoldersError</code><a class="reference internal" href="_modules/data.html#FoldersError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FoldersError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">FoldersError</code><a class="reference internal" href="_modules/data.html#FoldersError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.FoldersError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.IDError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">IDError</code><a class="reference internal" href="_modules/data.html#IDError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.IDError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">IDError</code><a class="reference internal" href="_modules/data.html#IDError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.IDError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.LengthError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">LengthError</code><a class="reference internal" href="_modules/data.html#LengthError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.LengthError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">LengthError</code><a class="reference internal" href="_modules/data.html#LengthError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.LengthError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="data.ProcessingError">
-<em class="property">exception </em><code class="descclassname">data.</code><code class="descname">ProcessingError</code><a class="reference internal" href="_modules/data.html#ProcessingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.ProcessingError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<em class="property">exception </em><code class="sig-prename descclassname">data.</code><code class="sig-name descname">ProcessingError</code><a class="reference internal" href="_modules/data.html#ProcessingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.ProcessingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 </dd></dl>
 
 <dl class="function">
 <dt id="data.sort_by_last_number">
-<code class="descclassname">data.</code><code class="descname">sort_by_last_number</code><span class="sig-paren">(</span><em>dataFiles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#sort_by_last_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.sort_by_last_number" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">data.</code><code class="sig-name descname">sort_by_last_number</code><span class="sig-paren">(</span><em class="sig-param">dataFiles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/data.html#sort_by_last_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#data.sort_by_last_number" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-</div>
 </div>
 
 
@@ -440,25 +334,12 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">data module</a><ul>
-<li><a class="reference internal" href="#id1">data Module</a><ul>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api/dataFitting.OrderError.html"
-                        title="previous chapter">OrderError</a></p>
+  <p class="topless"><a href="dataFitting.html"
+                        title="previous chapter">dataFitting module</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api/data.sort_by_last_number.html"
-                        title="next chapter">sort_by_last_number</a></p>
+  <p class="topless"><a href="taskGenerator.html"
+                        title="next chapter">taskGenerator module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -467,17 +348,15 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -492,17 +371,17 @@ for fitting. Default is <code class="docutils literal notranslate"><span class="
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/data.sort_by_last_number.html" title="sort_by_last_number"
+          <a href="taskGenerator.html" title="taskGenerator module"
              >next</a> |</li>
         <li class="right" >
-          <a href="api/dataFitting.OrderError.html" title="OrderError"
+          <a href="dataFitting.html" title="dataFitting module"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

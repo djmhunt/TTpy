@@ -1,22 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>model.modelTemplate &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -45,11 +43,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:Author: Dominic Hunt</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">absolute_import</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="kn">from</span> <span class="nn">model.decision.discrete</span> <span class="kn">import</span> <span class="n">weightProb</span>
 
@@ -76,14 +74,14 @@
         <span class="k">return</span> <span class="n">name</span></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Stimulus.details"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Stimulus.details">[docs]</a>    <span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&quot; with &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">desc</span></div>
@@ -125,14 +123,14 @@
         <span class="k">return</span> <span class="n">name</span></div>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Rewards.details"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Rewards.details">[docs]</a>    <span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[]()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s2">&quot;Name&quot;</span><span class="p">]</span>
         <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">+</span> <span class="s2">&quot; with &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">desc</span></div>
@@ -204,7 +202,7 @@
 <span class="sd">        understand. Default is Rewards</span>
 <span class="sd">    decision_function : function, optional</span>
 <span class="sd">        The function that takes the internal values of the model and turns them in to a decision.</span>
-<span class="sd">        Default is ``weightProb(range(number_actions))``</span>
+<span class="sd">        Default is ``weightProb(list(range(number_actions)))``</span>
 <span class="sd">    stimulus_shaper_properties : list, optional</span>
 <span class="sd">        The valid parameters of the function. Used to filter the unlisted keyword arguments</span>
 <span class="sd">        Default is ``None``</span>
@@ -224,6 +222,8 @@
 
     <span class="c1"># TODO:  define and start using non_action</span>
 
+    <span class="n">parameter_patterns</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_actions</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">number_cues</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_critics</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">action_codes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">non_action</span><span class="o">=</span><span class="s1">&#39;None&#39;</span><span class="p">,</span>
                  <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -234,6 +234,10 @@
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_pattern_parameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span> <span class="o">=</span> <span class="n">number_actions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_cues</span> <span class="o">=</span> <span class="n">number_cues</span>
         <span class="k">if</span> <span class="n">number_critics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -241,7 +245,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">number_critics</span> <span class="o">=</span> <span class="n">number_critics</span>
 
         <span class="k">if</span> <span class="n">action_codes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">action_codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)}</span>
+            <span class="n">action_codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actionCode</span> <span class="o">=</span> <span class="n">action_codes</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">defaultNonAction</span> <span class="o">=</span> <span class="n">non_action</span>
@@ -265,48 +269,48 @@
 
         <span class="k">if</span> <span class="n">stimulus_shaper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">stimulus_shaper</span><span class="p">,</span> <span class="n">Stimulus</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">stimulus_shaper_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">stimulus_shaper_properties</span><span class="p">}</span>
+                <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">stimulus_shaper_properties</span><span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">stimulus_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">stimulus_shaper_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">stimulus_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">stimulus_shaper_name</span><span class="p">,</span>
                                               <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span>
                                               <span class="n">inherited_class</span><span class="o">=</span><span class="n">Stimulus</span><span class="p">,</span>
                                               <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
-            <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">stimulus_class</span><span class="p">)}</span>
+            <span class="n">stimulus_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_class_args</span><span class="p">(</span><span class="n">stimulus_class</span><span class="p">)}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">stimulus_class</span><span class="p">(</span><span class="o">**</span><span class="n">stimulus_shaper_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span> <span class="o">=</span> <span class="n">Stimulus</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">reward_shaper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">reward_shaper</span><span class="p">,</span> <span class="n">Rewards</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">reward_shaper_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">reward_shaper_properties</span><span class="p">}</span>
+                <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">reward_shaper_properties</span><span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">reward_shaper</span><span class="p">(</span><span class="o">**</span><span class="n">reward_shaper_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">reward_class</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">reward_shaper_name</span><span class="p">,</span>
                                             <span class="n">class_folder</span><span class="o">=</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span>
                                             <span class="n">inherited_class</span><span class="o">=</span><span class="n">Rewards</span><span class="p">,</span>
                                             <span class="n">excluded_files</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;taskTemplate&#39;</span><span class="p">,</span> <span class="s1">&#39;__init__&#39;</span><span class="p">,</span> <span class="s1">&#39;taskGenerator&#39;</span><span class="p">])</span>
-            <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getClassArgs</span><span class="p">(</span><span class="n">reward_class</span><span class="p">)}</span>
+            <span class="n">reward_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_class_args</span><span class="p">(</span><span class="n">reward_class</span><span class="p">)}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">reward_class</span><span class="o">.</span><span class="n">processFeedback</span><span class="p">(</span><span class="o">**</span><span class="n">reward_shaper_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span> <span class="o">=</span> <span class="n">Rewards</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">decision_function</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">decision_function_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">decision_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">decision_function_properties</span><span class="p">}</span>
+                <span class="n">decision_shaper_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">decision_function_properties</span><span class="p">}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">decision_shaper_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span> <span class="o">=</span> <span class="n">decision_function</span><span class="p">(</span><span class="o">**</span><span class="n">decision_shaper_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decision_function_name</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">decision_function_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">decision_function</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">find_function</span><span class="p">(</span><span class="n">decision_function_name</span><span class="p">,</span> <span class="s1">&#39;model/decision&#39;</span><span class="p">)</span>
-            <span class="n">decision_function_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">getFuncArgs</span><span class="p">(</span><span class="n">decision_function</span><span class="p">)}</span>
+            <span class="n">decision_function_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_function_args</span><span class="p">(</span><span class="n">decision_function</span><span class="p">)}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span> <span class="o">=</span> <span class="n">decision_function</span><span class="p">(</span><span class="o">**</span><span class="n">decision_function_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span> <span class="o">=</span> <span class="n">weightProb</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span> <span class="o">=</span> <span class="n">weightProb</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">)))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span>
                            <span class="s2">&quot;number_actions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_actions</span><span class="p">,</span>
@@ -318,6 +322,7 @@
                            <span class="s2">&quot;stimulus_shaper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_shaper</span><span class="o">.</span><span class="n">details</span><span class="p">(),</span>
                            <span class="s2">&quot;reward_shaper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_shaper</span><span class="o">.</span><span class="n">details</span><span class="p">(),</span>
                            <span class="s2">&quot;decision_function&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">callableDetailsString</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span><span class="p">)</span>
 
         <span class="c1"># Recorded information</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recAction</span> <span class="o">=</span> <span class="p">[]</span>
@@ -741,7 +746,7 @@
         <span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Name&#39;</span><span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">(&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)]</span>
-        <span class="n">label</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
         <span class="n">label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
 
         <span class="n">representation</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -760,7 +765,52 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div>
+
+<div class="viewcode-block" id="Model.pattern_parameters_match"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Model.pattern_parameters_match">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pattern_parameters_match</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates if the parameters are described by the model patterns</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *args : strings</span>
+<span class="sd">            The potential parameter names</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pattern_parameters : list</span>
+<span class="sd">            The args that match the patterns in parameter_patterns</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pattern_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">parameter_patterns</span><span class="p">:</span>
+            <span class="n">pattern_parameters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">k</span><span class="p">)]))</span>
+
+        <span class="k">return</span> <span class="n">pattern_parameters</span></div>
+
+<div class="viewcode-block" id="Model.kwarg_pattern_parameters"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Model.kwarg_pattern_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">kwarg_pattern_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts the kwarg parameters that are described by the model patterns</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            The class initialisation kwargs</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pattern_parameter_dict : dict</span>
+<span class="sd">            A subset of kwargs that match the patterns in parameter_patterns</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pattern_parameter_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters_match</span><span class="p">(</span><span class="o">*</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">pattern_parameter_dict</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pattern_parameter_keys</span><span class="p">:</span>
+            <span class="n">pattern_parameter_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pattern_parameter_dict</span></div></div>
 </pre></div>
 
           </div>
@@ -769,17 +819,15 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -799,7 +847,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

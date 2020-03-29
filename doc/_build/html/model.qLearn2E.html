@@ -1,22 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>model.qLearn2E module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,231 +48,205 @@
             
   <div class="section" id="module-model.qLearn2E">
 <span id="model-qlearn2e-module"></span><h1>model.qLearn2E module<a class="headerlink" href="#module-model.qLearn2E" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Reference:</th><td class="field-body">Modified version of that found in the paper The role of the
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Dominic Hunt</p>
+</dd>
+<dt class="field-even">Reference</dt>
+<dd class="field-even"><p>Modified version of that found in the paper The role of the
 ventromedial prefrontal cortex in abstract state-based inference
 during decision making in humans.
 Hampton, A. N., Bossaerts, P., &amp; O’Doherty, J. P. (2006).
 The Journal of Neuroscience : The Official Journal of the
 Society for Neuroscience, 26(32), 8360–7.
-doi:10.1523/JNEUROSCI.1010-06.2006</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Notes:</th><td class="field-body">In the original paper this model used the Luce choice algorithm,
+doi:10.1523/JNEUROSCI.1010-06.2006</p>
+</dd>
+<dt class="field-odd">Notes</dt>
+<dd class="field-odd"><p>In the original paper this model used the Luce choice algorithm,
 rather than the logistic algorithm used here. This generalisation has
-meant that the variable nu is no longer possible to use.</td>
-</tr>
-</tbody>
-</table>
+meant that the variable nu is no longer possible to use.</p>
+</dd>
+</dl>
 <dl class="class">
 <dt id="model.qLearn2E.QLearn2E">
-<em class="property">class </em><code class="descclassname">model.qLearn2E.</code><code class="descname">QLearn2E</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>epsilon=0.1</em>, <em>alphaPos=None</em>, <em>alphaNeg=None</em>, <em>expect=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">model.qLearn2E.</code><code class="sig-name descname">QLearn2E</code><span class="sig-paren">(</span><em class="sig-param">alpha=0.3</em>, <em class="sig-param">epsilon=0.1</em>, <em class="sig-param">alphaPos=None</em>, <em class="sig-param">alphaNeg=None</em>, <em class="sig-param">expect=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The q-Learning algorithm modified to have different positive and
 negative reward prediction errors and use the Epsylon greedy method
 for claculating probabilities</p>
 <dl class="attribute">
 <dt id="model.qLearn2E.QLearn2E.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.qLearn2E.QLearn2E.Name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Name</code><a class="headerlink" href="#model.qLearn2E.QLearn2E.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="model.qLearn2E.QLearn2E.currAction">
-<code class="descname">currAction</code><a class="headerlink" href="#model.qLearn2E.QLearn2E.currAction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">currAction</code><a class="headerlink" href="#model.qLearn2E.QLearn2E.currAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>The current action chosen by the model. Used to pass participant action
 to model when fitting</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)">int</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter. For this model only used when setting alphaPos
-and alphaNeg to the same value. Default 0.3</li>
-<li><strong>alphaPos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The positive learning rate parameter. Used when RPE is positive.
-Default is alpha</li>
-<li><strong>alphaNeg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The negative learning rate parameter. Used when RPE is negative.
-Default is alpha</li>
-<li><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Noise parameter. The larger it is the less likely the model is to choose the highest expected reward</li>
-<li><strong>number_actions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
-Default 2.</li>
-<li><strong>number_cues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="docutils">
-<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
-<dd>Default 1.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter. For this model only used when setting alphaPos
+and alphaNeg to the same value. Default 0.3</p></li>
+<li><p><strong>alphaPos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The positive learning rate parameter. Used when RPE is positive.
+Default is alpha</p></li>
+<li><p><strong>alphaNeg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The negative learning rate parameter. Used when RPE is negative.
+Default is alpha</p></li>
+<li><p><strong>epsilon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Noise parameter. The larger it is the less likely the model is to choose the highest expected reward</p></li>
+<li><p><strong>number_actions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
+Default 2.</p></li>
+<li><p><strong>number_cues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt><dd><p>Default 1.</p>
+</dd>
 </dl>
-</li>
-<li><strong>number_critics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
-Default number_actions*number_cues</li>
-<li><strong>action_codes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
+</p></li>
+<li><p><strong>number_critics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
+Default number_actions*number_cues</p></li>
+<li><p><strong>action_codes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
 task or dataset and references used in the models to describe the order
-in which the action information is stored.</li>
-<li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
-Default <code class="docutils literal notranslate"><span class="pre">ones((number_actions,</span> <span class="pre">number_cues))</span> <span class="pre">/</span> <span class="pre">number_critics)</span></code></li>
-<li><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the the expected reward.
-Default <code class="docutils literal notranslate"><span class="pre">ones((number_actions,</span> <span class="pre">number_cues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">number_cues</span></code></li>
-<li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
-understand and a string to identify it later. Default is blankStim</li>
-<li><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
-understand. Default is blankRew</li>
-<li><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.discrete.weightProb</li>
+in which the action information is stored.</p></li>
+<li><p><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – The prior probability of of the states being the correct one.
+Default <code class="docutils literal notranslate"><span class="pre">ones((number_actions,</span> <span class="pre">number_cues))</span> <span class="pre">/</span> <span class="pre">number_critics)</span></code></p></li>
+<li><p><strong>expect</strong> (<em>array of floats</em><em>, </em><em>optional</em>) – The initialisation of the the expected reward.
+Default <code class="docutils literal notranslate"><span class="pre">ones((number_actions,</span> <span class="pre">number_cues))</span> <span class="pre">*</span> <span class="pre">5</span> <span class="pre">/</span> <span class="pre">number_cues</span></code></p></li>
+<li><p><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p></li>
+<li><p><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
+understand. Default is blankRew</p></li>
+<li><p><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.discrete.weightProb</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">model.QLearn</span></code></dt>
-<dd>This model is heavily based on that one</dd>
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">model.QLearn</span></code></dt><dd><p>This model is heavily based on that one</p>
+</dd>
 </dl>
 </div>
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probabilities</strong> – The probabilities associated with the action choices</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>probabilities</strong> – The probabilities associated with the action choices</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1D ndArray of floats</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcProbabilities</code><span class="sig-paren">(</span><em class="sig-param">actionValues: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>actionValues</strong> (<em>1D ndArray of floats</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>probArray</strong> – The probabilities associated with the actionValues</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D ndArray of floats</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>actionValues</strong> (<em>1D ndArray of floats</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>probArray</strong> – The probabilities associated with the actionValues</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1D ndArray of floats</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">expectation</em>, <em class="sig-param">action</em>, <em class="sig-param">stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</li>
-<li><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</li>
-<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</p></li>
+<li><p><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</p></li>
+<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</p></li>
+<li><p><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">delta</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>delta</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.returnTaskState">
-<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.returnTaskState" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – The dictionary contains a series of keys including Name,
-Probabilities, Actions and Events.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>results</strong> – The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rewardExpectation</code><span class="sig-paren">(</span><em class="sig-param">observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are task dependent</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</li>
-<li><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</li>
-<li><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</p></li>
+<li><p><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</p></li>
+<li><p><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.storeState" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.qLearn2E.QLearn2E.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.updateModel" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</li>
-<li><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</li>
-<li><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</li>
+<code class="sig-name descname">updateModel</code><span class="sig-paren">(</span><em class="sig-param">delta</em>, <em class="sig-param">action</em>, <em class="sig-param">stimuli</em>, <em class="sig-param">stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/qLearn2E.html#QLearn2E.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.qLearn2E.QLearn2E.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</p></li>
+<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</p></li>
+<li><p><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</p></li>
+<li><p><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -301,17 +273,15 @@ accessed later</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -337,7 +307,7 @@ accessed later</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>
