@@ -221,6 +221,8 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span></div>
 
     <span class="c1"># TODO:  define and start using non_action</span>
+    
+    <span class="n">parameter_patterns</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">parameter_patterns</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -233,6 +235,10 @@
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_pattern_parameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwarg_pattern_parameters</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -766,6 +772,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">simID</span> <span class="o">=</span> <span class="n">simID</span></div>
+
 
 <div class="viewcode-block" id="Model.pattern_parameters_match"><a class="viewcode-back" href="../../model.modelTemplate.html#model.modelTemplate.Model.pattern_parameters_match">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">pattern_parameters_match</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>

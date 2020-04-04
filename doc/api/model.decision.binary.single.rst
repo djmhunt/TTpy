@@ -1,6 +1,0 @@
-single
-======
-
-.. currentmodule:: model.decision.binary
-
-.. autofunction:: single

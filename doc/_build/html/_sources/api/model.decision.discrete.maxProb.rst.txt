@@ -1,6 +1,0 @@
-maxProb
-=======
-
-.. currentmodule:: model.decision.discrete
-
-.. autofunction:: maxProb

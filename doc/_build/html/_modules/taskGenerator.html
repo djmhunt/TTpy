@@ -52,7 +52,7 @@
 <span class="kn">from</span> <span class="nn">tasks.taskTemplate</span> <span class="kn">import</span> <span class="n">Task</span>
 
 
-<div class="viewcode-block" id="TaskGeneration"><a class="viewcode-back" href="../api/taskGenerator.TaskGeneration.html#taskGenerator.TaskGeneration">[docs]</a><span class="k">class</span> <span class="nc">TaskGeneration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TaskGeneration"><a class="viewcode-back" href="../taskGenerator.html#taskGenerator.TaskGeneration">[docs]</a><span class="k">class</span> <span class="nc">TaskGeneration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates task class instances based on a task and a set of varying parameters</span>
@@ -94,12 +94,12 @@
 
         <span class="n">parameter_combinations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">utils</span><span class="o">.</span><span class="n">listMergeGen</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
-            <span class="n">pc</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameter_keys</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">parameter_keys</span><span class="p">,</span> <span class="n">p</span><span class="p">)}</span>
             <span class="n">parameter_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parameter_combinations</span> <span class="o">=</span> <span class="n">parameter_combinations</span>
 
         <span class="k">if</span> <span class="n">other_options</span><span class="p">:</span>
-            <span class="n">checked_options</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">checked_options</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other_options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_task_args</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid property for task ``</span><span class="si">{}</span><span class="s1">``. Use </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span>
@@ -142,7 +142,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TaskGeneration.iter_task_ID"><a class="viewcode-back" href="../api/taskGenerator.TaskGeneration.html#taskGenerator.TaskGeneration.iter_task_ID">[docs]</a>    <span class="k">def</span> <span class="nf">iter_task_ID</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TaskGeneration.iter_task_ID"><a class="viewcode-back" href="../taskGenerator.html#taskGenerator.TaskGeneration.iter_task_ID">[docs]</a>    <span class="k">def</span> <span class="nf">iter_task_ID</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Yields the tasks IDs. To be used with self.new_task(expID) to receive the next tasks instance</span>
 
@@ -155,7 +155,7 @@
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_max</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">c</span></div>
 
-<div class="viewcode-block" id="TaskGeneration.new_task"><a class="viewcode-back" href="../api/taskGenerator.TaskGeneration.html#taskGenerator.TaskGeneration.new_task">[docs]</a>    <span class="k">def</span> <span class="nf">new_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_number</span><span class="p">):</span>
+<div class="viewcode-block" id="TaskGeneration.new_task"><a class="viewcode-back" href="../taskGenerator.html#taskGenerator.TaskGeneration.new_task">[docs]</a>    <span class="k">def</span> <span class="nf">new_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_number</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produces the next tasks instance</span>
 
