@@ -37,26 +37,21 @@ setuptools.setup(
                 author_email='d.hunt@gold.ac.uk',
 
                 # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+                # Or https://pypi.org/classifiers/
                 classifiers=[
-                    'Development Status :: 5 - Production/Stable'
-            
-                    'Environment :: Console'
-            
-                    'Intended Audience :: Science/Research'
-            
-                    'License :: OSI Approved :: MIT License'
-            
-                    'Natural Language :: English'
-            
-                    'Operating System :: OS Independent'
-            
-                    'Programming Language :: Python :: 3'
-            
-                    'Topic :: Scientific/Engineering :: Medical Science Apps.'
-                ],
+                            'Development Status :: 5 - Production/Stable',
+                            'Environment :: Console',
+                            'Intended Audience :: Science/Research',
+                            'License :: OSI Approved :: MIT License',
+                            'Natural Language :: English',
+                            'Operating System :: OS Independent',
+                            'Programming Language :: Python :: 3',
+                            'Topic :: Scientific/Engineering :: Medical Science Apps.',
+                            'Topic :: Scientific/Engineering :: Artificial Life'
+                            ],
 
                 # What does your project relate to?
-                keywords='neuroscience modelling Goldsmiths psychology PhD Dominic_Hunt',
+                keywords='neuroscience modelling Goldsmiths psychology PhD',
 
                 # You can just specify the packages manually here if your project is
                 # simple. Or you can use find_packages().
