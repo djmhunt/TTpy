@@ -7,12 +7,10 @@ https://github.com/pypa/sampleproject
 
 
 import setuptools
-# To use a consistent encoding
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-# Get the long description from the README file
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -25,7 +23,7 @@ setuptools.setup(
                 # Versions should comply with PEP440.  For a discussion on single-sourcing
                 # the version across setup.py and the project code, see
                 # https://packaging.python.org/en/latest/single_source_version.html
-                version='1.0.0-alpha',
+                version='1.0.0a0',
 
                 description=short_description,
                 long_description=long_description,
