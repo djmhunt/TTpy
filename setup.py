@@ -44,7 +44,7 @@ setuptools.setup(
             
                     'Intended Audience :: Science/Research'
             
-                    'License :: MIT'
+                    'License :: OSI Approved :: MIT License'
             
                     'Natural Language :: English'
             
@@ -52,7 +52,7 @@ setuptools.setup(
             
                     'Programming Language :: Python :: 3'
             
-                    'Topic :: Scientific/Engineering :: Medical Science Apps'
+                    'Topic :: Scientific/Engineering :: Medical Science Apps.'
                 ],
 
                 # What does your project relate to?
