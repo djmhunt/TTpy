@@ -197,8 +197,8 @@ def multi_files(tmpdir_factory):
         xlsx_file_name = folder_name.join('subj{}.xlsx'.format(subj))
         xlsx_file_names.append(str(xlsx_file_name).split('\\')[-1])
         subj_dat_ind.to_excel(xlsx_file_name)
-    file_names['csv'] = sorted(csv_file_names, key=lambda x: int(x[5:].split('.')[0]))
-    file_names['xlsx'] = sorted(xlsx_file_names, key=lambda x: int(x[5:].split('.')[0]))
+    file_names['csv'] = list(sorted(csv_file_names, key=lambda x: int(x[5:].split('.')[0])))
+    file_names['xlsx'] = list(sorted(xlsx_file_names, key=lambda x: int(x[5:].split('.')[0])))
 
     pkl_file_names = []
     for i, pkl_data in enumerate(SIM_DATA):
@@ -214,23 +214,23 @@ def multi_files(tmpdir_factory):
 @pytest.fixture(scope='session')
 def multi_folders(tmpdir_factory):
     folder_grouping = "multi_folder_data"
-    folder_name = tmpdir_factory.mktemp(folder_grouping, numbered=False)
-    folder_name_str = str(folder_name).replace('\\', '/')
 
     file_names = []
+    folder_paths = []
     for i, (cumulative_points, subject_choices) in enumerate(zip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
-        folder_path = '{}/subj{}'.format(folder_name_str, i)
-        folder_sub_path = tmpdir_factory.mktemp("{}/subj{}/".format(folder_grouping, i), numbered=False)
-        file_path = '{}/{}'.format(folder_path, mat_file_name)
+        folder_path = tmpdir_factory.mktemp("{}_subj{}/".format(folder_grouping, i), numbered=False)
+        folder_path_str = str(folder_path).replace('\\', '/')
+        file_path = '{}/{}'.format(folder_path_str, mat_file_name)
         file_names.append(mat_file_name)
+        folder_paths.append(folder_path_str)
 
         MAT_DATA['cumpts'] = cumulative_points
         MAT_DATA['subchoice'] = subject_choices
         sp.io.savemat(str(file_path), MAT_DATA)
 
-    return folder_name_str, file_names
+    return folder_paths, file_names
 
 #%% For Data generally
 class TestClass_Data:
@@ -524,18 +524,17 @@ class TestClass_Mat:
 #%% For importing multiple folders into Data
 class TestClass_Folders:
     def test_folders(self, multi_folders):
-        folder_name, file_names = multi_folders
-        dat_folders = ['{}/{}/'.format(folder_name, f[:-4]) for f in file_names]
+        folder_paths, file_names = multi_folders
         dat = data.Data.load_data(file_type='mat',
-                                  folders=dat_folders,
+                                  folders=folder_paths,
                                   participantID='dfile',
                                   choices='subchoice',
                                   feedbacks='cumpts')
-        for result, folder, file_name, points, choices in zip(dat, dat_folders, file_names, MAT_POINTS_SETS,
+        for result, folder, file_name, points, choices in zip(dat, folder_paths, file_names, MAT_POINTS_SETS,
                                                                          MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
-                              'folder': folder,
+                              'folder': folder + '/',
                               'bonuscrit': 450,
                               'choiceRT': np.array([0, 0, 0]),
                               'cumpts': np.array(points),
