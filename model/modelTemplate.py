@@ -40,7 +40,7 @@ class Stimulus(object):
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
@@ -89,7 +89,7 @@ class Rewards(object):
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
