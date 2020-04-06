@@ -12,7 +12,7 @@ import utils
 
 def qualFuncIdent(value, **kwargs):
 
-    if isinstance(value, collections.Callable):
+    if isinstance(value, collections.abc.Callable):
         fitness = value
     elif value == "BIC":
         fitness = BIC2(**kwargs)
