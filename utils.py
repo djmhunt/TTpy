@@ -413,7 +413,7 @@ def mergeDatasets(data, extend=False):
     for key in keySet:
         for d in data:
             dv = d.get(key, None)
-            if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, str):
+            if extend and isinstance(dv, collections.abc.Iterable) and not isinstance(dv, str):
                 newStore[key].extend(dv)
             else:
                 newStore[key].append(dv)
@@ -541,7 +541,7 @@ def callableDetails(item):
 
     """
     # TODO : clean up this and the functions calling it. This should be unnecessary now
-    if isinstance(item, collections.Callable):
+    if isinstance(item, collections.abc.Callable):
         if hasattr(item, 'Name'):
             name = item.Name
         elif hasattr(item, 'get_name'):
