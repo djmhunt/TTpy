@@ -529,7 +529,7 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
     {'list_[0]': [1], 'list_[1]': [2], 'list_[2]': [3], 'list_[3]': [4], 'list_[4]': [5], 'list_[5]': [6]}
     >>> store = [{'string': 'string'}]
     >>> newFlatDict(store)
-    {'string': ["u'string'"]}
+    {'string': ["'string'"]}
     >>> store = [{'dict': {1: {3: "a"}, 2: "b"}}]
     >>> newFlatDict(store)
     {'dict_1_3': ["'a'"], 'dict_2': ["'b'"]}
