@@ -44,7 +44,7 @@ class RandomBias(Model):
         in to a decision. Default is model.decision.discrete.weightProb
     """
 
-    parameter_patterns = ['^prob\d+$']
+    parameter_patterns = ['^prob\\d+$']
 
     def __init__(self, expect=None, **kwargs):
 

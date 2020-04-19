@@ -1,22 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>model.BPV module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,204 +48,199 @@
             
   <div class="section" id="module-model.BPV">
 <span id="model-bpv-module"></span><h1>model.BPV module<a class="headerlink" href="#module-model.BPV" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Dominic Hunt</p>
+</dd>
+</dl>
 <dl class="class">
 <dt id="model.BPV.BPV">
-<em class="property">class </em><code class="descclassname">model.BPV.</code><code class="descname">BPV</code><span class="sig-paren">(</span><em>alpha=0.3</em>, <em>dirichletInit=1</em>, <em>validRewards=array([0</em>, <em>1])</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">model.BPV.</code><code class="sig-name descname">BPV</code><span class="sig-paren">(</span><em class="sig-param">alpha=0.3</em>, <em class="sig-param">dirichletInit=1</em>, <em class="sig-param">validRewards=array([0</em>, <em class="sig-param">1])</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="model.modelTemplate.html#model.modelTemplate.Model" title="model.modelTemplate.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">model.modelTemplate.Model</span></code></a></p>
 <p>The Bayesian predictor model</p>
 <dl class="attribute">
 <dt id="model.BPV.BPV.Name">
-<code class="descname">Name</code><a class="headerlink" href="#model.BPV.BPV.Name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Name</code><a class="headerlink" href="#model.BPV.BPV.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the class used when recording what has been used.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter</li>
-<li><strong>number_actions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
-Default 2.</li>
-<li><strong>number_cues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="docutils">
-<dt>The initial maximum number of stimuli the model can expect to receive.</dt>
-<dd>Default 1.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – Learning rate parameter</p></li>
+<li><p><strong>number_actions</strong> (<em>integer</em><em>, </em><em>optional</em>) – The maximum number of valid actions the model can expect to receive.
+Default 2.</p></li>
+<li><p><strong>number_cues</strong> (<em>integer</em><em>, </em><em>optional</em>) – <dl class="simple">
+<dt>The initial maximum number of stimuli the model can expect to receive.</dt><dd><p>Default 1.</p>
+</dd>
 </dl>
-</li>
-<li><strong>number_critics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
-Default number_actions*number_cues</li>
-<li><strong>validRewards</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><em>np.ndarray</em><em>, </em><em>optional</em>) – The different reward values that can occur in the task. Default <code class="docutils literal notranslate"><span class="pre">array([0,</span> <span class="pre">1])</span></code></li>
-<li><strong>action_codes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
+</p></li>
+<li><p><strong>number_critics</strong> (<em>integer</em><em>, </em><em>optional</em>) – The number of different reaction learning sets.
+Default number_actions*number_cues</p></li>
+<li><p><strong>validRewards</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a><em>, </em><em>np.ndarray</em><em>, </em><em>optional</em>) – The different reward values that can occur in the task. Default <code class="docutils literal notranslate"><span class="pre">array([0,</span> <span class="pre">1])</span></code></p></li>
+<li><p><strong>action_codes</strong> (<em>dict with string</em><em> or </em><em>int as keys and int values</em><em>, </em><em>optional</em>) – A dictionary used to convert between the action references used by the
 task or dataset and references used in the models to describe the order
-in which the action information is stored.</li>
-<li><strong>dirichletInit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The initial values for values of the dirichlet distribution.
-Normally 0, 1/2 or 1. Default 1</li>
-<li><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – Ignored in this case</li>
-<li><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
-understand and a string to identify it later. Default is blankStim</li>
-<li><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
-understand. Default is blankRew</li>
-<li><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
-in to a decision. Default is model.decision.discrete.weightProb</li>
+in which the action information is stored.</p></li>
+<li><p><strong>dirichletInit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The initial values for values of the dirichlet distribution.
+Normally 0, 1/2 or 1. Default 1</p></li>
+<li><p><strong>prior</strong> (array of floats in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, optional) – Ignored in this case</p></li>
+<li><p><strong>stimFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the stimulus into a form the model can
+understand and a string to identify it later. Default is blankStim</p></li>
+<li><p><strong>rewFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that transforms the reward into a form the model can
+understand. Default is blankRew</p></li>
+<li><p><strong>decFunc</strong> (<em>function</em><em>, </em><em>optional</em>) – The function that takes the internal values of the model and turns them
+in to a decision. Default is model.decision.discrete.weightProb</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="model.BPV.BPV.actStimMerge">
-<code class="descname">actStimMerge</code><span class="sig-paren">(</span><em>dirichletVals</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.actStimMerge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.actStimMerge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">actStimMerge</code><span class="sig-paren">(</span><em class="sig-param">dirichletVals</em>, <em class="sig-param">stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.actStimMerge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.actStimMerge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the parameter to be merged by stimuli and filters it by the stimuli values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>actStimuliParam</strong> (<em>list of floats</em>) – <dl class="simple">
+<dt>The list of values representing each action stimuli pair, where the stimuli will have their filtered</dt><dd><p>values merged together.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>stimFilter</strong> (<em>array of floats</em><em> or </em><em>a float</em><em>, </em><em>optional</em>) – The list of active stimuli with their weightings or one weight for all.
+Default <code class="docutils literal notranslate"><span class="pre">1</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>actionParams</strong> – The parameter values associated with each action</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of floats</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.actorStimulusProbs">
-<code class="descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">actorStimulusProbs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.actorStimulusProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.actorStimulusProbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates in the model-appropriate way the probability of each action.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>probabilities</strong> – The probabilities associated with the action choices</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">1D np.ndarray of floats</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>probabilities</strong> – The probabilities associated with the action choices</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>1D np.ndarray of floats</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.calcActExpectations">
-<code class="descname">calcActExpectations</code><span class="sig-paren">(</span><em>dirichletVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.calcActExpectations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.calcActExpectations" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcActExpectations</code><span class="sig-paren">(</span><em class="sig-param">dirichletVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.calcActExpectations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.calcActExpectations" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.calcProbabilities">
-<code class="descname">calcProbabilities</code><span class="sig-paren">(</span><em>actionValues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.calcProbabilities" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">calcProbabilities</code><span class="sig-paren">(</span><em class="sig-param">actionValues: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/model/BPV.html#BPV.calcProbabilities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.calcProbabilities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the probabilities associated with the actions</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>actionValues</strong> (<em>1D np.ndarray of floats</em>) – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>probArray</strong> – The probabilities associated with the actionValues</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">1D np.ndarray of floats</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>actionValues</strong> (<em>1D np.ndarray of floats</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>probArray</strong> – The probabilities associated with the actionValues</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1D np.ndarray of floats</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.delta">
-<code class="descname">delta</code><span class="sig-paren">(</span><em>reward</em>, <em>expectation</em>, <em>action</em>, <em>stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">reward</em>, <em class="sig-param">expectation</em>, <em class="sig-param">action</em>, <em class="sig-param">stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.delta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the comparison between the reward and the expectation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</li>
-<li><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</li>
-<li><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reward</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The reward value</p></li>
+<li><p><strong>expectation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The expected reward value</p></li>
+<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The chosen action</p></li>
+<li><p><strong>stimuli</strong> (<em>{int | float | tuple | None}</em>) – The stimuli received</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">delta</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>delta</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.returnTaskState">
-<code class="descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.returnTaskState" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">returnTaskState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.returnTaskState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.returnTaskState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the relevant data for this model</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> – The dictionary contains a series of keys including Name,
-Probabilities, Actions and Events.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>results</strong> – The dictionary contains a series of keys including Name,
+Probabilities, Actions and Events.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)">dict</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.rewardExpectation">
-<code class="descname">rewardExpectation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.rewardExpectation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">rewardExpectation</code><span class="sig-paren">(</span><em class="sig-param">observation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.rewardExpectation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.rewardExpectation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the estimated reward based on the action and stimuli</p>
 <p>This contains parts that are task dependent</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</li>
-<li><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</li>
-<li><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>observation</strong> (<em>{int | float | tuple}</em>) – The set of stimuli</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>actionExpectations</strong> (<em>array of floats</em>) – The expected rewards for each action</p></li>
+<li><p><strong>stimuli</strong> (<em>list of floats</em>) – The processed observations</p></li>
+<li><p><strong>activeStimuli</strong> (<em>list of [0, 1] mapping to [False, True]</em>) – A list of the stimuli that were or were not present</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.storeState">
-<code class="descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.storeState" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">storeState</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.storeState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.storeState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the state of all the important variables so that they can be
 accessed later</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.updateExpectations">
-<code class="descname">updateExpectations</code><span class="sig-paren">(</span><em>dirichletVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.updateExpectations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.updateExpectations" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">updateExpectations</code><span class="sig-paren">(</span><em class="sig-param">dirichletVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.updateExpectations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.updateExpectations" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="model.BPV.BPV.updateModel">
-<code class="descname">updateModel</code><span class="sig-paren">(</span><em>delta</em>, <em>action</em>, <em>stimuli</em>, <em>stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.updateModel" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</li>
-<li><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</li>
-<li><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</li>
+<code class="sig-name descname">updateModel</code><span class="sig-paren">(</span><em class="sig-param">delta</em>, <em class="sig-param">action</em>, <em class="sig-param">stimuli</em>, <em class="sig-param">stimuliFilter</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/model/BPV.html#BPV.updateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#model.BPV.BPV.updateModel" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delta</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – The difference between the reward and the expected reward</p></li>
+<li><p><strong>action</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – The action chosen by the model in this trialstep</p></li>
+<li><p><strong>stimuli</strong> (<em>list of float</em>) – The weights of the different stimuli in this trialstep</p></li>
+<li><p><strong>stimuliFilter</strong> (<em>list of bool</em>) – A list describing if a stimulus cue is present in this trialstep</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -274,17 +267,15 @@ accessed later</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -310,7 +301,7 @@ accessed later</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

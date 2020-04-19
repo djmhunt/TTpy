@@ -1,27 +1,25 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>fitAlgs.evolutionary module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="fitAlgs.fitAlg module" href="fitAlgs.fitAlg.html" />
-    <link rel="prev" title="scalarBound" href="api/fitAlgs.boundFunc.scalarBound.html" /> 
+    <link rel="prev" title="fitAlgs.boundFunc module" href="fitAlgs.boundFunc.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -36,7 +34,7 @@
           <a href="fitAlgs.fitAlg.html" title="fitAlgs.fitAlg module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.boundFunc.scalarBound.html" title="scalarBound"
+          <a href="fitAlgs.boundFunc.html" title="fitAlgs.boundFunc module"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" accesskey="U">fitAlgs package</a> &#187;</li> 
@@ -50,152 +48,131 @@
             
   <div class="section" id="module-fitAlgs.evolutionary">
 <span id="fitalgs-evolutionary-module"></span><h1>fitAlgs.evolutionary module<a class="headerlink" href="#module-fitAlgs.evolutionary" title="Permalink to this headline">¶</a></h1>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Dominic Hunt</p>
+</dd>
+</dl>
 <dl class="class">
 <dt id="fitAlgs.evolutionary.Evolutionary">
-<em class="property">class </em><code class="descclassname">fitAlgs.evolutionary.</code><code class="descname">Evolutionary</code><span class="sig-paren">(</span><em>strategy=None</em>, <em>polish=False</em>, <em>population_size=20</em>, <em>tolerance=0.01</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">fitAlgs.evolutionary.</code><code class="sig-name descname">Evolutionary</code><span class="sig-paren">(</span><em class="sig-param">strategy=None</em>, <em class="sig-param">polish=False</em>, <em class="sig-param">population_size=20</em>, <em class="sig-param">tolerance=0.01</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></p>
 <p>The class for fitting data using scipy.optimise.differential_evolution</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>fit_sim</strong> (<em>fitAlgs.fitSims.FitSim instance</em><em>, </em><em>optional</em>) – An instance of one of the fitting simulation methods. Default <code class="docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></li>
-<li><strong>fit_measure</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
-The value it returns provides the fitter with its fitting guide. Default <code class="docutils literal notranslate"><span class="pre">-loge</span></code></li>
-<li><strong>fit_measure_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fit_measure and extra_fit_measures. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>extra_fit_measures</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
-measures should be placed in fit_measure_args. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></li>
-<li><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit_sim</strong> (<em>fitAlgs.fitSims.FitSim instance</em><em>, </em><em>optional</em>) – An instance of one of the fitting simulation methods. Default <code class="docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></p></li>
+<li><p><strong>fit_measure</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the function used to calculate the quality of the fit.
+The value it returns provides the fitter with its fitting guide. Default <code class="docutils literal notranslate"><span class="pre">-loge</span></code></p></li>
+<li><p><strong>fit_measure_args</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters used to initialise fit_measure and extra_fit_measures. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>extra_fit_measures</strong> (<em>list of strings</em><em>, </em><em>optional</em>) – List of fit measures not used to fit the model, but to provide more information. Any arguments needed for these
+measures should be placed in fit_measure_args. Default <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><strong>bounds</strong> (<em>dictionary of tuples of length two with floats</em><em>, </em><em>optional</em>) – The boundaries for methods that use bounds. If unbounded methods are
 specified then the bounds will be ignored. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which
-translates to boundaries of (0, np.inf) for each parameter.</li>
-<li><strong>boundary_excess_cost</strong> (<em>basestring</em><em> or </em><em>callable returning a function</em><em>, </em><em>optional</em>) – The function is used to calculate the penalty for exceeding the boundaries.
-Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound()</span></code></li>
-<li><strong>boundary_excess_cost_properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters for the boundary_excess_cost function. Default {}</li>
-<li><strong>strategy</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting strategy or list of names of fitting strategies or
+translates to boundaries of (0, np.inf) for each parameter.</p></li>
+<li><p><strong>boundary_excess_cost</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> or </em><em>callable returning a function</em><em>, </em><em>optional</em>) – The function is used to calculate the penalty for exceeding the boundaries.
+Default is <code class="docutils literal notranslate"><span class="pre">boundFunc.scalarBound()</span></code></p></li>
+<li><p><strong>boundary_excess_cost_properties</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a><em>, </em><em>optional</em>) – The parameters for the boundary_excess_cost function. Default {}</p></li>
+<li><p><strong>strategy</strong> (<em>string</em><em> or </em><em>list of strings</em><em>, </em><em>optional</em>) – The name of the fitting strategy or list of names of fitting strategies or
 name of a list of fitting strategies. Valid names found in the notes.
-Default <code class="docutils literal notranslate"><span class="pre">best1bin</span></code></li>
-<li><strong>polish</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If True (default), then scipy.optimize.minimize with the <code class="docutils literal notranslate"><span class="pre">L-BFGS-B</span></code>
+Default <code class="docutils literal notranslate"><span class="pre">best1bin</span></code></p></li>
+<li><p><strong>polish</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a><em>, </em><em>optional</em>) – If True (default), then scipy.optimize.minimize with the <code class="docutils literal notranslate"><span class="pre">L-BFGS-B</span></code>
 method is used to polish the best population member at the end, which
-can improve the minimization slightly. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></li>
-<li><strong>population_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – A multiplier for setting the total population size. The population has
-popsize * len(x) individuals. Default 20</li>
-<li><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – When the mean of the population energies, multiplied by tol, divided by
+can improve the minimization slightly. Default <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><strong>population_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – A multiplier for setting the total population size. The population has
+popsize * len(x) individuals. Default 20</p></li>
+<li><p><strong>tolerance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – When the mean of the population energies, multiplied by tol, divided by
 the standard deviation of the population energies is greater than 1 the
 solving process terminates: convergence = mean(pop) * tol / stdev(pop) &gt; 1
-Default 0.01</li>
+Default 0.01</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="fitAlgs.evolutionary.Evolutionary.Name">
-<code class="descname">Name</code><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.Name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Name</code><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.Name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name of the fitting strategies</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">string</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="fitAlgs.evolutionary.Evolutionary.strategySet">
-<code class="descname">strategySet</code><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.strategySet" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">strategySet</code><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.strategySet" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of valid fitting strategies.
 Currently these are: ‘best1bin’, ‘best1exp’, ‘rand1exp’,
 ‘randtobest1exp’, ‘best2exp’, ‘rand2exp’, ‘randtobest1bin’,
 ‘best2bin’, ‘rand2bin’, ‘rand1bin’
 For all strategies, use ‘all’</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)">list</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></dt>
-<dd>The general fitting strategy class, from which this one inherits</dd>
-<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim" title="fitAlgs.fitSims.FitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></a></dt>
-<dd>The general class for seeing how a parameter combination perform</dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.differential_evolution</span></code></dt>
-<dd>The fitting method this wraps around</dd>
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="fitAlgs.fitAlg.html#fitAlgs.fitAlg.FitAlg" title="fitAlgs.fitAlg.FitAlg"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.FitAlg</span></code></a></dt><dd><p>The general fitting strategy class, from which this one inherits</p>
+</dd>
+<dt><a class="reference internal" href="fitAlgs.fitSims.html#fitAlgs.fitSims.FitSim" title="fitAlgs.fitSims.FitSim"><code class="xref py py-class docutils literal notranslate"><span class="pre">fitAlgs.fitSims.FitSim</span></code></a></dt><dd><p>The general class for seeing how a parameter combination perform</p>
+</dd>
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">scipy.optimise.differential_evolution</span></code></dt><dd><p>The fitting method this wraps around</p>
+</dd>
 </dl>
 </div>
 <dl class="method">
 <dt id="fitAlgs.evolutionary.Evolutionary.callback">
-<code class="descname">callback</code><span class="sig-paren">(</span><em>xk</em>, <em>convergence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.callback" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">callback</code><span class="sig-paren">(</span><em class="sig-param">xk</em>, <em class="sig-param">convergence</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary.callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for storing the state after each stage of fitting</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>xk</strong> (<em>coordinates of best fit</em>) – </li>
-<li><strong>convergence</strong> (<em>the proportion of the points from the iteration that have converged</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xk</strong> (<em>coordinates of best fit</em>) – </p></li>
+<li><p><strong>convergence</strong> (<em>the proportion of the points from the iteration that have converged</em>) – </p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="fitAlgs.evolutionary.Evolutionary.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>simulator</em>, <em>model_parameter_names</em>, <em>model_initial_parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">simulator</em>, <em class="sig-param">model_parameter_names</em>, <em class="sig-param">model_initial_parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/evolutionary.html#Evolutionary.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs the model through the fitting algorithms and starting parameters
 and returns the best one.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>simulator</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
-given model parameters. One example is fitAlgs.fitSim.fitness</li>
-<li><strong>model_parameter_names</strong> (<em>list of strings</em>) – The list of initial parameter names</li>
-<li><strong>model_initial_parameters</strong> (<em>list of floats</em>) – The list of the initial parameters</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simulator</strong> (<em>function</em>) – The function used by a fitting algorithm to generate a fit for
+given model parameters. One example is fitAlgs.fitSim.fitness</p></li>
+<li><p><strong>model_parameter_names</strong> (<em>list of strings</em>) – The list of initial parameter names</p></li>
+<li><p><strong>model_initial_parameters</strong> (<em>list of floats</em>) – The list of the initial parameters</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>best_fit_parameters</strong> (<em>list of floats</em>) – The best fitting parameters</li>
-<li><strong>fit_quality</strong> (<em>float</em>) – The quality of the fit as defined by the quality function chosen.</li>
-<li><strong>testedParams</strong> (<em>tuple of two lists and a dictionary</em>) – The two lists are a list containing the parameter values tested, in the order they were tested, and the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>best_fit_parameters</strong> (<em>list of floats</em>) – The best fitting parameters</p></li>
+<li><p><strong>fit_quality</strong> (<em>float</em>) – The quality of the fit as defined by the quality function chosen.</p></li>
+<li><p><strong>testedParams</strong> (<em>tuple of two lists and a dictionary</em>) – The two lists are a list containing the parameter values tested, in the order they were tested, and the
 fit qualities of these parameters. The dictionary contains the parameters and convergence values from each
-iteration, stored in two lists.</li>
+iteration, stored in two lists.</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitness()</span></code></p>
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">fitAlgs.fitAlg.fitness()</span></code></p>
 </div>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="fitAlgs.evolutionary.Evolutionary.validStrategySet">
-<code class="descname">validStrategySet</code><em class="property"> = [u'best1bin', u'best1exp', u'rand1exp', u'randtobest1exp', u'best2exp', u'rand2exp', u'randtobest1bin', u'best2bin', u'rand2bin', u'rand1bin']</em><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.validStrategySet" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">validStrategySet</code><em class="property"> = ['best1bin', 'best1exp', 'rand1exp', 'randtobest1exp', 'best2exp', 'rand2exp', 'randtobest1bin', 'best2bin', 'rand2bin', 'rand1bin']</em><a class="headerlink" href="#fitAlgs.evolutionary.Evolutionary.validStrategySet" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -209,8 +186,8 @@ iteration, stored in two lists.</li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api/fitAlgs.boundFunc.scalarBound.html"
-                        title="previous chapter">scalarBound</a></p>
+  <p class="topless"><a href="fitAlgs.boundFunc.html"
+                        title="previous chapter">fitAlgs.boundFunc module</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="fitAlgs.fitAlg.html"
                         title="next chapter">fitAlgs.fitAlg module</a></p>
@@ -222,17 +199,15 @@ iteration, stored in two lists.</li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -250,7 +225,7 @@ iteration, stored in two lists.</li>
           <a href="fitAlgs.fitAlg.html" title="fitAlgs.fitAlg module"
              >next</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.boundFunc.scalarBound.html" title="scalarBound"
+          <a href="fitAlgs.boundFunc.html" title="fitAlgs.boundFunc module"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">pyHPDM 0.9.9 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="fitAlgs.html" >fitAlgs package</a> &#187;</li> 
@@ -258,7 +233,7 @@ iteration, stored in two lists.</li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

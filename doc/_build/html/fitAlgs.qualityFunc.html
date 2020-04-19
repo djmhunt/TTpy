@@ -1,26 +1,24 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>fitAlgs.qualityFunc module &#8212; pyHPDM 0.9.9 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="BIC2" href="api/fitAlgs.qualityFunc.BIC2.html" />
+    <link rel="next" title="outputting module" href="outputting.html" />
     <link rel="prev" title="fitAlgs.minimize module" href="fitAlgs.minimize.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -33,7 +31,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.qualityFunc.BIC2.html" title="BIC2"
+          <a href="outputting.html" title="outputting module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="fitAlgs.minimize.html" title="fitAlgs.minimize module"
@@ -50,282 +48,180 @@
             
   <div class="section" id="fitalgs-qualityfunc-module">
 <h1>fitAlgs.qualityFunc module<a class="headerlink" href="#fitalgs-qualityfunc-module" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>fitAlgs.qualityFunc Module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-fitAlgs.qualityFunc"></span><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.BIC2" title="fitAlgs.qualityFunc.BIC2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BIC2</span></code></a>(**kwargs)</td>
-<td>Generates a function that calculates the Bayesian Information Criterion (BIC)</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.BIC2norm" title="fitAlgs.qualityFunc.BIC2norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BIC2norm</span></code></a>(**kwargs)</td>
-<td><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">param numParams:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">The number of parameters used by the model used for the fits process. Default 2</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.BIC2normBoot" title="fitAlgs.qualityFunc.BIC2normBoot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BIC2normBoot</span></code></a>(**kwargs)</td>
-<td>An attempt at looking what would happen if the samples were resampled.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.WBIC2" title="fitAlgs.qualityFunc.WBIC2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WBIC2</span></code></a>(**kwargs)</td>
-<td>Unfinished WBIC implementation</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.bayesFactor" title="fitAlgs.qualityFunc.bayesFactor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bayesFactor</span></code></a>(**kwargs)</td>
-<td>:math:<a href="#id2"><span class="problematic" id="id3">`</span></a>2^{</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.bayesInv" title="fitAlgs.qualityFunc.bayesInv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bayesInv</span></code></a>(**kwargs)</td>
-<td><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">param numParams:</th></tr>
-<tr class="field-odd field"><td>&#160;</td><td class="field-body">The number of parameters used by the model used for the fitters process. Default 2</td>
-</tr>
-</tbody>
-</table>
-</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.bayesRand" title="fitAlgs.qualityFunc.bayesRand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bayesRand</span></code></a>(**kwargs)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.logAverageProb" title="fitAlgs.qualityFunc.logAverageProb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logAverageProb</span></code></a>(modVals)</td>
-<td>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum -2\mathrm{log}_2(\vec x)\)</span></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.logeprob" title="fitAlgs.qualityFunc.logeprob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logeprob</span></code></a>(modVals)</td>
-<td>Generates a fit quality value based on :math:<a href="#id4"><span class="problematic" id="id5">`</span></a>f_{mathrm{mod}}left(vec x</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.logprob" title="fitAlgs.qualityFunc.logprob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logprob</span></code></a>(modVals)</td>
-<td>Generates a fit quality value based on :math:<a href="#id6"><span class="problematic" id="id7">`</span></a>f_{mathrm{mod}}left(vec x</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.maxprob" title="fitAlgs.qualityFunc.maxprob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maxprob</span></code></a>(modVals)</td>
-<td>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum 1-{\vec x}\)</span></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.qualFuncIdent" title="fitAlgs.qualityFunc.qualFuncIdent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qualFuncIdent</span></code></a>(value,&nbsp;**kwargs)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#fitAlgs.qualityFunc.r2" title="fitAlgs.qualityFunc.r2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">r2</span></code></a>(**kwargs)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#fitAlgs.qualityFunc.simpleSum" title="fitAlgs.qualityFunc.simpleSum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simpleSum</span></code></a>(modVals)</td>
-<td>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum {\vec x}\)</span></td>
-</tr>
-</tbody>
-</table>
-<span class="target" id="module-fitAlgs.qualityFunc"></span><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Dominic Hunt</td>
-</tr>
-</tbody>
-</table>
+<span class="target" id="module-fitAlgs.qualityFunc"></span><dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Dominic Hunt</p>
+</dd>
+</dl>
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.BIC2">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">BIC2</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>Generates a function that calculates the Bayesian Information Criterion (BIC)</p>
-<p>:math:<a href="#id8"><span class="problematic" id="id9">`</span></a>lambda mathrm{log}_2(T)+ f_{mathrm{mod}}left(vec x</p>
-</div></blockquote>
-<p>ight)`</p>
-<blockquote>
-<div>kwargs</div></blockquote>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">BIC2</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a function that calculates the Bayesian Information Criterion (BIC)</p>
+<p><span class="math notranslate nohighlight">\(\lambda \mathrm{log}_2(T)+ f_{\mathrm{mod}}\left(\\vec x\right)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.BIC2norm">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">BIC2norm</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2norm" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fits process. Default 2</li>
-<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
-<li><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
-specified for each trial if the number of action choices varies between trials. Default 2</li>
-<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></li>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">BIC2norm</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2norm" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fits process. Default 2</p></li>
+<li><p><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</p></li>
+<li><p><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
+specified for each trial if the number of action choices varies between trials. Default 2</p></li>
+<li><p><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.BIC2normBoot">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">BIC2normBoot</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2normBoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2normBoot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">BIC2normBoot</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#BIC2normBoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.BIC2normBoot" title="Permalink to this definition">¶</a></dt>
 <dd><p>An attempt at looking what would happen if the samples were resampled. It was hoped that by doing this, the
 difference between different sample distributions would become more pronounced. This was not found to be true.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fits process. Default 2</li>
-<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
-<li><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
-specified for each trial if the number of action choices varies between trials. Default 2</li>
-<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></li>
-<li><strong>numSamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples that will be randomly resampled from <code class="docutils literal notranslate"><span class="pre">modVals</span></code>. Default 100</li>
-<li><strong>sampleLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The length of the random sample. Default 1</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fits process. Default 2</p></li>
+<li><p><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</p></li>
+<li><p><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
+specified for each trial if the number of action choices varies between trials. Default 2</p></li>
+<li><p><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></p></li>
+<li><p><strong>numSamples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples that will be randomly resampled from <code class="docutils literal notranslate"><span class="pre">modVals</span></code>. Default 100</p></li>
+<li><p><strong>sampleLen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The length of the random sample. Default 1</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.WBIC2">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">WBIC2</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#WBIC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.WBIC2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">WBIC2</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#WBIC2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.WBIC2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unfinished WBIC implementation</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.bayesFactor">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">bayesFactor</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesFactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesFactor" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>:math:<a href="#id10"><span class="problematic" id="id11">`</span></a>2^{</div></blockquote>
-<p>rac{x}{2}}`</p>
-<blockquote>
-<div>kwargs</div></blockquote>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">bayesFactor</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesFactor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesFactor" title="Permalink to this definition">¶</a></dt>
+<dd><p><span class="math notranslate nohighlight">\(2^{\frac{x}{2}}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.bayesInv">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">bayesInv</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesInv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesInv" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitters process. Default 2</li>
-<li><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</li>
-<li><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
-specified for each trial if the number of action choices varies between trials. Default 2</li>
-<li><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
-of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></li>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">bayesInv</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesInv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesInv" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numParams</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em>, </em><em>optional</em>) – The number of parameters used by the model used for the fitters process. Default 2</p></li>
+<li><p><strong>qualityThreshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em>, </em><em>optional</em>) – The BIC minimum fit quality criterion used for determining if a fit is valid. Default 20.0</p></li>
+<li><p><strong>number_actions</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a><em> or </em><em>list of ints the length of the number of trials being fitted</em><em>, </em><em>optional</em>) – The number of actions the participant can choose between for each trialstep of the task. May need to be
+specified for each trial if the number of action choices varies between trials. Default 2</p></li>
+<li><p><strong>randActProb</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a><em> or </em><em>list of floats the length of the number of trials being fitted. Optional</em>) – The prior probability of an action being randomly chosen. May need to be specified for each trial if the number
+of action choices varies between trials. Default <code class="docutils literal notranslate"><span class="pre">1/number_actions</span></code></p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.bayesRand">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">bayesRand</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesRand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesRand" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">bayesRand</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#bayesRand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.bayesRand" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.logAverageProb">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">logAverageProb</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logAverageProb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logAverageProb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum -2\mathrm{log}_2(\vec x)\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></td>
-</tr>
-</tbody>
-</table>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">logAverageProb</code><span class="sig-paren">(</span><em class="sig-param">modVals: Union[ndarray, list]</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logAverageProb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logAverageProb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum -2\mathrm{log}_2(\\vec x)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>fit</strong> – The sum of the model values returned</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.logeprob">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">logeprob</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logeprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logeprob" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Generates a fit quality value based on :math:<a href="#id12"><span class="problematic" id="id13">`</span></a>f_{mathrm{mod}}left(vec x</div></blockquote>
-<p>ight) = sum -mathrm{log}_e(vec x)`</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>fit <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The sum of the model values returned</dd>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">logeprob</code><span class="sig-paren">(</span><em class="sig-param">modVals: Union[ndarray, list]</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logeprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logeprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(f_{\mathrm{mod}}\left(\\vec x\right) = \sum -\mathrm{log}_e(\\vec x)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>fit</strong> – The sum of the model values returned</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.logprob">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">logprob</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logprob" title="Permalink to this definition">¶</a></dt>
-<dd><blockquote>
-<div>Generates a fit quality value based on :math:<a href="#id14"><span class="problematic" id="id15">`</span></a>f_{mathrm{mod}}left(vec x</div></blockquote>
-<p>ight) = sum -2mathrm{log}_2(vec x)`</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>fit <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>The sum of the model values returned</dd>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">logprob</code><span class="sig-paren">(</span><em class="sig-param">modVals: Union[ndarray, list]</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.logprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(f_{\mathrm{mod}}\left(\\vec x\right) = \sum -2\mathrm{log}_2(\\vec x)\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>fit</strong> – The sum of the model values returned</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.maxprob">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">maxprob</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.maxprob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum 1-{\vec x}\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></td>
-</tr>
-</tbody>
-</table>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">maxprob</code><span class="sig-paren">(</span><em class="sig-param">modVals: Union[ndarray, list]</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#maxprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.maxprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum 1-{\\vec x}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>fit</strong> – The sum of the model values returned</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.qualFuncIdent">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">qualFuncIdent</code><span class="sig-paren">(</span><em>value</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#qualFuncIdent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.qualFuncIdent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">qualFuncIdent</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#qualFuncIdent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.qualFuncIdent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.r2">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">r2</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.r2" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">r2</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#r2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.r2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="fitAlgs.qualityFunc.simpleSum">
-<code class="descclassname">fitAlgs.qualityFunc.</code><code class="descname">simpleSum</code><span class="sig-paren">(</span><em>modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#simpleSum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.simpleSum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum {\vec x}\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>fit</strong> – The sum of the model values returned</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></td>
-</tr>
-</tbody>
-</table>
+<code class="sig-prename descclassname">fitAlgs.qualityFunc.</code><code class="sig-name descname">simpleSum</code><span class="sig-paren">(</span><em class="sig-param">modVals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/fitAlgs/qualityFunc.html#simpleSum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fitAlgs.qualityFunc.simpleSum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a fit quality value based on <span class="math notranslate nohighlight">\(\sum {\\vec x}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>fit</strong> – The sum of the model values returned</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)">float</a></p>
+</dd>
+</dl>
 </dd></dl>
 
-</div>
-</div>
 </div>
 
 
@@ -334,23 +230,12 @@ of action choices varies between trials. Default <code class="docutils literal n
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">fitAlgs.qualityFunc module</a><ul>
-<li><a class="reference internal" href="#id1">fitAlgs.qualityFunc Module</a><ul>
-<li><a class="reference internal" href="#functions">Functions</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
   <p class="topless"><a href="fitAlgs.minimize.html"
                         title="previous chapter">fitAlgs.minimize module</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api/fitAlgs.qualityFunc.BIC2.html"
-                        title="next chapter">BIC2</a></p>
+  <p class="topless"><a href="outputting.html"
+                        title="next chapter">outputting module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -359,17 +244,15 @@ of action choices varies between trials. Default <code class="docutils literal n
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -384,7 +267,7 @@ of action choices varies between trials. Default <code class="docutils literal n
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/fitAlgs.qualityFunc.BIC2.html" title="BIC2"
+          <a href="outputting.html" title="outputting module"
              >next</a> |</li>
         <li class="right" >
           <a href="fitAlgs.minimize.html" title="fitAlgs.minimize module"
@@ -395,7 +278,7 @@ of action choices varies between trials. Default <code class="docutils literal n
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2014-2020, Dominic Hunt.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

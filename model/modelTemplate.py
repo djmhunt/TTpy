@@ -40,7 +40,7 @@ class Stimulus(object):
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
@@ -89,7 +89,7 @@ class Rewards(object):
 
     def details(self):
 
-        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k is not "Name"]
+        properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
         desc = self.Name + " with " + ", ".join(properties)
 
         return desc
@@ -196,7 +196,7 @@ class Model(object):
         self.Name = self.get_name()
         
         self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
-        for k, v in self.pattern_parameters.iteritems():
+        for k, v in self.pattern_parameters.items():
             setattr(self, k, v)
 
         self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)

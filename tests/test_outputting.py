@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 import os
 import itertools
+import logging
 
 import collections
 import outputting
@@ -22,36 +23,127 @@ def output_folder(tmpdir_factory):
 
 #%% For saving
 class TestClass_saving:
-    def test_S_none(self, capsys):
+    def test_S_none(self, caplog):
+        caplog.set_level(logging.INFO)
 
         with outputting.Saving() as saving:
-            captured = capsys.readouterr()
-            standard_captured = [c[6:] for c in captured[0].splitlines()]
-            error_captured = captured[1]
+            captured = caplog.records.copy()
             assert saving is None
 
-        correct = ['Setup        INFO     {}'.format(outputting.date()),
-                   'Setup        INFO     Log initialised',
-                   'Framework    INFO     Beginning task labelled: Untitled']
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
 
-        for correct_line, standard_captured_line in zip(correct, standard_captured):
+        captured_loggers = [k.name for k in captured]
+        correct_loggers = ['Setup', 'Setup', 'Framework']
+        for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
+            assert capt == corr
+
+        standard_captured = [k.message for k in captured]
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised',
+                   'Beginning task labelled: Untitled']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
-    def test_S_close(self, capsys):
+    def test_S_close(self, caplog):
+        caplog.set_level(logging.INFO)
 
         with outputting.Saving() as saving:
             assert saving is None
 
-        captured = capsys.readouterr()
-        standard_captured = [c[6:] for c in captured[0].splitlines()]
-        error_captured = captured[1]
+        captured = caplog.records
 
-        correct = ['Setup        INFO     {}'.format(outputting.date()),
-                   'Setup        INFO     Log initialised',
-                   'Framework    INFO     Beginning task labelled: Untitled',
-                   'Setup        INFO     Shutting down program']
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
 
-        for correct_line, standard_captured_line in zip(correct, standard_captured):
+        captured_loggers = [k.name for k in captured]
+        correct_loggers = ['Setup', 'Setup', 'Framework', 'Setup']
+        for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
+            assert capt == corr
+
+        standard_captured = [k.message for k in captured]
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised',
+                   'Beginning task labelled: Untitled',
+                   'Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+    def test_S_config(self, caplog):
+        caplog.set_level(logging.INFO)
+        config = {'label': None,
+                  'config_file': None,
+                  'output_path': None,
+                  'pickle': False,
+                  'min_log_level': 'INFO',
+                  'numpy_error_level': 'log'}
+
+        with outputting.Saving(config=config) as saving:
+            assert saving is None
+
+        captured = caplog.records
+
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
+
+        captured_loggers = [k.name for k in captured]
+        correct_loggers = ['Setup', 'Setup', 'Framework', 'Setup']
+        for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
+            assert capt == corr
+
+        standard_captured = [k.message for k in captured]
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised',
+                   'Beginning task labelled: Untitled',
+                   'Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+    def test_S_label(self, caplog, tmpdir):
+        caplog.set_level(logging.INFO)
+
+        label = 'label'
+        current_date = outputting.date()
+        path_str = str(tmpdir)
+        path_clean = path_str.replace('\\', '/')
+        log_path = '{}/Outputs/{}_{}/log.txt'.format(path_clean, label, current_date)
+
+        config = {'label': label,
+                  'config_file': None,
+                  'output_path': path_str,
+                  'pickle': False,
+                  'min_log_level': 'INFO',
+                  'numpy_error_level': 'log'}
+
+        with outputting.Saving(config=config) as saving:
+            assert callable(saving)
+
+        captured = caplog.records
+
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
+
+        captured_loggers = [k.name for k in captured]
+        correct_loggers = ['Setup', 'Setup', 'Setup', 'Framework', 'Setup']
+        for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
+            assert capt == corr
+
+        standard_captured = [k.message for k in captured]
+        correct = ['{}'.format(current_date),
+                   'Log initialised',
+                   'The log you are reading was written to {}'.format(log_path),
+                   'Beginning task labelled: {}'.format(label),
+                   'Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
+        with open(log_path) as log:
+            cleaned_log = [l[37:].strip() for l in log.readlines()]
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, cleaned_log):
             assert standard_captured_line == correct_line
 
 
@@ -142,58 +234,74 @@ class TestClass_fileNameGenerator:
 
 #%% For fancy_logger
 class TestClass_fancy_logger:
-    def test_FL_none(self, capsys):
+    def test_FL_none(self, caplog):
+        caplog.set_level(logging.INFO)
+
         close_loggers = outputting.fancy_logger()
 
-        captured = capsys.readouterr()
-        standard_captured = [c[6:] for c in captured[0].splitlines()]
-        error_captured = captured[1]
+        captured = caplog.records
+        standard_captured = [k.message for k in captured]
 
-        correct = ['Setup        INFO     {}'.format(outputting.date()),
-                   'Setup        INFO     Log initialised']
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
 
-        for correct_line, standard_captured_line in zip(correct, standard_captured):
+        for logger in [k.name for k in captured]:
+            assert logger == 'Setup'
+
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
         close_loggers()
 
-    def test_FL_file(self, capsys, tmpdir):
+    def test_FL_file(self, caplog, tmpdir):
+        caplog.set_level(logging.INFO)
+
         path_str = str(tmpdir).replace('\\', '/')
         log_path = '{}/log.txt'.format(path_str)
+
         close_loggers = outputting.fancy_logger(log_file=log_path)
 
-        captured = capsys.readouterr()
-        standard_captured = [c[6:] for c in captured[0].splitlines()]
-        error_captured = captured[1]
+        captured = caplog.records
+        standard_captured = [k.message for k in captured]
 
         date = outputting.date()
 
-        correct = ['Setup        INFO     {}'.format(date),
-                   'Setup        INFO     Log initialised',
-                   'Setup        INFO     The log you are reading was written to {}'.format(log_path)]
+        correct = ['{}'.format(date),
+                   'Log initialised',
+                   'The log you are reading was written to {}'.format(log_path)]
 
-        for correct_line, standard_captured_line in zip(correct, standard_captured):
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
         with open(log_path) as log:
-            cleaned_log = [l[15:].strip() for l in log.readlines()]
-        for correct_line, standard_captured_line in zip(correct, cleaned_log):
+            cleaned_log = [l[37:].strip() for l in log.readlines()]
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, cleaned_log):
             assert standard_captured_line == correct_line
 
         close_loggers()
 
-    def test_FL_close(self, capsys):
+    def test_FL_close(self, caplog):
+        caplog.set_level(logging.INFO)
+
         close_loggers = outputting.fancy_logger()
         close_loggers()
 
-        captured = capsys.readouterr()
-        standard_captured = [c[6:] for c in captured[0].splitlines()]
-        error_captured = captured[1]
+        captured = caplog.records
+        standard_captured = [k.message for k in captured]
 
-        correct = ['Setup        INFO     {}'.format(outputting.date()),
-                   'Setup        INFO     Log initialised',
-                   'Setup        INFO     Shutting down program']
+        for level in [k.levelname for k in captured]:
+            assert level == 'INFO'
 
-        for correct_line, standard_captured_line in zip(correct, standard_captured):
+        for logger in [k.name for k in captured]:
+            assert logger == 'Setup'
+
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised',
+                   'Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
 

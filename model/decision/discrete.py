@@ -47,9 +47,9 @@ def weightProb(task_responses=(0, 1)):
     (2, OrderedDict([(0, 0.4), (1, 0), (2, 0.6), (3, 0)]))
     >>> d = weightProb(["A", "B", "C"])
     >>> d([0.2, 0.3, 0.5], trial_responses=["A", "B"])
-    (u'B', OrderedDict([(u'A', 0.4), (u'B', 0.6), (u'C', 0)]))
+    ('B', OrderedDict([('A', 0.4), ('B', 0.6), ('C', 0)]))
     >>> d([0.2, 0.3, 0.5], trial_responses=[])
-    (None, OrderedDict([(u'A', 0.2), (u'B', 0.3), (u'C', 0.5)]))
+    (None, OrderedDict([('A', 0.2), ('B', 0.3), ('C', 0.5)]))
     """
 
     def decision_function(probabilities, last_action=None, trial_responses=None):

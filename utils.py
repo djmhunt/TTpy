@@ -63,7 +63,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
         The uninstansiated class sought
     """
     folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(class_folder)
-    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] is not '_']
+    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] != '_']
     if excluded_files:
         potential_files_filtered = [f for f in potential_files if f not in excluded_files]
     else:
@@ -121,7 +121,7 @@ def find_function(function_name, function_folder, excluded_files=None):
         The uninstansiated class sought
     """
     folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(function_folder)
-    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] is not '_']
+    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] != '_']
     if excluded_files:
         potential_files_filtered = [f for f in potential_files if f not in excluded_files]
     else:
@@ -413,7 +413,7 @@ def mergeDatasets(data, extend=False):
     for key in keySet:
         for d in data:
             dv = d.get(key, None)
-            if extend and isinstance(dv, collections.Iterable) and not isinstance(dv, str):
+            if extend and isinstance(dv, collections.abc.Iterable) and not isinstance(dv, str):
                 newStore[key].extend(dv)
             else:
                 newStore[key].append(dv)
@@ -541,7 +541,7 @@ def callableDetails(item):
 
     """
     # TODO : clean up this and the functions calling it. This should be unnecessary now
-    if isinstance(item, collections.Callable):
+    if isinstance(item, collections.abc.Callable):
         if hasattr(item, 'Name'):
             name = item.Name
         elif hasattr(item, 'get_name'):

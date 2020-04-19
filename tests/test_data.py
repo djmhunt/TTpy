@@ -139,51 +139,53 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
 def single_files(tmpdir_factory):
 
     folder_name = tmpdir_factory.mktemp("single_data", numbered=False)
+    folder_name_str = str(folder_name).replace('\\', '/')
     file_names = {}
 
-    mat_file_name = folder_name.join(MAT_DATA['dfile'])
-    file_names['mat'] = str(mat_file_name)
-    sp.io.savemat(str(mat_file_name), MAT_DATA)
+    mat_file_name = str(folder_name.join(MAT_DATA['dfile'])).replace('\\', '/')
+    file_names['mat'] = mat_file_name
+    sp.io.savemat(mat_file_name, MAT_DATA)
 
     single_df = pd.DataFrame(SINGLE_DATA).set_index('Trial')
-    csv_file_name = folder_name.join('subj1.csv')
+    csv_file_name = str(folder_name.join('subj1.csv')).replace('\\', '/')
     file_names['csv_single'] = csv_file_name
     single_df.to_csv(csv_file_name)
-    xlsx_file_name = folder_name.join('subj1.xlsx')
+    xlsx_file_name = str(folder_name.join('subj1.xlsx')).replace('\\', '/')
     file_names['xlsx_single'] = xlsx_file_name
     single_df.to_excel(xlsx_file_name)
 
     multi_df = pd.DataFrame(MULTI_DATA).set_index(['subno', 'trialnum'])
-    csv_file_name = folder_name.join('multisubject.csv')
-    file_names['csv_multi'] = str(csv_file_name).split('\\')[-1]
+    csv_file_name = str(folder_name.join('multisubject.csv')).replace('\\', '/')
+    file_names['csv_multi'] = csv_file_name.split('/')[-1]
     multi_df.to_csv(csv_file_name)
-    xlsx_file_name = folder_name.join('multisubject.xlsx')
-    file_names['xlsx_multi'] = str(xlsx_file_name).split('\\')[-1]
+    xlsx_file_name = str(folder_name.join('multisubject.xlsx')).replace('\\', '/')
+    file_names['xlsx_multi'] = xlsx_file_name.split('/')[-1]
     multi_df.to_excel(xlsx_file_name)
 
     pkl_data = SIM_DATA[0]
-    pkl_file_name = folder_name.join('QLearn_modelData_sim-0.pkl')
-    file_names['pkl'] = str(pkl_file_name)
+    pkl_file_name = str(folder_name.join('QLearn_modelData_sim-0.pkl')).replace('\\', '/')
+    file_names['pkl'] = pkl_file_name
     with open(str(pkl_file_name), 'wb') as w:
         pickle.dump(pkl_data, w)
 
-    return str(folder_name), file_names
+    return folder_name_str, file_names
 
 @pytest.fixture(scope="session")
 def multi_files(tmpdir_factory):
     folder_name = tmpdir_factory.mktemp("multi_data", numbered=False)
+    folder_name_str = str(folder_name).replace('\\', '/')
     file_names = {}
 
     mat_file_names = []
     for i, (cumulative_points, subject_choices) in enumerate(zip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
-        file_path = folder_name.join(mat_file_name)
+        file_path = str(folder_name.join(mat_file_name)).replace('\\', '/')
         mat_file_names.append(mat_file_name)
 
         MAT_DATA['cumpts'] = cumulative_points
         MAT_DATA['subchoice'] = subject_choices
-        sp.io.savemat(str(file_path), MAT_DATA)
+        sp.io.savemat(file_path, MAT_DATA)
     file_names['mat'] = mat_file_names
 
     multi_df = pd.DataFrame(MULTI_DATA)
@@ -191,46 +193,46 @@ def multi_files(tmpdir_factory):
     xlsx_file_names = []
     for subj, subj_dat in multi_df.groupby('subno'):
         subj_dat_ind = subj_dat.set_index('trialnum')
-        csv_file_name = folder_name.join('subj{}.csv'.format(subj))
-        csv_file_names.append(str(csv_file_name).split('\\')[-1])
+        csv_file_name = str(folder_name.join('subj{}.csv'.format(subj))).replace('\\', '/')
+        csv_file_names.append(csv_file_name.split('/')[-1])
         subj_dat_ind.to_csv(csv_file_name)
-        xlsx_file_name = folder_name.join('subj{}.xlsx'.format(subj))
-        xlsx_file_names.append(str(xlsx_file_name).split('\\')[-1])
+        xlsx_file_name = str(folder_name.join('subj{}.xlsx'.format(subj))).replace('\\', '/')
+        xlsx_file_names.append(xlsx_file_name.split('/')[-1])
         subj_dat_ind.to_excel(xlsx_file_name)
-    file_names['csv'] = sorted(csv_file_names, key=lambda x: int(x[5:].split('.')[0]))
-    file_names['xlsx'] = sorted(xlsx_file_names, key=lambda x: int(x[5:].split('.')[0]))
+    file_names['csv'] = list(sorted(csv_file_names, key=lambda x: int(x[5:].split('.')[0])))
+    file_names['xlsx'] = list(sorted(xlsx_file_names, key=lambda x: int(x[5:].split('.')[0])))
 
     pkl_file_names = []
     for i, pkl_data in enumerate(SIM_DATA):
-        pkl_file_name = folder_name.join('QLearn_modelData_sim-{}.pkl'.format(i))
-        pkl_file_names.append(str(pkl_file_name).split('\\')[-1])
+        pkl_file_name = str(folder_name.join('QLearn_modelData_sim-{}.pkl'.format(i))).replace('\\', '/')
+        pkl_file_names.append(pkl_file_name.split('/')[-1])
         with open(str(pkl_file_name), 'wb') as w:
             pickle.dump(pkl_data, w)
     file_names['pkl'] = pkl_file_names
 
-    return str(folder_name), file_names
+    return folder_name_str, file_names
 
 
 @pytest.fixture(scope='session')
 def multi_folders(tmpdir_factory):
     folder_grouping = "multi_folder_data"
-    folder_name = tmpdir_factory.mktemp(folder_grouping, numbered=False)
-    folder_name_str = str(folder_name).replace('\\', '/')
 
     file_names = []
+    folder_paths = []
     for i, (cumulative_points, subject_choices) in enumerate(zip(MAT_POINTS_SETS, MAT_CHOICE_SETS)):
         mat_file_name = 'subj{}.mat'.format(i)
         MAT_DATA['dfile'] = mat_file_name
-        folder_path = '{}/subj{}'.format(folder_name_str, i)
-        folder_sub_path = tmpdir_factory.mktemp("{}/subj{}/".format(folder_grouping, i), numbered=False)
-        file_path = '{}/{}'.format(folder_path, mat_file_name)
+        folder_path = tmpdir_factory.mktemp("{}_subj{}/".format(folder_grouping, i), numbered=False)
+        folder_path_str = str(folder_path).replace('\\', '/')
+        file_path = '{}/{}'.format(folder_path_str, mat_file_name)
         file_names.append(mat_file_name)
+        folder_paths.append(folder_path_str)
 
         MAT_DATA['cumpts'] = cumulative_points
         MAT_DATA['subchoice'] = subject_choices
         sp.io.savemat(str(file_path), MAT_DATA)
 
-    return folder_name_str, file_names
+    return folder_paths, file_names
 
 #%% For Data generally
 class TestClass_Data:
@@ -448,9 +450,9 @@ class TestClass_Mat:
         folder_name, file_names = single_files
         dat = data.Data.from_mat(folder=folder_name, participantID='dfile', choices='subchoice', feedbacks='cumpts')
         result = dat[0]
-        correct_result = {'filename': file_names['mat'].split('\\')[-1],
+        correct_result = {'filename': file_names['mat'].split('/')[-1],
                           'participant_ID': 'all',
-                          'folder': folder_name.replace('\\', '/') + '/',
+                          'folder': folder_name + '/',
                           'bonuscrit': 450,
                           'choiceRT': np.array([0, 0, 0]),
                           'cumpts': np.array([7,  9, 11]),
@@ -471,7 +473,7 @@ class TestClass_Mat:
         for result, file_name, points, choices in zip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
-                              'folder': folder_name.replace('\\', '/') + '/',
+                              'folder': folder_name + '/',
                               'bonuscrit': 450,
                               'choiceRT': np.array([0, 0, 0]),
                               'cumpts': np.array(points),
@@ -496,7 +498,7 @@ class TestClass_Mat:
         for result, file_name, points, choices in zip(dat, file_names['mat'], MAT_POINTS_SETS, MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
-                              'folder': folder_name.replace('\\', '/') + '/',
+                              'folder': folder_name + '/',
                               'bonuscrit': 450,
                               'choiceRT': np.array([0, 0, 0]),
                               'cumpts': np.array(points),
@@ -524,18 +526,17 @@ class TestClass_Mat:
 #%% For importing multiple folders into Data
 class TestClass_Folders:
     def test_folders(self, multi_folders):
-        folder_name, file_names = multi_folders
-        dat_folders = ['{}/{}/'.format(folder_name, f[:-4]) for f in file_names]
+        folder_paths, file_names = multi_folders
         dat = data.Data.load_data(file_type='mat',
-                                  folders=dat_folders,
+                                  folders=folder_paths,
                                   participantID='dfile',
                                   choices='subchoice',
                                   feedbacks='cumpts')
-        for result, folder, file_name, points, choices in zip(dat, dat_folders, file_names, MAT_POINTS_SETS,
+        for result, folder, file_name, points, choices in zip(dat, folder_paths, file_names, MAT_POINTS_SETS,
                                                                          MAT_CHOICE_SETS):
             correct_result = {'filename': file_name,
                               'participant_ID': file_name.split('.')[0][-1],
-                              'folder': folder,
+                              'folder': folder + '/',
                               'bonuscrit': 450,
                               'choiceRT': np.array([0, 0, 0]),
                               'cumpts': np.array(points),
@@ -559,7 +560,7 @@ class TestClass_csv:
         correct_result = SINGLE_DATA
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.csv'
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
-        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
         correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
         for key, value in result.items():
@@ -583,7 +584,7 @@ class TestClass_csv:
         correct_result = SINGLE_DATA
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.csv'
         correct_result[data.DATA_KEYWORDS['ID']] = 's1'
-        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
         correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
         for key, value in result.items():
@@ -608,7 +609,7 @@ class TestClass_csv:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["csv_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -638,7 +639,7 @@ class TestClass_csv:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["csv_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -674,7 +675,7 @@ class TestClass_csv:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -704,7 +705,7 @@ class TestClass_xlsx:
         correct_result = SINGLE_DATA
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.xlsx'
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
-        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
         correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
         for key, value in result.items():
@@ -728,7 +729,7 @@ class TestClass_xlsx:
         correct_result = SINGLE_DATA
         correct_result[data.DATA_KEYWORDS['filename']] = 'subj1.xlsx'
         correct_result[data.DATA_KEYWORDS['ID']] = 's1'
-        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
         correct_result['cues_combined'] = [[q1, q2] for q1, q2 in zip(SINGLE_DATA['left_symbol'], SINGLE_DATA['right_symbol'])]
 
         for key, value in result.items():
@@ -753,7 +754,7 @@ class TestClass_xlsx:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["xlsx_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -783,7 +784,7 @@ class TestClass_xlsx:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = file_names["xlsx_multi"]
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -819,7 +820,7 @@ class TestClass_xlsx:
             correct_result = {k: v[loc * 9:loc * 9 + 9] for k, v in MULTI_DATA.items()}
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['subno'][0]
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
             correct_result['cues_combined'] = [[q1, q2, q3, q4] for q1, q2, q3, q4 in
                                                zip(correct_result['cue1'],
                                                               correct_result['cue2'],
@@ -849,7 +850,7 @@ class TestClass_pkl:
         correct_result = SIM_DATA[0]
         correct_result[data.DATA_KEYWORDS['filename']] = 'QLearn_modelData_sim-0.pkl'
         correct_result[data.DATA_KEYWORDS['ID']] = 'all'
-        correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+        correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
 
         for key, value in result.items():
             if isinstance(value, (list, np.ndarray)):
@@ -874,7 +875,7 @@ class TestClass_pkl:
         for f, result, correct_result in zip(file_names["pkl"], dat, SIM_DATA):
             correct_result[data.DATA_KEYWORDS['filename']] = f
             correct_result[data.DATA_KEYWORDS['ID']] = correct_result['simID']
-            correct_result[data.DATA_KEYWORDS['folder']] = folder_name.replace('\\', '/') + '/'
+            correct_result[data.DATA_KEYWORDS['folder']] = folder_name + '/'
 
             for key, value in result.items():
                 if isinstance(value, (list, np.ndarray)):
