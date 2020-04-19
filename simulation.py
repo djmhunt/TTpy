@@ -155,12 +155,12 @@ def record_simulation(file_name_generator, task_data, model_data, simID, pickle=
     logger = logging.getLogger('Framework')
 
     message = "Beginning simulation output processing"
-    logger.info(message)
+    logger.debug(message)
 
     label = "_sim-" + simID
 
     message = "Store data for simulation " + simID
-    logger.info(message)
+    logger.debug(message)
 
     csv_model_simulation(model_data, simID, file_name_generator)
 
