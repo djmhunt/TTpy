@@ -321,14 +321,12 @@ def folder_path_cleaning(folder):
 
 
 #%% Logging
-def fancy_logger(log_file=None, log_level=logging.INFO, numpy_error_level='log'):
+def fancy_logger(log_file=None, log_level=logging.DEBUG, numpy_error_level='log'):
     """
     Sets up the style of logging for all the simulations
 
     Parameters
     ----------
-    date_string : str
-        The date the log will start at
     log_file : string, optional
         Provides the path the log will be written to. Default "./log.txt"
     log_level : {logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL}
@@ -360,6 +358,8 @@ def fancy_logger(log_file=None, log_level=logging.INFO, numpy_error_level='log')
         file_format = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s', datefmt='%y-%m-%d %H:%M')
         file_handler.setFormatter(file_format)
         core_logger.addHandler(file_handler)
+    else:
+        file_handler = None
 
     logging.captureWarnings(True)
 
@@ -382,13 +382,15 @@ def fancy_logger(log_file=None, log_level=logging.INFO, numpy_error_level='log')
         message = "Shutting down program"
         setup_logger.info(message)
         logging.shutdown()
+        if file_handler:
+            core_logger.removeHandler(file_handler)
         np.seterrcall(old_np_error_call)
         sys.stderr = old_stderr
         sys.stdout = old_stdout
 
-        for h in core_logger.handlers[:]:
-            h.close()
-            core_logger.removeHandler(h)
+        #for h in core_logger.handlers[:]:
+        #    h.close()
+        #    core_logger.removeHandler(h)
 
     return close_loggers
 
