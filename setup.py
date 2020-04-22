@@ -14,8 +14,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-short_description = 'Tinker Taylor py is a probabilistic decision-modelling framework for simulating and fitting the '
-short_description += 'responses of people to probabilistic decision making tasks. '
+short_description = 'Tinker Taylor py is a decision-modelling framework for simulating and fitting reinforcement '
+short_description += 'learning and Bayesian models responses from probabilistic decision making tasks. '
 
 setuptools.setup(
                 name='Tinker Taylor py',
@@ -23,7 +23,7 @@ setuptools.setup(
                 # Versions should comply with PEP440.  For a discussion on single-sourcing
                 # the version across setup.py and the project code, see
                 # https://packaging.python.org/en/latest/single_source_version.html
-                version='1.0.0a0',
+                version='1.0.0b1',
 
                 description=short_description,
                 long_description=long_description,
