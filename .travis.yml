@@ -1,16 +1,20 @@
 language: python
-
 python:
-    - "3.7"
-    - "3.8"
-
+- '3.7'
+- '3.8'
 install:
-    - pip install -r requirements.txt
-    - pip install coverage
-
+- pip install -r requirements.txt
+- pip install coverage
 script:
-    - python -m pytest --cov=./
-
+- python -m pytest --cov=./
 after_success:
-    - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
 
+deploy:
+  provider: pypi
+  edge: true
+  user: djhunt
+  password:
+    secure: eLThuysiTJVufCQ4k0x4igCLUMTMTVdRqn5uFapKbipPQenNghXXCr7yjWcSGiERwBYuWqnDt4A9BbHYvffcC/EX5dhnSZDeAN21PBp2JehNgU5k5eLyFdPvfR3xWYmktcetWqSqGbVtycOtsTiapA0W9/Md9JIeNWQvMOZ8vewZwr6LG7PPVSL1cTttjYEPDI6D0AKhLgAAJq5PxWylIx/+jHA9WOks3CSc7Xk6jWQ3G67mPFYsZbZGXs8eizrKd39lAGy+VuBLDyfHMrbVIH0a6OiZgHW4Xp0CCmHmUvNuWOUDAz0M42gA4KsUaPEV0+z4bn/yfu0nVJ+GyK1mBmgm047no1eAEOgooCgJ3F/CbrEVhbDrn9SvpmzJiU0/Sq/WbH7Qj+ICBeUuBDMo3a/HXJ3J5TKCxR2HRTbMw8RtXyOU8FRxzqb2Y9nC3HEYZA64uD0zFLD6HRv1rTtmS5np3KrqA3W4o/7xIfTfw0VvLUz4OdtCx48rU9OrxmDnJp16sOLQJYEgQZUpOL1I/78+ZXQUwF92oixzQGelcqvBYhmyb5SF4tpfcu2oq/R7wIqToQ+A1fXuyfw18uR7S0a+ajsQgeRRtFilt03baBxiF9XpQEYvFfxBpHhiSglGZkT/qNDwRsgccGmzjKssKD3pX9JhQEcntFdfdEwT2i4=
+  on:
+    branch: master
