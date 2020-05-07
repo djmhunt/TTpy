@@ -65,6 +65,47 @@ SCRIPT_PARAMETER_GROUPS = {'model_constant_properties': ['model'],
                            'fit_method_args': ['fitting', 'measures']}
 
 
+def generate_run_properties(script: dict, script_file: str) -> dict:
+    """
+    Takes the dictionary coming from a YAML configuration file and returns a dictionary of parameters for TTpy functions
+
+    Parameters
+    ----------
+    script : dict
+        The contents of the script_file as read in by the YAML interpreter
+    script_file : string
+        The file name and path of a ``.yaml`` configuration file.
+
+    Returns
+    -------
+    run_properties : dict
+        The dictionary of parameters for a TTpy function
+    """
+    run_properties = {'config_file': script_file}
+
+    for label, location in SCRIPT_PARAMETERS.items():
+        try:
+            value = key_find(script, location)
+            if label == 'data_extra_processing':
+                if value[:4] == 'def ':
+                    compiled_value = compile(value, '<string>', 'exec')
+                    eval(compiled_value)
+                    function_name = compiled_value.co_names[0]
+                    function = [v for k, v in copy.copy(locals()).items() if k == function_name][0]
+                    args = utils.get_function_args(function)
+                    if len(args) != 1:
+                        raise ArgumentError('The data extra_processing function must have only one argument. Found {}'.format(args))
+                    function.func_code_string = value
+                    value = function
+                else:
+                    raise TypeError('data extra_processing must provide a function')
+            run_properties[label] = value
+        except MissingKeyError:
+            continue
+
+    return run_properties
+
+
 def run_config(script_file, trusted_file=False):
     """
     Takes a .yaml configuration file and runs a simulation or data fitting as described.
@@ -91,27 +132,7 @@ def run_config(script_file, trusted_file=False):
     if 'model' not in script_sections:
         raise MissingScriptSection('A ``model`` should be described in the script')
 
-    run_properties = {'config_file': script_file}
-
-    for label, location in SCRIPT_PARAMETERS.items():
-        try:
-            value = key_find(script, location)
-            if label == 'data_extra_processing':
-                if value[:4] == 'def ':
-                    compiled_value = compile(value, '<string>', 'exec')
-                    eval(compiled_value)
-                    function_name = compiled_value.co_names[0]
-                    function = [v for k, v in copy.copy(locals()).items() if k == function_name][0]
-                    args = utils.get_function_args(function)
-                    if len(args) != 1:
-                        raise ArgumentError('The data extra_processing function must have only one argument. Found {}'.format(args))
-                    function.func_code_string = value
-                    value = function
-                else:
-                    raise TypeError('data extra_processing must provide a function')
-            run_properties[label] = value
-        except MissingKeyError:
-            continue
+    run_properties = generate_run_properties(script, script_file)
 
     for label, location in SCRIPT_PARAMETER_GROUPS.items():
         try:
@@ -228,6 +249,8 @@ def write_script(file_path, config):
     """
     Takes the parameters passed to simulation.run or dataFitting.run and returns an appropriate YAML script
 
+    The parameters passed to simulation.run or dataFitting.run should be those passed to generate_run_properties
+
     Parameters
     ----------
     file_path : string
@@ -254,5 +277,4 @@ def write_script(file_path, config):
 
 
 if __name__ == '__main__':
-    run_config('./runScripts/runScripts_sim.yaml', trusted_file=True)
-#    fire.Fire(run_config)
+    fire.Fire(run_config)
