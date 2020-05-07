@@ -22,6 +22,56 @@ def listMerTestData():
     
     return interSets, answer
 
+#%% For list_all_equal
+class TestClass_list_all_equal:
+    def test_LAE_empty(self):
+        input = []
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_single(self):
+        input = [1]
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_double(self):
+        input = [1, 1]
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_double2(self):
+        input = [1, 2]
+        output = utils.list_all_equal(input)
+        correct_output = False
+        assert output == correct_output
+
+    def test_LAE_nan(self):
+        input = [np.nan]
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_nan2(self):
+        input = [np.nan, np.nan]
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_nan3(self):
+        input = [1, np.nan]
+        output = utils.list_all_equal(input)
+        correct_output = False
+        assert output == correct_output
+
+    def test_LAE_nan3(self):
+        input = [np.nan, 1]
+        output = utils.list_all_equal(input)
+        correct_output = False
+        assert output == correct_output
+
 
 #%% For mergeDatasets
 class TestClass_mergeDatasets:

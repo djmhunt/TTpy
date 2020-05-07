@@ -14,6 +14,8 @@ import inspect
 import importlib
 import traceback
 
+from typing import List
+
 # For analysing the state of the computer
 # import psutil
 
@@ -197,7 +199,7 @@ def get_function_args(inspected_function):
     return args
 
 
-def list_all_equal(data):
+def list_all_equal(data: List) -> bool:
     """
     Checks if all of the elements of a list are the same.
 
@@ -215,8 +217,14 @@ def list_all_equal(data):
     -----
     Based on https://stackoverflow.com/questions/3844801
     """
-
-    equivalence = data.count(data[0]) == len(data)
+    if data:
+        initial_element = data[0]
+        if np.isnan(initial_element):
+            equivalence = all(np.isnan(data))
+        else:
+            equivalence = data.count(initial_element) == len(data)
+    else:
+        equivalence = True
 
     return equivalence
 
