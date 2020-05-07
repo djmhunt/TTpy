@@ -7,6 +7,7 @@ import copy
 import fire
 import collections
 import inspect
+import pathlib
 
 import numpy as np
 
@@ -188,6 +189,8 @@ def simplify_dtypes(struct):
         clean_struct = {}
         for key, value in struct.items():
             clean_struct[key] = simplify_dtypes(value)
+    elif isinstance(struct, pathlib.PurePath):
+        clean_struct = struct.as_posix()
     elif callable(struct):
         try:
             clean_struct = inspect.getsource(struct)
