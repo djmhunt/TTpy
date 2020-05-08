@@ -85,7 +85,7 @@ def generate_run_properties(script: dict, script_file: str) -> dict:
 
     for label, location in SCRIPT_PARAMETERS.items():
         try:
-            value = key_find(script, location)
+            value = key_find(script, location.copy())
             if label == 'data_extra_processing':
                 if value[:4] == 'def ':
                     compiled_value = compile(value, '<string>', 'exec')
@@ -136,7 +136,7 @@ def run_config(script_file, trusted_file=False):
 
     for label, location in SCRIPT_PARAMETER_GROUPS.items():
         try:
-            value = key_find(script, location)
+            value = key_find(script, location.copy())
             run_properties[label] = value
         except MissingKeyError:
             continue
@@ -266,10 +266,10 @@ def write_script(file_path, config):
             if config[label] is None:
                 config.pop(label)
             else:
-                key_set(prepared_dict, location, config.pop(label))
+                key_set(prepared_dict, location.copy(), config.pop(label))
 
     for label, value in config.items():
-        location = SCRIPT_PARAMETERS[label]
+        location = SCRIPT_PARAMETERS[label].copy()
         key_set(prepared_dict, location, value)
 
     with open(file_path, 'w') as file_stream:
