@@ -5,7 +5,7 @@
 import logging
 import sys
 import os
-import inspect
+import pathlib
 import collections
 
 import pickle
@@ -13,6 +13,8 @@ import pandas as pd
 import datetime as dt
 import shutil as shu
 import numpy as np
+
+from typing import Union
 
 import utils
 import start
@@ -298,14 +300,14 @@ def file_name_generator(output_folder=None):
     return new_file_name
 
 
-def folder_path_cleaning(folder):
+def folder_path_cleaning(folder: Union[str, pathlib.PurePath]) -> str:
     """
     Modifies string file names from Windows format to Unix format if necessary
     and makes sure there is a ``/`` at the end.
 
     Parameters
     ----------
-    folder : string
+    folder : string or pathlib.PurePath
         The folder path
 
     Returns
@@ -313,8 +315,12 @@ def folder_path_cleaning(folder):
     folder_path : str
         The folder path
     """
-
-    folder_path = folder.replace('\\', '/')
+    if not folder:
+        return folder
+    elif isinstance(folder, pathlib.PurePath):
+        folder_path = folder.as_posix()
+    else:
+        folder_path = folder.replace('\\', '/')
     if folder_path[-1] != '/':
         folder_path += '/'
     return folder_path

@@ -8,6 +8,7 @@ import pytest
 import os
 import itertools
 import logging
+import pathlib
 
 import collections
 import outputting
@@ -230,6 +231,45 @@ class TestClass_fileNameGenerator:
         result = file_name_generator("a", "b")
         correct_result = './a_1.b'
         assert result == correct_result
+
+
+#%% For folder_path_cleaning
+class TestClass_folder_path_cleaning:
+    def test_FC_none(self):
+        input = ''
+        output = outputting.folder_path_cleaning(input)
+        expected_output = ''
+        assert output == expected_output
+
+    def test_FC_dot(self):
+        input = '.'
+        output = outputting.folder_path_cleaning(input)
+        expected_output = './'
+        assert output == expected_output
+
+    def test_FC_simple(self):
+        input = './'
+        output = outputting.folder_path_cleaning(input)
+        expected_output = './'
+        assert output == expected_output
+
+    def test_FC_simple2(self):
+        input = '.\\'
+        output = outputting.folder_path_cleaning(input)
+        expected_output = './'
+        assert output == expected_output
+
+    def test_FC_PurePath(self):
+        input = pathlib.Path('./')
+        output = outputting.folder_path_cleaning(input)
+        expected_output = './'
+        assert output == expected_output
+
+    def test_FC_PurePath2(self):
+        input = pathlib.PurePath('./')
+        output = outputting.folder_path_cleaning(input)
+        expected_output = './'
+        assert output == expected_output
 
 
 #%% For fancy_logger
