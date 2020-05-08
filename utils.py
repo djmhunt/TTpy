@@ -157,10 +157,12 @@ def find_function(function_name, function_folder, excluded_files=None):
         raise FunctionNameError('Unknown function {}'.format(function_name))
 
 
-def get_class_args(inspected_class, arg_ignore=['self']):
+def get_class_args(inspected_class, arg_ignore=None):
     """
     Finds the arguments that could be passed into the specified class
     """
+    if arg_ignore is None:
+        arg_ignore = ['self']
     sig = inspect.signature(inspected_class.__init__)
     args = list(sig.parameters.keys())
     if 'kwargs' in args:
