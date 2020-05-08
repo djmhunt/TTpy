@@ -20,14 +20,14 @@ import simulation
 #%% Set the model sets and task sets
 number_actions = 6
 number_cues = 1
-repetitions = 2
-alphaSet = np.repeat(np.array([0.1, 0.3, 0.5, 0.7, 0.9]), repetitions)
-betaSet = np.array([0.1, 0.3, 0.5, 0.7, 1, 2, 4, 8, 16])
+repetitions = 1
+alphaSet = np.repeat(np.array([0.1, 0.5, 0.9]), repetitions)
+betaSet = np.array([0.1, 0.5, 1, 4, 16])
 
 task_parameters = {}
 task_static_properties = {'number_actions': number_actions,
-                          'learning_length': 200,
-                          'test_length': 100,
+                          'learning_length': 100,
+                          'test_length': 50,
                           'reward_size': 1,
                           'action_reward_probabilities': collections.OrderedDict([('A', 0.80),
                                                                                   ('B', 0.20),
