@@ -7,9 +7,9 @@
 
 
 """
-import logging
-
 import numpy as np
+
+from typing import Union, Tuple, List
 
 from model.modelTemplate import Model
 
@@ -65,7 +65,7 @@ class QLearnMeta(Model):
         in to a decision. Default is model.decision.binary.eta
     """
 
-    def __init__(self, alpha=0.3, tau=0.2, rewardD=None, rewardDD=None, expect=None, **kwargs):
+    def __init__(self, alpha=0.3, tau=0.2, reward_d=None, reward_dd=None, expect=None, **kwargs):
 
         super(QLearnMeta, self).__init__(**kwargs)
 
@@ -78,25 +78,25 @@ class QLearnMeta(Model):
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
 
-        if rewardD is None:
-            rewardD = 5.5 * np.ones((self.number_actions, self.number_cues))
-        self.rewardD = rewardD
-        if rewardDD is None:
-            rewardDD = 5.5 * np.ones((self.number_actions, self.number_cues))
-        self.rewardDD = rewardDD
+        if reward_d is None:
+            reward_d = 5.5 * np.ones((self.number_actions, self.number_cues))
+        self.reward_d = reward_d
+        if reward_dd is None:
+            reward_dd = 5.5 * np.ones((self.number_actions, self.number_cues))
+        self.reward_dd = reward_dd
 
         self.parameters["alpha"] = self.alpha
         self.parameters["tau"] = self.tau
         self.parameters["expectation"] = self.expectations.copy()
 
-        self.beta = np.exp(self.rewardD - self.rewardDD)
+        self.beta = np.exp(self.reward_d - self.reward_dd)
 
         # Recorded information
-        self.recRewardD = []
-        self.recRewardDD = []
-        self.recBeta = []
+        self.rec_reward_d = []
+        self.rec_reward_dd = []
+        self.rec_beta = []
 
-    def returnTaskState(self):
+    def returnTaskState(self) -> dict:
         """ Returns all the relevant data for this model
 
         Returns
@@ -107,13 +107,13 @@ class QLearnMeta(Model):
         """
 
         results = self.standardResultOutput()
-        results["rewardD"] = np.array(self.recRewardD).T
-        results["rewardDD"] = np.array(self.recRewardDD).T
-        results["beta"] = np.array(self.recBeta).T
+        results["reward_d"] = np.array(self.rec_reward_d).T
+        results["reward_dd"] = np.array(self.rec_reward_dd).T
+        results["beta"] = np.array(self.rec_beta).T
 
         return results
 
-    def storeState(self):
+    def storeState(self) -> None:
         """
         Stores the state of all the important variables so that they can be
         accessed later
@@ -121,11 +121,11 @@ class QLearnMeta(Model):
 
         self.storeStandardResults()
 
-        self.recRewardD.append(self.rewardD.flatten())
-        self.recRewardDD.append(self.rewardDD.flatten())
-        self.recBeta.append(self.beta.flatten())
+        self.rec_reward_d.append(self.reward_d.flatten())
+        self.rec_reward_dd.append(self.reward_dd.flatten())
+        self.rec_beta.append(self.beta.flatten())
 
-    def rewardExpectation(self, observation):
+    def rewardExpectation(self, observation: Union[int, float, Tuple]) -> Tuple[np.ndarray, List[float], List[bool]]:
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -137,21 +137,21 @@ class QLearnMeta(Model):
 
         Returns
         -------
-        actionExpectations : array of floats
+        action_expectations : array of floats
             The expected rewards for each action
         stimuli : list of floats
             The processed observations
-        activeStimuli : list of [0, 1] mapping to [False, True]
+        active_stimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        active_stimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
 
-        actionExpectations = self._actExpectations(self.expectations, stimuli)
+        action_expectations = self._action_expectations(self.expectations, stimuli)
 
-        return actionExpectations, stimuli, activeStimuli
+        return action_expectations, stimuli, active_stimuli
 
-    def delta(self, reward, expectation, action, stimuli):
+    def delta(self, reward: float, expectation: float, action: int, stimuli: Union[int, float, Tuple]) -> float:
         """
         Calculates the comparison between the reward and the expectation
 
@@ -171,35 +171,38 @@ class QLearnMeta(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        mod_reward = self.reward_shaper.processFeedback(reward, action, stimuli)
 
-        delta = modReward - expectation
+        delta = mod_reward - expectation
 
-        self.updateBeta(reward, action)
+        self.update_beta(reward, action)
 
         return delta
 
-    def updateBeta(self, reward, action):
+    def update_beta(self, reward: float, action: int) -> None:
         """
+        Update the estimate of beta
 
         Parameters
         ----------
         reward : float
             The reward value
+        action : int
+            The chosen action
 
         """
 
-        #self.rewardD += self.tau * (reward - self.rewardD)
-        #self.rewardDD += self.tau * (self.rewardD - self.rewardDD)
-        #self.beta = np.exp(self.rewardD - self.rewardDD)
+        #self.reward_d += self.tau * (reward - self.reward_d)
+        #self.reward_dd += self.tau * (self.reward_d - self.reward_dd)
+        #self.beta = np.exp(self.reward_d - self.reward_dd)
 
-        rewardD = self.rewardD[action]
-        rewardDD = self.rewardDD[action]
-        rewardD += self.tau * (reward - rewardD)
-        rewardDD += self.tau * (rewardD - rewardDD)
-        self.beta[action] = np.exp(rewardD - rewardDD)
-        self.rewardD[action] = rewardD
-        self.rewardDD[action] = rewardDD
+        reward_d = self.reward_d[action]
+        reward_dd = self.reward_dd[action]
+        reward_d += self.tau * (reward - reward_d)
+        reward_dd += self.tau * (reward_d - reward_dd)
+        self.beta[action] = np.exp(reward_d - reward_dd)
+        self.reward_d[action] = reward_d
+        self.reward_dd[action] = reward_dd
 
     def updateModel(self, delta, action, stimuli, stimuliFilter):
         """
@@ -217,53 +220,52 @@ class QLearnMeta(Model):
         """
 
         # Find the new activities
-        self._newExpect(action, delta, stimuli)
+        self._new_expectations(action, delta, stimuli)
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self._actExpectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        act_expectations = self._action_expectations(self.expectations, stimuli)
+        self.probabilities = self.calcProbabilities(act_expectations)
 
-    def _newExpect(self, action, delta, stimuli):
+    def _new_expectations(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
+        new_expectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
 
-        newExpectations = newExpectations * (newExpectations >= 0)
+        new_expectations = new_expectations * (new_expectations >= 0)
 
-        self.expectations[action] = newExpectations
+        self.expectations[action] = new_expectations
 
-    def _actExpectations(self, expectations, stimuli):
+    def _action_expectations(self, expectations, stimuli):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            action_expectations = self.actStimMerge(expectations, stimuli)
         else:
-            actionExpectations = expectations
+            action_expectations = expectations
 
-        return actionExpectations
+        return action_expectations
 
-    def calcProbabilities(self, actionValues):
-        # type: (np.ndarray) -> np.ndarray
+    def calcProbabilities(self, action_values: np.ndarray) -> np.ndarray:
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
-        probArray : 1D ndArray of floats
+        prob_array : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
 
-        numerator = np.exp(self.beta * actionValues)
+        numerator = np.exp(self.beta * action_values)
         denominator = np.sum(numerator)
 
-        probArray = numerator / denominator
+        prob_array = numerator / denominator
 
-        return probArray
+        return prob_array
 
     def actorStimulusProbs(self):
         """
