@@ -6,10 +6,11 @@ import logging
 import collections
 import copy
 import fire
+import pathlib
 
 import pandas as pd
 
-from typing import Any
+from typing import List
 
 import outputting
 import utils
@@ -54,7 +55,7 @@ def run(data_folder='./',
         participant_varying_model_parameters=None,
         label=None,
         save_fitting_progress=False,
-        config_file=None,
+        config_file_path=None,
         output_path=None,
         pickle=False,
         boundary_excess_cost_function=None,
@@ -143,7 +144,7 @@ def run(data_folder='./',
         The label for the data fitting. Default ``None`` will mean no data is saved to files.
     save_fitting_progress : bool, optional
         Specifies if the results from each iteration of the fitting process should be returned. Default ``False``
-    config_file : string, optional
+    config_file_path : string, optional
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
     output_path : string, optional
@@ -182,6 +183,7 @@ def run(data_folder='./',
     # TODO : Validate model_changing_properties with the data and the model
     participants = data.Data.load_data(file_type=data_format,
                                        folders=data_folder,
+                                       config_file_path=config_file_path,
                                        file_name_filter=data_file_filter,
                                        terminal_ID=data_file_terminal_ID,
                                        split_by=data_split_by,
@@ -249,7 +251,7 @@ def run(data_folder='./',
 
         model_ID = 0
         # Initialise the stores of information
-        participant_fits = collections.defaultdict(list)  # type: collections.defaultdict[Any, list]
+        participant_fits = collections.defaultdict(list)  # type: collections.defaultdict[List]
 
         for model, model_parameter_variables, model_static_args in models.iter_details():
 

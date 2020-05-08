@@ -95,7 +95,7 @@ class Saving(object):
         if config is not None:
             label = config['label']
             output_path = config['output_path']
-            config_file = config['config_file']
+            config_file = config['config_file_path']
             pickle_store = config['pickle']
             min_log_level = config['min_log_level']
             numpy_error_level = config['numpy_error_level']

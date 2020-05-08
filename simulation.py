@@ -23,7 +23,7 @@ def run(task_name='Basic',
         model_constant_properties=None,
         model_changing_properties_repetition=1,
         label=None,
-        config_file=None,
+        config_file_path=None,
         output_path=None,
         pickle=False,
         min_log_level='INFO',
@@ -54,7 +54,7 @@ def run(task_name='Basic',
         of the model being studied. Default ``None``
     model_changing_properties_repetition : int, optional
         The number of times each parameter combination is repeated.
-    config_file : string, optional
+    config_file_path : string, optional
         The file name and path of a ``.yaml`` configuration file. Overrides all other parameters if found.
         Default ``None``
     output_path : string, optional
