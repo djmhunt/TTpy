@@ -396,7 +396,7 @@ class Data(list):
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
                     participantID_changed = True
                 elif participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
-                    if utils.list_all_equal(dat_dict[participantID]):
+                    if utils.list_all_equal(dat_dict[participantID][1:]):
                         dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
                         participantID_changed = True
                     else:
@@ -544,7 +544,7 @@ class Data(list):
                     dat_dict[DATA_KEYWORDS['ID']] = fileID
                     participantID_changed = True
                 elif participantID in dat_dict and isinstance(dat_dict[participantID], (list, np.ndarray)):
-                    if utils.list_all_equal(dat_dict[participantID]):
+                    if utils.list_all_equal(dat_dict[participantID][1:]):
                         dat_dict[DATA_KEYWORDS['ID']] = dat_dict[participantID][0]
                         participantID_changed = True
                     else:
@@ -728,13 +728,19 @@ class Data(list):
 
             if participantID not in keys:
                 raise KeyError("participantID key not found in participant data: `{}`".format(participantID))
-            elif not isinstance(p[participantID], str):
-                raise TypeError("participantID value must be a string. Found {}".format(type(p[participantID])))
-            elif p[participantID] in self.IDs:
+            participantID_value = p[participantID]
+
+            if not isinstance(participantID_value, str):
+                if isinstance(participantID_value, (int, float)):
+                    participantID_value = str(participantID_value)
+                else:
+                    raise TypeError("participantID value must be a string. Found {}".format(type(p[participantID])))
+
+            if participantID_value in self.IDs:
                 raise IDError("participantID must be unique. Found more than one instance of `{}`".format(p[participantID]))
-            else:
-                self.participantID = participantID
-                self.IDs[p[participantID]] = loc
+
+            self.participantID = participantID
+            self.IDs[participantID_value] = loc
 
             if choices not in keys:
                 raise KeyError("choices key not found in participant {} data: `{}`".format(p[participantID], choices))
