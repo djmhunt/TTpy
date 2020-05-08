@@ -221,7 +221,7 @@ def list_all_equal(data: List) -> bool:
     """
     if data:
         initial_element = data[0]
-        if np.isnan(initial_element):
+        if not isinstance(initial_element, str) and np.isnan(initial_element):
             equivalence = all(np.isnan(data))
         else:
             equivalence = data.count(initial_element) == len(data)

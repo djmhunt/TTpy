@@ -72,6 +72,30 @@ class TestClass_list_all_equal:
         correct_output = False
         assert output == correct_output
 
+    def test_LAE_str(self):
+        input = ['str']
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_str2(self):
+        input = ['str', 'str']
+        output = utils.list_all_equal(input)
+        correct_output = True
+        assert output == correct_output
+
+    def test_LAE_str3(self):
+        input = ['str', 'st']
+        output = utils.list_all_equal(input)
+        correct_output = False
+        assert output == correct_output
+
+    def test_LAE_str4(self):
+        input = ['str', 1]
+        output = utils.list_all_equal(input)
+        correct_output = False
+        assert output == correct_output
+
 
 #%% For mergeDatasets
 class TestClass_mergeDatasets:
