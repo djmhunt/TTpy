@@ -11,9 +11,10 @@ import pandas as pd
 
 import os
 import re
-import collections
+import pathlib
 
 import utils
+import outputting
 
 
 class LengthError(Exception):
@@ -69,6 +70,7 @@ class Data(list):
                   action_options=None,
                   group_by=None,
                   extra_processing=None,
+                  config_file_path=None,
                   data_read_options=None):
         """
         Import data from a folder. This is a wrapper function for the other import methods
@@ -115,17 +117,28 @@ class Data(list):
         -------
         Data : Data class instance
         """
-        if isinstance(folders, str):
+        if isinstance(folders, (str, pathlib.PurePath)):
             folder_list = [folders]
-        elif isinstance(folders, list):
+        elif isinstance(folders, list) and all([isinstance(f, (str, pathlib.PurePath)) for f in folders]):
             folder_list = folders
         else:
             raise FoldersError('``folders`` must be a string or a list of strings. Found {}'.format(type(folders)))
 
+        if config_file_path is not None:
+            parent_folder = pathlib.Path(config_file_path).parent
+        else:
+            parent_folder = pathlib.Path.cwd()
+
         dat = None
         for folder in folder_list:
+            folder_path = pathlib.PurePath(folder)
+            if not folder_path.is_absolute():
+                absolute_data_folder = (parent_folder / pathlib.Path(folder)).resolve()
+            else:
+                absolute_data_folder = pathlib.Path(folder_path)
+
             if file_type == 'mat':
-                subdat = cls.from_mat(folder=folder,
+                subdat = cls.from_mat(folder=absolute_data_folder,
                                       file_name_filter=file_name_filter,
                                       terminal_ID=terminal_ID,
                                       participantID=participantID,
@@ -136,7 +149,7 @@ class Data(list):
                                       group_by=group_by,
                                       extra_processing=extra_processing)
             elif file_type == 'csv':
-                subdat = cls.from_csv(folder=folder,
+                subdat = cls.from_csv(folder=absolute_data_folder,
                                       file_name_filter=file_name_filter,
                                       terminal_ID=terminal_ID,
                                       split_by=split_by,
@@ -149,7 +162,7 @@ class Data(list):
                                       extra_processing=extra_processing,
                                       csv_read_options=data_read_options)
             elif file_type == 'xlsx':
-                subdat = cls.from_xlsx(folder=folder,
+                subdat = cls.from_xlsx(folder=absolute_data_folder,
                                        file_name_filter=file_name_filter,
                                        terminal_ID=terminal_ID,
                                        split_by=split_by,
@@ -162,7 +175,7 @@ class Data(list):
                                        extra_processing=extra_processing,
                                        xlsx_read_options=data_read_options)
             elif file_type == 'pkl':
-                subdat = cls.from_pkl(folder=folder,
+                subdat = cls.from_pkl(folder=absolute_data_folder,
                                       file_name_filter=file_name_filter,
                                       terminal_ID=terminal_ID,
                                       participantID=participantID,
@@ -236,7 +249,7 @@ class Data(list):
         --------
         scipy.io.loadmat
         """
-        folder_path = cls.__folder_path_cleaning(folder)
+        folder_path = outputting.folder_path_cleaning(folder)
 
         files, file_IDs = cls.__locate_files(folder_path, "mat", file_name_filter=file_name_filter, terminal_ID=terminal_ID)
 
@@ -335,7 +348,7 @@ class Data(list):
         --------
         pandas.read_csv
         """
-        folder_path = cls.__folder_path_cleaning(folder)
+        folder_path = outputting.folder_path_cleaning(folder)
 
         files, file_IDs = cls.__locate_files(folder_path, "csv", file_name_filter=file_name_filter,
                                              terminal_ID=terminal_ID)
@@ -479,7 +492,7 @@ class Data(list):
         --------
         pandas.read_excel
         """
-        folder_path = cls.__folder_path_cleaning(folder)
+        folder_path = outputting.folder_path_cleaning(folder)
 
         files, file_IDs = cls.__locate_files(folder_path, "xlsx", file_name_filter=file_name_filter,
                                              terminal_ID=terminal_ID)
@@ -617,7 +630,7 @@ class Data(list):
         -------
         Data : Data class instance
         """
-        folder_path = cls.__folder_path_cleaning(folder)
+        folder_path = outputting.folder_path_cleaning(folder)
 
         files, file_IDs = cls.__locate_files(folder_path, "pkl", file_name_filter=file_name_filter,
                                              terminal_ID=terminal_ID)
@@ -896,14 +909,6 @@ class Data(list):
 
         return not self.__eq__(other)
 
-    @staticmethod
-    def __folder_path_cleaning(folder):
-
-        folder_path = os.path.abspath(folder).replace('\\', '/')
-        if folder_path[-1] != '/':
-            folder_path += '/'
-        return folder_path
-
     @classmethod
     def __locate_files(cls, folder, file_type, file_name_filter=None, terminal_ID=True):
         """
@@ -1131,13 +1136,13 @@ class Data(list):
             The strings now sorted
         """
 
-        try:
-            if suffix:
-                testItem = int(unorderedList[0][len(prefix):-len(suffix)])
-            else:
-                testItem = int(unorderedList[0][len(prefix):])
-        except ValueError:
-            return [], []
+        #try:
+        #    if suffix:
+        #        testItem = int(unorderedList[0][len(prefix):-len(suffix)])
+        #    else:
+        #        testItem = int(unorderedList[0][len(prefix):])
+        #except ValueError:
+        #    return [], []
 
         if suffix:
             core = [(d[len(prefix):-(len(suffix))], i) for i, d in enumerate(unorderedList)]
