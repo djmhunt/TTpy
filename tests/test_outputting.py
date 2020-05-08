@@ -75,7 +75,7 @@ class TestClass_saving:
     def test_S_config(self, caplog):
         caplog.set_level(logging.INFO)
         config = {'label': None,
-                  'config_file': None,
+                  'config_file_path': None,
                   'output_path': None,
                   'pickle': False,
                   'min_log_level': 'INFO',
@@ -113,7 +113,7 @@ class TestClass_saving:
         log_path = '{}/Outputs/{}_{}/log.txt'.format(path_clean, label, current_date)
 
         config = {'label': label,
-                  'config_file': None,
+                  'config_file_path': None,
                   'output_path': path_str,
                   'pickle': False,
                   'min_log_level': 'INFO',
