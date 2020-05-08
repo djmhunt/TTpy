@@ -11,6 +11,8 @@ with the data.
 #%% Import useful functions
 import numpy as np
 
+import pathlib
+
 import collections
 
 import simulation
@@ -55,5 +57,6 @@ simulation.run(task_name='ProbSelect',
                model_changing_properties=model_parameters,
                model_constant_properties=model_static_properties,
                label='qLearn_probSelectSimSet',
+               output_path=pathlib.Path(__file__).parent.absolute(),
                pickle=True,
                numpy_error_level='log') # 'raise','log'

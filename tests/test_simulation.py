@@ -6,6 +6,8 @@ import pytest
 import os
 import itertools
 import logging
+import shutil
+import subprocess
 
 import simulation
 import outputting
@@ -117,6 +119,27 @@ class TestClass_basic:
             assert standard_captured_line == correct_line
 
 
+class TestClass_example:
+    def test_R_sim(self, output_folder, caplog):
+        caplog.set_level(logging.INFO)
+        output_path = str(output_folder).replace('\\', '/')
+        test_file_path = output_path + '/runScript.py'
+        date = outputting.date()
+
+        shutil.copyfile('../runScripts/runScript_sim.py', test_file_path)
+        completedProcess = subprocess.run('python ' + test_file_path)
+
+        assert os.path.exists(output_path)
+        assert os.path.exists(output_path + '/Outputs')
+        folder_path = output_path + '/Outputs/qLearn_probSelectSimSet_{}/'.format(date)
+        assert os.path.exists(folder_path)
+        assert os.path.exists(folder_path + 'data')
+        assert os.path.exists(folder_path + 'Pickle')
+        assert completedProcess.returncode == 0
+        assert os.path.exists(folder_path + 'log.txt')
+        assert os.path.exists(folder_path + 'config.yaml')
+
+        # TODO: extend this to validate the data somewhat
 
 
 
