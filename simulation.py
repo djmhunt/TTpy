@@ -80,7 +80,7 @@ def run(task_name='Basic',
                            other_options=task_constant_properties)
 
     if model_changing_properties_repetition > 1:
-        repeated_key = model_changing_properties.keys()[0]
+        repeated_key = list(model_changing_properties.keys())[0]
         repeated_values = np.repeat(model_changing_properties[repeated_key], model_changing_properties_repetition)
         model_changing_properties[repeated_key] = repeated_values.tolist()
 
