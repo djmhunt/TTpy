@@ -81,7 +81,7 @@ def generate_run_properties(script: dict, script_file: str) -> dict:
     run_properties : dict
         The dictionary of parameters for a TTpy function
     """
-    run_properties = {'config_file': script_file}
+    run_properties = {'config_file_path': script_file}
 
     for label, location in SCRIPT_PARAMETERS.items():
         try:
@@ -258,7 +258,7 @@ def write_script(file_path, config):
     config : dict
         The configuration to be written to the YAML file
     """
-    config_file = config.pop('config_file', None)
+    config_file = config.pop('config_file_path', None)
 
     prepared_dict = {}
     for label, location in SCRIPT_PARAMETER_GROUPS.items():
