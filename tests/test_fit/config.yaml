@@ -9,7 +9,7 @@ data:
     format: pkl
     group_by: null
     name: simID
-    path: ../tests/test_sim/Pickle/
+    path: ./tests/test_sim/Pickle/
     read_options: null
     rewards: Rewards
     split_by: null
@@ -18,6 +18,7 @@ data:
     varying_model_parameters: null
 fitting:
     calculate_covariance: false
+    fitting_variable: ActionProb
     measures:
         extras:
         - -2log
@@ -25,7 +26,6 @@ fitting:
         - r2
         - bayesFactor
         - BIC2norm
-        fitting_variable: ActionProb
         float_error_response_value: 1.0e-100
         main: -loge
         parameters:
@@ -33,8 +33,8 @@ fitting:
             number_actions: 6
             qualityThreshold: 20
             randActProb: 0.5
-        trial_subset: all
     method: Evolutionary
+    trial_subset: all
 model:
     action_codes:
         A: 0
@@ -44,13 +44,6 @@ model:
         E: 4
         F: 5
     decision_function_name: weightProb
-    expect:
-    -   - 0.5
-    -   - 0.5
-    -   - 0.5
-    -   - 0.5
-    -   - 0.5
-    -   - 0.5
     name: QLearn
     number_actions: 6
     number_cues: 1
@@ -61,13 +54,6 @@ model:
         beta:
         - 0
         - 30
-    prior:
-    - 0.16666666666666666
-    - 0.16666666666666666
-    - 0.16666666666666666
-    - 0.16666666666666666
-    - 0.16666666666666666
-    - 0.16666666666666666
     reward_shaper_name: RewardProbSelectDirect
     stimulus_shaper_name: StimulusProbSelectDirect
     task_responses:
