@@ -103,6 +103,13 @@ def generate_run_properties(script: dict, script_file: str) -> dict:
         except MissingKeyError:
             continue
 
+    for label, location in SCRIPT_PARAMETER_GROUPS.items():
+        try:
+            value = key_find(script, location.copy())
+            run_properties[label] = value
+        except MissingKeyError:
+            continue
+
     return run_properties
 
 
@@ -133,13 +140,6 @@ def run_config(script_file, trusted_file=False):
         raise MissingScriptSection('A ``model`` should be described in the script')
 
     run_properties = generate_run_properties(script, script_file)
-
-    for label, location in SCRIPT_PARAMETER_GROUPS.items():
-        try:
-            value = key_find(script, location.copy())
-            run_properties[label] = value
-        except MissingKeyError:
-            continue
 
     if 'simulation' in script_sections:
         if 'task' not in script_sections:
@@ -245,9 +245,40 @@ def key_set(prepared_dict, location, value):
     sub_dict[final_location] = cleaned_value
 
 
-def write_script(file_path, config):
+def generate_config(config: dict) -> dict:
     """
-    Takes the parameters passed to simulation.run or dataFitting.run and returns an appropriate YAML script
+    Takes the parameters passed to simulation.run or dataFitting.run and returns the dict to be written to the YAML
+
+    The parameters passed to simulation.run or dataFitting.run should be those passed to generate_run_properties
+
+    Parameters
+    ----------
+    config : dict
+        The parameters passed to the functions
+
+    Returns
+    -------
+    prepared_dict : dict
+        The configuration to be written to the YAML file
+    """
+    prepared_dict = {}
+    for label, location in SCRIPT_PARAMETER_GROUPS.items():
+        if label in config:
+            if config[label] is None:
+                config.pop(label)
+            else:
+                key_set(prepared_dict, location.copy(), config.pop(label))
+
+    for label, value in config.items():
+        location = SCRIPT_PARAMETERS[label].copy()
+        key_set(prepared_dict, location, value)
+
+    return prepared_dict
+
+
+def write_script(file_path: str, config: dict) -> None:
+    """
+    Takes the parameters passed to simulation.run or dataFitting.run and writes a configuration YAML script
 
     The parameters passed to simulation.run or dataFitting.run should be those passed to generate_run_properties
 
@@ -260,17 +291,7 @@ def write_script(file_path, config):
     """
     config_file = config.pop('config_file_path', None)
 
-    prepared_dict = {}
-    for label, location in SCRIPT_PARAMETER_GROUPS.items():
-        if label in config:
-            if config[label] is None:
-                config.pop(label)
-            else:
-                key_set(prepared_dict, location.copy(), config.pop(label))
-
-    for label, value in config.items():
-        location = SCRIPT_PARAMETERS[label].copy()
-        key_set(prepared_dict, location, value)
+    prepared_dict = generate_config(config)
 
     with open(file_path, 'w') as file_stream:
         yaml.dump(dict(prepared_dict), file_stream, indent=4)
