@@ -150,7 +150,7 @@ def record_simulation(file_name_generator, task_data, model_data, simID, pickle=
 
     See Also
     --------
-    pickleLog : records the picked data
+    pickle_log : records the picked data
     """
     logger = logging.getLogger('Framework')
 
@@ -165,8 +165,8 @@ def record_simulation(file_name_generator, task_data, model_data, simID, pickle=
     csv_model_simulation(model_data, simID, file_name_generator)
 
     if pickle:
-        outputting.pickleLog(task_data, file_name_generator, "_taskData" + label)
-        outputting.pickleLog(model_data, file_name_generator, "_modelData" + label)
+        outputting.pickle_log(task_data, file_name_generator, "_taskData" + label)
+        outputting.pickle_log(model_data, file_name_generator, "_modelData" + label)
 
 
 def log_simulation_parameters(task_parameters, model_parameters, simID):
@@ -218,7 +218,7 @@ def csv_model_simulation(modelData, simID, file_name_generator):
         returns one ``fileName`` string
     """
 
-    data = outputting.newListDict(modelData)
+    data = outputting.new_list_dict(modelData)
     record = pd.DataFrame(data)
     name = "data/modelSim_" + simID
     outputFile = file_name_generator(name, 'csv')

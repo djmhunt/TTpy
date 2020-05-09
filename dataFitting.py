@@ -337,7 +337,7 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
 
     See Also
     --------
-    outputting.pickleLog : records the picked data
+    outputting.pickle_log : records the picked data
     """
     logger = logging.getLogger('Logging')
     partNameStr = str(part_name)
@@ -362,10 +362,10 @@ def record_participant_fit(participant, part_name, model_data, model_name, fitti
 
         if pickleData:
             if expData is not None:
-                outputting.pickleLog(expData, fileNameGen, "_expData" + label)
-            outputting.pickleLog(model_data, fileNameGen, "_modelData" + label)
-            outputting.pickleLog(participant, fileNameGen, "_partData" + label)
-            outputting.pickleLog(fitting_data, fileNameGen, "_fitData" + label)
+                outputting.pickle_log(expData, fileNameGen, "_expData" + label)
+            outputting.pickle_log(model_data, fileNameGen, "_modelData" + label)
+            outputting.pickle_log(participant, fileNameGen, "_partData" + label)
+            outputting.pickle_log(fitting_data, fileNameGen, "_fitData" + label)
 
     return participantFits
 
@@ -543,7 +543,7 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
     """
 
     data = {}
-    partData = outputting.newListDict(participant, 'part')
+    partData = outputting.new_list_dict(participant, 'part')
     data.update(partData)
 
     parameter_fitting_dict = copy.copy(fitting_data["tested_parameters"])
@@ -554,7 +554,7 @@ def xlsx_fitting_data(fitting_data, label, participant, file_name_generator):
         parameter_fitting_dict[k + "final"] = v
     parameter_fitting_dict.update(fitting_data)
     data.update(parameter_fitting_dict)
-    record_data = outputting.newListDict(data, "")
+    record_data = outputting.new_list_dict(data, "")
 
     record = pd.DataFrame(record_data)
 

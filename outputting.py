@@ -9,12 +9,11 @@ import pathlib
 import collections
 
 import pickle
-import pandas as pd
 import datetime as dt
 import shutil as shu
 import numpy as np
 
-from typing import Union
+from typing import Union, List, Optional, Any, Tuple, Dict, Callable
 
 import utils
 import start
@@ -35,14 +34,14 @@ class LoggerWriter(object):
         self._writer = writer
         self._message = ''
 
-    def write(self, message):
+    def write(self, message: str) -> None:
         self._message = self._message + message
         while '\n' in self._message:
             pos = self._message.find('\n')
             self._writer(self._message[:pos])
             self._message = self._message[pos + 1:]
 
-    def flush(self):
+    def flush(self) -> None:
         if self._message != '':
             self._writer(self._message)
             self._message = ''
@@ -75,8 +74,8 @@ class Saving(object):
     Returns
     -------
     file_name_gen : function
-        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
-        returns one ``fileName`` string
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string
+        parameters: (``handle``, ``extension``) and returns one ``fileName`` string
 
     See Also
     --------
@@ -124,7 +123,7 @@ class Saving(object):
                                'CRITICAL': logging.CRITICAL}
         self.log_level = possible_log_levels[min_log_level]
 
-    def __enter__(self):
+    def __enter__(self) -> Optional[Callable[[str, str], str]]:
         if self.label:
             output_folder = folder_setup(self.save_label,
                                          self.date_string,
@@ -155,14 +154,21 @@ class Saving(object):
 
         return file_name_gen
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type: Optional[type],
+                 exc_value: Optional[Exception],
+                 exc_traceback: Optional[Any]
+                 ) -> None:
         if exc_type is not None and issubclass(exc_type, Exception):
             logger = logging.getLogger('Fatal')
             logger.error("Logging an uncaught fatal exception", exc_info=(exc_type, exc_value, exc_traceback))
         self.close_loggers()
 
 
-def folder_setup(label, date_string, pickle_data=False, base_path=None):
+def folder_setup(label: str,
+                 date_string: str,
+                 pickle_data: Optional[bool] = False,
+                 base_path: Optional[str] = None
+                 ) -> str:
     """
     Identifies and creates the folder the data will be stored in
 
@@ -171,7 +177,7 @@ def folder_setup(label, date_string, pickle_data=False, base_path=None):
     "./Outputs/<sim_label>_<date>_no_<#>/", where "<#>" is the first
     available integer.
 
-    A subfolder is also created with the name ``Pickle`` if  pickle is
+    A sub-folder is also created with the name ``Pickle`` if  pickle is
     true.
 
     Parameters
@@ -223,7 +229,7 @@ def folder_setup(label, date_string, pickle_data=False, base_path=None):
 
 
 #%% File management
-def file_name_generator(output_folder=None):
+def file_name_generator(output_folder: Optional[str] = None) -> Callable[[str, str], str]:
     """
     Keeps track of filenames that have been used and generates the next unused one
 
@@ -235,8 +241,8 @@ def file_name_generator(output_folder=None):
     Returns
     -------
     new_file_name : function
-        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
-        returns one ``fileName`` string
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string
+        parameters: (``handle``, ``extension``) and returns one ``fileName`` string
 
     Examples
     --------
@@ -259,7 +265,7 @@ def file_name_generator(output_folder=None):
 
     output_file_counts = collections.defaultdict(int)
 
-    def new_file_name(handle, extension):
+    def new_file_name(handle: str, extension: str) -> str:
         """
         Creates a new unused file name with the <handle> and the extension <extension>
 
@@ -327,7 +333,10 @@ def folder_path_cleaning(folder: Union[str, pathlib.PurePath]) -> str:
 
 
 #%% Logging
-def fancy_logger(log_file=None, log_level=logging.DEBUG, numpy_error_level='log'):
+def fancy_logger(log_file: Optional[str] = None,
+                 log_level: int = logging.DEBUG,
+                 numpy_error_level: str = 'log'
+                 ) -> Callable[[], None]:
     """
     Sets up the style of logging for all the simulations
 
@@ -394,15 +403,15 @@ def fancy_logger(log_file=None, log_level=logging.DEBUG, numpy_error_level='log'
         sys.stderr = old_stderr
         sys.stdout = old_stdout
 
-        #for h in core_logger.handlers[:]:
-        #    h.close()
-        #    core_logger.removeHandler(h)
+        # for h in core_logger.handlers[:]:
+        #     h.close()
+        #     core_logger.removeHandler(h)
 
     return close_loggers
 
 
 #%% Pickle
-def pickle_write(data, handle, file_name_gen):
+def pickle_write(data: Any, handle: str, file_name_gen: Callable[[str, str], str]) -> None:
     """
     Writes the data to a pickle file
 
@@ -413,8 +422,8 @@ def pickle_write(data, handle, file_name_gen):
     handle : string
         The name of the file
     file_name_gen : function
-        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
-        returns one ``fileName`` string
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string
+        parameters: (``handle``, ``extension``) and returns one ``fileName`` string
     """
     output_file = file_name_gen(handle, 'pkl')
 
@@ -422,17 +431,20 @@ def pickle_write(data, handle, file_name_gen):
         pickle.dump(data, w)
 
 
-def pickleLog(results, file_name_gen, label=""):
+def pickle_log(results: Dict,
+               file_name_gen: Callable[[str, str], str],
+               label: Optional[str] = None
+               ) -> None:
     """
-    Stores the data in the appropriate pickle file in a Pickle subfolder of the outputting folder
+    Stores the data in the appropriate pickle file in a Pickle sub-folder of the outputting folder
 
     Parameters
     ----------
     results : dict
         The data to be stored
     file_name_gen : function
-        Creates a new file with the name <handle> and the extension <extension>. It takes two string parameters: (``handle``, ``extension``) and
-        returns one ``fileName`` string
+        Creates a new file with the name <handle> and the extension <extension>. It takes two string
+        parameters: (``handle``, ``extension``) and returns one ``fileName`` string
     label : string, optional
         A label for the results file
     """
@@ -447,14 +459,16 @@ def pickleLog(results, file_name_gen, label=""):
     else:
         raise TypeError("The ``Name`` in the participant data is of type {} and not str".format(type(name)))
 
-    if label:
+    if label is not None:
         handle += label
 
     pickle_write(results, handle, file_name_gen)
 
 
 #%% Utils
-def flatDictKeySet(store, selectKeys=None):
+def flat_dict_key_set(store: List[Dict],
+                      select_keys: Optional[List[str]] = None
+                      ) -> Dict[str, Optional[Union[Dict, List]]]:
     """
     Generates a dictionary of keys and identifiers for the new dictionary,
     including only the keys in the keys list. Any keys with lists  will
@@ -468,46 +482,57 @@ def flatDictKeySet(store, selectKeys=None):
         The dictionaries would be expected to have many of the same keys.
         Any dictionary keys containing lists in the input have been split
         into multiple numbered keys
-    selectKeys : list of strings, optional
-        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned
+    select_keys : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys
+        being returned
 
     Returns
     -------
-    keySet : dict with values of dict, list or None
+    key_set : dict with values of dict, list or None
         The dictionary of keys to be extracted
 
     See Also
     --------
-    reframeListDicts, newFlatDict
+    reframeListDicts, new_flat_dict
     """
 
-    keySet = {}
+    key_set = {}
 
     for s in store:
-        if selectKeys:
-            sKeys = (k for k in s.keys() if k in selectKeys)
+        if select_keys:
+            s_keys = (k for k in s.keys() if k in select_keys)
             abridge = True
         else:
-            sKeys = s.keys()
+            s_keys = s.keys()
             abridge = False
-        for k in sKeys:
-            if k in keySet:
+
+        for k in s_keys:
+            if k in key_set:
                 continue
             v = s[k]
             if isinstance(v, (list, np.ndarray)):
-                listSet, maxListLen = listKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
-                if listSet is not None:
-                    keySet[k] = listSet
+                list_set, max_list_len = list_key_gen(v,
+                                                      max_list_len=None,
+                                                      return_list=False,
+                                                      abridge=abridge)
+                if list_set is not None:
+                    key_set[k] = list_set
             elif isinstance(v, dict):
-                dictKeySet, maxListLen = dictKeyGen(v, maxListLen=None, returnList=False, abridge=abridge)
-                keySet[k] = dictKeySet
+                dict_key_set, max_list_len = dict_key_gen(v,
+                                                          max_list_len=None,
+                                                          return_list=False,
+                                                          abridge=abridge)
+                key_set[k] = dict_key_set
             else:
-                 keySet[k] = None
+                key_set[k] = None
 
-    return keySet
+    return key_set
 
 
-def newFlatDict(store, selectKeys=None, labelPrefix=''):
+def new_flat_dict(store: List[Dict],
+                  select_keys: Optional[List[str]] = None,
+                  label_prefix: Optional[str] = None
+                  ) -> Dict:
     """
     Takes a list of dictionaries and returns a dictionary of 1D lists.
 
@@ -518,63 +543,69 @@ def newFlatDict(store, selectKeys=None, labelPrefix=''):
     store : list of dicts
         The dictionaries would be expected to have many of the same keys.
         Any dictionary keys containing lists in the input have been split into multiple numbered keys
-    selectKeys : list of strings, optional
-        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys being returned
-    labelPrefix : string
+    select_keys : list of strings, optional
+        The keys whose data will be included in the return dictionary. Default ``None``, which results in all keys
+        being returned
+    label_prefix : string
         An identifier to be added to the beginning of each key string.
 
     Returns
     -------
-    newStore : dict
-        The new dictionary with the keys from the keySet and the values as
+    new_store : dict
+        The new dictionary with the keys from the key_set and the values as
         1D lists with 'None' if the keys, value pair was not found in the
         store.
 
     Examples
     --------
     >>> store = [{'list': [1, 2, 3, 4, 5, 6]}]
-    >>> newFlatDict(store)
+    >>> new_flat_dict(store)
     {'list_[0]': [1], 'list_[1]': [2], 'list_[2]': [3], 'list_[3]': [4], 'list_[4]': [5], 'list_[5]': [6]}
     >>> store = [{'string': 'string'}]
-    >>> newFlatDict(store)
+    >>> new_flat_dict(store)
     {'string': ["'string'"]}
     >>> store = [{'dict': {1: {3: "a"}, 2: "b"}}]
-    >>> newFlatDict(store)
+    >>> new_flat_dict(store)
     {'dict_1_3': ["'a'"], 'dict_2': ["'b'"]}
     """
-    keySet = flatDictKeySet(store, selectKeys=selectKeys)
+    key_set = flat_dict_key_set(store, select_keys=select_keys)
 
-    newStore = {}
+    new_store = {}
 
-    if labelPrefix:
-        labelPrefix += "_"
+    if label_prefix is not None:
+        label_prefix += "_"
+    else:
+        label_prefix = ''
 
-    for key, loc in keySet.items():
+    for key, loc in key_set.items():
 
-        newKey = labelPrefix + str(key)
+        new_key = label_prefix + str(key)
 
         if isinstance(loc, dict):
-            subStore = [s[key] for s in store]
-            keyStoreSet = newFlatDict(subStore, labelPrefix=newKey)
-            newStore.update(keyStoreSet)
+            sub_store = [s[key] for s in store]
+            key_store_set = new_flat_dict(sub_store, label_prefix=new_key)
+            new_store.update(key_store_set)
         elif isinstance(loc, (list, np.ndarray)):
             for locCo in loc:
-                tempList = []
+                temp_list = []
                 for s in store:
-                    rawVal = s.get(key, None)
-                    if rawVal is None:
-                        tempList.append(None)
+                    raw_val = s.get(key, None)
+                    if raw_val is None:
+                        temp_list.append(None)
                     else:
-                        tempList.append(listSelection(rawVal, locCo))
-                newStore.setdefault(newKey + "_" + str(locCo), tempList)
+                        temp_list.append(list_selection(raw_val, locCo))
+                new_store.setdefault(new_key + "_" + str(locCo), temp_list)
         else:
-            vals = [repr(s.get(key, None)) for s in store]
-            newStore.setdefault(newKey, vals)
+            values = [repr(s.get(key, None)) for s in store]
+            new_store.setdefault(new_key, values)
 
-    return newStore
+    return new_store
 
 
-def newListDict(store, labelPrefix='', maxListLen=0):
+def new_list_dict(store: Dict,
+                  label_prefix: Optional[str] = None,
+                  max_list_len: Optional[int] = 0
+                  ) -> Dict:
     """
     Takes a dictionary of numbers, strings, lists and arrays and returns a dictionary of 1D arrays.
 
@@ -584,62 +615,70 @@ def newListDict(store, labelPrefix='', maxListLen=0):
     ----------
     store : dict
         A dictionary of numbers, strings, lists, dictionaries and arrays
-    labelPrefix : string
+    label_prefix : string, optional
         An identifier to be added to the beginning of each key string. Default empty string
+    max_list_len : int, optional
+        The number of elements the list will need to have
 
     Returns
     -------
-    newStore : dict
-        The new dictionary with the keys from the keySet and the values as
-        1D lists.
+    new_store : dict
+        The new dictionary with the keys from the key_set and the values as 1D lists.
 
     Examples
     --------
     >>> store = {'list': [1, 2, 3, 4, 5, 6]}
-    >>> newListDict(store)
+    >>> new_list_dict(store)
     {'list': [1, 2, 3, 4, 5, 6]}
     >>> store = {'string': 'string'}
-    >>> newListDict(store)
+    >>> new_list_dict(store)
     {'string': ['string']}
     >>> store = {'dict': {1: {3: "a"}, 2: "b"}}
-    >>> newListDict(store)
+    >>> new_list_dict(store)
     {'dict_1_3': ['a'], 'dict_2': ['b']}
     """
 
-    keySet, maxListLen = dictKeyGen(store, maxListLen=maxListLen, returnList=True, abridge=False)
+    key_set, max_list_len = dict_key_gen(store,
+                                         max_list_len=max_list_len,
+                                         return_list=True,
+                                         abridge=False)
 
-    newStore = {}
+    new_store = {}
 
-    if labelPrefix:
-        labelPrefix += "_"
+    if label_prefix is not None:
+        label_prefix += "_"
+    else:
+        label_prefix = ''
 
-    for key, loc in keySet.items():
+    for key, loc in key_set.items():
 
-        newKey = labelPrefix + str(key)
+        new_key = label_prefix + str(key)
 
         if isinstance(loc, dict):
-            keyStoreSet = newListDict(store[key], labelPrefix=newKey, maxListLen=maxListLen)
-            newStore.update(keyStoreSet)
+            key_store_set = new_list_dict(store[key],
+                                          label_prefix=new_key,
+                                          max_list_len=max_list_len)
+            new_store.update(key_store_set)
 
         elif isinstance(loc, (list, np.ndarray)):
             for locCo in loc:
-                vals = list(listSelection(store[key], locCo))
-                vals = pad(vals, maxListLen)
-                newStore[newKey + "_" + str(locCo)] = vals
+                values = list(list_selection(store[key], locCo))
+                values = pad(values, max_list_len)
+                new_store[new_key + "_" + str(locCo)] = values
 
         else:
             v = store[key]
             if isinstance(v, (list, np.ndarray)):
-                vals = pad(list(v), maxListLen)
+                values = pad(list(v), max_list_len)
             else:
                 # We assume the object is a single value or string
-                vals = pad([v], maxListLen)
-            newStore[newKey] = vals
+                values = pad([v], max_list_len)
+            new_store[new_key] = values
 
-    return newStore
+    return new_store
 
 
-def pad(values, maxListLen):
+def pad(values: List, max_list_len: int) -> List:
     """
     Pads a list with None
 
@@ -647,17 +686,22 @@ def pad(values, maxListLen):
     ----------
     values : list
         The list to be extended
-    maxListLen : int
+    max_list_len : int
         The number of elements the list needs to have
+
+    Returns
+    -------
+    padded_values: list
+        The original list, now padded
     """
 
-    vLen = np.size(values)
-    if vLen < maxListLen:
-        values.extend([None for i in range(maxListLen - vLen)])
+    value_len = np.size(values)
+    if value_len < max_list_len:
+        values.extend([None] * (max_list_len - value_len))
     return values
 
 
-def listSelection(data, loc):
+def list_selection(data: List, loc: Tuple[int, ...]) -> Any:
     """
     Allows numpy array-like referencing of lists
 
@@ -670,16 +714,16 @@ def listSelection(data, loc):
 
     Returns
     -------
-    selection : list
+    selection : sublist
         The referenced subset
 
     Examples
     --------
-    >>> listSelection([1, 2, 3], (0,))
+    >>> list_selection([1, 2, 3], (0,))
     1
-    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0,))
+    >>> list_selection([[1, 2, 3], [4, 5, 6]], (0,))
     [1, 2, 3]
-    >>> listSelection([[1, 2, 3], [4, 5, 6]], (0, 2))
+    >>> list_selection([[1, 2, 3], [4, 5, 6]], (0, 2))
     3
     """
     if len(loc) == 0:
@@ -687,14 +731,18 @@ def listSelection(data, loc):
     elif len(loc) == 1:
         return data[loc[0]]
     else:
-        subData = listSelection(data, loc[:-1])
-        if len(np.shape(subData)) > 0:
-            return listSelection(data, loc[:-1])[loc[-1]]
+        sub_data = list_selection(data, loc[:-1])
+        if len(np.shape(sub_data)) > 0:
+            return list_selection(data, loc[:-1])[loc[-1]]
         else:
             return None
 
 
-def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
+def dict_key_gen(store: Dict,
+                 max_list_len: Optional[int] = None,
+                 return_list: Optional[bool] = False,
+                 abridge: Optional[bool] = False
+                 ) -> Tuple[Optional[dict], Optional[int]]:
     """
     Identifies the columns necessary to convert a dictionary into a table
 
@@ -702,61 +750,71 @@ def dictKeyGen(store, maxListLen=None, returnList=False, abridge=False):
     ----------
     store : dict
         The dictionary to be broken down into keys
-    maxListLen : int or float with no decimal places or None, optional
-        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``
-    returnList : bool, optional
+    max_list_len : int or None, optional
+        The length of the longest  expected list. Only useful if return_list is ``True``. Default ``None``
+    return_list : bool, optional
         Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values
     abridge : bool, optional
-        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.
-        Default ``False``, not abridged
+        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10
+        elements are removed. Default ``False``, not abridged
 
     Returns
     -------
-    keySet : dict with values of dict, list or None
+    key_set : dict with values of dict, list or None
         The dictionary of keys to be extracted
-    maxListLen : int or float with no decimal places or None, optional
-        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+    max_list_len : int or None, optional
+        If return_list is ``True`` this should be the length of the longest list. If return_list is ``False``
         this should return its original value
 
     Examples
     --------
     >>> store = {'string': 'string'}
-    >>> dictKeyGen(store)
+    >>> dict_key_gen(store)
     ({'string': None}, 1)
     >>> store = {'num': 23.6}
-    >>> dictKeyGen(store)
+    >>> dict_key_gen(store)
     ({'num': None}, 1)
     >>> store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
-    >>> dictKeyGen(store, returnList=True, abridge=True)
+    >>> dict_key_gen(store, return_list=True, abridge=True)
     ({'array': array([[0],
            [1]])}, 6)
     >>> store = {'dict': {1: "a", 2: "b"}}
-    >>> dictKeyGen(store, maxListLen=7, returnList=True, abridge=True)
+    >>> dict_key_gen(store, max_list_len=7, return_list=True, abridge=True)
     ({'dict': {1: None, 2: None}}, 7)
     """
-    keySet = {}
+    key_set = {}
 
     for k in store.keys():
         v = store[k]
         if isinstance(v, (list, np.ndarray)):
-            listSet, maxListLen = listKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
-            if listSet is not None:
-                keySet.setdefault(k, listSet)
+            list_set, max_list_len = list_key_gen(v,
+                                                  max_list_len=max_list_len,
+                                                  return_list=return_list,
+                                                  abridge=abridge)
+            if list_set is not None:
+                key_set.setdefault(k, list_set)
             else:
-                keySet.setdefault(k, None)
+                key_set.setdefault(k, None)
         elif isinstance(v, dict):
-            dictKeySet, maxListLen = dictKeyGen(v, maxListLen=maxListLen, returnList=returnList, abridge=abridge)
-            keySet.setdefault(k, dictKeySet)
+            dict_key_set, max_list_len = dict_key_gen(v,
+                                                      max_list_len=max_list_len,
+                                                      return_list=return_list,
+                                                      abridge=abridge)
+            key_set.setdefault(k, dict_key_set)
         else:
-            keySet.setdefault(k, None)
+            key_set.setdefault(k, None)
 
-    if maxListLen is None and len(keySet) > 0:
-        maxListLen = 1
+    if max_list_len is None and len(key_set) > 0:
+        max_list_len = 1
 
-    return keySet, maxListLen
+    return key_set, max_list_len
 
 
-def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
+def list_key_gen(data: Union[List, np.ndarray],
+                 max_list_len: Optional[int] = None,
+                 return_list: Optional[bool] = False,
+                 abridge: Optional[bool] = False
+                 ) -> Tuple[Optional[np.ndarray], Optional[int]]:
     """
     Identifies the columns necessary to convert a list into a table
 
@@ -764,70 +822,70 @@ def listKeyGen(data, maxListLen=None, returnList=False, abridge=False):
     ----------
     data : numpy.ndarray or list
         The list to be broken down
-    maxListLen : int or float with no decimal places or None, optional
-        The length of the longest  expected list. Only useful if returnList is ``True``. Default ``None``
-    returnList : bool, optional
+    max_list_len : int, optional
+        The length of the longest  expected list. Only useful if return_list is ``True``. Default ``None``
+    return_list : bool, optional
         Defines if the lists will be broken into 1D lists or values. Default ``False``, lists will be broken into values
     abridge : bool, optional
-        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10 elements are removed.
-        Default ``False``, not abridged
+        Defines if the final dataset will be a summary or the whole lot. If it is a summary, lists of more than 10
+        elements are removed. Default ``False``, not abridged
 
     Returns
     -------
-    returnList : None or list of tuples of ints or ints
+    return_list : None or list of tuples of ints
         The list of co-ordinates for the elements to be extracted from the data. If None the list is used as-is.
-    maxListLen : int or float with no decimal places or None, optional
-        If returnList is ``True`` this should be the length of the longest list. If returnList is ``False``
+    max_list_len : int or None
+        If return_list is ``True`` this should be the length of the longest list. If return_list is ``False``
         this should return its original value
 
     Examples
     --------
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=False)
+    >>> list_key_gen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], max_list_len=None, return_list=False, abridge=False)
     (array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]), 1)
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=False, abridge=True)
+    >>> list_key_gen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], max_list_len=None, return_list=False, abridge=True)
     (None, None)
-    >>> listKeyGen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], maxListLen=None, returnList=True, abridge=True)
+    >>> list_key_gen([[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]], max_list_len=None, return_list=True, abridge=True)
     (array([[0],
            [1]]), 6)
     """
-    dataShape = np.shape(data)
-    if dataShape[-1] == 0:
-        return None, maxListLen
+    data_shape = np.shape(data)
+    if data_shape[-1] == 0:
+        return None, max_list_len
 
-    dataShapeList = list(dataShape)
-    if returnList:
-        dataShapeFirst = dataShapeList.pop(-1)
-        numberColumns = np.prod(dataShapeList)
-        if maxListLen is None:
-            maxListLen = dataShapeFirst
-        elif dataShapeFirst > maxListLen:
-            maxListLen = dataShapeFirst
+    data_shape_list = list(data_shape)
+    if return_list:
+        data_shape_first = data_shape_list.pop(-1)
+        number_columns = np.prod(data_shape_list)
+        if max_list_len is None:
+            max_list_len = data_shape_first
+        elif data_shape_first > max_list_len:
+            max_list_len = data_shape_first
     else:
-        numberColumns = np.prod(dataShape)
+        number_columns = np.prod(data_shape)
 
     # If we are creating an abridged dataset and the length is too long, skip it. It will just clutter up the document
-    if abridge and numberColumns > 10:
-        return None, maxListLen
+    if abridge and number_columns > 10:
+        return None, max_list_len
 
     # We need to calculate every combination of co-ordinates in the array
-    arrSets = [list(range(0, i)) for i in dataShapeList]
+    array_sets = [list(range(0, i)) for i in data_shape_list]
     # Now record each one
-    locList = np.array([tuple(loc) for loc in utils.listMergeGen(*arrSets)])
-    listItemLen = len(locList[0])
-    if listItemLen == 1:
-        finalList = locList #.flatten()
-    elif listItemLen == 0:
-        return None, maxListLen
+    location_list = np.array([tuple(loc) for loc in utils.listMergeGen(*array_sets)])
+    list_item_len = len(location_list[0])
+    if list_item_len == 1:
+        final_list = location_list  # .flatten()
+    elif list_item_len == 0:
+        return None, max_list_len
     else:
-        finalList = locList
+        final_list = location_list
 
-    if maxListLen is None and len(finalList) > 0:
-        maxListLen = 1
+    if max_list_len is None and len(final_list) > 0:
+        max_list_len = 1
 
-    return finalList, maxListLen
+    return final_list, max_list_len
 
 
-def date():
+def date() -> str:
     """
     Calculate today's date as a string in the form <year>-<month>-<day>
     and returns it

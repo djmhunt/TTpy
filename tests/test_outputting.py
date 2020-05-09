@@ -72,6 +72,34 @@ class TestClass_saving:
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
+    def test_S_close2(self, caplog):
+        caplog.set_level(logging.INFO)
+
+        with pytest.raises(KeyError, match='This is a test'):
+            with outputting.Saving() as saving:
+                raise KeyError('This is a test')
+
+        captured = caplog.records
+
+        levels = ['INFO', 'INFO', 'INFO', 'ERROR', 'INFO']
+        for expected_level, actual_level in itertools.zip_longest(levels, [k.levelname for k in captured]):
+            assert actual_level == expected_level
+
+        captured_loggers = [k.name for k in captured]
+        correct_loggers = ['Setup', 'Setup', 'Framework', 'Fatal', 'Setup']
+        for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
+            assert capt == corr
+
+        standard_captured = [k.message for k in captured]
+        correct = ['{}'.format(outputting.date()),
+                   'Log initialised',
+                   'Beginning task labelled: Untitled',
+                   'Logging an uncaught fatal exception',
+                   'Shutting down program']
+
+        for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
+            assert standard_captured_line == correct_line
+
     def test_S_config(self, caplog):
         caplog.set_level(logging.INFO)
         config = {'label': None,
@@ -345,61 +373,61 @@ class TestClass_fancy_logger:
             assert standard_captured_line == correct_line
 
 
-#%% For flatDictKeySet
+#%% For flat_dict_key_set
 class TestClass_flatDictKeySet:
     def test_FDKS_none(self):
         store = []
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict()
         assert result == correct_result
 
     def test_FDKS_string(self):
         store = [{'string': 'string'}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('string', None)])
         assert result == correct_result
 
     def test_FDKS_list1(self):
         store = [{'list': [1, 2, 3, 4, 5, 6]}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('list', np.array([[0], [1], [2], [3], [4], [5]]))])
         assert (result['list'] == correct_result['list']).all()
 
     def test_FDKS_num(self):
         store = [{'num': 23.6}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('num', None)])
         assert result == correct_result
 
     def test_FDKS_array(self):
         store = [{'array': np.array([1, 2, 3])}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('array', np.array([[0], [1], [2]]))])
         assert (result['array'] == correct_result['array']).all()
 
     def test_FDKS_array2(self):
         store = [{'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4],
                                                                        [0, 5], [1, 5]]))])
         assert (result['array'] == correct_result['array']).all()
 
     def test_FDKS_array3(self):
         store = [{'array': np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [0, 1], [1, 1], [2, 1], [3, 1],
                                                                        [4, 1], [5, 1]]))])
         assert (result['array'] == correct_result['array']).all()
 
     def test_FDKS_dict(self):
         store = [{'dict': {1: "a", 2: "b"}}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, None), (2, None)]))])
         assert result['dict'] == correct_result['dict']
 
     def test_FDKS_dict2(self):
         store = [{'dict': {1: [1, 2, 3], 2: [[1, 2], [3, 4]]}}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, np.array([[0], [1], [2]])),
                                                                                      (2, [[0, 0], [1, 0],
                                                                                           [0, 1], [1, 1]])]))])
@@ -408,61 +436,61 @@ class TestClass_flatDictKeySet:
 
     def test_FDKS_dict3(self):
         store = [{'dict': {1: {3: "a"}, 2: "b"}}]
-        result = outputting.flatDictKeySet(store)
+        result = outputting.flat_dict_key_set(store)
         correct_result = collections.OrderedDict([('dict', collections.OrderedDict([(1, collections.OrderedDict([(3, None)])),
                                                                                      (2, None)]))])
         assert result['dict'] == correct_result['dict']
 
-    # TODO: Upgrade flatDictKeySet to cope with this
+    # TODO: Upgrade flat_dict_key_set to cope with this
     #def test_FDKS_list_dict(self):
     #    store = [{'list': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}]
-    #    result = outputting.flatDictKeySet(store)
+    #    result = outputting.flat_dict_key_set(store)
     #    correct_result = collections.OrderedDict([('list', np.array([[0, "A"], [0, "B"], [1, 1], [1, 2]]))])
     #    assert (result['list'] == correct_result['list']).all()
 
 
-#%% For newFlatDict
+#%% For new_flat_dict
 class TestClass_newFlatDict:
     def test_NFD_none(self):
         store = []
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict()
         assert result == correct_result
 
     def test_NFD_none2(self):
         store = [{}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict()
         assert result == correct_result
 
     def test_NFD_string(self):
         store = [{'string': 'string'}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('string', ["'string'"])])
         assert result == correct_result
 
     def test_NFD_list1(self):
         store = [{'list': [1, 2, 3, 4, 5, 6]}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('list_[0]', [1]), ('list_[1]', [2]), ('list_[2]', [3]),
                                                   ('list_[3]', [4]), ('list_[4]', [5]), ('list_[5]', [6])])
         assert result == correct_result
 
     def test_NFD_num(self):
         store = [{'num': 23.6}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('num', ['23.6'])])
         assert result == correct_result
 
     def test_NFD_num2(self):
         store = [{'num': 23.6}, {'num': 29}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('num', ['23.6', '29'])])
         assert result == correct_result
 
     def test_NFD_array(self):
         store = [{'array': np.array([1, 2, 3])}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('array_[0]', [1]),
                                                   ('array_[1]', [2]),
                                                   ('array_[2]', [3])])
@@ -470,7 +498,7 @@ class TestClass_newFlatDict:
 
     def test_NFD_array2(self):
         store = [{'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('array_[0 0]', [1]), ('array_[1 0]', [7]), ('array_[0 1]', [2]),
                                                   ('array_[1 1]', [8]), ('array_[0 2]', [3]), ('array_[1 2]', [9]),
                                                   ('array_[0 3]', [4]), ('array_[1 3]', [10]), ('array_[0 4]', [5]),
@@ -479,7 +507,7 @@ class TestClass_newFlatDict:
 
     def test_NFD_array3(self):
         store = [{'array': np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('array_[0 0]', [1]), ('array_[1 0]', [3]), ('array_[2 0]', [5]),
                                                   ('array_[3 0]', [7]), ('array_[4 0]', [9]), ('array_[5 0]', [11]),
                                                   ('array_[0 1]', [2]), ('array_[1 1]', [4]), ('array_[2 1]', [6]),
@@ -488,13 +516,13 @@ class TestClass_newFlatDict:
 
     def test_NFD_dict(self):
         store = [{'dict': {1: "a", 2: "b"}}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('dict_1', ["'a'"]), ('dict_2', ["'b'"])])
         assert result == correct_result
 
     def test_NFD_dict2(self):
         store = [{'dict': {1: [1, 2, 3], 2: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]]}}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('dict_1_[0]', [1]), ('dict_1_[1]', [2]), ('dict_1_[2]', [3]),
                                                   ('dict_2_[0 0]', [1]), ('dict_2_[1 0]', [12]), ('dict_2_[0 1]', [2]),
                                                   ('dict_2_[1 1]', [13]), ('dict_2_[0 2]', [3]), ('dict_2_[1 2]', [14]),
@@ -508,74 +536,74 @@ class TestClass_newFlatDict:
 
     def test_NFD_dict3(self):
         store = [{'dict': {1: {3: "a"}, 2: "b"}}]
-        result = outputting.newFlatDict(store)
+        result = outputting.new_flat_dict(store)
         correct_result = collections.OrderedDict([('dict_1_3', ["'a'"]), ('dict_2', ["'b'"])])
         assert result == correct_result
 
-    # TODO: Upgrade newFlatDict to cope with this
+    # TODO: Upgrade new_flat_dict to cope with this
     # def test_NFD_list_dict(self):
     #    store = {'listDict': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}
-    #    result = outputting.newFlatDict(store)
+    #    result = outputting.new_flat_dict(store)
     #    correct_result = collections.OrderedDict([('listDict_[0]_"A"', [0.3]), ('listDict_[0]_"B"', [0.7]),
     #                                              ('listDict_[1]_1', [0.7]), ('listDict_[1]_1', [0.3])])
     #    assert result == correct_result
 
 
-#%% For newListDict
+#%% For new_list_dict
 class TestClass_newListDict:
     def test_NLD_none(self):
         store = {}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict()
         assert result == correct_result
 
     def test_NLD_string(self):
         store = {'string': 'string'}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('string', ['string'])])
         assert result == correct_result
 
     def test_NLD_list1(self):
         store = {'list': [1, 2, 3, 4, 5, 6]}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('list', [1, 2, 3, 4, 5, 6])])
         assert result == correct_result
 
     def test_NLD_num(self):
         store = {'num': 23.6}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('num', [23.6])])
         assert result == correct_result
 
     def test_NLD_array(self):
         store = {'array': np.array([1, 2, 3])}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('array', [1, 2, 3])])
         assert result == correct_result
 
     def test_NLD_array2(self):
         store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('array_[0]', [1, 2, 3, 4, 5, 6]),
                                                   ('array_[1]', [7, 8, 9, 10, 11, 12])])
         assert result == correct_result
 
     def test_NLD_array3(self):
         store = {'array': np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('array_[0]', [1, 2]), ('array_[1]', [3, 4]), ('array_[2]', [5, 6]),
                                                   ('array_[3]', [7, 8]), ('array_[4]', [9, 10]), ('array_[5]', [11, 12])])
         assert result == correct_result
 
     def test_NLD_dict(self):
         store = {'dict': {1: "a", 2: "b"}}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('dict_1', ['a']), ('dict_2', ['b'])])
         assert result == correct_result
 
     def test_NLD_dict2(self):
         store = {'dict': {1: [1, 2, 3], 2: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]]}}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('dict_1', [1, 2, 3, None, None, None, None, None, None, None, None]),
                                                   ('dict_2_[0]', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]),
                                                   ('dict_2_[1]', [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22])])
@@ -583,20 +611,20 @@ class TestClass_newListDict:
 
     def test_NLD_dict3(self):
         store = {'dict': {1: {3: "a"}, 2: "b"}}
-        result = outputting.newListDict(store)
+        result = outputting.new_list_dict(store)
         correct_result = collections.OrderedDict([('dict_1_3', ['a']), ('dict_2', ['b'])])
         assert result == correct_result
 
     def test_NLD_dict4(self):
         store = {'dict': {1: "a", 2: "b"}}
-        result = outputting.newListDict(store, maxListLen=3)
+        result = outputting.new_list_dict(store, max_list_len=3)
         correct_result = collections.OrderedDict([('dict_1', ['a', None, None]), ('dict_2', ['b', None, None])])
         assert result == correct_result
 
-    # TODO: Upgrade newListDict to cope with this
+    # TODO: Upgrade new_list_dict to cope with this
     #def test_NLD_list_dict(self):
     #    store = {'listDict': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}
-    #    result = outputting.newListDict(store)
+    #    result = outputting.new_list_dict(store)
     #    correct_result = collections.OrderedDict([('listDict_[0 "A"]', [0.3]), ('listDict_[0 "B"]', [0.7]),
     #                                              ('listDict_[1 1]', [0.7]), ('listDict_[1 1]', [0.3])])
     #    assert result == correct_result
@@ -620,79 +648,79 @@ class TestClass_pad:
         assert result == correct_result
 
 
-#%% For listSelection
+#%% For list_selection
 class TestClass_listSelection:
     def test_LS_simple(self):
-        result = outputting.listSelection([1, 2, 3], (0,))
+        result = outputting.list_selection([1, 2, 3], (0,))
         correct_result = 1
         assert result == correct_result
 
     def test_LS_simple2(self):
-        result = outputting.listSelection([[1, 2, 3], [4, 5, 6]], (0,))
+        result = outputting.list_selection([[1, 2, 3], [4, 5, 6]], (0,))
         correct_result = [1, 2, 3]
         assert result == correct_result
 
     def test_LS_double(self):
-        result = outputting.listSelection([[1, 2, 3], [4, 5, 6]], (0, 2))
+        result = outputting.list_selection([[1, 2, 3], [4, 5, 6]], (0, 2))
         correct_result = 3
         assert result == correct_result
 
     def test_LS_string(self):
-        result = outputting.listSelection([["A", "B", "C"], ["D", "E", "F"]], (0, 2))
+        result = outputting.list_selection([["A", "B", "C"], ["D", "E", "F"]], (0, 2))
         correct_result = "C"
         assert result == correct_result
 
     def test_LS_none(self):
-        result = outputting.listSelection([[1, 2, 3], [4, 5, 6]], ())
+        result = outputting.list_selection([[1, 2, 3], [4, 5, 6]], ())
         correct_result = None
         assert result == correct_result
 
     def test_LS_over(self):
-        result = outputting.listSelection([[1, 2, 3], [4, 5, 6]], (0, 2, 1))
+        result = outputting.list_selection([[1, 2, 3], [4, 5, 6]], (0, 2, 1))
         correct_result = None
         assert result == correct_result
 
 
-#%% For dictKeyGen
+#%% For dict_key_gen
 class TestClass_dictKeyGen:
     def test_DKG_none(self):
         store = {}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict(), None)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_DKG_string(self):
         store = {'string': 'string'}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('string', None)]), 1)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_DKG_list1(self):
         store = {'list': [1, 2, 3, 4, 5, 6]}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('list', np.array([[0], [1], [2], [3], [4], [5]]))]), 1)
         assert (result[0]['list'] == correct_result[0]['list']).all()
         assert result[1] == correct_result[1]
 
     def test_DKG_num(self):
         store = {'num': 23.6}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('num', None)]), 1)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_DKG_array(self):
         store = {'array': np.array([1, 2, 3])}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('array', np.array([[0], [1], [2]]))]), 1)
         assert (result[0]['array'] == correct_result[0]['array']).all()
         assert result[1] == correct_result[1]
 
     def test_DKG_array2(self):
         store = {'array': np.array([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]])}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4],
                                                                        [0, 5], [1, 5]]))]),
                           1)
@@ -701,7 +729,7 @@ class TestClass_dictKeyGen:
 
     def test_DKG_array3(self):
         store = {'array': np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('array', np.array([[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [0, 1], [1, 1], [2, 1], [3, 1],
                                                                        [4, 1], [5, 1]]))]),
                           1)
@@ -710,14 +738,14 @@ class TestClass_dictKeyGen:
 
     def test_DKG_dict(self):
         store = {'dict': {1: "a", 2: "b"}}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('dict', collections.OrderedDict([(1, None), (2, None)]))]), 1)
         assert result[0]['dict'] == correct_result[0]['dict']
         assert result[1] == correct_result[1]
 
     def test_DKG_dict2(self):
         store = {'dict': {1: [1, 2, 3], 2: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]]}}
-        result = outputting.dictKeyGen(store, abridge=True)
+        result = outputting.dict_key_gen(store, abridge=True)
         correct_result = (collections.OrderedDict([('dict', collections.OrderedDict([(1, np.array([[0], [1], [2]])),
                                                                                      (2, None)]))]),
                           1)
@@ -727,62 +755,62 @@ class TestClass_dictKeyGen:
 
     def test_DKG_dict3(self):
         store = {'dict': {1: {3: "a"}, 2: "b"}}
-        result = outputting.dictKeyGen(store)
+        result = outputting.dict_key_gen(store)
         correct_result = (collections.OrderedDict([('dict', collections.OrderedDict([(1, collections.OrderedDict([(3, None)])),
                                                                                      (2, None)]))]),
                           1)
         assert result[0]['dict'] == correct_result[0]['dict']
         assert result[1] == correct_result[1]
 
-    # TODO: Upgrade dictKeyGen to cope with this
+    # TODO: Upgrade dict_key_gen to cope with this
     #def test_DKG_list_dict(self):
     #    store = {'list': [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]}
-    #    result = outputting.dictKeyGen(store)
+    #    result = outputting.dict_key_gen(store)
     #    correct_result = (collections.OrderedDict([('list', np.array([[0, "A"], [0, "B"], [1, 1], [1, 2]]))]), None)
     #    assert (result[0]['list'] == correct_result[0]['list']).all()
     #    assert result[1] == correct_result[1]
 
 
-#%% For listKeyGen
+#%% For list_key_gen
 class TestClass_listKeyGen:
     def test_LKG_empty(self):
         store = []
-        result = outputting.listKeyGen(store)
+        result = outputting.list_key_gen(store)
         correct_result = (None, None)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_LKG_list1(self):
         store = [1, 2, 3, 4, 5, 6]
-        result = outputting.listKeyGen(store)
+        result = outputting.list_key_gen(store)
         correct_result = (np.array([[0], [1], [2], [3], [4], [5]]), 1)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list2(self):
         store = [1, 2, 3, 4, 5, 6]
-        result = outputting.listKeyGen(store, maxListLen=10)
+        result = outputting.list_key_gen(store, max_list_len=10)
         correct_result = (np.array([[0], [1], [2], [3], [4], [5]]), 10)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list3(self):
         store = [1, 2, 3, 4, 5, 6]
-        result = outputting.listKeyGen(store, returnList=True, maxListLen=10)
+        result = outputting.list_key_gen(store, return_list=True, max_list_len=10)
         correct_result = (None, 10)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_LKG_list4(self):
         store = [1, 2, 3, 4, 5, 6]
-        result = outputting.listKeyGen(store, returnList=True)
+        result = outputting.list_key_gen(store, return_list=True)
         correct_result = (None, 6)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_LKG_list5(self):
         store = [[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store)
+        result = outputting.list_key_gen(store)
         correct_result = (np.array([[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [0, 3], [1, 3], [0, 4], [1, 4], [0, 5], [1, 5]]),
                           1)
         assert (result[0] == correct_result[0]).all()
@@ -790,57 +818,57 @@ class TestClass_listKeyGen:
 
     def test_LKG_list6(self):
         store = [[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store, returnList=True)
+        result = outputting.list_key_gen(store, return_list=True)
         correct_result = (np.array([[0], [1]]), 6)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list7(self):
         store = [[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store, abridge=True)
+        result = outputting.list_key_gen(store, abridge=True)
         correct_result = (None, None)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_LKG_list8(self):
         store = [[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store, returnList=True, abridge=True)
+        result = outputting.list_key_gen(store, return_list=True, abridge=True)
         correct_result = (np.array([[0], [1]]), 6)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list9(self):
         store = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store, returnList=True, abridge=True)
+        result = outputting.list_key_gen(store, return_list=True, abridge=True)
         correct_result = (np.array([[0], [1]]), 10)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list10(self):
         store = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
-        result = outputting.listKeyGen(store, returnList=True, abridge=True, maxListLen=11)
+        result = outputting.list_key_gen(store, return_list=True, abridge=True, max_list_len=11)
         correct_result = (np.array([[0], [1]]), 11)
         assert (result[0] == correct_result[0]).all()
         assert result[1] == correct_result[1]
 
     def test_LKG_list11(self):
         store = [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], [15, 16], [17, 18], [19, 20], [21, 22]]
-        result = outputting.listKeyGen(store, returnList=True, abridge=True)
+        result = outputting.list_key_gen(store, return_list=True, abridge=True)
         correct_result = (None, 2)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
     def test_LKG_list12(self):
         store = [[1, 2, 3, 4, 5, 6]]
-        result = outputting.listKeyGen(store, returnList=True, abridge=True)
+        result = outputting.list_key_gen(store, return_list=True, abridge=True)
         correct_result = (np.array([[0]]), 6)
         assert result[0] == correct_result[0]
         assert result[1] == correct_result[1]
 
-    # TODO: Upgrade listKeyGen to cope with this
+    # TODO: Upgrade list_key_gen to cope with this
     #def test_LKG_dict(self):
     #    store = [collections.OrderedDict([("A", 0.3), ("B", 0.7)]), collections.OrderedDict([(1, 0.7), (2, 0.3)])]
-    #    result = outputting.listKeyGen(store)
+    #    result = outputting.list_key_gen(store)
     #    correct_result = (np.array([[0, "A"], [0, "B"], [1, 1], [1, 2]]), None)
     #    assert result[0] == correct_result[0]
     #    assert result[1] == correct_result[1]
