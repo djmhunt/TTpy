@@ -5,12 +5,15 @@
 A collection of decision making functions where there are no limits on the
 number of actions, but they are countable.
 """
-import collections
-
 import numpy as np
 
+from typing import Union, Tuple, List, Optional, Dict, Callable, NewType
 
-def weightProb(task_responses=(0, 1)):
+Action = NewType('Action', Union[int, str])
+
+
+def weightProb(task_responses: List[Union[int, str]] = (0, 1)
+               ) -> Callable[[List[float], Optional[Action], Optional[List[Action]]], Tuple[Optional[Action], Dict[Action, float]]]:
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing randomly based on which are valid and what their associated probabilities are
@@ -28,7 +31,7 @@ def weightProb(task_responses=(0, 1)):
         decision and the probability of that decision
     decision : int or None
         The action to be taken by the model
-    probDict : OrderedDict of valid responses
+    prob_dict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
 
     See Also
@@ -52,14 +55,17 @@ def weightProb(task_responses=(0, 1)):
     (None, OrderedDict([('A', 0.2), ('B', 0.3), ('C', 0.5)]))
     """
 
-    def decision_function(probabilities, last_action=None, trial_responses=None):
+    def decision_function(probabilities: List[float],
+                          last_action: Optional[Action] = None,
+                          trial_responses: Optional[List[Action]] = None
+                          ) -> Tuple[Optional[Action], Dict[Action, float]]:
 
         probArray = np.array(probabilities).flatten()
 
-        trial_probabilities, valid_responses = _validProbabilities(probArray, task_responses, trial_responses)
+        trial_probabilities, valid_responses = _valid_probabilities(probArray, task_responses, trial_responses)
 
         if trial_probabilities is None:
-            return None, collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
+            return None, dict([(k, v) for k, v in zip(task_responses, probArray)])
 
         normalised_trial_probabilities = trial_probabilities / np.sum(trial_probabilities)
 
@@ -67,9 +73,9 @@ def weightProb(task_responses=(0, 1)):
 
         abridged_probability_dict = {k: v for k, v in zip(valid_responses, normalised_trial_probabilities)}
         probability_list = [(k, abridged_probability_dict[k]) if k in valid_responses else (k, 0) for k in task_responses]
-        probDict = collections.OrderedDict(probability_list)
+        prob_dict = dict(probability_list)
 
-        return decision, probDict
+        return decision, prob_dict
 
     decision_function.Name = "discrete.weightProb"
     decision_function.Params = {"task_responses": task_responses}
@@ -77,7 +83,8 @@ def weightProb(task_responses=(0, 1)):
     return decision_function
 
 
-def maxProb(task_responses=(0, 1)):
+def maxProb(task_responses: List[Union[int, str]] = (0, 1)
+            ) -> Callable[[List[float], Optional[Action], Optional[List[Action]]], Tuple[Optional[Action], Dict[Action, float]]]:
     """Decisions for an arbitrary number of choices
 
     Choice made by choosing the most likely
@@ -95,7 +102,7 @@ def maxProb(task_responses=(0, 1)):
         decision and the probability of that decision
     decision : int or None
         The action to be taken by the model
-    probDict : OrderedDict of valid responses
+    prob_dict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
 
     See Also
@@ -117,22 +124,25 @@ def maxProb(task_responses=(0, 1)):
     ('A', OrderedDict([('A', 0.6), ('B', 0.3), ('C', 0.5)]))
     """
 
-    def decision_function(probabilities, last_action=None, trial_responses=None):
+    def decision_function(probabilities: List[float],
+                          last_action: Optional[Action] = None,
+                          trial_responses: Optional[List[Action]] = None
+                          ) -> Tuple[Optional[Action], Dict[Action, float]]:
 
-        probArray = np.array(probabilities).flatten()
+        prob_array = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
+        prob_dict = dict([(k, v) for k, v in zip(task_responses, prob_array)])
 
-        trial_probabilities, responses = _validProbabilities(probArray, task_responses, trial_responses)
+        trial_probabilities, responses = _valid_probabilities(prob_array, task_responses, trial_responses)
 
         if trial_probabilities is None:
-            return None, probDict
+            return None, prob_dict
 
         max_probability = np.amax(trial_probabilities)
         max_responses = [r for r, p in zip(responses, trial_probabilities) if p == max_probability]
         decision = np.random.choice(max_responses)
 
-        return decision, probDict
+        return decision, prob_dict
 
     decision_function.Name = "discrete.maxProb"
     decision_function.Params = {"task_responses": task_responses}
@@ -140,7 +150,8 @@ def maxProb(task_responses=(0, 1)):
     return decision_function
 
 
-def probThresh(task_responses=(0, 1), eta=0.8):
+def probThresh(task_responses: List[Union[int, str]] = (0, 1), eta: float = 0.8
+               ) -> Callable[[List[float], Optional[Action], Optional[List[Action]]], Tuple[Optional[Action], Dict[Action, float]]]:
     # type : (list, float) -> (float, collections.OrderedDict)
     """Decisions for an arbitrary number of choices
 
@@ -161,7 +172,7 @@ def probThresh(task_responses=(0, 1), eta=0.8):
         decision and the probability of that decision
     decision : int or None
         The action to be taken by the model
-    probDict : OrderedDict of valid responses
+    prob_dict : OrderedDict of valid responses
         A dictionary of considered actions as keys and their associated probabilities as values
 
     Examples
@@ -179,16 +190,19 @@ def probThresh(task_responses=(0, 1), eta=0.8):
     ('A', OrderedDict([('A', 0.2), ('B', 0.3), ('C', 0.8)]))
     """
 
-    def decision_function(probabilities, last_action=None, trial_responses=None):
+    def decision_function(probabilities: List[float],
+                          last_action: Optional[Action] = None,
+                          trial_responses: Optional[List[Action]] = None
+                          ) -> Tuple[Optional[Action], Dict[Action, float]]:
 
-        probArray = np.array(probabilities).flatten()
+        prob_array = np.array(probabilities).flatten()
 
-        probDict = collections.OrderedDict([(k, v) for k, v in zip(task_responses, probArray)])
+        prob_dict = dict([(k, v) for k, v in zip(task_responses, prob_array)])
 
-        trial_probabilities, responses = _validProbabilities(probArray, task_responses, trial_responses)
+        trial_probabilities, responses = _valid_probabilities(prob_array, task_responses, trial_responses)
 
         if trial_probabilities is None:
-            return None, probDict
+            return None, prob_dict
 
         # If probMax is above a threshold, we pick the best one, otherwise we pick at random
         eta_responses = [r for r, p in zip(responses, trial_probabilities) if p >= eta]
@@ -197,7 +211,7 @@ def probThresh(task_responses=(0, 1), eta=0.8):
         else:
             decision = np.random.choice(responses)
 
-        return decision, probDict
+        return decision, prob_dict
 
     decision_function.Name = "discrete.probThresh"
     decision_function.Params = {"task_responses": task_responses,
@@ -206,16 +220,19 @@ def probThresh(task_responses=(0, 1), eta=0.8):
     return decision_function
 
 
-def _validProbabilities(probabilities, task_responses, trial_responses):
+def _valid_probabilities(probabilities: np.ndarray,
+                         task_responses: List[Action],
+                         trial_responses: Optional[List[Action]]
+                         ) -> Tuple[List[float], List[Action]]:
     """
     Takes the list of probabilities, valid responses and possible responses and returns the appropriate probabilities
     and responses
 
     Parameters
     ----------
-    probabilities : 1D list or array
+    probabilities : 1D list
         The probabilities for all possible actions
-    task_responses : tuple or None
+    task_responses : 1D list
         Provides the action responses expected by the tasks for each
         probability estimate.
     trial_responses : 1D list or array, or ``None``
@@ -230,7 +247,7 @@ def _validProbabilities(probabilities, task_responses, trial_responses):
 
     Examples
     --------
-    >>> _validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
+    >>> _valid_probabilities(np.array([0.2, 0.1, 0.7]), ["A", "B", "C"], ["B", "C"])
     ([0.1, 0.7], ['B', 'C'])
     """
 
@@ -247,4 +264,3 @@ def _validProbabilities(probabilities, task_responses, trial_responses):
             reduced_probabilities = [probabilities[i] for i, r in enumerate(task_responses) if r in trial_responses]
 
     return reduced_probabilities, responses
-

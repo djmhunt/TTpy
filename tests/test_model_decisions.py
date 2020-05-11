@@ -15,7 +15,7 @@ class TestClass_decSingle:
     def test_S_normal(self):
         np.random.seed(100)
         d = binary.single()
-        result = d(0.23)
+        result = d([0.23])
         correct_result = (0, collections.OrderedDict([(0, 0.77), (1, 0.23)]))
         assert result == correct_result
 
@@ -23,7 +23,7 @@ class TestClass_decSingle:
         last_action = 0
         np.random.seed(100)
         d = binary.single()
-        result = d(0.23, last_action)
+        result = d([0.23], last_action)
         correct_result = (0, collections.OrderedDict([(0, 0.77), (1, 0.23)]))
         assert result == correct_result
 
@@ -31,21 +31,21 @@ class TestClass_decSingle:
         last_action = 0
         np.random.seed(104)
         d = binary.single()
-        result = d(0.23, last_action)
+        result = d([0.23], last_action)
         correct_result = (1, collections.OrderedDict([(0, 0.77), (1, 0.23)]))
         assert result == correct_result
 
     def test_S_valid_1(self):
         np.random.seed(100)
         d = binary.single()
-        result = d(0.23, trial_responses=[1])
+        result = d([0.23], trial_responses=[1])
         correct_result = (1, collections.OrderedDict([(0, 0), (1, 1)]))
         assert result == correct_result
 
     def test_S_valid_2(self):
         np.random.seed(100)
         d = binary.single()
-        result = d(0.23, trial_responses=[])
+        result = d([0.23], trial_responses=[])
         correct_result = (None, collections.OrderedDict([(0, 0.77), (1, 0.23)]))
         assert result == correct_result
 
@@ -220,34 +220,34 @@ class TestClass_decProbThresh:
         assert result == correct_result
 
 
-#%% For discrete._validProbabilities
+#%% For discrete._valid_probabilities
 class TestClass_validProbabilities:
     def test_VP_reduced_int(self):
         correct_result = (np.array([0.1, 0.7]), np.array([2, 3]))
-        result = discrete._validProbabilities([0.2, 0.1, 0.7], [1, 2, 3], [2, 3])
+        result = discrete._valid_probabilities([0.2, 0.1, 0.7], [1, 2, 3], [2, 3])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_reduced_str(self):
         correct_result = (np.array([0.1, 0.7]), np.array(['B', 'C']))
-        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
+        result = discrete._valid_probabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["B", "C"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_normal(self):
         correct_result = (np.array([0.2, 0.1, 0.7]), np.array(["A", "B", "C"]))
-        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "B", "C"])
+        result = discrete._valid_probabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "B", "C"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_err(self):
         correct_result = (np.array([0.2]), np.array(['A']))
-        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "D"])
+        result = discrete._valid_probabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "D"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
 
     def test_VP_err_2(self):
         correct_result = (np.array([0.2]), np.array(['A']))
-        result = discrete._validProbabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "A"])
+        result = discrete._valid_probabilities([0.2, 0.1, 0.7], ["A", "B", "C"], ["A", "A"])
         assert (result[0] == correct_result[0]).all()
         assert (result[1] == correct_result[1]).all()
