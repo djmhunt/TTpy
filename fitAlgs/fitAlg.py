@@ -378,7 +378,6 @@ class FitAlg(object):
 
         bounds = self.boundaries
         boundNames = self.boundary_names
-        boundVals = self.boundary_values
 
         # Check if the bounds have changed or should be added
         if boundNames:
