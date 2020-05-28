@@ -5,9 +5,12 @@
 import logging
 import copy
 import fire
+import pathlib
 
 import pandas as pd
 import numpy as np
+
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType, Callable
 
 import outputting
 
@@ -15,19 +18,20 @@ from taskGenerator import TaskGeneration
 from modelGenerator import ModelGen
 
 
-def run(task_name='Basic',
-        task_changing_properties=None,
-        task_constant_properties=None,
-        model_name='QLearn',
-        model_changing_properties=None,
-        model_constant_properties=None,
-        model_changing_properties_repetition=1,
-        label=None,
-        config_file_path=None,
-        output_path=None,
-        pickle=False,
-        min_log_level='INFO',
-        numpy_error_level="log"):
+def run(task_name: str = 'Basic',
+        task_changing_properties: Optional[Dict[str, Any]] = None,
+        task_constant_properties: Optional[Dict[str, Any]] = None,
+        model_name: str = 'QLearn',
+        model_changing_properties: Optional[Dict[str, Any]] = None,
+        model_constant_properties: Optional[Dict[str, Any]] = None,
+        model_changing_properties_repetition: int = 1,
+        label: Optional[str] = None,
+        config_file_path: Optional[Union[str, pathlib.PurePath]] = None,
+        output_path: Optional[Union[str, pathlib.PurePath]] = None,
+        pickle: bool = False,
+        min_log_level: str = 'INFO',
+        numpy_error_level: str = 'log'
+        ) -> None:
     """
     A framework for letting models interact with tasks and record the data
 
@@ -129,7 +133,12 @@ def run(task_name='Basic',
                 simID += 1
 
 
-def record_simulation(file_name_generator, task_data, model_data, simID, pickle=False):
+def record_simulation(file_name_generator: Callable[[str, str], str],
+                      task_data: Dict[str, Any],
+                      model_data: Dict[str, Any],
+                      simID: str,
+                      pickle: Optional[bool] = False
+                      ) -> None:
     """
     Records the data from an task-model run. Creates a pickled version
 
@@ -169,7 +178,7 @@ def record_simulation(file_name_generator, task_data, model_data, simID, pickle=
         outputting.pickle_log(model_data, file_name_generator, "_modelData" + label)
 
 
-def log_simulation_parameters(task_parameters, model_parameters, simID):
+def log_simulation_parameters(task_parameters: Dict[str, Any], model_parameters: Dict[str, Any], simID: str) -> None:
     """
     Writes to the log the description and the label of the task and model
 
@@ -202,14 +211,16 @@ def log_simulation_parameters(task_parameters, model_parameters, simID):
     logger_sim.info(message)
 
 
-def csv_model_simulation(modelData, simID, file_name_generator):
-    # type: (dict, str, function) -> None
+def csv_model_simulation(model_data: Dict[str, Any],
+                         simID: str,
+                         file_name_generator: Callable[[str, str], str]
+                         ) -> None:
     """
     Saves the fitting data to a CSV file
 
     Parameters
     ----------
-    modelData : dict
+    model_data : dict
         The data from the model
     simID : string
         The identifier for the simulation
@@ -218,7 +229,7 @@ def csv_model_simulation(modelData, simID, file_name_generator):
         returns one ``fileName`` string
     """
 
-    data = outputting.new_list_dict(modelData)
+    data = outputting.new_list_dict(model_data)
     record = pd.DataFrame(data)
     name = "data/modelSim_" + simID
     outputFile = file_name_generator(name, 'csv')
