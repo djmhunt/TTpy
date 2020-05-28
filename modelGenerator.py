@@ -2,10 +2,10 @@
 """
 :Author: Dominic Hunt
 """
-import itertools
-import collections
 import copy
 import warnings
+
+from typing import Dict, Any, Optional, Iterable, Type
 
 import utils
 
@@ -31,7 +31,9 @@ class ModelGen(object):
         of the model being studied. Default ``None``
     """
 
-    def __init__(self, model_name, parameters=None, other_options=None):
+    def __init__(self, model_name: str,
+                 parameters: Optional[Dict[str, Any]] = None,
+                 other_options: Optional[Dict[str, Any]] = None):
 
         self.count = -1
 
@@ -52,39 +54,41 @@ class ModelGen(object):
                     "This system has not been created for changing stimulus shapers. Please put it in the ``other_options``")
         stimulus_shaper_name = other_options.pop('stimulus_shaper_name', None)
         if stimulus_shaper_name:
-            stimFunc = utils.find_class(stimulus_shaper_name,
-                                        class_folder='tasks',
-                                        inherited_class=Stimulus,
-                                        excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            valid_stimulus_args = utils.get_class_attributes(stimFunc, ignore=['processStimulus'])
+            stimulus_function = utils.find_class(stimulus_shaper_name,
+                                                 class_folder='tasks',
+                                                 inherited_class=Stimulus,
+                                                 excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
+            valid_stimulus_args = utils.get_class_attributes(stimulus_function, ignore=['process_stimulus'])
             valid_args.extend(valid_stimulus_args)
         else:
-            stimFunc = None
+            stimulus_function = None
+            valid_stimulus_args = []
 
         if 'reward_shaper_name' in parameters:
             raise NotImplementedError(
                 "This system has not been created for changing reward shapers. Please put it in the ``other_options``")
         reward_shaper_name = other_options.pop('reward_shaper_name', None)
         if reward_shaper_name:
-            rewardFunc = utils.find_class(reward_shaper_name,
-                                          class_folder='tasks',
-                                          inherited_class=Rewards,
-                                          excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
-            valid_reward_args = utils.get_class_attributes(rewardFunc, ignore=['processFeedback'])
+            reward_function = utils.find_class(reward_shaper_name,
+                                               class_folder='tasks',
+                                               inherited_class=Rewards,
+                                               excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
+            valid_reward_args = utils.get_class_attributes(reward_function, ignore=['process_feedback'])
             valid_args.extend(valid_reward_args)
         else:
-            rewardFunc = None
+            reward_function = None
+            valid_reward_args = []
 
         if 'decision_function_name' in parameters:
-            raise NotImplementedError(
-                    "This system has not been created for changing decision functions. Please put it in the ``other_options``")
+            raise NotImplementedError("This system has not been created for changing decision functions. Please put it in the ``other_options``")
         decision_function_name = other_options.pop('decision_function_name', None)
         if decision_function_name:
-            decisionFunc = utils.find_function(decision_function_name, 'model/decision', excluded_files=['__init__'])
-            valid_decision_args = utils.get_function_args(decisionFunc)
+            decision_function = utils.find_function(decision_function_name, 'model/decision', excluded_files=['__init__'])
+            valid_decision_args = utils.get_function_args(decision_function)
             valid_args.extend(valid_decision_args)
         else:
-            decisionFunc = None
+            decision_function = None
+            valid_decision_args = []
 
         self.model_class = model_class
 
@@ -95,8 +99,7 @@ class ModelGen(object):
         for p in parameter_keys:
             if p not in valid_args and len(model_class.pattern_parameters_match(p)) == 0:
                 raise KeyError(
-                    '{} is not a valid property for model ``{}``. Those available are {}'.format(p, model_name,
-                                                                                                 valid_args))
+                    f'{p} is not a valid property for model ``{model_name}``. Those available are {valid_args}')
 
         parameter_combinations = []
         for p in utils.listMergeGen(*list(parameters.values())):
@@ -108,11 +111,9 @@ class ModelGen(object):
             checked_options = {}
             for k, v in other_options.items():
                 if k not in valid_args:
-                    raise KeyError('{} is not a valid property for model ``{}``. Those available are {}'.format(k,
-                                                                                                                model_name,
-                                                                                                                valid_args))
+                    raise KeyError(f'{k} is not a valid property for model ``{model_name}``. Those available are {valid_args}')
                 elif k in parameter_keys:
-                    warnings.warn("model parameter {} has been defined twice".format(k))
+                    warnings.warn(f"model parameter {k} has been defined twice")
                 else:
                     checked_options[k] = v
             self.other_options = checked_options
@@ -122,12 +123,12 @@ class ModelGen(object):
         else:
             self.other_options = {}
 
-        if stimFunc:
-            self.other_options['stimulus_shaper'] = stimFunc
-        if rewardFunc:
-            self.other_options['reward_shaper'] = rewardFunc
-        if decisionFunc:
-            self.other_options['decision_function'] = decisionFunc
+        if stimulus_function:
+            self.other_options['stimulus_shaper'] = stimulus_function
+        if reward_function:
+            self.other_options['reward_shaper'] = reward_function
+        if decision_function:
+            self.other_options['decision_function'] = decision_function
 
         if parameter_combinations:
             self.count_max = len(parameter_combinations)
@@ -143,7 +144,7 @@ class ModelGen(object):
 
         return self
 
-    def __next__(self):
+    def __next__(self) -> Model:
         """
         Produces the next item for the iterator
         
@@ -162,7 +163,7 @@ class ModelGen(object):
 
         return self.model_class(**properties)
 
-    def iter_details(self):
+    def iter_details(self) -> Iterable[Type[Model], Dict[str, Any], Dict[str, Any]]:
         """ 
         Yields a list containing a model object and parameters to initialise them
         

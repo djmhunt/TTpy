@@ -3,8 +3,9 @@
 :Author: Dominic Hunt
 """
 import copy
-import collections
 import warnings
+
+from typing import Dict, Any, Optional, Iterable
 
 import utils
 
@@ -29,7 +30,10 @@ class TaskGeneration(object):
         task instances. Default ``None``
     """
 
-    def __init__(self, task_name, parameters=None, other_options=None):
+    def __init__(self,
+                 task_name: str,
+                 parameters: Optional[Dict[str, Any]] = None,
+                 other_options: Optional[Dict[str, Any]] = None):
 
         self.count = -1
 
@@ -47,9 +51,7 @@ class TaskGeneration(object):
         parameter_keys = list(parameters.keys())
         for p in parameter_keys:
             if p not in valid_task_args:
-                raise KeyError(
-                        '{} is not a valid property for model ``{}``. Use {}'.format(p, task_name,
-                                                                                     valid_task_args))
+                raise KeyError(f'{p} is not a valid property for model ``{task_name}``. Use {valid_task_args}')
 
         parameter_combinations = []
         for p in utils.listMergeGen(*list(parameters.values())):
@@ -61,11 +63,9 @@ class TaskGeneration(object):
             checked_options = {}
             for k, v in other_options.items():
                 if k not in valid_task_args:
-                    raise KeyError('{} is not a valid property for task ``{}``. Use {}'.format(k,
-                                                                                               task_name,
-                                                                                               valid_task_args))
+                    raise KeyError(f'{k} is not a valid property for task ``{task_name}``. Use {valid_task_args}')
                 elif k in parameter_keys:
-                    warnings.warn("task parameter {} has been defined twice".format(k))
+                    warnings.warn(f'task parameter {k} has been defined twice')
                 else:
                     checked_options[k] = v
             self.other_options = checked_options
@@ -86,7 +86,7 @@ class TaskGeneration(object):
 
         return self
 
-    def __next__(self):
+    def __next__(self) -> Task:
         """ 
         Produces the next task instance for the iterator
 
@@ -101,7 +101,7 @@ class TaskGeneration(object):
 
         return self.new_task(self.count)
 
-    def iter_task_ID(self):
+    def iter_task_ID(self) -> Iterable[int]:
         """
         Yields the tasks IDs. To be used with self.new_task(expID) to receive the next tasks instance
 
@@ -114,7 +114,7 @@ class TaskGeneration(object):
         for c in range(self.count_max):
             yield c
 
-    def new_task(self, task_number):
+    def new_task(self, task_number: int) -> Optional[Task]:
         """
         Produces the next tasks instance
 
