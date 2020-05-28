@@ -9,8 +9,6 @@ import scipy as sp
 import numpy as np
 import pandas as pd
 
-import tempfile
-
 import data
 
 MAT_DATA = {'__globals__': [],
@@ -79,7 +77,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Rewards': np.array([0.0,  1.0,  1.0,  1.0,  0.0,  0.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['E', 'F'], ['C', 'D'], ['C', 'D'], ['A', 'B'], ['E', 'F'], ['B', 'D'], ['D', 'A'], ['E', 'C']], dtype='<U1'),
-             'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
+             'action_code': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 0.5,
              'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
@@ -100,7 +98,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Rewards': np.array([1.0,  1.0,  1.0,  0.0,  0.0,  1.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['C', 'D'], ['C', 'D'], ['E', 'F'], ['A', 'B'], ['E', 'F'], ['F', 'B'], ['D', 'F'], ['B', 'C']], dtype='<U1'),
-             'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
+             'action_code': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.7,
              'beta': 0.5,
              'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
@@ -121,7 +119,7 @@ SIM_DATA = [{'ActionProb': np.array([0.5, 0.5, 0.51874122, 0.53742985, 0.5, 0.51
              'Rewards': np.array([0.0, 0.0, 0.0, 0.0,  0.0, 1.0, np.nan, np.nan, np.nan]),
              'Stimuli': np.array([1, 1, 1, 1, 1, 1, 1, 1, 1]),
              'ValidActions': np.array([['C', 'D'], ['C', 'D'], ['A', 'B'], ['A', 'B'], ['A', 'B'], ['A', 'B'], ['F', 'C'], ['C', 'A'], ['A', 'F']], dtype='<U1'),
-             'actionCode': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
+             'action_code': {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5},
              'alpha': 0.3,
              'beta': 4.0,
              'decision_function': "discrete.weightProb with task_responses : 'A', 'B', 'C', 'D', 'E', 'F'",
