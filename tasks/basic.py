@@ -6,9 +6,14 @@
 """
 import copy
 
-from tasks.taskTemplate import Task
+import numpy as np
 
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType
+
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
+
+Action = NewType('Action', Union[int, str])
 
 
 class Basic(Task):
@@ -19,14 +24,9 @@ class Basic(Task):
     ----------
     trials : int
         The number of trials in the task
-
-    Attributes
-    ----------
-    Name : string
-        The name of the class used when recording what has been used.
     """
 
-    def __init__(self, trials=100):
+    def __init__(self, trials: int = 100):
 
         super(Basic, self).__init__()
 
@@ -35,11 +35,11 @@ class Basic(Task):
         self.parameters["Trials"] = self.nbr_of_trials
 
         self.trial = -1  # start at -1 so first call to next will yield trial 0
-        self.action = None  # placeholder for what action is taken
+        self.action: Optional[Action] = None  # placeholder for what action is taken
 
         self.action_history = [-1] * self.nbr_of_trials
 
-    def __next__(self):
+    def __next__(self) -> Tuple[int, List[Action]]:
         """
         the task class is an iterator [link to iterator documentation]
         this function produces the next stimulus for the task iterator
@@ -47,7 +47,7 @@ class Basic(Task):
         Returns
         -------
         stimulus : None
-        nextValidActions : Tuple of ints or ``None``
+        next_valid_actions : Tuple of ints or ``None``
             The list of valid actions that the model can respond with. Set to (0,1), as they never vary.
 
         Raises
@@ -60,12 +60,12 @@ class Basic(Task):
         if self.trial == self.nbr_of_trials:
             raise StopIteration
 
-        nextStimulus = 1
-        nextValidActions = (0, 1)
+        next_stimulus = 1
+        next_valid_actions = [0, 1]
 
-        return nextStimulus, nextValidActions
+        return next_stimulus, next_valid_actions
 
-    def receiveAction(self, action):
+    def receive_action(self, action):
         """
         Receives the next action from the participant
 
@@ -88,7 +88,7 @@ class Basic(Task):
         """
         pass
 
-    def returnTaskState(self):
+    def return_task_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 
@@ -98,13 +98,13 @@ class Basic(Task):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_result_output()
 
         results["participantActions"] = copy.copy(self.action_history)
 
         return results
 
-    def storeState(self):
+    def store_state(self) -> None:
         """ Stores the state of all the important variables so that they can be
         output later
         """
@@ -118,7 +118,7 @@ class StimulusBasicSimple(Stimulus):
 
     """
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: int) -> Tuple[int, int]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -138,7 +138,11 @@ class RewardBasicDirect(Rewards):
     Processes the reward for models expecting just the reward
     """
 
-    def processFeedback(self, feedback, lastAction, stimuli):
+    def process_feedback(self,
+                         feedback: Union[int, float, Action],
+                         last_action: Action,
+                         stimuli: List[float]
+                         ) -> Union[float, np.ndarray]:
         """
 
         Returns

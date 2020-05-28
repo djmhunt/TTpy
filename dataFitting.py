@@ -284,7 +284,7 @@ def run(data_folder='./',
 
                 log_model_fitted_parameters(model_parameter_variables, model_fitted.params(), fit_quality, participant_name)
 
-                participant_fits = record_participant_fit(participant, participant_name, model_fitted.returnTaskState(),
+                participant_fits = record_participant_fit(participant, participant_name, model_fitted.return_task_state(),
                                                           str(model_ID), fitting_data, model_changing_variables,
                                                           participant_fits, fileNameGen=file_name_generator,
                                                           pickleData=pickle, saveFittingProgress=save_fitting_progress)

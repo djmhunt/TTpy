@@ -153,7 +153,7 @@ class FitSim(object):
             return np.ones(np.array(self.participant_rewards).shape) * self.float_error_response_value
 
         # Pull out the values to be compared
-        model_data = model_instance.returnTaskState()
+        model_data = model_instance.return_task_state()
         model_choice_probabilities = model_data[self.model_fitting_variable]
 
         if self.fit_subset_described is None:
@@ -400,7 +400,7 @@ class FitSim(object):
 
         for observation, action, reward in zip(observations, actions, rewards):
             model_instance.observe(observation)
-            model_instance.overrideActionChoice(action)
+            model_instance.override_action_choice(action)
             model_instance.feedback(reward)
 
         return model_instance

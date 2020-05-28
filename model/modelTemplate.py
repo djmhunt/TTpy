@@ -8,9 +8,13 @@ import copy
 import re
 import collections
 
+from typing import Union, Tuple, List, Any, Optional, ClassVar, Dict, Callable, NewType
+
 from model.decision.discrete import weightProb
 
 import utils
+
+Action = NewType('Action', Union[int, str])
 
 
 class Stimulus(object):
@@ -23,7 +27,7 @@ class Stimulus(object):
         The identifier of the function
     """
 
-    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
+    # Name: ClassVar[str] = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
     @classmethod
     def get_name(cls):
@@ -38,14 +42,23 @@ class Stimulus(object):
 
         self.Name = self.get_name()
 
-    def details(self):
+    def details(self) -> str:
+        """
+        Provides a description of the stimulus class properties, starting with its name
+
+        Returns
+        -------
+        description: str
+            The description
+        """
 
         properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
-        desc = self.Name + " with " + ", ".join(properties)
+        description = self.Name + " with " + ", ".join(properties)
 
-        return desc
+        return description
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: Union[str, float, List[float]]
+                         ) -> Tuple[Union[int, List[int]], Union[float, List[float]]]:
         """
         Takes the observation and turns it into a form the model can use
 
@@ -72,7 +85,7 @@ class Rewards(object):
         The identifier of the function
     """
 
-    # Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
+    # Name: ClassVar[str] = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
     @classmethod
     def get_name(cls):
@@ -87,21 +100,33 @@ class Rewards(object):
 
         self.Name = self.get_name()
 
-    def details(self):
+    def details(self) -> str:
+        """
+        Provides a description of the reward class properties, starting with its name
+
+        Returns
+        -------
+        description: str
+            The description
+        """
 
         properties = [str(k) + ' : ' + str(v).strip('[]()') for k, v in self.__dict__.items() if k != "Name"]
-        desc = self.Name + " with " + ", ".join(properties)
+        description = self.Name + " with " + ", ".join(properties)
 
-        return desc
+        return description
 
-    def processFeedback(self, feedback, lastAction, stimuli):
+    def process_feedback(self,
+                         feedback: Union[int, float, Action],
+                         last_action: Action,
+                         stimuli: List[float]
+                         ) -> Union[float, np.ndarray]:
         """
         Takes the feedback and turns it into a form to be processed by the model
 
         Parameters
         ----------
         feedback :
-        lastAction :
+        last_action :
         stimuli:
 
         Returns
@@ -173,32 +198,34 @@ class Model(object):
         Default is ``None``
     """
 
-    #Name = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
+    # Name: ClassVar[str] = __qualname__ ## TODO: start using when moved to Python 3. See https://docs.python.org/3/glossary.html#term-qualified-name
 
     @classmethod
     def get_name(cls):
         return cls.__name__
 
-    # TODO:  define and start using non_action
-    
     parameter_patterns = []
 
-    parameter_patterns = []
-
-    def __init__(self, number_actions=2, number_cues=1, number_critics=None,
-                 action_codes=None, non_action='None',
-                 prior=None,
-                 stimulus_shaper=None, stimulus_shaper_name=None, stimulus_shaper_properties=None,
-                 reward_shaper=None, reward_shaper_name=None, reward_shaper_properties=None,
-                 decision_function=None, decision_function_name=None, decision_function_properties=None,
+    def __init__(self, *,
+                 number_actions: Optional[int] = 2,
+                 number_cues: Optional[int] = 1,
+                 number_critics: Optional[int] = None,
+                 action_codes: Optional[Dict[Action, int]] = None,
+                 non_action: Optional[Union[int, float, str]] = 'None',
+                 prior: Optional[Union[list, np.ndarray]] = None,
+                 stimulus_shaper: Optional['Stimulus'] = None,  # What kind of callable?
+                 stimulus_shaper_name: Optional[str] = None,
+                 stimulus_shaper_properties: Dict[str, Any] = None,
+                 reward_shaper: Optional['Rewards'] = None,
+                 reward_shaper_name: Optional[str] = None,
+                 reward_shaper_properties: Dict[str, Any] = None,
+                 decision_function: Optional[Callable] = None,
+                 decision_function_name: Optional[str] = None,
+                 decision_function_properties: Dict[str, Any] = None,
                  **kwargs):
         """"""
         self.Name = self.get_name()
         
-        self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
-        for k, v in self.pattern_parameters.items():
-            setattr(self, k, v)
-
         self.pattern_parameters = self.kwarg_pattern_parameters(kwargs)
         for k, v in self.pattern_parameters.items():
             setattr(self, k, v)
@@ -211,25 +238,26 @@ class Model(object):
 
         if action_codes is None:
             action_codes = {k: k for k in range(self.number_actions)}
-        self.actionCode = action_codes
+        self.action_code = action_codes
 
-        self.defaultNonAction = non_action
+        self.default_non_action = non_action
 
         if prior is None:
             prior = np.ones(self.number_actions) / self.number_actions
         self.prior = prior
 
         self.stimuli = np.ones(self.number_cues)
-        self.stimuliFilter = np.ones(self.number_cues)
+        self.stimuli_filter = np.ones(self.number_cues)
 
-        self.currAction = None
+        self.current_action = None
+        self.curr_action_symbol: Optional[Action] = None
         self.decision = None
-        self.validActions = None
-        self.lastObservation = None
+        self.valid_actions: Optional[List[Action]] = None
+        self.last_observation = None
 
         self.probabilities = np.array(self.prior)
-        self.decProbabilities = np.array(self.prior)
-        self.expectedRewards = np.ones(self.number_actions)
+        self.decision_probabilities = np.array(self.prior)
+        self.expected_rewards = np.ones(self.number_actions)
         self.expectedReward = np.array([1])
 
         if stimulus_shaper is not None and issubclass(stimulus_shaper, Stimulus):
@@ -260,7 +288,7 @@ class Model(object):
                                             inherited_class=Rewards,
                                             excluded_files=['taskTemplate', '__init__', 'taskGenerator'])
             reward_shaper_kwargs = {k: v for k, v in kwargs.items() if k in utils.get_class_args(reward_class)}
-            self.reward_shaper = reward_class.processFeedback(**reward_shaper_kwargs)
+            self.reward_shaper = reward_class.process_feedback(**reward_shaper_kwargs)
         else:
             self.reward_shaper = Rewards()
 
@@ -272,7 +300,8 @@ class Model(object):
             self.decision_function = decision_function(**decision_shaper_kwargs)
         elif isinstance(decision_function_name, str):
             decision_function = utils.find_function(decision_function_name, 'model/decision')
-            decision_function_kwargs = {k: v for k, v in kwargs.items() if k in utils.get_function_args(decision_function)}
+            decision_function_kwargs = {k: v for k, v in kwargs.items()
+                                        if k in utils.get_function_args(decision_function)}
             self.decision_function = decision_function(**decision_function_kwargs)
         else:
             self.decision_function = weightProb(list(range(self.number_actions)))
@@ -282,29 +311,29 @@ class Model(object):
                            "number_cues": self.number_cues,
                            "number_critics": self.number_critics,
                            "prior": copy.copy(self.prior),
-                           "non_action": self.defaultNonAction,
-                           "actionCode": copy.copy(self.actionCode),
+                           "non_action": self.default_non_action,
+                           "action_code": copy.copy(self.action_code),
                            "stimulus_shaper": self.stimulus_shaper.details(),
                            "reward_shaper": self.reward_shaper.details(),
                            "decision_function": utils.callableDetailsString(self.decision_function)}
         self.parameters.update(self.pattern_parameters)
 
         # Recorded information
-        self.recAction = []
-        self.recActionSymbol = []
-        self.recStimuli = []
-        self.recReward = []
-        self.recExpectations = []
-        self.recExpectedReward = []
-        self.recExpectedRewards = []
-        self.recValidActions = []
-        self.recDecision = []
-        self.recProbabilities = []
-        self.recActionProbs = []
-        self.recActionProb = []
-        self.simID = None
+        self.rec_action = []
+        self.rec_action_symbol = []
+        self.rec_stimuli = []
+        self.rec_reward = []
+        self.rec_expectations = []
+        self.rec_expected_reward = []
+        self.rec_expected_rewards = []
+        self.rec_valid_actions = []
+        self.rec_decision = []
+        self.rec_probabilities = []
+        self.rec_action_probabilities = []
+        self.rec_action_probability = []
+        self.simID: Optional[str] = None
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'Model') -> bool:
 
         # TODO: Expand this to cover the parameters properly
         if self.Name == other.Name:
@@ -312,14 +341,14 @@ class Model(object):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other: 'Model') -> bool:
 
         if self.Name != other.Name:
             return True
         else:
             return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
 
         return hash(self.Name)
 
@@ -332,9 +361,9 @@ class Model(object):
         action : integer or None
         """
 
-        return self.currActionSymbol
+        return self.curr_action_symbol
 
-    def observe(self, state):
+    def observe(self, state: Tuple[Any, Optional[List[Action]]]):
         """
         Receives the latest observation and decides what to do with it
 
@@ -347,43 +376,45 @@ class Model(object):
 
         Parameters
         ----------
-        state : tuple of ({int | float | tuple},{tuple of int | None})
+        state : tuple of ({int | float | tuple},{tuple of int or str | None})
             The stimulus from the task followed by the tuple of valid
-            actions. Passes the values onto a processing function,
-            self._updateObservation``.
+            actions.
 
         """
 
-        events, validActions = state
+        events, valid_actions = state
 
-        lastEvents = self.lastObservation
-        self.validActions = validActions
+        last_events = self.last_observation
+        self.valid_actions = valid_actions
 
         # If the last observation still has not been processed,
         # and there has been no feedback, then process it.
         # There may have been an action but feedback was None
         # Since we have another observation it is time to learn from the previous one
-        if lastEvents is not None:
-            self.processEvent(self.currAction)
-            self.storeState()
+        if last_events is not None:
+            self.process_event(self.current_action)
+            self.store_state()
 
-        self.lastObservation = events
+        self.last_observation = events
 
         # Find the reward expectations
-        self.expectedRewards, self.stimuli, self.stimuliFilter = self.rewardExpectation(events)
+        self.expected_rewards, self.stimuli, self.stimuli_filter = self.reward_expectation(events)
 
-        expectedProbs = self.actorStimulusProbs()
+        expected_probabilities = self.actor_stimulus_probs()
 
         # If the model is not expected to act, use a dummy action,
         # Otherwise choose an action
-        lastAction = self.currAction
-        if validActions is self.defaultNonAction:
-            self.currAction = self.defaultNonAction
+        last_action = self.current_action
+        if valid_actions is self.default_non_action:
+            self.current_action = self.default_non_action
         else:
-            self.currAction, self.decProbabilities = self.chooseAction(expectedProbs, lastAction, events, validActions)
+            self.current_action, self.decision_probabilities = self.choose_action(expected_probabilities,
+                                                                                  last_action,
+                                                                                  events,
+                                                                                  valid_actions)
 
         # Now that the action has been chosen, add any reinforcement of the previous choice in the expectations
-        self.lastChoiceReinforcement()
+        self.last_choice_reinforcement()
 
     def feedback(self, response):
         """
@@ -398,63 +429,61 @@ class Model(object):
 
         # If there is feedback
         if response is not None:
-            self.processEvent(self.currAction, response)
-            self.lastObservation = None
-            self.storeState()
+            self.process_event(self.current_action, response)
+            self.last_observation = None
+            self.store_state()
 
-    def processEvent(self, action=None, response=None):
+    def process_event(self, action: Action = None, response: Optional[float] = None):
         """
         Integrates the information from a stimulus, action, response set, regardless
         of which of the three elements are present.
 
         Parameters
         ----------
-        stimuli : {int | float | tuple | None}
-            The stimuli received
         action : int, optional
             The chosen action of the model. Default ``None``
         response : float, optional
             The response from the task after an action. Default ``None``
         """
-        self.recReward.append(response)
+        self.rec_reward.append(response)
 
         # If there were any last reflections to do on the action chosen before processing the new event, now is the last
         # chance to do it
-        self.choiceReflection()
+        self.choice_reflection()
 
         # If there was a reward passed but it was empty, there is nothing to update
         if response is not None and (np.size(response) == 0 or np.isnan(response)):
             return
 
         # Find the reward expectation
-        expectedReward = self.expectedRewards[action]
-        self.expectedReward = expectedReward
+        expected_reward = self.expected_rewards[action]
+        self.expectedReward = expected_reward
 
         # If there was no reward, the the stimulus is the learnt 'reward'
         if response is None:
             response = self.stimuli
 
         # Find the significance of the discrepancy between the response and the expected response
-        delta = self.delta(response, expectedReward, action, self.stimuli)
+        delta = self.delta(response, expected_reward, action, self.stimuli)
 
         # Use that discrepancy to update the model
-        self.updateModel(delta, action, self.stimuli, self.stimuliFilter)
+        self.update_model(delta, action, self.stimuli, self.stimuli_filter)
 
-    def rewardExpectation(self, stimuli):
+    def reward_expectation(self, observation: Any) -> Tuple[List[float], List[float], List[bool]]:
         """Calculate the expected reward for each action based on the stimuli
 
         This contains parts that are task dependent
 
         Parameters
         ----------
-        stimuli : {int | float | tuple}
+        observation :
             The set of stimuli
 
         Returns
         -------
-        expectedRewards : float
+        expected_rewards : list of float
             The expected reward for each action
-        stimuli : list of floats
+        observation : list of floats
             The processed observations
         activeStimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
@@ -466,8 +495,8 @@ class Model(object):
         # Calculate the combined value
         # Return the value
 
-        # stimuli = self.stimulus_shaper_name(lastObservation)
-        return 0, stimuli, 0
+        active_stimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
+        return [0], stimuli, active_stimuli
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -489,11 +518,11 @@ class Model(object):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        # modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         return 0
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -503,33 +532,34 @@ class Model(object):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
 
         # There is no model here
+        pass
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values: np.ndarray) -> np.ndarray:
         """
         Calculate the probabilities associated with the action
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
-        probArray : 1D ndArray of floats
+        prob_array : 1D ndArray of floats
             The probabilities associated with the actionValues
 
         """
 
         # There is no model here
 
-        return 0
+        return np.zeros(self.number_actions)
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self) -> np.ndarray:
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -540,9 +570,14 @@ class Model(object):
 
         """
 
-        return 0
+        return np.zeros(self.number_actions)
 
-    def chooseAction(self, probabilities, lastAction, events, validActions):
+    def choose_action(self,
+                      probabilities: List[float],
+                      lastAction: Optional[Action],
+                      events,
+                      valid_actions: Optional[List[Action]]
+                      ) -> Tuple[int, Dict[Action, float]]:
         """
         Chooses the next action and returns the associated probabilities
 
@@ -554,28 +589,28 @@ class Model(object):
             The last chosen action
         events : list of floats
             The stimuli. If probActions is True then this will be unused as the probabilities will already be
-        validActions : 1D list or array
+        valid_actions : 1D list or array
             The actions permitted during this trialstep
 
         Returns
         -------
         newAction : int
             The chosen action
-        decProbabilities : list of floats
+        dec_probabilities : list of floats
             The weights for the different actions
 
         """
 
         if np.isnan(probabilities).any():
             raise ValueError("probabilities contain NaN")
-        decision, decProbabilities = self.decision_function(probabilities, lastAction, trial_responses=validActions)
+        decision, dec_probabilities = self.decision_function(probabilities, lastAction, trial_responses=valid_actions)
         self.decision = decision
-        self.currActionSymbol = decision
-        decisionCode = self.actionCode[decision]
+        self.curr_action_symbol = decision
+        decision_code = self.action_code[decision]
 
-        return decisionCode, decProbabilities
+        return decision_code, dec_probabilities
 
-    def overrideActionChoice(self, action):
+    def override_action_choice(self, action: Action) -> None:
         """
         Provides a method for overriding the model action choice. This is used when fitting models to participant actions.
 
@@ -585,50 +620,54 @@ class Model(object):
             Action chosen by external source to same situation
         """
 
-        self.currActionSymbol = action
-        self.currAction = self.actionCode[action]
+        self.curr_action_symbol = action
+        self.current_action = self.action_code[action]
 
-    def choiceReflection(self):
+    def choice_reflection(self) -> None:
         """
         Allows the model to update its state once an action has been chosen.
         """
 
-    def lastChoiceReinforcement(self):
+        pass
+
+    def last_choice_reinforcement(self) -> None:
         """
-        Allows the model to update the reward expectation for the previous trialstep given the choice made in this trialstep
+        Allows the model to update the reward expectation for the previous trialstep given the choice made
+        in this trialstep
 
         Returns
         -------
 
         """
+        pass
 
-    def actStimMerge(self, actStimuliParam, stimFilter=1):
+    def action_cue_merge(self, act_cue_param, cue_filter=1):
         """
         Takes the parameter to be merged by stimuli and filters it by the stimuli values
 
         Parameters
         ----------
-        actStimuliParam : list of floats
+        act_cue_param : list of floats
             The list of values representing each action stimuli pair, where the stimuli will have their filtered
              values merged together.
-        stimFilter : array of floats or a float, optional
-            The list of active stimuli with their weightings or one weight for all.
+        cue_filter : array of floats or a float, optional
+            The list of active stimulus cues with their weightings or one weight for all.
             Default ``1``
 
         Returns
         -------
-        actionParams : list of floats
+        action_params : list of floats
             The parameter values associated with each action
 
         """
 
-        actionParamSets = np.reshape(actStimuliParam, (self.number_actions, self.number_cues))
-        actionParamSets = actionParamSets * stimFilter
-        actionParams = np.sum(actionParamSets, axis=1, keepdims=True)
+        action_param_sets = np.reshape(act_cue_param, (self.number_actions, self.number_cues))
+        action_param_sets = action_param_sets * cue_filter
+        action_params = np.sum(action_param_sets, axis=1, keepdims=True)
 
-        return actionParams
+        return action_params
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """
         Returns all the relevant data for this model
 
@@ -637,64 +676,64 @@ class Model(object):
         results : dictionary
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
 
         return results.copy()
 
-    def storeState(self):
+    def store_state(self) -> None:
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
 
-    def standardResultOutput(self):
+    def standard_results_output(self) -> Dict[str, Any]:
         """
         Returns the relevant data expected from a model as well as the parameters for the current model
 
         Returns
         -------
         results : dictionary
-            A dictionary of details about the
+            A dictionary of details about the model run
 
         """
 
         results = self.parameters.copy()
 
         results["simID"] = self.simID
-        results["Actions"] = np.array(self.recAction)
-        results["Stimuli"] = np.array(self.recStimuli).T
-        results["Rewards"] = np.array(self.recReward)
-        results["Expectations"] = np.array(self.recExpectations).T
-        results["ExpectedReward"] = np.array(self.recExpectedReward).flatten()
-        results["ExpectedRewards"] = np.array(self.recExpectedRewards).T
-        results["ValidActions"] = np.array(self.recValidActions).T
-        results["Decisions"] = np.array(self.recDecision)
-        results["UpdatedProbs"] = np.array(self.recProbabilities).T
-        results["ActionProb"] = np.array(self.recActionProb)
-        results["DecisionProbs"] = np.array(self.recActionProbs)
+        results["Actions"] = np.array(self.rec_action)
+        results["Stimuli"] = np.array(self.rec_stimuli).T
+        results["Rewards"] = np.array(self.rec_reward)
+        results["Expectations"] = np.array(self.rec_expectations).T
+        results["ExpectedReward"] = np.array(self.rec_expected_reward).flatten()
+        results["ExpectedRewards"] = np.array(self.rec_expected_rewards).T
+        results["ValidActions"] = np.array(self.rec_valid_actions).T
+        results["Decisions"] = np.array(self.rec_decision)
+        results["UpdatedProbs"] = np.array(self.rec_probabilities).T
+        results["ActionProb"] = np.array(self.rec_action_probability)
+        results["DecisionProbs"] = np.array(self.rec_action_probabilities)
 
         return results
 
-    def storeStandardResults(self):
+    def store_standard_results(self) -> None:
         """
         Updates the store of standard results found across models
         """
 
-        self.recAction.append(self.currAction)
-        self.recActionSymbol.append(self.currActionSymbol)
-        self.recValidActions.append(self.validActions[:])
-        self.recDecision.append(self.decision)
-        self.recExpectations.append(self.expectations.flatten())
-        self.recExpectedRewards.append(self.expectedRewards.flatten())
-        self.recExpectedReward.append(self.expectedReward.flatten())
-        self.recStimuli.append(self.stimuli)
-        self.recProbabilities.append(self.probabilities.flatten())
-        self.recActionProbs.append(self.decProbabilities.copy())
-        self.recActionProb.append(self.decProbabilities[self.currActionSymbol])
+        self.rec_action.append(self.current_action)
+        self.rec_action_symbol.append(self.curr_action_symbol)
+        self.rec_valid_actions.append(self.valid_actions[:])
+        self.rec_decision.append(self.decision)
+        self.rec_expectations.append(self.expectations.flatten())
+        self.rec_expected_rewards.append(self.expected_rewards.flatten())
+        self.rec_expected_reward.append(self.expectedReward.flatten())
+        self.rec_stimuli.append(self.stimuli)
+        self.rec_probabilities.append(self.probabilities.flatten())
+        self.rec_action_probabilities.append(self.decision_probabilities.copy())
+        self.rec_action_probability.append(self.decision_probabilities[self.curr_action_symbol])
 
-    def params(self):
+    def params(self) -> Dict[str, Any]:
         """
         Returns the parameters of the model
 
@@ -705,7 +744,7 @@ class Model(object):
 
         return self.parameters.copy()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
 
         params = self.params()
         name = params.pop('Name')
@@ -718,7 +757,7 @@ class Model(object):
 
         return representation
 
-    def setsimID(self, simID):
+    def set_simID(self, simID: str) -> None:
         """
 
         Parameters
@@ -731,7 +770,6 @@ class Model(object):
         """
 
         self.simID = simID
-
 
     @classmethod
     def pattern_parameters_match(cls, *args):
@@ -755,7 +793,7 @@ class Model(object):
 
         return pattern_parameters
 
-    def kwarg_pattern_parameters(self, kwargs):
+    def kwarg_pattern_parameters(self, kwargs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Extracts the kwarg parameters that are described by the model patterns
 

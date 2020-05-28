@@ -9,9 +9,12 @@ from numpy import nan
 
 from numpy import float as npfloat
 
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType
 
 from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
+
+Action = NewType('Action', Union[int, str])
 
 # TODO: Create a set of test cues
 cue_sets = {"Test": []}
@@ -22,15 +25,10 @@ actuality_lists = {}
 
 class Probstim(Task):
     """
-    Basic probabilistic
+    Basic probabilistic stimulus task. Sometimes referred to as a biased coins task
 
     Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
-
-    Attributes
-    ----------
-    Name : string
-        The name of the class used when recording what has been used.
 
     Parameters
     ----------
@@ -38,7 +36,7 @@ class Probstim(Task):
         The actual reality the cues pointed to. The correct response the participant is trying to get correct
     cues: array of floats, optional
         The cues used to guess the actualities
-    trialsteps: int, optional
+    task_length: int, optional
         If no provided cues, it is the number of trialsteps for the generated set of cues. Default ``100``
     num_cues: int, optional
         If no provided cues, it is the number of distinct stimuli for the generated set of cues. Default ``4``
@@ -47,74 +45,77 @@ class Probstim(Task):
         The default is ``0.8``
     correct_probabilities: list or array of floats in [0,1], optional
         If no actualities provided, it is the probability of the correct answer being answer 1 rather than answer 0 for
-        each of the different stimuli. Default ``[corrProb, 1-corrProb] * (numStimuli//2) + [corrProb] * (numStimuli%2)``
-    rewardless_trialsteps: int, optional
+        each of the different stimuli. Default ``[correct_prob, 1-correct_prob] * num_cues/2`` with an additional
+        correct_prob if there are an odd number of cues
+    rewardless_trial_steps: int, optional
         If no actuality is provided, it is the number of actualities at the end of the tasks that will have a
         ``None`` reward. Default ``2*numStimuli``
     """
 
     def __init__(self,
-                 cues=None,
-                 actualities=None,
-                 trialsteps=100,
-                 num_cues=4,
-                 correct_prob=0.8,
-                 correct_probabilities=None,
-                 rewardless_trialsteps=None):
+                 cues: Optional[Union[str, List[List[float]], np.ndarray]] = None,
+                 actualities: Optional[Union[str, List[float], np.ndarray]] = None,
+                 task_length: Optional[int] = 100,
+                 num_cues: Optional[int] = 4,
+                 correct_prob: Optional[float] = 0.8,
+                 correct_probabilities: Optional[List[float]] = None,
+                 rewardless_trial_steps: Optional[Union[str, int, List[float]]] = None):
 
         super(Probstim, self).__init__()
 
         if isinstance(cues, str):
             if cues in cue_sets:
                 self.cues = cue_sets[cues]
-                self.T = len(self.cues)
+                self.task_length = len(self.cues)
                 num_cues = len(self.cues[0])
             else:
                 raise Exception("Unknown cue sets")
         elif isinstance(cues, (list, np.ndarray)):
             self.cues = cues
-            self.T = len(self.cues)
+            self.task_length = len(self.cues)
             num_cues = len(self.cues[0])
         else:
-            self.T = trialsteps
-            stimuli = np.zeros((self.T, num_cues))
-            stimuli[list(range(self.T)), np.random.randint(num_cues, size=self.T)] = 1
+            self.task_length = task_length
+            stimuli = np.zeros((self.task_length, num_cues))
+            stimuli[list(range(self.task_length)), np.random.randint(num_cues, size=self.task_length)] = 1
             self.cues = stimuli
 
         if isinstance(actualities, str):
             if actualities in actuality_lists:
                 self.actualities = actuality_lists[actualities]
-                rewardless_trialsteps = np.sum(np.isnan(np.array(self.actualities, dtype=npfloat)))
+                rewardless_trial_steps = np.sum(np.isnan(np.array(self.actualities, dtype=npfloat)))
             else:
                 raise Exception("Unknown actualities list")
         elif isinstance(actualities, (list, np.ndarray)):
             self.actualities = actualities
-            rewardless_trialsteps = np.sum(np.isnan(np.array(actualities, dtype=npfloat)))
+            rewardless_trial_steps = np.sum(np.isnan(np.array(actualities, dtype=npfloat)))
         else:
-            corr_prob_default = [correct_prob, 1 - correct_prob] * (num_cues // 2) + [correct_prob] * (num_cues % 2)
-            if not correct_probabilities:
+            corr_prob_default = [correct_prob, 1 - correct_prob] * (num_cues // 2)
+            corr_prob_default.extend([correct_prob] * (num_cues % 2))
+
+            if correct_probabilities is None:
                 correct_probabilities = corr_prob_default
-            if not rewardless_trialsteps:
-                rewardless_trialsteps = 2 * num_cues
+            if rewardless_trial_steps is None:
+                rewardless_trial_steps = 2 * num_cues
             corr_choice_prob = np.sum(self.cues * correct_probabilities, 1)
-            correct_choice = list((np.random.rand(self.T) < corr_choice_prob) * 1)
-            correct_choice[-rewardless_trialsteps:] = [nan] * rewardless_trialsteps
+            correct_choice = list((np.random.rand(self.task_length) < corr_choice_prob) * 1)
+            correct_choice[-rewardless_trial_steps:] = [nan] * rewardless_trial_steps
             self.actualities = correct_choice
 
         self.parameters["actualities"] = np.array(self.actualities)
         self.parameters["cues"] = np.array(self.cues)
-        self.parameters["trialsteps"] = self.T
-        self.parameters["rewardless_trialsteps"] = rewardless_trialsteps
+        self.parameters["trial_duration"] = self.task_length
+        self.parameters["rewardless_trial_steps"] = rewardless_trial_steps
         self.parameters["number_cues"] = num_cues
 
         # Set draw count
-        self.t = -1
-        self.action = None
+        self.trial_step: int = -1
+        self.action: Action = None
 
         # Recording variables
-        self.recAction = [-1] * self.T
+        self.recAction: List[Action] = [-1] * self.task_length
 
-    def __next__(self):
+    def __next__(self) -> Tuple[List[Union[int, float]], List[Action]]:
         """
         Produces the next stimulus for the iterator
 
@@ -130,17 +131,17 @@ class Probstim(Task):
         StopIteration
         """
 
-        self.t += 1
+        self.trial_step += 1
 
-        if self.t == self.T:
+        if self.trial_step == self.task_length:
             raise StopIteration
 
-        next_stim = self.cues[self.t]
-        next_valid_actions = (0, 1)
+        next_stim = list(self.cues[self.trial_step])
+        next_valid_actions = [0, 1]
 
         return next_stim, next_valid_actions
 
-    def receiveAction(self, action):
+    def receive_action(self, action: Action) -> None:
         """
         Receives the next action from the participant
 
@@ -152,25 +153,18 @@ class Probstim(Task):
 
         self.action = action
 
-    def feedback(self):
+    def feedback(self) -> Union[int, float]:
         """
         Feedback to the action from the participant
         """
 
-        response = self.actualities[self.t]
+        response = self.actualities[self.trial_step]
 
-        self.storeState()
+        self.store_state()
 
         return response
 
-    def proceed(self):
-        """
-        Updates the task after feedback
-        """
-
-        pass
-
-    def returnTaskState(self):
+    def return_task_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 
@@ -180,17 +174,17 @@ class Probstim(Task):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_result_output()
 
         results["Actions"] = self.recAction
 
         return results
 
-    def storeState(self):
+    def store_state(self) -> None:
         """ Stores the state of all the important variables so that they can be
         output later """
 
-        self.recAction[self.t] = self.action
+        self.recAction[self.trial_step] = self.action
 
 
 class StimulusProbStimDirect(Stimulus):
@@ -199,7 +193,7 @@ class StimulusProbStimDirect(Stimulus):
 
     """
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: List[int]) -> Tuple[List[int], List[int]]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -220,7 +214,7 @@ class RewardProbStimDiff(Rewards):
     Processes the reward for models expecting reward corrections
     """
 
-    def processFeedback(self, feedback, last_action, stimuli):
+    def process_feedback(self, feedback: Action, last_action: Action, stimuli: List[float]) -> int:
         """
 
         Returns
@@ -241,7 +235,7 @@ class RewardProbStimDualCorrection(Rewards):
     """
     epsilon = 1
 
-    def processFeedback(self, feedback, last_action, stimuli):
+    def process_feedback(self, feedback: int, last_action: Action, stimuli: List[float]) -> np.ndarray:
         """
 
         Returns

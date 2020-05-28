@@ -93,7 +93,7 @@ class QLearnCorr(Model):
 
         # Recorded information
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -103,19 +103,19 @@ class QLearnCorr(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -135,7 +135,7 @@ class QLearnCorr(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -161,13 +161,13 @@ class QLearnCorr(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -177,7 +177,7 @@ class QLearnCorr(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -188,7 +188,7 @@ class QLearnCorr(Model):
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         actExpectations = self._actExpectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        self.probabilities = self.calculate_probabilities(actExpectations)
 
         self.lastAction = action
 
@@ -205,37 +205,37 @@ class QLearnCorr(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
         probArray : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
-        lastAction = np.zeros(np.shape(actionValues))
+        lastAction = np.zeros(np.shape(action_values))
         lastAction[self.lastAction] = 1
 
-        numerator = np.exp(self.beta * (actionValues + self.kappa * lastAction))
+        numerator = np.exp(self.beta * (action_values + self.kappa * lastAction))
         denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
         return probArray
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -246,6 +246,6 @@ class QLearnCorr(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities

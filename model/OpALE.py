@@ -172,7 +172,7 @@ class OpALE(Model):
         self.recNogo = []
         self.recActionValues = []
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -182,25 +182,25 @@ class OpALE(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
         results["Go"] = np.array(self.recGo)
         results["Nogo"] = np.array(self.recNogo)
         results["ActionValues"] = np.array(self.recActionValues)
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
         self.recGo.append(self.go.copy())
         self.recNogo.append(self.nogo.copy())
         self.recActionValues.append(self.actionValues.copy())
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -220,7 +220,7 @@ class OpALE(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -246,13 +246,13 @@ class OpALE(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -262,7 +262,7 @@ class OpALE(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -275,7 +275,7 @@ class OpALE(Model):
         self._actionValues(self.go, self.nogo)
 
         # Calculate the new probabilities
-        self.probabilities = self.actorStimulusProbs()
+        self.probabilities = self.actor_stimulus_probs()
 
     def _critic(self, action, delta, stimuli):
 
@@ -306,20 +306,20 @@ class OpALE(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
@@ -327,14 +327,14 @@ class OpALE(Model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == max(actionValues)
+        cbest = action_values == max(action_values)
         deltaEpsilon = self.epsilon * (1 / self.number_actions)
         bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -346,6 +346,6 @@ class OpALE(Model):
         """
 
         actExpectations = self._actExpectations(self.actionValues, self.stimuli)
-        probabilities = self.calcProbabilities(actExpectations)
+        probabilities = self.calculate_probabilities(actExpectations)
 
         return probabilities

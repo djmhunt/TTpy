@@ -9,7 +9,7 @@
 """
 import numpy as np
 
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 
 from model.modelTemplate import Model
 
@@ -65,7 +65,13 @@ class QLearnMeta(Model):
         in to a decision. Default is model.decision.binary.eta
     """
 
-    def __init__(self, alpha=0.3, tau=0.2, reward_d=None, reward_dd=None, expect=None, **kwargs):
+    def __init__(self, *,
+                 alpha: Optional[float] = 0.3,
+                 tau: Optional[float] = 0.2,
+                 reward_d=None,
+                 reward_dd=None,
+                 expect=None,
+                 **kwargs):
 
         super(QLearnMeta, self).__init__(**kwargs)
 
@@ -96,7 +102,7 @@ class QLearnMeta(Model):
         self.rec_reward_dd = []
         self.rec_beta = []
 
-    def returnTaskState(self) -> dict:
+    def return_task_state(self) -> dict:
         """ Returns all the relevant data for this model
 
         Returns
@@ -106,26 +112,26 @@ class QLearnMeta(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
         results["reward_d"] = np.array(self.rec_reward_d).T
         results["reward_dd"] = np.array(self.rec_reward_dd).T
         results["beta"] = np.array(self.rec_beta).T
 
         return results
 
-    def storeState(self) -> None:
+    def store_state(self) -> None:
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
 
         self.rec_reward_d.append(self.reward_d.flatten())
         self.rec_reward_dd.append(self.reward_dd.flatten())
         self.rec_beta.append(self.beta.flatten())
 
-    def rewardExpectation(self, observation: Union[int, float, Tuple]) -> Tuple[np.ndarray, List[float], List[bool]]:
+    def reward_expectation(self, observation: Union[int, float, Tuple]) -> Tuple[np.ndarray, List[float], List[bool]]:
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -145,7 +151,7 @@ class QLearnMeta(Model):
             A list of the stimuli that were or were not present
         """
 
-        active_stimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        active_stimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         action_expectations = self._action_expectations(self.expectations, stimuli)
 
@@ -171,7 +177,7 @@ class QLearnMeta(Model):
         delta
         """
 
-        mod_reward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        mod_reward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = mod_reward - expectation
 
@@ -204,7 +210,7 @@ class QLearnMeta(Model):
         self.reward_d[action] = reward_d
         self.reward_dd[action] = reward_dd
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -214,7 +220,7 @@ class QLearnMeta(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -225,7 +231,7 @@ class QLearnMeta(Model):
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         act_expectations = self._action_expectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(act_expectations)
+        self.probabilities = self.calculate_probabilities(act_expectations)
 
     def _new_expectations(self, action, delta, stimuli):
 
@@ -240,13 +246,13 @@ class QLearnMeta(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            action_expectations = self.actStimMerge(expectations, stimuli)
+            action_expectations = self.action_cue_merge(expectations, stimuli)
         else:
             action_expectations = expectations
 
         return action_expectations
 
-    def calcProbabilities(self, action_values: np.ndarray) -> np.ndarray:
+    def calculate_probabilities(self, action_values: np.ndarray) -> np.ndarray:
         """
         Calculate the probabilities associated with the actions
 
@@ -257,7 +263,7 @@ class QLearnMeta(Model):
         Returns
         -------
         prob_array : 1D ndArray of floats
-            The probabilities associated with the actionValues
+            The probabilities associated with the action_values
         """
 
         numerator = np.exp(self.beta * action_values)
@@ -267,7 +273,7 @@ class QLearnMeta(Model):
 
         return prob_array
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -278,6 +284,6 @@ class QLearnMeta(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities

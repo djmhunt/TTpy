@@ -5,7 +5,7 @@
 import copy
 import warnings
 
-from typing import Dict, Any, Optional, Iterable, Type
+from typing import Tuple, Dict, Any, Optional, Iterable, Type
 
 import utils
 
@@ -163,7 +163,7 @@ class ModelGen(object):
 
         return self.model_class(**properties)
 
-    def iter_details(self) -> Iterable[Type[Model], Dict[str, Any], Dict[str, Any]]:
+    def iter_details(self) -> Iterable[Tuple[Type[Model], Dict[str, Any], Dict[str, Any]]]:
         """ 
         Yields a list containing a model object and parameters to initialise them
         

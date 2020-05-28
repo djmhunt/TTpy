@@ -90,7 +90,7 @@ class TDR(Model):
         # Recorded information
         self.recActAvReward = []
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -100,21 +100,21 @@ class TDR(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
         results["averageReward"] = np.array(self.recActAvReward)
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
         self.recActAvReward.append(self.actAvReward.copy())
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -134,7 +134,7 @@ class TDR(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -160,7 +160,7 @@ class TDR(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = modReward - expectation - self.actAvReward[action]
 
@@ -168,7 +168,7 @@ class TDR(Model):
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -178,7 +178,7 @@ class TDR(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -193,7 +193,7 @@ class TDR(Model):
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         actExpectations = self._actExpectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        self.probabilities = self.calculate_probabilities(actExpectations)
 
         self.lastStimuli = stimuli
         self.lastAction = action
@@ -211,20 +211,20 @@ class TDR(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
@@ -232,24 +232,24 @@ class TDR(Model):
             The probabilities associated with the actionValues
         """
 
-        numerator = np.exp(self.beta * actionValues)
+        numerator = np.exp(self.beta * action_values)
         denominator = np.sum(numerator)
 
         probArray = numerator / denominator
 
         return probArray
 
-    def lastChoiceReinforcement(self):
+    def last_choice_reinforcement(self):
         """
         Allows the model to update its expectations once the action has been chosen.
         """
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.expectedRewards[self.currAction] * lastStimuli/np.sum(lastStimuli)
+        change = self.alpha * self.expected_rewards[self.current_action] * lastStimuli / np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -260,7 +260,7 @@ class TDR(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities
 

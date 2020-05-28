@@ -110,20 +110,20 @@ def run(task_name='Basic',
                 for state in task:
                     model.observe(state)
                     action = model.action()
-                    task.receiveAction(action)
+                    task.receive_action(action)
                     response = task.feedback()
                     model.feedback(response)
                     task.proceed()
 
-                model.setsimID(str(simID))
+                model.set_simID(str(simID))
 
                 message = "Task completed"
                 logger.debug(message)
 
                 if file_name_generator is not None:
                     record_simulation(file_name_generator,
-                                      task.returnTaskState(),
-                                      model.returnTaskState(),
+                                      task.return_task_state(),
+                                      model.return_task_state(),
                                       str(simID), pickle=pickle)
 
                 simID += 1

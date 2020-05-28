@@ -7,9 +7,10 @@
                 Psychonomic Bulletin & Review, 14(6), 1125–32.
                 Retrieved from http://www.ncbi.nlm.nih.gov/pubmed/18229485
 """
-import logging
 
 import numpy as np
+
+from typing import Union, Tuple, List, Optional
 
 from model.modelTemplate import Model
 
@@ -65,7 +66,11 @@ class QLearn(Model):
         in to a decision. Default is model.decision.discrete.weightProb
     """
 
-    def __init__(self, alpha=0.3, beta=4, invBeta=None, expect=None, **kwargs):
+    def __init__(self, *,
+                 alpha: Optional[float] = 0.3,
+                 beta: Optional[float] = 4,
+                 invBeta: Optional[float] = None,
+                 expect=None, **kwargs):
 
         super(QLearn, self).__init__(**kwargs)
 
@@ -84,7 +89,7 @@ class QLearn(Model):
 
         # Recorded information
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -94,19 +99,19 @@ class QLearn(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation: Tuple[List[bool], List[float]]):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -118,19 +123,19 @@ class QLearn(Model):
 
         Returns
         -------
-        actionExpectations : array of floats
+        action_expectations : array of floats
             The expected rewards for each action
         stimuli : list of floats
             The processed observations
-        activeStimuli : list of [0, 1] mapping to [False, True]
+        active_stimuli : list of [0, 1] mapping to [False, True]
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        active_stimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
-        actionExpectations = self._actExpectations(self.expectations, stimuli)
+        action_expectations = self._action_expectations(self.expectations, stimuli)
 
-        return actionExpectations, stimuli, activeStimuli
+        return action_expectations, stimuli, active_stimuli
 
     def delta(self, reward, expectation, action, stimuli):
         """
@@ -152,13 +157,13 @@ class QLearn(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        mod_reward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
-        delta = modReward - expectation
+        delta = mod_reward - expectation
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -168,55 +173,55 @@ class QLearn(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
 
         # Find the new activities
-        self._newExpect(action, delta, stimuli)
+        self._new_expect(action, delta, stimuli)
 
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
-        actExpectations = self._actExpectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        act_expectations = self._action_expectations(self.expectations, stimuli)
+        self.probabilities = self.calculate_probabilities(act_expectations)
 
-    def _newExpect(self, action, delta, stimuli):
+    def _new_expect(self, action, delta, stimuli):
 
-        newExpectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
-        newExpectations = newExpectations * (newExpectations >= 0)
-        self.expectations[action] = newExpectations
+        new_expectations = self.expectations[action] + self.alpha*delta*stimuli/np.sum(stimuli)
+        new_expectations = new_expectations * (new_expectations >= 0)
+        self.expectations[action] = new_expectations
 
-    def _actExpectations(self, expectations, stimuli):
+    def _action_expectations(self, expectations, stimuli):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
-        probArray : 1D ndArray of floats
+        prob_array : 1D ndArray of floats
             The probabilities associated with the actionValues
         """
 
-        numerator = np.exp(self.beta * actionValues)
+        numerator = np.exp(self.beta * action_values)
         denominator = np.sum(numerator)
 
-        probArray = numerator / denominator
+        prob_array = numerator / denominator
 
 #        inftest = isinf(numerator)
 #        if inftest.any():
@@ -229,9 +234,9 @@ class QLearn(Model):
 #            message += " \n Returning the prob: " + str(probs)
 #            logger.warning(message)
 
-        return probArray
+        return prob_array
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -242,7 +247,7 @@ class QLearn(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities
 

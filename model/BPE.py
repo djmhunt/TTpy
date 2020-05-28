@@ -84,7 +84,7 @@ class BPE(Model):
         # Recorded information
         self.recDirichletVals = []
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -94,21 +94,21 @@ class BPE(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
         results["dirichletVals"] = np.array(self.recDirichletVals)
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
         self.recDirichletVals.append(self.dirichletVals.copy())
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -128,7 +128,7 @@ class BPE(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
 
@@ -154,11 +154,11 @@ class BPE(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         return modReward
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -168,7 +168,7 @@ class BPE(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -179,7 +179,7 @@ class BPE(Model):
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         actionExpectations = self._actExpectations(self.dirichletVals, stimuli)
-        self.probabilities = self.calcProbabilities(actionExpectations)
+        self.probabilities = self.calculate_probabilities(actionExpectations)
 
     def _newExpect(self, action, delta, stimuli):
 
@@ -192,20 +192,20 @@ class BPE(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.calcActExpectations(self.actStimMerge(dirichletVals, stimuli))
+            actionExpectations = self.calcActExpectations(self.action_cue_merge(dirichletVals, stimuli))
         else:
             actionExpectations = self.calcActExpectations(dirichletVals[:, 0, :])
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
@@ -213,14 +213,14 @@ class BPE(Model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == max(actionValues)
+        cbest = action_values == max(action_values)
         deltaEpsilon = self.epsilon * (1 / self.number_actions)
         bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -231,11 +231,11 @@ class BPE(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities
 
-    def actStimMerge(self, dirichletVals, stimuli):
+    def action_cue_merge(self, dirichletVals, stimuli):
 
         dirVals = dirichletVals * np.expand_dims(np.repeat([stimuli], self.number_actions, axis=0), 2)
 

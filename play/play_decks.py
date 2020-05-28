@@ -16,7 +16,7 @@ for state in decky:
     print("Your total points are {}".format(total_points))
     print("Please pick an action between {}".format(state[1]))
     action = int(raw_input("enter your choice: "))
-    decky.receiveAction(action)
+    decky.receive_action(action)
     response = decky.feedback()
     print("you got {} points!".format(response))
     total_points += response

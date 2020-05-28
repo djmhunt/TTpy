@@ -9,9 +9,12 @@
 """
 import numpy as np
 
-from tasks.taskTemplate import Task
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType
 
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
+
+Action = NewType('Action', Union[int, str])
 
 # Bead Sequences:
 beadSequences = {"MooreSellen": [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]}
@@ -24,57 +27,54 @@ class Beads(Task):
     Many methods are inherited from the tasks.taskTemplate.Task class.
     Refer to its documentation for missing methods.
 
-    Attributes
-    ----------
-    Name : string
-        The name of the class used when recording what has been used.
-
     Parameters
     ----------
-    N : int, optional
+    task_length : int, optional
         Number of beads that could potentially be shown
-    beadSequence : list or array of {0,1}, optional
+    bead_sequence : list or array of {0,1}, optional
         The sequence of beads to be shown. Bead sequences can also be embedded
         in the code and then referred to by name. The only current one is
         `MooreSellen`, the default sequence.
     """
 
-    def __init__(self, N=None, beadSequence=defaultBeads):
+    def __init__(self, task_length: int = None, bead_sequence: Optional[Union[str, List]] = None):
 
         super(Beads, self).__init__()
 
-        if isinstance(beadSequence, str):
-            if beadSequence in beadSequences:
-                self.beads = beadSequences[beadSequence]
+        if isinstance(bead_sequence, str):
+            if bead_sequence in beadSequences:
+                self.beads = beadSequences[bead_sequence]
             else:
                 raise Exception("Unknown bead sequence")
+        elif isinstance(bead_sequence, list):
+            self.beads = bead_sequence
         else:
-            self.beads = beadSequence
+            self.beads = defaultBeads
 
-        if N:
-            self.T = N
+        if task_length:
+            self.task_length = task_length
         else:
-            self.T = len(self.beads)
+            self.task_length = len(self.beads)
 
-        self.parameters["N"] = self.T
-        self.parameters["beadSequence"] = self.beads
+        self.parameters["trial_duration"] = self.task_length
+        self.parameters["bead_sequence"] = self.beads
 
-        # Set trialstep count
-        self.t = -1
+        # Set trial_step count
+        self.trial_step = -1
 
         # Recording variables
 
-        self.recBeads = [-1]*self.T
-        self.recAction = [-1]*self.T
+        self.recBeads = [-1]*self.task_length
+        self.recAction = [-1]*self.task_length
         self.firstDecision = 0
 
-    def __next__(self):
+    def __next__(self) -> Tuple[int, List[Action]]:
         """ Produces the next bead for the iterator
 
         Returns
         -------
         bead : {0,1}
-        nextValidActions : Tuple of ints or ``None``
+        next_valid_actions : Tuple of ints or ``None``
             The list of valid actions that the model can respond with. Set to (0,1), as they never vary.
 
         Raises
@@ -82,19 +82,19 @@ class Beads(Task):
         StopIteration
         """
 
-        self.t += 1
+        self.trial_step += 1
 
-        if self.t == self.T:
+        if self.trial_step == self.task_length:
             raise StopIteration
 
-        self.storeState()
+        self.store_state()
 
-        nextStim = self.beads[self.t]
-        nextValidActions = (0, 1)
+        next_stim = self.beads[self.trial_step]
+        next_valid_actions = [0, 1]
 
-        return nextStim, nextValidActions
+        return next_stim, next_valid_actions
 
-    def receiveAction(self, action):
+    def receive_action(self, action: Action) -> None:
         """
         Receives the next action from the participant
 
@@ -104,12 +104,12 @@ class Beads(Task):
             The action taken by the model
         """
 
-        self.recAction[self.t] = action
+        self.recAction[self.trial_step] = action
 
         if action and not self.firstDecision:
-            self.firstDecision = self.t + 1
+            self.firstDecision = self.trial_step + 1
 
-    def returnTaskState(self):
+    def return_task_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 
@@ -119,7 +119,7 @@ class Beads(Task):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_result_output()
 
         results["Observables"] = np.array(self.recBeads)
         results["Actions"] = self.recAction
@@ -127,28 +127,28 @@ class Beads(Task):
 
         return results
 
-    def storeState(self):
+    def store_state(self) -> None:
         """
         Stores the state of all the important variables so that they can be
         output later
         """
 
-        self.recBeads[self.t] = self.beads[self.t]
+        self.recBeads[self.trial_step] = self.beads[self.trial_step]
 
 
-def generateSequence(numBeads, oneProb, switchProb):
+def generate_sequence(num_beads: int, one_prob: float, switch_prob: float) -> np.ndarray:
     """
     Designed to generate a sequence of beads with a probability of switching
     jar at any time.
 
     Parameters
     ----------
-    numBeads : int
+    num_beads : int
         The number of beads in the sequence
-    oneProb : float in ``[0,1]``
+    one_prob : float in ``[0,1]``
         The probability of a 1 from the first jar. This is also the probability
         of a 0 from the second jar.
-    switchProb : float in ``[0,1]``
+    switch_prob : float in ``[0,1]``
         The probability that the drawn beads change the jar they are being
         drawn from
 
@@ -158,16 +158,16 @@ def generateSequence(numBeads, oneProb, switchProb):
         The generated sequence of beads
     """
 
-    sequence = np.zeros(numBeads)
+    sequence = np.zeros(num_beads)
 
-    probs = np.random.rand(numBeads, 2)
+    probabilities = np.random.rand(num_beads, 2)
     bead = 1
 
-    for i in range(numBeads):
-        if probs[i, 1] < switchProb:
+    for i in range(num_beads):
+        if probabilities[i, 1] < switch_prob:
             bead = 1-bead
 
-        if probs[i, 0] < oneProb:
+        if probabilities[i, 0] < one_prob:
             sequence[i] = bead
         else:
             sequence[i] = 1-bead
@@ -181,7 +181,7 @@ class StimulusBeadDirect(Stimulus):
 
     """
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: int) -> Tuple[int, int]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -200,7 +200,7 @@ class StimulusBeadDualDirect(Stimulus):
 
     """
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: int) -> Tuple[int, np.ndarray]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -223,14 +223,14 @@ class StimulusBeadDualInfo(Stimulus):
 
     Parameters
     ----------
-    oneProb : float in ``[0,1]``
+    one_prob : float in ``[0,1]``
         The probability of a 1 from the first jar. This is also the probability
         of a 0 from the second jar. ``event_info`` is calculated as
-        ``oneProb*event + (1-oneProb)*(1-event)``
+        ``one_prob*event + (1-one_prob)*(1-event)``
     """
-    oneProb = [0, 1]
+    oneProb = 0.1
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: float) -> Tuple[int, np.ndarray]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -252,7 +252,11 @@ class RewardBeadDirect(Rewards):
     Processes the beads reward for models expecting just the reward
     """
 
-    def processFeedback(self, feedback, lastAction, stimuli):
+    def process_feedback(self,
+                         feedback: None,
+                         last_action: Action,
+                         stimuli: List[float]
+                         ) -> None:
         """
 
         Returns
@@ -260,5 +264,3 @@ class RewardBeadDirect(Rewards):
         modelFeedback:
         """
         return feedback
-
-

@@ -7,18 +7,23 @@ import copy
 
 import numpy as np
 
-from tasks.taskTemplate import Task
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType
 
+from tasks.taskTemplate import Task
 from model.modelTemplate import Stimulus, Rewards
+
+Action = NewType('Action', Union[int, str])
+
 
 class Balltask(Task):
     # TODO: Describe parameters
     # each bag always contains balls of same color
-    def __init__(self, nbr_of_bags=6, bag_colors=['red', 'green', 'blue'], balls_per_bag=3):
+    def __init__(self,
+                 nbr_of_bags: int = 6,
+                 bag_colors: Optional[List[str]] = ['red', 'green', 'blue'],
+                 balls_per_bag: Optional[int] = 3):
 
         super(Balltask, self).__init__()
-
-        # TODO: change nbr_of_bags default to 90
         
         # check for counterbalance
         assert(nbr_of_bags % len(bag_colors) == 0), "nbr of bags should be multiple of color count"
@@ -27,7 +32,7 @@ class Balltask(Task):
         bag_sequence = np.random.permutation(bag_sequence)
 
         self.parameters["nbr_of_bags"] = nbr_of_bags
-        self.parameters["bag_colors"] = bag_colors
+        self.parameters["bag_colours"] = bag_colors
         self.parameters["balls_per_bag"] = balls_per_bag
         self.parameters["bag_sequence"] = list(bag_sequence)
         self.parameters["nbr_of_trials"] = nbr_of_bags * balls_per_bag
@@ -36,7 +41,7 @@ class Balltask(Task):
         self.trial = -1
         self.bag = -1
         self.action = None
-        self.ballcolor = None
+        self.ball_colour = None
 #        self.reward = None
         
         self.action_history = [-1] * self.parameters['nbr_of_trials']
@@ -71,15 +76,15 @@ class Balltask(Task):
             self.bag += 1
 
         next_stimulus = self.parameters['bag_sequence'][self.bag]
-        self.ballcolor = next_stimulus
+        self.ball_colour = next_stimulus
         
-        valid_actions = np.arange(0, len(self.parameters['bag_colors']))
+        valid_actions = np.arange(0, len(self.parameters['bag_colours']))
         next_valid_actions = tuple(valid_actions)  # (0, 1, 2) for RGB
 #        next_valid_actions = tuple(self.parameters['bag_colors'])
 
         return next_stimulus, next_valid_actions
 
-    def receiveAction(self, action):
+    def receive_action(self, action):
         """
         Receives the next action from the participant
 
@@ -95,17 +100,11 @@ class Balltask(Task):
         Responds to the action from the participant
         balltask has no rewards so we return None
         """
-        self.storeState()
+        self.store_state()
 
         return None
 
-    def proceed(self):
-        """
-        Updates the task after feedback
-        """
-        pass
-
-    def returnTaskState(self):
+    def return_task_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 
@@ -115,20 +114,20 @@ class Balltask(Task):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        history = self.standardResultOutput()
+        history = self.standard_result_output()
 
         history['participant_actions'] = copy.copy(self.action_history)
-        history['ballcolor'] = copy.copy(self.ball_history)
+        history['ball_colour'] = copy.copy(self.ball_history)
         
         return history
 
-    def storeState(self):
+    def store_state(self) -> None:
         """ Stores the state of all the important variables so that they can be
         output later
         """
 
         self.action_history[self.trial] = self.action
-        self.ball_history[self.trial] = self.ballcolor
+        self.ball_history[self.trial] = self.ball_colour
 
 
 class StimulusBalltaskSimple(Stimulus):
@@ -139,7 +138,7 @@ class StimulusBalltaskSimple(Stimulus):
 
     # TODO! change below to work for more colors than 3
 
-    def processStimulus(self, observation):
+    def process_stimulus(self, observation: str) -> Tuple[List[int], List[int]]:
         """
         Processes the decks stimuli for models expecting just the event
 
@@ -152,11 +151,11 @@ class StimulusBalltaskSimple(Stimulus):
 
         """
         if observation == "red":
-            return (1, 0, 0), (1, 0, 0)
+            return [1, 0, 0], [1, 0, 0]
         if observation == "green":
-            return (0, 1, 0), (0, 1, 0)
+            return [0, 1, 0], [0, 1, 0]
         if observation == "blue":
-            return (0, 0, 1), (0, 0, 1)
+            return [0, 0, 1], [0, 0, 1]
 
 
 class RewardBalltaskDirect(Rewards):
@@ -164,7 +163,7 @@ class RewardBalltaskDirect(Rewards):
     Processes the reward for models expecting just the reward
     """
 
-    def processFeedback(self, feedback, lastAction, stimuli):
+    def process_feedback(self, feedback, last_action: Action, stimuli):
         """
 
         Returns

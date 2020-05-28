@@ -2,6 +2,9 @@
 """
 :Author: Dominic
 """
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType
+
+Action = NewType('Action', Union[int, str])
 
 
 class Task(object):
@@ -36,7 +39,7 @@ class Task(object):
 
         return self
 
-    def __next__(self):
+    def __next__(self) -> Tuple[List[Union[int, float]], List[Action]]:
         """
         Produces the next stimulus for the iterator
 
@@ -56,33 +59,33 @@ class Task(object):
 
         raise StopIteration
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'Task') -> bool:
 
         if self.Name == other.Name:
             return True
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other: 'Task') -> bool:
 
         if self.Name != other.Name:
             return True
         else:
             return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
 
         return hash(self.Name)
 
     @classmethod
-    def get_name(cls):
+    def get_name(cls) -> str:
         """
         Returns the name of the class
         """
 
         return cls.__name__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
 
         params = self.params()
         name = params.pop('Name')
@@ -95,7 +98,7 @@ class Task(object):
 
         return representation
 
-    def receiveAction(self, action):
+    def receive_action(self, action: Action) -> None:
         """
         Receives the next action from the participant
 
@@ -107,14 +110,14 @@ class Task(object):
 
         self.record_actions.append(action)
 
-    def proceed(self):
+    def proceed(self) -> None:
         """
         Updates the task before the next trialstep
         """
 
         pass
 
-    def feedback(self):
+    def feedback(self) -> Union[int, float]:
         """
         Responds to the action from the participant
 
@@ -123,9 +126,9 @@ class Task(object):
         feedback : None, int or float
 
         """
-        return None
+        pass
 
-    def returnTaskState(self):
+    def return_task_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 
@@ -135,13 +138,13 @@ class Task(object):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_result_output()
 
         results["Actions"] = self.record_actions
 
         return results
 
-    def storeState(self):
+    def store_state(self) -> None:
         """
         Stores the state of all the important variables so that they can be
         output later
@@ -149,13 +152,13 @@ class Task(object):
 
         pass
 
-    def standardResultOutput(self):
+    def standard_result_output(self) -> Dict[str, Any]:
 
         results = self.parameters.copy()
 
         return results
 
-    def params(self):
+    def params(self) -> Dict[str, Any]:
         """
         Returns the parameters of the task as a dictionary
 

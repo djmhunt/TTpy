@@ -106,7 +106,7 @@ class QLearn2E(Model):
 
         # Recorded information
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -116,19 +116,19 @@ class QLearn2E(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
-        self.storeStandardResults()
+        self.store_standard_results()
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -148,7 +148,7 @@ class QLearn2E(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = self._actExpectations(self.expectations, stimuli)
 
@@ -174,13 +174,13 @@ class QLearn2E(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -190,7 +190,7 @@ class QLearn2E(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -201,7 +201,7 @@ class QLearn2E(Model):
         # Calculate the new probabilities
         # We need to combine the expectations before calculating the probabilities
         actExpectations = self._actExpectations(self.expectations, stimuli)
-        self.probabilities = self.calcProbabilities(actExpectations)
+        self.probabilities = self.calculate_probabilities(actExpectations)
 
     def _newExpect(self, action, delta, stimuli):
 
@@ -215,20 +215,20 @@ class QLearn2E(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
@@ -236,14 +236,14 @@ class QLearn2E(Model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == max(actionValues)
+        cbest = action_values == max(action_values)
         deltaEpsilon = self.epsilon * (1 / self.number_actions)
         bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -254,6 +254,6 @@ class QLearn2E(Model):
 
         """
 
-        probabilities = self.calcProbabilities(self.expectedRewards)
+        probabilities = self.calculate_probabilities(self.expected_rewards)
 
         return probabilities

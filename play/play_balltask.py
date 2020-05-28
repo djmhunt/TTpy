@@ -13,7 +13,7 @@ for state in tsk:
     print("you see {}".format(state[0]))
     print("Please predict next color from these options {}".format(state[1]))
     action = int(raw_input("enter your choice: "))
-    tsk.receiveAction(action)
+    tsk.receive_action(action)
     response = tsk.feedback()
     tsk.proceed()  # not actually needed but should be here for future reference
 

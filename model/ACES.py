@@ -79,7 +79,7 @@ class ACES(Model):
         # Recorded extra information
         self.recActorExpectations = []
 
-    def returnTaskState(self):
+    def return_task_state(self):
         """ Returns all the relevant data for this model
 
         Returns
@@ -89,22 +89,22 @@ class ACES(Model):
             Probabilities, Actions and Events.
         """
 
-        results = self.standardResultOutput()
+        results = self.standard_results_output()
         results["ActorExpectations"] = np.array(self.recActorExpectations).T
 
         return results
 
-    def storeState(self):
+    def store_state(self):
         """
         Stores the state of all the important variables so that they can be
         accessed later
         """
 
         self.expectations = np.array([self.expectationsF])
-        self.storeStandardResults()
+        self.store_standard_results()
         self.recActorExpectations.append(self.actorExpectations.flatten())
 
-    def rewardExpectation(self, observation):
+    def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
 
         This contains parts that are task dependent
@@ -124,7 +124,7 @@ class ACES(Model):
             A list of the stimuli that were or were not present
         """
 
-        activeStimuli, stimuli = self.stimulus_shaper.processStimulus(observation)
+        activeStimuli, stimuli = self.stimulus_shaper.process_stimulus(observation)
 
         actionExpectations = np.array([self.expectationsF] * self.number_actions)
 
@@ -150,13 +150,13 @@ class ACES(Model):
         delta
         """
 
-        modReward = self.reward_shaper.processFeedback(reward, action, stimuli)
+        modReward = self.reward_shaper.process_feedback(reward, action, stimuli)
 
         delta = modReward - expectation
 
         return delta
 
-    def updateModel(self, delta, action, stimuli, stimuliFilter):
+    def update_model(self, delta, action, stimuli, stimuli_filter):
         """
         Parameters
         ----------
@@ -166,7 +166,7 @@ class ACES(Model):
             The action chosen by the model in this trialstep
         stimuli : list of float
             The weights of the different stimuli in this trialstep
-        stimuliFilter : list of bool
+        stimuli_filter : list of bool
             A list describing if a stimulus cue is present in this trialstep
 
         """
@@ -175,7 +175,7 @@ class ACES(Model):
         self._newExpect(action, delta, stimuli)
 
         # Calculate the new probabilities
-        self.probabilities = self.actorStimulusProbs()
+        self.probabilities = self.actor_stimulus_probs()
 
     def _newExpect(self, action, delta, stimuli):
 
@@ -190,20 +190,20 @@ class ACES(Model):
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
         if self.number_cues > 1:
-            actionExpectations = self.actStimMerge(expectations, stimuli)
+            actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calcProbabilities(self, actionValues):
+    def calculate_probabilities(self, action_values):
         # type: (np.ndarray) -> np.ndarray
         """
         Calculate the probabilities associated with the actions
 
         Parameters
         ----------
-        actionValues : 1D ndArray of floats
+        action_values : 1D ndArray of floats
 
         Returns
         -------
@@ -211,14 +211,14 @@ class ACES(Model):
             The probabilities associated with the actionValues
         """
 
-        cbest = actionValues == np.max(actionValues)
+        cbest = action_values == np.max(action_values)
         deltaEpsilon = self.epsilon * (1 / self.number_actions)
         bestEpsilon = (1 - self.epsilon) / np.sum(cbest) + deltaEpsilon
         probArray = bestEpsilon * cbest + deltaEpsilon * (1 - cbest)
 
         return probArray
 
-    def actorStimulusProbs(self):
+    def actor_stimulus_probs(self):
         """
         Calculates in the model-appropriate way the probability of each action.
 
@@ -230,6 +230,6 @@ class ACES(Model):
         """
 
         actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
-        probabilities = self.calcProbabilities(actExpectations)
+        probabilities = self.calculate_probabilities(actExpectations)
 
         return probabilities
