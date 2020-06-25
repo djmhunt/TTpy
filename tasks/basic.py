@@ -26,20 +26,17 @@ class Basic(Task):
         The number of trials in the task
     """
 
-    def __init__(self, trials: int = 100):
+    valid_actions = [0, 1]
+    number_cues = 1
 
-        super(Basic, self).__init__()
+    def __init__(self, trials: int = 100):
 
         self.nbr_of_trials = trials
 
-        self.parameters["Trials"] = self.nbr_of_trials
+        self._trial = -1  # start at -1 so first call to next will yield _trial 0
+        self._action: Optional[Action] = None  # placeholder for what _action is taken
 
-        self.trial = -1  # start at -1 so first call to next will yield trial 0
-        self.action: Optional[Action] = None  # placeholder for what action is taken
-
-        self.action_history = [-1] * self.nbr_of_trials
-
-    def __next__(self) -> Tuple[int, List[Action]]:
+    def next_trialstep(self) -> Tuple[int, List[Action]]:
         """
         the task class is an iterator [link to iterator documentation]
         this function produces the next stimulus for the task iterator
@@ -55,61 +52,32 @@ class Basic(Task):
         StopIteration
         """
 
-        self.trial += 1
+        self._trial += 1
 
-        if self.trial == self.nbr_of_trials:
+        if self._trial == self.nbr_of_trials:
             raise StopIteration
 
         next_stimulus = 1
-        next_valid_actions = [0, 1]
+        next_valid_actions = self.valid_actions
 
         return next_stimulus, next_valid_actions
 
-    def receive_action(self, action):
+    def action_feedback(self, action: Action) -> int:
         """
-        Receives the next action from the participant
+        Receives the next action from the participant and responds to the action from the participant
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
-        self.action = action
-
-    def feedback(self):
-        """
-        Responds to the action from the participant
-        """
-        return 1
-
-    def proceed(self):
-        """
-        Updates the task after feedback
-        """
-        pass
-
-    def return_task_state(self) -> Dict[str, Any]:
-        """
-        Returns all the relevant data for this task run
 
         Returns
         -------
-        results : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
+        feedback : int
         """
+        self._action = action
 
-        results = self.standard_result_output()
-
-        results["participantActions"] = copy.copy(self.action_history)
-
-        return results
-
-    def store_state(self) -> None:
-        """ Stores the state of all the important variables so that they can be
-        output later
-        """
-
-        self.action_history[self.trial] = self.action
+        return 1
 
 
 class StimulusBasicSimple(Stimulus):

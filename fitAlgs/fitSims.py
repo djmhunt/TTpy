@@ -399,7 +399,7 @@ class FitSim(object):
         """
 
         for observation, action, reward in zip(observations, actions, rewards):
-            model_instance.observe(observation)
+            model_action = model_instance.observe(observation)
             model_instance.override_action_choice(action)
             model_instance.feedback(reward)
 

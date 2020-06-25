@@ -112,12 +112,9 @@ def run(task_name: str = 'Basic',
                 logger.debug(message)
 
                 for state in task:
-                    model.observe(state)
-                    action = model.action()
-                    task.receive_action(action)
-                    response = task.feedback()
+                    action = model.observe(state)
+                    response = task.feedback(action)
                     model.feedback(response)
-                    task.proceed()
 
                 model.set_simID(str(simID))
 

@@ -232,13 +232,16 @@ class Model(object):
 
         self.number_actions = number_actions
         self.number_cues = number_cues
-        if number_critics is None:
-            number_critics = self.number_actions * self.number_cues
-        self.number_critics = number_critics
 
         if action_codes is None:
             action_codes = {k: k for k in range(self.number_actions)}
+        else:
+            self.number_actions = len(action_codes)
         self.action_code = action_codes
+
+        if number_critics is None:
+            number_critics = self.number_actions * self.number_cues
+        self.number_critics = number_critics
 
         self.default_non_action = non_action
 
@@ -352,20 +355,9 @@ class Model(object):
 
         return hash(self.Name)
 
-    def action(self):
+    def observe(self, state: Tuple[Any, Optional[List[Action]]]) -> Action:
         """
-        Returns the action of the model
-
-        Returns
-        -------
-        action : integer or None
-        """
-
-        return self.curr_action_symbol
-
-    def observe(self, state: Tuple[Any, Optional[List[Action]]]):
-        """
-        Receives the latest observation and decides what to do with it
+        Receives the latest observation and returns the chosen action
 
         There are five possible states:
         Observation
@@ -379,6 +371,10 @@ class Model(object):
         state : tuple of ({int | float | tuple},{tuple of int or str | None})
             The stimulus from the task followed by the tuple of valid
             actions.
+
+        Returns
+        -------
+        action : integer or None
 
         """
 
@@ -415,6 +411,8 @@ class Model(object):
 
         # Now that the action has been chosen, add any reinforcement of the previous choice in the expectations
         self.last_choice_reinforcement()
+
+        return self.curr_action_symbol
 
     def feedback(self, response):
         """

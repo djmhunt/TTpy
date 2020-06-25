@@ -2,53 +2,57 @@
 """
 :Author: Dominic
 """
-from typing import Union, Tuple, List, Dict, Any, Optional, NewType
+import collections
+import abc
+
+from typing import Union, Tuple, List, Dict, Any, Optional, NewType, ClassVar
 
 Action = NewType('Action', Union[int, str])
 
 
-class Task(object):
-    """The abstract tasks class from which all others inherit
+class TaskMeta(abc.ABCMeta):
+    def __call__(cls, *args, **kwargs):
 
-    Many general methods for tasks are found only here
+        self = super(TaskMeta, cls).__call__(*args, **kwargs)
 
-    Parameters
-    ----------
-
-
-    Attributes
-    ----------
-    Name : string
-        The name of the class used when recording what has been used.
-
-    """
-
-    def __init__(self):
-
-        self.Name = self.get_name()
-
-        self.parameters = {"Name": self.Name
-                           }
-
-        self.record_actions = []
-
-    def __iter__(self):
-        """
-        Returns the iterator for the tasks
-        """
+        self.__task_setup__()
 
         return self
 
-    def __next__(self) -> Tuple[List[Union[int, float]], List[Action]]:
+
+class Task(metaclass=TaskMeta):
+    """The abstract tasks class from which all others inherit
+
+    Many general methods for tasks are found only here
+    """
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return (hasattr(subclass, 'next_trialstep') and
+                callable(subclass.next_trialstep) and
+                hasattr(subclass, 'action_feedback') and
+                callable(subclass.action_feedback) or
+                NotImplemented)
+
+    @property
+    @abc.abstractmethod
+    def number_cues(cls):
+        return NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def valid_actions(cls):
+        return NotImplementedError
+
+    @abc.abstractmethod
+    def next_trialstep(self) -> Tuple[Optional[List[Union[int, float]]], List[Action]]:
         """
         Produces the next stimulus for the iterator
 
         Returns
         -------
         stimulus : None
-        nextValidActions : Tuple of ints
-            The list of valid actions that the model can respond with. Set to
-            ``None``, as they never vary.
+        next_valid_actions : Tuple of ints
+            The list of valid actions that the model can respond with.
 
         Raises
         ------
@@ -57,7 +61,50 @@ class Task(object):
 
         # Since there is nothing to iterate over, just return the final state
 
-        raise StopIteration
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def action_feedback(self, action: Action) -> Optional[Union[int, float]]:
+        """
+        Receives the next action from the participant and responds to the action from the participant
+
+        Parameters
+        ----------
+        action : int or string
+            The action taken by the model
+
+        Returns
+        -------
+        feedback : None, int or float
+        """
+
+        raise NotImplementedError
+
+    def __iter__(self):
+        """
+        Returns the iterator for the tasks
+        """
+
+        return self
+
+    def __next__(self) -> Tuple[Optional[List[Union[int, float]]], List[Action]]:
+        """
+        Produces the next stimulus for the iterator
+
+        Returns
+        -------
+        stimulus : list of floats or ints
+        next_valid_actions : Tuple of ints
+            The list of valid actions that the model can respond with
+
+        Raises
+        ------
+        StopIteration
+        """
+
+        stimulus, next_valid_actions = self.next_trialstep()
+
+        return stimulus, next_valid_actions
 
     def __eq__(self, other: 'Task') -> bool:
 
@@ -87,46 +134,62 @@ class Task(object):
 
     def __repr__(self) -> str:
 
-        params = self.params()
+        params = self.parameters.copy()
         name = params.pop('Name')
 
-        label = ["{}(".format(name)]
-        label.extend(["{}={}, ".format(k, repr(v)) for k, v in params.items()])
-        label.append(")")
+        label = [f'{name}(']
+        label.extend([f'{k}={repr(v)}, ' for k, v in params.items()])
+        label.append(')')
 
         representation = ' '.join(label)
 
         return representation
 
-    def receive_action(self, action: Action) -> None:
+    def __task_setup__(self):
+
+        self.Name = self.__class__.__name__
+
+        if hasattr(self, 'valid_actions'):
+            if isinstance(self.valid_actions, collections.abc.Iterable):
+                self.number_actions: int = len(self.valid_actions)
+            else:
+                raise TypeError(f'The valid_actions needs to by iterable, found {type(self.valid_actions)}')
+        else:
+            raise NotImplementedError('The number_actions needs to be specified in the task initialisation ')
+
+        if not hasattr(self, 'number_cues'):
+            raise NotImplementedError('The number_cues attribute needs to be specified in the task initialisation')
+        elif not isinstance(self.number_cues, int):
+            raise TypeError(f'The number_cues attribute should be an int')
+
+        class_variables = vars(self).copy()
+        self.record = collections.defaultdict(list)
+        self.parameters = {}
+        for k, v in class_variables.items():
+            if k.startswith('_'):
+                self.record[k.strip('_')].append(v)
+            else:
+                self.parameters[k] = v
+
+    def feedback(self, action: Action) -> Optional[Union[int, float]]:
         """
-        Receives the next action from the participant
+        Receives the next action from the participant and responds to the action from the participant
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
-
-        self.record_actions.append(action)
-
-    def proceed(self) -> None:
-        """
-        Updates the task before the next trialstep
-        """
-
-        pass
-
-    def feedback(self) -> Union[int, float]:
-        """
-        Responds to the action from the participant
 
         Returns
         -------
         feedback : None, int or float
-
         """
-        pass
+
+        feedback_value = self.action_feedback(action)
+
+        self.store_state()
+
+        return feedback_value
 
     def return_task_state(self) -> Dict[str, Any]:
         """
@@ -138,9 +201,9 @@ class Task(object):
             A dictionary containing the class parameters  as well as the other useful data
         """
 
-        results = self.standard_result_output()
+        results = dict(self.record)
 
-        results["Actions"] = self.record_actions
+        results.update(self.parameters)
 
         return results
 
@@ -150,22 +213,14 @@ class Task(object):
         output later
         """
 
-        pass
+        current_state = vars(self).copy()
+        for k in set(current_state.keys()).difference(self.parameters.keys()):
+            if k.startswith('_'):
+                self.record[k.strip('_')].append(current_state[k])
+            elif k not in ['parameters', 'record']:
+                self.record[k].append(current_state[k])
 
-    def standard_result_output(self) -> Dict[str, Any]:
 
-        results = self.parameters.copy()
-
-        return results
-
-    def params(self) -> Dict[str, Any]:
-        """
-        Returns the parameters of the task as a dictionary
-
-        Returns
-        -------
-        parameters : dict
-            The parameters of the task
-        """
-
-        return self.parameters.copy()
+    @number_cues.setter
+    def number_cues(self, value):
+        self._number_cues = value

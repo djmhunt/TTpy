@@ -32,7 +32,7 @@ def model_setup():
                       parameters=model_parameters,
                       other_options=model_static_args)
 
-    modelInfos = [m for m in models.iter_details()]
+    modelInfos = [m for m in models]
     modelInfo = modelInfos[0]
     model = modelInfo[0]
     modelSetup = modelInfo[1:]
@@ -236,7 +236,7 @@ class TestClass_model:
         fitting = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
 
         model_instance = fit_sim.fitted_model(0.5, 3)
-        model_data = model_instance.returnTaskState()
+        model_data = model_instance.return_task_state()
         result = model_data['ActionProb']
         correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
                                    0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])

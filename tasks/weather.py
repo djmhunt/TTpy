@@ -68,6 +68,10 @@ class Weather(Task):
     cues : array of floats, optional
         The stimulus cues used to guess the actualities
     """
+
+    valid_actions = [0, 1]
+    number_cues = 4
+
     def __init__(self,
                  cue_probabilities: Optional[List[float]] = None,
                  learning_length: Optional[int] = 200,
@@ -76,13 +80,14 @@ class Weather(Task):
                  cues: List[List[Union[int, float]]] = None,
                  actualities=None):
 
-        super(Weather, self).__init__()
-
         if cue_probabilities is None:
             cue_probabilities = [[0.2, 0.8, 0.2, 0.8], [0.8, 0.2, 0.8, 0.2]]
 
+        self.valid_actions = list(range(len(cue_probabilities)))
+
         if number_cues is None:
-            number_cues = len(cue_probabilities)
+            number_cues = len(cue_probabilities[0])
+
         if cues is None:
             cues = generate_cues(number_cues, learning_length + test_length)
         if not actualities:
@@ -106,17 +111,10 @@ class Weather(Task):
 
         self.task_length = len(self.cues)
 
-        self.parameters["Actualities"] = self.actualities
-        self.parameters["Cues"] = self.cues
+        self._trial_step: int = -1
+        self._action: Action = None
 
-        # Set draw count
-        self.trial_step: int = -1
-        self.action: Action = None
-
-        # Recording variables
-        self.record_action: List[int] = [-1] * self.task_length
-
-    def __next__(self) -> Tuple[List[int], List[Action]]:
+    def next_trialstep(self) -> Tuple[List[int], List[Action]]:
         """
         Produces the next stimulus for the iterator
 
@@ -132,67 +130,34 @@ class Weather(Task):
         StopIteration
         """
 
-        self.trial_step += 1
+        self._trial_step += 1
 
-        if self.trial_step == self.task_length:
+        if self._trial_step == self.task_length:
             raise StopIteration
 
-        next_stim = self.cues[self.trial_step]
-        next_valid_actions = [0, 1]
+        next_stim = self.cues[self._trial_step]
 
-        return next_stim, next_valid_actions
+        return next_stim, self.valid_actions
 
-    def receive_action(self, action) -> None:
+    def action_feedback(self, action: Action) -> Union[int, float]:
         """
-        Receives the next action from the participant
+        Receives the next action from the participant and responds to the action from the participant
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
-
-        self.action = action
-
-    def feedback(self) -> Union[int, float]:
-        """
-        Feedback to the action from the participant
-        """
-
-        response = self.actualities[self.trial_step]
-
-        self.store_state()
-
-        return response
-
-    def proceed(self):
-        """
-        Updates the task after feedback
-        """
-
-        pass
-
-    def returnTaskState(self):
-        """
-        Returns all the relevant data for this task run
 
         Returns
         -------
-        results : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
+        feedback : None, int or float
         """
 
-        results = self.standard_result_output()
+        response = self.actualities[self._trial_step]
 
-        results["Actions"] = self.record_action
+        self._action = action
 
-        return results
-
-    def store_state(self) -> None:
-        """ Stores the state of all the important variables so that they can be
-        output later """
-
-        self.record_action[self.trial_step] = self.action
+        return response
 
 
 def generate_cues(number_cues: int, task_length: int) -> List[List[int]]:

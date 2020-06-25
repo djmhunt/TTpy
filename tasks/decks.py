@@ -47,11 +47,12 @@ class Decks(Task):
         Defines if you discard the card not chosen or if you keep it.
     """
 
+    number_cues = 1
+    valid_actions = [0, 1]
+
     def __init__(self, draws: Optional[int] = None,
                  decks: Optional[Union[str, List[List[float]]]] = None,
                  discard: Optional[bool] = False):
-
-        super(Decks, self).__init__()
 
         self.discard = discard
 
@@ -70,25 +71,16 @@ class Decks(Task):
         else:
             self.task_length = len(self.decks[0])
 
-        self.parameters["Draws"] = self.task_length
-        self.parameters["Discard"] = self.discard
-        self.parameters["Decks"] = self.decks
-
         # Set draw count
-        self.trial_step: int = -1
-        self.card_value: float = np.nan
-        self.action: Optional[Action] = None
+        self._trial_step: int = -1
+        self._card_value: float = np.nan
+        self._deck_drawn: Optional[Action] = None
         if self.discard:
-            self.drawn: int = -1
+            self._drawn: int = -1
         else:
-            self.drawn: List[int] = [-1, -1]
+            self._drawn: List[int] = [-1, -1]
 
-        # Recording variables
-
-        self.record_card_value: List[float] = [-1] * self.task_length
-        self.record_action: List[int] = [-1] * self.task_length
-
-    def __next__(self) -> Tuple[List[Union[int, float]], List[Action]]:
+    def next_trialstep(self) -> Tuple[List[Union[int, float]], List[Action]]:
         """
         Produces the next stimulus for the iterator
 
@@ -103,9 +95,9 @@ class Decks(Task):
         StopIteration
         """
 
-        self.trial_step += 1
+        self._trial_step += 1
 
-        if self.trial_step == self.task_length:
+        if self._trial_step == self.task_length:
             raise StopIteration
 
         next_stim = [1]
@@ -113,68 +105,34 @@ class Decks(Task):
 
         return next_stim, next_valid_actions
 
-    def receive_action(self, action: Action) -> None:
+    def action_feedback(self, action: Action) -> float:
         """
-        Receives the next action from the participant
+        Receives the next action from the participant and responds to the action from the participant
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
-
-        self.action = action
-
-    def feedback(self) -> float:
-        """
-        Responds to the action from the participant
-        """
-
-        deck_drawn: int = self.action
-
-        if self.discard:
-            card_drawn = self.drawn + 1
-            self.drawn = card_drawn
-        else:
-            card_drawn = self.drawn[deck_drawn] + 1
-            self.drawn[deck_drawn] = card_drawn
-
-        self.card_value = self.decks[deck_drawn][card_drawn]
-
-        self.store_state()
-
-        return self.card_value
-
-    def proceed(self):
-        """
-        Updates the task after feedback
-        """
-
-    def return_task_state(self) -> Dict[str, Any]:
-        """
-        Returns all the relevant data for this task run
 
         Returns
         -------
-        results : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
+        feedback : float
         """
 
-        results = self.standard_result_output()
+        deck_drawn: int = action
 
-        results["Actions"] = self.record_action
-        results["card_value"] = self.record_card_value
-        results["finalDeckDraws"] = self.drawn
+        if self.discard:
+            card_drawn = self._drawn + 1
+            self._drawn = card_drawn
+        else:
+            card_drawn = self._drawn[deck_drawn] + 1
+            self._drawn[deck_drawn] = card_drawn
 
-        return results
+        self._card_value = self.decks[deck_drawn][card_drawn]
 
-    def store_state(self) -> None:
-        """ Stores the state of all the important variables so that they can be
-        output later
-        """
+        self._deck_drawn = action
 
-        self.record_action[self.trial_step] = self.action
-        self.record_card_value[self.trial_step] = self.card_value
+        return self._card_value
 
 
 class StimulusDecksLinear(Stimulus):

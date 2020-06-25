@@ -60,6 +60,9 @@ class ProbSelect(Task):
 
     """
 
+    number_cues = 1
+    valid_actions = [0, 1, 2, 3]
+
     def __init__(self,
                  reward_probability: Optional[float] = 0.7,
                  learning_action_pairs: Optional[List[Tuple[Action, Action]]] = None,
@@ -81,37 +84,23 @@ class ProbSelect(Task):
         if not number_actions:
             number_actions = len(action_reward_probabilities)
 
-        super(ProbSelect, self).__init__()
-
-        self.parameters["reward_probability"] = reward_probability
-        self.parameters["action_reward_probabilities"] = action_reward_probabilities
-        self.parameters["learning_action_pairs"] = learning_action_pairs
-        self.parameters["learning_length"] = learning_length
-        self.parameters["test_length"] = test_length
-        self.parameters["number_actions"] = number_actions
-        self.parameters["reward_size"] = reward_size
-
-        self.trial_step = -1
         self.reward_probability = reward_probability
         self.action_reward_probabilities = action_reward_probabilities
         self.learning_action_pairs = learning_action_pairs
         self.learning_length = learning_length
         self.reward_size = reward_size
         self.task_length = learning_length + test_length
-        self.action = None
-        self.reward_value = -1
         self.number_actions = number_actions
-        self.choices = list(action_reward_probabilities.keys())
-
+        self.valid_actions = list(action_reward_probabilities.keys())
         self.action_sequence = self.__generate_action_sequence(learning_action_pairs,
                                                                learning_length,
                                                                test_length)
 
-        # Recording variables
-        self.record_reward_values = [-1] * self.task_length
-        self.record_actions = [-1] * self.task_length
+        self._action = None
+        self._trial_step = -1
+        self._reward_value = -1
 
-    def __next__(self):
+    def next_trialstep(self) -> Tuple[None, List[Action]]:
         """
         Produces the next stimulus for the iterator
 
@@ -126,36 +115,33 @@ class ProbSelect(Task):
         StopIteration
         """
 
-        self.trial_step += 1
+        self._trial_step += 1
 
-        if self.trial_step == self.task_length:
+        if self._trial_step == self.task_length:
             raise StopIteration
 
         next_stimulus = None
-        next_valid_actions = self.action_sequence[self.trial_step]
+        next_valid_actions = self.action_sequence[self._trial_step]
 
         return next_stimulus, next_valid_actions
 
-    def receive_action(self, action):
+    def action_feedback(self, action: Action) -> float:
         """
-        Receives the next action from the participant
+        Receives the next action from the participant and responds to the action from the participant
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
 
-        self.action = action
-
-    def feedback(self) -> float:
+        Returns
+        -------
+        feedback : None, int or float
         """
-        Responds to the action from the participant
-        """
-        # The probability of success varies depending on if it is choice
+        # The probability of success varies depending on if it is chosen
 
-        if self.trial_step < self.learning_length:
-            action_reward_probabilities = self.action_reward_probabilities[self.action]
+        if self._trial_step < self.learning_length:
+            action_reward_probabilities = self.action_reward_probabilities[action]
 
             if action_reward_probabilities >= np.random.rand(1):
                 reward = self.reward_size
@@ -164,42 +150,16 @@ class ProbSelect(Task):
         else:
             reward = np.nan
 
-        self.reward_value = reward
-
-        self.store_state()
+        self._action = action
+        self._reward_value = reward
 
         return reward
-
-    def return_task_state(self) -> Dict[str, Any]:
-        """
-        Returns all the relevant data for this task run
-
-        Returns
-        -------
-        results : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
-        """
-
-        results = self.standard_result_output()
-
-        results["reward_values"] = np.array(self.record_reward_values)
-        results["Actions"] = np.array(self.record_actions)
-        results["valid_actions"] = np.array(self.action_sequence)
-
-        return results
-
-    def store_state(self) -> None:
-        """ Stores the state of all the important variables so that they can be
-        output later """
-
-        self.record_actions[self.trial_step] = self.action
-        self.record_reward_values[self.trial_step] = self.reward_value
 
     @staticmethod
     def __generate_action_sequence(learning_action_pairs: List[Tuple[Action, Action]],
                                    learning_length: int,
                                    test_length: int
-                                   ) -> List[Tuple[Action, Action]]:
+                                   ) -> List[List[Action]]:
 
         pair_ids = list(range(len(learning_action_pairs)))
         action_pairs = np.array(learning_action_pairs)
@@ -230,7 +190,7 @@ class StimulusProbSelectDirect(Stimulus):
     (1, 1)
     """
 
-    def process_stimulus(self, observation) -> Tuple[int, int]:
+    def process_stimulus(self, observation: None) -> Tuple[int, int]:
         """
         Processes the decks stimuli for models expecting just the event
 

@@ -37,9 +37,11 @@ class Beads(Task):
         `MooreSellen`, the default sequence.
     """
 
-    def __init__(self, task_length: int = None, bead_sequence: Optional[Union[str, List]] = None):
+    number_cues = 1
+    valid_actions = [0, 1]
 
-        super(Beads, self).__init__()
+    def __init__(self, task_length: int = None,
+                 bead_sequence: Optional[Union[str, List]] = None):
 
         if isinstance(bead_sequence, str):
             if bead_sequence in beadSequences:
@@ -56,19 +58,12 @@ class Beads(Task):
         else:
             self.task_length = len(self.beads)
 
-        self.parameters["trial_duration"] = self.task_length
-        self.parameters["bead_sequence"] = self.beads
-
         # Set trial_step count
-        self.trial_step = -1
+        self._trial_step = -1
+        self._first_decision = 0
+        self._action = None
 
-        # Recording variables
-
-        self.recBeads = [-1]*self.task_length
-        self.recAction = [-1]*self.task_length
-        self.firstDecision = 0
-
-    def __next__(self) -> Tuple[int, List[Action]]:
+    def next_trialstep(self) -> Tuple[int, List[Action]]:
         """ Produces the next bead for the iterator
 
         Returns
@@ -82,19 +77,19 @@ class Beads(Task):
         StopIteration
         """
 
-        self.trial_step += 1
+        self._trial_step += 1
 
-        if self.trial_step == self.task_length:
+        if self._trial_step == self.task_length:
             raise StopIteration
 
         self.store_state()
 
-        next_stim = self.beads[self.trial_step]
-        next_valid_actions = [0, 1]
+        next_stim = self.beads[self._trial_step]
+        next_valid_actions = self.valid_actions
 
         return next_stim, next_valid_actions
 
-    def receive_action(self, action: Action) -> None:
+    def action_feedback(self, action: Action) -> None:
         """
         Receives the next action from the participant
 
@@ -104,36 +99,10 @@ class Beads(Task):
             The action taken by the model
         """
 
-        self.recAction[self.trial_step] = action
+        self._action = action
 
-        if action and not self.firstDecision:
-            self.firstDecision = self.trial_step + 1
-
-    def return_task_state(self) -> Dict[str, Any]:
-        """
-        Returns all the relevant data for this task run
-
-        Returns
-        -------
-        results : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
-        """
-
-        results = self.standard_result_output()
-
-        results["Observables"] = np.array(self.recBeads)
-        results["Actions"] = self.recAction
-        results["FirstDecision"] = self.firstDecision
-
-        return results
-
-    def store_state(self) -> None:
-        """
-        Stores the state of all the important variables so that they can be
-        output later
-        """
-
-        self.recBeads[self.trial_step] = self.beads[self.trial_step]
+        if action and not self._first_decision:
+            self._first_decision = self._trial_step + 1
 
 
 def generate_sequence(num_beads: int, one_prob: float, switch_prob: float) -> np.ndarray:

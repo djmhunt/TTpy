@@ -18,37 +18,37 @@ Action = NewType('Action', Union[int, str])
 class Balltask(Task):
     # TODO: Describe parameters
     # each bag always contains balls of same color
+    bag_colours = ['red', 'green', 'blue']
+    valid_actions = list(range(len(bag_colours)))
+    number_cues = 3
+
     def __init__(self,
                  nbr_of_bags: int = 6,
-                 bag_colors: Optional[List[str]] = ['red', 'green', 'blue'],
+                 bag_colours: Optional[List[str]] = None,
                  balls_per_bag: Optional[int] = 3):
 
-        super(Balltask, self).__init__()
-        
-        # check for counterbalance
-        assert(nbr_of_bags % len(bag_colors) == 0), "nbr of bags should be multiple of color count"
-        
-        bag_sequence = np.repeat(bag_colors, nbr_of_bags / len(bag_colors))
-        bag_sequence = np.random.permutation(bag_sequence)
+        if bag_colours is not None:
+            self.bag_colours = bag_colours
 
-        self.parameters["nbr_of_bags"] = nbr_of_bags
-        self.parameters["bag_colours"] = bag_colors
-        self.parameters["balls_per_bag"] = balls_per_bag
-        self.parameters["bag_sequence"] = list(bag_sequence)
-        self.parameters["nbr_of_trials"] = nbr_of_bags * balls_per_bag
+        # check for counterbalance
+        assert(nbr_of_bags % len(self.bag_colours) == 0), "nbr of bags should be multiple of color count"
+        
+        bag_sequence = np.repeat(self.bag_colours, nbr_of_bags / len(self.bag_colours))
+        self.bag_sequence = np.random.permutation(bag_sequence)
+
+        self.nbr_of_bags = nbr_of_bags
+        self.balls_per_bag = balls_per_bag
+        self.nbr_of_trials = nbr_of_bags * balls_per_bag
+        self.valid_actions = list(range(0, len(self.bag_colours)))
 
         # variables internal to a task instance
-        self.trial = -1
-        self.bag = -1
-        self.action = None
-        self.ball_colour = None
+        self._trial = -1
+        self._bag = -1
+        self._action = None
+        self._ball_colour = None
 #        self.reward = None
-        
-        self.action_history = [-1] * self.parameters['nbr_of_trials']
-#        self.reward_history = [-1] * self.parameters['nbr_of_trials']
-        self.ball_history = [""] * self.parameters['nbr_of_trials']
 
-    def __next__(self):
+    def next_trialstep(self):
         """
         Produces the next stimulus for the iterator
 
@@ -64,70 +64,42 @@ class Balltask(Task):
         StopIteration
         """
 
-        self.trial += 1
+        self._trial += 1
         
-        if self.trial == self.parameters['nbr_of_trials']:
+        if self._trial == self.nbr_of_trials:
             raise StopIteration
 
         # on first trial, bag is 0, go to next bag when all balls in bag are shown
-        if self.trial == 0:
-            self.bag = 0
-        elif self.trial % self.parameters['balls_per_bag'] == 0:
-            self.bag += 1
+        if self._trial == 0:
+            self._bag = 0
+        elif self._trial % self.balls_per_bag == 0:
+            self._bag += 1
 
-        next_stimulus = self.parameters['bag_sequence'][self.bag]
-        self.ball_colour = next_stimulus
-        
-        valid_actions = np.arange(0, len(self.parameters['bag_colours']))
-        next_valid_actions = tuple(valid_actions)  # (0, 1, 2) for RGB
-#        next_valid_actions = tuple(self.parameters['bag_colors'])
+        next_stimulus = self.bag_sequence[self._bag]
+        self._ball_colour = next_stimulus
+
+        next_valid_actions = self.valid_actions  # (0, 1, 2) for RGB
+#        next_valid_actions = tuple(self.bag_colors)
 
         return next_stimulus, next_valid_actions
 
-    def receive_action(self, action):
+    def action_feedback(self, action: Action) -> None:
         """
-        Receives the next action from the participant
+        Responds to the action from the participant
+        balltask has no rewards so we return None
 
         Parameters
         ----------
         action : int or string
             The action taken by the model
-        """
-        self.action = action
-
-    def feedback(self):
-        """
-        Responds to the action from the participant
-        balltask has no rewards so we return None
-        """
-        self.store_state()
-
-        return None
-
-    def return_task_state(self) -> Dict[str, Any]:
-        """
-        Returns all the relevant data for this task run
 
         Returns
         -------
-        history : dictionary
-            A dictionary containing the class parameters  as well as the other useful data
+        feedback : None, int or float
         """
+        self._action = action
 
-        history = self.standard_result_output()
-
-        history['participant_actions'] = copy.copy(self.action_history)
-        history['ball_colour'] = copy.copy(self.ball_history)
-        
-        return history
-
-    def store_state(self) -> None:
-        """ Stores the state of all the important variables so that they can be
-        output later
-        """
-
-        self.action_history[self.trial] = self.action
-        self.ball_history[self.trial] = self.ball_colour
+        return None
 
 
 class StimulusBalltaskSimple(Stimulus):

@@ -8,6 +8,7 @@ import itertools
 import logging
 import shutil
 import subprocess
+import pathlib
 
 import simulation
 import outputting
@@ -41,7 +42,7 @@ class TestClass_basic:
         correct = ['{}'.format(outputting.date()),
                    'Log initialised',
                    'Beginning task labelled: Untitled',
-                   "Simulation 0 contains the task Basic: Trials = 100.The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', actionCode = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
@@ -49,7 +50,7 @@ class TestClass_basic:
 
     def test_S_folder(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
-        output_path = str(output_folder).replace('\\', '/')
+        output_path = pathlib.Path(output_folder)
         simulation.run(output_path=output_path)
 
         captured = caplog.records
@@ -66,7 +67,7 @@ class TestClass_basic:
         correct = ['{}'.format(outputting.date()),
                    'Log initialised',
                    'Beginning task labelled: Untitled',
-                   "Simulation 0 contains the task Basic: Trials = 100.The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', actionCode = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
@@ -76,8 +77,9 @@ class TestClass_basic:
 
     def test_S_label(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
-        output_path = str(output_folder).replace('\\', '/')
+        output_path = pathlib.Path(output_folder)
         date = outputting.date()
+        folder_path = output_path / 'Outputs' / 'test_{}'.format(date)
 
         simulation.run(label='test', output_path=output_path)
 
@@ -94,22 +96,21 @@ class TestClass_basic:
         standard_captured = [k.message.replace('\n', '') for k in captured]
         correct = ['{}'.format(date),
                    'Log initialised',
-                   'The log you are reading was written to {}/Outputs/test_{}/log.txt'.format(output_path, date),
+                   'The log you are reading was written to {}/log.txt'.format(folder_path.as_posix()),
                    'Beginning task labelled: test',
-                   "Simulation 0 contains the task Basic: Trials = 100.The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', actionCode = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
             assert standard_captured_line == correct_line
 
-        assert os.path.exists(output_path)
-        assert os.path.exists(output_path + '/Outputs')
-        folder_path = output_path + '/Outputs/test_{}/'.format(date)
-        assert os.path.exists(folder_path)
-        assert os.path.exists(folder_path + 'data')
-        assert not os.path.exists(folder_path + 'Pickle')
+        assert output_path.exists()
+        assert (output_path / 'Outputs').exists()
+        assert folder_path.exists()
+        assert (folder_path / 'data').exists()
+        assert not (folder_path / 'Pickle').exists()
 
-        with open(folder_path + 'log.txt') as log:
+        with open(folder_path / 'log.txt') as log:
             cleaned_log = [l.split('    ')[-1].strip() for l in log.readlines()]
             correct[-2] = correct[-2][:-15]
             final_correct = correct[-1]
@@ -119,25 +120,57 @@ class TestClass_basic:
             assert standard_captured_line == correct_line
 
 
+class TestClass_tasks:
+    def test_tasks(self, output_folder, caplog):
+        caplog.set_level(logging.INFO)
+        output_path = pathlib.Path(output_folder)
+        date = outputting.date()
+        task_folder = pathlib.Path.cwd().parent / 'tasks'
+
+        task_list = [el.stem for el in task_folder.iterdir()
+                     if el.is_file() and el.suffix == '.py' and el.stem[0] != '_' and el.stem != 'taskTemplate']
+        for task in task_list:
+            task_label = f'{task}_test'
+            folder_path = output_path / 'Outputs' / f'{task_label}_{date}'
+            simulation.run(task_name=task[0].upper() + task[1:], label=task_label, output_path=output_path)
+
+            captured = caplog.records
+            for level in [k.levelname for k in captured]:
+                assert level in ['INFO']
+
+            data_path = captured[2].message.split('The log you are reading was written to ')[1]
+
+            assert output_path.exists()
+            assert (output_path / 'Outputs').exists()
+            assert folder_path.exists()
+            assert data_path == (folder_path / 'log.txt').as_posix()
+            assert (folder_path / 'data').exists()
+            assert (folder_path / 'data' / 'modelSim_0.csv').exists()
+            assert (folder_path / 'data' / 'modelSim_0.csv').stat().st_size > 0
+            assert not (folder_path / 'Pickle').exists()
+
+            caplog.clear()
+
+
 class TestClass_example:
     def test_R_sim(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
-        output_path = str(output_folder).replace('\\', '/')
-        test_file_path = output_path + '/runScript.py'
+        output_path = pathlib.Path(output_folder)
         date = outputting.date()
+        folder_path = output_path / 'Outputs' / 'test_{}'.format(date)
+        test_file_path = output_path / 'runScript.py'
 
         shutil.copyfile('../runScripts/runScript_sim.py', test_file_path)
-        completedProcess = subprocess.run('python ' + test_file_path)
+        completed_process = subprocess.run('python ' + test_file_path.as_posix())
 
-        assert os.path.exists(output_path)
-        assert os.path.exists(output_path + '/Outputs')
-        folder_path = output_path + '/Outputs/qLearn_probSelectSimSet_{}/'.format(date)
-        assert os.path.exists(folder_path)
-        assert os.path.exists(folder_path + 'data')
-        assert os.path.exists(folder_path + 'Pickle')
-        assert completedProcess.returncode == 0
-        assert os.path.exists(folder_path + 'log.txt')
-        assert os.path.exists(folder_path + 'config.yaml')
+        assert output_path.exists()
+        assert (output_path / 'Outputs').exists()
+        assert folder_path.exists()
+        assert (folder_path / 'data').exists()
+        assert not (folder_path / 'Pickle').exists()
+        assert completed_process.returncode == 0
+        assert (folder_path / 'log.txt').exists()
+        assert (folder_path / 'config.yaml').exists()
 
         # TODO: extend this to validate the data somewhat
 
