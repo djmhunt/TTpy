@@ -33,3 +33,11 @@ class TestClass_basic:
 
         with pytest.raises(data.FileError, match='No data files found'):
             dataFitting.run(output_path=output_path)
+
+    def test_DF_2(self, output_folder, capsys):
+        output_path = str(output_folder)
+
+        with pytest.raises(NameError, match='Please specify bounds for your parameters'):
+            dataFitting.run(data_folder='./test_sim/data/', output_path=output_path, participantID='simID')
+
+
