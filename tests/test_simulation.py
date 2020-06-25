@@ -159,36 +159,36 @@ class TestClass_tasks:
             caplog.clear()
 
 
-class TestClass_example:
-    def test_R_sim(self, output_folder, caplog):
-        caplog.set_level(logging.INFO)
-        output_path = pathlib.Path(output_folder)
-        date = outputting.date()
-        folder_path = output_path / 'Outputs' / 'qLearn_probSelectSimSet_{}'.format(date)
-        test_file_path = output_path / 'runScript.py'
-
-        working_path = pathlib.Path.cwd()
-        if working_path.stem == 'tests':
-            main_path = working_path.parent
-        elif working_path.stem == 'TTpy':
-            main_path = working_path
-        else:
-            raise NotImplementedError(f'Unexpected cwd {working_path}')
-        script_file = main_path / 'runScripts' / 'runScript_sim.py'
-
-        shutil.copyfile(script_file, test_file_path)
-        completed_process = subprocess.run('python ' + test_file_path.as_posix())
-
-        assert output_path.exists()
-        assert (output_path / 'Outputs').exists()
-        assert folder_path.exists()
-        assert (folder_path / 'data').exists()
-        assert (folder_path / 'Pickle').exists()
-        assert completed_process.returncode == 0
-        assert (folder_path / 'log.txt').exists()
-        assert (folder_path / 'config.yaml').exists()
-
-        # TODO: extend this to validate the data somewhat
+#class TestClass_example:
+#    def test_R_sim(self, output_folder, caplog):
+#        caplog.set_level(logging.INFO)
+#        output_path = pathlib.Path(output_folder)
+#        date = outputting.date()
+#        folder_path = output_path / 'Outputs' / 'qLearn_probSelectSimSet_{}'.format(date)
+#        test_file_path = output_path / 'runScript.py'
+#
+#        working_path = pathlib.Path.cwd()
+#        if working_path.stem == 'tests':
+#            main_path = working_path.parent
+#        elif working_path.stem == 'TTpy':
+#            main_path = working_path
+#        else:
+#            raise NotImplementedError(f'Unexpected cwd {working_path}')
+#        script_file = main_path / 'runScripts' / 'runScript_sim.py'
+#
+#        shutil.copyfile(script_file, test_file_path)
+#        completed_process = subprocess.run('python ' + test_file_path.as_posix())
+#
+#        assert output_path.exists()
+#        assert (output_path / 'Outputs').exists()
+#        assert folder_path.exists()
+#        assert (folder_path / 'data').exists()
+#        assert (folder_path / 'Pickle').exists()
+#        assert completed_process.returncode == 0
+#        assert (folder_path / 'log.txt').exists()
+#        assert (folder_path / 'config.yaml').exists()
+#
+#        # TODO: extend this to validate the data somewhat
 
 
 
