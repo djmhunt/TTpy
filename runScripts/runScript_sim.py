@@ -13,8 +13,6 @@ import numpy as np
 
 import pathlib
 
-import collections
-
 import simulation
 
 #%% Set the model sets and task sets
@@ -29,12 +27,12 @@ task_static_properties = {'number_actions': number_actions,
                           'learning_length': 100,
                           'test_length': 50,
                           'reward_size': 1,
-                          'action_reward_probabilities': collections.OrderedDict([('A', 0.80),
-                                                                                  ('B', 0.20),
-                                                                                  ('C', 0.70),
-                                                                                  ('D', 0.30),
-                                                                                  ('E', 0.60),
-                                                                                  ('F', 0.40)]),
+                          'action_reward_probabilities': {'A': 0.80,
+                                                          'B': 0.20,
+                                                          'C': 0.70,
+                                                          'D': 0.30,
+                                                          'E': 0.60,
+                                                          'F': 0.40},
                           'learning_action_pairs': [('A', 'B'), ('C', 'D'), ('E', 'F')]}
 
 model_parameters = {'alpha': alphaSet,
