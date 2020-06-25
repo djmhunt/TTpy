@@ -125,7 +125,14 @@ class TestClass_tasks:
         caplog.set_level(logging.INFO)
         output_path = pathlib.Path(output_folder)
         date = outputting.date()
-        task_folder = pathlib.Path.cwd().parent / 'tasks'
+
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            task_folder = working_path.parent / 'tasks'
+        elif working_path.stem == 'TTpy':
+            task_folder = working_path / 'tasks'
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
 
         task_list = [el.stem for el in task_folder.iterdir()
                      if el.is_file() and el.suffix == '.py' and el.stem[0] != '_' and el.stem != 'taskTemplate']
@@ -157,17 +164,26 @@ class TestClass_example:
         caplog.set_level(logging.INFO)
         output_path = pathlib.Path(output_folder)
         date = outputting.date()
-        folder_path = output_path / 'Outputs' / 'test_{}'.format(date)
+        folder_path = output_path / 'Outputs' / 'qLearn_probSelectSimSet_{}'.format(date)
         test_file_path = output_path / 'runScript.py'
 
-        shutil.copyfile('../runScripts/runScript_sim.py', test_file_path)
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        script_file = main_path / 'runScripts' / 'runScript_sim.py'
+
+        shutil.copyfile(script_file, test_file_path)
         completed_process = subprocess.run('python ' + test_file_path.as_posix())
 
         assert output_path.exists()
         assert (output_path / 'Outputs').exists()
         assert folder_path.exists()
         assert (folder_path / 'data').exists()
-        assert not (folder_path / 'Pickle').exists()
+        assert (folder_path / 'Pickle').exists()
         assert completed_process.returncode == 0
         assert (folder_path / 'log.txt').exists()
         assert (folder_path / 'config.yaml').exists()

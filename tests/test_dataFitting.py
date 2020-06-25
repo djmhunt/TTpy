@@ -6,6 +6,7 @@ import sys
 sys.path.append("../")
 
 import pytest
+import pathlib
 import itertools
 import os
 
@@ -37,7 +38,15 @@ class TestClass_basic:
     def test_DF_2(self, output_folder, capsys):
         output_path = str(output_folder)
 
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            data_folder = './test_sim/data/'
+        elif working_path.stem == 'TTpy':
+            data_folder = './tests/test_sim/data/'
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+
         with pytest.raises(NameError, match='Please specify bounds for your parameters'):
-            dataFitting.run(data_folder='./test_sim/data/', output_path=output_path, participantID='simID')
+            dataFitting.run(data_folder=data_folder, output_path=output_path, participantID='simID')
 
 

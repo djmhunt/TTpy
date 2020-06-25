@@ -35,7 +35,15 @@ class TestClass_IO:
     def test_IO_sim(self, caplog):
         caplog.set_level(logging.INFO)
 
-        script_file = '../runScripts/runScripts_sim.yaml'
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        script_file = main_path / 'runScripts' / 'runScripts_sim.yaml'
+
         with open(script_file) as file_stream:
             input_script = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
 
@@ -48,7 +56,15 @@ class TestClass_IO:
     def test_IO_fit(self, caplog):
         caplog.set_level(logging.INFO)
 
-        script_file = '../runScripts/runScripts_fit.yaml'
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        script_file = main_path / 'runScripts' / 'runScripts_sim.yaml'
+
         with open(script_file) as file_stream:
             input_script = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
 
@@ -63,22 +79,31 @@ class TestClass_IO:
 class TestClass_example:
     def test_RC_sim(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
-        output_path = str(output_folder).replace('\\', '/')
-        test_file_path = output_path + '/runScript.yaml'
+        output_path = pathlib.Path(output_folder)
         date = outputting.date()
+        folder_path = output_path / 'Outputs' / 'qLearn_probSelectSimSet_{}'.format(date)
+        test_file_path = output_path / 'runScript.yaml'
 
-        shutil.copyfile('../runScripts/runScripts_sim.yaml', test_file_path)
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        script_file = main_path / 'runScripts' / 'runScripts_sim.yaml'
+
+        shutil.copyfile(script_file, test_file_path)
         start.run_config(test_file_path, trusted_file=True)
 
-        assert os.path.exists(output_path)
-        assert os.path.exists(output_path + '/Outputs')
-        folder_path = output_path + '/Outputs/qLearn_probSelectSimSet_{}/'.format(date)
-        assert os.path.exists(folder_path)
-        assert os.path.exists(folder_path + 'data')
-        assert os.path.exists(folder_path + 'Pickle')
-        assert os.path.exists(folder_path + 'log.txt')
-        yaml_file = folder_path + 'config.yaml'
-        assert os.path.exists(yaml_file)
+        assert output_path.exists()
+        assert (output_path / 'Outputs').exists()
+        assert folder_path.exists()
+        assert (folder_path / 'data').exists()
+        assert (folder_path / 'Pickle').exists()
+        assert (folder_path / 'log.txt').exists()
+        yaml_file = folder_path / 'config.yaml'
+        assert yaml_file.exists()
 
         with open(test_file_path) as file_stream:
             original = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
@@ -90,22 +115,34 @@ class TestClass_example:
 
     def test_RC_fit(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
-        output_path = str(output_folder).replace('\\', '/')
-        test_file_path = output_path + '/runScript.yaml'
+        output_path = pathlib.Path(output_folder)
         date = outputting.date()
+        folder_path = output_path / 'Outputs' / 'qLearn_probSelect_fromSim_{}'.format(date)
+        test_file_path = output_path / 'runScript.yaml'
 
-        shutil.copyfile('../runScripts/runScripts_fit.yaml', test_file_path)
-        shutil.copytree('./test_sim', output_path + '/tests/test_sim')
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        script_file = main_path / 'runScripts' / 'runScripts_fit.yaml'
+        data_folder_source = main_path / 'tests' / 'test_sim'
+        data_folder_path = output_path / 'tests' / 'test_sim'
+
+        shutil.copyfile(script_file, test_file_path)
+        shutil.copytree(data_folder_source, data_folder_path)
         start.run_config(test_file_path, trusted_file=True)
 
-        assert os.path.exists(output_path)
-        assert os.path.exists(output_path + '/Outputs')
-        folder_path = output_path + '/Outputs/qLearn_probSelect_fromSim_{}/'.format(date)
-        assert os.path.exists(folder_path)
-        assert os.path.exists(folder_path + 'data')
-        assert os.path.exists(folder_path + 'log.txt')
-        yaml_file = folder_path + 'config.yaml'
-        assert os.path.exists(yaml_file)
+        assert output_path.exists()
+        assert (output_path / 'Outputs').exists()
+        assert folder_path.exists()
+        assert (folder_path / 'data').exists()
+        assert not (folder_path / 'Pickle').exists()
+        assert (folder_path / 'log.txt').exists()
+        yaml_file = folder_path / 'config.yaml'
+        assert yaml_file.exists()
 
         with open(test_file_path) as file_stream:
             original = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
