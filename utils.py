@@ -13,8 +13,9 @@ import os
 import inspect
 import importlib
 import traceback
+import pathlib
 
-from typing import List
+from typing import Optional, List, Any
 
 # For analysing the state of the computer
 # import psutil
@@ -44,7 +45,7 @@ def argProcess(**kwargs):
     return expArgs, modelArgs, otherArgs
 
 
-def find_class(class_name, class_folder, inherited_class, excluded_files=None):
+def find_class(class_name: str, class_folder: str, inherited_class: Any, excluded_files: Optional[List[str]]=None):
     """
     Finds and imports a class from a given folder. Does not look in subfolders
 
@@ -64,8 +65,10 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
     sought_class : inherited_class
         The uninstansiated class sought
     """
-    folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(class_folder)
-    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] != '_']
+    # TODO : Make search case insensitive
+
+    folder_path = pathlib.Path(__file__).parent / class_folder
+    potential_files = [f.stem for f in folder_path.glob('*.py') if f.stem[0] != '_']
     if excluded_files:
         potential_files_filtered = [f for f in potential_files if f not in excluded_files]
     else:
@@ -73,7 +76,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
 
     sought_class = None
     for potential_file in potential_files_filtered:
-        if sought_class:
+        if sought_class is not None:
             break
         # This is necessary to deal with importlib.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
@@ -104,7 +107,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
     # TODO : Create a function that validates that passed in classes /  functions match what is needed
 
 
-def find_function(function_name, function_folder, excluded_files=None):
+def find_function(function_name: str, function_folder: str, excluded_files: Optional[List[str]]=None):
     """
     Finds and imports a function from a given folder. Does not look in subfolders
 
@@ -122,8 +125,8 @@ def find_function(function_name, function_folder, excluded_files=None):
     sought_class : inherited_class
         The uninstansiated class sought
     """
-    folder_path = os.path.dirname(os.path.abspath(__file__)).replace('\\', '/') + '/{}'.format(function_folder)
-    potential_files = [f[:-3] for f in os.listdir(folder_path) if f[-2:] == 'py' and f[0] != '_']
+    folder_path = pathlib.Path(__file__).parent / function_folder
+    potential_files = [f.stem for f in folder_path.glob('*.py') if f.stem[0] != '_']
     if excluded_files:
         potential_files_filtered = [f for f in potential_files if f not in excluded_files]
     else:
@@ -131,7 +134,7 @@ def find_function(function_name, function_folder, excluded_files=None):
 
     sought_function = None
     for potential_file in potential_files_filtered:
-        if sought_function:
+        if sought_function is not None:
             break
         # This is necessary to deal with importlib.load_module reloading modules and changing class signatures
         # see https://thingspython.wordpress.com/2010/09/27/another-super-wrinkle-raising-typeerror/
