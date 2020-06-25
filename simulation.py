@@ -97,7 +97,7 @@ def run(task_name: str = 'Basic',
 
         simID = 0
 
-        message = "Beginning the simulation set"
+        message = 'Beginning the simulation set'
         logger.debug(message)
 
         for task_number in tasks.iter_task_ID():
@@ -121,14 +121,15 @@ def run(task_name: str = 'Basic',
 
                 model.set_simID(str(simID))
 
-                message = "Task completed"
+                message = 'Task completed'
                 logger.debug(message)
 
                 if file_name_generator is not None:
                     record_simulation(file_name_generator,
                                       task.return_task_state(),
                                       model.return_task_state(),
-                                      str(simID), pickle=pickle)
+                                      str(simID),
+                                      pickle=pickle)
 
                 simID += 1
 
@@ -163,19 +164,19 @@ def record_simulation(file_name_generator: Callable[[str, str], str],
     """
     logger = logging.getLogger('Framework')
 
-    message = "Beginning simulation output processing"
+    message = 'Beginning simulation output processing'
     logger.debug(message)
 
-    label = "_sim-" + simID
+    label = f'_sim-{simID}'
 
-    message = "Store data for simulation " + simID
+    message = f'Store data for simulation {simID}'
     logger.debug(message)
 
     csv_model_simulation(model_data, simID, file_name_generator)
 
     if pickle:
-        outputting.pickle_log(task_data, file_name_generator, "_taskData" + label)
-        outputting.pickle_log(model_data, file_name_generator, "_modelData" + label)
+        outputting.pickle_log(task_data, file_name_generator, f'_taskData{label}')
+        outputting.pickle_log(model_data, file_name_generator, f'_modelData{label}')
 
 
 def log_simulation_parameters(task_parameters: Dict[str, Any], model_parameters: Dict[str, Any], simID: str) -> None:
@@ -196,16 +197,16 @@ def log_simulation_parameters(task_parameters: Dict[str, Any], model_parameters:
     recordSimParams : Records these parameters for later use
     """
 
-    task_description = task_parameters.pop('Name') + ": "
-    task_descriptors = [k + ' = ' + repr(v) for k, v in task_parameters.items()]
-    task_description += ", ".join(task_descriptors)
+    task_description = f"{task_parameters.pop('Name')}: "
+    task_descriptors = [f'{k} = {repr(v)}' for k, v in task_parameters.items()]
+    task_description += ', '.join(task_descriptors)
 
     model_description = model_parameters.pop('Name') + ": "
     model_descriptors = [k + ' = ' + repr(v) for k, v in model_parameters.items()]
     model_description += ", ".join(model_descriptors)
 
-    message = "Simulation " + simID + " contains the task " + task_description + "."
-    message += "The model used is " + model_description + "."
+    message = f'Simulation {simID} contains the task {task_description}. '
+    message += f'The model used is {model_description}.'
 
     logger_sim = logging.getLogger('Simulation')
     logger_sim.info(message)
@@ -231,7 +232,7 @@ def csv_model_simulation(model_data: Dict[str, Any],
 
     data = outputting.new_list_dict(model_data)
     record = pd.DataFrame(data)
-    name = "data/modelSim_" + simID
+    name = f'data/modelSim_{simID}'
     outputFile = file_name_generator(name, 'csv')
     record.to_csv(outputFile)
 

@@ -81,7 +81,7 @@ def find_class(class_name, class_folder, inherited_class, excluded_files=None):
             potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
         else:
             module_parent = class_folder.replace('/', '.').replace('\\', '.')
-            potential_modules = [importlib.import_module(module_parent + '.' + potential_file)]
+            potential_modules = [importlib.import_module(f'{module_parent}.{potential_file}')]
 
         for potential_module in potential_modules:
             module_classes = inspect.getmembers(potential_module,
@@ -139,7 +139,7 @@ def find_function(function_name, function_folder, excluded_files=None):
             potential_modules = [v for k, v in sys.modules.items() if potential_file in k]
         else:
             module_parent = function_folder.replace('/', '.').replace('\\', '.')
-            potential_modules = [importlib.import_module(module_parent + '.' + potential_file)]
+            potential_modules = [importlib.import_module(f'{module_parent}.{potential_file}')]
 
         for potential_module in potential_modules:
             module_functions = inspect.getmembers(potential_module,
