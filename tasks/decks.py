@@ -253,9 +253,9 @@ class RewardDecksAllInfo(Rewards):
     --------
     >>> rew = RewardDecksAllInfo(max_reward_val=10, min_reward_val=1, number_actions=2)
     >>> rew.process_feedback(6, 0, [1])
-    [1., 1., 1., 1., 1., 2., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.]
+    array([1., 1., 1., 1., 1., 2., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.])
     >>> rew.process_feedback(6, 1, [1])
-    [1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 1., 1., 1., 1.]
+    array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 2., 1., 1., 1., 1.])
     """
     max_reward_val: int = 10
     min_reward_val: int = 1

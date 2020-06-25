@@ -12,6 +12,7 @@ from typing import Union, Tuple, List, Optional, Dict, Callable, NewType
 
 Action = NewType('Action', Union[int, str])
 
+
 def single(task_responses: List[Union[int, str]] = (0, 1)
            ) -> Callable[[List[float], Optional[Action], Optional[List[Action]]], Tuple[Optional[Action], Dict[Action, float]]]:
     """Decisions using a switching probability
@@ -35,10 +36,10 @@ def single(task_responses: List[Union[int, str]] = (0, 1)
     --------
     >>> np.random.seed(100)
     >>> dec = single()
-    >>> dec(0.23)
-    (0, OrderedDict([(0, 0.77), (1, 0.23)]))
-    >>> dec(0.23, 0)
-    (0, OrderedDict([(0, 0.77), (1, 0.23)]))
+    >>> dec([0.23])
+    (0, {0: 0.77, 1: 0.23})
+    >>> dec([0.23], 0)
+    (0, {0: 0.77, 1: 0.23})
     """
 
     def decision_function(probabilities: List[float],
