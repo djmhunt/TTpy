@@ -17,6 +17,8 @@ import outputting
 from taskGenerator import TaskGeneration
 from modelGenerator import ModelGen
 
+class SetupMismatchError(Exception):
+    pass
 
 def run(task_name: str = 'Basic',
         task_changing_properties: Optional[Dict[str, Any]] = None,
@@ -100,13 +102,37 @@ def run(task_name: str = 'Basic',
         message = 'Beginning the simulation set'
         logger.debug(message)
 
-        for task_number in tasks.iter_task_ID():
+        for task_class, task_varying_input, task_static_input in tasks:
 
-            for model in models:
+            task_static_input.update(task_varying_input)
 
-                task = tasks.new_task(task_number)
+            for model_class, model_varying_input, model_static_input in models:
 
-                log_simulation_parameters(task.params(), model.params(), simID=str(simID))
+                model_static_input.update(model_varying_input)
+
+                task = task_class(**task_static_input)
+                if 'number_cues' in model_static_input:
+                    if model_static_input['number_cues'] != task.number_cues:
+                        raise SetupMismatchError(f"The number of cues expected by the task, {task.number_cues}, should match those expected by the model {model_static_input['number_cues']}")
+                else:
+                    model_static_input['number_cues'] = task.number_cues
+                if 'action_codes' in model_static_input:
+                    model_action_keys = list(model_static_input['action_codes'].keys())
+                    mismatch = False
+                    for task_action in task.valid_actions:
+                        if task_action not in model_action_keys:
+                            mismatch = True
+                            break
+                    if len(task.valid_actions) != len(model_action_keys) or mismatch:
+                        raise SetupMismatchError(f"The actions expected by the task, {task.valid_actions}, should match those expected by the model {model_action_keys}")
+                else:
+                    model_static_input['action_codes'] = {k: i for i, k in enumerate(task.valid_actions)}
+
+                model = model_class(**model_static_input)
+
+                log_simulation_parameters(task.parameters.copy(),
+                                          model.params(),
+                                          simID=str(simID))
 
                 message = "Beginning task"
                 logger.debug(message)

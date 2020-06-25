@@ -5,7 +5,7 @@
 import copy
 import warnings
 
-from typing import Dict, Any, Optional, Iterable
+from typing import Tuple, Dict, Any, Optional, Type
 
 import utils
 
@@ -86,7 +86,7 @@ class TaskGeneration(object):
 
         return self
 
-    def __next__(self) -> Task:
+    def __next__(self) -> Tuple[Type[Task], Dict[str, Any], Dict[str, Any]]:
         """ 
         Produces the next task instance for the iterator
 
@@ -99,39 +99,8 @@ class TaskGeneration(object):
         if self.count >= self.count_max:
             raise StopIteration
 
-        return self.new_task(self.count)
+        varying_properties = copy.copy(self.parameter_combinations[self.count])
+        static_properties = copy.copy(self.other_options)
 
-    def iter_task_ID(self) -> Iterable[int]:
-        """
-        Yields the tasks IDs. To be used with self.new_task(expID) to receive the next tasks instance
 
-        Returns
-        -------
-        expID : int
-            The ID number that refers to the next tasks parameter combination.
-        """
-
-        for c in range(self.count_max):
-            yield c
-
-    def new_task(self, task_number: int) -> Optional[Task]:
-        """
-        Produces the next tasks instance
-
-        Parameters
-        ----------
-        task_number : int
-            The number of the tasks instance to be initialised
-
-        Returns
-        -------
-        instance : tasks.taskTemplate.Task instance
-        """
-
-        if task_number >= self.count_max:
-            return None
-
-        properties = copy.copy(self.parameter_combinations[task_number])
-        properties.update(copy.copy(self.other_options))
-
-        return self.task_class(**properties)
+        return self.task_class, varying_properties, static_properties

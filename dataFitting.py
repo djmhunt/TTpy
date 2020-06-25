@@ -253,12 +253,12 @@ def run(data_folder='./',
         # Initialise the stores of information
         participant_fits = collections.defaultdict(list)  # type: collections.defaultdict[List]
 
-        for model, model_parameter_variables, model_static_args in models.iter_details():
+        for model, model_parameter_input, model_static_input in models:
 
             for v in model_changing_variables.values():
-                model_static_args[v] = "<Varies for each participant>"
+                model_static_input[v] = "<Varies for each participant>"
 
-            log_model_fitting_parameters(model, model_parameter_variables, model_static_args)
+            log_model_fitting_parameters(model, model_parameter_input, model_static_input)
 
             participantID = participants.participantID
             for participant in participants:
@@ -268,21 +268,21 @@ def run(data_folder='./',
                     participant_name = participant_name[0]
 
                 for k, v in model_changing_variables.items():
-                    model_static_args[v] = participant[k]
+                    model_static_input[v] = participant[k]
 
                 # Find the best model values from those proposed
                 message = "Beginning participant fit for participant {}".format(participant_name)
                 logger.info(message)
 
                 model_fitted, fit_quality, fitting_data = fitter.participant(model,
-                                                                             model_parameter_variables,
-                                                                             model_static_args,
+                                                                             model_parameter_input,
+                                                                             model_static_input,
                                                                              participant)
 
                 message = "Participant fitted"
                 logger.debug(message)
 
-                log_model_fitted_parameters(model_parameter_variables, model_fitted.params(), fit_quality, participant_name)
+                log_model_fitted_parameters(model_parameter_input, model_fitted.params(), fit_quality, participant_name)
 
                 participant_fits = record_participant_fit(participant, participant_name, model_fitted.return_task_state(),
                                                           str(model_ID), fitting_data, model_changing_variables,

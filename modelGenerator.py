@@ -5,7 +5,7 @@
 import copy
 import warnings
 
-from typing import Tuple, Dict, Any, Optional, Iterable, Type
+from typing import Tuple, Dict, Any, Optional, Type
 
 import utils
 
@@ -144,7 +144,7 @@ class ModelGen(object):
 
         return self
 
-    def __next__(self) -> Model:
+    def __next__(self) -> Tuple[Type[Model], Dict[str, Any], Dict[str, Any]]:
         """
         Produces the next item for the iterator
         
@@ -157,24 +157,7 @@ class ModelGen(object):
         if self.count >= self.count_max:
             raise StopIteration
 
-        properties = copy.copy(self.parameter_combinations[self.count])
-        other_options = copy.copy(self.other_options)
-        properties.update(other_options)
+        varying_properties = copy.copy(self.parameter_combinations[self.count])
+        static_properties = copy.copy(self.other_options)
 
-        return self.model_class(**properties)
-
-    def iter_details(self) -> Iterable[Tuple[Type[Model], Dict[str, Any], Dict[str, Any]]]:
-        """ 
-        Yields a list containing a model object and parameters to initialise them
-        
-        Returns
-        -------
-        model : model.modelTemplate.Model
-            The model to be initialised
-        parameters : ordered dictionary of floats or bools
-            The model instance parameters
-        other_options : dictionary of floats, strings and binary values
-        """
-
-        for p in self.parameter_combinations:
-            yield self.model_class, p, self.other_options
+        return self.model_class, varying_properties, static_properties
