@@ -9,7 +9,7 @@ data:
     format: pkl
     group_by: null
     name: simID
-    path: ./tests/test_sim/Pickle/
+    path: ../tests/test_sim/Pickle/
     read_options: null
     rewards: Rewards
     split_by: null
@@ -44,6 +44,13 @@ model:
         E: 4
         F: 5
     decision_function_name: weightProb
+    expect:
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
+    -   - 0.5
     name: QLearn
     number_actions: 6
     number_cues: 1
@@ -54,6 +61,13 @@ model:
         beta:
         - 0
         - 30
+    prior:
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
+    - 0.16666666666666666
     reward_shaper_name: RewardProbSelectDirect
     stimulus_shaper_name: StimulusProbSelectDirect
     task_responses:
