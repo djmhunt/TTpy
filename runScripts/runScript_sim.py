@@ -19,8 +19,8 @@ import simulation
 number_actions = 6
 number_cues = 1
 repetitions = 1
-alphaSet = np.repeat(np.array([0.1, 0.5, 0.9]), repetitions)
-betaSet = np.array([0.1, 0.5, 1, 4, 16])
+alphaSet = np.repeat(np.array([0.3, 0.7]), repetitions)
+betaSet = np.array([0.5, 2, 16])
 
 task_parameters = {}
 task_static_properties = {'number_actions': number_actions,
