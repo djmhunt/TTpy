@@ -120,7 +120,7 @@ class TestClass_basic:
             assert standard_captured_line == correct_line
 
 
-class TestClass_tasks:
+class TestClass_simulation_overview:
     def test_tasks(self, output_folder, caplog):
         caplog.set_level(logging.INFO)
         output_path = pathlib.Path(output_folder)
@@ -128,11 +128,12 @@ class TestClass_tasks:
 
         working_path = pathlib.Path.cwd()
         if working_path.stem == 'tests':
-            task_folder = working_path.parent / 'tasks'
+            main_folder = working_path.parent
         elif working_path.stem == 'TTpy':
-            task_folder = working_path / 'tasks'
+            main_folder = working_path
         else:
             raise NotImplementedError(f'Unexpected cwd {working_path}')
+        task_folder = main_folder / 'tasks'
 
         task_list = [el.stem for el in task_folder.iterdir()
                      if el.is_file() and el.suffix == '.py' and el.stem[0] != '_' and el.stem != 'taskTemplate']
