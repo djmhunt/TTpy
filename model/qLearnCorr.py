@@ -72,9 +72,7 @@ class QLearnCorr(Model):
     model.QLearn : This model is heavily based on that one
     """
 
-    def __init__(self, alpha=0.3, beta=4, kappa=0.1, invBeta=None, expect=None, **kwargs):
-
-        super(QLearnCorr, self).__init__(**kwargs)
+    def __init__(self, alpha=0.3, beta=4, kappa=0.1, invBeta=None, expect=None, lastAction=0, **kwargs):
 
         self.alpha = alpha
         if invBeta is not None:
@@ -82,38 +80,11 @@ class QLearnCorr(Model):
         self.beta = beta
         self.kappa = kappa
 
+        self.lastAction = lastAction
+
         if expect is None:
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
-        self.parameters["kappa"] = self.kappa
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -223,12 +194,12 @@ class QLearnCorr(Model):
         Returns
         -------
         probArray : 1D ndArray of floats
-            The probabilities associated with the actionValues
+            The probabilities associated with the action_values
         """
-        lastAction = np.zeros(np.shape(action_values))
-        lastAction[self.lastAction] = 1
+        lastActions = np.zeros(np.shape(action_values))
+        lastActions[self.lastAction] = 1
 
-        numerator = np.exp(self.beta * (action_values + self.kappa * lastAction))
+        numerator = np.exp(self.beta * (action_values + self.kappa * lastActions))
         denominator = np.sum(numerator)
 
         probArray = numerator / denominator
@@ -246,6 +217,6 @@ class QLearnCorr(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities

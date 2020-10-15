@@ -123,8 +123,6 @@ class OpAL_H(Model):
     def __init__(self, alpha=0.3, beta=4, rho=0, invBeta=None, alphaCrit=None, betaGo=None, betaNogo=None, alphaGo=None, alphaNogo=None, alphaGoDiff=None,
                  alphaNogoDiff=None, alphaGoNogoDiff=None, expect=None, expectGo=None, **kwargs):
 
-        super(OpAL_H, self).__init__(**kwargs)
-
         if alphaCrit is None:
             alphaCrit = alpha
         self.alphaCrit = alphaCrit
@@ -166,49 +164,6 @@ class OpAL_H(Model):
         self.go = np.array(self.expectGo)
         self.nogo = np.array(self.expectGo)
         self.actionValues = np.ones(self.expectations.shape)
-
-        self.parameters["alphaCrit"] = self.alphaCrit
-        self.parameters["alphaGo"] = self.alphaGo
-        self.parameters["alphaNogo"] = self.alphaNogo
-        self.parameters["beta"] = self.beta
-        self.parameters["betaGo"] = betaGo
-        self.parameters["betaNogo"] = betaNogo
-        self.parameters["rho"] = self.rho
-        self.parameters["expectation"] = self.expect
-        self.parameters["expectationGo"] = self.expectGo
-
-        # Recorded information
-        self.recGo = []
-        self.recNogo = []
-        self.recActionValues = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["Go"] = np.array(self.recGo)
-        results["Nogo"] = np.array(self.recNogo)
-        results["ActionValues"] = np.array(self.recActionValues)
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recGo.append(self.go.copy())
-        self.recNogo.append(self.nogo.copy())
-        self.recActionValues.append(self.actionValues.copy())
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -350,7 +305,7 @@ class OpAL_H(Model):
 
         """
 
-        actExpectations = self._actExpectations(self.actionValues, self.stimuli)
+        actExpectations = self._actExpectations(self.actionValues, self._stimuli)
         probabilities = self.calculate_probabilities(actExpectations)
 
         return probabilities

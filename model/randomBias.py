@@ -44,51 +44,27 @@ class RandomBias(Model):
         in to a decision. Default is model.decision.discrete.weightProb
     """
 
-    parameter_patterns = ['^prob\\d+$']
-
     def __init__(self, expect=None, **kwargs):
 
-        super(RandomBias, self).__init__(**kwargs)
+        if 'prob0' not in kwargs:
+            kwargs['prob0'] = 0.5
+        if 'prob1' not in kwargs:
+            kwargs['prob1'] = 0.5
+        pattern_parameters = self.add_pattern_parameters(kwargs, patterns=['^prob\\d+$'])
 
-        number_pattern_parameters = len(self.pattern_parameters)
+        number_pattern_parameters = len(pattern_parameters)
 
         if number_pattern_parameters != self.number_actions:
             raise IndexError(
                 "Wrong number of action weights. Received {} instead of {}".format(number_pattern_parameters,
                                                                                    self.number_actions))
 
-        action_probabilities = self.pattern_parameters.values()
+        action_probabilities = list(pattern_parameters.values())
         self.actionProbs = np.array(action_probabilities) / np.sum(action_probabilities)
 
         if expect is None:
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
-
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli

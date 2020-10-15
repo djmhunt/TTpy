@@ -75,8 +75,6 @@ class QLearnK(Model):
 
     def __init__(self, beta=4, sigma=1, sigmaG=1, drift=1, sigmaA=None, alphaA=None, invBeta=None, expect=None, **kwargs):
 
-        super(QLearnK, self).__init__(**kwargs)
-
         if invBeta is not None:
             beta = (1 / invBeta) - 1
         self.beta = beta
@@ -96,43 +94,6 @@ class QLearnK(Model):
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
         self.expectations0 = self.expectations.copy()
-
-
-        self.parameters["sigma"] = self.sigma
-        self.parameters["sigmaG"] = self.sigmaG
-        self.parameters["beta"] = self.beta
-        self.parameters["lambda"] = self.drift
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-        self.recsigmaA = []
-        self.recalphaA = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["sigmaA"] = np.array(self.recsigmaA).T
-        results["alphaA"] = np.array(self.recalphaA).T
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recsigmaA.append(self.sigmaA.copy())
-        self.recalphaA.append(self.alphaA.copy())
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -278,6 +239,6 @@ class QLearnK(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities

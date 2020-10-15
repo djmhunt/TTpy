@@ -191,7 +191,7 @@ class Task(metaclass=TaskMeta):
 
         return feedback_value
 
-    def return_task_state(self) -> Dict[str, Any]:
+    def return_state(self) -> Dict[str, Any]:
         """
         Returns all the relevant data for this task run
 

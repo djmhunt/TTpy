@@ -131,7 +131,7 @@ def run(task_name: str = 'Basic',
                 model = model_class(**model_static_input)
 
                 log_simulation_parameters(task.parameters.copy(),
-                                          model.params(),
+                                          model.parameters.copy(),
                                           simID=str(simID))
 
                 message = "Beginning task"
@@ -149,8 +149,8 @@ def run(task_name: str = 'Basic',
 
                 if file_name_generator is not None:
                     record_simulation(file_name_generator,
-                                      task.return_task_state(),
-                                      model.return_task_state(),
+                                      task.return_state(),
+                                      model.return_state(),
                                       str(simID),
                                       pickle=pickle)
 

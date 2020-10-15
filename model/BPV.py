@@ -60,8 +60,6 @@ class BPV(Model):
 
     def __init__(self, alpha=0.3, dirichletInit=1, validRewards=np.array([0, 1]), **kwargs):
 
-        super(BPV, self).__init__(**kwargs)
-
         self.alpha = alpha
 
         self.validRew = validRewards
@@ -73,35 +71,7 @@ class BPV(Model):
         self.expectations = self.updateExpectations(self.dirichletVals)
         self.beta = np.ones(self.number_actions)
 
-        self.parameters["alpha"] = self.alpha
-        self.parameters["dirichletInit"] = dirichletInit
-
-        # Recorded information
-        self.recDirichletVals = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["dirichletVals"] = np.array(self.recDirichletVals)
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recDirichletVals.append(self.dirichletVals.copy())
+        self.dirichletInit = dirichletInit
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -229,7 +199,7 @@ class BPV(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

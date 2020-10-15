@@ -72,8 +72,6 @@ class QLearnF(Model):
 
     def __init__(self, alpha=0.3, beta=4, gamma=0.3, invBeta=None, expect=None, **kwargs):
 
-        super(QLearnF, self).__init__(**kwargs)
-
         self.alpha = alpha
         if invBeta is not None:
             beta = (1 / invBeta) - 1
@@ -86,35 +84,6 @@ class QLearnF(Model):
 
         self.lastAction = 0
         self.lastStimuli = np.ones(self.number_cues)
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
-        self.parameters["gamma"] = self.gamma
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -243,7 +212,7 @@ class QLearnF(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.gamma * np.max(self.expected_rewards) * lastStimuli / np.sum(lastStimuli)
+        change = self.alpha * self.gamma * np.max(self._expected_rewards) * lastStimuli / np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actor_stimulus_probs(self):
@@ -257,7 +226,7 @@ class QLearnF(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

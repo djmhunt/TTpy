@@ -73,8 +73,6 @@ class QLearnMeta(Model):
                  expect=None,
                  **kwargs):
 
-        super(QLearnMeta, self).__init__(**kwargs)
-
         # A record of the kwarg keys, the variable they create and their default value
 
         self.tau = tau
@@ -91,45 +89,7 @@ class QLearnMeta(Model):
             reward_dd = 5.5 * np.ones((self.number_actions, self.number_cues))
         self.reward_dd = reward_dd
 
-        self.parameters["alpha"] = self.alpha
-        self.parameters["tau"] = self.tau
-        self.parameters["expectation"] = self.expectations.copy()
-
         self.beta = np.exp(self.reward_d - self.reward_dd)
-
-        # Recorded information
-        self.rec_reward_d = []
-        self.rec_reward_dd = []
-        self.rec_beta = []
-
-    def return_task_state(self) -> dict:
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["reward_d"] = np.array(self.rec_reward_d).T
-        results["reward_dd"] = np.array(self.rec_reward_dd).T
-        results["beta"] = np.array(self.rec_beta).T
-
-        return results
-
-    def store_state(self) -> None:
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-
-        self.rec_reward_d.append(self.reward_d.flatten())
-        self.rec_reward_dd.append(self.reward_dd.flatten())
-        self.rec_beta.append(self.beta.flatten())
 
     def reward_expectation(self, observation: Union[int, float, Tuple]) -> Tuple[np.ndarray, List[float], List[bool]]:
         """Calculate the estimated reward based on the action and stimuli
@@ -284,6 +244,6 @@ class QLearnMeta(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities

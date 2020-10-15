@@ -70,9 +70,8 @@ class QLearn(Model):
                  alpha: Optional[float] = 0.3,
                  beta: Optional[float] = 4,
                  invBeta: Optional[float] = None,
-                 expect=None, **kwargs):
-
-        super(QLearn, self).__init__(**kwargs)
+                 expect=None,
+                 **kwargs):
 
         self.alpha = alpha
         if invBeta is not None:
@@ -82,34 +81,6 @@ class QLearn(Model):
         if expect is None:
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_critics
         self.expectations = np.array(expect)
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation: Tuple[List[bool], List[float]]):
         """Calculate the estimated reward based on the action and stimuli
@@ -247,7 +218,7 @@ class QLearn(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

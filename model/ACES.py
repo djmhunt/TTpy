@@ -13,7 +13,12 @@ from model.modelTemplate import Model
 
 
 class ACES(Model):
-    """A basic, complete actor-critic model with decision making based on QLearnE
+    """A cruder version of the ACE model was created with a less discerning critic.
+
+    Here, the critic assesses whether the reward is higher than the average across actions, irrespective of the stimuli.
+    Effectively, the critic is comparing the reward with a moving average of the reward. The actor is therefore
+    learning not how the predictions compare to its expectations of reward for that action, but, indirectly, how the
+    actions’ reward compares to those of all possible actions.
 
     Attributes
     ----------
@@ -58,51 +63,19 @@ class ACES(Model):
 
     def __init__(self, alpha=0.3, epsilon=0.1, expect=None, actorExpect=None, **kwargs):
 
-        super(ACES, self).__init__(**kwargs)
-
-        # A record of the kwarg keys, the variable they create and their default value
         self.alpha = alpha
         self.epsilon = epsilon
 
         if expect is None:
-            expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
-        self.expectationsF = expect
+            self.expectationsF = np.ones((self.number_cues)) / self.number_cues
+        else:
+            self.expectationsF = np.array(expect)
+
         if actorExpect is None:
-            actorExpect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
-        self.actorExpectations = actorExpect
+            self.actorExpectations = np.ones((self.number_actions, self.number_cues)) / self.number_cues
+        else:
+            self.actorExpectations = np.array(actorExpect)
 
-        self.parameters["alpha"] = self.alpha
-        self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectationsF.copy()
-        self.parameters["actorExpectation"] = self.actorExpectations.copy()
-
-        # Recorded extra information
-        self.recActorExpectations = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["ActorExpectations"] = np.array(self.recActorExpectations).T
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.expectations = np.array([self.expectationsF])
-        self.store_standard_results()
-        self.recActorExpectations.append(self.actorExpectations.flatten())
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -189,15 +162,14 @@ class ACES(Model):
 
         # If there are multiple possible stimuli, filter by active stimuli and calculate
         # calculate the expectations associated with each action.
-        if self.number_cues > 1:
+        if len(expectations.shape) > 1: #self.number_cues > 1:
             actionExpectations = self.action_cue_merge(expectations, stimuli)
         else:
             actionExpectations = expectations
 
         return actionExpectations
 
-    def calculate_probabilities(self, action_values):
-        # type: (np.ndarray) -> np.ndarray
+    def calculate_probabilities(self, action_values: np.ndarray) -> np.ndarray:
         """
         Calculate the probabilities associated with the actions
 
@@ -229,7 +201,7 @@ class ACES(Model):
 
         """
 
-        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
+        actExpectations = self._actExpectations(self.actorExpectations, self._stimuli)
         probabilities = self.calculate_probabilities(actExpectations)
 
         return probabilities

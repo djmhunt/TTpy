@@ -64,9 +64,7 @@ class TDE(Model):
     model.TD0 : This model is heavily based on that one
     """
 
-    def __init__(self, alpha=0.3, epsilon=0.1, gamma=0.3, expect=None, **kwargs):
-
-        super(TDE, self).__init__(**kwargs)
+    def __init__(self, alpha: float=0.3, epsilon: float=0.1, gamma: float=0.3, expect=None, **kwargs):
 
         self.alpha = alpha
         self.epsilon = epsilon
@@ -78,35 +76,6 @@ class TDE(Model):
 
         self.lastAction = 0
         self.lastStimuli = np.ones(self.number_cues)
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["epsilon"] = self.epsilon
-        self.parameters["gamma"] = self.gamma
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -238,7 +207,7 @@ class TDE(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.gamma * self.expected_rewards[self.current_action] * lastStimuli / np.sum(lastStimuli)
+        change = self.alpha * self.gamma * self._expected_rewards[self._current_action] * lastStimuli / np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actor_stimulus_probs(self):
@@ -252,7 +221,7 @@ class TDE(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

@@ -64,42 +64,12 @@ class QLearnE(Model):
 
     def __init__(self, alpha=0.3, epsilon=0.1,  expect=None, **kwargs):
 
-        super(QLearnE, self).__init__(**kwargs)
-
         self.alpha = alpha
         self.epsilon = epsilon
 
         if expect is None:
             expect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.expectations = expect
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectations.copy()
-
-        # Recorded information
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -228,7 +198,7 @@ class QLearnE(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

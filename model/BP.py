@@ -64,49 +64,18 @@ class BP(Model):
 
     def __init__(self, alpha=0.3, beta=4, dirichletInit=1, validRewards=np.array([0, 1]), invBeta=None, **kwargs):
 
-        super(BP, self).__init__(**kwargs)
-
         self.alpha = alpha
         if invBeta is not None:
             beta = (1 / invBeta) - 1
         self.beta = beta
 
         self.validRew = validRewards
-        self.rewLoc = collections.OrderedDict(((k, v) for k, v in itertools.izip(self.validRew, range(len(self.validRew)))))
+        self.rewLoc = collections.OrderedDict(((k, v) for k, v in zip(self.validRew, range(len(self.validRew)))))
 
         self.dirichletVals = np.ones((self.number_actions, self.number_cues, len(self.validRew))) * dirichletInit
         self.expectations = self.updateExpectations(self.dirichletVals)
 
-        self.parameters["beta"] = self.beta
-        self.parameters["alpha"] = self.alpha
-        self.parameters["dirichletInit"] = dirichletInit
-
-        # Recorded information
-        self.recDirichletVals = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["dirichletVals"] = np.array(self.recDirichletVals)
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recDirichletVals.append(self.dirichletVals.copy())
+        self.dirichletInit = dirichletInit
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -230,7 +199,7 @@ class BP(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

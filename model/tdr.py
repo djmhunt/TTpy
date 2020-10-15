@@ -63,8 +63,6 @@ class TDR(Model):
 
     def __init__(self, alpha=0.3, beta=4, tau=0.3, invBeta=None, expect=None, avReward=None, **kwargs):
 
-        super(TDR, self).__init__(**kwargs)
-
         self.alpha = alpha
         if invBeta is not None:
             beta = (1 / invBeta) - 1
@@ -80,39 +78,6 @@ class TDR(Model):
 
         self.lastAction = 0
         self.lastStimuli = np.ones(self.number_cues)
-
-        self.parameters["alpha"] = self.alpha
-        self.parameters["beta"] = self.beta
-        self.parameters["tau"] = self.tau
-        self.parameters["expectation"] = self.expectations.copy()
-        self.parameters["avReward"] = self.actAvReward.copy()
-
-        # Recorded information
-        self.recActAvReward = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["averageReward"] = np.array(self.recActAvReward)
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recActAvReward.append(self.actAvReward.copy())
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -246,7 +211,7 @@ class TDR(Model):
 
         lastStimuli = self.lastStimuli
 
-        change = self.alpha * self.expected_rewards[self.current_action] * lastStimuli / np.sum(lastStimuli)
+        change = self.alpha * self._expected_rewards[self._current_action] * lastStimuli / np.sum(lastStimuli)
         self._newExpect(self.lastAction, change)
 
     def actor_stimulus_probs(self):
@@ -260,7 +225,7 @@ class TDR(Model):
 
         """
 
-        probabilities = self.calculate_probabilities(self.expected_rewards)
+        probabilities = self.calculate_probabilities(self._expected_rewards)
 
         return probabilities
 

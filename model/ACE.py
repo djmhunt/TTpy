@@ -62,8 +62,6 @@ class ACE(Model):
 
     def __init__(self, alpha=0.3, epsilon=0.1, alphaE=None, alphaA=None, expect=None, actorExpect=None, **kwargs):
 
-        super(ACE, self).__init__(**kwargs)
-
         # A record of the kwarg keys, the variable they create and their default value
         self.alpha = alpha
         self.epsilon = epsilon
@@ -81,39 +79,6 @@ class ACE(Model):
         if actorExpect is None:
             actorExpect = np.ones((self.number_actions, self.number_cues)) / self.number_cues
         self.actorExpectations = actorExpect
-
-        self.parameters["alphaE"] = self.alphaE
-        self.parameters["alphaA"] = self.alphaA
-        self.parameters["epsilon"] = self.epsilon
-        self.parameters["expectation"] = self.expectations.copy()
-        self.parameters["actorExpectation"] = self.actorExpectations.copy()
-
-        # Recorded extra information
-        self.recActorExpectations = []
-
-    def return_task_state(self):
-        """ Returns all the relevant data for this model
-
-        Returns
-        -------
-        results : dict
-            The dictionary contains a series of keys including Name,
-            Probabilities, Actions and Events.
-        """
-
-        results = self.standard_results_output()
-        results["ActorExpectations"] = np.array(self.recActorExpectations).T
-
-        return results
-
-    def store_state(self):
-        """
-        Stores the state of all the important variables so that they can be
-        accessed later
-        """
-
-        self.store_standard_results()
-        self.recActorExpectations.append(self.actorExpectations.flatten())
 
     def reward_expectation(self, observation):
         """Calculate the estimated reward based on the action and stimuli
@@ -242,7 +207,7 @@ class ACE(Model):
 
         """
 
-        actExpectations = self._actExpectations(self.actorExpectations, self.stimuli)
+        actExpectations = self._actExpectations(self.actorExpectations, self._stimuli)
         probabilities = self.calculate_probabilities(actExpectations)
 
         return probabilities

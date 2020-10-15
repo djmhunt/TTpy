@@ -282,9 +282,11 @@ def run(data_folder='./',
                 message = "Participant fitted"
                 logger.debug(message)
 
-                log_model_fitted_parameters(model_parameter_input, model_fitted.params(), fit_quality, participant_name)
+                log_model_fitted_parameters(model_parameter_input,
+                                            model_fitted.parameters.copy(),
+                                            fit_quality, participant_name)
 
-                participant_fits = record_participant_fit(participant, participant_name, model_fitted.return_task_state(),
+                participant_fits = record_participant_fit(participant, participant_name, model_fitted.return_state(),
                                                           str(model_ID), fitting_data, model_changing_variables,
                                                           participant_fits, fileNameGen=file_name_generator,
                                                           pickleData=pickle, saveFittingProgress=save_fitting_progress)
@@ -438,7 +440,7 @@ def log_model_fitting_parameters(model, model_fit_variables, model_other_args):
     model_args = copy.copy(model_fit_variables)
     model_args.update(copy.copy(model_other_args))
     model_instance = model(**model_args)
-    model_properties = model_instance.params()
+    model_properties = model_instance.parameters
 
     message = "The fit will use the model ``{}``".format(model_properties['Name'])
 
