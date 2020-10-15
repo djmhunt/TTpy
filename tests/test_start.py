@@ -13,6 +13,7 @@ import yaml
 import start
 import outputting
 
+
 @pytest.fixture(scope="session")
 def output_folder(tmpdir_factory):
 
@@ -47,9 +48,9 @@ class TestClass_IO:
         with open(script_file) as file_stream:
             input_script = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
 
-        input = start.generate_run_properties(input_script.copy(), script_file)
-        config_file = input.pop('config_file_path', None)
-        output_script = start.generate_config(input)
+        input_properties = start.generate_run_properties(input_script.copy(), script_file)
+        config_file = input_properties.pop('config_file_path', None)
+        output_script = start.generate_config(input_properties)
 
         nested_assessment(input_script, output_script)
 
@@ -68,9 +69,9 @@ class TestClass_IO:
         with open(script_file) as file_stream:
             input_script = yaml.load(file_stream, Loader=yaml.UnsafeLoader)
 
-        input = start.generate_run_properties(input_script.copy(), script_file)
-        config_file = input.pop('config_file_path', None)
-        output_script = start.generate_config(input)
+        input_properties = start.generate_run_properties(input_script.copy(), script_file)
+        config_file = input_properties.pop('config_file_path', None)
+        output_script = start.generate_config(input_properties)
 
         nested_assessment(input_script, output_script)
 

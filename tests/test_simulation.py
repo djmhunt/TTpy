@@ -28,13 +28,24 @@ class TestClass_basic:
         caplog.set_level(logging.INFO)
         simulation.run()
 
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_path = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_path = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        modelTemplate_path = main_path / 'model' / 'modelTemplate.py'
+
         captured = caplog.records
 
-        for level in [k.levelname for k in captured]:
-            assert level == 'INFO'
+        captured_levels = [k.levelname for k in captured]
+        correct_levels = ['INFO', 'INFO', 'INFO', 'WARNING', 'WARNING', 'INFO', 'INFO']
+        for capt, corr in itertools.zip_longest(captured_levels, correct_levels):
+            assert capt == corr
 
         captured_loggers = [k.name for k in captured]
-        correct_loggers = ['Setup', 'Setup', 'Framework', 'Simulation', 'Setup']
+        correct_loggers = ['Setup', 'Setup', 'Framework', 'py.warnings', 'py.warnings', 'Simulation', 'Setup']
         for capt, corr in itertools.zip_longest(captured_loggers, correct_loggers):
             assert capt == corr
 
@@ -42,7 +53,9 @@ class TestClass_basic:
         correct = ['{}'.format(outputting.date()),
                    'Log initialised',
                    'Beginning task labelled: Untitled',
-                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   f"{modelTemplate_path}:276: UserWarning: No stimulus shaper has been defined. Using the default shaper may lead to errors  warnings.warn('No stimulus shaper has been defined. Using the default shaper may lead to errors', UserWarning)",
+                   f"{modelTemplate_path}:293: UserWarning: No reward shaper has been defined. Using the default shaper may lead to errors  warnings.warn('No reward shaper has been defined. Using the default shaper may lead to errors', UserWarning)",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, action_code = {0: 0, 1: 1}, action_code_reversed = {0: 0, 1: 1}, number_critics = 2, default_non_action = 'None', prior = array([0.5, 0.5]), last_observation = None, probabilities = array([0.5, 0.5]), stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', simID = None, alpha = 0.3, beta = 4, expectations = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
@@ -67,7 +80,7 @@ class TestClass_basic:
         correct = ['{}'.format(outputting.date()),
                    'Log initialised',
                    'Beginning task labelled: Untitled',
-                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, action_code = {0: 0, 1: 1}, action_code_reversed = {0: 0, 1: 1}, number_critics = 2, default_non_action = 'None', prior = array([0.5, 0.5]), last_observation = None, probabilities = array([0.5, 0.5]), stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', simID = None, alpha = 0.3, beta = 4, expectations = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
@@ -98,7 +111,7 @@ class TestClass_basic:
                    'Log initialised',
                    'The log you are reading was written to {}/log.txt'.format(folder_path.as_posix()),
                    'Beginning task labelled: test',
-                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, number_critics = 2, prior = array([0.5, 0.5]), non_action = 'None', action_code = {0: 0, 1: 1}, stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', alpha = 0.3, beta = 4, expectation = array([[0.5],       [0.5]]).",
+                   "Simulation 0 contains the task Basic: nbr_of_trials = 100, number_actions = 2. The model used is QLearn: number_actions = 2, number_cues = 1, action_code = {0: 0, 1: 1}, action_code_reversed = {0: 0, 1: 1}, number_critics = 2, default_non_action = 'None', prior = array([0.5, 0.5]), last_observation = None, probabilities = array([0.5, 0.5]), stimulus_shaper = 'model.modelTemplate.Stimulus with ', reward_shaper = 'model.modelTemplate.Rewards with ', decision_function = 'discrete.weightProb with task_responses : 0, 1', simID = None, alpha = 0.3, beta = 4, expectations = array([[0.5],       [0.5]]).",
                    'Shutting down program']
 
         for correct_line, standard_captured_line in itertools.zip_longest(correct, standard_captured):
@@ -144,7 +157,45 @@ class TestClass_simulation_overview:
 
             captured = caplog.records
             for level in [k.levelname for k in captured]:
-                assert level in ['INFO']
+                assert level == 'INFO'
+
+            data_path = captured[2].message.split('The log you are reading was written to ')[1]
+
+            assert output_path.exists()
+            assert (output_path / 'Outputs').exists()
+            assert folder_path.exists()
+            assert data_path == (folder_path / 'log.txt').as_posix()
+            assert (folder_path / 'data').exists()
+            assert (folder_path / 'data' / 'modelSim_0.csv').exists()
+            assert (folder_path / 'data' / 'modelSim_0.csv').stat().st_size > 0
+            assert not (folder_path / 'Pickle').exists()
+
+            caplog.clear()
+
+    def test_models(self, output_folder, caplog):
+        caplog.set_level(logging.INFO)
+        output_path = pathlib.Path(output_folder)
+        date = outputting.date()
+
+        working_path = pathlib.Path.cwd()
+        if working_path.stem == 'tests':
+            main_folder = working_path.parent
+        elif working_path.stem == 'TTpy':
+            main_folder = working_path
+        else:
+            raise NotImplementedError(f'Unexpected cwd {working_path}')
+        model_folder = main_folder / 'model'
+
+        model_list = [el.stem for el in model_folder.iterdir()
+                      if el.is_file() and el.suffix == '.py' and el.stem[0] != '_' and el.stem != 'modelTemplate']
+        for model in model_list:
+            model_label = f'{model}_test'
+            folder_path = output_path / 'Outputs' / f'{model_label}_{date}'
+            simulation.run(model_name=model[0].upper() + model[1:], label=model_label, output_path=output_path)
+
+            captured = caplog.records
+            for level in [k.levelname for k in captured]:
+                assert level == 'INFO'
 
             data_path = captured[2].message.split('The log you are reading was written to ')[1]
 

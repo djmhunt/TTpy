@@ -110,6 +110,7 @@ class TestClass_fitSims:
             with pytest.raises(fitSims.FitSubsetError, match='{} is not a known fit_subset'.format(values)):
                 assert fit_sim._set_fit_subset(values, part_rewards)
 
+
 class TestClass_participant:
 
     def test_participant_processing(self, participant_data_setup):
@@ -171,10 +172,10 @@ class TestClass_participant:
         fit_sim = fitSims.FitSim()
         with pytest.raises(fitSims.ActionError):
             fit_sim.participant_sequence_generation(participant_data,
-                                                             'Decisions',
-                                                             'Rewards',
-                                                             None,
-                                                             ['A', 'C', 'D', 'E', 'F'])
+                                                    'Decisions',
+                                                    'Rewards',
+                                                    None,
+                                                    ['A', 'C', 'D', 'E', 'F'])
 
 
 class TestClass_model:
@@ -226,6 +227,7 @@ class TestClass_model:
         model, model_other = model_setup
         participant_data = participant_data_setup
 
+        np.random.seed(100)
         fit_sim = fitSims.FitSim(participant_choice_property='Choices',
                                  participant_reward_property='Rewards',
                                  model_fitting_variable='ActionProb',
@@ -236,10 +238,10 @@ class TestClass_model:
         fitting = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
 
         model_instance = fit_sim.fitted_model(0.5, 3)
-        model_data = model_instance.return_task_state()
+        model_data = model_instance.return_state()
         result = model_data['ActionProb']
-        correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
-                                   0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])
+        correct_result = np.array([0.5, 0.35434369, 0.53742985, 0.37168381, 0.55601389, 0.48125878, 0.5093739,
+                                   0.5093739, 0.4906261, 0.5093739, 0.5093739, 0.4906261])
 
         np.testing.assert_array_almost_equal(result, correct_result)
 
@@ -247,6 +249,7 @@ class TestClass_model:
         model, model_other = model_setup
         participant_data = participant_data_setup
 
+        np.random.seed(100)
         fit_sim = fitSims.FitSim(participant_choice_property='Choices',
                                  participant_reward_property='Rewards',
                                  model_fitting_variable='ActionProb',
@@ -256,7 +259,7 @@ class TestClass_model:
 
         fitness = fit_sim.prepare_sim(model, model_other[0], model_other[1], participant_data)
         result = fitness(0.5, 3)
-        correct_result = np.array([0.5, 0.64565631, 0.46257015, 0.62831619, 0.55601389, 0.51874122, 0.5093739,
-                                   0.4906261, 0.4906261, 0.5093739, 0.5093739, 0.5093739])
+        correct_result = np.array([0.5, 0.35434369, 0.53742985, 0.37168381, 0.55601389, 0.48125878, 0.5093739,
+                                   0.5093739, 0.4906261, 0.5093739, 0.5093739, 0.4906261])
 
         np.testing.assert_array_almost_equal(result, correct_result)
