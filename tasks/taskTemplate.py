@@ -35,12 +35,12 @@ class Task(metaclass=TaskMeta):
 
     @property
     @abc.abstractmethod
-    def number_cues(cls):
+    def number_cues(self):
         return NotImplementedError
 
     @property
     @abc.abstractmethod
-    def valid_actions(cls):
+    def valid_actions(self):
         return NotImplementedError
 
     @abc.abstractmethod
@@ -213,14 +213,11 @@ class Task(metaclass=TaskMeta):
         output later
         """
 
+        ignore = ['parameters', 'record']
+
         current_state = vars(self).copy()
-        for k in set(current_state.keys()).difference(self.parameters.keys()):
+        for k in set(current_state.keys()).difference(ignore).difference(self.parameters.keys()):
             if k.startswith('_'):
                 self.record[k.strip('_')].append(current_state[k])
-            elif k not in ['parameters', 'record']:
+            else:
                 self.record[k].append(current_state[k])
-
-
-    @number_cues.setter
-    def number_cues(self, value):
-        self._number_cues = value
