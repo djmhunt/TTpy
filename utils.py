@@ -65,7 +65,7 @@ def find_class(class_name: str, class_folder: str, inherited_class: Any, exclude
     sought_class : inherited_class
         The uninstansiated class sought
     """
-    # TODO : Make search case insensitive
+    class_name_lower = class_name.lower()
 
     folder_path = pathlib.Path(__file__).parent / class_folder
     potential_files = [f.stem for f in folder_path.glob('*.py') if f.stem[0] != '_']
@@ -90,7 +90,7 @@ def find_class(class_name: str, class_folder: str, inherited_class: Any, exclude
             module_classes = inspect.getmembers(potential_module,
                                                 lambda x: inspect.isclass(x)
                                                           and issubclass(x, inherited_class)
-                                                          and x.__name__ == class_name
+                                                          and x.__name__.lower() == class_name_lower
                                                 )
 
             if module_classes and len(module_classes) == 1:
